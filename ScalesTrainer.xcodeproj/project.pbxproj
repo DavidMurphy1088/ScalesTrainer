@@ -24,7 +24,7 @@
 		794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49572BCD29390005A173 /* ScaleMatcher.swift */; };
 		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
 		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
-		794D495F2BCD342A0005A173 /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */; };
+		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
 		79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */; };
 		79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
 		79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */; };
@@ -52,7 +52,7 @@
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
 		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
 		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 1_octave_slow.m4a; path = ../../../ScalesTrainerTest/AudioKitTest/audio/1_octave_slow.m4a; sourceTree = "<group>"; };
+		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79DA82122BCCE95F008AC492 /* ScalesTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesTrainerApp.swift; sourceTree = "<group>"; };
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 		794D495D2BCD34080005A173 /* AudioFiles */ = {
 			isa = PBXGroup;
 			children = (
-				794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */,
+				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
 			);
 			path = AudioFiles;
 			sourceTree = "<group>";
@@ -251,7 +251,7 @@
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
-				794D495F2BCD342A0005A173 /* 1_octave_slow.m4a in Resources */,
+				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

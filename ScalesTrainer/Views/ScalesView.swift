@@ -100,7 +100,7 @@ struct ScalesView: View {
         .onAppear {
             pianoKeyboardViewModel.delegate = keyboardAudioEngine
             keyboardAudioEngine.start()
-            audio_kit_audioManager.setupAudioSession()
+            audio_kit_audioManager.setupAudioFile()
         }
         .onDisappear {
             audio_kit_audioManager.stopPlayFile()

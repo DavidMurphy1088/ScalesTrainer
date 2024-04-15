@@ -203,7 +203,7 @@ class AudioKit_AudioManager: ObservableObject {
         engine.output = silenceMixer
     }
     
-    func setupAudioSession() {
+    func setupAudioFile() {
         //let f = "church_4_octave_Cmajor_RH"
         //let f = "4_octave_fast"
         let f = "1_octave_slow"
@@ -280,6 +280,7 @@ class AudioKit_AudioManager: ObservableObject {
 
     func stopPlayFile() {
         audioPlayer?.stop()
+        self.tap?.stop()
         //if engine.isRunning {
             //engine.stop()
         //}
