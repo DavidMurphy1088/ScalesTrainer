@@ -1,9 +1,3 @@
-//
-//  ScalesTrainerApp.swift
-//  ScalesTrainer
-//
-//  Created by David Murphy on 15/04/24.
-//
 
 import SwiftUI
 
@@ -11,7 +5,36 @@ import SwiftUI
 struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
         }
+    }
+}
+
+struct MainTabView: View {
+    var body: some View {
+        TabView {
+            ScalesView()
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
+            StaveView()
+                .tabItem {
+                    Label("Notes", systemImage: "house")
+                }
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+        }
+    }
+}
+
+
+
+struct SettingsView: View {
+    var body: some View {
+        Text("Settings Screen")
+            .padding()
     }
 }

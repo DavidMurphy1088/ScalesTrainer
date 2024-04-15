@@ -7,18 +7,58 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		794D49392BCD073A0005A173 /* ClassicStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49302BCD073A0005A173 /* ClassicStyle.swift */; };
+		794D493C2BCD073A0005A173 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49332BCD073A0005A173 /* Note.swift */; };
+		794D493D2BCD073A0005A173 /* PianoKeyboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49342BCD073A0005A173 /* PianoKeyboardViewModel.swift */; };
+		794D493E2BCD073A0005A173 /* PianoKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49352BCD073A0005A173 /* PianoKeyboardView.swift */; };
+		794D493F2BCD073A0005A173 /* RoundedCornersShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49362BCD073A0005A173 /* RoundedCornersShape.swift */; };
+		794D49402BCD073A0005A173 /* PianoKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49372BCD073A0005A173 /* PianoKeyViewModel.swift */; };
+		794D49412BCD073A0005A173 /* TouchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49382BCD073A0005A173 /* TouchesView.swift */; };
+		794D49432BCD07F50005A173 /* KeyboardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49422BCD07F50005A173 /* KeyboardStyle.swift */; };
+		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
+		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
+		794D494E2BCD216A0005A173 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494D2BCD216A0005A173 /* Staff.swift */; };
+		794D49502BCD28AC0005A173 /* AudioKit_AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioKit_AudioManager.swift */; };
+		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
+		794D49562BCD29090005A173 /* TapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* TapHandler.swift */; };
+		794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49572BCD29390005A173 /* ScaleMatcher.swift */; };
+		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
+		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
+		794D495F2BCD342A0005A173 /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */; };
 		79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */; };
-		79DA82182BCCE95F008AC492 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82172BCCE95F008AC492 /* ContentView.swift */; };
 		79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
 		79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */; };
+		79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82242BCCEAA0008AC492 /* ScalesView.swift */; };
+		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
+		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
+		79DA822E2BCCED36008AC492 /* KeyboardAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */; };
+		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		794D49302BCD073A0005A173 /* ClassicStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassicStyle.swift; sourceTree = "<group>"; };
+		794D49332BCD073A0005A173 /* Note.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Note.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/Note.swift"; sourceTree = "<group>"; };
+		794D49342BCD073A0005A173 /* PianoKeyboardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PianoKeyboardViewModel.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/PianoKeyboardViewModel.swift"; sourceTree = "<group>"; };
+		794D49352BCD073A0005A173 /* PianoKeyboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PianoKeyboardView.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/PianoKeyboardView.swift"; sourceTree = "<group>"; };
+		794D49362BCD073A0005A173 /* RoundedCornersShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RoundedCornersShape.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/RoundedCornersShape.swift"; sourceTree = "<group>"; };
+		794D49372BCD073A0005A173 /* PianoKeyViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PianoKeyViewModel.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/PianoKeyViewModel.swift"; sourceTree = "<group>"; };
+		794D49382BCD073A0005A173 /* TouchesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TouchesView.swift; path = "../../../../Downloads/PianoKeyboard-master/Source/TouchesView.swift"; sourceTree = "<group>"; };
+		794D49422BCD07F50005A173 /* KeyboardStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyboardStyle.swift; path = "../../../PianoKeyboard-master 2/Source/Styles/KeyboardStyle.swift"; sourceTree = "<group>"; };
+		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = akai_steinway.sf2; path = Assets.xcassets/akai_steinway.sf2; sourceTree = "<group>"; };
+		794D494D2BCD216A0005A173 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
+		794D494F2BCD28AC0005A173 /* AudioKit_AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioKit_AudioManager.swift; sourceTree = "<group>"; };
+		794D49552BCD29090005A173 /* TapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapHandler.swift; sourceTree = "<group>"; };
+		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
+		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
+		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = 1_octave_slow.m4a; path = ../../../ScalesTrainerTest/AudioKitTest/audio/1_octave_slow.m4a; sourceTree = "<group>"; };
 		79DA82122BCCE95F008AC492 /* ScalesTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesTrainerApp.swift; sourceTree = "<group>"; };
-		79DA82172BCCE95F008AC492 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
+		79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAudioEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,12 +66,58 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */,
+				79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */,
+				794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */,
+				79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		794D492E2BCD07220005A173 /* PianoKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				794D49332BCD073A0005A173 /* Note.swift */,
+				79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */,
+				794D49352BCD073A0005A173 /* PianoKeyboardView.swift */,
+				794D49342BCD073A0005A173 /* PianoKeyboardViewModel.swift */,
+				794D49372BCD073A0005A173 /* PianoKeyViewModel.swift */,
+				794D49362BCD073A0005A173 /* RoundedCornersShape.swift */,
+				794D492F2BCD073A0005A173 /* Styles */,
+				794D49382BCD073A0005A173 /* TouchesView.swift */,
+			);
+			path = PianoKeyboard;
+			sourceTree = "<group>";
+		};
+		794D492F2BCD073A0005A173 /* Styles */ = {
+			isa = PBXGroup;
+			children = (
+				794D49302BCD073A0005A173 /* ClassicStyle.swift */,
+				794D49422BCD07F50005A173 /* KeyboardStyle.swift */,
+			);
+			name = Styles;
+			path = "../../../../Downloads/PianoKeyboard-master/Source/Styles";
+			sourceTree = "<group>";
+		};
+		794D49542BCD28E60005A173 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				794D494F2BCD28AC0005A173 /* AudioKit_AudioManager.swift */,
+				794D49552BCD29090005A173 /* TapHandler.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		794D495D2BCD34080005A173 /* AudioFiles */ = {
+			isa = PBXGroup;
+			children = (
+				794D495E2BCD342A0005A173 /* 1_octave_slow.m4a */,
+			);
+			path = AudioFiles;
+			sourceTree = "<group>";
+		};
 		79DA82092BCCE95F008AC492 = {
 			isa = PBXGroup;
 			children = (
@@ -51,9 +137,13 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				794D495D2BCD34080005A173 /* AudioFiles */,
+				794D492E2BCD07220005A173 /* PianoKeyboard */,
+				79DA822C2BCCED24008AC492 /* Model */,
+				79DA82232BCCEA6A008AC492 /* Views */,
 				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
-				79DA82172BCCE95F008AC492 /* ContentView.swift */,
 				79DA82192BCCE960008AC492 /* Assets.xcassets */,
+				794D494B2BCD16E60005A173 /* akai_steinway.sf2 */,
 				79DA821B2BCCE960008AC492 /* Preview Content */,
 			);
 			path = ScalesTrainer;
@@ -65,6 +155,27 @@
 				79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		79DA82232BCCEA6A008AC492 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
+				794D494D2BCD216A0005A173 /* Staff.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		79DA822C2BCCED24008AC492 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				794D49542BCD28E60005A173 /* Audio */,
+				794D49472BCD15AE0005A173 /* Logger.swift */,
+				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
+				794D49592BCD29610005A173 /* Scale.swift */,
+				794D495B2BCD29DF0005A173 /* Util.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,6 +194,12 @@
 			dependencies = (
 			);
 			name = ScalesTrainer;
+			packageProductDependencies = (
+				79DA82272BCCEB70008AC492 /* AudioKit */,
+				79DA822A2BCCEB8B008AC492 /* AudioKitUI */,
+				79DA82352BCCF260008AC492 /* AudioKitEX */,
+				794D49522BCD28CC0005A173 /* SoundpipeAudioKit */,
+			);
 			productName = ScalesTrainer;
 			productReference = 79DA82122BCCE95F008AC492 /* ScalesTrainer.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +228,12 @@
 				Base,
 			);
 			mainGroup = 79DA82092BCCE95F008AC492;
+			packageReferences = (
+				79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */,
+				79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
+				79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */,
+				794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
+			);
 			productRefGroup = 79DA82132BCCE95F008AC492 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -126,7 +249,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
+				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
+				794D495F2BCD342A0005A173 /* 1_octave_slow.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +262,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79DA82182BCCE95F008AC492 /* ContentView.swift in Sources */,
+				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
+				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
+				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
+				794D49412BCD073A0005A173 /* TouchesView.swift in Sources */,
+				794D49402BCD073A0005A173 /* PianoKeyViewModel.swift in Sources */,
+				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
+				794D49432BCD07F50005A173 /* KeyboardStyle.swift in Sources */,
+				79DA822E2BCCED36008AC492 /* KeyboardAudioEngine.swift in Sources */,
+				794D493D2BCD073A0005A173 /* PianoKeyboardViewModel.swift in Sources */,
+				794D493F2BCD073A0005A173 /* RoundedCornersShape.swift in Sources */,
+				794D493C2BCD073A0005A173 /* Note.swift in Sources */,
+				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
+				794D49502BCD28AC0005A173 /* AudioKit_AudioManager.swift in Sources */,
+				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
+				794D493E2BCD073A0005A173 /* PianoKeyboardView.swift in Sources */,
+				794D49392BCD073A0005A173 /* ClassicStyle.swift in Sources */,
+				794D494E2BCD216A0005A173 /* Staff.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,6 +416,8 @@
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -304,6 +447,8 @@
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -344,6 +489,64 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.1;
+			};
+		};
+		79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.3;
+			};
+		};
+		79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKitUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.7;
+			};
+		};
+		79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKitEX.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		794D49522BCD28CC0005A173 /* SoundpipeAudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
+			productName = SoundpipeAudioKit;
+		};
+		79DA82272BCCEB70008AC492 /* AudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */;
+			productName = AudioKit;
+		};
+		79DA822A2BCCEB8B008AC492 /* AudioKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */;
+			productName = AudioKitUI;
+		};
+		79DA82352BCCF260008AC492 /* AudioKitEX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */;
+			productName = AudioKitEX;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 79DA820A2BCCE95F008AC492 /* Project object */;
 }
