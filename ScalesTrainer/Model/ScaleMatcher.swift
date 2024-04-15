@@ -146,7 +146,7 @@ class ScaleMatcher : ObservableObject {
             }
             lastMatchTime = match.matchedTime
         }
-        var tempo = total / Double(ctr)
+        let tempo = total / Double(ctr)
         let tempo1 = tempo > 0 ? Int(60.0 / tempo) : 0
         //return "Errors:\(wrongCount) Correct:\(correctCount) Tempo\(tempo1)"
         return "ScaleMatcher, =====>Missing:\(missing)   Correct:\(correctCount)   Tempo:\(tempo1) \(tempo1/4)  MismatchesAllowed:\(self.mismatchesAllowed)"
