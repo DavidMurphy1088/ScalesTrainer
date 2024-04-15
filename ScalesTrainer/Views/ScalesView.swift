@@ -95,7 +95,7 @@ struct ScalesView: View {
             }
             StaveView()
         }
-        //.ignoresSafeArea()
+        // .ignoresSafeArea()
 
         .onAppear {
             pianoKeyboardViewModel.delegate = keyboardAudioEngine
