@@ -281,8 +281,6 @@ class AudioKit_AudioManager: ObservableObject {
     func stopPlayFile() {
         audioPlayer?.stop()
         self.tap?.stop()
-        //if engine.isRunning {
-            //engine.stop()
-        //}
+
     }
 }
