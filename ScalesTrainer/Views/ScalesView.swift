@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ScalesView: View {
+    @StateObject private var audio_kit_audioManager = AudioKit_AudioManager()
+    
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
     
     @State private var requiredPitchTapStartAmplitude: Double = 0.00
@@ -18,10 +20,6 @@ struct ScalesView: View {
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     @State private var startMidiIndex = 4
     
-    //@StateObject var audioProcessor = AudioProcessor(fileName: "1_octave_slow")
-    @StateObject private var audio_kit_audioManager = AudioKit_AudioManager()
-    private let keyboardAudioEngine: KeyboardAudioEngine
-    
     let fftMode = false
     @State var stateSetup = true
     @State var amplitudeFilter: Double = 0.00
@@ -29,7 +27,6 @@ struct ScalesView: View {
     
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
-        self.keyboardAudioEngine = KeyboardAudioEngine()
         pianoKeyboardViewModel.numberOfKeys = 16
         pianoKeyboardViewModel.showLabels = true
     }
@@ -98,9 +95,9 @@ struct ScalesView: View {
         
 
         .onAppear {
-            pianoKeyboardViewModel.delegate = keyboardAudioEngine
-            keyboardAudioEngine.start()
-            audio_kit_audioManager.setupAudioFile()
+            pianoKeyboardViewModel.delegate = audio_kit_audioManager //keyboardAudioEngine
+            //keyboardAudioEngine.start()
+            //audio_kit_audioManager.setupAudioFile()
         }
         .onDisappear {
             audio_kit_audioManager.stopPlayFile()

@@ -90,8 +90,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "71"
             endingLineNumber = "71"
-            landmarkName = "startSampler()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
             <Locations>
                <Location
                   uuid = "C64BA8B9-012C-439F-A2F6-E3C4B6D94567 - 426c508a2fc82809"
@@ -377,8 +377,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "12"
             endingLineNumber = "12"
-            landmarkName = "start()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -391,8 +391,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "240"
-            endingLineNumber = "240"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
             <Locations>
@@ -439,8 +439,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -455,8 +455,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
             <Locations>
@@ -518,8 +518,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
             <Locations>
@@ -566,8 +566,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
             <Locations>
@@ -629,8 +629,8 @@
             filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "installTapHandler(bufferSize:tapHandler:asynch:)"
             landmarkType = "7">
             <Locations>
@@ -665,6 +665,102 @@
                   offsetFromSymbolStart = "188">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A9AE9162-329E-4CBA-9514-381D9D2D0D07"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "init()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "13D18F6B-2EAA-4FE2-B7B6-F80E0D173AA4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "pianoKeyDown(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "63D6BEFD-3504-4562-AC17-664916657E2B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "setupAudioFile()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "63D6BEFD-3504-4562-AC17-664916657E2B - 56753109191840a1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.AudioKit_AudioManager.setupAudioFile() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "1052">
+               </Location>
+               <Location
+                  uuid = "63D6BEFD-3504-4562-AC17-664916657E2B - 56753109191840a1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.AudioKit_AudioManager.setupAudioFile() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "239"
+                  endingLineNumber = "239"
+                  offsetFromSymbolStart = "1008">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA930130-86C6-4BB5-B559-674DD891BDAF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
+            landmarkName = "init()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

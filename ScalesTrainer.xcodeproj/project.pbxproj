@@ -31,7 +31,6 @@
 		79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82242BCCEAA0008AC492 /* ScalesView.swift */; };
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
-		79DA822E2BCCED36008AC492 /* KeyboardAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +57,6 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
-		79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAudioEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +78,6 @@
 			isa = PBXGroup;
 			children = (
 				794D49332BCD073A0005A173 /* Note.swift */,
-				79DA822D2BCCED36008AC492 /* KeyboardAudioEngine.swift */,
 				794D49352BCD073A0005A173 /* PianoKeyboardView.swift */,
 				794D49342BCD073A0005A173 /* PianoKeyboardViewModel.swift */,
 				794D49372BCD073A0005A173 /* PianoKeyViewModel.swift */,
@@ -269,7 +266,6 @@
 				794D49402BCD073A0005A173 /* PianoKeyViewModel.swift in Sources */,
 				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
 				794D49432BCD07F50005A173 /* KeyboardStyle.swift in Sources */,
-				79DA822E2BCCED36008AC492 /* KeyboardAudioEngine.swift in Sources */,
 				794D493D2BCD073A0005A173 /* PianoKeyboardViewModel.swift in Sources */,
 				794D493F2BCD073A0005A173 /* RoundedCornersShape.swift in Sources */,
 				794D493C2BCD073A0005A173 /* Note.swift in Sources */,
