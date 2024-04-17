@@ -16,7 +16,6 @@ protocol TapHanderProtocol {
 }
 
 class TapHandler : TapHanderProtocol {
-    //let amplitudeFilter:Double
     var startTime:Date
     
     init() {
@@ -33,6 +32,20 @@ class TapHandler : TapHanderProtocol {
     }
     
     func end(){
+    }
+}
+
+class CallibrationTapHandler : TapHandler {
+    override func tapUpdate(_ frequencyAmplitudes: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        let n = 3
+        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+        let secs = Double(ms) / 1000.0
+        //let midi = Util.frequencyToMIDI(frequency: frequency)
+        var msg = ""
+        msg += "secs:\(String(format: "%.2f", secs))"
+        msg += " \t"+String(format: "%.4f", amplitudes[0])
+        Logger.shared.log(self, msg)
+        //print(amplitudes, frequencyAmplitudes)
     }
 }
 

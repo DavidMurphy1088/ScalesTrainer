@@ -7,47 +7,63 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B1D0C2A3-2A7B-4392-B100-307F6FC138C8"
+            uuid = "AA9CE8D5-0F18-47DC-8895-D649DA08EC3E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+            filePath = "ScalesTrainer/Model/Audio/AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
-            landmarkName = "configureMixer(useMicrophone:)"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "playSampleFile()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "974128CC-F2D8-48FF-BBB4-9D51E0F4A9A8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Audio/AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "init()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "B1D0C2A3-2A7B-4392-B100-307F6FC138C8 - 62acf7408f4aec31"
+                  uuid = "974128CC-F2D8-48FF-BBB4-9D51E0F4A9A8 - daabe89617a1bb68"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.AudioKit_AudioManager.configureMixer(useMicrophone: Swift.Bool) -&gt; ()"
+                  symbolName = "ScalesTrainer.AudioManager.init() -&gt; ScalesTrainer.AudioManager"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "102"
-                  endingLineNumber = "102"
-                  offsetFromSymbolStart = "64">
+                  startingLineNumber = "37"
+                  endingLineNumber = "37"
+                  offsetFromSymbolStart = "1080">
                </Location>
                <Location
-                  uuid = "B1D0C2A3-2A7B-4392-B100-307F6FC138C8 - 62acf7408f4aecf3"
+                  uuid = "974128CC-F2D8-48FF-BBB4-9D51E0F4A9A8 - daabe89617a1ba81"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.AudioKit_AudioManager.configureMixer(useMicrophone: Swift.Bool) -&gt; ()"
+                  symbolName = "ScalesTrainer.AudioManager.init() -&gt; ScalesTrainer.AudioManager"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Audio/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "100"
-                  endingLineNumber = "100"
-                  offsetFromSymbolStart = "64">
+                  startingLineNumber = "46"
+                  endingLineNumber = "46"
+                  offsetFromSymbolStart = "912">
                </Location>
             </Locations>
          </BreakpointContent>

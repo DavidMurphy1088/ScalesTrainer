@@ -10,15 +10,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>0</string>
+					<string>12</string>
 					<key>EndingLineNumber</key>
-					<string>137</string>
+					<string>39</string>
 					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>11</string>
 					<key>StartingLineNumber</key>
-					<string>136</string>
+					<string>39</string>
 					<key>Timestamp</key>
-					<string>735036029.605409</string>
+					<string>735046050.735378</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,23 +27,22 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>ScalesTrainer/Model/Audio/AudioKit_AudioManager.swift</string>
+						<string>ScalesTrainer/Model/Audio/TapHandler.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>
-</string>
+				<string> </string>
 				<key>leading</key>
-				<string>    }
-    
-</string>
+				<string>class CallibrationTapHandler : TapHandler {
+    override func tapUpdate(_ frequencyAmplitudes: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        let</string>
 				<key>trailing</key>
-				<string>    func stopRecording() {
-        recorder?.stop()
-    }
+				<string>n = 3
+        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+        let secs = Double(ms) / 1000.0
 </string>
 			</dict>
 			<key>type</key>
