@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct ScalesView: View {
-    @StateObject private var audio_kit_audioManager = AudioKit_AudioManager()
+    //@StateObject
+    let audio_kit_audioManager = AudioKit_AudioManager.shared
     
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
     
@@ -49,6 +50,9 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
+            .onChange(of: octaveNumberIndex, {
+                pianoKeyboardViewModel.numberOfKeys = (octaveNumberValues[octaveNumberIndex] * 12) + 1
+            })
             Spacer()
         }
     }
@@ -71,28 +75,36 @@ struct ScalesView: View {
             HStack {
                 Spacer()
                 Button("Play Scale") {
-                    pianoKeyboardViewModel.numberOfKeys = 36
-                }.padding()
-                
-                Spacer()
-                Button("Play File") {
-                    pianoKeyboardViewModel.numberOfKeys = 18
-                    audio_kit_audioManager.playFile()
-                }.padding()
-                
-                Spacer()
-                Button("Stop File") {
-                    audio_kit_audioManager.stopPlayFile()
+                    
                 }.padding()
                 
                 Spacer()
                 Button("Record Scale") {
+                    audio_kit_audioManager.startRecording()
+                }.padding()
+                Spacer()
+                Button("Stop Record") {
+                    audio_kit_audioManager.stopRecording()
+                }.padding()
+                Button("Play Recording") {
+                    audio_kit_audioManager.playRecordedFile()
+                }.padding()
+                Spacer()
+            }
+            HStack {
+                Spacer()
+                Button("Play Sample File") {
+                    audio_kit_audioManager.playSampleFile()
+                }.padding()
+                
+                Spacer()
+                Button("Stop Sample File") {
+                    audio_kit_audioManager.stopPlaySampleFile()
                 }.padding()
                 Spacer()
             }
             StaveView()
         }
-        
 
         .onAppear {
             pianoKeyboardViewModel.delegate = audio_kit_audioManager //keyboardAudioEngine
@@ -100,7 +112,7 @@ struct ScalesView: View {
             //audio_kit_audioManager.setupAudioFile()
         }
         .onDisappear {
-            audio_kit_audioManager.stopPlayFile()
+            audio_kit_audioManager.stopPlaySampleFile()
         }
 
     }

@@ -25,6 +25,7 @@
 		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
 		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
+		79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79C7CB732BCEA48D00F45257 /* one_note_60.m4a */; };
 		79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */; };
 		79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
 		79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */; };
@@ -52,6 +53,8 @@
 		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
 		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
+		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		79C7CB732BCEA48D00F45257 /* one_note_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = one_note_60.m4a; path = ../../../../Downloads/one_note_60.m4a; sourceTree = "<group>"; };
 		79DA82122BCCE95F008AC492 /* ScalesTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesTrainerApp.swift; sourceTree = "<group>"; };
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -111,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
+				79C7CB732BCEA48D00F45257 /* one_note_60.m4a */,
 			);
 			path = AudioFiles;
 			sourceTree = "<group>";
@@ -134,6 +138,7 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				79BFC69E2BCF790600006CA4 /* Info.plist */,
 				794D495D2BCD34080005A173 /* AudioFiles */,
 				794D492E2BCD07220005A173 /* PianoKeyboard */,
 				79DA822C2BCCED24008AC492 /* Model */,
@@ -249,6 +254,7 @@
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +418,7 @@
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScalesTrainer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -443,6 +450,7 @@
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScalesTrainer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
