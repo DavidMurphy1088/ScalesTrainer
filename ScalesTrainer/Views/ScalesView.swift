@@ -28,7 +28,6 @@ struct ScalesView: View {
     
     func configureKeyboard(key:String, octaves:Int) {
         DispatchQueue.main.async {
-            //pianoKeyboardViewModel.numberOfKeys = 16
             if ["C", "D", "E"].contains(key) {
                 pianoKeyboardViewModel.noteMidi = 60
             }
@@ -37,7 +36,8 @@ struct ScalesView: View {
             }
             pianoKeyboardViewModel.numberOfKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
             pianoKeyboardViewModel.showLabels = true
-            
+            let keyName = scalesModel.keyValues[keyIndex]
+            pianoKeyboardViewModel.setScale(scale: Scale(key: Key(name: keyName, keyType:.major), scaleType: .major, octaves: 1))
         }
     }
     
@@ -78,7 +78,7 @@ struct ScalesView: View {
     }
     
     func getScale() -> Scale {
-        let scale = Scale(start: scalesModel.startMidiValues[self.startMidiIndex], scaleType: .major, octaves: scalesModel.octaveNumberValues[self.octaveNumberIndex])
+        let scale = Scale(key: Key(), scaleType: .major, octaves: scalesModel.octaveNumberValues[self.octaveNumberIndex])
         return scale
     }
     
@@ -126,7 +126,7 @@ struct ScalesView: View {
                     Button(recordingScale ? "Stop Recording Scale" : "Record Scale") {
                         recordingScale.toggle()
                         if recordingScale {
-                            let scale = Scale(start: 60, scaleType: .major, octaves: 1)
+                            let scale = Scale(key: Key(), scaleType: .major, octaves: 1)
                             let scaleMatcher = ScaleMatcher(scale: scale, mismatchesAllowed: 8)
                             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: scaleMatcher)
                             audioManager.startRecording(tapHandler: pitchTapHandler)

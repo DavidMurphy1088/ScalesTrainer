@@ -47,12 +47,14 @@ public enum ScaleType {
 }
 
 public class Scale {
+    let key:Key
     var notes:[Int]
     public var display = ""
     
-    public init(start:Int, scaleType:ScaleType, octaves:Int) {
+    public init(key:Key, scaleType:ScaleType, octaves:Int) {
+        self.key = key
         notes = []
-        var next = start
+        var next = 60
         for oct in 0..<octaves {
             for i in 0..<7 {
                 notes.append(next)

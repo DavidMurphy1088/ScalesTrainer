@@ -3,12 +3,12 @@ import SwiftUI
 
 public protocol PianoKeyViewModelDelegateProtocol {
     var noteMidi: Int { get }
+    var scale:Scale {get}
 }
                 
 public struct PianoKeyViewModel: Identifiable {
     let keyIndex: Int
     let delegate: PianoKeyViewModelDelegateProtocol
-    //let scale:Scale
     public var touchDown = false
     public var latched = false
 
@@ -25,7 +25,11 @@ public struct PianoKeyViewModel: Identifiable {
     }
     
     public var finger: String {
-        "\(keyIndex)"
+        var s = "_"
+        //if let scale = scale {
+            s = delegate.scale.key.name
+        //}
+        return "\(keyIndex) \(s)"
     }
 
     public var isNatural: Bool {

@@ -6,7 +6,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegateProtocol {
-    //let scale:Scale
+    @Published public var scale:Scale = Scale(key: Key(), scaleType: .major, octaves: 1)
     @Published public var keys: [PianoKeyViewModel] = []
     @Published public var noteMidi = 60
     @Published public var showLabels = true
@@ -15,17 +15,20 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     }
     
     public var keyRects: [CGRect] = []
-    //public weak var delegate: PianoKeyboardDelegate?
-    //public
+
     weak var delegate: AudioManager?
     
     public init() {
         //self.scale = scale
-        configureKeys("INIT \(self.numberOfKeys)")
+        configureKeys()
     }
-
+    public func setScale(scale:Scale) {
+        DispatchQueue.main.async { [self] in
+            self.scale = scale
+        }
+    }
     public var numberOfKeys = 18 {
-        didSet { configureKeys("DIDSET \(self.numberOfKeys)") }
+        didSet { configureKeys() }
     }
     public var naturalKeyCount: Int {
         keys.filter { $0.isNatural }.count
@@ -35,15 +38,13 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         didSet { updateKeys() }
     }
 
-
     func naturalKeyWidth(_ width: CGFloat, space: CGFloat) -> CGFloat {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    private func configureKeys(_ from:String) {
+    private func configureKeys() {
         //DispatchQueue.main.async { [self] in
-            print("==================== CONFIG KYS", from, self.numberOfKeys )
-            self.keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: self.numberOfKeys)
+        self.keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: self.numberOfKeys)
             self.keyRects = Array(repeating: .zero, count: numberOfKeys)
             
             for i in 0..<numberOfKeys {
