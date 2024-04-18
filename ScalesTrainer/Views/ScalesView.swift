@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct ScalesView: View {
-    let scalesModel = ScalesModel()
+    let scalesModel = ScalesModel.shared
     let audioManager = AudioManager.shared
     
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
     
     @State private var octaveNumberIndex = 0
     @State private var keyIndex = 0
+    @State private var scaleTypeIndex = 0
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     
@@ -22,6 +23,7 @@ struct ScalesView: View {
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
         pianoKeyboardViewModel.numberOfKeys = 16
+        //pianoKeyboardViewModel.noteOffset = 2
         pianoKeyboardViewModel.showLabels = true
     }
     
@@ -32,6 +34,15 @@ struct ScalesView: View {
             Picker("Select Value", selection: $keyIndex) {
                 ForEach(scalesModel.keyValues.indices, id: \.self) { index in
                     Text("\(scalesModel.keyValues[index])")
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: keyIndex, {pianoKeyboardViewModel.setScale(scale: getScale())})
+            
+            Text("Scale")
+            Picker("Select Value", selection: $scaleTypeIndex) {
+                ForEach(scalesModel.scaleTypes.indices, id: \.self) { index in
+                    Text("\(scalesModel.scaleTypes[index])")
                 }
             }
             .pickerStyle(.menu)
@@ -50,9 +61,13 @@ struct ScalesView: View {
         }
     }
     
-    func getScaleMatcher() -> ScaleMatcher  {
-        let scale = Scale(start: scalesModel.startMidiValues[self.startMidiIndex], major: true, octaves: scalesModel.octaveNumberValues[self.octaveNumberIndex])
-        return ScaleMatcher(scale: scale, mismatchesAllowed: 8)
+    func getScale() -> Scale {
+        let scale = Scale(start: scalesModel.startMidiValues[self.startMidiIndex], scaleType: .major, octaves: scalesModel.octaveNumberValues[self.octaveNumberIndex])
+        return scale
+    }
+    
+    func getScaleMatcher() -> ScaleMatcher  {        
+        return ScaleMatcher(scale: getScale(), mismatchesAllowed: 8)
     }
     
     var body: some View {
@@ -68,55 +83,65 @@ struct ScalesView: View {
                 Spacer()
                 Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
                     calibrating.toggle()
+                    let t = CallibrationTapHandler()
                     if calibrating {
-                        audioManager.playSampleFile()
+                        //let fileName = "one_note_60"
+                        let fileName = "1_octave_slow"
+                        audioManager.playSampleFile(fileName: fileName, tapHandler: t)
                     }
                     else {
                         audioManager.stopPlaySampleFile()
                     }
                 }.padding()
+                Text("Required Start Amplitude:\(scalesModel.getRequiredStartAmplitude())")
                 Spacer()
             }
+             
+            Button("Play Scale") {
+            }.padding()
+            
             HStack {
-                Spacer()
-                Button("Play Scale") {
+                if let requiredAmplitude = scalesModel.requiredStartAmplitude {
+                    Spacer()
+                    Button(recordingScale ? "Stop Recording Scale" : "Record Scale") {
+                        recordingScale.toggle()
+                        if recordingScale {
+                            let scale = Scale(start: 60, scaleType: .major, octaves: 1)
+                            let scaleMatcher = ScaleMatcher(scale: scale, mismatchesAllowed: 8)
+                            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: scaleMatcher)
+                            audioManager.startRecording(tapHandler: pitchTapHandler)
+                        }
+                        else {
+                            audioManager.stopRecording()
+                        }
+                    }.padding()
                     
-                }.padding()
-                
-                Spacer()
-                Button(recordingScale ? "Stop Recording Scale" : "Record Scale") {
-                    recordingScale.toggle()
-                    if recordingScale {
-                        let scale = Scale(start: 60, major: true, octaves: 1)
-                        let scaleMatcher = ScaleMatcher(scale: scale, mismatchesAllowed: 8)
-                        let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: 0, scaleMatcher: scaleMatcher)
-                        audioManager.startRecording(tapHandler: pitchTapHandler)
-                    }
-                    else {
-                        audioManager.stopRecording()
-                    }
-                }.padding()
-                Spacer()
-//                Button("Stop Record") {
-//                    audio_kit_audioManager.stopRecording()
-//                }.padding()
-                Button("Play Recording") {
-                    audioManager.playRecordedFile()
-                }.padding()
-                Spacer()
+                    Spacer()
+
+                    Button(playingSampleFile ? "Stop Recording Sample" : "Record Sample File") {
+                        playingSampleFile.toggle()
+                        if playingSampleFile {
+                            //let f = "church_4_octave_Cmajor_RH"
+                            //let f = "4_octave_fast"
+                            //let f = "one_note_60" //1_octave_slow"
+                            let fileName = "1_octave_slow"
+                            audioManager.playSampleFile(fileName: fileName, 
+                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude, 
+                                                                                    scaleMatcher: getScaleMatcher()))
+                        }
+                        else {
+                            audioManager.stopPlaySampleFile()
+                        }
+                    }.padding()
+                    Spacer()
+                    Button("Play Recording") {
+                        audioManager.playRecordedFile()
+                    }.padding()
+                    Spacer()
+                }
             }
-            HStack {
-                Spacer()
-                Button(playingSampleFile ? "Stop Playing Sample" : "Play Sample File") {
-                    playingSampleFile.toggle()
-                    if playingSampleFile {
-                        audioManager.playSampleFile()
-                    }
-                    else {
-                        audioManager.stopPlaySampleFile()
-                    }
-                }.padding()
-                Spacer()
+            if scalesModel.statusMessage.count > 0 {
+                Text(scalesModel.statusMessage)
             }
             StaveView()
         }

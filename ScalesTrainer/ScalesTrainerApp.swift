@@ -26,6 +26,10 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+            LogView()
+                .tabItem {
+                    Label("Log", systemImage: "gear")
+                }
         }
     }
 }

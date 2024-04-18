@@ -38,30 +38,42 @@ class MatchType {
     }
 }
 
+enum ScaleType {
+    case major
+    case naturalMinor
+    case harmonicMinor
+    case melodicMinor
+    case arpeggio
+}
+
 class Scale {
     var notes:[Int]
     public var display = ""
     
-    init(start:Int, major:Bool, octaves:Int) {
+    init(start:Int, scaleType:ScaleType, octaves:Int) {
         notes = []
         var next = start
         for oct in 0..<octaves {
             for i in 0..<7 {
                 notes.append(next)
                 var delta = 2
-                if major {
+                if scaleType == .major {
                     if [2, 6].contains(i) {
                         delta = 1
                     }
                 }
-                else {
+                if [ScaleType.naturalMinor, ScaleType.harmonicMinor].contains(scaleType) {
                     if [1, 4,6].contains(i) {
                         delta = 1
                     }
-                    if [5].contains(i) {
-                        delta = 3
+                    if scaleType == .harmonicMinor {
+                        if [5].contains(i) {
+                            delta = 3
+                        }
                     }
                 }
+
+
                 next += delta
             }
             if oct == octaves - 1 {

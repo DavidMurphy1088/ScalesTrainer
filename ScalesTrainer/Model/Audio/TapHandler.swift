@@ -12,7 +12,7 @@ import Foundation
 ///
 protocol TapHanderProtocol {
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
-    func end()
+    func stop()
 }
 
 class TapHandler : TapHanderProtocol {
@@ -31,21 +31,29 @@ class TapHandler : TapHanderProtocol {
     func showConfig() {
     }
     
-    func end(){
+    func stop(){
     }
 }
 
 class CallibrationTapHandler : TapHandler {
-    override func tapUpdate(_ frequencyAmplitudes: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+    private var amplitudes:[Float] = []
+    
+    override func tapUpdate(_ frequencyAmplitudes: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
         let n = 3
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
         //let midi = Util.frequencyToMIDI(frequency: frequency)
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
-        msg += " \t"+String(format: "%.4f", amplitudes[0])
+        msg += " \t"+String(format: "%.4f", amplitudesIn[0])
+        amplitudes.append(amplitudesIn[0])
         Logger.shared.log(self, msg)
         //print(amplitudes, frequencyAmplitudes)
+    }
+    
+    override func stop() {
+        ScalesModel.shared.doCallibration(amplitudes: amplitudes)
+        Logger.shared.log(self, "ended callibration")
     }
 }
 
@@ -68,7 +76,6 @@ class PitchTapHandler : TapHandler {
     }
     
     override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        // Reduces sensitivity to background noise to prevent random / fluctuating data.
         
         if wrongNoteFound {
             return
@@ -119,9 +126,10 @@ class PitchTapHandler : TapHandler {
         Logger.shared.log(self, msg, Double(amplitude))
     }
     
-    override func end() {
+    override func stop() {
         if let scaleMatcher = scaleMatcher {
             Logger.shared.log(self, scaleMatcher.stats())
+            ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
         }
     }
     
@@ -243,10 +251,10 @@ class FFTTapHandler :TapHandler {
         //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
     }
     
-    override func end() {
-        if let scaleMatcher = scaleMatcher {
-            Logger.shared.log(self, scaleMatcher.stats())
-        }
-    }
+//    override func stop() {
+//        if let scaleMatcher = scaleMatcher {
+//            Logger.shared.log(self, scaleMatcher.stats())
+//        }
+//    }
 }
     

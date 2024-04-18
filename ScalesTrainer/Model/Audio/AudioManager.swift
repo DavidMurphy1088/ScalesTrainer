@@ -15,6 +15,7 @@ class AudioManager {
     var recorder: NodeRecorder?
     var silencer: Fader?
     let mixer = Mixer()
+    var currentTapHandler:TapHandler? = nil
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -100,12 +101,10 @@ class AudioManager {
         recorder?.stop()
     }
 
-    func playSampleFile() {        
-        //let f = "church_4_octave_Cmajor_RH"
-        //let f = "4_octave_fast"
-        let f = "one_note_60" //1_octave_slow"
-        guard let fileURL = Bundle.main.url(forResource: f, withExtension: "m4a") else {
-            Logger.shared.reportError(self, "Audio file not found \(f)")
+    func playSampleFile(fileName:String, tapHandler: TapHandler) {
+        Logger.shared.clearLog()
+        guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
+            Logger.shared.reportError(self, "Audio file not found \(fileName)")
             return
         }
         startEngine()
@@ -118,8 +117,9 @@ class AudioManager {
             Logger.shared.reportError(self, "File cannot load \(error.localizedDescription)")
         }
         installTapHandler(node: audioPlayer, bufferSize: 4096,
-                          tapHandler: CallibrationTapHandler(),
+                          tapHandler: tapHandler,
                           asynch: true)
+        currentTapHandler = tapHandler
         audioPlayer.play()
     }
     
@@ -134,6 +134,7 @@ class AudioManager {
     func stopPlaySampleFile() {
         audioPlayer.stop()
         self.tap?.stop()
+        currentTapHandler?.stop()
     }
     
     func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandler, asynch : Bool) {
