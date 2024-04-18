@@ -38,7 +38,7 @@ class MatchType {
     }
 }
 
-enum ScaleType {
+public enum ScaleType {
     case major
     case naturalMinor
     case harmonicMinor
@@ -46,11 +46,11 @@ enum ScaleType {
     case arpeggio
 }
 
-class Scale {
+public class Scale {
     var notes:[Int]
     public var display = ""
     
-    init(start:Int, scaleType:ScaleType, octaves:Int) {
+    public init(start:Int, scaleType:ScaleType, octaves:Int) {
         notes = []
         var next = start
         for oct in 0..<octaves {

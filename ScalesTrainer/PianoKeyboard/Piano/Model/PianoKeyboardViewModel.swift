@@ -6,23 +6,26 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegateProtocol {
+    //let scale:Scale
     @Published public var keys: [PianoKeyViewModel] = []
-    @Published public var noteOffset = 60
-    @Published public var showLabels = false
+    @Published public var noteMidi = 60
+    @Published public var showLabels = true
     @Published public var latch = false {
         didSet { reset() }
-    }
-
-    func setScale(scale:Scale) {
-        
     }
     
     public var keyRects: [CGRect] = []
     //public weak var delegate: PianoKeyboardDelegate?
     //public
     weak var delegate: AudioManager?
+    
+    public init() {
+        //self.scale = scale
+        configureKeys("INIT \(self.numberOfKeys)")
+    }
+
     public var numberOfKeys = 18 {
-        didSet { configureKeys() }
+        didSet { configureKeys("DIDSET \(self.numberOfKeys)") }
     }
     public var naturalKeyCount: Int {
         keys.filter { $0.isNatural }.count
@@ -32,21 +35,21 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         didSet { updateKeys() }
     }
 
-    public init() {
-        configureKeys()
-    }
 
     func naturalKeyWidth(_ width: CGFloat, space: CGFloat) -> CGFloat {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    private func configureKeys() {
-        keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: numberOfKeys)
-        keyRects = Array(repeating: .zero, count: numberOfKeys)
-
-        for i in 0..<numberOfKeys {
-            keys[i] = PianoKeyViewModel(keyIndex: i, delegate: self)
-        }
+    private func configureKeys(_ from:String) {
+        //DispatchQueue.main.async { [self] in
+            print("==================== CONFIG KYS", from, self.numberOfKeys )
+            self.keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: self.numberOfKeys)
+            self.keyRects = Array(repeating: .zero, count: numberOfKeys)
+            
+            for i in 0..<numberOfKeys {
+                keys[i] = PianoKeyViewModel(keyIndex: i, delegate: self)
+            }
+        //}
     }
 
     private func updateKeys() {

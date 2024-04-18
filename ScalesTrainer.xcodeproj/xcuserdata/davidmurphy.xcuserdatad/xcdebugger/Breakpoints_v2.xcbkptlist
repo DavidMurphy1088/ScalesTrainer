@@ -216,7 +216,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9473563C-EF27-4BFB-845F-A6448BD4459C"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/Scale.swift"
@@ -322,6 +322,339 @@
             endingLineNumber = "24"
             landmarkName = "name(for:preferSharps:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "73021542-F928-4A5D-A187-10A6CDADEE7C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "layout(viewModel:geometry:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "73021542-F928-4A5D-A187-10A6CDADEE7C - a2e49343e3dfdbd7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (inout SwiftUI.GraphicsContext, __C.CGSize) -&gt; () in ScalesTrainer.ClassicStyle.layout(viewModel: ScalesTrainer.PianoKeyboardViewModel, geometry: SwiftUI.GeometryProxy) -&gt; some"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "83"
+                  endingLineNumber = "83"
+                  offsetFromSymbolStart = "1224">
+               </Location>
+               <Location
+                  uuid = "73021542-F928-4A5D-A187-10A6CDADEE7C - a2e49343e3dfdbf6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (inout SwiftUI.GraphicsContext, __C.CGSize) -&gt; () in ScalesTrainer.ClassicStyle.layout(viewModel: ScalesTrainer.PianoKeyboardViewModel, geometry: SwiftUI.GeometryProxy) -&gt; some"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "82"
+                  endingLineNumber = "82"
+                  offsetFromSymbolStart = "1324">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "32A8A144-B7A5-4E60-8FBF-DB44C5CA22BE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "layout(viewModel:geometry:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "297ADEA8-EBD5-41C1-985B-91112260BFA1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "name"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B966745-24AB-4019-B1D7-964D2287E8FA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "finger"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D6CA9225-9D37-4D5F-B1B6-A1CFAD4A957F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "layout(viewModel:geometry:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BE70627F-ADD8-4BE3-BC29-AD1B99D64533"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "layout(viewModel:geometry:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2031E3B8-5E0C-4240-AAE5-1FD78054FA40"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Views/ScalesView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "configureKeyboard(key:octaves:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2031E3B8-5E0C-4240-AAE5-1FD78054FA40 - 2334d93dcefb574f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.ScalesView.configureKeyboard(key: Swift.String, octaves: Swift.Int) -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Views/ScalesView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "156">
+               </Location>
+               <Location
+                  uuid = "2031E3B8-5E0C-4240-AAE5-1FD78054FA40 - 421ebc4544106480"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.ScalesView.configureKeyboard(key: Swift.String, octaves: Swift.Int) -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Views/ScalesView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "56">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "88A27F2C-9D39-47E0-AEC7-1BF8F11F00A0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "configureKeys(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "88A27F2C-9D39-47E0-AEC7-1BF8F11F00A0 - 56e1725247586ce5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.configureKeys() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "260">
+               </Location>
+               <Location
+                  uuid = "88A27F2C-9D39-47E0-AEC7-1BF8F11F00A0 - e6985a53a87cf097"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.PianoKeyboardViewModel.configureKeys() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "45"
+                  endingLineNumber = "45"
+                  offsetFromSymbolStart = "88">
+               </Location>
+               <Location
+                  uuid = "88A27F2C-9D39-47E0-AEC7-1BF8F11F00A0 - f05bb032caeb1c96"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.PianoKeyboardViewModel.configureKeys(Swift.String) -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "46"
+                  endingLineNumber = "46"
+                  offsetFromSymbolStart = "372">
+               </Location>
+               <Location
+                  uuid = "88A27F2C-9D39-47E0-AEC7-1BF8F11F00A0 - ec8986d3c79188c4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.configureKeys(Swift.String) -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "46"
+                  endingLineNumber = "46"
+                  offsetFromSymbolStart = "368">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6D2EC4F7-BB22-40DD-BD9C-1CDD43EEB11E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
+            landmarkName = "numberOfKeys"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8E502326-74A4-4B5D-BEF0-C54230AFEABB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
+            landmarkName = "init()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8E502326-74A4-4B5D-BEF0-C54230AFEABB - 808fb9ec7f6f8577"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.init(scale: ScalesTrainer.Scale) -&gt; ScalesTrainer.PianoKeyboardViewModel"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "732">
+               </Location>
+               <Location
+                  uuid = "8E502326-74A4-4B5D-BEF0-C54230AFEABB - 808fb9ec7f6f8577"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.init(scale: ScalesTrainer.Scale) -&gt; ScalesTrainer.PianoKeyboardViewModel"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "712">
+               </Location>
+               <Location
+                  uuid = "8E502326-74A4-4B5D-BEF0-C54230AFEABB - 90363aa0062556ec"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.init() -&gt; ScalesTrainer.PianoKeyboardViewModel"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "24"
+                  endingLineNumber = "24"
+                  offsetFromSymbolStart = "676">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

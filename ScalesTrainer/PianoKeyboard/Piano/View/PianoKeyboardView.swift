@@ -7,10 +7,11 @@ public struct PianoKeyboardView<T: KeyboardStyle>: View {
     var style: T
 
     public init(
-        viewModel: PianoKeyboardViewModel = PianoKeyboardViewModel(),
+        viewModel: PianoKeyboardViewModel, //= PianoKeyboardViewModel(),
         style: T
     ) {
         self.viewModel = viewModel
+        //self.viewModel = PianoKeyboardViewModel(scale: Scale(start: 60, scaleType: .major, octaves: 1))
         self.style = style
     }
 

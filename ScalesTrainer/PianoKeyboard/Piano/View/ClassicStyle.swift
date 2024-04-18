@@ -24,7 +24,9 @@ public struct ClassicStyle: KeyboardStyle {
     public let naturalKeySpace: CGFloat
 
     public init(
-        sfKeyWidthMultiplier: CGFloat = 0.65,
+        //scale:Scale,
+        //sfKeyWidthMultiplier: CGFloat = 0.65,
+        sfKeyWidthMultiplier: CGFloat = 0.55,
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
@@ -79,7 +81,7 @@ public struct ClassicStyle: KeyboardStyle {
                     origin: CGPoint(x: xpos, y: 0),
                     size: CGSize(width: naturalWidth, height: height)
                 )
-
+                //print(index, key.noteNumber, key.keyIndex, key.name)
                 let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
                     .path(in: rect)
 
@@ -101,7 +103,7 @@ public struct ClassicStyle: KeyboardStyle {
                         at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
                     )
                     context.draw(
-                        Text("2").font(.title.bold()).foregroundColor(Color.green),
+                        Text(key.finger).font(.title.bold()).foregroundColor(Color.green),
                         at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
                     )
                 }

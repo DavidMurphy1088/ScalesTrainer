@@ -22,9 +22,23 @@ struct ScalesView: View {
 
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
-        pianoKeyboardViewModel.numberOfKeys = 16
-        //pianoKeyboardViewModel.noteOffset = 2
-        pianoKeyboardViewModel.showLabels = true
+        //configureKeyboard(key: Key(sharps: 0, flats: 0, type: .major))
+        configureKeyboard(key: "C", octaves: 1)
+    }
+    
+    func configureKeyboard(key:String, octaves:Int) {
+        DispatchQueue.main.async {
+            //pianoKeyboardViewModel.numberOfKeys = 16
+            if ["C", "D", "E"].contains(key) {
+                pianoKeyboardViewModel.noteMidi = 60
+            }
+            else {
+                pianoKeyboardViewModel.noteMidi = 65
+            }
+            pianoKeyboardViewModel.numberOfKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
+            pianoKeyboardViewModel.showLabels = true
+            
+        }
     }
     
     func SelectScaleView() -> some View {
@@ -37,7 +51,9 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: keyIndex, {pianoKeyboardViewModel.setScale(scale: getScale())})
+            .onChange(of: keyIndex, {
+                self.configureKeyboard(key: scalesModel.keyValues[keyIndex], octaves: 1)
+            })
             
             Text("Scale")
             Picker("Select Value", selection: $scaleTypeIndex) {
@@ -55,7 +71,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
-                pianoKeyboardViewModel.numberOfKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
+                self.configureKeyboard(key: scalesModel.keyValues[keyIndex], octaves: 1)
             })
             Spacer()
         }
@@ -76,9 +92,13 @@ struct ScalesView: View {
             
             SelectScaleView()
             
-            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(sfKeyWidthMultiplier: 0.55))
+            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle())
                 .frame(height: 320)
                 .padding()
+//            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(scale: getScale()))
+//                .frame(height: 320)
+//                .padding()
+
             HStack {
                 Spacer()
                 Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
