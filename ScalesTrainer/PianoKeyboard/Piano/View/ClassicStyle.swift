@@ -98,14 +98,17 @@ public struct ClassicStyle: KeyboardStyle {
 
                 if viewModel.showLabels {
                     let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
-                    context.draw(
-                        Text(key.name).font(labelFont).foregroundColor(color),
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
-                    )
-                    context.draw(
-                        Text(key.finger).font(.title.bold()).foregroundColor(Color.green),
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
-                    )
+                    if key.finger.count > 0 {
+                        context.draw(
+                            Text(key.name).font(labelFont).foregroundColor(color),
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
+                        )
+                        context.draw(
+                            //Text(key.finger).font(.title.bold()).foregroundColor(Color.green),
+                            Text(key.finger).foregroundColor(Color.green),
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
+                        )
+                    }
                 }
 
                 xpos += naturalXIncr
@@ -154,21 +157,23 @@ public struct ClassicStyle: KeyboardStyle {
                 ))
                 
                 if viewModel.showLabels {
-                    let color = Color.white //key.name.prefix(1) == "C" ? labelColor : .clear
-                    
-                    context.draw(
-                        Text(key.name).font(labelFont).foregroundColor(color),
-                        //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
+                    if key.finger.count > 0 {
+                        let color = Color.white //key.name.prefix(1) == "C" ? labelColor : .clear
                         
-                    )
-                    context.draw(
-                        Text("1").font(.title.bold()).foregroundColor(Color.green),
-                        //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
-                        
-                    )
-
+                        context.draw(
+                            Text(key.name).font(labelFont).foregroundColor(color),
+                            //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
+                            
+                        )
+                        context.draw(
+                            //Text("1").font(.title.bold()).foregroundColor(Color.green),
+                            Text(key.finger).foregroundColor(Color.green),
+                            //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
+                            
+                        )
+                    }
                 }
 
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)

@@ -21,15 +21,21 @@ public struct PianoKeyViewModel: Identifiable {
     }
 
     public var name: String {
-        Note.name(for: noteNumber)
+        Note.name(for: noteNumber, preferSharps: !(delegate.scale.key.flats > 0))
     }
     
     public var finger: String {
-        var s = "_"
-        //if let scale = scale {
-            s = delegate.scale.key.name
-        //}
-        return "\(keyIndex) \(s)"
+        var s = delegate.scale.key.name
+        let scale = delegate.scale
+        let midi = noteNumber
+        let inScale = scale.containsMidi(midi: midi) //? 1 : 0
+        if inScale {
+            //return "\(keyIndex) \(noteNumber) \(s)"
+            return "\(noteNumber) \(s)"
+        }
+        else {
+            return ""
+        }
     }
 
     public var isNatural: Bool {

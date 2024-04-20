@@ -54,7 +54,16 @@ public class Scale {
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
         notes = []
-        var next = 60
+        var next = 0
+        switch key.sharps {
+        case 1:
+            next = 67
+        case 2:
+            next = 62
+        default:
+            next = 60
+        }
+        ///upwards
         for oct in 0..<octaves {
             for i in 0..<7 {
                 notes.append(next)
@@ -75,17 +84,25 @@ public class Scale {
                     }
                 }
 
-
                 next += delta
             }
             if oct == octaves - 1 {
                 notes.append(next)
             }
         }
+        ///downwards
+        let up = Array(notes)
+        for i in stride(from: up.count - 2, through: 0, by: -1) {
+            notes.append(up[i])
+        }
         var m = ""
         for n in notes {
             m += "  \(n)"
         }
         display = m
+    }
+    
+    func containsMidi(midi:Int) -> Bool {
+        return self.notes.contains(midi)
     }
 }

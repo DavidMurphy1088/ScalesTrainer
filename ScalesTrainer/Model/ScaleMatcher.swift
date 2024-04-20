@@ -1,13 +1,13 @@
 import Foundation
 
 class ScaleMatcher : ObservableObject {
+
     var lastMatchTime:Date?
     var nextMatchIndex = 0
     var matches:[NoteMatch] = []
     var topMidi:Int = 0
     var lastGoodMidi:Int?
     var wrongCount = 0
-    var correctCount = 0
     var firstNoteMatched = false
     var mismatchCount = 0
     var mismatchesAllowed = 0
@@ -15,15 +15,17 @@ class ScaleMatcher : ObservableObject {
     init(scale:Scale, mismatchesAllowed:Int) {
         var num = 0
         matches = []
+        
+        ///upwards
         for midi in scale.notes {
             matches.append(NoteMatch(noteNumber: num, midi: midi))
             num += 1
         }
         ///downwards
-        for index in stride(from: scale.notes.count - 2, through: 0, by: -1) {
-            matches.append(NoteMatch(noteNumber: num, midi: scale.notes[index]))
-            num += 1
-        }
+//        for index in stride(from: scale.notes.count - 2, through: 0, by: -1) {
+//            matches.append(NoteMatch(noteNumber: num, midi: scale.notes[index]))
+//            num += 1
+//        }
         topMidi = scale.notes.max() ?? 0
         self.mismatchesAllowed = mismatchesAllowed
     }
@@ -79,6 +81,8 @@ class ScaleMatcher : ObservableObject {
                 self.firstNoteMatched = true
                 self.mismatchCount = 0
                 self.lastGoodMidi = midi
+                ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
+
                 return MatchType(.correct, "required_midi:\(requiredMidi) matched:\(midi) noteNum:[\(requiredNoteNumber)]")
             }
             if mismatchCount == self.mismatchesAllowed {
@@ -86,6 +90,8 @@ class ScaleMatcher : ObservableObject {
                     nextMatchIndex += 1
                 }
                 wrongCount += 1
+                ScalesModel.shared.result.updateResult(correct: 0, wrong: 1)
+
                 return MatchType(.wrongNote, "required_midi:\(requiredMidi) OR_Octaves:\(makeMidiOctaves(midi: requiredMidi)) noteNum:[\(requiredNoteNumber)] wrongCount:\(self.wrongCount)")
             }
             else {
@@ -120,7 +126,7 @@ class ScaleMatcher : ObservableObject {
     
     func stats() -> String {
         var missing = 0
-        correctCount = 0
+        var correctCount = 0
         for match in self.matches {
             if match.matchedTime == nil {
                 missing += 1
@@ -148,7 +154,8 @@ class ScaleMatcher : ObservableObject {
         }
         let avgDuration = total / Double(ctr)
         let tempo = avgDuration > 0 ? Int(60.0 / avgDuration) : 0
-        return "ScaleMatcher,   ❓Missing:\(missing)   Correct:\(correctCount)   Tempo:♩=\(tempo) (\(tempo/4))  MismatchesAllowed:\(self.mismatchesAllowed)"
+        let missingSymbol = missing > 0 ? "❓❓" : ""
+        return "ScaleMatcher,   \(missingSymbol) Missing:\(missing)   Correct:\(correctCount)   Tempo:♩=\(tempo) (\(tempo/4))  MismatchesAllowed:\(self.mismatchesAllowed)"
     }
     
 //    func matchNew1(timestamp:Date, frequency:Float, asc:Bool) -> MatchType {

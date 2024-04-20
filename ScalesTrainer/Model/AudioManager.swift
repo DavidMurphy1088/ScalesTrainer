@@ -4,11 +4,12 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
+import Speech
 
 class AudioManager {
     static let shared = AudioManager()
     var audioPlayer = AudioPlayer()
-    private var engine = AudioEngine()
+    private  var engine = AudioEngine()
     var tap: BaseTap?
     var amplitudeFilter = 0.0
     let midiSampler = MIDISampler()
@@ -16,6 +17,9 @@ class AudioManager {
     var silencer: Fader?
     let mixer = Mixer()
     var currentTapHandler:TapHandler? = nil
+    var mic:AudioEngine.InputNode? = nil
+    var speechManager:SpeechManager?
+    let speech = SpeechManager.shared
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -24,9 +28,9 @@ class AudioManager {
             Logger.shared.log(self, "Engine has no input")
             return
         }
-
+        mic = input
         do {
-            recorder = try NodeRecorder(node: input)
+            recorder = try NodeRecorder(node: mic!)
         } catch let err {
             Logger.shared.reportError(self, "\(err)")
             return
@@ -41,6 +45,7 @@ class AudioManager {
         simulator = true
         #endif
         if !simulator {
+            ///Without this the recorder causes a fatal error when it sttarts recording - no idea why 😣
             let silencer = Fader(input, gain: 0)
             self.silencer = silencer
             mixer.addInput(silencer)
@@ -48,9 +53,17 @@ class AudioManager {
         mixer.addInput(audioPlayer)
         setupSampler()
         mixer.addInput(midiSampler)
+        
+        //if false {
+            self.speechManager = SpeechManager.shared
+            speechManager!.installSpeechTap()
+            speechManager!.startSpeechRecognition()
+        //}
+        
         engine.output = mixer
         setSession()
         startEngine()
+
     }
     
     func startEngine() {
@@ -85,13 +98,21 @@ class AudioManager {
             Logger.shared.reportError(self, error.localizedDescription)
         }
     }
-        
-    func startRecording(tapHandler:TapHandler) {
+
+    func startRecordingMicrophone(tapHandler:TapHandler) {
+        Logger.shared.clearLog()
+        Logger.shared.log(self, "startRecordingMicrophone")
+        ScalesModel.shared.result.reset()
+
         do {
-            installTapHandler(node: mixer, bufferSize: 4096,
+            installTapHandler(node: mic!,
+                              bufferSize: 4096,
                               tapHandler: tapHandler,
                               asynch: true)
+            //WARNING 😣 - .record must come before tap.start
             try recorder?.record()
+            tap!.start()
+            currentTapHandler = tapHandler
         } catch let err {
             print(err)
         }
@@ -99,15 +120,18 @@ class AudioManager {
     
     func stopRecording() {
         recorder?.stop()
+        self.tap?.stop()
+        currentTapHandler?.stop()
     }
 
     func playSampleFile(fileName:String, tapHandler: TapHandler) {
         Logger.shared.clearLog()
+        ScalesModel.shared.result.reset()
         guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
             Logger.shared.reportError(self, "Audio file not found \(fileName)")
             return
         }
-        startEngine()
+        //startEngine()
         do {
             //try engine.start()
             let file = try AVAudioFile(forReading: fileURL)
@@ -119,11 +143,14 @@ class AudioManager {
         installTapHandler(node: audioPlayer, bufferSize: 4096,
                           tapHandler: tapHandler,
                           asynch: true)
-        currentTapHandler = tapHandler
         audioPlayer.play()
+        tap!.start()
+        currentTapHandler = tapHandler
+        //audioPlayer.play()
     }
     
     func playRecordedFile() {
+        
         if let file = recorder?.audioFile {
             startEngine()
             try? audioPlayer.load(file: file)
@@ -152,8 +179,7 @@ class AudioManager {
                     }
                 //}
             }
-            tap?.start()
-
+            //tap?.start()
         }
         if tapHandler is PitchTapHandler {
             tap = PitchTap(node,
@@ -169,7 +195,7 @@ class AudioManager {
                     }
                 //}
             }
-            tap?.start()
+            //tap?.start()
         }
 //        if tapHandler is FFTTapHandler {
 //            let node:Node

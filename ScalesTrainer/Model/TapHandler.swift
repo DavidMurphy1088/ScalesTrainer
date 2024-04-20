@@ -47,13 +47,14 @@ class CallibrationTapHandler : TapHandler {
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " \t"+String(format: "%.4f", amplitudesIn[0])
         amplitudes.append(amplitudesIn[0])
-        Logger.shared.log(self, msg)
+        Logger.shared.log(self, msg, Double(amplitudesIn[0]))
         //print(amplitudes, frequencyAmplitudes)
     }
     
     override func stop() {
         ScalesModel.shared.doCallibration(amplitudes: amplitudes)
         Logger.shared.log(self, "ended callibration")
+        Logger.shared.calcValueLimits()
     }
 }
 
@@ -128,8 +129,10 @@ class PitchTapHandler : TapHandler {
     
     override func stop() {
         if let scaleMatcher = scaleMatcher {
-            Logger.shared.log(self, scaleMatcher.stats())
+            Logger.shared.log(self, "PitchTapHandler:" + scaleMatcher.stats())
             ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
+            Logger.shared.log(self, "PitchTapHandler ended callibration")
+            Logger.shared.calcValueLimits()
         }
     }
     

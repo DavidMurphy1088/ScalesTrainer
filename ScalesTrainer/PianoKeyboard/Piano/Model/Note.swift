@@ -18,7 +18,7 @@ public struct Note {
         return (12 + (octave * 12)) + (offset ?? 0)
     }
 
-    public static func name(for midiNumber: Int, preferSharps: Bool = false) -> String {
+    public static func name(for midiNumber: Int, preferSharps: Bool) -> String {
         let offset = midiNumber % 12
         //let octave = ((midiNumber - offset) / 12) - 1
         let note = preferSharps ? sharps[offset] : flats[offset]

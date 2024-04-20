@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct ScalesView: View {
-    let scalesModel = ScalesModel.shared
-    let audioManager = AudioManager.shared
-    
+    @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
-    
+    private let audioManager = AudioManager.shared
+
     @State private var octaveNumberIndex = 0
     @State private var keyIndex = 0
     @State private var scaleTypeIndex = 0
@@ -16,28 +15,53 @@ struct ScalesView: View {
     @State var stateSetup = true
     @State var amplitudeFilter: Double = 0.00
     @State var asynchHandle = true
-    @State var recordingScale = false
-    @State var playingSampleFile = false
-    @State var calibrating = false
 
+    @State var playingSampleFile = false
+    
+    @State var speechListening = false
+    @State var speechAudioStarted = false
+    var speech = SpeechManager.shared
+    
+    struct ResultView: View {
+        @ObservedObject var result = ScalesModel.shared.result
+        
+        var body: some View {
+            HStack {
+                Text("Result")
+                Text("Correct: \(result.correctCount)")
+                //if result.wrongCount > 0 {
+                    Text("Wrong: \(result.wrongCount)").foregroundColor(result.wrongCount > 0  ? Color.red : Color.black)
+                    if result.wrongCount > 0 {
+                        Text("🤚").font(.title)
+                    }
+                //}
+            }
+        }
+    }
+    
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
         //configureKeyboard(key: Key(sharps: 0, flats: 0, type: .major))
         configureKeyboard(key: "C", octaves: 1)
+        //configureKeyboard(key: "D", octaves: 1)
     }
     
     func configureKeyboard(key:String, octaves:Int) {
         DispatchQueue.main.async {
-            if ["C", "D", "E"].contains(key) {
+            let keyName = scalesModel.keyValues[scalesModel.selectedKey]
+            let key = Key(name: keyName, keyType:.major)
+            if ["C", "D", "E"].contains(keyName) {
                 pianoKeyboardViewModel.noteMidi = 60
             }
             else {
                 pianoKeyboardViewModel.noteMidi = 65
             }
-            pianoKeyboardViewModel.numberOfKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
+            let scaleForKey = Scale(key: key, scaleType: .major, octaves: octaves)
+            var numKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
+            numKeys += 2
+            pianoKeyboardViewModel.numberOfKeys = numKeys
             pianoKeyboardViewModel.showLabels = true
-            let keyName = scalesModel.keyValues[keyIndex]
-            pianoKeyboardViewModel.setScale(scale: Scale(key: Key(name: keyName, keyType:.major), scaleType: .major, octaves: 1))
+            pianoKeyboardViewModel.setScale(scale: scaleForKey)
         }
     }
     
@@ -52,7 +76,8 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: keyIndex, {
-                self.configureKeyboard(key: scalesModel.keyValues[keyIndex], octaves: 1)
+                scalesModel.selectedKey = keyIndex
+                self.configureKeyboard(key: scalesModel.keyValues[scalesModel.selectedKey], octaves: 1)
             })
             
             Text("Scale")
@@ -77,15 +102,6 @@ struct ScalesView: View {
         }
     }
     
-    func getScale() -> Scale {
-        let scale = Scale(key: Key(), scaleType: .major, octaves: scalesModel.octaveNumberValues[self.octaveNumberIndex])
-        return scale
-    }
-    
-    func getScaleMatcher() -> ScaleMatcher  {        
-        return ScaleMatcher(scale: getScale(), mismatchesAllowed: 8)
-    }
-    
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
@@ -99,37 +115,36 @@ struct ScalesView: View {
 //                .frame(height: 320)
 //                .padding()
 
+
             HStack {
-                Spacer()
-                Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
-                    calibrating.toggle()
-                    let t = CallibrationTapHandler()
-                    if calibrating {
-                        //let fileName = "one_note_60"
-                        let fileName = "1_octave_slow"
-                        audioManager.playSampleFile(fileName: fileName, tapHandler: t)
+                
+                Button("Play Scale") {
+                }.padding()
+                Button(speechListening ? "Stop Speech" : "Speech Listen") {
+                    speechListening.toggle()
+                    if speechListening {
+                        if !speechAudioStarted {
+                            //speech.installSpeechTap()
+                            speechAudioStarted = true
+                        }
+                        speech.startSpeechRecognition()
+                        //AudioManager.shared.startEngine()
                     }
                     else {
-                        audioManager.stopPlaySampleFile()
+                        speech.stopAudioEngine()
                     }
                 }.padding()
-                Text("Required Start Amplitude:\(scalesModel.getRequiredStartAmplitude())")
-                Spacer()
             }
-             
-            Button("Play Scale") {
-            }.padding()
             
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
-                    Button(recordingScale ? "Stop Recording Scale" : "Record Scale") {
-                        recordingScale.toggle()
-                        if recordingScale {
-                            let scale = Scale(key: Key(), scaleType: .major, octaves: 1)
-                            let scaleMatcher = ScaleMatcher(scale: scale, mismatchesAllowed: 8)
-                            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: scaleMatcher)
-                            audioManager.startRecording(tapHandler: pitchTapHandler)
+                    Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Scale") {
+                        DispatchQueue.main.async {
+                            scalesModel.recordingScale.toggle()
+                        }
+                        if scalesModel.recordingScale {
+                            scalesModel.recordScale()
                         }
                         else {
                             audioManager.stopRecording()
@@ -145,9 +160,10 @@ struct ScalesView: View {
                             //let f = "4_octave_fast"
                             //let f = "one_note_60" //1_octave_slow"
                             let fileName = "1_octave_slow"
-                            audioManager.playSampleFile(fileName: fileName, 
-                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude, 
-                                                                                    scaleMatcher: getScaleMatcher()))
+                            //scaleMatcher = getScaleMatcher()
+                            audioManager.playSampleFile(fileName: fileName,
+                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
+                                                                                    scaleMatcher: scalesModel.getScaleMatcher()))
                         }
                         else {
                             audioManager.stopPlaySampleFile()
@@ -160,22 +176,22 @@ struct ScalesView: View {
                     Spacer()
                 }
             }
-            if scalesModel.statusMessage.count > 0 {
-                Text(scalesModel.statusMessage)
-            }
+            //if let scaleMatcher = scaleMatcher {
+                ResultView()
+            //}
             StaveView()
+            Spacer()
+            if let req = scalesModel.requiredStartAmplitude {
+                Text("Required Start Amplitude:\(String(format: "%.4f",req))")
+            }
         }
 
         .onAppear {
             pianoKeyboardViewModel.delegate = audioManager //keyboardAudioEngine
-            //keyboardAudioEngine.start()
-            //audio_kit_audioManager.setupAudioFile()
         }
         .onDisappear {
-            audioManager.stopPlaySampleFile()
+            //audioManager.stopPlaySampleFile()
         }
-
     }
-
 }
 

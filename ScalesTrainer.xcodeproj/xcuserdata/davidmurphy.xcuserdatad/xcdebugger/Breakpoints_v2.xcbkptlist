@@ -7,79 +7,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2F99A656-840C-4A4B-A141-6003CAA7CC59"
+            uuid = "E0B12C66-DCD3-4ED4-97FD-CEF592254E07"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+            filePath = "ScalesTrainer/Model/AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "configureKeys()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "66873B7E-16E9-4B4E-9DD8-66A299395AC4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "finger"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E8D6B75E-F29F-456D-A108-884053611279"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Views/ScalesView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
-            landmarkName = "configureKeyboard(key:octaves:)"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "startRecordingMicrophone(tapHandler:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "E8D6B75E-F29F-456D-A108-884053611279 - f542823be9b8a4c3"
+                  uuid = "E0B12C66-DCD3-4ED4-97FD-CEF592254E07 - ca84d4908ea4485e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.ScalesView.configureKeyboard(key: Swift.String, octaves: Swift.Int) -&gt; ()"
+                  symbolName = "ScalesTrainer.AudioManager.startRecordingMicrophone(tapHandler: ScalesTrainer.TapHandler) -&gt; ()"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/Views/ScalesView.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "1344">
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "192">
                </Location>
                <Location
-                  uuid = "E8D6B75E-F29F-456D-A108-884053611279 - f542823be9b8a4c3"
+                  uuid = "E0B12C66-DCD3-4ED4-97FD-CEF592254E07 - ca84d4908ea4485e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.ScalesView.configureKeyboard(key: Swift.String, octaves: Swift.Int) -&gt; ()"
+                  symbolName = "ScalesTrainer.AudioManager.startRecordingMicrophone(tapHandler: ScalesTrainer.TapHandler) -&gt; ()"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer_FUCKED/ScalesTrainer/Views/ScalesView.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40"
-                  offsetFromSymbolStart = "1208">
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "112">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -87,33 +55,65 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "361C130E-4C80-490E-A663-DD55A226F02E"
+            uuid = "DF8352B8-FFCA-4A1C-8CB1-258B52BACC57"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "setScale(scale:)"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "processSpeech(speech:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0D956B21-BB3C-4092-B3F6-C313493FAA85"
+            uuid = "6312288B-DF90-43F7-81DE-2E18B5707EBA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Key.swift"
+            filePath = "ScalesTrainer/Model/SpeechManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
-            landmarkName = "init(name:keyType:)"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "startSpeechRecognition()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6312288B-DF90-43F7-81DE-2E18B5707EBA - 978d7ab843a0919b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.SFSpeechRecognitionResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in ScalesTrainer.SpeechManager.startSpeechRecognition() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/SpeechManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "67"
+                  endingLineNumber = "67"
+                  offsetFromSymbolStart = "2312">
+               </Location>
+               <Location
+                  uuid = "6312288B-DF90-43F7-81DE-2E18B5707EBA - 978d7ab843a091ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.SFSpeechRecognitionResult&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in ScalesTrainer.SpeechManager.startSpeechRecognition() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/SpeechManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "68"
+                  endingLineNumber = "68"
+                  offsetFromSymbolStart = "2312">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

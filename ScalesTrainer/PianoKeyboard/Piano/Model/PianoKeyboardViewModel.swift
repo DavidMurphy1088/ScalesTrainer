@@ -24,6 +24,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     }
     public func setScale(scale:Scale) {
         DispatchQueue.main.async { [self] in
+            print("============ PianoKeyboardViewModel.setScale", scale.key.name)
             self.scale = scale
         }
     }

@@ -62,9 +62,11 @@ public class Logger : ObservableObject {
                 max = m.value
             }
         }
+        print("=======MinMax", min, max)
         DispatchQueue.main.async {
             self.maxLogValue = max
             self.minLogValue = min
+            self.hiliteLogValue = min
         }
     }
     
@@ -96,12 +98,12 @@ public class Logger : ObservableObject {
     }
 
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
-        let msg = msg //String(describing: type(of: reporter)) + ":" + msg
-        let strVal = value == nil ? "" : String(format: "%.2f", value!)
-        print("\(getTime()) \(msg)  val:\(strVal)")
+        let msg = String(describing: type(of: reporter)) + ":" + msg
+        let strVal = value == nil ? "_" : String(format: "%.2f", value!)
+        print("\(getTime()) \(msg)")//  val:\(strVal)")
         DispatchQueue.main.async {
-            let val:Double = (value == nil ? 0.0 : value)!
-            self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, msg, valueIn: val))
+            let val:Double = value == nil ? 0 : value!
+            self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, msg, valueIn: val * 100))
         }
     }
     

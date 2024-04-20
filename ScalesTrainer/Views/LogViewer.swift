@@ -19,6 +19,15 @@ struct LogView: View {
     
     var body: some View {
         VStack {
+            if logger.minLogValue < logger.maxLogValue {
+                Slider(
+                    value: $logger.hiliteLogValue,
+                    in: logger.minLogValue...logger.maxLogValue,
+                    step: 1
+                )
+                .padding()
+            }
+            
             ScrollView {
                 ScrollViewReader { proxy in
                     LazyVStack {
