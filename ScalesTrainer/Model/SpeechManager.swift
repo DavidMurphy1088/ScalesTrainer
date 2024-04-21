@@ -1,22 +1,88 @@
 import Speech
 import AVFoundation
+import Speech
 
-class SpeechManager {
+///Not used currently. Delege methods to handle the parts of a speech recognition
+//class SpeechRecognitionManager: NSObject, SFSpeechRecognitionTaskDelegate {
+//    private var speechRecognizer: SFSpeechRecognizer!
+//    private var recognitionTask: SFSpeechRecognitionTask?
+//    var ctr = 0
+//    
+//    override init() {
+//        super.init()
+//        self.speechRecognizer = SFSpeechRecognizer()
+//    }
+//
+//    func startRecognition(with audioURL: URL) {
+//        let request = SFSpeechURLRecognitionRequest(url: audioURL)
+//        recognitionTask = speechRecognizer.recognitionTask(with: request, delegate: self)
+//    }
+//
+//    // MARK: SFSpeechRecognitionTaskDelegate Methods
+//
+//    func speechRecognitionDidDetectSpeech(_ task: SFSpeechRecognitionTask) {
+//        print("Detected speech")
+//    }
+//
+//    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didHypothesizeTranscription transcription: SFTranscription) {
+//        print("Current (didHypothesizeTranscription) transcription: \(ctr) \(transcription.formattedString)")
+//    }
+//
+//    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishRecognition recognitionResult: SFSpeechRecognitionResult) {
+//        print("Final (didFinishRecognition) transcription: \(ctr) \(recognitionResult.bestTranscription.formattedString)")
+//        ctr += 1
+//    }
+//
+//    func speechRecognitionTaskFinishedReadingAudio(_ task: SFSpeechRecognitionTask) {
+//        print("Finished reading audio.")
+//    }
+//
+//    func speechRecognitionTaskWasCancelled(_ task: SFSpeechRecognitionTask) {
+//        print("Task was cancelled.")
+//    }
+//
+//    func speechRecognitionTask(_ task: SFSpeechRecognitionTask, didFinishSuccessfully successfully: Bool) {
+//        if successfully {
+//            print("Recognition finished successfully.")
+//        } else {
+//            print("Recognition did not finish successfully.")
+//        }
+//    }
+//}
+
+class SpeechManager : NSObject, SFSpeechRecognitionTaskDelegate, ObservableObject {
     static let shared = SpeechManager()
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine() //AudioManager.shared.engine //AVAudioEngine()
+    
+    let speakSynthesizer = AVSpeechSynthesizer()
+    
+    var isRunning = false
+    //let taskDelegate = SpeechRecognitionManager()
     var ctr = 0
     
-    private init() {
+    private override init() {
+        super.init()
         Logger.shared.log(self, "Inited")
         requestPermissions()
     }
+    
+    func speak(_ text: String) {
+        let voice = AVSpeechSynthesisVoice()
+        print("Default Voice Language: \(voice.language), Name: \(voice.name), Quality: \(voice.quality.rawValue)")
 
-    func installSpeechTap() {
+        let utterance = AVSpeechUtterance(string: text)
+        //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.25  // Adjust the rate of speech here
+        utterance.volume = 0.1
+        speakSynthesizer.speak(utterance)
+    }
+    
+    func startAudioEngine() {
         let recordingFormat = audioEngine.inputNode.outputFormat(forBus: 0)
-        //audioEngine.inputNode.removeTap(onBus: 0)
+        audioEngine.inputNode.removeTap(onBus: 0)
         let bufferSize = 1024 //1024
         audioEngine.inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(bufferSize), format: recordingFormat) { [unowned self] (buffer, when) in
 //            if ctr % 20 == 0 {
@@ -24,25 +90,37 @@ class SpeechManager {
 //            }
             ctr += 1
             self.recognitionRequest?.append(buffer)
-            //self.recognitionRequest?.shouldReportPartialResults
         }
         Logger.shared.log(self, "Installed speech tap")
 
         do {
             try audioEngine.start()
             Logger.shared.log(self, "started speech tap AudioEngine")
+            //DispatchQueue.main.async {
+                self.isRunning = true
+            //}
         } catch {
             print("Could not start audio engine: \(error)")
         }
-        
     }
     
-    func xx() {
-//        DispatchQueue.main.async {
-//            print("=========== resetting task")
-//            sleep(1)
-//            startSpeechRecognition()
-//        }
+    func stopAudioEngine() {
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        recognitionRequest?.endAudio()
+        recognitionRequest = nil
+        audioEngine.stop()
+        audioEngine.inputNode.removeTap(onBus: 0)
+        
+        Logger.shared.log(self, "stopped AudioEngine")
+        //DispatchQueue.main.async {
+            self.isRunning = false
+        //}
+    }
+    
+    // ==== delegate
+    func speechRecognitionDidDetectSpeech(_ task: SFSpeechRecognitionTask) {
+        print("Detected speech")
     }
     
     func startSpeechRecognition() {
@@ -64,38 +142,28 @@ class SpeechManager {
         }
         recognitionRequest.shouldReportPartialResults = true
         
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-            if let error = error {
-                print("Recognition error: \(error.localizedDescription)")
-                return
-            }
-            guard let result = result else { return }
-            
-            print(self!.ctr, "final:", result.isFinal ,"count:", result.transcriptions.count, "Recognized Speech: \(result.bestTranscription.formattedString)")
-            //self?.checkForHello(in: result.bestTranscription)
-            ScalesModel.shared.processSpeech(speech: result.bestTranscription.formattedString)
-            //self?.speechRecognizer.
-            if result.isFinal {
-                self?.stopAudioEngine()
-            }
-            //self?.xx()
+        if false {
+            //recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, delegate: self.taskDelegate)
         }
-        
-    }
-
-    private func checkForHello(in transcription: SFTranscription) {
-        let recognizedText = transcription.formattedString.lowercased()
-        if recognizedText.contains("hello") {
-            print("Detected 'hello'")
-            // Perform any specific action here, such as notifying other components or triggering events
+        else {
+            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+                if let error = error {
+                    print("Recognition error: \(error.localizedDescription)")
+                    return
+                }
+                guard let result = result else { return }
+                
+                print(self!.ctr, "final:", result.isFinal ,"count:", result.transcriptions.count, "Recognized Speech: \(result.bestTranscription.formattedString)")
+                //self?.checkForHello(in: result.bestTranscription)
+                let command = result.bestTranscription.formattedString
+                //self?.speechRecognizer.
+//                if result.isFinal {
+//                    self?.stopAudioEngine()
+//                }
+                ScalesModel.shared.processSpeech(speech: command)
+                //ScalesModel.shared.processCommand(command: command)
+            }
         }
-    }
-
-    func stopAudioEngine() {
-        //audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionTask?.cancel()
-        Logger.shared.log(self, "stopped AudioEngine")
     }
 
     private func requestPermissions() {

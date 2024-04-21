@@ -6,7 +6,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegateProtocol {
-    @Published public var scale:Scale = Scale(key: Key(), scaleType: .major, octaves: 1)
+    @Published public var scale:Scale = ScalesModel.shared.scale //Scale(key: Key(), scaleType: .major, octaves: 1)
     @Published public var keys: [PianoKeyViewModel] = []
     @Published public var noteMidi = 60
     @Published public var showLabels = true
@@ -24,7 +24,6 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     }
     public func setScale(scale:Scale) {
         DispatchQueue.main.async { [self] in
-            print("============ PianoKeyboardViewModel.setScale", scale.key.name)
             self.scale = scale
         }
     }
@@ -44,14 +43,11 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     }
 
     private func configureKeys() {
-        //DispatchQueue.main.async { [self] in
         self.keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: self.numberOfKeys)
-            self.keyRects = Array(repeating: .zero, count: numberOfKeys)
-            
-            for i in 0..<numberOfKeys {
-                keys[i] = PianoKeyViewModel(keyIndex: i, delegate: self)
-            }
-        //}
+        self.keyRects = Array(repeating: .zero, count: numberOfKeys)
+        for i in 0..<numberOfKeys {
+            keys[i] = PianoKeyViewModel(keyIndex: i, delegate: self)
+        }
     }
 
     private func updateKeys() {
@@ -64,7 +60,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         }
 
         for index in 0..<numberOfKeys {
-            let noteNumber = keys[index].noteNumber
+            let noteNumber = keys[index].noteMidiNumber
 
             if keys[index].touchDown != keyDownAt[index] {
                 if latch {
@@ -116,7 +112,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         for i in 0..<numberOfKeys {
             keys[i].touchDown = false
             keys[i].latched = false
-            delegate?.pianoKeyUp(keys[i].noteNumber)
+            delegate?.pianoKeyUp(keys[i].noteMidiNumber)
         }
     }
 }

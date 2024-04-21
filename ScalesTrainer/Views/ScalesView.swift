@@ -1,8 +1,34 @@
 import SwiftUI
 
+struct SpeechView : View {
+    @ObservedObject private var scalesModel = ScalesModel.shared
+    @State var setSpeechListenMode = false
+    var body: some View {
+        HStack {
+            
+            HStack() {
+                //Text("Speech Listen")
+                Toggle("Speech Listen", isOn: $setSpeechListenMode)
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.15)
+            .padding()
+            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
+            .onChange(of: setSpeechListenMode, {scalesModel.setSpeechListenMode(setSpeechListenMode)})
+            .padding()
+            if scalesModel.speechListenMode {
+                let c = String(scalesModel.speechCommandsReceived)
+                Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
+            }
+            Spacer()
+        }
+    }
+}
+
 struct ScalesView: View {
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
+    @ObservedObject private var speech = SpeechManager.shared
+
     private let audioManager = AudioManager.shared
 
     @State private var octaveNumberIndex = 0
@@ -18,9 +44,7 @@ struct ScalesView: View {
 
     @State var playingSampleFile = false
     
-    @State var speechListening = false
     @State var speechAudioStarted = false
-    var speech = SpeechManager.shared
     
     struct ResultView: View {
         @ObservedObject var result = ScalesModel.shared.result
@@ -42,26 +66,31 @@ struct ScalesView: View {
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
         //configureKeyboard(key: Key(sharps: 0, flats: 0, type: .major))
-        configureKeyboard(key: "C", octaves: 1)
+        configureKeyboard()
         //configureKeyboard(key: "D", octaves: 1)
     }
     
-    func configureKeyboard(key:String, octaves:Int) {
+    func configureKeyboard() {
         DispatchQueue.main.async {
-            let keyName = scalesModel.keyValues[scalesModel.selectedKey]
-            let key = Key(name: keyName, keyType:.major)
-            if ["C", "D", "E"].contains(keyName) {
-                pianoKeyboardViewModel.noteMidi = 60
-            }
-            else {
+            //let keyName = scalesModel.keyValues[scalesModel.selectedKey]
+            //let key = Key(name: keyName, keyType:.major)
+            //if ["C", "D", "E"].contains(keyName) {
+            pianoKeyboardViewModel.noteMidi = 60
+            //}
+            if ["G", "A", "F", "B♭", "A♭"].contains(scalesModel.selectedKey.name) {
                 pianoKeyboardViewModel.noteMidi = 65
             }
-            let scaleForKey = Scale(key: key, scaleType: .major, octaves: octaves)
             var numKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
             numKeys += 2
+            if ["E", "G", "A", "A♭"].contains(scalesModel.selectedKey.name) {
+                numKeys += 4
+            }
+            if ["B", "B♭"].contains(scalesModel.selectedKey.name) {
+                numKeys += 6
+            }
             pianoKeyboardViewModel.numberOfKeys = numKeys
             pianoKeyboardViewModel.showLabels = true
-            pianoKeyboardViewModel.setScale(scale: scaleForKey)
+            pianoKeyboardViewModel.setScale(scale: scalesModel.scale)
         }
     }
     
@@ -76,10 +105,12 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: keyIndex, {
-                scalesModel.selectedKey = keyIndex
-                self.configureKeyboard(key: scalesModel.keyValues[scalesModel.selectedKey], octaves: 1)
+                scalesModel.setKey(index: keyIndex)
+                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
+                self.configureKeyboard()
             })
             
+            Spacer()
             Text("Scale")
             Picker("Select Value", selection: $scaleTypeIndex) {
                 ForEach(scalesModel.scaleTypes.indices, id: \.self) { index in
@@ -87,7 +118,8 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
-
+            
+            Spacer()
             Text("Octaves:")
             Picker("Select Value", selection: $octaveNumberIndex) {
                 ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
@@ -96,8 +128,10 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
-                self.configureKeyboard(key: scalesModel.keyValues[keyIndex], octaves: 1)
+                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
+                self.configureKeyboard()
             })
+            
             Spacer()
         }
     }
@@ -105,6 +139,8 @@ struct ScalesView: View {
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
+            
+            SpeechView()
             
             SelectScaleView()
             
@@ -116,38 +152,20 @@ struct ScalesView: View {
 //                .padding()
 
 
-            HStack {
-                
-                Button("Play Scale") {
-                }.padding()
-                Button(speechListening ? "Stop Speech" : "Speech Listen") {
-                    speechListening.toggle()
-                    if speechListening {
-                        if !speechAudioStarted {
-                            //speech.installSpeechTap()
-                            speechAudioStarted = true
-                        }
-                        speech.startSpeechRecognition()
-                        //AudioManager.shared.startEngine()
-                    }
-                    else {
-                        speech.stopAudioEngine()
-                    }
-                }.padding()
-            }
+//            HStack {
+//                Button("Play Scale") {
+//                }.padding()
+//            }
             
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Scale") {
-                        DispatchQueue.main.async {
-                            scalesModel.recordingScale.toggle()
-                        }
                         if scalesModel.recordingScale {
-                            scalesModel.recordScale()
+                            scalesModel.stopRecordingScale()
                         }
                         else {
-                            audioManager.stopRecording()
+                            scalesModel.startRecordingScale()
                         }
                     }.padding()
                     
@@ -169,10 +187,13 @@ struct ScalesView: View {
                             audioManager.stopPlaySampleFile()
                         }
                     }.padding()
-                    Spacer()
-                    Button("Play Recording") {
-                        audioManager.playRecordedFile()
-                    }.padding()
+                    
+                    if scalesModel.recordingAvailable {
+                        Spacer()
+                        Button("Play Recording") {
+                            audioManager.playRecordedFile()
+                        }.padding()
+                    }
                     Spacer()
                 }
             }

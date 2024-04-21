@@ -17,7 +17,6 @@ class Result : ObservableObject {
         DispatchQueue.main.async {
             self.correctCount += correct
             self.wrongCount += wrong
-            print("===== Update", self.correctCount)
         }
     }
 }
@@ -27,11 +26,16 @@ class ScalesModel : ObservableObject {
 
     @Published var requiredStartAmplitude:Double? = nil
     @Published var statusMessage = ""
+    @Published var speechListenMode = false
+    @Published var recordingAvailable = false
+    @Published var speechLastWord = ""
+    
+    var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
     let result = Result()
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭", "D♭"]
-    var selectedKey = 0
+    var selectedKey = Key()
     
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpegeggio", "Chromatic"]
     
@@ -44,8 +48,11 @@ class ScalesModel : ObservableObject {
     let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, scaleMatcher: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
+    
+    ///Speech
     let speechManager = SpeechManager.shared
     var speechWords:[String] = []
+    var speechCommandsReceived = 0
     
     @Published var recordingScale = false
     
@@ -56,31 +63,86 @@ class ScalesModel : ObservableObject {
         }
     }
     
-    func processSpeech(speech: String) {
-        logger.log(self, "Process speech \(speech)")
-        let words = speech.split(separator: " ")
-        print("==============", speech, words.count, words)
-        //speechManager.resetRequest()
-        DispatchQueue.main.async {
-            self.recordingScale = true
-        }
-        //recordScale()
+    func setKey(index:Int) {
+        let name = keyValues[index]
+        self.selectedKey = Key(name: name, keyType: .major)
     }
     
-    func getScale() -> Scale {
-        let keyName = keyValues[selectedKey]
-        let key = Key(name: keyName, keyType: .major)
-        let scale = Scale(key: key, scaleType: .major, octaves: octaveNumberValues[selectedOctaves])
-        return scale
+    func setSpeechListenMode(_ way:Bool) {
+        DispatchQueue.main.async {
+            self.speechListenMode = way
+            if way {
+                self.speechManager.speak("Hello")
+                sleep(2)
+                if !self.speechManager.isRunning {
+                    self.speechManager.startAudioEngine()
+                    self.speechManager.startSpeechRecognition()
+                }
+            }
+            else {
+                self.speechManager.stopAudioEngine()
+            }
+        }
+    }
+    
+    func processSpeech(speech: String) {
+        let words = speech.split(separator: " ")
+        guard words.count > 0 else {
+            return
+        }
+        speechCommandsReceived += 1
+        var m = "Process speech. commandCtr:\(speechCommandsReceived) Words:\(words)"
+        logger.log(self, m)
+        if words[0].uppercased() == "START" {
+            speechManager.stopAudioEngine()
+            startRecordingScale()
+        }
+        DispatchQueue.main.async {
+            self.speechLastWord = String(words[0])
+            self.speechManager.stopAudioEngine()
+            self.speechManager.startAudioEngine()
+            self.speechManager.startSpeechRecognition()
+        }
+    }
+    
+    func setScale(octaveIndex:Int) {
+        //let key = Key(name: selectedKey, keyType: .major)
+        self.scale = Scale(key: self.selectedKey, scaleType: .major, octaves: octaveIndex + 1)
     }
     
     func getScaleMatcher() -> ScaleMatcher  {
-        return ScaleMatcher(scale: getScale(), mismatchesAllowed: 8)
+        return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
     }
     
-    func recordScale() {
+    func stopRecordingScale() {
+        Logger.shared.log(self, "Stop recording scale")
+        DispatchQueue.main.async {
+            self.recordingScale = false
+        }
+        audioManager.stopRecording()
+        DispatchQueue.main.async {
+//            self.speechManager.startAudioEngine()
+//            self.speechManager.startSpeechRecognition()
+            if let file = self.audioManager.recorder?.audioFile {
+                if file.duration > 0 {
+                    self.recordingAvailable = true
+                }
+            }
+        }
+    }
+    
+    func startRecordingScale() {
         if let requiredAmplitude = requiredStartAmplitude {
-            let scale = Scale(key: Key(), scaleType: .major, octaves: 1)
+            if self.speechListenMode {
+                sleep(1)
+                speechManager.speak("Please start your scale")
+                sleep(2)
+            }
+            Logger.shared.log(self, "Start recording scale")
+            DispatchQueue.main.async {
+                self.recordingScale = true
+                self.recordingAvailable = false
+            }
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: getScaleMatcher())
             audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler)
         }

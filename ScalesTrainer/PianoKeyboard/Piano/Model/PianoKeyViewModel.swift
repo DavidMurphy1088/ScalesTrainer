@@ -13,25 +13,36 @@ public struct PianoKeyViewModel: Identifiable {
     public var latched = false
 
     public var id: Int {
-        noteNumber
+        noteMidiNumber
     }
 
-    public var noteNumber: Int {
+    public var noteMidiNumber: Int {
         keyIndex + delegate.noteMidi
     }
 
     public var name: String {
-        Note.name(for: noteNumber, preferSharps: !(delegate.scale.key.flats > 0))
+        Note.name(for: noteMidiNumber, preferSharps: !(delegate.scale.key.flats > 0))
     }
     
     public var finger: String {
-        var s = delegate.scale.key.name
+        //var s = delegate.scale.key.name
         let scale = delegate.scale
-        let midi = noteNumber
+        let midi = noteMidiNumber
         let inScale = scale.containsMidi(midi: midi) //? 1 : 0
+        var fingerName = "F"
+        var scaleOffset:Int? = nil
+        
         if inScale {
-            //return "\(keyIndex) \(noteNumber) \(s)"
-            return "\(noteNumber) \(s)"
+            for i in 0..<scale.notes.count {
+                if scale.notes[i] == midi {
+                    fingerName = String(scale.fingers[i])
+                    scaleOffset = i
+                    break
+                }
+            }
+            let off = scaleOffset == nil ? "X" : String(scaleOffset!)
+            //return "\(noteMidiNumber) \(fingerName)"
+            return "\(fingerName)"
         }
         else {
             return ""
@@ -39,7 +50,7 @@ public struct PianoKeyViewModel: Identifiable {
     }
 
     public var isNatural: Bool {
-        let k = noteNumber % 12
+        let k = noteMidiNumber % 12
         return (k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 || k == 11)
     }
 

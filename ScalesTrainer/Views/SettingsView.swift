@@ -12,7 +12,7 @@ public struct SettingsView: View {
         var body: some View {
             VStack {
                 Text("Configuration").font(.largeTitle).padding()
-                Text("The app needs to hear you play a mezzo-forte (mf) note on your piano before listening to your scales.\n\n•Tap Start Calibrating\n\n•Play Middle C\n\n•Wait a a few seconds\n\n•Tap Stop Calibrating.")
+                Text("The app needs to hear you play a mezzo-forte (mf) note on your piano before listening to your scales.\n\n•Tap Start Calibrating\n\n•Play Middle C on your piano\n\n•Wait a a few seconds\n\n•Tap Stop Calibrating.")
                 Spacer()
             }
         }

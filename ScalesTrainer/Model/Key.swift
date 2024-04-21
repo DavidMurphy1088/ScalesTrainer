@@ -21,16 +21,24 @@ public class Key {
                 name = "G"
             case 2:
                 name = "D"
+            case 3:
+                name = "A"
+            case 4:
+                name = "D"
             default:
-                name = "C"
+                name = "E"
             }
         }
         else {
-            switch sharps {
+            switch flats {
             case 2:
-                name = "E♭"
-            default:
                 name = "B♭"
+            case 3:
+                name = "E♭"
+            case 4:
+                name = "A♭"
+            default:
+                name = "F"
             }
         }
     }
@@ -45,6 +53,13 @@ public class Key {
         case "D":
             self.flats = 0
             self.sharps = 2
+        case "A":
+            self.flats = 0
+            self.sharps = 3
+        case "E":
+            self.flats = 0
+            self.sharps = 4
+            
         case "B♭":
             self.flats = 1
             self.sharps = 0

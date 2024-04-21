@@ -105,7 +105,7 @@ public struct ClassicStyle: KeyboardStyle {
                         )
                         context.draw(
                             //Text(key.finger).font(.title.bold()).foregroundColor(Color.green),
-                            Text(key.finger).foregroundColor(Color.green),
+                            Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
                         )
                     }
@@ -168,7 +168,7 @@ public struct ClassicStyle: KeyboardStyle {
                         )
                         context.draw(
                             //Text("1").font(.title.bold()).foregroundColor(Color.green),
-                            Text(key.finger).foregroundColor(Color.green),
+                            Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
                             //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
                             

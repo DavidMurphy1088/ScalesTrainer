@@ -54,11 +54,7 @@ class AudioManager {
         setupSampler()
         mixer.addInput(midiSampler)
         
-        //if false {
-            self.speechManager = SpeechManager.shared
-            speechManager!.installSpeechTap()
-            speechManager!.startSpeechRecognition()
-        //}
+        self.speechManager = SpeechManager.shared
         
         engine.output = mixer
         setSession()
@@ -103,7 +99,8 @@ class AudioManager {
         Logger.shared.clearLog()
         Logger.shared.log(self, "startRecordingMicrophone")
         ScalesModel.shared.result.reset()
-
+        //engine.removeTap(onBus: 0)
+        
         do {
             installTapHandler(node: mic!,
                               bufferSize: 4096,

@@ -192,9 +192,9 @@
 				794D49592BCD29610005A173 /* Scale.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
+				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				794D49552BCD29090005A173 /* TapHandler.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

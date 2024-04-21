@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>131</string>
+					<string>158</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>130</string>
+					<string>157</string>
 					<key>Timestamp</key>
-					<string>735295838.973843</string>
+					<string>735387523.4799449</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                        //AudioManager.shared.startEngine()
+				<string>//            }
 </string>
 				<key>leading</key>
-				<string>                        }
-                        speech.startSpeechRecognition()
+				<string>//                Button("Play Scale") {
+//                }.padding()
 </string>
 				<key>trailing</key>
-				<string>                    }
-                    else {
-                        speech.stopAudioEngine()
+				<string>            
+            HStack {
+                if let requiredAmplitude = scalesModel.requiredStartAmplitude {
 </string>
 			</dict>
 			<key>type</key>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>65</string>
+					<string>61</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>64</string>
+					<string>60</string>
 					<key>Timestamp</key>
-					<string>735294401.755573</string>
+					<string>735380602.596073</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>102</string>
+					<string>98</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>101</string>
+					<string>97</string>
 					<key>Timestamp</key>
-					<string>735294401.75555</string>
+					<string>735380602.596048</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

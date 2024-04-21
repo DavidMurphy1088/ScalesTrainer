@@ -8,6 +8,7 @@ class ScaleMatcher : ObservableObject {
     var topMidi:Int = 0
     var lastGoodMidi:Int?
     var wrongCount = 0
+    var correctCount = 0
     var firstNoteMatched = false
     var mismatchCount = 0
     var mismatchesAllowed = 0
@@ -60,9 +61,7 @@ class ScaleMatcher : ObservableObject {
         
         let requiredMidi = matches[nextMatchIndex].midi
         let requiredNoteNumber = self.midiToNoteNum(midi: requiredMidi)
-//        if midis[0]==91 && midis[1]==93 {
-//            print("==========")
-//        }
+
         for midiIndex in 0..<midis.count {
             let midi = midis[midiIndex]
             if let lastGoodMidi = lastGoodMidi {
@@ -82,7 +81,13 @@ class ScaleMatcher : ObservableObject {
                 self.mismatchCount = 0
                 self.lastGoodMidi = midi
                 ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
-
+                correctCount += 1
+                if correctCount > 3 {
+                    DispatchQueue.main.async {
+                        sleep(1)
+                        ScalesModel.shared.stopRecordingScale()
+                    }
+                }
                 return MatchType(.correct, "required_midi:\(requiredMidi) matched:\(midi) noteNum:[\(requiredNoteNumber)]")
             }
             if mismatchCount == self.mismatchesAllowed {
@@ -91,7 +96,10 @@ class ScaleMatcher : ObservableObject {
                 }
                 wrongCount += 1
                 ScalesModel.shared.result.updateResult(correct: 0, wrong: 1)
-
+                DispatchQueue.main.async {
+                    sleep(1)
+                    ScalesModel.shared.stopRecordingScale()
+                }
                 return MatchType(.wrongNote, "required_midi:\(requiredMidi) OR_Octaves:\(makeMidiOctaves(midi: requiredMidi)) noteNum:[\(requiredNoteNumber)] wrongCount:\(self.wrongCount)")
             }
             else {
