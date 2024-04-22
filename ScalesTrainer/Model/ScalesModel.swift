@@ -1,6 +1,6 @@
-
 import Foundation
 import Speech
+import Combine
 
 class Result : ObservableObject {
     @Published var correctCount = 0
@@ -30,15 +30,21 @@ class ScalesModel : ObservableObject {
     @Published var recordingAvailable = false
     @Published var speechLastWord = ""
     
+    
     var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
     let result = Result()
     
-    let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭", "D♭"]
+    let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
     var selectedKey = Key()
     
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpegeggio", "Chromatic"]
     
+    var directionTypes = ["Ascending", "Descending"]
+    var selectedDirection = 0
+    
+    var handTypes = ["Right Hand", "Left Hand"]
+
     let octaveNumberValues = [1,2,3,4]
     let selectedOctaves = 0
     
@@ -62,12 +68,16 @@ class ScalesModel : ObservableObject {
             self.requiredStartAmplitude = amplitude
         }
     }
-    
+        
     func setKey(index:Int) {
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)
     }
     
+    func setDirection(_ index:Int) {
+        self.selectedDirection = index
+    }
+
     func setSpeechListenMode(_ way:Bool) {
         DispatchQueue.main.async {
             self.speechListenMode = way

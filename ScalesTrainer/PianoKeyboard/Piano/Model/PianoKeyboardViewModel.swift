@@ -43,10 +43,10 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     }
 
     private func configureKeys() {
-        self.keys = Array(repeating: PianoKeyViewModel(keyIndex: 0, delegate: self), count: self.numberOfKeys)
+        self.keys = Array(repeating: PianoKeyViewModel(scale: ScalesModel.shared.scale, keyIndex: 0, delegate: self), count: self.numberOfKeys)
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         for i in 0..<numberOfKeys {
-            keys[i] = PianoKeyViewModel(keyIndex: i, delegate: self)
+            keys[i] = PianoKeyViewModel(scale: ScalesModel.shared.scale, keyIndex: i, delegate: self)
         }
     }
 

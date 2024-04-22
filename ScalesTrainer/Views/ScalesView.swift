@@ -20,6 +20,7 @@ struct SpeechView : View {
                 Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
             }
             Spacer()
+            MetronomeView()
         }
     }
 }
@@ -28,12 +29,16 @@ struct ScalesView: View {
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
     @ObservedObject private var speech = SpeechManager.shared
+    @ObservedObject private var metronome = MetronomeModel.shared
 
     private let audioManager = AudioManager.shared
 
     @State private var octaveNumberIndex = 0
+    @State private var handIndex = 0
     @State private var keyIndex = 0
     @State private var scaleTypeIndex = 0
+    @State private var directionIndex = 0
+
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     
@@ -79,10 +84,13 @@ struct ScalesView: View {
             //}
             if ["G", "A", "F", "B♭", "A♭"].contains(scalesModel.selectedKey.name) {
                 pianoKeyboardViewModel.noteMidi = 65
+                if ["A", "B♭", "A♭"].contains(scalesModel.selectedKey.name) {
+                    pianoKeyboardViewModel.noteMidi -= 12
+                }
             }
             var numKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
             numKeys += 2
-            if ["E", "G", "A", "A♭"].contains(scalesModel.selectedKey.name) {
+            if ["E", "G", "A", "A♭", "E♭"].contains(scalesModel.selectedKey.name) {
                 numKeys += 4
             }
             if ["B", "B♭"].contains(scalesModel.selectedKey.name) {
@@ -111,7 +119,7 @@ struct ScalesView: View {
             })
             
             Spacer()
-            Text("Scale")
+            Text("Scale").padding(0)
             Picker("Select Value", selection: $scaleTypeIndex) {
                 ForEach(scalesModel.scaleTypes.indices, id: \.self) { index in
                     Text("\(scalesModel.scaleTypes[index])")
@@ -120,7 +128,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             
             Spacer()
-            Text("Octaves:")
+            Text("Octaves:").padding(0)
             Picker("Select Value", selection: $octaveNumberIndex) {
                 ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
                     Text("\(scalesModel.octaveNumberValues[index])")
@@ -132,6 +140,28 @@ struct ScalesView: View {
                 self.configureKeyboard()
             })
             
+            Spacer()
+            Text("Hand:")
+            Picker("Select Value", selection: $handIndex) {
+                ForEach(scalesModel.handTypes.indices, id: \.self) { index in
+                    Text("\(scalesModel.handTypes[index])")
+                }
+            }
+            .pickerStyle(.menu)
+
+            Spacer()
+            Text("Direction")
+            Picker("Select Value", selection: $directionIndex) {
+                ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
+                    Text("\(scalesModel.directionTypes[index])")
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: directionIndex, {
+                scalesModel.setDirection(self.directionIndex)
+                self.configureKeyboard()
+            })
+
             Spacer()
         }
     }
@@ -152,10 +182,18 @@ struct ScalesView: View {
 //                .padding()
 
 
-//            HStack {
-//                Button("Play Scale") {
-//                }.padding()
-//            }
+            HStack {
+                Spacer()
+                Button(metronome.playingScale ? "Stop Playing Scale" : "Play Scale") {
+                    if !metronome.playingScale {
+                        metronome.playScale(scale: scalesModel.scale)
+                    }
+                    else {
+                        metronome.stop()
+                    }
+                }.padding()
+                Spacer()
+            }
             
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {

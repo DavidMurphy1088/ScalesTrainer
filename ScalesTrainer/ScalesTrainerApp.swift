@@ -12,6 +12,15 @@ struct ScalesTrainerApp: App {
                         Label("Home", systemImage: "house")
                     }
                     .tag(0)
+                SpriteKitAudioView()
+                    .tabItem {
+                        Label("Game", systemImage: "house")
+                    }
+                MetronomeView()
+                    .tabItem {
+                        Label("Metronome", systemImage: "house")
+                    }
+
                 StaveView()
                     .tabItem {
                         Label("Notes", systemImage: "house")

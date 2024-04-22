@@ -60,18 +60,21 @@ public class Key {
             self.flats = 0
             self.sharps = 4
             
-        case "B♭":
+        case "F":
             self.flats = 1
             self.sharps = 0
-        case "E♭":
+        case "B♭":
             self.flats = 2
             self.sharps = 0
-        case "A♭":
+        case "E♭":
             self.flats = 3
             self.sharps = 0
-        case "D♭":
+        case "A♭":
             self.flats = 4
             self.sharps = 0
+//        case "D♭":
+//            self.flats = 5
+//            self.sharps = 0
         default:
             self.flats = 0
             self.sharps = 0

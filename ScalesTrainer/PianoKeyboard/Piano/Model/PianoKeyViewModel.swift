@@ -7,8 +7,11 @@ public protocol PianoKeyViewModelDelegateProtocol {
 }
                 
 public struct PianoKeyViewModel: Identifiable {
+    let scalesModel = ScalesModel.shared
+    @ObservedObject var scale:Scale
     let keyIndex: Int
     let delegate: PianoKeyViewModelDelegateProtocol
+    
     public var touchDown = false
     public var latched = false
 
@@ -24,29 +27,57 @@ public struct PianoKeyViewModel: Identifiable {
         Note.name(for: noteMidiNumber, preferSharps: !(delegate.scale.key.flats > 0))
     }
     
+    func sequence(midi:Int) -> Int {
+        //let scale = delegate.scale
+        for i in 0..<scale.notes.count {
+            if scale.notes[i] == midi {
+                //fingerName = String(scale.fingers[i])
+                //scaleOffset = i
+                return i
+            }
+        }
+        return 0
+    }
+    
     public var finger: String {
-        //var s = delegate.scale.key.name
-        let scale = delegate.scale
+        //let scale = delegate.scale
         let midi = noteMidiNumber
         let inScale = scale.containsMidi(midi: midi) //? 1 : 0
-        var fingerName = "F"
-        var scaleOffset:Int? = nil
         
         if inScale {
-            for i in 0..<scale.notes.count {
-                if scale.notes[i] == midi {
-                    fingerName = String(scale.fingers[i])
-                    scaleOffset = i
-                    break
-                }
-            }
-            let off = scaleOffset == nil ? "X" : String(scaleOffset!)
+            //let off = scaleOffset == nil ? "X" : String(scaleOffset!)
             //return "\(noteMidiNumber) \(fingerName)"
+            let seq = sequence(midi: midi)
+            let fingerName = String(scale.fingers[seq])
             return "\(fingerName)"
         }
         else {
             return ""
         }
+    }
+    
+    public var fingerSequenceBreak: Bool {
+        //let scale = delegate.scale
+        let midi = noteMidiNumber
+        var seq = sequence(midi: midi)
+        if scalesModel.selectedDirection == 1 {
+            ///Finger breaks are at one note below the ascending break
+            seq = seq + 1
+        }
+        if seq < 0 {
+            return false
+        }
+        else {
+            return scale.fingerSequenceBreak[seq]
+        }
+    }
+    
+    public var isPlayingMidi: Bool {
+        let scale = delegate.scale
+        let midi = noteMidiNumber
+        //var seq = sequence(midi: midi)
+        //return scale.isPlayingMidi(midi: midi)
+        return true
     }
 
     public var isNatural: Bool {

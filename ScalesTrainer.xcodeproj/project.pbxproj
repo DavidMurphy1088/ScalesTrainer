@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		790D5A252BD2319C00C31A8F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* SettingsView.swift */; };
+		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
+		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
+		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
 		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
 		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
 		794D494E2BCD216A0005A173 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494D2BCD216A0005A173 /* Staff.swift */; };
@@ -41,6 +44,9 @@
 
 /* Begin PBXFileReference section */
 		790D5A242BD2319C00C31A8F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
+		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = akai_steinway.sf2; path = Assets.xcassets/akai_steinway.sf2; sourceTree = "<group>"; };
 		794D494D2BCD216A0005A173 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
@@ -85,6 +91,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7943AE602BD6539500E94AC7 /* Games */ = {
+			isa = PBXGroup;
+			children = (
+				7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */,
+			);
+			path = Games;
+			sourceTree = "<group>";
+		};
 		794D492E2BCD07220005A173 /* PianoKeyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -151,6 +165,7 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				7943AE602BD6539500E94AC7 /* Games */,
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
 				794D495D2BCD34080005A173 /* AudioFiles */,
 				794D492E2BCD07220005A173 /* PianoKeyboard */,
@@ -175,6 +190,7 @@
 		79DA82232BCCEA6A008AC492 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				794D494D2BCD216A0005A173 /* Staff.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
@@ -195,6 +211,7 @@
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				794D49552BCD29090005A173 /* TapHandler.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
+				793D6E572BD66F730012F701 /* Metronome.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -284,9 +301,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
+				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardViewModel.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				790D5A252BD2319C00C31A8F /* SettingsView.swift in Sources */,
@@ -300,6 +319,7 @@
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
 				79D7C2A02BD112FF00AE0B24 /* Note.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
+				793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */,
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
 				794D494E2BCD216A0005A173 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* Key.swift in Sources */,
