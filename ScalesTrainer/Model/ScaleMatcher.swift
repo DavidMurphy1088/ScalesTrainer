@@ -18,8 +18,12 @@ class ScaleMatcher : ObservableObject {
         matches = []
         
         ///upwards
-        for midi in scale.notes {
-            matches.append(NoteMatch(noteNumber: num, midi: midi))
+        topMidi = 0
+        for state in scale.scaleNoteStates {
+            matches.append(NoteMatch(noteNumber: num, midi: state.midi))
+            if state.midi > topMidi {
+                topMidi = state.midi
+            }
             num += 1
         }
         ///downwards
@@ -27,7 +31,7 @@ class ScaleMatcher : ObservableObject {
 //            matches.append(NoteMatch(noteNumber: num, midi: scale.notes[index]))
 //            num += 1
 //        }
-        topMidi = scale.notes.max() ?? 0
+        //topMidi = scale.notes.max() ?? 0
         self.mismatchesAllowed = mismatchesAllowed
     }
     

@@ -16,21 +16,22 @@ class MetronomeModel: ObservableObject {
         }
         self.isRunning = true
         DispatchQueue.global(qos: .background).async {
-            let sampler = AudioManager.shared.midiSampler
-            let delay = 60.0 / Double(self.tempo)
-            for midi in scale.notes {
-                if !self.isRunning {
-                    break
-                }
-                scale.setPlayingMidi(midi: midi)
-                sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                let sleepDelay = 1000000 * delay
-                usleep(UInt32(sleepDelay))
-                sampler.stop(noteNumber: UInt8(midi), channel: 0)
-            }
-            DispatchQueue.main.async { [self] in
-                playingScale = false
-            }
+            scale.scaleNoteStates[0].setPlayingMidi(true)
+//            let sampler = AudioManager.shared.midiSampler
+//            let delay = 60.0 / Double(self.tempo)
+//            for state in scale.scaleNoteStates {
+//                if !self.isRunning {
+//                    break
+//                }
+//                state.setPlayingMidi(true)
+//                sampler.play(noteNumber: UInt8(state.midi), velocity: 64, channel: 0)
+//                let sleepDelay = 1000000 * delay
+//                usleep(UInt32(sleepDelay))
+//                sampler.stop(noteNumber: UInt8(state.midi), channel: 0)
+//            }
+//            DispatchQueue.main.async { [self] in
+//                playingScale = false
+//            }
         }
     }
     

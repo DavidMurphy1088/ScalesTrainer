@@ -108,7 +108,8 @@ public struct ClassicStyle: KeyboardStyle {
                             Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
                         )
-                        if key.isPlayingMidi {
+                        print("====view", key.midiState.midi, key.midiState.isPlayingMidi)
+                        if key.midiState.isPlayingMidi {
                             var innerContext = context
                             let rad = rect.height * 0.05
                             let w = 2.0 * rad

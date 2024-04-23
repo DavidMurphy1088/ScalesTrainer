@@ -4,6 +4,7 @@ import UIKit
 
 public struct PianoKeyboardView<T: KeyboardStyle>: View {
     @ObservedObject private var viewModel: PianoKeyboardViewModel
+    //@ObservedObject private var x: ScalesModel.shared
     var style: T
 
     public init(

@@ -21,7 +21,7 @@ class Result : ObservableObject {
     }
 }
 
-class ScalesModel : ObservableObject {
+public class ScalesModel : ObservableObject {
     public static let shared = ScalesModel()
 
     @Published var requiredStartAmplitude:Double? = nil
@@ -76,6 +76,7 @@ class ScalesModel : ObservableObject {
     
     func setDirection(_ index:Int) {
         self.selectedDirection = index
+        self.scale.setFingerBreaks(direction: index)
     }
 
     func setSpeechListenMode(_ way:Bool) {
