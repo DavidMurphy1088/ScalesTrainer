@@ -2,27 +2,28 @@
 import SwiftUI
 import UIKit
 
-public struct PianoKeyboardView<T: KeyboardStyle>: View {
+public struct PianoKeyboardView : View {
+    @ObservedObject var scalesModel: ScalesModel
     @ObservedObject private var viewModel: PianoKeyboardViewModel
-    //@ObservedObject private var x: ScalesModel.shared
-    var style: T
+    var style = ClassicStyle() //T
 
-    public init(
-        viewModel: PianoKeyboardViewModel, //= PianoKeyboardViewModel(),
-        style: T
-    ) {
+    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardViewModel) {// //, //= PianoKeyboardViewModel()) {
+        self.scalesModel = scalesModel
         self.viewModel = viewModel
-        //self.viewModel = PianoKeyboardViewModel(scale: Scale(start: 60, scaleType: .major, octaves: 1))
-        self.style = style
     }
 
     public var body: some View {
         GeometryReader { geometry in
-            ZStack(alignment: .top) {
-                style.layout(viewModel: viewModel, geometry: geometry)
-                TouchesView(viewModel: viewModel)
+            VStack {
+                //Warning - Anything added here screws up touch handliong 😡
+                //Text("Key:\(scalesModel.scale.key.getName())").padding().commonFrameStyle(backgroundColor: .yellow, borderColor: .red)
+                ZStack(alignment: .top) {
+                    
+                    style.layout(viewModel: viewModel, geometry: geometry)
+                    TouchesView(viewModel: viewModel)
+                }
+                .background(.black)
             }
-            .background(.black)
         }
     }
 }

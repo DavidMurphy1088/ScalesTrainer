@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>196</string>
+					<string>191</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>195</string>
+					<string>190</string>
 					<key>Timestamp</key>
-					<string>735473817.798612</string>
+					<string>735557179.459636</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            }
+				<string>            HStack {
 </string>
 				<key>leading</key>
-				<string>                }.padding()
-                Spacer()
+				<string>//                .padding()
+
 </string>
 				<key>trailing</key>
-				<string>            
-            HStack {
-                if let requiredAmplitude = scalesModel.requiredStartAmplitude {
+				<string>                Spacer()
+                Button(metronome.playingScale ? "Stop Playing Scale" : "Play Scale") {
+                    if !metronome.playingScale {
 </string>
 			</dict>
 			<key>type</key>

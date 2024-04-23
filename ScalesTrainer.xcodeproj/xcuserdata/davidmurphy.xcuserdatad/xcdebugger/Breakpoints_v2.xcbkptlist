@@ -7,17 +7,112 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5B789259-0AE1-48C0-8F2D-86DA2E560BB8"
+            uuid = "05858785-0D96-4BE7-AB66-86CA6B1F0153"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/View/ClassicStyle.swift"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
-            landmarkName = "layout(viewModel:geometry:)"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "configureKeys()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "05858785-0D96-4BE7-AB66-86CA6B1F0153 - 56e17252475f93ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.configureKeys() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50"
+                  offsetFromSymbolStart = "324">
+               </Location>
+               <Location
+                  uuid = "05858785-0D96-4BE7-AB66-86CA6B1F0153 - 56e17252475f93ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.configureKeys() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "50"
+                  endingLineNumber = "50"
+                  offsetFromSymbolStart = "340">
+               </Location>
+               <Location
+                  uuid = "05858785-0D96-4BE7-AB66-86CA6B1F0153 - 56e17252475f93db"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.PianoKeyboardViewModel.configureKeys() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "51"
+                  endingLineNumber = "51"
+                  offsetFromSymbolStart = "336">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6731F64E-3CA6-4715-B493-1AA433B3EE1A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleMatcher.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "match(timestamp:midis:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6731F64E-3CA6-4715-B493-1AA433B3EE1A - e29380a6ed88b38d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.ScaleMatcher.match(timestamp: Foundation.Date, midis: Swift.Array&lt;Swift.Int&gt;) -&gt; ScalesTrainer.MatchType"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleMatcher.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "392">
+               </Location>
+               <Location
+                  uuid = "6731F64E-3CA6-4715-B493-1AA433B3EE1A - e29380a6ed88b3b2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.ScaleMatcher.match(timestamp: Foundation.Date, midis: Swift.Array&lt;Swift.Int&gt;) -&gt; ScalesTrainer.MatchType"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleMatcher.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "392">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

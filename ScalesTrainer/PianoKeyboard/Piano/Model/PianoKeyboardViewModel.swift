@@ -19,7 +19,6 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     weak var delegate: AudioManager?
     
     public init() {
-        //self.scale = scale
         configureKeys()
     }
     public func setScale(scale:Scale) {
@@ -45,12 +44,14 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     private func configureKeys() {
         self.keys = []
         let scale = ScalesModel.shared.scale
-
+        let startMidi = self.noteMidi
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
+        
         for i in 0..<numberOfKeys {
             var state = scale.scaleNoteStates[0]
-            if i < scale.scaleNoteStates.count {
-                state = scale.scaleNoteStates[i]
+            let midi = startMidi + i
+            if let seq = scale.getMidiIndex(midi: midi) {
+                state = scale.scaleNoteStates[seq]
             }
             let model = PianoKeyViewModel(scale: scale,
                                           midiState: state,

@@ -3,6 +3,8 @@ import Foundation
 public enum KeyType {
     case major
     case minor
+    case harmonicMinor
+    case melodicMinor
 }
 
 public class Key {
@@ -72,12 +74,27 @@ public class Key {
         case "A♭":
             self.flats = 4
             self.sharps = 0
-//        case "D♭":
-//            self.flats = 5
-//            self.sharps = 0
         default:
             self.flats = 0
             self.sharps = 0
         }
+    }
+    
+    func getName() -> String {
+        var name = self.name + " "
+        var type = ""
+        switch self.keyType {
+            
+        case .minor:
+            type = "Minor"
+        case .harmonicMinor:
+            type = "Harmonic Minor"
+        case .melodicMinor:
+            type = "Melodic Minor"
+        default:
+            name += "Major"
+        }
+        name += type
+        return name
     }
 }

@@ -55,15 +55,15 @@ struct ScalesView: View {
         @ObservedObject var result = ScalesModel.shared.result
         
         var body: some View {
-            HStack {
-                Text("Result")
-                Text("Correct: \(result.correctCount)")
-                //if result.wrongCount > 0 {
-                    Text("Wrong: \(result.wrongCount)").foregroundColor(result.wrongCount > 0  ? Color.red : Color.black)
-                    if result.wrongCount > 0 {
-                        Text("🤚").font(.title)
-                    }
-                //}
+            VStack {
+                Text("Your scale had \(result.correctCount) correct notes.").font(.title)
+                if result.wrongCount > 0 {
+                    Text("\(result.wrongCount) wrong notes.").foregroundColor(result.wrongCount > 0  ? Color.red : Color.black)
+                    Text("😢").font(.largeTitle)
+                }
+                else {
+                    Text("👏").font(.largeTitle)
+                }
             }
         }
     }
@@ -166,21 +166,27 @@ struct ScalesView: View {
         }
     }
     
+    var body1: some View {
+        VStack {
+            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
+                .frame(height: 320)
+                .padding()
+        }
+    }
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
             
             SpeechView()
             
-            SelectScaleView()
+            SelectScaleView().commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             
-            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle())
+            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
                 .frame(height: 320)
                 .padding()
 //            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(scale: getScale()))
 //                .frame(height: 320)
 //                .padding()
-
 
             HStack {
                 Spacer()
@@ -192,10 +198,7 @@ struct ScalesView: View {
                         metronome.stop()
                     }
                 }.padding()
-                Spacer()
-            }
-            
-            HStack {
+                
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Scale") {
@@ -235,10 +238,11 @@ struct ScalesView: View {
                     Spacer()
                 }
             }
-            //if let scaleMatcher = scaleMatcher {
-                ResultView()
-            //}
-            StaveView()
+            .commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            
+            ResultView()//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            
+            StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             Spacer()
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))")

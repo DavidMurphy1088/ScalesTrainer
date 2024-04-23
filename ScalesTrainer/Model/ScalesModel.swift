@@ -29,8 +29,8 @@ public class ScalesModel : ObservableObject {
     @Published var speechListenMode = false
     @Published var recordingAvailable = false
     @Published var speechLastWord = ""
-    
-    
+    @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
+
     var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
     let result = Result()
@@ -68,7 +68,13 @@ public class ScalesModel : ObservableObject {
             self.requiredStartAmplitude = amplitude
         }
     }
-        
+    
+    func forceRepaint() {
+        DispatchQueue.main.async {
+            self.forcePublish += 1
+        }
+    }
+    
     func setKey(index:Int) {
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)

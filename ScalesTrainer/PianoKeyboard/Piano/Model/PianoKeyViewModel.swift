@@ -8,7 +8,6 @@ public protocol PianoKeyViewModelDelegateProtocol {
                 
 public struct PianoKeyViewModel: Identifiable {
     let scalesModel = ScalesModel.shared
-    //@ObservedObject
     let scale:Scale
     @ObservedObject var midiState:ScaleNoteState
     let keyIndex: Int
@@ -42,10 +41,9 @@ public struct PianoKeyViewModel: Identifiable {
     }
     
     public var finger: String {
-        //let scale = delegate.scale
         let midi = noteMidiNumber
-        let inScale = scale.containsMidi(midi: midi) //? 1 : 0
-        
+        let inScale = scale.getMidiIndex(midi: midi) != nil
+
         if inScale {
             //let off = scaleOffset == nil ? "X" : String(scaleOffset!)
             //return "\(noteMidiNumber) \(fingerName)"

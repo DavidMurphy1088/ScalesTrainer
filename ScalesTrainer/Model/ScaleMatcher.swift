@@ -1,7 +1,37 @@
 import Foundation
 
-class ScaleMatcher : ObservableObject {
+class NoteMatch {
+    let noteSequenceNumber:Int
+    let scaleNoteState:ScaleNoteState
+    var matchedTime:Date?
+    init(noteSequenceNumber:Int, scaleNoteState:ScaleNoteState) {
+        self.noteSequenceNumber = noteSequenceNumber
+        self.scaleNoteState = scaleNoteState
+    }
+}
 
+class MatchType {
+    var status:NoteCorrectStatus
+    var msg:String?
+    
+    init(_ status:NoteCorrectStatus, _ message:String?) {
+        self.status = status
+        self.msg = message
+    }
+    
+    func dispStatus() -> String {
+        switch status {
+        case .correct:
+            return "Correct"
+        case .wrongNote:
+            return "****** ****** Wrong ****** ******"
+        default:
+            return "    Ignored"
+        }
+    }
+}
+
+class ScaleMatcher : ObservableObject {
     var lastMatchTime:Date?
     var nextMatchIndex = 0
     var matches:[NoteMatch] = []
@@ -20,7 +50,7 @@ class ScaleMatcher : ObservableObject {
         ///upwards
         topMidi = 0
         for state in scale.scaleNoteStates {
-            matches.append(NoteMatch(noteNumber: num, midi: state.midi))
+            matches.append(NoteMatch(noteSequenceNumber: num, scaleNoteState: state))
             if state.midi > topMidi {
                 topMidi = state.midi
             }
@@ -31,7 +61,6 @@ class ScaleMatcher : ObservableObject {
 //            matches.append(NoteMatch(noteNumber: num, midi: scale.notes[index]))
 //            num += 1
 //        }
-        //topMidi = scale.notes.max() ?? 0
         self.mismatchesAllowed = mismatchesAllowed
     }
     
@@ -43,10 +72,10 @@ class ScaleMatcher : ObservableObject {
         nextMatchIndex = 0
     }
     
-    func midiToNoteNum(midi: Int) -> Int {
-        let nameIndex = (midi + 48 - matches[0].midi) % 12
-        return nameIndex
-    }
+//    func midiToNoteNum(midi: Int) -> Int {
+//        let nameIndex = (midi + 48 - matches[0].midi) % 12
+//        return nameIndex
+//    }
     
     func makeMidiOctaves(midi: Int) -> [Int] {
         let res = [midi-36, midi-24, midi-12, midi, midi+12, midi+24]
@@ -86,7 +115,7 @@ class ScaleMatcher : ObservableObject {
                 self.lastGoodMidi = midi
                 ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
                 correctCount += 1
-                if correctCount > 3 {
+                if correctCount >= 3 { //matches.count {
                     DispatchQueue.main.async {
                         sleep(1)
                         ScalesModel.shared.stopRecordingScale()

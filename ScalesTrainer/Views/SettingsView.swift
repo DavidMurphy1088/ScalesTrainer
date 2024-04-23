@@ -12,7 +12,7 @@ public struct SettingsView: View {
         var body: some View {
             VStack {
                 Text("Configuration").font(.largeTitle).padding()
-                Text("The app needs to hear you play a mezzo-forte (mf) note on your piano before listening to your scales.\n\n•Tap Start Calibrating\n\n•Play Middle C on your piano\n\n•Wait a a few seconds\n\n•Tap Stop Calibrating.")
+                Text("The app needs to hear you play a mezzo-forte (mf) note on your piano before listening to your scales.\n\n•Make sure your device is close to your piano\n\n•Tap Start Calibrating\n\n•Play Middle C on your piano a few times\n\n•Wait a a few seconds\n\n•Tap Stop Calibrating.")
                 Spacer()
             }
         }
@@ -33,42 +33,53 @@ public struct SettingsView: View {
             Spacer()
             
             let tapHandler = CallibrationTapHandler()
-            HStack {
-                Spacer()
-                Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
-                    calibrating.toggle()
-                    if calibrating {
-                        audioManager.startRecordingMicrophone(tapHandler: tapHandler)
-                    }
-                    else {
-                        audioManager.stopRecording()
-                    }
-                }.padding()
-
-
-                Spacer()
-                Button(calibratingFromFile ? "Stop Calibrating" : "Start Calibrating from Recording") {
-                    calibratingFromFile.toggle()
-                    
-                    if calibratingFromFile {
-                        //let fileName = "one_note_60"
-                        let fileName = "1_octave_slow"
-                        audioManager.playSampleFile(fileName: fileName, tapHandler: tapHandler)
-                    }
-                    else {
-                        audioManager.stopPlaySampleFile()
-                    }
-                }.padding()
-                Spacer()
-            }
             Spacer()
-            if let req = scalesModel.requiredStartAmplitude {
-                Text("Required Start Amplitude:\(String(format: "%.4f", req))")
-            }
+            Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
+                calibrating.toggle()
+                if calibrating {
+                    audioManager.startRecordingMicrophone(tapHandler: tapHandler)
+                }
+                else {
+                    audioManager.stopRecording()
+                }
+            }.padding()
             Spacer()
+            VStack {
+                if calibrating {
+                    HStack {
+                        Spacer()
+                        Text("Play Middle C a few times").font(.title).padding()
+                        Spacer()
+                    }
+                }
+                else {
+                    if let req = scalesModel.requiredStartAmplitude {
+                        Text("Heard start amplitude:\(String(format: "%.4f", req))").font(.title).padding()
+                    }
+                }
+            }
+            .commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            Spacer()
+
         }
         .sheet(isPresented: $showingHelpPopup) {
             HelpView()
         }
     }
 }
+
+
+//                Spacer()
+//                Button(calibratingFromFile ? "Stop Calibrating" : "Start Calibrating from Recording") {
+//                    calibratingFromFile.toggle()
+//
+//                    if calibratingFromFile {
+//                        //let fileName = "one_note_60"
+//                        let fileName = "1_octave_slow"
+//                        audioManager.playSampleFile(fileName: fileName, tapHandler: tapHandler)
+//                    }
+//                    else {
+//                        audioManager.stopPlaySampleFile()
+//                    }
+//                }.padding()
+//                Spacer()

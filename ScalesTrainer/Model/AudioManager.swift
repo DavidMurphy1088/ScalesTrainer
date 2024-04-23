@@ -240,6 +240,7 @@ extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
         //sampler.startNote(UInt8(keyNumber), withVelocity: 64, onChannel: 0)
         midiSampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
+        
     }
 
     func pianoKeyUp(_ keyNumber: Int) {

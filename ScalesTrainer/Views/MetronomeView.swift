@@ -19,9 +19,10 @@ struct MetronomeView: View {
                 Button("Decrease") {
                     viewModel.tempo = max(40, viewModel.tempo - 5)
                 }
-                Button(viewModel.isRunning ? "Stop" : "Start \(viewModel.tempo)") {
-                    viewModel.isRunning ? viewModel.stop() : viewModel.start(tickCall: {})
-                }
+//                Button(viewModel.isRunning ? "Stop" : "Start \(viewModel.tempo)") {
+//                    viewModel.isRunning ? viewModel.stop() : viewModel.start(tickCall: {})
+//                }
+                Text("\(viewModel.tempo)")
                 .foregroundColor(.white)
                 .padding()
                 .background(Color.blue)

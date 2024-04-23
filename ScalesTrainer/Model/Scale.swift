@@ -1,41 +1,9 @@
-
 import Foundation
 
-class NoteMatch {
-    let noteNumber:Int
-    let midi:Int
-    var matchedTime:Date?
-    init(noteNumber:Int, midi:Int) {
-        self.noteNumber = noteNumber
-        self.midi = midi
-    }
-}
-
-class MatchType {
-    enum Status {
-        case correct
-        case wrongNote
-        case dataIgnored
-    }
-    
-    var status:Status
-    var msg:String?
-    
-    init(_ status:Status, _ message:String?) {
-        self.status = status
-        self.msg = message
-    }
-    
-    func dispStatus() -> String {
-        switch status {
-        case .correct:
-            return "Correct"
-        case .wrongNote:
-            return "****** ****** Wrong ****** ******"
-        default:
-            return "    Ignored"
-        }
-    }
+public enum NoteCorrectStatus {
+    case correct
+    case wrongNote
+    case dataIgnored
 }
 
 public enum ScaleType {
@@ -47,7 +15,8 @@ public enum ScaleType {
 }
 
 public class ScaleNoteState :ObservableObject {
-    @Published var isPlayingMidi = true
+    @Published private(set) var isPlayingMidi = true
+    @Published private(set) var correctState = NoteCorrectStatus.dataIgnored
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
@@ -56,23 +25,23 @@ public class ScaleNoteState :ObservableObject {
         self.midi = midi
         isPlayingMidi = false
     }
+    
     public func setPlayingMidi(_ way:Bool) {
         DispatchQueue.main.async {
             self.isPlayingMidi = way
         }
     }
+    public func setCorrectState(_ way:NoteCorrectStatus) {
+        DispatchQueue.main.async {
+            self.correctState = way
+        }
+    }
 }
 
-public class Scale :ObservableObject {
-    let key:Key
-//    var notes:[Int]
-//    var fingers:[Int]
-//    var fingerSequenceBreak:[Bool]
-    //@Published
-    var scaleNoteStates:[ScaleNoteState]
+public class Scale {
+    private(set) var key:Key
+    private(set) var scaleNoteStates:[ScaleNoteState]
 
-    //public var display = ""
-            
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
         scaleNoteStates = []
@@ -84,7 +53,7 @@ public class Scale :ObservableObject {
             case 2:
                 nextMidi = 62
             case 3:
-                nextMidi = 57 //57 //A 
+                nextMidi = 57  //A
             case 4:
                 nextMidi = 64
             default:
@@ -107,7 +76,8 @@ public class Scale :ObservableObject {
             }
 
         }
-        ///upwards
+        
+        ///Set midi values in scale
         for oct in 0..<octaves {
             for i in 0..<7 {
                 scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
@@ -134,23 +104,13 @@ public class Scale :ObservableObject {
                 scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
             }
         }
-        ///downwards
+        
+        ///Downwards
         let up = Array(scaleNoteStates)
         for i in stride(from: up.count - 2, through: 0, by: -1) {
             scaleNoteStates.append(up[i])
         }
-//        var m = ""
-//        for n in notes {
-//            m += "  \(n)"
-//        }
-        //display = m
-        
-        //self.fingerSequenceBreak = Array(repeating: false, count: scaleNoteStates.count)
-        //self.midiStates = Array(repeating: MidiState(midi: 0), count: notes.count)
-//        for i in 0..<self.scaleNoteStates.count {
-//            let midi = self.notes[i]
-//            self.midiStates[i].midi = midi
-//        }
+
         setFingers()
         
         setFingerBreaks(direction: 0)
@@ -161,8 +121,8 @@ public class Scale :ObservableObject {
 //        }
     }
     
-    ///calculate finger sequence breaks
-    ///only calculated for ascending. descending view assumes break is on key one below ascending break key
+    ///Calculate finger sequence breaks
+    ///Only calculated for ascending. Descending view assumes break is on key one below ascending break key
     func setFingerBreaks(direction:Int) {
         if direction == 0 {
             var lastFinger = self.scaleNoteStates[0].finger
@@ -181,11 +141,8 @@ public class Scale :ObservableObject {
     }
     
     func setFingers() {
-        //self.fingers = Array(repeating: 0, count: notes.count)
         var currentFinger = 1
-//        if ["B♭", "E♭", "A♭"].contains(key.name) {
-//            currentFinger = 2
-//        }
+
         if ["B♭"].contains(key.name) {
             currentFinger = 4
         }
@@ -207,7 +164,6 @@ public class Scale :ObservableObject {
         default:
             sequenceBreaks = [3, 7]
         }
-        var lastMidi = 0
         var fingerPattern:[Int] = Array(repeating: 0, count: 7)
         
         for i in 0..<7 {
@@ -240,12 +196,12 @@ public class Scale :ObservableObject {
         }
     }
     
-    func containsMidi(midi:Int) -> Bool {
-        for state in self.scaleNoteStates {
-            if state.midi == midi {
-                return true
+    func getMidiIndex(midi:Int) -> Int? {
+        for i in 0..<self.scaleNoteStates.count {
+            if scaleNoteStates[i].midi == midi {
+                return i
             }
         }
-        return false
+        return nil
     }
 }
