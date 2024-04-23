@@ -33,6 +33,12 @@ class TapHandler : TapHanderProtocol {
     
     func stop(){
     }
+    
+    func log(_ m:String, _ value:Double? = nil) {
+        //if false {
+            Logger.shared.log(self, m, value)
+        //}
+    }
 }
 
 class CallibrationTapHandler : TapHandler {
@@ -47,13 +53,13 @@ class CallibrationTapHandler : TapHandler {
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " \t"+String(format: "%.4f", amplitudesIn[0])
         amplitudes.append(amplitudesIn[0])
-        Logger.shared.log(self, msg, Double(amplitudesIn[0]))
+        log(msg, Double(amplitudesIn[0]))
         //print(amplitudes, frequencyAmplitudes)
     }
     
     override func stop() {
         ScalesModel.shared.doCallibration(amplitudes: amplitudes)
-        Logger.shared.log(self, "ended callibration")
+        log("ended callibration")
         Logger.shared.calcValueLimits()
     }
 }
@@ -73,14 +79,14 @@ class PitchTapHandler : TapHandler {
     override func showConfig() {
         let s = String(format: "%.2f", requiredStartAmplitude)
         let m = "PitchTapHandler required_start_amplitude:\(s)"
-        Logger.shared.log(self, m)
+        log(m)
     }
     
     override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         
-        if wrongNoteFound {
-            return
-        }
+//        if wrongNoteFound {
+//            return
+//        }
         
         var frequency:Float
         var amplitude:Float
@@ -105,17 +111,13 @@ class PitchTapHandler : TapHandler {
         //let midi = Util.frequencyToMIDI(frequency: frequency)
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
-        msg += " amp:\(String(format: "%.2f", amplitude))"
+        msg += " amp:\(String(format: "%.4f", amplitude))"
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
         
         if let scaleMatcher = scaleMatcher {
             let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi])
-            //        if Logger.shared.logLevel  == .short {
-            //            if matchedStatus.status == .dataIgnored {
-            //                return
-            //            }
-            //        }
+
             msg += "\t\(matchedStatus.dispStatus())"
             if let message = matchedStatus.msg {
                 msg += "  " + message //"\t \(message)"
@@ -124,18 +126,17 @@ class PitchTapHandler : TapHandler {
                 wrongNoteFound = true
             }
         }
-        Logger.shared.log(self, msg, Double(amplitude))
+        log(msg, Double(amplitude))
     }
     
     override func stop() {
         if let scaleMatcher = scaleMatcher {
-            Logger.shared.log(self, "PitchTapHandler:" + scaleMatcher.stats())
+            log("PitchTapHandler:" + scaleMatcher.stats())
             ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
-            Logger.shared.log(self, "PitchTapHandler ended callibration")
+            log("PitchTapHandler ended callibration")
             Logger.shared.calcValueLimits()
         }
     }
-    
 }
 
 ///Handle a raw FFT
@@ -156,7 +157,7 @@ class FFTTapHandler :TapHandler {
     override func showConfig() {
         let s = String(format: "%.2f", requiredStartAmplitude)
         let m = "FFTTapHandler required_start_amplitude:\(s)"
-        Logger.shared.log(self, m)
+        log(m)
     }
     
     func frequencyForBin(forBinIndex binIndex: Int, sampleRate: Double = 44100.0, fftSize: Int = 1024) -> Double {
@@ -198,18 +199,18 @@ class FFTTapHandler :TapHandler {
         }
         firstTap = false
         
-        var log = ""
+        var logMsg = ""
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
-        log += "secs:\(String(format: "%.2f", secs))"
-        log += "  ind:  "
+        logMsg += "secs:\(String(format: "%.2f", secs))"
+        logMsg += "  ind:  "
         for idx in indicesOfMaxAmplitudes {
-            log += " " + String(idx)
+            logMsg += " " + String(idx)
         }
         //var log = ""
-        log += "    ampl: "
+        logMsg += "    ampl: "
         for a in maxAmplitudes  {
-            log += "  " + String(format: "%.2f", a.element * 1000)
+            logMsg += "  " + String(format: "%.2f", a.element * 1000)
         }
         
 //
@@ -217,33 +218,33 @@ class FFTTapHandler :TapHandler {
 //        for ampl in maxAmplitudes {
 //            log += String(format: "%.2f", ampl.element * 1000)+","
 //        }
-        log += "    freq:"
+        logMsg += "    freq:"
         for freq in frequencies {
-            log += String(format: "%.2f", freq)+","
+            logMsg += String(format: "%.2f", freq)+","
         }
-        log += "    mid:"
+        logMsg += "    mid:"
         var midisToTest:[Int] = []
         for freq in frequencies {
             let midi = Util.frequencyToMIDI(frequency: Float(freq)) + 10
-            log += String(midi)+","
+            logMsg += String(midi)+","
             midisToTest.append(midi)
         }
 
         if maxAmplitudes[0].element > 4.0 / 1000.0 {
             //print("", String(format: "%.2f", secs), "\t", amps, "\t", ind)
-            Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
+            log(logMsg, Double(maxAmplitudes[0].element))
         }
         
-        log += " midis:\(midisToTest) "
+        logMsg += " midis:\(midisToTest) "
         if midisToTest.count == 0 {
-            log += " NONE"
+            logMsg += " NONE"
         }
         else {
             if let scaleMatcher = scaleMatcher {
                 let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest)
-                log += "\t\(matchedStatus.dispStatus())"
+                logMsg += "\t\(matchedStatus.dispStatus())"
                 if let message = matchedStatus.msg {
-                    log += "  " + message //"\t \(message)"
+                    logMsg += "  " + message //"\t \(message)"
                 }
                 if matchedStatus.status == .wrongNote {
                     wrongNoteFound = true
@@ -254,10 +255,6 @@ class FFTTapHandler :TapHandler {
         //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
     }
     
-//    override func stop() {
-//        if let scaleMatcher = scaleMatcher {
-//            Logger.shared.log(self, scaleMatcher.stats())
-//        }
-//    }
+
 }
     

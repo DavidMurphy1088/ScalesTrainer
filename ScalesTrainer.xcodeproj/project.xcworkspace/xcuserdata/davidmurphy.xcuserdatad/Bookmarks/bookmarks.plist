@@ -133,7 +133,7 @@
 				<key>trailing</key>
 				<string>        Logger.shared.clearLog()
         Logger.shared.log(self, "startRecordingMicrophone")
-        ScalesModel.shared.result.reset()
+        ScalesModel.shared.result = nil
 </string>
 			</dict>
 			<key>type</key>

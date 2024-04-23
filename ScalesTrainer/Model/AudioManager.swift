@@ -11,7 +11,7 @@ class AudioManager {
     var audioPlayer = AudioPlayer()
     private  var engine = AudioEngine()
     var tap: BaseTap?
-    var amplitudeFilter = 0.0
+    var amplitudeFilter = 0.01
     let midiSampler = MIDISampler()
     var recorder: NodeRecorder?
     var silencer: Fader?
@@ -98,7 +98,7 @@ class AudioManager {
     func startRecordingMicrophone(tapHandler:TapHandler) {
         Logger.shared.clearLog()
         Logger.shared.log(self, "startRecordingMicrophone")
-        ScalesModel.shared.result.reset()
+        ScalesModel.shared.result = nil
         //engine.removeTap(onBus: 0)
         
         do {
@@ -123,7 +123,7 @@ class AudioManager {
 
     func playSampleFile(fileName:String, tapHandler: TapHandler) {
         Logger.shared.clearLog()
-        ScalesModel.shared.result.reset()
+        ScalesModel.shared.result = nil
         guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
             Logger.shared.reportError(self, "Audio file not found \(fileName)")
             return
@@ -181,7 +181,7 @@ class AudioManager {
         if tapHandler is PitchTapHandler {
             tap = PitchTap(node,
                            bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-                //if Double(amplitude[0]) > self.amplitudeFilter {
+                if Double(amplitude[0]) > self.amplitudeFilter {
                     if asynch {
                         DispatchQueue.main.async {
                             tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
@@ -190,7 +190,7 @@ class AudioManager {
                     else {
                         tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                     }
-                //}
+                }
             }
             //tap?.start()
         }

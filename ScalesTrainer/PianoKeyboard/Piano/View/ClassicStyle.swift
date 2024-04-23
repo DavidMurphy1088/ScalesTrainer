@@ -194,6 +194,18 @@ public struct ClassicStyle: KeyboardStyle {
                             
                         )
                         
+                        if key.midiState.isPlayingMidi {
+                            var innerContext = context
+                            let rad = rect.height * 0.05
+                            let w = 2.0 * rad
+                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
+                                               y: rect.origin.y + rect.height * 0.30 - rad, width: w, height: w)
+                            if let image = UIImage(systemName: "star") {
+                                let drawingImage = Image(uiImage: image)
+                                context.draw(drawingImage, in: frame)
+                            }
+                        }
+                        
                         let rad = rect.height * 0.08
                         let w = 2.0 * rad
                         let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad, y: rect.origin.y + rect.height * 0.75 - rad, width: w, height: w)

@@ -6,12 +6,12 @@ class Result : ObservableObject {
     @Published var correctCount = 0
     @Published var wrongCount = 0
     
-    func reset() {
-        DispatchQueue.main.async {
-            self.correctCount = 0
-            self.wrongCount = 0
-        }
-    }
+//    func reset() {
+//        DispatchQueue.main.async {
+//            self.correctCount = 0
+//            self.wrongCount = 0
+//        }
+//    }
     
     func updateResult(correct : Int, wrong: Int) {
         DispatchQueue.main.async {
@@ -33,7 +33,7 @@ public class ScalesModel : ObservableObject {
 
     var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
-    let result = Result()
+    var result:Result? = nil
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
     var selectedKey = Key()
@@ -149,20 +149,24 @@ public class ScalesModel : ObservableObject {
     }
     
     func startRecordingScale() {
-        if let requiredAmplitude = requiredStartAmplitude {
-            if self.speechListenMode {
-                sleep(1)
-                speechManager.speak("Please start your scale")
-                sleep(2)
+        //DispatchQueue.global(qos: .background).async {
+            self.scale.resetPlayMidiStatus()
+            if let requiredAmplitude = self.requiredStartAmplitude {
+                if self.speechListenMode {
+                    sleep(1)
+                    self.speechManager.speak("Please start your scale")
+                    sleep(2)
+                }
+                self.result = nil
+                Logger.shared.log(self, "Start recording scale")
+                DispatchQueue.main.async {
+                    self.recordingScale = true
+                    self.recordingAvailable = false
+                }
+                let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher())
+                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler)
             }
-            Logger.shared.log(self, "Start recording scale")
-            DispatchQueue.main.async {
-                self.recordingScale = true
-                self.recordingAvailable = false
-            }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: getScaleMatcher())
-            audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler)
-        }
+        //}
     }
     
     func setStatusMessage(_ msg:String) {

@@ -15,11 +15,13 @@ public enum ScaleType {
 }
 
 public class ScaleNoteState :ObservableObject {
-    @Published private(set) var isPlayingMidi = true
+    //@Published The UI Canvas used to pain the paino key does not get updated with published  changes. It draws direct.
+    private(set) var isPlayingMidi = true
     @Published private(set) var correctState = NoteCorrectStatus.dataIgnored
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
+    var matchedTime:Date? = nil
     
     init(midi:Int) {
         self.midi = midi
@@ -27,10 +29,12 @@ public class ScaleNoteState :ObservableObject {
     }
     
     public func setPlayingMidi(_ way:Bool) {
-        DispatchQueue.main.async {
+        //DispatchQueue.main.async {
+            //print("====>>> setPlayMidi", self.midi, way)
             self.isPlayingMidi = way
-        }
+        //}
     }
+    
     public func setCorrectState(_ way:NoteCorrectStatus) {
         DispatchQueue.main.async {
             self.correctState = way
@@ -119,6 +123,12 @@ public class Scale {
 //        for state in self.scaleNoteStates {
 //            print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
 //        }
+    }
+    
+    func resetPlayMidiStatus() {
+        for state in self.scaleNoteStates {
+            state.setPlayingMidi(false)
+        }
     }
     
     ///Calculate finger sequence breaks

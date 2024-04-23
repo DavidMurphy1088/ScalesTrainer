@@ -52,7 +52,7 @@ struct ScalesView: View {
     @State var speechAudioStarted = false
     
     struct ResultView: View {
-        @ObservedObject var result = ScalesModel.shared.result
+        let result:Result
         
         var body: some View {
             VStack {
@@ -240,7 +240,9 @@ struct ScalesView: View {
             }
             .commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             
-            ResultView()//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            if let result  = scalesModel.result {
+                ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            }
             
             StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             Spacer()

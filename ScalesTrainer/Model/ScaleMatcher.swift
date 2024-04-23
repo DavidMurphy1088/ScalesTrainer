@@ -1,15 +1,5 @@
 import Foundation
 
-class NoteMatch {
-    let noteSequenceNumber:Int
-    let scaleNoteState:ScaleNoteState
-    var matchedTime:Date?
-    init(noteSequenceNumber:Int, scaleNoteState:ScaleNoteState) {
-        self.noteSequenceNumber = noteSequenceNumber
-        self.scaleNoteState = scaleNoteState
-    }
-}
-
 class MatchType {
     var status:NoteCorrectStatus
     var msg:String?
@@ -32,9 +22,10 @@ class MatchType {
 }
 
 class ScaleMatcher : ObservableObject {
+    let scale:Scale
     var lastMatchTime:Date?
     var nextMatchIndex = 0
-    var matches:[NoteMatch] = []
+    //var matches:[NoteMatch] = []
     var topMidi:Int = 0
     var lastGoodMidi:Int?
     var wrongCount = 0
@@ -44,18 +35,22 @@ class ScaleMatcher : ObservableObject {
     var mismatchesAllowed = 0
     
     init(scale:Scale, mismatchesAllowed:Int) {
-        var num = 0
-        matches = []
-        
-        ///upwards
-        topMidi = 0
-        for state in scale.scaleNoteStates {
-            matches.append(NoteMatch(noteSequenceNumber: num, scaleNoteState: state))
-            if state.midi > topMidi {
-                topMidi = state.midi
-            }
-            num += 1
+        self.scale = scale
+        for state in self.scale.scaleNoteStates {
+            state.matchedTime = nil
         }
+        //var num = 0
+        //matches = []
+        
+//        ///upwards
+//        topMidi = 0
+//        for state in scale.scaleNoteStates {
+//            matches.append(NoteMatch(noteSequenceNumber: num, scaleNoteState: state))
+//            if state.midi > topMidi {
+//                topMidi = state.midi
+//            }
+//            num += 1
+//        }
         ///downwards
 //        for index in stride(from: scale.notes.count - 2, through: 0, by: -1) {
 //            matches.append(NoteMatch(noteNumber: num, midi: scale.notes[index]))
@@ -72,10 +67,10 @@ class ScaleMatcher : ObservableObject {
         nextMatchIndex = 0
     }
     
-//    func midiToNoteNum(midi: Int) -> Int {
-//        let nameIndex = (midi + 48 - matches[0].midi) % 12
-//        return nameIndex
-//    }
+    func midiToNoteNum(midi: Int) -> Int {
+        let nameIndex = (midi + 48 - scale.scaleNoteStates[0].midi) % 12
+        return nameIndex
+    }
     
     func makeMidiOctaves(midi: Int) -> [Int] {
         let res = [midi-36, midi-24, midi-12, midi, midi+12, midi+24]
@@ -83,7 +78,7 @@ class ScaleMatcher : ObservableObject {
     }
     
     func match(timestamp:Date, midis:[Int]) -> MatchType {
-        if nextMatchIndex >= matches.count  {
+        if nextMatchIndex >= scale.scaleNoteStates.count {
             return MatchType(.dataIgnored, "after_scale")
         }
 //        if !firstNoteMatched {
@@ -92,7 +87,7 @@ class ScaleMatcher : ObservableObject {
 //            }
 //        }
         
-        let requiredMidi = matches[nextMatchIndex].midi
+        let requiredMidi = scale.scaleNoteStates[nextMatchIndex].midi
         let requiredNoteNumber = self.midiToNoteNum(midi: requiredMidi)
 
         for midiIndex in 0..<midis.count {
@@ -108,19 +103,22 @@ class ScaleMatcher : ObservableObject {
             
             let requiredMidisOctave = [requiredMidi-24, requiredMidi-12, requiredMidi, requiredMidi+12, requiredMidi+24]
             if requiredMidisOctave.contains(midi) {
-                matches[nextMatchIndex].matchedTime = timestamp
+                scale.scaleNoteStates[nextMatchIndex].matchedTime = timestamp
+                scale.scaleNoteStates[nextMatchIndex].setPlayingMidi(true)
+                ScalesModel.shared.forceRepaint()
                 nextMatchIndex += 1
                 self.firstNoteMatched = true
                 self.mismatchCount = 0
                 self.lastGoodMidi = midi
-                ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
+                //ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
                 correctCount += 1
-                if correctCount >= 3 { //matches.count {
+                if correctCount >= scale.scaleNoteStates.count {
                     DispatchQueue.main.async {
                         sleep(1)
                         ScalesModel.shared.stopRecordingScale()
                     }
                 }
+                print("============= Matcher CORRECT", requiredMidi)
                 return MatchType(.correct, "required_midi:\(requiredMidi) matched:\(midi) noteNum:[\(requiredNoteNumber)]")
             }
             if mismatchCount == self.mismatchesAllowed {
@@ -128,11 +126,12 @@ class ScaleMatcher : ObservableObject {
                     nextMatchIndex += 1
                 }
                 wrongCount += 1
-                ScalesModel.shared.result.updateResult(correct: 0, wrong: 1)
+                //ScalesModel.shared.result.updateResult(correct: 0, wrong: 1)
                 DispatchQueue.main.async {
                     sleep(1)
-                    ScalesModel.shared.stopRecordingScale()
+                    //ScalesModel.shared.stopRecordingScale()
                 }
+                print("============= Matcher WRONG", requiredMidi)
                 return MatchType(.wrongNote, "required_midi:\(requiredMidi) OR_Octaves:\(makeMidiOctaves(midi: requiredMidi)) noteNum:[\(requiredNoteNumber)] wrongCount:\(self.wrongCount)")
             }
             else {
@@ -168,10 +167,9 @@ class ScaleMatcher : ObservableObject {
     func stats() -> String {
         var missing = 0
         var correctCount = 0
-        for match in self.matches {
+        for match in self.scale.scaleNoteStates {
             if match.matchedTime == nil {
                 missing += 1
-                //Logger.shared.log(self, "Missing note number:\(match.noteNumber) midi:\(match.midi)")
             }
             else {
                 correctCount += 1
@@ -182,7 +180,7 @@ class ScaleMatcher : ObservableObject {
         var ctr = 0
         var total = 0.0
         //get tempo
-        for match in self.matches {
+        for match in self.scale.scaleNoteStates {
             if match.matchedTime == nil {
                 break
             }
