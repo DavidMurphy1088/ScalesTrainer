@@ -2,23 +2,21 @@ import Foundation
 import Speech
 import Combine
 
-class Result : ObservableObject {
-    @Published var correctCount = 0
-    @Published var wrongCount = 0
+public class Result : ObservableObject {
+    @Published var scale:Scale
+    var notInScale:[UnMatchedType]
     
-//    func reset() {
+    public init(scale:Scale, notInScale:[UnMatchedType]) {
+        self.scale = scale
+        self.notInScale = notInScale
+    }
+    
+//    func updateResult(correct : Int, wrong: Int) {
 //        DispatchQueue.main.async {
-//            self.correctCount = 0
-//            self.wrongCount = 0
+//            self.correctCount += correct
+//            self.wrongCount += wrong
 //        }
 //    }
-    
-    func updateResult(correct : Int, wrong: Int) {
-        DispatchQueue.main.async {
-            self.correctCount += correct
-            self.wrongCount += wrong
-        }
-    }
 }
 
 public class ScalesModel : ObservableObject {
@@ -33,7 +31,7 @@ public class ScalesModel : ObservableObject {
     @Published var speechLastWord = ""
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
 
-    var scale:Scale = Scale(key: Key(name: "C", keyType: .minor), scaleType: .naturalMinor, octaves: 1)
+    var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
     var result:Result? = nil
     
@@ -179,6 +177,7 @@ public class ScalesModel : ObservableObject {
     
     func startRecordingScale() {
         self.scale.resetPlayMidiStatus()
+        self.scale.resetMatches()
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
                 sleep(1)

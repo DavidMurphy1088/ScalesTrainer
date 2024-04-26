@@ -126,6 +126,7 @@ class AudioManager {
     func playSampleFile(fileName:String, tapHandler: TapHandler) {
         Logger.shared.clearLog()
         ScalesModel.shared.result = nil
+        ScalesModel.shared.scale.resetMatches()
         guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
             Logger.shared.reportError(self, "Audio file not found \(fileName)")
             return
@@ -183,7 +184,6 @@ class AudioManager {
         if tapHandler is PitchTapHandler {
             tap = PitchTap(node,
                            bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-                //let filter:Double = self.scalesModel.amplitudeFilter == nil ? 0.0 : self.scalesModel.amplitudeFilter!
                 if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
                     if asynch {
                         DispatchQueue.main.async {

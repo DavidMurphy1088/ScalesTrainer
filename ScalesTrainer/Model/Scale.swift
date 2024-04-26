@@ -14,7 +14,9 @@ public enum ScaleType {
     case arpeggio
 }
 
-public class ScaleNoteState :ObservableObject {
+public class ScaleNoteState :ObservableObject, Hashable {
+    let id = UUID()
+    let sequence:Int
     //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
     private(set) var isPlayingMidi = true
     @Published private(set) var correctState = NoteCorrectStatus.dataIgnored
@@ -23,9 +25,16 @@ public class ScaleNoteState :ObservableObject {
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
     
-    init(midi:Int) {
+    init(sequence: Int, midi:Int) {
+        self.sequence = sequence
         self.midi = midi
         isPlayingMidi = false
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    public static func == (lhs: ScaleNoteState, rhs: ScaleNoteState) -> Bool {
+        return rhs.id == lhs.id
     }
     
     public func setPlayingMidi(_ way:Bool) {
@@ -127,18 +136,21 @@ public class Scale {
             scaleOffsets = [2,1,2,2,2,2,1]
         }
         
+        var sequence = 0
         for oct in 0..<octaves {
             for i in 0..<7 {
                 if oct == 0 {
-                    scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: nextMidi))
                     nextMidi += scaleOffsets[i]
                 }
                 else {
-                    scaleNoteStates.append(ScaleNoteState(midi: scaleNoteStates[i % 8].midi + (oct * 12)))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[i % 8].midi + (oct * 12)))
                 }
+                sequence += 1
             }
             if oct == octaves - 1 {
-                scaleNoteStates.append(ScaleNoteState(midi: scaleNoteStates[0].midi + (octaves) * 12))
+                scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[0].midi + (octaves) * 12))
+                sequence += 1
             }
         }
         
@@ -156,7 +168,8 @@ public class Scale {
                     }
                 }
             }
-            scaleNoteStates.append(ScaleNoteState(midi: downMidi))
+            scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: downMidi))
+            sequence += 1
         }
 
         setFingers()
@@ -175,6 +188,12 @@ public class Scale {
         }
     }
     
+    func resetMatches() {
+        for i in 0..<self.scaleNoteStates.count {
+            self.scaleNoteStates[i].matchedTime = nil
+        }
+    }
+
     ///Calculate finger sequence breaks
     ///Only calculated for ascending. Descending view assumes break is on key one below ascending break key
     func setFingerBreaks(direction:Int) {
@@ -261,8 +280,8 @@ public class Scale {
             endIndex = (self.scaleNoteStates.count / 2) + 1
         }
         else {
-            startIndex = (self.scaleNoteStates.count / 2) - 1
-            endIndex = self.scaleNoteStates.count
+            startIndex = (self.scaleNoteStates.count / 2) + 1
+            endIndex = self.scaleNoteStates.count 
         }
         
         for i in startIndex..<endIndex {

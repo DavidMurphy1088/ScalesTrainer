@@ -50,23 +50,7 @@ struct ScalesView: View {
     @State var playingSampleFile = false
     
     @State var speechAudioStarted = false
-    
-    struct ResultView: View {
-        let result:Result
-        
-        var body: some View {
-            VStack {
-                Text("Your scale had \(result.correctCount) correct notes.").font(.title)
-                if result.wrongCount > 0 {
-                    Text("\(result.wrongCount) wrong notes.").foregroundColor(result.wrongCount > 0  ? Color.red : Color.black)
-                    Text("😢").font(.largeTitle)
-                }
-                else {
-                    Text("👏").font(.largeTitle)
-                }
-            }
-        }
-    }
+    @State var showResult = false
     
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardViewModel()
@@ -205,27 +189,30 @@ struct ScalesView: View {
                 }.padding()
                 
                 Spacer()
-                Button(scalesModel.listening ? "Stop Listening" : "Play") {
+                Button(scalesModel.listening ? "Stop Listening" : "Play for Test Listen") {
                     if scalesModel.listening {
                         scalesModel.stopListening()
                     }
                     else {
                         scalesModel.startListening()
                     }
-
+                    
                 }.padding()
-                
+                Spacer()
+            }
+            .commonFrameStyle(backgroundColor: .clear).padding()
+            HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
                     Button(scalesModel.recordingScale ? "Stop Playing Scale" : "Play Scale") {
                         if scalesModel.recordingScale {
                             scalesModel.stopRecordingScale()
+                            showResult = true
                         }
                         else {
                             scalesModel.startRecordingScale()
                         }
                     }.padding()
-                    
                     Spacer()
 
                     Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
@@ -235,16 +222,23 @@ struct ScalesView: View {
                             //let f = "4_octave_fast"
                             //let f = "one_note_60" //1_octave_slow"
                             let fileName = "1_octave_slow"
-                            //scaleMatcher = getScaleMatcher()
                             audioManager.playSampleFile(fileName: fileName,
                                                         tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
                                                                                     scaleMatcher: scalesModel.getScaleMatcher(), scale: nil))
                         }
                         else {
                             audioManager.stopPlaySampleFile()
+                            showResult = true
                         }
                     }.padding()
                     
+                    if let result = scalesModel.result {
+                        Spacer()
+                        Button("Show Result") {
+                            showResult = true
+                        }.padding()
+                    }
+
                     if scalesModel.recordingAvailable {
                         Spacer()
                         Button("Play Recording") {
@@ -255,15 +249,16 @@ struct ScalesView: View {
                 }
             }
             .commonFrameStyle(backgroundColor: .clear).padding()
-            
-            if let result  = scalesModel.result {
-                ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
-            }
-            
-            StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+
+            //StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             Spacer()
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
+            }
+        }
+        .sheet(isPresented: $showResult) {
+            if let result  = scalesModel.result {
+                ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             }
         }
         .onAppear {
