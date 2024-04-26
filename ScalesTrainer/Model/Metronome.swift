@@ -19,7 +19,6 @@ class MetronomeModel: ObservableObject {
         self.isRunning = true
         scalesModel.scale.resetPlayMidiStatus()
         DispatchQueue.global(qos: .background).async {
-
             let sampler = AudioManager.shared.midiSampler
             let delay = 60.0 / Double(self.tempo)
             for state in scale.scaleNoteStates {

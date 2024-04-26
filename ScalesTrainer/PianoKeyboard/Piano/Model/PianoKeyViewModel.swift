@@ -42,7 +42,7 @@ public struct PianoKeyViewModel: Identifiable {
     
     public var finger: String {
         let midi = noteMidiNumber
-        let inScale = scale.getMidiIndex(midi: midi) != nil
+        let inScale = scale.getMidiIndex(midi: midi, direction: scalesModel.selectedDirection) != nil
 
         if inScale {
             //let off = scaleOffset == nil ? "X" : String(scaleOffset!)

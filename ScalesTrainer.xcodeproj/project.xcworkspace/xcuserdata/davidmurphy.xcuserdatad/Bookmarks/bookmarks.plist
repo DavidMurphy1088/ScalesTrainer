@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>191</string>
+					<string>196</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>190</string>
+					<string>195</string>
 					<key>Timestamp</key>
-					<string>735557179.459636</string>
+					<string>735731592.634361</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -38,12 +38,12 @@
 </string>
 				<key>leading</key>
 				<string>//                .padding()
-
+            
 </string>
 				<key>trailing</key>
 				<string>                Spacer()
-                Button(metronome.playingScale ? "Stop Playing Scale" : "Play Scale") {
-                    if !metronome.playingScale {
+                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
+                    if metronome.playingScale {
 </string>
 			</dict>
 			<key>type</key>
@@ -63,7 +63,7 @@
 					<key>StartingLineNumber</key>
 					<string>60</string>
 					<key>Timestamp</key>
-					<string>735380602.596073</string>
+					<string>735612500.254934</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -108,7 +108,7 @@
 					<key>StartingLineNumber</key>
 					<string>97</string>
 					<key>Timestamp</key>
-					<string>735380602.596048</string>
+					<string>735612500.254963</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -124,7 +124,7 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func startRecordingMicrophone(tapHandler:TapHandler) {
+				<string>    func startRecordingMicrophone(tapHandler:TapHandler, recordAudio:Bool) {
 </string>
 				<key>leading</key>
 				<string>    }

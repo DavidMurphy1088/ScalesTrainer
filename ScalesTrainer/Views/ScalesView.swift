@@ -126,6 +126,11 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
+            .onChange(of: scaleTypeIndex, {
+                scalesModel.selectedScaleType = scaleTypeIndex
+                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
+                self.configureKeyboard()
+            })
             
             Spacer()
             Text("Octaves:").padding(0)
@@ -179,7 +184,7 @@ struct ScalesView: View {
             
             SpeechView()
             
-            SelectScaleView().commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding()
             
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
                 .frame(height: 320)
@@ -187,21 +192,32 @@ struct ScalesView: View {
 //            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(scale: getScale()))
 //                .frame(height: 320)
 //                .padding()
-
+            
             HStack {
                 Spacer()
-                Button(metronome.playingScale ? "Stop Playing Scale" : "Play Scale") {
-                    if !metronome.playingScale {
-                        metronome.playScale(scale: scalesModel.scale)
-                    }
-                    else {
+                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
+                    if metronome.playingScale {
                         metronome.stop()
                     }
+                    else {
+                        metronome.playScale(scale: scalesModel.scale)
+                    }
+                }.padding()
+                
+                Spacer()
+                Button(scalesModel.listening ? "Stop Listening" : "Play") {
+                    if scalesModel.listening {
+                        scalesModel.stopListening()
+                    }
+                    else {
+                        scalesModel.startListening()
+                    }
+
                 }.padding()
                 
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
-                    Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Scale") {
+                    Button(scalesModel.recordingScale ? "Stop Playing Scale" : "Play Scale") {
                         if scalesModel.recordingScale {
                             scalesModel.stopRecordingScale()
                         }
@@ -212,7 +228,7 @@ struct ScalesView: View {
                     
                     Spacer()
 
-                    Button(playingSampleFile ? "Stop Recording Sample" : "Record Sample File") {
+                    Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
                         playingSampleFile.toggle()
                         if playingSampleFile {
                             //let f = "church_4_octave_Cmajor_RH"
@@ -222,7 +238,7 @@ struct ScalesView: View {
                             //scaleMatcher = getScaleMatcher()
                             audioManager.playSampleFile(fileName: fileName,
                                                         tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                                                    scaleMatcher: scalesModel.getScaleMatcher()))
+                                                                                    scaleMatcher: scalesModel.getScaleMatcher(), scale: nil))
                         }
                         else {
                             audioManager.stopPlaySampleFile()
@@ -238,7 +254,7 @@ struct ScalesView: View {
                     Spacer()
                 }
             }
-            .commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            .commonFrameStyle(backgroundColor: .clear).padding()
             
             if let result  = scalesModel.result {
                 ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
@@ -247,10 +263,9 @@ struct ScalesView: View {
             StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             Spacer()
             if let req = scalesModel.requiredStartAmplitude {
-                Text("Required Start Amplitude:\(String(format: "%.4f",req))")
+                Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
             }
         }
-
         .onAppear {
             pianoKeyboardViewModel.delegate = audioManager //keyboardAudioEngine
         }

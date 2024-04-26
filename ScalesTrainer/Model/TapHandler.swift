@@ -9,7 +9,7 @@ import Foundation
 ///The bufferSize parameter specifies the number of audio samples that will be processed in each iteration before calling the closure with the detected pitch and amplitude values.
 ///By default, the bufferSize is set to 4096 samples. Assuming a typical sample rate of 44,100 Hz, this means that the closure will be called approximately 10.7 times per second (44,100 / 4096).
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
-///
+
 protocol TapHanderProtocol {
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stop()
@@ -41,37 +41,55 @@ class TapHandler : TapHanderProtocol {
     }
 }
 
+public enum CallibrationType {
+    case startAmplitude
+    case amplitudeFilter
+    case none
+}
+
 class CallibrationTapHandler : TapHandler {
+    let type:CallibrationType
     private var amplitudes:[Float] = []
     
-    override func tapUpdate(_ frequencyAmplitudes: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
-        let n = 3
+    init(type: CallibrationType) {
+        self.type = type
+    }
+    
+    override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
+        //let n = 3
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
-        //let midi = Util.frequencyToMIDI(frequency: frequency)
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
-        msg += " \t"+String(format: "%.4f", amplitudesIn[0])
+        msg += " \tAmpl:"+String(format: "%.4f", amplitudesIn[0])
         amplitudes.append(amplitudesIn[0])
+        let frequency:Float = frequencies[0]
+        let midi = Util.frequencyToMIDI(frequency: frequency)
+        msg += " \tMidi:"+String(midi)
+
         log(msg, Double(amplitudesIn[0]))
-        //print(amplitudes, frequencyAmplitudes)
     }
     
     override func stop() {
-        ScalesModel.shared.doCallibration(amplitudes: amplitudes)
-        log("ended callibration")
+        if type != .none {
+            ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
+        }
+        log("ended callibration, type:\(self.type)")
         Logger.shared.calcValueLimits()
     }
 }
 
 class PitchTapHandler : TapHandler {
+    //let scalesModel = ScalesModel.shared
     let scaleMatcher:ScaleMatcher?
+    let scale:Scale?
     var wrongNoteFound = false
     var firstTap = true
     let requiredStartAmplitude:Double
     
-    init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?) {
+    init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?, scale:Scale?) {
         self.scaleMatcher = scaleMatcher
+        self.scale = scale
         self.requiredStartAmplitude = requiredStartAmplitude
         super.init()
     }
@@ -108,7 +126,6 @@ class PitchTapHandler : TapHandler {
 
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
-        //let midi = Util.frequencyToMIDI(frequency: frequency)
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " amp:\(String(format: "%.4f", amplitude))"
@@ -126,6 +143,15 @@ class PitchTapHandler : TapHandler {
                 wrongNoteFound = true
             }
         }
+        else {
+            if let scale = scale {
+                if let index = scale.getMidiIndex(midi: midi, direction: ScalesModel.shared.selectedDirection) {
+                    let status = scale.scaleNoteStates[index]
+                    status.setPlayingMidi(true)
+                    ScalesModel.shared.forceRepaint()
+                }
+            }
+        }
         log(msg, Double(amplitude))
     }
     
@@ -133,9 +159,9 @@ class PitchTapHandler : TapHandler {
         if let scaleMatcher = scaleMatcher {
             log("PitchTapHandler:" + scaleMatcher.stats())
             ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
-            log("PitchTapHandler ended callibration")
-            Logger.shared.calcValueLimits()
         }
+        log("PitchTapHandler ended callibration")
+        Logger.shared.calcValueLimits()
     }
 }
 

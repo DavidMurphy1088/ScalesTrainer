@@ -11,8 +11,8 @@ class AudioManager {
     var audioPlayer = AudioPlayer()
     private  var engine = AudioEngine()
     var tap: BaseTap?
-    var amplitudeFilter = 0.01
     let midiSampler = MIDISampler()
+    //let scalesModel = ScalesModel.shared ///Causes start up exception
     var recorder: NodeRecorder?
     var silencer: Fader?
     let mixer = Mixer()
@@ -95,7 +95,7 @@ class AudioManager {
         }
     }
 
-    func startRecordingMicrophone(tapHandler:TapHandler) {
+    func startRecordingMicrophone(tapHandler:TapHandler, recordAudio:Bool) {
         Logger.shared.clearLog()
         Logger.shared.log(self, "startRecordingMicrophone")
         ScalesModel.shared.result = nil
@@ -107,7 +107,9 @@ class AudioManager {
                               tapHandler: tapHandler,
                               asynch: true)
             //WARNING 😣 - .record must come before tap.start
-            try recorder?.record()
+            if recordAudio {
+                try recorder?.record() ///😡Causes exception if tap handler is Callibration
+            }
             tap!.start()
             currentTapHandler = tapHandler
         } catch let err {
@@ -165,7 +167,7 @@ class AudioManager {
         if tapHandler is CallibrationTapHandler {
             tap = PitchTap(node,
                            bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-                //if Double(amplitude[0]) > self.amplitudeFilter {
+                //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
                     if asynch {
                         DispatchQueue.main.async {
                             tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
@@ -176,12 +178,13 @@ class AudioManager {
                     }
                 //}
             }
-            //tap?.start()
+            tap?.start()
         }
         if tapHandler is PitchTapHandler {
             tap = PitchTap(node,
                            bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-                if Double(amplitude[0]) > self.amplitudeFilter {
+                //let filter:Double = self.scalesModel.amplitudeFilter == nil ? 0.0 : self.scalesModel.amplitudeFilter!
+                if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
                     if asynch {
                         DispatchQueue.main.async {
                             tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])

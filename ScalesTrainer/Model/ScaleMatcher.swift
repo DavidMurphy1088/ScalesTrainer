@@ -110,7 +110,6 @@ class ScaleMatcher : ObservableObject {
                 self.firstNoteMatched = true
                 self.mismatchCount = 0
                 self.lastGoodMidi = midi
-                //ScalesModel.shared.result.updateResult(correct: 1, wrong: 0)
                 correctCount += 1
                 if correctCount >= scale.scaleNoteStates.count {
                     DispatchQueue.main.async {
@@ -118,7 +117,6 @@ class ScaleMatcher : ObservableObject {
                         ScalesModel.shared.stopRecordingScale()
                     }
                 }
-                print("============= Matcher CORRECT", requiredMidi)
                 return MatchType(.correct, "required_midi:\(requiredMidi) matched:\(midi) noteNum:[\(requiredNoteNumber)]")
             }
             if mismatchCount == self.mismatchesAllowed {
@@ -126,12 +124,10 @@ class ScaleMatcher : ObservableObject {
                     nextMatchIndex += 1
                 }
                 wrongCount += 1
-                //ScalesModel.shared.result.updateResult(correct: 0, wrong: 1)
                 DispatchQueue.main.async {
                     sleep(1)
                     //ScalesModel.shared.stopRecordingScale()
                 }
-                print("============= Matcher WRONG", requiredMidi)
                 return MatchType(.wrongNote, "required_midi:\(requiredMidi) OR_Octaves:\(makeMidiOctaves(midi: requiredMidi)) noteNum:[\(requiredNoteNumber)] wrongCount:\(self.wrongCount)")
             }
             else {

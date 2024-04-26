@@ -6,7 +6,8 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegateProtocol {
-    @Published public var scale:Scale = ScalesModel.shared.scale //Scale(key: Key(), scaleType: .major, octaves: 1)
+    let scalesModel = ScalesModel.shared
+    @Published public var scale:Scale = ScalesModel.shared.scale
     @Published public var keys: [PianoKeyViewModel] = []
     @Published public var noteMidi = 60
     @Published public var showLabels = true
@@ -19,7 +20,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
     weak var delegate: AudioManager?
     
     public init() {
-        configureKeys()
+        configureKeys(direction: ScalesModel.shared.selectedDirection)
     }
     public func setScale(scale:Scale) {
         DispatchQueue.main.async { [self] in
@@ -27,7 +28,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         }
     }
     public var numberOfKeys = 18 {
-        didSet { configureKeys() }
+        didSet { configureKeys(direction: ScalesModel.shared.selectedDirection) }
     }
     public var naturalKeyCount: Int {
         keys.filter { $0.isNatural }.count
@@ -41,7 +42,7 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    private func configureKeys() {
+    private func configureKeys(direction: Int) {
         self.keys = []
         let scale = ScalesModel.shared.scale
         let startMidi = self.noteMidi
@@ -50,12 +51,13 @@ public class PianoKeyboardViewModel: ObservableObject, PianoKeyViewModelDelegate
         for i in 0..<numberOfKeys {
             var state = scale.scaleNoteStates[0]
             let midi = startMidi + i
-            if let seq = scale.getMidiIndex(midi: midi) {
+            if let seq = scale.getMidiIndex(midi: midi, direction: scalesModel.selectedDirection) {
                 state = scale.scaleNoteStates[seq]
             }
+            let keyIndex = i// (direction == 0 ? 0 : 8) + i
             let model = PianoKeyViewModel(scale: scale,
                                           midiState: state,
-                                          keyIndex: i,
+                                          keyIndex: keyIndex,
                                           delegate: self)
             self.keys.append(model)
         }

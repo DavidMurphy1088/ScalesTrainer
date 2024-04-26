@@ -1,5 +1,9 @@
-
 import SwiftUI
+
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    ScalesModel.shared = ScalesModel()
+    return true
+}
 
 @main
 struct ScalesTrainerApp: App {
@@ -16,16 +20,16 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("Game", systemImage: "house")
                     }
-                MetronomeView()
-                    .tabItem {
-                        Label("Metronome", systemImage: "house")
-                    }
-
-                StaveView()
-                    .tabItem {
-                        Label("Notes", systemImage: "house")
-                    }
-                    .tag(1)
+//                MetronomeView()
+//                    .tabItem {
+//                        Label("Metronome", systemImage: "house")
+//                    }
+//
+//                StaveView()
+//                    .tabItem {
+//                        Label("Notes", systemImage: "house")
+//                    }
+//                    .tag(1)
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")

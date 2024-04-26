@@ -10,16 +10,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         self.backgroundColor = .white
-        for i in 1...3 {
+        for i in 1...5 {
             let plat = SKShapeNode(rectOf: CGSize(width: w, height: 10))
             plat.fillColor = .red
             plat.strokeColor = .lightGray
-            if i == 2 {
-                plat.zRotation = .pi / 8
+            if i%2 == 0 {
+                plat.zRotation = .pi / CGFloat(8 + 2*i)
                 plat.position = CGPoint(x:590,y:700-75*i)
             } else {
+                var yInc = 75
+                if i%3 == 0 {
+                    yInc -= 8
+                }
                 plat.zRotation = -.pi / 8
-                plat.position = CGPoint(x:490,y:700-75*i)
+                plat.position = CGPoint(x:490,y:700-yInc*i)
             }
             plat.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: w, height: 10))
             plat.physicsBody?.categoryBitMask = 2
@@ -56,14 +60,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(60), channel: 0)
             }
         } else if contact.bodyB.node?.name == "platform2" || contact.bodyA.node?.name == "platform2" {
-            conductor!.instrument.play(noteNumber: MIDINoteNumber(64), velocity: 90, channel: 0)
+            conductor!.instrument.play(noteNumber: MIDINoteNumber(63), velocity: 90, channel: 0)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(64), channel: 0)
+                self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(63), channel: 0)
             }
         } else if contact.bodyB.node?.name == "platform3" || contact.bodyA.node?.name == "platform3" {
             conductor!.instrument.play(noteNumber: MIDINoteNumber(67), velocity: 90, channel: 0)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(67), channel: 0)
+            }
+        } else if contact.bodyB.node?.name == "platform4" || contact.bodyA.node?.name == "platform4" {
+            conductor!.instrument.play(noteNumber: MIDINoteNumber(70), velocity: 90, channel: 0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(70), channel: 0)
+            }
+        } else if contact.bodyB.node?.name == "platform5" || contact.bodyA.node?.name == "platform5" {
+            conductor!.instrument.play(noteNumber: MIDINoteNumber(72), velocity: 90, channel: 0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.conductor!.instrument.stop(noteNumber: MIDINoteNumber(72), channel: 0)
             }
         } else if contact.bodyB.node?.name != "ball" || contact.bodyA.node?.name != "ball" {
             contact.bodyB.node?.removeFromParent()

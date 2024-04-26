@@ -15,7 +15,7 @@ public enum ScaleType {
 }
 
 public class ScaleNoteState :ObservableObject {
-    //@Published The UI Canvas used to pain the paino key does not get updated with published  changes. It draws direct.
+    //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
     private(set) var isPlayingMidi = true
     @Published private(set) var correctState = NoteCorrectStatus.dataIgnored
     var midi:Int
@@ -50,79 +50,123 @@ public class Scale {
         self.key = key
         scaleNoteStates = []
         var nextMidi = 0
-        if key.sharps > 0 {
-            switch key.sharps {
-            case 1:
-                nextMidi = 67
-            case 2:
-                nextMidi = 62
-            case 3:
-                nextMidi = 57  //A
-            case 4:
-                nextMidi = 64
-            default:
-                nextMidi = 60
+        if key.keyType == .major {
+            if key.sharps > 0 {
+                switch key.sharps {
+                case 1:
+                    nextMidi = 67
+                case 2:
+                    nextMidi = 62
+                case 3:
+                    nextMidi = 57  //A
+                case 4:
+                    nextMidi = 64
+                default:
+                    nextMidi = 60
+                }
+            }
+            else {
+                switch key.flats {
+                case 1:
+                    nextMidi = 65 //F
+                case 2:
+                    nextMidi = 58 //B♭
+                    //next = 70 //B♭
+                case 3:
+                    nextMidi = 63 //E♭
+                case 4:
+                    nextMidi = 56 //A♭
+                default:
+                    nextMidi = 60
+                }
             }
         }
         else {
-            switch key.flats {
-            case 1:
-                nextMidi = 65 //F
-            case 2:
-                nextMidi = 58 //B♭
-                //next = 70 //B♭
-            case 3:
-                nextMidi = 63 //E♭
-            case 4:
-                nextMidi = 56 //A♭
-            default:
-                nextMidi = 60
+            if key.sharps > 0 {
+                switch key.sharps {
+                case 1:
+                    nextMidi = 64
+                case 2:
+                    nextMidi = 59
+                case 3:
+                    nextMidi = 66  //F#
+                case 4:
+                    nextMidi = 61
+                default:
+                    nextMidi = 57
+                }
             }
-
+            else {
+                switch key.flats {
+                case 1:
+                    nextMidi = 62 //D
+                case 2:
+                    nextMidi = 67 //G
+                case 3:
+                    nextMidi = 60 //C
+                case 4:
+                    nextMidi = 65 //F
+                default:
+                    nextMidi = 60
+                }
+            }
         }
         
         ///Set midi values in scale
+        var scaleOffsets:[Int] = []
+        if scaleType == .major {
+            scaleOffsets = [2,2,1,2,2,2,2]
+        }
+        if scaleType == .naturalMinor {
+            scaleOffsets = [2,1,2,2,1,2,2]
+        }
+        if scaleType == .harmonicMinor {
+            scaleOffsets = [2,1,2,2,1,3,1]
+        }
+        if scaleType == .melodicMinor {
+            scaleOffsets = [2,1,2,2,2,2,1]
+        }
+        
         for oct in 0..<octaves {
             for i in 0..<7 {
-                scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
-                var delta = 2
-                if scaleType == .major {
-                    if [2, 6].contains(i) {
-                        delta = 1
-                    }
+                if oct == 0 {
+                    scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
+                    nextMidi += scaleOffsets[i]
                 }
-                if [ScaleType.naturalMinor, ScaleType.harmonicMinor].contains(scaleType) {
-                    if [1, 4,6].contains(i) {
-                        delta = 1
-                    }
-                    if scaleType == .harmonicMinor {
-                        if [5].contains(i) {
-                            delta = 3
-                        }
-                    }
+                else {
+                    scaleNoteStates.append(ScaleNoteState(midi: scaleNoteStates[i % 8].midi + (oct * 12)))
                 }
-
-                nextMidi += delta
             }
             if oct == octaves - 1 {
-                scaleNoteStates.append(ScaleNoteState(midi: nextMidi))
+                scaleNoteStates.append(ScaleNoteState(midi: scaleNoteStates[0].midi + (octaves) * 12))
             }
         }
         
         ///Downwards
         let up = Array(scaleNoteStates)
         for i in stride(from: up.count - 2, through: 0, by: -1) {
-            scaleNoteStates.append(up[i])
+            var downMidi = up[i].midi
+            if scaleType == .melodicMinor {
+                if i > 0 {
+                    if i % 6 == 0 {
+                        downMidi = downMidi - 1
+                    }
+                    if i % 5 == 0 {
+                        downMidi = downMidi - 1
+                    }
+                }
+            }
+            scaleNoteStates.append(ScaleNoteState(midi: downMidi))
         }
 
         setFingers()
         
         setFingerBreaks(direction: 0)
 
-//        print("==========scale", key.name)
-//        for state in self.scaleNoteStates {
-//            print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
-//        }
+        print("==========scale", key.name, key.keyType)
+        for state in self.scaleNoteStates {
+            print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
+        }
     }
     
     func resetPlayMidiStatus() {
@@ -206,8 +250,22 @@ public class Scale {
         }
     }
     
-    func getMidiIndex(midi:Int) -> Int? {
-        for i in 0..<self.scaleNoteStates.count {
+    ///Get the offset in the scale for the given midi
+    ///The search is direction specific since melodic minors have different notes in the descending direction
+    func getMidiIndex(midi:Int, direction:Int) -> Int? {
+        var endIndex:Int
+        var startIndex:Int
+        
+        if direction == 0 {
+            startIndex = 0
+            endIndex = (self.scaleNoteStates.count / 2) + 1
+        }
+        else {
+            startIndex = (self.scaleNoteStates.count / 2) - 1
+            endIndex = self.scaleNoteStates.count
+        }
+        
+        for i in startIndex..<endIndex {
             if scaleNoteStates[i].midi == midi {
                 return i
             }

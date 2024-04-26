@@ -62,7 +62,7 @@ public class Logger : ObservableObject {
                 max = m.value
             }
         }
-        print("=======MinMax", min, max)
+        Logger.shared.log(self, "MinMax, min:\(min) max:\(max)")
         DispatchQueue.main.async {
             self.maxLogValue = max
             self.minLogValue = min

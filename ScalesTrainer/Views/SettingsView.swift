@@ -18,6 +18,53 @@ public struct SettingsView: View {
         }
     }
     
+    func CallibrationView(type:CallibrationType) -> some View {
+        VStack {
+            let tapHandler = CallibrationTapHandler(type: type)
+            //let tapHandler = PitchTapHandler(requiredStartAmplitude: 0.0, scaleMatcher: nil, scale: nil)
+            let title = type == .amplitudeFilter ? "Amplitude Filter" : "Required Start Amplitude"
+            Text(title).font(.title3).padding()
+            
+            HStack {
+                Spacer()
+                Button(calibrating ? "Stop" : "Start") {
+                    calibrating.toggle()
+                    if calibrating {
+                        audioManager.startRecordingMicrophone(tapHandler: tapHandler, recordAudio: false)
+                        //ScalesModel.shared.calibrate(type: type)
+                    }
+                    else {
+                        audioManager.stopRecording()
+                    }
+                }.padding()
+                Spacer()
+            
+                if calibrating {
+                    HStack {
+                        Spacer()
+                        Text("Play Middle C a few times").font(.title3).padding()
+                        Spacer()
+                    }
+                }
+                else {
+                    if type == .amplitudeFilter {
+                        //if let req = scalesModel.amplitudeFilter {
+                            Text("Amplitude filter set at:\(String(format: "%.4f", scalesModel.amplitudeFilter))").font(.title3).padding()
+                        //}
+                    }
+                    else {
+                        if let req = scalesModel.requiredStartAmplitude {
+                            Text("Start Amplitude set at:\(String(format: "%.4f", req))").font(.title3).padding()
+                        }
+                    }
+                }
+                Spacer()
+            }
+            .commonFrameStyle(backgroundColor: .clear).padding()
+            Spacer()
+        }
+    }
+    
     public var body: some View {
         VStack {
             Spacer()
@@ -31,36 +78,10 @@ public struct SettingsView: View {
                     .foregroundColor(.blue)  // Sets the color of the icon
             }
             Spacer()
-            
-            let tapHandler = CallibrationTapHandler()
+            CallibrationView(type: .startAmplitude)
             Spacer()
-            Button(calibrating ? "Stop Calibrating" : "Start Calibrating") {
-                calibrating.toggle()
-                if calibrating {
-                    audioManager.startRecordingMicrophone(tapHandler: tapHandler)
-                }
-                else {
-                    audioManager.stopRecording()
-                }
-            }.padding()
+            CallibrationView(type: .amplitudeFilter)
             Spacer()
-            VStack {
-                if calibrating {
-                    HStack {
-                        Spacer()
-                        Text("Play Middle C a few times").font(.title).padding()
-                        Spacer()
-                    }
-                }
-                else {
-                    if let req = scalesModel.requiredStartAmplitude {
-                        Text("Heard start amplitude:\(String(format: "%.4f", req))").font(.title).padding()
-                    }
-                }
-            }
-            .commonFrameStyle(backgroundColor: .clear, borderColor: .red)
-            Spacer()
-
         }
         .sheet(isPresented: $showingHelpPopup) {
             HelpView()
