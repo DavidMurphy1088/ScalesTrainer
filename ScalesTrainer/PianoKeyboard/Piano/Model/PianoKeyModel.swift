@@ -2,14 +2,18 @@
 import SwiftUI
 
 public protocol PianoKeyViewModelDelegateProtocol {
-    var noteMidi: Int { get }
+    var firstKeyMidi: Int { get }
     var scale:Scale {get}
 }
                 
-public struct PianoKeyViewModel: Identifiable {
+public struct PianoKeyModel: Identifiable {
     let scalesModel = ScalesModel.shared
     let scale:Scale
-    @ObservedObject var midiState:ScaleNoteState
+    
+    ///A key in the scale is associated with a scale note state based on if the scale is ascending or descending
+    //@ObservedObject
+    var midiState:ScaleNoteState? = nil
+    
     let keyIndex: Int
     let delegate: PianoKeyViewModelDelegateProtocol
     
@@ -21,7 +25,7 @@ public struct PianoKeyViewModel: Identifiable {
     }
 
     public var noteMidiNumber: Int {
-        keyIndex + delegate.noteMidi
+        keyIndex + delegate.firstKeyMidi
     }
 
     public var name: String {
@@ -29,11 +33,8 @@ public struct PianoKeyViewModel: Identifiable {
     }
     
     func sequence(midi:Int) -> Int {
-        //let scale = delegate.scale
         for i in 0..<scale.scaleNoteStates.count {
             if scale.scaleNoteStates[i].midi == midi {
-                //fingerName = String(scale.fingers[i])
-                //scaleOffset = i
                 return i
             }
         }
@@ -85,7 +86,7 @@ public struct PianoKeyViewModel: Identifiable {
         return (k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 || k == 11)
     }
 
-    static func == (lhs: PianoKeyViewModel, rhs: PianoKeyViewModel) -> Bool {
+    static func == (lhs: PianoKeyModel, rhs: PianoKeyModel) -> Bool {
         lhs.id == rhs.id
     }
 }

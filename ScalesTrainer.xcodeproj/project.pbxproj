@@ -32,10 +32,10 @@
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
 		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
 		79D7C2972BD10DB500AE0B24 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2962BD10DB500AE0B24 /* Key.swift */; };
-		79D7C29E2BD1122900AE0B24 /* PianoKeyboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29D2BD1122900AE0B24 /* PianoKeyboardViewModel.swift */; };
+		79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */; };
 		79D7C2A02BD112FF00AE0B24 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29F2BD112FF00AE0B24 /* Note.swift */; };
 		79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */; };
-		79D7C2A62BD1167D00AE0B24 /* PianoKeyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A52BD1167D00AE0B24 /* PianoKeyViewModel.swift */; };
+		79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */; };
 		79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */; };
 		79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A92BD1171200AE0B24 /* TouchesView.swift */; };
 		79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */; };
@@ -74,10 +74,10 @@
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
 		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		79D7C2962BD10DB500AE0B24 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
-		79D7C29D2BD1122900AE0B24 /* PianoKeyboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardViewModel.swift; sourceTree = "<group>"; };
+		79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardModel.swift; sourceTree = "<group>"; };
 		79D7C29F2BD112FF00AE0B24 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardView.swift; sourceTree = "<group>"; };
-		79D7C2A52BD1167D00AE0B24 /* PianoKeyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyViewModel.swift; sourceTree = "<group>"; };
+		79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyModel.swift; sourceTree = "<group>"; };
 		79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornersShape.swift; sourceTree = "<group>"; };
 		79D7C2A92BD1171200AE0B24 /* TouchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchesView.swift; sourceTree = "<group>"; };
 		79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassicStyle.swift; sourceTree = "<group>"; };
@@ -145,8 +145,8 @@
 			isa = PBXGroup;
 			children = (
 				79D7C29F2BD112FF00AE0B24 /* Note.swift */,
-				79D7C29D2BD1122900AE0B24 /* PianoKeyboardViewModel.swift */,
-				79D7C2A52BD1167D00AE0B24 /* PianoKeyViewModel.swift */,
+				79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */,
+				79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -328,12 +328,12 @@
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
-				79D7C29E2BD1122900AE0B24 /* PianoKeyboardViewModel.swift in Sources */,
+				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* ResultView.swift in Sources */,
 				790D5A252BD2319C00C31A8F /* SettingsView.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
-				79D7C2A62BD1167D00AE0B24 /* PianoKeyViewModel.swift in Sources */,
+				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,

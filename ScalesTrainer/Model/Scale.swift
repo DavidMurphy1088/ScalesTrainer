@@ -30,16 +30,18 @@ public class ScaleNoteState :ObservableObject, Hashable {
         self.midi = midi
         isPlayingMidi = false
     }
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
+    
     public static func == (lhs: ScaleNoteState, rhs: ScaleNoteState) -> Bool {
         return rhs.id == lhs.id
     }
     
     public func setPlayingMidi(_ way:Bool) {
         //DispatchQueue.main.async {
-            //print("====>>> setPlayMidi", self.midi, way)
+            ///Canvas is direct draw, not background thread draw)
             self.isPlayingMidi = way
         //}
     }
@@ -271,17 +273,22 @@ public class Scale {
     
     ///Get the offset in the scale for the given midi
     ///The search is direction specific since melodic minors have different notes in the descending direction
+    ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
+    ///For descending C 1-octave returns same 8 notes
     func getMidiIndex(midi:Int, direction:Int) -> Int? {
         var endIndex:Int
         var startIndex:Int
-        
+        let cnt = self.scaleNoteStates.count
+        if cnt == 0 {
+            return nil
+        }
         if direction == 0 {
             startIndex = 0
-            endIndex = (self.scaleNoteStates.count / 2) + 1
+            endIndex = (cnt / 2) + 1
         }
         else {
-            startIndex = (self.scaleNoteStates.count / 2) + 1
-            endIndex = self.scaleNoteStates.count 
+            startIndex = (cnt / 2) ///Middle scale note is returned in both ascending and descending
+            endIndex = cnt
         }
         
         for i in startIndex..<endIndex {

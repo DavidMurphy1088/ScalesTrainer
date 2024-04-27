@@ -8,7 +8,7 @@ public protocol KeyboardStyle {
     func naturalColor(_ down: Bool) -> Color
     func sharpFlatColor(_ down: Bool) -> Color
     func labelColor(_ noteNumber: Int) -> Color
-    func layout(viewModel: PianoKeyboardViewModel, geometry: GeometryProxy) -> Layout
+    func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> Layout
 }
 
 public struct ClassicStyle: KeyboardStyle {
@@ -56,7 +56,7 @@ public struct ClassicStyle: KeyboardStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    public func layout(viewModel: PianoKeyboardViewModel, geometry: GeometryProxy) -> some View {
+    public func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let width = size.width
             let height = size.height
@@ -102,42 +102,50 @@ public struct ClassicStyle: KeyboardStyle {
                         )
                         
                         context.draw(
-                            //Text(key.finger).font(.title.bold()).foregroundColor(Color.green),
-                            Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
+                            Text(key.finger).foregroundColor(key.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
                         )
 
-                        if key.midiState.isPlayingMidi {
-                            var innerContext = context
-                            let rad = rect.height * 0.05
-                            let w = 2.0 * rad
-                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
-                                               y: rect.origin.y + rect.height * 0.80 - rad, width: w, height: w)
-                            if let image = UIImage(systemName: "star") {
-                                let drawingImage = Image(uiImage: image)
-                                context.draw(drawingImage, in: frame)
+//                        if key.midiState.isPlayingMidi {
+//                            var innerContext = context
+//                            let rad = rect.height * 0.05
+//                            let w = 2.0 * rad
+//                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
+//                                               y: rect.origin.y + rect.height * 0.80 - rad, width: w, height: w)
+//                            if let image = UIImage(systemName: "star") {
+//                                let drawingImage = Image(uiImage: image)
+//                                context.draw(drawingImage, in: frame)
+//                            }
+//                        }
+                        if let state = key.midiState {
+                            if state.isPlayingMidi {
+                                let innerContext = context
+                                let rad = rect.height * 0.05
+                                let w = 2.5 * rad
+                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
+                                
+                                innerContext.stroke(
+                                    Path(ellipseIn: frame),
+                                    with: .color(key.fingerSequenceBreak ? Color.orange : Color.green),
+                                    lineWidth: 3)
                             }
                         }
-                        
-                        if key.fingerSequenceBreak {
-                            var innerContext = context
-                            let rad = rect.height * 0.05
-                            let w = 2.0 * rad
-                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad, y: rect.origin.y + rect.height * 0.90 - rad, width: w, height: w)
-                            
-                            innerContext.stroke(
-                                Path(ellipseIn: frame),
-                                with: .color(.green),
-                                lineWidth: 2)
-                            var innerContext1 = context
-                            innerContext1.opacity = 0.3
-                            innerContext1.fill(Path(ellipseIn: frame), with: .color(.yellow))
-                        }
+
+//                        if key.fingerSequenceBreak {
+//                            var innerContext = context
+//                            let rad = rect.height * 0.05
+//                            let w = 2.5 * rad
+//                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
+//                            
+//                            innerContext.stroke(
+//                                Path(ellipseIn: frame),
+//                                with: .color(.orange),
+//                                lineWidth: 3)
+//                        }
                     }
                 }
 
                 xpos += naturalXIncr
-
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }
 
@@ -187,20 +195,20 @@ public struct ClassicStyle: KeyboardStyle {
                         
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(color),
-                            //at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.88)
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
                             
                         )
-                        
-                        if key.midiState.isPlayingMidi {
-                            var innerContext = context
-                            let rad = rect.height * 0.05
-                            let w = 2.0 * rad
-                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
-                                               y: rect.origin.y + rect.height * 0.30 - rad, width: w, height: w)
-                            if let image = UIImage(systemName: "star") {
-                                let drawingImage = Image(uiImage: image)
-                                context.draw(drawingImage, in: frame)
+                        if let state = key.midiState {
+                            if state.isPlayingMidi {
+                                //var innerContext = context
+                                let rad = rect.height * 0.05
+                                let w = 2.0 * rad
+                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
+                                                   y: rect.origin.y + rect.height * 0.30 - rad, width: w, height: w)
+                                if let image = UIImage(systemName: "star") {
+                                    let drawingImage = Image(uiImage: image)
+                                    context.draw(drawingImage, in: frame)
+                                }
                             }
                         }
                         
@@ -208,28 +216,19 @@ public struct ClassicStyle: KeyboardStyle {
                         let w = 2.0 * rad
                         let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad, y: rect.origin.y + rect.height * 0.75 - rad, width: w, height: w)
                         
+                        ///Finger number background
+                        
+                        var innerContext = context
+                        var innerContext1 = context
+                        innerContext1.opacity = 0.9
+                        innerContext1.fill(Path(ellipseIn: frame), with: .color(.white))
                         if key.fingerSequenceBreak {
-                            var innerContext = context
-                            var innerContext1 = context
-                            innerContext1.opacity = 0.8
-                            innerContext1.fill(Path(ellipseIn: frame), with: .color(.yellow))
-
                             innerContext.stroke(
                                 Path(ellipseIn: frame),
-                                with: .color(.green),
-                                lineWidth: 2)
+                                with: .color(.orange),
+                                lineWidth: 3)
                         }
-                        else {
-                            var innerContext = context
-                            var innerContext1 = context
-                            innerContext1.opacity = 0.6
-                            innerContext1.fill(Path(ellipseIn: frame), with: .color(.white))
 
-//                            innerContext.stroke(
-//                                Path(ellipseIn: frame),
-//                                with: .color(.white),
-//                                lineWidth: 2)
-                        }
                         context.draw(
                             Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)

@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 
 struct TouchesView: UIViewRepresentable {
-    var viewModel: PianoKeyboardViewModel
+    var viewModel: PianoKeyboardModel
 
     func makeUIView(context: Context) -> TouchesUIView {
         let touchesUIView = TouchesUIView()

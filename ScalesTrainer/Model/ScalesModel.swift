@@ -11,17 +11,13 @@ public class Result : ObservableObject {
         self.notInScale = notInScale
     }
     
-//    func updateResult(correct : Int, wrong: Int) {
-//        DispatchQueue.main.async {
-//            self.correctCount += correct
-//            self.wrongCount += wrong
-//        }
-//    }
 }
 
 public class ScalesModel : ObservableObject {
-    public static var shared = ScalesModel()
-
+    static public var shared = ScalesModel()
+    
+    var scale:Scale
+    
     @Published var requiredStartAmplitude:Double? = nil
     @Published var amplitudeFilter:Double = 0.0
     
@@ -30,8 +26,6 @@ public class ScalesModel : ObservableObject {
     @Published var recordingAvailable = false
     @Published var speechLastWord = ""
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
-
-    var scale:Scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
     
     var result:Result? = nil
     
@@ -47,7 +41,7 @@ public class ScalesModel : ObservableObject {
     var handTypes = ["Right Hand", "Left Hand"]
 
     let octaveNumberValues = [1,2,3,4]
-    let selectedOctaves = 0
+    var selectedOctavesIndex = 0
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -65,6 +59,10 @@ public class ScalesModel : ObservableObject {
     @Published var listening = false
 
     init() {
+        scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
+        DispatchQueue.main.async {
+            PianoKeyboardModel.shared.configureKeyboardSize()
+        }
         var value = UserDefaults.standard.double(forKey: "requiredStartAmplitude")
         if value > 0 {
             self.requiredStartAmplitude = value
@@ -114,7 +112,7 @@ public class ScalesModel : ObservableObject {
             return
         }
         speechCommandsReceived += 1
-        var m = "Process speech. commandCtr:\(speechCommandsReceived) Words:\(words)"
+        let m = "Process speech. commandCtr:\(speechCommandsReceived) Words:\(words)"
         logger.log(self, m)
         if words[0].uppercased() == "START" {
             speechManager.stopAudioEngine()
@@ -128,10 +126,10 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func setScale(octaveIndex:Int) {
+    func setScale() {
         //let key = Key(name: selectedKey, keyType: .major)
         var scaleType:ScaleType = .major
-        switch selectedScaleType {
+        switch self.selectedScaleType {
         case 1:
             scaleType = .naturalMinor
         case 2:
@@ -143,7 +141,8 @@ public class ScalesModel : ObservableObject {
         }
         self.scale = Scale(key: self.selectedKey,
                            scaleType: scaleType,
-                           octaves: octaveIndex + 1)
+                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
+        PianoKeyboardModel.shared.configureKeyboardSize()
     }
     
     func getScaleMatcher() -> ScaleMatcher  {

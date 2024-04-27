@@ -99,7 +99,7 @@ public class Logger : ObservableObject {
 
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
         let msg = String(describing: type(of: reporter)) + ":" + msg
-        let strVal = value == nil ? "_" : String(format: "%.2f", value!)
+        //let strVal = value == nil ? "_" : String(format: "%.2f", value!)
         print("\(getTime()) \(msg)")//  val:\(strVal)")
         DispatchQueue.main.async {
             let val:Double = value == nil ? 0 : value!

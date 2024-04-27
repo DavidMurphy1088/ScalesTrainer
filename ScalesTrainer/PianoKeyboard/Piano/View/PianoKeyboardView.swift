@@ -4,10 +4,10 @@ import UIKit
 
 public struct PianoKeyboardView : View {
     @ObservedObject var scalesModel: ScalesModel
-    @ObservedObject private var viewModel: PianoKeyboardViewModel
+    @ObservedObject private var viewModel: PianoKeyboardModel
     var style = ClassicStyle() //T
 
-    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardViewModel) {// //, //= PianoKeyboardViewModel()) {
+    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardModel) {// //, //= PianoKeyboardViewModel()) {
         self.scalesModel = scalesModel
         self.viewModel = viewModel
     }

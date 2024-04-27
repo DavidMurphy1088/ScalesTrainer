@@ -25,11 +25,14 @@ class MatchType {
 public class UnMatchedType: Hashable {
     var notePlayedSequence:Int
     var midi:Int
+    var amplitude:Float
     
-    init(notePlayedSequence:Int, midi:Int) {
+    init(notePlayedSequence:Int, midi:Int, amplitude:Float) {
         self.notePlayedSequence = notePlayedSequence
         self.midi = midi
+        self.amplitude = amplitude
     }
+    
     public static func == (lhs: UnMatchedType, rhs: UnMatchedType) -> Bool {
         return lhs.notePlayedSequence == rhs.notePlayedSequence
     }
@@ -91,7 +94,7 @@ class ScaleMatcher : ObservableObject {
         return res
     }
 
-    func match(timestamp:Date, midis:[Int]) -> MatchType {
+    func match(timestamp:Date, midis:[Int], ampl:[Float]) -> MatchType {
         let inputMidi = midis[0]
         var matchedInScale = false
         var match = MatchType(.dataIgnored, nil)
@@ -114,7 +117,7 @@ class ScaleMatcher : ObservableObject {
                             print("========== Descending")
                         }
                     }
-                    
+                    //72 matches on index 7 then the next 72 (right after) matches index 14 since mode is now descending so the last note iat index 0 is never matched
                     lastGoodMidi = midiOctave
                     if !ascending && inputMidi == scale.scaleNoteStates[0].midi {
                         DispatchQueue.main.async {
@@ -131,7 +134,7 @@ class ScaleMatcher : ObservableObject {
         }
         if !matchedInScale {
             //if !unMatchedToScale.contains(inputMidi) {
-            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi))
+            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi, amplitude: ampl[0]))
             //}
             match.status = .wrongNote
         }

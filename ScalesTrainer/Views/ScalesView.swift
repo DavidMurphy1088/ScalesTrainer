@@ -27,7 +27,8 @@ struct SpeechView : View {
 
 struct ScalesView: View {
     @ObservedObject private var scalesModel = ScalesModel.shared
-    @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardViewModel
+    private var keyboardModel = PianoKeyboardModel.shared
+    @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
     @ObservedObject private var speech = SpeechManager.shared
     @ObservedObject private var metronome = MetronomeModel.shared
 
@@ -53,37 +54,7 @@ struct ScalesView: View {
     @State var showResult = false
     
     init() {
-        self.pianoKeyboardViewModel = PianoKeyboardViewModel()
-        //configureKeyboard(key: Key(sharps: 0, flats: 0, type: .major))
-        configureKeyboard()
-        //configureKeyboard(key: "D", octaves: 1)
-    }
-    
-    func configureKeyboard() {
-        DispatchQueue.main.async {
-            //let keyName = scalesModel.keyValues[scalesModel.selectedKey]
-            //let key = Key(name: keyName, keyType:.major)
-            //if ["C", "D", "E"].contains(keyName) {
-            pianoKeyboardViewModel.noteMidi = 60
-            //}
-            if ["G", "A", "F", "B♭", "A♭"].contains(scalesModel.selectedKey.name) {
-                pianoKeyboardViewModel.noteMidi = 65
-                if ["A", "B♭", "A♭"].contains(scalesModel.selectedKey.name) {
-                    pianoKeyboardViewModel.noteMidi -= 12
-                }
-            }
-            var numKeys = (scalesModel.octaveNumberValues[octaveNumberIndex] * 12) + 1
-            numKeys += 2
-            if ["E", "G", "A", "A♭", "E♭"].contains(scalesModel.selectedKey.name) {
-                numKeys += 4
-            }
-            if ["B", "B♭"].contains(scalesModel.selectedKey.name) {
-                numKeys += 6
-            }
-            pianoKeyboardViewModel.numberOfKeys = numKeys
-            pianoKeyboardViewModel.showLabels = true
-            pianoKeyboardViewModel.setScale(scale: scalesModel.scale)
-        }
+        self.pianoKeyboardViewModel = PianoKeyboardModel.shared
     }
     
     func SelectScaleView() -> some View {
@@ -98,8 +69,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: keyIndex, {
                 scalesModel.setKey(index: keyIndex)
-                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
-                self.configureKeyboard()
+                scalesModel.setScale()
             })
             
             Spacer()
@@ -112,8 +82,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: scaleTypeIndex, {
                 scalesModel.selectedScaleType = scaleTypeIndex
-                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
-                self.configureKeyboard()
+                scalesModel.setScale()
             })
             
             Spacer()
@@ -125,8 +94,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
-                scalesModel.setScale(octaveIndex: self.octaveNumberIndex)
-                self.configureKeyboard()
+                scalesModel.setScale()
             })
             
             Spacer()
@@ -148,7 +116,8 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setDirection(self.directionIndex)
-                self.configureKeyboard()
+                //keyboardModel.configureKeyboardSize()
+                keyboardModel.configureKeysToScaleNotes(direction: ScalesModel.shared.selectedDirection)
             })
 
             Spacer()
@@ -232,7 +201,7 @@ struct ScalesView: View {
                         }
                     }.padding()
                     
-                    if let result = scalesModel.result {
+                    if scalesModel.result != nil {
                         Spacer()
                         Button("Show Result") {
                             showResult = true

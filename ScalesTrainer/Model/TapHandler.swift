@@ -133,7 +133,7 @@ class PitchTapHandler : TapHandler {
         msg += "  MIDI \(String(describing: midi))"
         
         if let scaleMatcher = scaleMatcher {
-            let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi])
+            let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi], ampl: amplitudes)
 
             msg += "\t\(matchedStatus.dispStatus())"
             if let message = matchedStatus.msg {
@@ -267,7 +267,7 @@ class FFTTapHandler :TapHandler {
         }
         else {
             if let scaleMatcher = scaleMatcher {
-                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest)
+                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest, ampl: frequencyAmplitudes)
                 logMsg += "\t\(matchedStatus.dispStatus())"
                 if let message = matchedStatus.msg {
                     logMsg += "  " + message //"\t \(message)"

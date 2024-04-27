@@ -4,6 +4,11 @@ import SwiftUI
 struct ResultView: View {
     @ObservedObject var result:Result
     
+    func toStr(_ unmatch:UnMatchedType) -> String {
+        let amp = String(format: "%.4f", unmatch.amplitude)
+        return "Index:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi) Ampl:\(amp)"
+    }
+    
     var body: some View {
         VStack {
             Text("Result \(result.scale.key.getName())").font(.title)
@@ -15,7 +20,7 @@ struct ResultView: View {
             }
             Text("Not in Scale").foregroundColor(Color .blue).padding()
             ForEach(result.notInScale, id: \.self) { unmatch in
-                Text("Index:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi)")
+                Text(toStr(unmatch))
             }
 
         }
