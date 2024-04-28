@@ -146,8 +146,11 @@ class PitchTapHandler : TapHandler {
         else {
             if let scale = scale {
                 if let index = scale.getMidiIndex(midi: midi, direction: ScalesModel.shared.selectedDirection) {
-                    let status = scale.scaleNoteStates[index]
-                    status.setPlayingMidi(true)
+                    let scaleNote = scale.scaleNoteStates[index]
+                    scaleNote.setPlayingMidi(true)
+//                    DispatchQueue.main.async {
+//                        scaleNote.repaint1 = true
+//                    }
                     ScalesModel.shared.forceRepaint()
                 }
             }

@@ -1,17 +1,17 @@
 import SwiftUI
 import SwiftUI
 
-public protocol KeyboardStyle {
-    associatedtype Layout: View
+//public protocol KeyboardStyle {
+//    associatedtype Layout: View
+//
+//    var naturalKeySpace: CGFloat { get }
+//    func naturalColor(_ down: Bool) -> Color
+//    func sharpFlatColor(_ down: Bool) -> Color
+//    func labelColor(_ noteNumber: Int) -> Color
+//    func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> Layout
+//}
 
-    var naturalKeySpace: CGFloat { get }
-    func naturalColor(_ down: Bool) -> Color
-    func sharpFlatColor(_ down: Bool) -> Color
-    func labelColor(_ noteNumber: Int) -> Color
-    func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> Layout
-}
-
-public struct ClassicStyle: KeyboardStyle {
+public struct ClassicStyle {
     let sfKeyWidthMultiplier: CGFloat
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
@@ -56,7 +56,7 @@ public struct ClassicStyle: KeyboardStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    public func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
+    public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let width = size.width
             let height = size.height
@@ -68,7 +68,7 @@ public struct ClassicStyle: KeyboardStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-            
+
             for (index, key) in viewModel.keys.enumerated() {
                 guard key.isNatural else {
                     continue
@@ -78,7 +78,7 @@ public struct ClassicStyle: KeyboardStyle {
                     origin: CGPoint(x: xpos, y: 0),
                     size: CGSize(width: naturalWidth, height: height)
                 )
-                //print(index, key.noteNumber, key.keyIndex, key.name)
+
                 let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
                     .path(in: rect)
 
@@ -95,56 +95,31 @@ public struct ClassicStyle: KeyboardStyle {
 
                 if viewModel.showLabels {
                     let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
-                    if key.finger.count > 0 {
+                    if let scaleNote = key.scaleNote {
+                        
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(color),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
                         )
                         
                         context.draw(
-                            Text(key.finger).foregroundColor(key.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
+                            Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
                         )
 
-//                        if key.midiState.isPlayingMidi {
-//                            var innerContext = context
-//                            let rad = rect.height * 0.05
-//                            let w = 2.0 * rad
-//                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
-//                                               y: rect.origin.y + rect.height * 0.80 - rad, width: w, height: w)
-//                            if let image = UIImage(systemName: "star") {
-//                                let drawingImage = Image(uiImage: image)
-//                                context.draw(drawingImage, in: frame)
-//                            }
-//                        }
-                        if let state = key.midiState {
-                            if state.isPlayingMidi {
-                                let innerContext = context
-                                let rad = rect.height * 0.05
-                                let w = 2.5 * rad
-                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
-                                
-                                innerContext.stroke(
-                                    Path(ellipseIn: frame),
-                                    with: .color(key.fingerSequenceBreak ? Color.orange : Color.green),
-                                    lineWidth: 3)
-                            }
+                        if scaleNote.isPlayingMidi {
+                            let innerContext = context
+                            let rad = rect.height * 0.05
+                            let w = 2.5 * rad
+                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
+                            
+                            innerContext.stroke(
+                                Path(ellipseIn: frame),
+                                with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
+                                lineWidth: 3)
                         }
-
-//                        if key.fingerSequenceBreak {
-//                            var innerContext = context
-//                            let rad = rect.height * 0.05
-//                            let w = 2.5 * rad
-//                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
-//                            
-//                            innerContext.stroke(
-//                                Path(ellipseIn: frame),
-//                                with: .color(.orange),
-//                                lineWidth: 3)
-//                        }
                     }
                 }
-
                 xpos += naturalXIncr
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }
@@ -198,41 +173,23 @@ public struct ClassicStyle: KeyboardStyle {
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
                             
                         )
-                        if let state = key.midiState {
-                            if state.isPlayingMidi {
-                                //var innerContext = context
+                        if let scaleNote = key.scaleNote {
+                            context.draw(
+                                Text(key.finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
+                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
+                            )
+                            if scaleNote.isPlayingMidi {
+                                let innerContext = context
                                 let rad = rect.height * 0.05
-                                let w = 2.0 * rad
-                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad,
-                                                   y: rect.origin.y + rect.height * 0.30 - rad, width: w, height: w)
-                                if let image = UIImage(systemName: "star") {
-                                    let drawingImage = Image(uiImage: image)
-                                    context.draw(drawingImage, in: frame)
-                                }
+                                let w = 4.0 * rad
+                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.75 - w/2, width: w, height: w)
+                                
+                                innerContext.stroke(
+                                    Path(ellipseIn: frame),
+                                    with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
+                                    lineWidth: 3)
                             }
                         }
-                        
-                        let rad = rect.height * 0.08
-                        let w = 2.0 * rad
-                        let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - rad, y: rect.origin.y + rect.height * 0.75 - rad, width: w, height: w)
-                        
-                        ///Finger number background
-                        
-                        var innerContext = context
-                        var innerContext1 = context
-                        innerContext1.opacity = 0.9
-                        innerContext1.fill(Path(ellipseIn: frame), with: .color(.white))
-                        if key.fingerSequenceBreak {
-                            innerContext.stroke(
-                                Path(ellipseIn: frame),
-                                with: .color(.orange),
-                                lineWidth: 3)
-                        }
-
-                        context.draw(
-                            Text(key.finger).foregroundColor(Color.green).font(.title).bold(),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
-                        )
                     }
                 }
 

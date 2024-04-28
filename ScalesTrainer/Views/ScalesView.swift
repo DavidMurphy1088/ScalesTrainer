@@ -116,8 +116,8 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setDirection(self.directionIndex)
-                //keyboardModel.configureKeyboardSize()
-                keyboardModel.configureKeysToScaleNotes(direction: ScalesModel.shared.selectedDirection)
+                keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
+                scalesModel.forceRepaint()
             })
 
             Spacer()

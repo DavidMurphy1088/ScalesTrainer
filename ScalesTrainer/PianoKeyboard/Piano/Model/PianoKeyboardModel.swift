@@ -45,66 +45,68 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
     }
     
     func configureKeyboardSize() {
-        DispatchQueue.main.async {
-            self.scale = self.scalesModel.scale
-            self.firstKeyMidi = 60
-            if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
-                self.firstKeyMidi = 65
-                if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
-                    self.firstKeyMidi -= 12
-                }
+        self.scale = self.scalesModel.scale
+        self.firstKeyMidi = 60
+        if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
+            self.firstKeyMidi = 65
+            if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
+                self.firstKeyMidi -= 12
             }
-            var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
-            numKeys += 2
-            if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.selectedKey.name) {
-                numKeys += 4
-            }
-            if ["B", "B♭"].contains(self.scalesModel.selectedKey.name) {
-                numKeys += 6
-            }
-            self.numberOfKeys = numKeys
-            self.showLabels = true
-            //self.keys = Array(repeating: ExampleClass(value: 0), count: 10)            
-            self.configureKeysToScaleNotes1(direction: 0)
         }
+        var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
+        numKeys += 2
+        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.selectedKey.name) {
+            numKeys += 4
+        }
+        if ["B", "B♭"].contains(self.scalesModel.selectedKey.name) {
+            numKeys += 6
+        }
+        self.numberOfKeys = numKeys
+        self.showLabels = true
+        //self.keys = Array(repeating: ExampleClass(value: 0), count: 10)
+        self.createPianoKeys()
+        self.mapPianoKeysToScaleNotes(direction: self.scalesModel.selectedDirection)
+        //self.scalesModel.forceRepaint()
     }
     
-    ///Map a key to each note in the scale. Some keys dont have notes.
+    ///Create each piano key and map to each note in the scale. Some piano keys dont have notes.
     ///Mapping may be different for descending - e.g. melodic minor
-    private func configureKeysToScaleNotes1(direction: Int) {
+    private func createPianoKeys() {
         self.keys = []
         let scale = ScalesModel.shared.scale
         let startMidi = self.firstKeyMidi
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         
         for i in 0..<numberOfKeys {
-            let midi = startMidi + i
-            var state:ScaleNoteState? = nil
-            if let seq = scale.getMidiIndex(midi: midi, direction: scalesModel.selectedDirection) {
-                state = scale.scaleNoteStates[seq]
-            }
-            let keyIndex = i
+//            let midi = startMidi + i
+//            var scaleNote:ScaleNoteState? = nil
+//            if let seq = scale.getMidiIndex(midi: midi, direction: scalesModel.selectedDirection) {
+//                scaleNote = scale.scaleNoteStates[seq]
+//            }
+//            scaleNote = ScaleNoteState(sequence: 0, midi: 62)
+//            scaleNote?.finger = 7
+//            let keyIndex = i
             let model = PianoKeyModel(scale: scale,
-                                          midiState: state, //?????????????????????? GEt rid of TODO
-                                          keyIndex: keyIndex,
+                                          scaleNote: nil,
+                                          keyIndex: i,
                                           delegate: self)
+
             self.keys.append(model)
         }
     }
     
-    public func configureKeysToScaleNotes(direction: Int) {
-        DispatchQueue.main.async {
-            for i in 0..<self.keys.count {
-                var model = self.keys[i]
-                let midi = model.id
-                if let stateIndex = self.scale.getMidiIndex(midi: midi, direction: direction) {
-                    model.midiState = self.scale.scaleNoteStates[stateIndex]
-                }
-                else {
-                    model.midiState = nil
-                }
+    public func mapPianoKeysToScaleNotes(direction: Int) {
+        //print("====== mapPianoKeysToScaleNotes dir:\(direction)")
+        for i in 0..<self.keys.count {
+            var key = self.keys[i]
+            if let seq = scale.getMidiIndex(midi: key.id, direction: direction) {
+                let scaleNote = scale.scaleNoteStates[seq]
+                key.scaleNote = scaleNote
+                //print("=== mapped keyboard note:", i, key.id, "==> scaleNote:", seq, scaleNote.midi, "finger:", scaleNote.finger, scaleNote.fingerSequenceBreak)
             }
-            ScalesModel.shared.forceRepaint()
+            else {
+                key.scaleNote = nil
+            }
         }
     }
     

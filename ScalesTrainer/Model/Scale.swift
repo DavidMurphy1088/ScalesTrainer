@@ -19,7 +19,6 @@ public class ScaleNoteState :ObservableObject, Hashable {
     let sequence:Int
     //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
     private(set) var isPlayingMidi = true
-    @Published private(set) var correctState = NoteCorrectStatus.dataIgnored
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
@@ -45,12 +44,7 @@ public class ScaleNoteState :ObservableObject, Hashable {
             self.isPlayingMidi = way
         //}
     }
-    
-    public func setCorrectState(_ way:NoteCorrectStatus) {
-        DispatchQueue.main.async {
-            self.correctState = way
-        }
-    }
+
 }
 
 public class Scale {
@@ -177,8 +171,11 @@ public class Scale {
         setFingers()
         
         setFingerBreaks(direction: 0)
-
-        print("==========scale", key.name, key.keyType)
+        debug("Constructor")
+    }
+    
+    func debug(_ msg:String) {
+        print("==========scale \(msg)", key.name, key.keyType)
         for state in self.scaleNoteStates {
             print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
         }
@@ -199,19 +196,18 @@ public class Scale {
     ///Calculate finger sequence breaks
     ///Only calculated for ascending. Descending view assumes break is on key one below ascending break key
     func setFingerBreaks(direction:Int) {
-        if direction == 0 {
-            var lastFinger = self.scaleNoteStates[0].finger
-            for i in 1..<self.scaleNoteStates.count/2 {
-                let finger = self.scaleNoteStates[i].finger
-                let diff = abs(finger - lastFinger)
-                if diff > 1 {
-                    self.scaleNoteStates[i].fingerSequenceBreak = true
-                }
-                else {
-                    self.scaleNoteStates[i].fingerSequenceBreak = false
-                }
-                lastFinger = self.scaleNoteStates[i].finger
+        for note in self.scaleNoteStates {
+            note.fingerSequenceBreak = false
+        }
+        var lastFinger = self.scaleNoteStates[0].finger
+        for i in 1..<self.scaleNoteStates.count/2 {
+            let finger = self.scaleNoteStates[i].finger
+            let diff = abs(finger - lastFinger)
+            if diff > 1 {
+                self.scaleNoteStates[i].fingerSequenceBreak = true
+                self.scaleNoteStates[self.scaleNoteStates.count - i].fingerSequenceBreak = true
             }
+            lastFinger = self.scaleNoteStates[i].finger
         }
     }
     
