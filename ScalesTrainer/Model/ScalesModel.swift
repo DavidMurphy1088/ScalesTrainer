@@ -159,7 +159,6 @@ public class ScalesModel : ObservableObject {
             Logger.shared.log(self, "Start listening")
             DispatchQueue.main.async {
                 self.listening = true
-                //self.recordingAvailable = false
             }
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: nil, scale:self.scale)
             self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: false)

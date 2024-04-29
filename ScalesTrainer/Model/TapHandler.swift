@@ -80,12 +80,12 @@ class CallibrationTapHandler : TapHandler {
 }
 
 class PitchTapHandler : TapHandler {
-    //let scalesModel = ScalesModel.shared
     let scaleMatcher:ScaleMatcher?
     let scale:Scale?
     var wrongNoteFound = false
     var firstTap = true
     let requiredStartAmplitude:Double
+    var lastNotePlayed:ScaleNoteState?
     
     init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?, scale:Scale?) {
         self.scaleMatcher = scaleMatcher
@@ -101,11 +101,6 @@ class PitchTapHandler : TapHandler {
     }
     
     override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        
-//        if wrongNoteFound {
-//            return
-//        }
-        
         var frequency:Float
         var amplitude:Float
         if amplitudes[0] > amplitudes[1] {
@@ -147,11 +142,12 @@ class PitchTapHandler : TapHandler {
             if let scale = scale {
                 if let index = scale.getMidiIndex(midi: midi, direction: ScalesModel.shared.selectedDirection) {
                     let scaleNote = scale.scaleNoteStates[index]
+                    if let lastNotePlayed = lastNotePlayed {
+                        lastNotePlayed.setPlayingMidi(false)
+                    }
                     scaleNote.setPlayingMidi(true)
-//                    DispatchQueue.main.async {
-//                        scaleNote.repaint1 = true
-//                    }
                     ScalesModel.shared.forceRepaint()
+                    lastNotePlayed = scaleNote
                 }
             }
         }

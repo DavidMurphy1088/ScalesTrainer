@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>149</string>
+					<string>162</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>148</string>
+					<string>161</string>
 					<key>Timestamp</key>
-					<string>735993230.056469</string>
+					<string>736065101.506116</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -42,8 +42,8 @@
 </string>
 				<key>trailing</key>
 				<string>                Spacer()
-                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
-                    if metronome.playingScale {
+               
+                Button(scalesModel.listening ? "Stop Listening" : "Listen") {
 </string>
 			</dict>
 			<key>type</key>

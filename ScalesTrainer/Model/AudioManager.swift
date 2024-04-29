@@ -150,7 +150,6 @@ class AudioManager {
     }
     
     func playRecordedFile() {
-        
         if let file = recorder?.audioFile {
             startEngine()
             try? audioPlayer.load(file: file)
@@ -195,7 +194,6 @@ class AudioManager {
                     }
                 }
             }
-            //tap?.start()
         }
 //        if tapHandler is FFTTapHandler {
 //            let node:Node

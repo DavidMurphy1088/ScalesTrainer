@@ -1,6 +1,8 @@
 import Foundation
 import Speech
 import Combine
+import Accelerate
+import AVFoundation
 
 class MetronomeModel: ObservableObject {
     public static let shared = MetronomeModel()
@@ -74,5 +76,32 @@ class MetronomeModel: ObservableObject {
         isRunning = false
         timer?.cancel()
         timer = nil
+    }
+    
+    func countIn() {
+        var audioPlayers:[AVAudioPlayer] = []
+        let clapURL = Bundle.module.url(forResource: name, withExtension: ext)
+        guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "aiff") else {
+            print("File not found.")
+            return
+        }
+
+        if clapURL == nil {
+            Logger.logger.reportError(self, "Cannot load resource \(name)")
+        }
+        for _ in 0..<numAudioPlayers {
+            do {
+                let audioPlayer = try AVAudioPlayer(contentsOf: clapURL!)
+                audioPlayers.append(audioPlayer)
+                audioPlayer.prepareToPlay()
+                audioPlayer.volume = 1.0 // Set the volume to full
+                audioPlayer.rate = 2.0
+            }
+            catch  {
+                Logger.logger.reportError(self, "Cannot prepare AVAudioPlayer")
+            }
+        }
+        Logger.logger.log(self, "Loaded \(numAudioPlayers) audio players")
+        return audioPlayers
     }
 }

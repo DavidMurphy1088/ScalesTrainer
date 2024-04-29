@@ -18,7 +18,7 @@ public struct SettingsView: View {
         }
     }
     
-    func CallibrationView(type:CallibrationType) -> some View {
+    func CallibrationView(type:CallibrationType, instruction:String) -> some View {
         VStack {
             let tapHandler = CallibrationTapHandler(type: type)
             //let tapHandler = PitchTapHandler(requiredStartAmplitude: 0.0, scaleMatcher: nil, scale: nil)
@@ -27,7 +27,7 @@ public struct SettingsView: View {
             
             HStack {
                 Spacer()
-                Button(calibrating ? "Stop" : "Start") {
+                Button(calibrating ? "Stop" : "Start Calibration") {
                     calibrating.toggle()
                     if calibrating {
                         audioManager.startRecordingMicrophone(tapHandler: tapHandler, recordAudio: false)
@@ -42,7 +42,7 @@ public struct SettingsView: View {
                 if calibrating {
                     HStack {
                         Spacer()
-                        Text("Play Middle C a few times").font(.title3).padding()
+                        Text(instruction).font(.title3).padding()
                         Spacer()
                     }
                 }
@@ -78,9 +78,9 @@ public struct SettingsView: View {
                     .foregroundColor(.blue)  // Sets the color of the icon
             }
             Spacer()
-            CallibrationView(type: .startAmplitude)
+            CallibrationView(type: .startAmplitude, instruction: "Play Middle C a few times at normal (mf) volume")
             Spacer()
-            CallibrationView(type: .amplitudeFilter)
+            CallibrationView(type: .amplitudeFilter, instruction: "Play Middle C a few times at a very soft (pp) volume")
             Spacer()
         }
         .sheet(isPresented: $showingHelpPopup) {

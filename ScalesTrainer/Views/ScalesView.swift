@@ -68,6 +68,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: keyIndex, {
+                reset()
                 scalesModel.setKey(index: keyIndex)
                 scalesModel.setScale()
             })
@@ -81,6 +82,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: scaleTypeIndex, {
+                reset()
                 scalesModel.selectedScaleType = scaleTypeIndex
                 scalesModel.setScale()
             })
@@ -94,6 +96,8 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
+                reset()
+                scalesModel.selectedOctavesIndex = octaveNumberIndex
                 scalesModel.setScale()
             })
             
@@ -115,6 +119,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
+                reset()
                 scalesModel.setDirection(self.directionIndex)
                 keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
                 scalesModel.forceRepaint()
@@ -124,13 +129,21 @@ struct ScalesView: View {
         }
     }
     
-    var body1: some View {
-        VStack {
-            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
-                .frame(height: 320)
-                .padding()
-        }
+    func reset() {
+        scalesModel.stopListening()
+        metronome.stop()
+        scalesModel.stopRecordingScale()
+        audioManager.stopPlaySampleFile()
     }
+    
+//    var body1: some View {
+//        VStack {
+//            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
+//                .frame(height: 320)
+//                .padding()
+//        }
+//    }
+    
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
@@ -148,28 +161,31 @@ struct ScalesView: View {
             
             HStack {
                 Spacer()
-                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
-                    if metronome.playingScale {
-                        metronome.stop()
-                    }
-                    else {
-                        metronome.playScale(scale: scalesModel.scale)
-                    }
-                }.padding()
-                
-                Spacer()
-                Button(scalesModel.listening ? "Stop Listening" : "Play for Test Listen") {
+               
+                Button(scalesModel.listening ? "Stop Listening" : "Listen") {
                     if scalesModel.listening {
                         scalesModel.stopListening()
                     }
                     else {
+                        reset()
                         scalesModel.startListening()
                     }
                     
                 }.padding()
                 Spacer()
+                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
+                    if metronome.playingScale {
+                        metronome.stop()
+                    }
+                    else {
+                        reset()
+                        metronome.playScale(scale: scalesModel.scale)
+                    }
+                }.padding()
+                Spacer()
             }
             .commonFrameStyle(backgroundColor: .clear).padding()
+            
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
@@ -179,6 +195,7 @@ struct ScalesView: View {
                             showResult = true
                         }
                         else {
+                            reset()
                             scalesModel.startRecordingScale()
                         }
                     }.padding()
@@ -187,6 +204,7 @@ struct ScalesView: View {
                     Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
                         playingSampleFile.toggle()
                         if playingSampleFile {
+                            reset()
                             //let f = "church_4_octave_Cmajor_RH"
                             //let f = "4_octave_fast"
                             //let f = "one_note_60" //1_octave_slow"

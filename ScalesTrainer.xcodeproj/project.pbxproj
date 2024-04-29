@@ -54,7 +54,7 @@
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = akai_steinway.sf2; path = Assets.xcassets/akai_steinway.sf2; sourceTree = "<group>"; };
+		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = akai_steinway.sf2; sourceTree = "<group>"; };
 		794D494D2BCD216A0005A173 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		794D49552BCD29090005A173 /* TapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapHandler.swift; sourceTree = "<group>"; };
@@ -125,6 +125,7 @@
 				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
 				79552FC02BDBB41100A27531 /* Home_2_60.m4a */,
 				79552FC12BDBB41100A27531 /* Home_3_60.m4a */,
+				794D494B2BCD16E60005A173 /* akai_steinway.sf2 */,
 				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
 				79C7CB732BCEA48D00F45257 /* one_note_60.m4a */,
@@ -189,7 +190,6 @@
 				79DA82232BCCEA6A008AC492 /* Views */,
 				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
 				79DA82192BCCE960008AC492 /* Assets.xcassets */,
-				794D494B2BCD16E60005A173 /* akai_steinway.sf2 */,
 				79DA821B2BCCE960008AC492 /* Preview Content */,
 			);
 			path = ScalesTrainer;

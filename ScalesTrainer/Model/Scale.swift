@@ -18,7 +18,7 @@ public class ScaleNoteState :ObservableObject, Hashable {
     let id = UUID()
     let sequence:Int
     //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
-    private(set) var isPlayingMidi = true
+    private(set) var isPlayingMidi = false
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
