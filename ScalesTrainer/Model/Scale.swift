@@ -15,6 +15,7 @@ public enum ScaleType {
 }
 
 public class ScaleNoteState :ObservableObject, Hashable {
+
     let id = UUID()
     let sequence:Int
     //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
@@ -47,9 +48,11 @@ public class ScaleNoteState :ObservableObject, Hashable {
 
 }
 
-public class Scale {
+public class Scale : MetronomeTimerNotificationProtocol {
     private(set) var key:Key
     private(set) var scaleNoteStates:[ScaleNoteState]
+    private var metronomeNoteIndex = 0
+    private var metronomeNoteIndexLast:Int?
 
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
@@ -179,6 +182,31 @@ public class Scale {
         for state in self.scaleNoteStates {
             print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
         }
+    }
+    
+    func metronomeStart() {
+        metronomeNoteIndex = 0
+        metronomeNoteIndexLast = nil
+    }
+    
+    func metronomeNext(timerTickerNumber: Int) -> Bool {
+        let audioManager = AudioManager.shared
+        let sampler = audioManager.midiSampler
+        if let lastNote = self.metronomeNoteIndexLast {
+            let scaleNote = self.scaleNoteStates[lastNote]
+            scaleNote.setPlayingMidi(false)
+        }
+        let scaleNote = self.scaleNoteStates[metronomeNoteIndex]
+        scaleNote.setPlayingMidi(true)
+        ScalesModel.shared.forceRepaint()
+        sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
+        metronomeNoteIndex += 1
+        self.metronomeNoteIndexLast = timerTickerNumber
+        return metronomeNoteIndex >= scaleNoteStates.count
+    }
+    
+    func metronomeStop() {
+        
     }
     
     func resetPlayMidiStatus() {

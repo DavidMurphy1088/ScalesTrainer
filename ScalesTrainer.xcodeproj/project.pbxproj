@@ -20,6 +20,8 @@
 		794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49572BCD29390005A173 /* ScaleMatcher.swift */; };
 		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
 		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
+		795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */; };
+		795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */; };
 		79552FB62BDB975D00A27531 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79552FB52BDB975D00A27531 /* ResultView.swift */; };
 		79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FBF2BDBB41100A27531 /* Home_1_60.m4a */; };
 		79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC02BDBB41100A27531 /* Home_2_60.m4a */; };
@@ -61,6 +63,8 @@
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
 		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
 		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_low.aiff; sourceTree = "<group>"; };
+		795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_high.aiff; sourceTree = "<group>"; };
 		79552FB52BDB975D00A27531 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		79552FBF2BDBB41100A27531 /* Home_1_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_1_60.m4a; sourceTree = "<group>"; };
 		79552FC02BDBB41100A27531 /* Home_2_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_2_60.m4a; sourceTree = "<group>"; };
@@ -122,6 +126,8 @@
 		794D495D2BCD34080005A173 /* AudioFiles */ = {
 			isa = PBXGroup;
 			children = (
+				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
+				795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */,
 				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
 				79552FC02BDBB41100A27531 /* Home_2_60.m4a */,
 				79552FC12BDBB41100A27531 /* Home_3_60.m4a */,
@@ -308,8 +314,10 @@
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
+				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,

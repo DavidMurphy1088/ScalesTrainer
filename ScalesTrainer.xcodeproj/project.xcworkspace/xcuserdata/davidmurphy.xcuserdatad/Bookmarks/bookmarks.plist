@@ -42,8 +42,8 @@
 </string>
 				<key>trailing</key>
 				<string>                Spacer()
-               
-                Button(scalesModel.listening ? "Stop Listening" : "Listen") {
+                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
+                    //metronome.setTimer(!metronome.isTiming)
 </string>
 			</dict>
 			<key>type</key>

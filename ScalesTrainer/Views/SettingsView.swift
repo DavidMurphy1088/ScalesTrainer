@@ -82,6 +82,8 @@ public struct SettingsView: View {
             Spacer()
             CallibrationView(type: .amplitudeFilter, instruction: "Play Middle C a few times at a very soft (pp) volume")
             Spacer()
+            Text("Tet initial tempo").padding()
+            Spacer()
         }
         .sheet(isPresented: $showingHelpPopup) {
             HelpView()
