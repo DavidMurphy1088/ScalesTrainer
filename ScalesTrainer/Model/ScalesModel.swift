@@ -86,7 +86,7 @@ public class ScalesModel : ObservableObject {
     
     func setDirection(_ index:Int) {
         self.selectedDirection = index
-        self.scale.setFingerBreaks(direction: index)
+        //self.scale.setFingerBreaks(direction: index)
     }
 
     func setSpeechListenMode(_ way:Bool) {

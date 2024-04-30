@@ -160,11 +160,12 @@ struct ScalesView: View {
 //                .padding()
             
             HStack {
-                Spacer()
-                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
-                    //metronome.setTimer(!metronome.isTiming)
-                }.padding()
+//                Spacer()
+//                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
+//                    //metronome.setTimer(!metronome.isTiming)
+//                }.padding()
                 
+                Spacer()
                 Button(scalesModel.listening ? "Stop Listening" : "Listen") {
                     if scalesModel.listening {
                         scalesModel.stopListening()
@@ -177,8 +178,8 @@ struct ScalesView: View {
                 }.padding()
                 
                 Spacer()
-                Button(metronome.playingScale ? "Stop Hearing Scale" : "Hear Scale") {
-                    if metronome.playingScale {
+                Button(metronome.isTiming ? "Stop Hearing Scale" : "Hear Scale") {
+                    if metronome.isTiming {
                         metronome.stop()
                     }
                     else {

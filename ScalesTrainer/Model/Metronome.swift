@@ -7,16 +7,16 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol {
     func metronomeStart()
-    func metronomeNext(timerTickerNumber:Int) -> Bool
+    func metronomeTicked(timerTickerNumber:Int) -> Bool
     func metronomeStop()
 }
 
 class MetronomeModel: ObservableObject {
     public static let shared = MetronomeModel()
     
-    @Published private(set) var isRunning = false
+    //@Published private(set) var isRunning = false
     @Published var tempo: Int = 90 //90
-    @Published private(set) var playingScale:Bool = false
+    //@Published private(set) var playingScale:Bool = false
     @Published var isTiming = false
 
     private let scalesModel = ScalesModel.shared
@@ -46,28 +46,10 @@ class MetronomeModel: ObservableObject {
     }
     
     func stop() {
-        isRunning = false
+        isTiming = false
         //timer?.cancel()
         //timer = nil
     }
-    
-//    func setTimer(_ way:Bool) {
-//        if way {
-//            startTimer()
-//        }
-//        DispatchQueue.main.async { [self] in
-//            self.isTiming = way
-//        }
-//    }
-    
-//    private func onTick() {
-//        let playerNum = (self.beatNum % 4) == 0 ? 0 : 1
-//        let audioPlayer = self.audioPlayers[playerNum]
-//        audioPlayer.play()
-//        //print("Playback completed.")
-//        self.beatNum += 1
-//
-//    }
     
     private func stopTicking(notified: MetronomeTimerNotificationProtocol) {
         notified.metronomeStop()
@@ -80,95 +62,61 @@ class MetronomeModel: ObservableObject {
     }
     
     public func startTimer(notified: MetronomeTimerNotificationProtocol) {
-        DispatchQueue.main.async { [self] in
+        //DispatchQueue.main.async { [self] in
+        //need isTiming true immediately for loop to start
             self.isTiming = true
-        }
+        //}
         for player in self.audioPlayers {
             audioManager.mixer.addInput(player)
         }
         timerTickerNumber = 0
         let delay = 60.0 / Double(self.tempo)
         notified.metronomeStart()
-        DispatchQueue.global(qos: .background).async { [self] in
-            tickTimer = Timer.publish(every: delay, on: .main, in: .common)
-                .autoconnect()
-                .sink { _ in
-                    if !self.isTiming {
-                        self.tickTimer?.cancel()
-                        self.stopTicking(notified: notified)
-                    }
-                    else {
-                        let stop = notified.metronomeNext(timerTickerNumber: self.timerTickerNumber)
-                        
-                        if stop {
-                            self.isTiming = false
+        ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
+        if false {
+            DispatchQueue.global(qos: .background).async { [self] in
+                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
+                    .autoconnect()
+                    .sink { _ in
+                        if !self.isTiming {
+                            self.tickTimer?.cancel()
+                            self.stopTicking(notified: notified)
                         }
                         else {
-                            self.timerTickerNumber += 1
+                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                            
+                            if stop {
+                                self.isTiming = false
+                            }
+                            else {
+                                self.timerTickerNumber += 1
+                            }
                         }
                     }
-                }
+            }
         }
-    }
-    
-    func playScale_NOT_USED(scale:Scale) {
-        DispatchQueue.main.async { [self] in
-            playingScale = true
-        }
-        self.isRunning = true
-        scalesModel.scale.resetPlayMidiStatus()
-        DispatchQueue.global(qos: .background).async { [self] in
-            let originalDirection = scalesModel.selectedDirection
-            let sampler = AudioManager.shared.midiSampler
-            let delay = 60.0 / Double(self.tempo)
-            PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
-            for ascendingDescending in 0..<2 {
-                var start:Int
-                var end:Int
-                if ascendingDescending == 0 {
-                    start = 0
-                    end = scale.scaleNoteStates.count / 2
-                }
-                else {
-                    start = (scale.scaleNoteStates.count / 2) + 1
-                    end = scale.scaleNoteStates.count - 1
-                }
-                for s in start...end {
-                    if !self.isRunning {
+        else {
+            DispatchQueue.global(qos: .background).async { [self] in
+                while self.isTiming {
+                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                    if stop {
+                        DispatchQueue.main.async { [self] in
+                            self.isTiming = false
+                        }
                         break
                     }
-                    let scaleNote = scale.scaleNoteStates[s]
-                    scaleNote.setPlayingMidi(true)
-                    self.scalesModel.forceRepaint()
-                    sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-                    let sleepDelay = 1000000 * delay
-                    usleep(UInt32(sleepDelay))
-                    sampler.stop(noteNumber: UInt8(scaleNote.midi), channel: 0)
-                    scaleNote.setPlayingMidi(false)
+                    else {
+                        self.timerTickerNumber += 1
+                        let delay = (60.0 / Double(self.tempo)) * 1000000
+                        usleep(useconds_t(delay))
+                    }
                 }
-                self.scalesModel.setDirection(1)
-                ///Remap since finger number breaks will occur
-                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 1)
-                self.scalesModel.forceRepaint()
-                scalesModel.scale.debug("======= Turnaround")
-            }
-            DispatchQueue.main.async { [self] in
-                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: originalDirection)
-                self.scalesModel.forceRepaint()
-                playingScale = false
+                ///Let the last 'played' key show for a short time
+                let delay = (1.2) * 1000000
+                usleep(useconds_t(delay))
+                self.stopTicking(notified: notified)
             }
         }
     }
-    
-//    func start(tickCall:@escaping () -> Void) {
-//        isRunning = true
-//        timer = Timer.publish(every: 60.0 / Double(tempo), on: .main, in: .common).autoconnect()
-//            .sink { _ in
-//                //tickCall()
-//                print("Tick at \(self.tempo) BPM")
-//            }
-//    }
-
-
     
 }

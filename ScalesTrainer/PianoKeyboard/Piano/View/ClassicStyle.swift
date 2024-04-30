@@ -41,7 +41,8 @@ public struct ClassicStyle {
     }
 
     public func naturalColor(_ down: Bool) -> Color {
-        down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
+        print("===COlor", down)
+        return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
     }
 
     public func sharpFlatColor(_ down: Bool) -> Color {
@@ -57,6 +58,7 @@ public struct ClassicStyle {
     }
 
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
+    //public func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let width = size.width
             let height = size.height
@@ -68,7 +70,7 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-
+            print("\n====== Canvas paint playing", ScalesModel.shared.forcePublish)
             for (index, key) in viewModel.keys.enumerated() {
                 guard key.isNatural else {
                     continue
@@ -96,7 +98,7 @@ public struct ClassicStyle {
                 if viewModel.showLabels {
                     let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
                     if let scaleNote = key.scaleNote {
-                        
+                        //print("====== Canvas paint playing", "idx:", index, "key:", key.id, "note", scaleNote.sequence, "play", scaleNote.isPlayingMidi)
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(color),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
@@ -108,6 +110,7 @@ public struct ClassicStyle {
                         )
 
                         if scaleNote.isPlayingMidi {
+                            
                             let innerContext = context
                             let rad = rect.height * 0.05
                             let w = 2.5 * rad

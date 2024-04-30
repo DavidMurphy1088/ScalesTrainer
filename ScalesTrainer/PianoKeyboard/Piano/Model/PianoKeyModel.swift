@@ -11,7 +11,7 @@ public class PianoKeyModel: Identifiable {
     let scalesModel = ScalesModel.shared
     let scale:Scale
     
-    ///A key in the scale is associated with a scale note state based on if the scale is ascending or descending
+    ///A key on the piano is associated with a scale note state based on if the scale is ascending or descending
     var scaleNote:ScaleNoteState?
     
     var keyIndex: Int = 0

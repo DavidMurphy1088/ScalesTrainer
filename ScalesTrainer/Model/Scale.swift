@@ -45,14 +45,13 @@ public class ScaleNoteState :ObservableObject, Hashable {
             self.isPlayingMidi = way
         //}
     }
-
 }
 
 public class Scale : MetronomeTimerNotificationProtocol {
     private(set) var key:Key
     private(set) var scaleNoteStates:[ScaleNoteState]
-    private var metronomeNoteIndex = 0
-    private var metronomeNoteIndexLast:Int?
+    private var metronomeLastPlayedKeyIndex:Int?
+    private var metronomeAscending = true
 
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
@@ -173,7 +172,7 @@ public class Scale : MetronomeTimerNotificationProtocol {
 
         setFingers()
         
-        setFingerBreaks(direction: 0)
+        setFingerBreaks()
         debug("Constructor")
     }
     
@@ -185,28 +184,50 @@ public class Scale : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
-        metronomeNoteIndex = 0
-        metronomeNoteIndexLast = nil
+        //metronomeNoteIndex = 0
+        metronomeLastPlayedKeyIndex = nil
+        metronomeAscending = true
+        ScalesModel.shared.setDirection(0)
+        PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
+        //ScalesModel.shared.forceRepaint()
+
     }
     
-    func metronomeNext(timerTickerNumber: Int) -> Bool {
+    func metronomeTicked(timerTickerNumber: Int) -> Bool {
         let audioManager = AudioManager.shared
         let sampler = audioManager.midiSampler
-        if let lastNote = self.metronomeNoteIndexLast {
-            let scaleNote = self.scaleNoteStates[lastNote]
+        
+        let noteIndex = timerTickerNumber
+
+        if let lastIndex = metronomeLastPlayedKeyIndex {
+            let scaleNote = self.scaleNoteStates[lastIndex]
             scaleNote.setPlayingMidi(false)
         }
-        let scaleNote = self.scaleNoteStates[metronomeNoteIndex]
+
+        let scaleNote = self.scaleNoteStates[noteIndex]
         scaleNote.setPlayingMidi(true)
         ScalesModel.shared.forceRepaint()
         sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-        metronomeNoteIndex += 1
-        self.metronomeNoteIndexLast = timerTickerNumber
-        return metronomeNoteIndex >= scaleNoteStates.count
+        metronomeLastPlayedKeyIndex = noteIndex
+        
+        if metronomeAscending {
+            if timerTickerNumber == self.scaleNoteStates.count / 2 {
+                ///Turn around to paint the descending scale piano keys
+                metronomeAscending = false
+                ScalesModel.shared.setDirection(1)
+                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 1)
+                ScalesModel.shared.forceRepaint()
+            }
+        }
+        return timerTickerNumber >= self.scaleNoteStates.count - 1
     }
     
     func metronomeStop() {
-        
+        for note in self.scaleNoteStates {
+            note.setPlayingMidi(false)
+        }
+        PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
+        ScalesModel.shared.forceRepaint()
     }
     
     func resetPlayMidiStatus() {
@@ -222,8 +243,8 @@ public class Scale : MetronomeTimerNotificationProtocol {
     }
 
     ///Calculate finger sequence breaks
-    ///Only calculated for ascending. Descending view assumes break is on key one below ascending break key
-    func setFingerBreaks(direction:Int) {
+    ///Set descending as key one below ascending break key
+    func setFingerBreaks() {
         for note in self.scaleNoteStates {
             note.fingerSequenceBreak = false
         }

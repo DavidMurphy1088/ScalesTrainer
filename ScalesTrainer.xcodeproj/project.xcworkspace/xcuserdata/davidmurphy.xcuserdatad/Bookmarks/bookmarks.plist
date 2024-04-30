@@ -41,9 +41,9 @@
             
 </string>
 				<key>trailing</key>
-				<string>                Spacer()
-                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
-                    //metronome.setTimer(!metronome.isTiming)
+				<string>//                Spacer()
+//                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
+//                    //metronome.setTimer(!metronome.isTiming)
 </string>
 			</dict>
 			<key>type</key>

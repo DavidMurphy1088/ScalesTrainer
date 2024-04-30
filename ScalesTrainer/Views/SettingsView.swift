@@ -51,12 +51,19 @@ public struct SettingsView: View {
                         //if let req = scalesModel.amplitudeFilter {
                             Text("Amplitude filter set at:\(String(format: "%.4f", scalesModel.amplitudeFilter))").font(.title3).padding()
                         //}
+//                        Slider(
+//                            value: scalesModel.amplitudeFilter,
+//                            in: scalesModel.amplitudeFilter...scalesModel.amplitudeFilter,
+//                            step: 1
+//                        )
+//                        .padding()
                     }
                     else {
                         if let req = scalesModel.requiredStartAmplitude {
                             Text("Start Amplitude set at:\(String(format: "%.4f", req))").font(.title3).padding()
                         }
                     }
+
                 }
                 Spacer()
             }
@@ -82,7 +89,7 @@ public struct SettingsView: View {
             Spacer()
             CallibrationView(type: .amplitudeFilter, instruction: "Play Middle C a few times at a very soft (pp) volume")
             Spacer()
-            Text("Tet initial tempo").padding()
+            Text("Set initial tempo").padding()
             Spacer()
         }
         .sheet(isPresented: $showingHelpPopup) {

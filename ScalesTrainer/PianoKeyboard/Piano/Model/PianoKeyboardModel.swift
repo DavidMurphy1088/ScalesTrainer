@@ -12,13 +12,14 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
     
     @Published public var scale:Scale = ScalesModel.shared.scale
     @Published public var keys: [PianoKeyModel] = []
+    @Published public var forceRepaint = 0 ///Without this the key view does not update when pressed
     @Published public var firstKeyMidi = 60
     @Published public var showLabels = true
     
     @Published public var latch = false {
         didSet { reset() }
     }
-    
+     
     public var keyRects: [CGRect] = []
 
     weak var delegate: AudioManager?
@@ -118,7 +119,8 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
                 keyDownAt[index] = true
             }
         }
-
+        //print("======= KeyboardModel::UpdateKeys \(self.keyChangeNum)")
+        self.forceRepaint += 1
         for index in 0..<numberOfKeys {
             let noteNumber = keys[index].noteMidiNumber
 

@@ -17,8 +17,10 @@ public struct PianoKeyboardView : View {
             VStack {
                 //Warning - Anything added here screws up touch handling 😡
                 //Text("Key:\(scalesModel.scale.key.getName())").padding().commonFrameStyle(backgroundColor: .yellow, borderColor: .red)
+                //Text("Repaint \(viewModel.keyChangeNum)")
                 ZStack(alignment: .top) {
                     style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, geometry: geometry)
+                    //style.layout(viewModel: viewModel, geometry: geometry)
                     TouchesView(viewModel: viewModel)
                 }
                 .background(.black)
