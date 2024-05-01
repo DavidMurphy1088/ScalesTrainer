@@ -15,7 +15,7 @@ public struct CallibrationView: View {
             Text("Amplitude Filter").font(.title).padding()
             if !calibratingFilter {
                 VStack {
-                    Text("The app needs to hear you play a very soft (pp) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n\n•Tap Start Calibrating\n•Play Middle C very softly on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating.")
+                    Text("The app needs to hear you play a very soft (pp) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C very softly on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating.")
                 }
             }
 
@@ -64,7 +64,7 @@ public struct CallibrationView: View {
             Text("Start Scale Amplitude").font(.title).padding()
             if !calibratingStart {
                 VStack {
-                    Text("The app needs to hear you play a reglar (mf) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n\n•Tap Start Calibrating\n•Play Middle C on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating.")
+                    Text("The app needs to hear you play a reglar (mf) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating.")
                 }
             }
             if !calibratingFilter {

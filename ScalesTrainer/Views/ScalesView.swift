@@ -132,7 +132,7 @@ struct ScalesView: View {
     func reset() {
         scalesModel.stopListening()
         metronome.stop()
-        scalesModel.stopRecordingScale()
+        scalesModel.stopRecordingScale("Reset")
         audioManager.stopPlaySampleFile()
     }
     
@@ -196,11 +196,12 @@ struct ScalesView: View {
                     Spacer()
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
                         if scalesModel.recordingScale {
-                            scalesModel.stopRecordingScale()
+                            scalesModel.stopRecordingScale("Stop Button")
                             showResult = true
                         }
                         else {
-                            reset()
+                            ///😡 reset here causes the recording to stop just after its started - no idea why....
+                            //reset()
                             scalesModel.startRecordingScale()
                         }
                     }.padding()
@@ -213,30 +214,33 @@ struct ScalesView: View {
                         }.padding()
                     }
 
-                    Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
-                        playingSampleFile.toggle()
-                        if playingSampleFile {
-                            reset()
-                            //let f = "church_4_octave_Cmajor_RH"
-                            //let f = "4_octave_fast"
-                            //let f = "one_note_60" //1_octave_slow"
-                            let fileName = "1_octave_slow"
-                            audioManager.playSampleFile(fileName: fileName,
-                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                                                    scaleMatcher: scalesModel.getScaleMatcher(), scale: nil))
-                        }
-                        else {
-                            audioManager.stopPlaySampleFile()
-                            showResult = true
-                        }
-                    }.padding()
+//                    Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
+//                        playingSampleFile.toggle()
+//                        if playingSampleFile {
+//                            reset()
+//                            //let f = "church_4_octave_Cmajor_RH"
+//                            //let f = "4_octave_fast"
+//                            //let f = "one_note_60" //1_octave_slow"
+//                            let fileName = "1_octave_slow"
+//                            audioManager.playSampleFile(fileName: fileName,
+//                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
+//                                                                                    scaleMatcher: scalesModel.getScaleMatcher(), scale: nil))
+//                        }
+//                        else {
+//                            audioManager.stopPlaySampleFile()
+//                            showResult = true
+//                        }
+//                    }.padding()
                     
-
+                    Spacer()
                     if scalesModel.recordingAvailable {
-                        Spacer()
-                        Button("Play Recording") {
-                            audioManager.playRecordedFile()
-                        }.padding()
+                        if let result = scalesModel.result {
+                            Spacer()
+                            Button("Play Recording") {
+                                //audioManager.playRecordedFile()
+                                scalesModel.playUserScale(result: result)
+                            }.padding()
+                        }
                     }
                     Spacer()
                 }
@@ -258,7 +262,7 @@ struct ScalesView: View {
             }
         }
         .onAppear {
-            pianoKeyboardViewModel.delegate = audioManager //keyboardAudioEngine
+            pianoKeyboardViewModel.keyboardAudioManager = audioManager //keyboardAudioEngine
         }
         .onDisappear {
             //audioManager.stopPlaySampleFile()

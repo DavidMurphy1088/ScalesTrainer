@@ -22,13 +22,15 @@ struct ResultView: View {
                 unmatched += 1
             }
             else {
-                if note.matchedAmplitude! > max {
-                    max = note.matchedAmplitude!
+                if note.matchedAmplitude > max {
+                    max = note.matchedAmplitude
                     maxMidi = note.midi
                 }
-                if note.matchedAmplitude! < min {
-                    min = note.matchedAmplitude!
-                    minMidi = note.midi
+                if note.matchedAmplitude > 0 {
+                    if note.matchedAmplitude < min {
+                        min = note.matchedAmplitude
+                        minMidi = note.midi
+                    }
                 }
             }
         }

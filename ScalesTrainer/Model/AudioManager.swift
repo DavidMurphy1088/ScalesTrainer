@@ -9,7 +9,7 @@ import Speech
 class AudioManager {
     static let shared = AudioManager()
     var audioPlayer = AudioPlayer()
-    private  var engine = AudioEngine()
+    public var engine = AudioEngine()
     var tap: BaseTap?
     let midiSampler = MIDISampler()
     //let scalesModel = ScalesModel.shared ///Causes start up exception
@@ -35,6 +35,7 @@ class AudioManager {
             Logger.shared.reportError(self, "\(err)")
             return
         }
+        //mic.gain = 1.0
         checkMicPermission(completion: {granted in
             if !granted {
                 Logger.shared.reportError(self, "No microphone permission")
@@ -45,7 +46,7 @@ class AudioManager {
         simulator = true
         #endif
         if !simulator {
-            ///Without this the recorder causes a fatal error when it sttarts recording - no idea why 😣
+            ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
             let silencer = Fader(input, gain: 0)
             self.silencer = silencer
             mixer.addInput(silencer)
@@ -59,7 +60,6 @@ class AudioManager {
         engine.output = mixer
         setSession()
         startEngine()
-
     }
     
     func startEngine() {
@@ -109,6 +109,9 @@ class AudioManager {
             //WARNING 😣 - .record must come before tap.start
             if recordAudio {
                 try recorder?.record() ///😡Causes exception if tap handler is Callibration
+                if recorder != nil && recorder!.isRecording {
+                    Logger.shared.log(self, "Recording started...")
+                }
             }
             tap!.start()
             currentTapHandler = tapHandler
@@ -153,6 +156,9 @@ class AudioManager {
         if let file = recorder?.audioFile {
             startEngine()
             try? audioPlayer.load(file: file)
+            audioPlayer.volume = 1.0
+            //AudioManager.shared.engine.output = audioPlayer
+            //AudioManager.shared.mixer.addInput(audioPlayer)
             audioPlayer.play()
         }
     }

@@ -10,6 +10,7 @@
 		790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* CalibrationView.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
+		7942FAA52BE24E5A00658E39 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* Result.swift */; };
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
 		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
 		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
@@ -54,6 +55,7 @@
 		790D5A242BD2319C00C31A8F /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		7942FAA42BE24E5A00658E39 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = akai_steinway.sf2; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				79D7C2962BD10DB500AE0B24 /* Key.swift */,
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
+				7942FAA42BE24E5A00658E39 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
@@ -331,6 +334,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7942FAA52BE24E5A00658E39 /* Result.swift in Sources */,
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,

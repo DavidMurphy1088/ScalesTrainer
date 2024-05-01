@@ -19,17 +19,19 @@ public class ScaleNoteState :ObservableObject, Hashable {
     let id = UUID()
     let sequence:Int
     //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
-    private(set) var isPlayingMidi = false
+    //private(set) var isPlayingMidi = false
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
-    var matchedAmplitude:Double? = nil
-
-    init(sequence: Int, midi:Int) {
+    var matchedAmplitude:Double //? = nil
+    var pianoKey:PianoKeyModel?
+    
+    init(sequence: Int, midi:Int, amplitude:Double) {
         self.sequence = sequence
         self.midi = midi
-        isPlayingMidi = false
+        self.matchedAmplitude = amplitude
+        //isPlayingMidi = false
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -39,19 +41,12 @@ public class ScaleNoteState :ObservableObject, Hashable {
     public static func == (lhs: ScaleNoteState, rhs: ScaleNoteState) -> Bool {
         return rhs.id == lhs.id
     }
-    
-    public func setPlayingMidi(_ way:Bool) {
-        //DispatchQueue.main.async {
-            ///Canvas is direct draw, not background thread draw)
-            self.isPlayingMidi = way
-        //}
-    }
 }
 
 public class Scale : MetronomeTimerNotificationProtocol {
     private(set) var key:Key
     private(set) var scaleNoteStates:[ScaleNoteState]
-    private var metronomeLastPlayedKeyIndex:Int?
+    //private var metronomeLastPlayedKeyIndex:Int?
     private var metronomeAscending = true
 
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
@@ -141,16 +136,16 @@ public class Scale : MetronomeTimerNotificationProtocol {
         for oct in 0..<octaves {
             for i in 0..<7 {
                 if oct == 0 {
-                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: nextMidi))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: nextMidi, amplitude: 0))
                     nextMidi += scaleOffsets[i]
                 }
                 else {
-                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[i % 8].midi + (oct * 12)))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[i % 8].midi + (oct * 12), amplitude: 0))
                 }
                 sequence += 1
             }
             if oct == octaves - 1 {
-                scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[0].midi + (octaves) * 12))
+                scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[0].midi + (octaves) * 12, amplitude: 0))
                 sequence += 1
             }
         }
@@ -169,7 +164,7 @@ public class Scale : MetronomeTimerNotificationProtocol {
                     }
                 }
             }
-            scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: downMidi))
+            scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: downMidi, amplitude: 0))
             sequence += 1
         }
 
@@ -188,12 +183,11 @@ public class Scale : MetronomeTimerNotificationProtocol {
     
     func metronomeStart() {
         //metronomeNoteIndex = 0
-        metronomeLastPlayedKeyIndex = nil
+        //metronomeLastPlayedKeyIndex = nil
         metronomeAscending = true
         ScalesModel.shared.setDirection(0)
         PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
         //ScalesModel.shared.forceRepaint()
-
     }
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
@@ -202,16 +196,15 @@ public class Scale : MetronomeTimerNotificationProtocol {
         
         let noteIndex = timerTickerNumber
 
-        if let lastIndex = metronomeLastPlayedKeyIndex {
-            let scaleNote = self.scaleNoteStates[lastIndex]
-            scaleNote.setPlayingMidi(false)
+        let scaleNote = self.scaleNoteStates[noteIndex]
+        if let key = scaleNote.pianoKey {
+            key.setPlayingMidi("metronome tick")
         }
 
-        let scaleNote = self.scaleNoteStates[noteIndex]
-        scaleNote.setPlayingMidi(true)
-        ScalesModel.shared.forceRepaint()
+        //scaleNote.setPlayingMidi(true)
+        //ScalesModel.shared.forceRepaint()
         sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-        metronomeLastPlayedKeyIndex = noteIndex
+        //metronomeLastPlayedKeyIndex = noteIndex
         
         if metronomeAscending {
             if timerTickerNumber == self.scaleNoteStates.count / 2 {
@@ -226,18 +219,18 @@ public class Scale : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStop() {
-        for note in self.scaleNoteStates {
-            note.setPlayingMidi(false)
-        }
+//        for note in self.scaleNoteStates {
+//            note.setPlayingMidi(false)
+//        }
         PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
         ScalesModel.shared.forceRepaint()
     }
     
-    func resetPlayMidiStatus() {
-        for state in self.scaleNoteStates {
-            state.setPlayingMidi(false)
-        }
-    }
+//    func resetPlayMidiStatus() {
+//        for state in self.scaleNoteStates {
+//            state.setPlayingMidi(false)
+//        }
+//    }
     
     func resetMatches() {
         for i in 0..<self.scaleNoteStates.count {

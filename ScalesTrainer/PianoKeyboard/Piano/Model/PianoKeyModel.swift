@@ -1,30 +1,49 @@
-
 import SwiftUI
-
-public protocol PianoKeyViewModelDelegateProtocol {
-    var firstKeyMidi: Int { get }
-    var scale:Scale {get}
-}
-                
+  
 public class PianoKeyModel: Identifiable {
     ///ObservableObject - no point since the drawing of all keys is done by a single context struct that cannot listen to @Published
     let scalesModel = ScalesModel.shared
+    let keyboardModel:PianoKeyboardModel
     let scale:Scale
     
     ///A key on the piano is associated with a scale note state based on if the scale is ascending or descending
     var scaleNote:ScaleNoteState?
+    var isPlayingMidi = false
     
     var keyIndex: Int = 0
-    let delegate: PianoKeyViewModelDelegateProtocol
     
     public var touchDown = false
     public var latched = false
 
-    init(scale:Scale, scaleNote:ScaleNoteState?, keyIndex:Int, delegate: PianoKeyViewModelDelegateProtocol) {
+    init(keyboardModel:PianoKeyboardModel, scale:Scale, keyIndex:Int) {
         self.scale = scale
-        self.scaleNote = scaleNote
-        self.delegate = delegate
+        self.keyboardModel = keyboardModel
+        //self.scaleNote = scaleNote
+        //self.delegate = delegate
         self.keyIndex = keyIndex
+    }
+    
+    public func setPlayingMidi(_ ctx:String) {
+        //DispatchQueue.main.async {
+        ///Canvas is direct draw, not background thread draw)
+        //print(" ON=========================>>\(ctx)", self.id, "last", self.keyboardModel.lastKeyPlayed?.id ?? "None")
+        self.isPlayingMidi = true
+        
+        if let last = self.keyboardModel.lastKeyPlayed {
+            if last.id != self.id {
+                //DispatchQueue.main.async {.
+                DispatchQueue.global(qos: .background).async { [self] in
+                    usleep(1000000 * UInt32(0.5))
+                    //sleep(1)
+                    //print("OFF=========================\(ctx)", last.id)
+                    last.isPlayingMidi = false
+                    self.keyboardModel.redraw()
+                }
+            }
+        }
+        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+        self.keyboardModel.redraw()
+        self.keyboardModel.lastKeyPlayed = self
     }
     
     public var id: Int {
@@ -32,11 +51,11 @@ public class PianoKeyModel: Identifiable {
     }
 
     public var noteMidiNumber: Int {
-        keyIndex + delegate.firstKeyMidi
+        keyIndex + self.keyboardModel.firstKeyMidi
     }
 
     public var name: String {
-        Note.name(for: noteMidiNumber, preferSharps: !(delegate.scale.key.flats > 0))
+        Note.name(for: noteMidiNumber, preferSharps: !(keyboardModel.scale.key.flats > 0))
     }
     
     public var finger: String {

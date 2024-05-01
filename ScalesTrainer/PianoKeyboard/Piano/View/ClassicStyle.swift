@@ -1,16 +1,6 @@
 import SwiftUI
 import SwiftUI
 
-//public protocol KeyboardStyle {
-//    associatedtype Layout: View
-//
-//    var naturalKeySpace: CGFloat { get }
-//    func naturalColor(_ down: Bool) -> Color
-//    func sharpFlatColor(_ down: Bool) -> Color
-//    func labelColor(_ noteNumber: Int) -> Color
-//    func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> Layout
-//}
-
 public struct ClassicStyle {
     let sfKeyWidthMultiplier: CGFloat
     let sfKeyHeightMultiplier: CGFloat
@@ -57,7 +47,6 @@ public struct ClassicStyle {
     }
 
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
-    //public func layout(viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let width = size.width
             let height = size.height
@@ -69,8 +58,8 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-            //print("\n====== Canvas paint playing", ScalesModel.shared.forcePublish)
-            for (index, key) in viewModel.keys.enumerated() {
+            //print("=================== Canvas paint LAYOUT", PianoKeyboardModel.shared.forceRepaint1)
+            for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 guard key.isNatural else {
                     continue
                 }
@@ -94,32 +83,36 @@ public struct ClassicStyle {
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
                 ))
 
-                if viewModel.showLabels {
-                    let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
+                //if viewModel.showLabels {
+                let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
+                //print("====== Canvas paint playing", "idx:", index, "key:", key.id, "note", scaleNote.sequence, "play", scaleNote.isPlayingMidi)
+                context.draw(
+                    Text(key.name).font(labelFont).foregroundColor(color),
+                    at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
+                )
+                if let scaleNote = key.scaleNote {
+                    context.draw(
+                        Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
+                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
+                    )
+                }
+                //}
+                if viewModel.pianoKeyModel[index].isPlayingMidi {
+                    let innerContext = context
+                    let rad = rect.height * 0.05
+                    let w = 2.5 * rad
+                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
                     if let scaleNote = key.scaleNote {
-                        //print("====== Canvas paint playing", "idx:", index, "key:", key.id, "note", scaleNote.sequence, "play", scaleNote.isPlayingMidi)
-                        context.draw(
-                            Text(key.name).font(labelFont).foregroundColor(color),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
-                        )
-                        
-                        context.draw(
-                            Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.90)
-                        )
-
-                        if scaleNote.isPlayingMidi {
-                            
-                            let innerContext = context
-                            let rad = rect.height * 0.05
-                            let w = 2.5 * rad
-                            let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.90 - w/2, width: w, height: w)
-                            
-                            innerContext.stroke(
-                                Path(ellipseIn: frame),
-                                with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
-                                lineWidth: 3)
-                        }
+                        innerContext.stroke(
+                            Path(ellipseIn: frame),
+                            with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
+                            lineWidth: 3)
+                    }
+                    else {
+                        innerContext.stroke(
+                            Path(ellipseIn: frame),
+                            with: .color(.red),
+                            lineWidth: 3)
                     }
                 }
                 xpos += naturalXIncr
@@ -131,7 +124,7 @@ public struct ClassicStyle {
             let sfKeyHeight = height * sfKeyHeightMultiplier
             xpos = 0.0
 
-            for (index, key) in viewModel.keys.enumerated() {
+            for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 if key.isNatural {
                     xpos += naturalXIncr
                     continue
@@ -166,34 +159,44 @@ public struct ClassicStyle {
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
                 ))
                 
-                if viewModel.showLabels {
-                    if key.finger.count > 0 {
-                        let color = Color.white //key.name.prefix(1) == "C" ? labelColor : .clear
+                //if viewModel.showLabels {
+                let color = Color.white //key.name.prefix(1) == "C" ? labelColor : .clear
+                if key.finger.count > 0 {
+                    context.draw(
+                        Text(key.name).font(labelFont).foregroundColor(color),
+                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
                         
+                    )
+                
+                
+                    if let scaleNote = key.scaleNote {
                         context.draw(
-                            Text(key.name).font(labelFont).foregroundColor(color),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.50)
-                            
+                            Text(key.finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
                         )
-                        if let scaleNote = key.scaleNote {
-                            context.draw(
-                                Text(key.finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.green).font(.title).bold(),
-                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.75)
-                            )
-                            if scaleNote.isPlayingMidi {
-                                let innerContext = context
-                                let rad = rect.height * 0.05
-                                let w = 4.0 * rad
-                                let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.75 - w/2, width: w, height: w)
-                                
-                                innerContext.stroke(
-                                    Path(ellipseIn: frame),
-                                    with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
-                                    lineWidth: 3)
-                            }
-                        }
                     }
                 }
+                
+                if viewModel.pianoKeyModel[index].isPlayingMidi {
+                    let innerContext = context
+                    let rad = rect.height * 0.05
+                    let w = 4.0 * rad
+                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.75 - w/2, width: w, height: w)
+                    if let scaleNote = key.scaleNote {
+                        innerContext.stroke(
+                            Path(ellipseIn: frame),
+                            with: .color(scaleNote.fingerSequenceBreak ? Color.orange : Color.green),
+                            lineWidth: 3)
+                    }
+                    else {
+                        innerContext.stroke(
+                            Path(ellipseIn: frame),
+                            with: .color(.red),
+                            lineWidth: 3)
+
+                    }
+                }
+                //}
 
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }

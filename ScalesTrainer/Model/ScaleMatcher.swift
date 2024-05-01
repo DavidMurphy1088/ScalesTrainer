@@ -21,26 +21,6 @@ class MatchType {
     }
 }
 
-///A note that was played that was not in the scale
-public class UnMatchedType: Hashable {
-    var notePlayedSequence:Int
-    var midi:Int
-    var amplitude:Float
-    
-    init(notePlayedSequence:Int, midi:Int, amplitude:Float) {
-        self.notePlayedSequence = notePlayedSequence
-        self.midi = midi
-        self.amplitude = amplitude
-    }
-    
-    public static func == (lhs: UnMatchedType, rhs: UnMatchedType) -> Bool {
-        return lhs.notePlayedSequence == rhs.notePlayedSequence
-    }
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.notePlayedSequence)
-    }
-}
-
 class ScaleMatcher : ObservableObject {
     let scale:Scale
     //var lastMatchTime:Date?
@@ -62,7 +42,7 @@ class ScaleMatcher : ObservableObject {
         self.scale = scale
         for state in self.scale.scaleNoteStates {
             state.matchedTime = nil
-            state.matchedAmplitude = nil
+            state.matchedAmplitude = 0
             if state.midi > topMidi {
                 topMidi = state.midi
             }
@@ -136,7 +116,7 @@ class ScaleMatcher : ObservableObject {
         }
         if !matchedInScale {
             //if !unMatchedToScale.contains(inputMidi) {
-            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi, amplitude: ampl[0]))
+            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi, amplitude: Double(ampl[0]), time: Date()))
             //}
             match.status = .wrongNote
         }

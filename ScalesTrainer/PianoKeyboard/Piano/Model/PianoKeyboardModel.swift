@@ -5,36 +5,43 @@ public protocol PianoKeyboardDelegate: AnyObject {
     func pianoKeyDown(_ keyNumber: Int)
 }
 
-public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProtocol {
+public class PianoKeyboardModel: ObservableObject {
     public static var shared = PianoKeyboardModel()
     
     let scalesModel = ScalesModel.shared
     
     @Published public var scale:Scale = ScalesModel.shared.scale
-    @Published public var keys: [PianoKeyModel] = []
-    @Published public var forceRepaint = 0 ///Without this the key view does not update when pressed
+    @Published public var pianoKeyModel: [PianoKeyModel] = []
+    @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
     @Published public var firstKeyMidi = 60
     @Published public var showLabels = true
     
     @Published public var latch = false {
         didSet { reset() }
     }
-     
+    var lastKeyPlayed:PianoKeyModel?
+    
     public var keyRects: [CGRect] = []
 
-    weak var delegate: AudioManager?
+    weak var keyboardAudioManager: AudioManager?
     
     public init() {
         //configureKeys(direction: ScalesModel.shared.selectedDirection)
     }
     
-    public var numberOfKeys = 18 
+    func redraw() {
+        DispatchQueue.main.async {
+            self.forceRepaint1 += 1
+        }
+    }
+    
+    public var numberOfKeys = 18
 //    {
 //        didSet { configureKeysToScaleNotes(direction: ScalesModel.shared.selectedDirection) }
 //    }
     
     public var naturalKeyCount: Int {
-        keys.filter { $0.isNatural }.count
+        pianoKeyModel.filter { $0.isNatural }.count
     }
 
     var touches: [CGPoint] = [] {
@@ -76,7 +83,7 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
     ///Create each piano key and map to each note in the scale. Some piano keys dont have notes.
     ///Mapping may be different for descending - e.g. melodic minor
     private func createPianoKeys() {
-        self.keys = []
+        self.pianoKeyModel = []
         let scale = ScalesModel.shared.scale
         let startMidi = self.firstKeyMidi
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
@@ -90,22 +97,21 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
 //            scaleNote = ScaleNoteState(sequence: 0, midi: 62)
 //            scaleNote?.finger = 7
 //            let keyIndex = i
-            let model = PianoKeyModel(scale: scale,
-                                          scaleNote: nil,
-                                          keyIndex: i,
-                                          delegate: self)
-
-            self.keys.append(model)
+            let pianoKeyModel = PianoKeyModel(keyboardModel: self,
+                                    scale: scale,
+                                    keyIndex: i)
+            self.pianoKeyModel.append(pianoKeyModel)
         }
     }
     
     public func mapPianoKeysToScaleNotes(direction: Int) {
         //print("====== mapPianoKeysToScaleNotes dir:\(direction)")
-        for i in 0..<self.keys.count {
-            var key = self.keys[i]
+        for i in 0..<self.pianoKeyModel.count {
+            var key = self.pianoKeyModel[i]
             if let seq = scale.getMidiIndex(midi: key.id, direction: direction) {
                 let scaleNote = scale.scaleNoteStates[seq]
                 key.scaleNote = scaleNote
+                scaleNote.pianoKey = key
                 //print("=== mapped keyboard note:", i, key.id, "==> scaleNote:", seq, scaleNote.midi, "finger:", scaleNote.finger, scaleNote.fingerSequenceBreak)
             }
             else {
@@ -123,41 +129,54 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
             }
         }
         //print("======= KeyboardModel::UpdateKeys \(self.keyChangeNum)")
-        self.forceRepaint += 1
+        ///👉 😡 Do not remove this repaint. Removing it causes keydowns on the keyboard not to draw the down or up state changes
+        self.forceRepaint1 += 1
         for index in 0..<numberOfKeys {
-            let noteNumber = keys[index].noteMidiNumber
+            let noteNumber = pianoKeyModel[index].noteMidiNumber
 
-            if keys[index].touchDown != keyDownAt[index] {
+            if pianoKeyModel[index].touchDown != keyDownAt[index] {
                 if latch {
-                    let keyLatched = keys[index].latched
+                    let keyLatched = pianoKeyModel[index].latched
 
                     if keyDownAt[index] && keyLatched {
-                        delegate?.pianoKeyUp(noteNumber)
-                        keys[index].latched = false
-                        keys[index].touchDown = false
+                        keyboardAudioManager?.pianoKeyUp(noteNumber)
+                        pianoKeyModel[index].latched = false
+                        pianoKeyModel[index].touchDown = false
+                        
                     }
                     if keyDownAt[index] && !keyLatched {
-                        delegate?.pianoKeyDown(noteNumber)
-                        keys[index].latched = true
-                        keys[index].touchDown = true
+                        keyboardAudioManager?.pianoKeyDown(noteNumber)
+                        pianoKeyModel[index].latched = true
+                        pianoKeyModel[index].touchDown = true
                     }
 
                 } else {
                     if keyDownAt[index] {
-                        delegate?.pianoKeyDown(noteNumber)
+                        keyboardAudioManager?.pianoKeyDown(noteNumber)
+                        
                     } else {
-                        delegate?.pianoKeyUp(noteNumber)
+                        keyboardAudioManager?.pianoKeyUp(noteNumber)
                     }
-                    keys[index].touchDown = keyDownAt[index]
+                    pianoKeyModel[index].touchDown = keyDownAt[index]
+                    pianoKeyModel[index].setPlayingMidi("key pressed down")
                 }
             } else {
-                if keys[index].touchDown && keyDownAt[index] && keys[index].latched {
-                    delegate?.pianoKeyUp(noteNumber)
-                    keys[index].latched = false
-                    keys[index].touchDown = false
+                if pianoKeyModel[index].touchDown && keyDownAt[index] && pianoKeyModel[index].latched {
+                    keyboardAudioManager?.pianoKeyUp(noteNumber)
+                    pianoKeyModel[index].latched = false
+                    pianoKeyModel[index].touchDown = false
                 }
             }
         }
+    }
+    
+    public func getKeyIndexForMidi(_ midi: Int) -> Int? {
+        for i in 0..<self.pianoKeyModel.count {
+            if self.pianoKeyModel[i].id == midi {
+                return i
+            }
+        }
+        return nil
     }
 
     private func getKeyContaining(_ point: CGPoint) -> Int? {
@@ -165,7 +184,7 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
         for index in 0..<numberOfKeys {
             if keyRects[index].contains(point) {
                 keyNum = index
-                if !keys[index].isNatural {
+                if !pianoKeyModel[index].isNatural {
                     break
                 }
             }
@@ -175,9 +194,9 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
 
     private func reset() {
         for i in 0..<numberOfKeys {
-            keys[i].touchDown = false
-            keys[i].latched = false
-            delegate?.pianoKeyUp(keys[i].noteMidiNumber)
+            pianoKeyModel[i].touchDown = false
+            pianoKeyModel[i].latched = false
+            keyboardAudioManager?.pianoKeyUp(pianoKeyModel[i].noteMidiNumber)
         }
     }
 }

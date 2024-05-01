@@ -2,17 +2,6 @@ import Foundation
 import Speech
 import Combine
 
-public class Result : ObservableObject {
-    @Published var scale:Scale
-    var notInScale:[UnMatchedType]
-    
-    public init(scale:Scale, notInScale:[UnMatchedType]) {
-        self.scale = scale
-        self.notInScale = notInScale
-    }
-    
-}
-
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     
@@ -106,6 +95,40 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    func playUserScale(result:Result) {
+        guard let result = self.result else {
+            return
+        }
+        let audioManager = AudioManager.shared
+        let sampler = audioManager.midiSampler
+        let metronome = MetronomeModel.shared
+        var ascending = true
+        
+        DispatchQueue.global(qos: .background).async { [self] in
+            let events = result.makeEventsSequence()
+            
+            for index in 0..<events.count {
+                let event = events[index]
+                sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
+                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
+                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
+                }
+
+                let delay = (60.0 / Double(metronome.tempo)) * 1000000
+                usleep(useconds_t(delay))
+//                    if ascending {
+//                        if index == self.scale.scaleNoteStates.count / 2 {
+//                            ///Turn around to paint the descending scale piano keys
+//                            ascending = false
+//                            //ScalesModel.shared.setDirection(1)
+//                            PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 1)
+//                            ScalesModel.shared.forceRepaint()
+//                        }
+//                    }
+            }
+        }
+    }
+    
     func processSpeech(speech: String) {
         let words = speech.split(separator: " ")
         guard words.count > 0 else {
@@ -147,14 +170,9 @@ public class ScalesModel : ObservableObject {
     
     func getScaleMatcher() -> ScaleMatcher  {
         return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
-        //return nil
     }
-    
-    //======================
-    
+
     func startListening() {
-        self.scale.resetPlayMidiStatus()
-        
         if let requiredAmplitude = self.requiredStartAmplitude {
             self.result = nil
             Logger.shared.log(self, "Start listening")
@@ -175,7 +193,6 @@ public class ScalesModel : ObservableObject {
     }
     
     func startRecordingScale() {
-        self.scale.resetPlayMidiStatus()
         self.scale.resetMatches()
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
@@ -195,8 +212,9 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func stopRecordingScale() {
-        Logger.shared.log(self, "Stop recording scale")
+    func stopRecordingScale(_ ctx:String) {
+        let duration = self.audioManager.recorder?.recordedDuration
+        Logger.shared.log(self, "Stop recording scale, duration:\(duration), ctx:\(ctx)")
         DispatchQueue.main.async {
             self.recordingScale = false
         }
@@ -204,10 +222,15 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
 //            self.speechManager.startAudioEngine()
 //            self.speechManager.startSpeechRecognition()
+            
             if let file = self.audioManager.recorder?.audioFile {
-                if file.duration > 0 {
+                ///Comments should be removed after testing... 👉
+                //if file.duration > 0 {
                     self.recordingAvailable = true
-                }
+                //}
+                //else {
+                    //Logger.shared.reportError(self, "Recorded file is zero length")
+                //}
             }
         }
     }

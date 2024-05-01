@@ -85,7 +85,6 @@ class PitchTapHandler : TapHandler {
     var wrongNoteFound = false
     var tapNumber = 0
     let requiredStartAmplitude:Double
-    var lastNotePlayed:ScaleNoteState?
     
     var matchAscending = true
     var matchNotInScale:[UnMatchedType]=[]
@@ -114,11 +113,11 @@ class PitchTapHandler : TapHandler {
             frequency = frequencies[1]
             amplitude = amplitudes[1]
         }
-        if scaleMatcher != nil {
+        //if scaleMatcher != nil {
             if tapNumber == 0 {
                 guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
             }
-        }
+        //}
         
         let midi = Util.frequencyToMIDI(frequency: frequency)
 
@@ -130,17 +129,17 @@ class PitchTapHandler : TapHandler {
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
         
-        if let scaleMatcher = scaleMatcher {
-            let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi], ampl: amplitudes)
-            msg += "\t\(matchedStatus.dispStatus())"
-            if let message = matchedStatus.msg {
-                msg += "  " + message //"\t \(message)"
-            }
-            if matchedStatus.status == .wrongNote {
-                wrongNoteFound = true
-            }
-        }
-        
+//        if let scaleMatcher = scaleMatcher {
+//            let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi], ampl: amplitudes)
+//            msg += "\t\(matchedStatus.dispStatus())"
+//            if let message = matchedStatus.msg {
+//                msg += "  " + message //"\t \(message)"
+//            }
+//            if matchedStatus.status == .wrongNote {
+//                wrongNoteFound = true
+//            }
+//        }
+//        
         var scaleForNote:Scale?
         ///Listening has a scale but not a matcher
         if scale == nil {
@@ -155,12 +154,7 @@ class PitchTapHandler : TapHandler {
                 let scaleNote = scale.scaleNoteStates[index]
                 scaleNote.matchedTime = Date()
                 scaleNote.matchedAmplitude = Double(amplitude)
-                if let lastNotePlayed = lastNotePlayed {
-                    lastNotePlayed.setPlayingMidi(false)
-                }
-                scaleNote.setPlayingMidi(true)
-                ScalesModel.shared.forceRepaint()
-                lastNotePlayed = scaleNote
+                scaleNote.pianoKey?.setPlayingMidi("tap handler scale note")
                 if index == scale.scaleNoteStates.count / 2 {
                     matchAscending = false
                 }
@@ -174,7 +168,10 @@ class PitchTapHandler : TapHandler {
                     }
                 }
                 if !found {
-                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: amplitude))
+                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: Double(amplitude), time: Date()))
+                }
+                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(midi) {
+                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
                 }
             }
         }
@@ -194,7 +191,7 @@ class PitchTapHandler : TapHandler {
                 ScalesModel.shared.result = Result(scale: scale, notInScale: self.matchNotInScale)
             }
         }
-        log("PitchTapHandler ended callibration")
+        log("PitchTapHandler in stop()")
         Logger.shared.calcValueLimits()
     }
 }
