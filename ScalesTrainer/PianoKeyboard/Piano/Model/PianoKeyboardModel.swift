@@ -48,6 +48,9 @@ public class PianoKeyboardModel: ObservableObject, PianoKeyViewModelDelegateProt
     func configureKeyboardSize() {
         self.scale = self.scalesModel.scale
         self.firstKeyMidi = 60
+        if self.scale.scaleNoteStates[0].midi < 60 {
+            self.firstKeyMidi -= 12
+        }
         if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
             self.firstKeyMidi = 65
             if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {

@@ -31,9 +31,9 @@ struct ScalesTrainerApp: App {
 //                        Label("Notes", systemImage: "house")
 //                    }
 //                    .tag(1)
-                SettingsView()
+                CallibrationView()
                     .tabItem {
-                        Label("Settings", systemImage: "gear")
+                        Label("Calibration", systemImage: "gear")
                     }
                     .tag(2)
                 LogView()

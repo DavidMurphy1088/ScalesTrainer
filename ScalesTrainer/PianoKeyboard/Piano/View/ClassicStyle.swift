@@ -41,7 +41,6 @@ public struct ClassicStyle {
     }
 
     public func naturalColor(_ down: Bool) -> Color {
-        print("===COlor", down)
         return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
     }
 
@@ -70,7 +69,7 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-            print("\n====== Canvas paint playing", ScalesModel.shared.forcePublish)
+            //print("\n====== Canvas paint playing", ScalesModel.shared.forcePublish)
             for (index, key) in viewModel.keys.enumerated() {
                 guard key.isNatural else {
                     continue

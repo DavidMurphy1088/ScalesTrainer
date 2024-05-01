@@ -7,49 +7,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "85756720-FFF0-41CB-99F6-49CA698BD5AC"
+            uuid = "59D93ECB-5A06-4676-86FF-03A7C4E51410"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
+            filePath = "ScalesTrainer/Model/TapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "updateKeys()"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
+            landmarkName = "tapUpdate(_:_:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "85756720-FFF0-41CB-99F6-49CA698BD5AC - faa3267208b20a7a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.PianoKeyboardModel.updateKeys() -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "129"
-                  endingLineNumber = "129"
-                  offsetFromSymbolStart = "1384">
-               </Location>
-               <Location
-                  uuid = "85756720-FFF0-41CB-99F6-49CA698BD5AC - faa3267208b20b9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.PianoKeyboardModel.updateKeys() -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "1536">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

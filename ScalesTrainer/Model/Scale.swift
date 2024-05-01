@@ -24,7 +24,8 @@ public class ScaleNoteState :ObservableObject, Hashable {
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
-    
+    var matchedAmplitude:Double? = nil
+
     init(sequence: Int, midi:Int) {
         self.sequence = sequence
         self.midi = midi
@@ -56,7 +57,7 @@ public class Scale : MetronomeTimerNotificationProtocol {
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
         scaleNoteStates = []
-        var nextMidi = 0
+        var nextMidi = 0 ///The start of the scale
         if key.keyType == .major {
             if key.sharps > 0 {
                 switch key.sharps {
@@ -118,7 +119,9 @@ public class Scale : MetronomeTimerNotificationProtocol {
                 }
             }
         }
-        
+        if octaves > 2 {
+            nextMidi -= 12
+        }
         ///Set midi values in scale
         var scaleOffsets:[Int] = []
         if scaleType == .major {

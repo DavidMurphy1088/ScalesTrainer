@@ -147,6 +147,7 @@ public class ScalesModel : ObservableObject {
     
     func getScaleMatcher() -> ScaleMatcher  {
         return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
+        //return nil
     }
     
     //======================
@@ -188,7 +189,8 @@ public class ScalesModel : ObservableObject {
                 self.recordingScale = true
                 self.recordingAvailable = false
             }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher(), scale: nil)
+            //let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher(), scale: nil)
+            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: nil, scale: self.scale)
             self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
         }
     }
@@ -234,11 +236,11 @@ public class ScalesModel : ObservableObject {
             else {
                 self.requiredStartAmplitude = avgAmplitude
             }
-            self.save(type: type, value: avgAmplitude)
+            self.saveSetting(type: type, value: avgAmplitude)
         }
     }
         
-    func save(type:CallibrationType, value:Double) {
+    func saveSetting(type:CallibrationType, value:Double) {
         let key = type == .startAmplitude ? "requiredStartAmplitude" : "amplitudeFilter"
         UserDefaults.standard.set(value, forKey: key)
     }

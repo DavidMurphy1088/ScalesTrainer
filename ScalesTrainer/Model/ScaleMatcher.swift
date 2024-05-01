@@ -62,6 +62,7 @@ class ScaleMatcher : ObservableObject {
         self.scale = scale
         for state in self.scale.scaleNoteStates {
             state.matchedTime = nil
+            state.matchedAmplitude = nil
             if state.midi > topMidi {
                 topMidi = state.midi
             }
@@ -111,6 +112,7 @@ class ScaleMatcher : ObservableObject {
                 if state.matchedTime == nil {
                     match.status = .correct
                     state.matchedTime = Date()
+                    state.matchedAmplitude = Double(ampl[0])
                     if let lastMidi = lastGoodMidi {
                         if midiOctave < lastMidi || inputMidi == topMidi {
                             ascending = false
@@ -119,12 +121,12 @@ class ScaleMatcher : ObservableObject {
                     }
                     //72 matches on index 7 then the next 72 (right after) matches index 14 since mode is now descending so the last note iat index 0 is never matched
                     lastGoodMidi = midiOctave
-                    if !ascending && inputMidi == scale.scaleNoteStates[0].midi {
-                        DispatchQueue.main.async {
-                            sleep(1)
-                            ScalesModel.shared.stopRecordingScale()
-                        }
-                    }
+//                    if !ascending && inputMidi == scale.scaleNoteStates[0].midi {
+//                        DispatchQueue.main.async {
+//                            sleep(1)
+//                            ScalesModel.shared.stopRecordingScale()
+//                        }
+//                    }
                 }
                 else {
                     match.status = .dataIgnored

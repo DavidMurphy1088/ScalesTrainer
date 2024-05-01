@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		790D5A252BD2319C00C31A8F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* SettingsView.swift */; };
+		790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* CalibrationView.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
@@ -51,7 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		790D5A242BD2319C00C31A8F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		790D5A242BD2319C00C31A8F /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
@@ -212,13 +212,13 @@
 		79DA82232BCCEA6A008AC492 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
-				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
-				794D494D2BCD216A0005A173 /* Staff.swift */,
-				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
-				790D5A242BD2319C00C31A8F /* SettingsView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
+				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
+				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
 				79552FB52BDB975D00A27531 /* ResultView.swift */,
+				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
+				790D5A242BD2319C00C31A8F /* CalibrationView.swift */,
+				794D494D2BCD216A0005A173 /* Staff.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -339,7 +339,7 @@
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* ResultView.swift in Sources */,
-				790D5A252BD2319C00C31A8F /* SettingsView.swift in Sources */,
+				790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,

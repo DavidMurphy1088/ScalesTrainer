@@ -194,7 +194,7 @@ struct ScalesView: View {
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
-                    Button(scalesModel.recordingScale ? "Stop Playing Scale" : "Play Scale") {
+                    Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
                         if scalesModel.recordingScale {
                             scalesModel.stopRecordingScale()
                             showResult = true
@@ -204,7 +204,14 @@ struct ScalesView: View {
                             scalesModel.startRecordingScale()
                         }
                     }.padding()
+                    
                     Spacer()
+                    if scalesModel.result != nil {
+                        Spacer()
+                        Button("Show Result") {
+                            showResult = true
+                        }.padding()
+                    }
 
                     Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
                         playingSampleFile.toggle()
@@ -224,12 +231,6 @@ struct ScalesView: View {
                         }
                     }.padding()
                     
-                    if scalesModel.result != nil {
-                        Spacer()
-                        Button("Show Result") {
-                            showResult = true
-                        }.padding()
-                    }
 
                     if scalesModel.recordingAvailable {
                         Spacer()
@@ -238,6 +239,9 @@ struct ScalesView: View {
                         }.padding()
                     }
                     Spacer()
+                }
+                else {
+                    Text("Calibration is required in Settings").padding()
                 }
             }
             .commonFrameStyle(backgroundColor: .clear).padding()

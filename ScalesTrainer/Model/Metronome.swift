@@ -84,7 +84,6 @@ class MetronomeModel: ObservableObject {
                         }
                         else {
                             let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
-                            
                             if stop {
                                 self.isTiming = false
                             }

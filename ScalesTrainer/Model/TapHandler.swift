@@ -83,10 +83,13 @@ class PitchTapHandler : TapHandler {
     let scaleMatcher:ScaleMatcher?
     let scale:Scale?
     var wrongNoteFound = false
-    var firstTap = true
+    var tapNumber = 0
     let requiredStartAmplitude:Double
     var lastNotePlayed:ScaleNoteState?
     
+    var matchAscending = true
+    var matchNotInScale:[UnMatchedType]=[]
+
     init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?, scale:Scale?) {
         self.scaleMatcher = scaleMatcher
         self.scale = scale
@@ -112,11 +115,11 @@ class PitchTapHandler : TapHandler {
             amplitude = amplitudes[1]
         }
         if scaleMatcher != nil {
-            if firstTap {
+            if tapNumber == 0 {
                 guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
             }
         }
-        firstTap = false
+        
         let midi = Util.frequencyToMIDI(frequency: frequency)
 
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
@@ -129,7 +132,6 @@ class PitchTapHandler : TapHandler {
         
         if let scaleMatcher = scaleMatcher {
             let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi], ampl: amplitudes)
-
             msg += "\t\(matchedStatus.dispStatus())"
             if let message = matchedStatus.msg {
                 msg += "  " + message //"\t \(message)"
@@ -138,26 +140,59 @@ class PitchTapHandler : TapHandler {
                 wrongNoteFound = true
             }
         }
+        
+        var scaleForNote:Scale?
+        ///Listening has a scale but not a matcher
+        if scale == nil {
+            scaleForNote = scaleMatcher?.scale
+        }
         else {
-            if let scale = scale {
-                if let index = scale.getMidiIndex(midi: midi, direction: ScalesModel.shared.selectedDirection) {
-                    let scaleNote = scale.scaleNoteStates[index]
-                    if let lastNotePlayed = lastNotePlayed {
-                        lastNotePlayed.setPlayingMidi(false)
+            scaleForNote = scale
+        }
+        ///1May - Matcher no longer used. Tap handler must update scale with matched notes
+        if let scale = scaleForNote {
+            if let index = scale.getMidiIndex(midi: midi, direction: matchAscending ? 0 : 1) {
+                let scaleNote = scale.scaleNoteStates[index]
+                scaleNote.matchedTime = Date()
+                scaleNote.matchedAmplitude = Double(amplitude)
+                if let lastNotePlayed = lastNotePlayed {
+                    lastNotePlayed.setPlayingMidi(false)
+                }
+                scaleNote.setPlayingMidi(true)
+                ScalesModel.shared.forceRepaint()
+                lastNotePlayed = scaleNote
+                if index == scale.scaleNoteStates.count / 2 {
+                    matchAscending = false
+                }
+            }
+            else {
+                var found = false
+                for unMatch in matchNotInScale {
+                    if unMatch.midi == midi {
+                        found = true
+                        break
                     }
-                    scaleNote.setPlayingMidi(true)
-                    ScalesModel.shared.forceRepaint()
-                    lastNotePlayed = scaleNote
+                }
+                if !found {
+                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: amplitude))
                 }
             }
         }
+        
         log(msg, Double(amplitude))
+        tapNumber += 1
     }
     
     override func stop() {
         if let scaleMatcher = scaleMatcher {
             log("PitchTapHandler:" + scaleMatcher.stats())
             ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
+        }
+        else {
+            if let scale = self.scale {
+                ScalesModel.shared.setStatusMessage("from Tap Handler")
+                ScalesModel.shared.result = Result(scale: scale, notInScale: self.matchNotInScale)
+            }
         }
         log("PitchTapHandler ended callibration")
         Logger.shared.calcValueLimits()
