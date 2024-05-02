@@ -12,7 +12,9 @@ public enum ScaleType {
     case harmonicMinor
     case melodicMinor
     case arpeggio
+    case chromatic
 }
+
 
 public class ScaleNoteState :ObservableObject, Hashable {
 
@@ -48,9 +50,13 @@ public class Scale : MetronomeTimerNotificationProtocol {
     private(set) var scaleNoteStates:[ScaleNoteState]
     //private var metronomeLastPlayedKeyIndex:Int?
     private var metronomeAscending = true
+    let octaves:Int
+    let scaleType:ScaleType
 
     public init(key:Key, scaleType:ScaleType, octaves:Int) {
         self.key = key
+        self.octaves = octaves
+        self.scaleType = scaleType
         scaleNoteStates = []
         var nextMidi = 0 ///The start of the scale
         if key.keyType == .major {
@@ -338,5 +344,24 @@ public class Scale : MetronomeTimerNotificationProtocol {
             }
         }
         return nil
+    }
+    
+    static func getTypeName(type:ScaleType) -> String {
+        var name = ""
+        switch type {
+        case ScaleType.naturalMinor:
+            name = "Minor"
+        case ScaleType.harmonicMinor:
+            name = "Harmonic Minor"
+        case .melodicMinor:
+            name = "Melodic Minor"
+        case .arpeggio:
+            name = "Arpeggio"
+        case .chromatic:
+            name = "Chromatic"
+        default:
+            name += "Major"
+        }
+        return name
     }
 }

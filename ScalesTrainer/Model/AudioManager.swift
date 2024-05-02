@@ -94,6 +94,50 @@ class AudioManager {
             Logger.shared.reportError(self, error.localizedDescription)
         }
     }
+    
+    func readTestData(tapHandler:PitchTapHandler) {
+        let fileName = "05_02_CMajor_1_60 2.txt"
+        if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
+            do {
+                let contents = try String(contentsOfFile: filePath, encoding: .utf8)
+                let lines = contents.split(separator: "\n")
+                
+                var ctr = 0
+                for line in lines {
+                    if ctr == 0 {
+                        ctr += 1
+                        let fields = line.split(separator: "\t")
+                        let ampFilter = Double(fields[1])
+                        let reqStartAmpl = Double(fields[2])
+                        if let ampFilter = ampFilter {
+                            if let startAmple = reqStartAmpl  {
+                                ScalesModel.shared.amplitudeFilter = ampFilter
+                                ScalesModel.shared.requiredStartAmplitude = reqStartAmpl
+                            }
+                        }
+                        continue
+                    }
+                    let fields = line.split(separator: "\t")
+                    let time = fields[0].split(separator: ":")[1]
+                    let freq = fields[1].split(separator: ":")[1]
+                    let ampl = fields[2].split(separator: ":")[1]
+                    let f = Float(freq)
+                    let a = Float(ampl)
+                    //print("==== read Data", fields.count, "freq:", f, "ampl:", a)
+                    if let f = f {
+                        if let a = a {
+                            tapHandler.tapUpdate([f, f], [a, a])
+                        }
+                    }
+                    ctr += 1
+                }
+            } catch {
+                Logger.shared.reportError(self, "Error reading file: \(fileName) \(error)")
+            }
+        } else {
+            Logger.shared.reportError(self, "File not found \(fileName)")
+        }
+    }
 
     func startRecordingMicrophone(tapHandler:TapHandler, recordAudio:Bool) {
         Logger.shared.clearLog()

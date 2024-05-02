@@ -7,65 +7,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FFC925D0-81A5-4DB4-A1DC-3FD41D659D3D"
+            uuid = "89EB354B-7F92-422C-964D-63351CE796A0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/TapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "stopRecordingScale(_:)"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "init(requiredStartAmplitude:recordData:scaleMatcher:scale:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4B4AD00A-B17A-4C88-9158-CEAEDAC42715"
-            shouldBeEnabled = "No"
+            uuid = "A62A0095-C12F-4C4D-8552-0F33EBABE87C"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/TapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "stopRecordingScale(_:)"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "init(requiredStartAmplitude:recordData:scaleMatcher:scale:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "4B4AD00A-B17A-4C88-9158-CEAEDAC42715 - bfc905862b83c602"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.ScalesModel.stopRecordingScale(Swift.String) -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "195"
-                  endingLineNumber = "195"
-                  offsetFromSymbolStart = "1188">
-               </Location>
-               <Location
-                  uuid = "4B4AD00A-B17A-4C88-9158-CEAEDAC42715 - 58ebd6adbacfcf72"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesTrainer.ScalesModel.stopRecordingScale(Swift.String) -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "196"
-                  endingLineNumber = "196"
-                  offsetFromSymbolStart = "32">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

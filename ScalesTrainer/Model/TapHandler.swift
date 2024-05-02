@@ -4,6 +4,7 @@ import AVFoundation
 import Foundation
 import AudioKitEX
 import Foundation
+import UIKit
 
 ///The key parameter that determines the frequency at which the closure (handler) is called is the bufferSize.
 ///The bufferSize parameter specifies the number of audio samples that will be processed in each iteration before calling the closure with the detected pitch and amplitude values.
@@ -85,15 +86,45 @@ class PitchTapHandler : TapHandler {
     var wrongNoteFound = false
     var tapNumber = 0
     let requiredStartAmplitude:Double
+    let recordData:Bool
     
     var matchAscending = true
     var matchNotInScale:[UnMatchedType]=[]
-
-    init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?, scale:Scale?) {
+    var fileURL:URL?
+    
+    init(requiredStartAmplitude:Double, recordData:Bool, scaleMatcher:ScaleMatcher?, scale:Scale?) {
         self.scaleMatcher = scaleMatcher
         self.scale = scale
+        self.recordData = recordData
         self.requiredStartAmplitude = requiredStartAmplitude
+
         super.init()
+        if recordData {
+            if let scale = scale {
+                let calendar = Calendar.current
+                let month = calendar.component(.month, from: Date())
+                let day = calendar.component(.day, from: Date())
+                let device = UIDevice.current
+                let modelName = device.model
+                var keyName = scale.key.name + "_" 
+                keyName += String(Scale.getTypeName(type: scale.scaleType))
+                keyName = keyName.replacingOccurrences(of: " ", with: "")
+                var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"
+                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteStates[0].midi) + "_" + modelName + ".txt"
+                let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                // Create the file URL by appending the file name to the directory
+                fileURL = documentDirectoryURL.appendingPathComponent(fileName)
+                do {
+                    if let fileURL = fileURL {
+                        let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
+                        try config.write(to: fileURL, atomically: true, encoding: .utf8)
+                    }
+                }
+                catch {
+                    Logger.shared.reportError(self, "Error creating file: \(error)")
+                }
+            }
+        }
     }
     
     override func showConfig() {
@@ -103,6 +134,32 @@ class PitchTapHandler : TapHandler {
     }
     
     override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        if recordData {
+            recordTapData(frequencies, amplitudes)
+        }
+        else {
+            processTapData(frequencies, amplitudes)
+        }
+    }
+    
+    func recordTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        let timeInterval = Date().timeIntervalSince1970
+        var tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
+        if let fileURL = fileURL {
+            do {
+                let data = tapData.data(using: .utf8)!
+                let fileHandle = try FileHandle(forWritingTo: fileURL)
+                fileHandle.seekToEndOfFile()        // Move to the end of the file
+                fileHandle.write(data)              // Append the data
+                fileHandle.closeFile()              // Close the file
+                print("========== data written", fileURL)
+            } catch {
+                print("Error writing to file: \(error)")
+            }
+        }
+    }
+    
+    func processTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         var frequency:Float
         var amplitude:Float
         if amplitudes[0] > amplitudes[1] {

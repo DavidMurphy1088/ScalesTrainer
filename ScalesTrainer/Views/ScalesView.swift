@@ -5,7 +5,6 @@ struct SpeechView : View {
     @State var setSpeechListenMode = false
     var body: some View {
         HStack {
-            
             HStack() {
                 //Text("Speech Listen")
                 Toggle("Speech Listen", isOn: $setSpeechListenMode)
@@ -19,8 +18,23 @@ struct SpeechView : View {
                 let c = String(scalesModel.speechCommandsReceived)
                 Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
             }
-            Spacer()
-            MetronomeView()
+        }
+    }
+}
+
+struct DataModeView : View {
+    @ObservedObject private var scalesModel = ScalesModel.shared
+    @State var dataMode = false
+    var body: some View {
+        HStack {
+            HStack() {
+                Toggle("Record Data Mode", isOn: $dataMode)
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.15)
+            .padding()
+            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
+            .onChange(of: dataMode, {scalesModel.setRecordDataMode(dataMode)})
+            .padding()
         }
     }
 }
@@ -148,7 +162,13 @@ struct ScalesView: View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
             
-            SpeechView()
+            HStack {
+                SpeechView()
+                Spacer()
+                DataModeView()
+                Spacer()
+                MetronomeView()
+            }
             
             SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding()
             
@@ -194,6 +214,14 @@ struct ScalesView: View {
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
+                    Button("READ_TEST_DATA") {
+                        audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
+                                                                                scalesModel.requiredStartAmplitude ?? 0,
+                                                                              recordData: false,
+                                                                              scaleMatcher: nil,
+                                                                              scale: scalesModel.scale))
+                    }.padding()
+                    
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
                         if scalesModel.recordingScale {
                             scalesModel.stopRecordingScale("Stop Button")
@@ -202,7 +230,7 @@ struct ScalesView: View {
                         else {
                             ///😡 reset here causes the recording to stop just after its started - no idea why....
                             //reset()
-                            scalesModel.startRecordingScale()
+                            scalesModel.startRecordingScale(readTestData: false)
                         }
                     }.padding()
                     

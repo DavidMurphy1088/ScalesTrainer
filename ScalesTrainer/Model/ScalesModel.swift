@@ -35,9 +35,10 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, scaleMatcher: nil, scale: nil)
+    let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, recordData: false, scaleMatcher: nil, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
+    var recordDataMode = false
     
     ///Speech
     let speechManager = SpeechManager.shared
@@ -78,6 +79,10 @@ public class ScalesModel : ObservableObject {
         //self.scale.setFingerBreaks(direction: index)
     }
 
+    func setRecordDataMode(_ way:Bool) {
+        self.recordDataMode = way
+    }
+    
     func setSpeechListenMode(_ way:Bool) {
         DispatchQueue.main.async {
             self.speechListenMode = way
@@ -139,7 +144,7 @@ public class ScalesModel : ObservableObject {
         logger.log(self, m)
         if words[0].uppercased() == "START" {
             speechManager.stopAudioEngine()
-            startRecordingScale()
+            startRecordingScale(readTestData: false)
         }
         DispatchQueue.main.async {
             self.speechLastWord = String(words[0])
@@ -179,7 +184,7 @@ public class ScalesModel : ObservableObject {
             DispatchQueue.main.async {
                 self.listening = true
             }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: nil, scale:self.scale)
+            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, recordData: false, scaleMatcher: nil, scale:self.scale)
             self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: false)
         }
     }
@@ -192,7 +197,7 @@ public class ScalesModel : ObservableObject {
         audioManager.stopRecording()
     }
     
-    func startRecordingScale() {
+    func startRecordingScale(readTestData:Bool) {
         self.scale.resetMatches()
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
@@ -207,8 +212,16 @@ public class ScalesModel : ObservableObject {
                 self.recordingAvailable = false
             }
             //let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher(), scale: nil)
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: nil, scale: self.scale)
-            self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
+                                                    recordData: ScalesModel.shared.recordDataMode,
+                                                    scaleMatcher: nil, 
+                                                  scale:self.scale)
+            if readTestData {
+                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            }
+            else {
+                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            }
         }
     }
     

@@ -147,19 +147,16 @@ public class Key {
     
     func getName() -> String {
         var name = self.name + " "
-        var type = ""
         switch self.keyType {
-            
         case .minor:
-            type = "Minor"
+            name += "Minor"
         case .harmonicMinor:
-            type = "Harmonic Minor"
+            name += "Harmonic Minor"
         case .melodicMinor:
-            type = "Melodic Minor"
+            name += "Melodic Minor"
         default:
             name += "Major"
         }
-        name += type
         return name
     }
 }
