@@ -31,6 +31,13 @@
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
+		79C0D2632BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */; };
+		79C0D2642BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */; };
+		79C0D2652BE37EFF0036CC91 /* 05_02_C_Major_4_48_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */; };
+		79C0D2662BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */; };
+		79C0D2672BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */; };
+		79C0D2682BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */; };
+		79C0D2692BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */; };
 		79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79C7CB732BCEA48D00F45257 /* one_note_60.m4a */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
 		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
@@ -76,6 +83,13 @@
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_2_60_iPad.txt; sourceTree = "<group>"; };
+		79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "05_02_C_Major_2_60_iPad 2.txt"; sourceTree = "<group>"; };
+		79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_4_48_iPad.txt; sourceTree = "<group>"; };
+		79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "05_02_A♭_MelodicMinor_2_56_iPad.txt"; sourceTree = "<group>"; };
+		79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_MelodicMinor_2_60_iPad.txt; sourceTree = "<group>"; };
+		79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Minor_2_60_iPad.txt; sourceTree = "<group>"; };
+		79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_1_60_iPad.txt; sourceTree = "<group>"; };
 		79C7CB732BCEA48D00F45257 /* one_note_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = one_note_60.m4a; path = ../../../../Downloads/one_note_60.m4a; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
 		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
@@ -120,7 +134,8 @@
 		794D492E2BCD07220005A173 /* PianoKeyboard */ = {
 			isa = PBXGroup;
 			children = (
-				79D7C29C2BD1113100AE0B24 /* Piano */,
+				79D7C2AD2BD1181A00AE0B24 /* Model */,
+				79D7C2AE2BD1184400AE0B24 /* View */,
 			);
 			path = PianoKeyboard;
 			sourceTree = "<group>";
@@ -144,17 +159,15 @@
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */,
+				79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */,
+				79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */,
+				79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */,
+				79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */,
+				79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */,
+				79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		79D7C29C2BD1113100AE0B24 /* Piano */ = {
-			isa = PBXGroup;
-			children = (
-				79D7C2AE2BD1184400AE0B24 /* View */,
-				79D7C2AD2BD1181A00AE0B24 /* Model */,
-			);
-			path = Piano;
 			sourceTree = "<group>";
 		};
 		79D7C2AD2BD1181A00AE0B24 /* Model */ = {
@@ -164,7 +177,8 @@
 				79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */,
 				79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */,
 			);
-			path = Model;
+			name = Model;
+			path = Piano/Model;
 			sourceTree = "<group>";
 		};
 		79D7C2AE2BD1184400AE0B24 /* View */ = {
@@ -323,15 +337,22 @@
 			files = (
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
+				79C0D2642BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				79C0D2632BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad.txt in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
+				79C0D2652BE37EFF0036CC91 /* 05_02_C_Major_4_48_iPad.txt in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
+				79C0D2682BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt in Resources */,
+				79C0D2672BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
+				79C0D2662BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
+				79C0D2692BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

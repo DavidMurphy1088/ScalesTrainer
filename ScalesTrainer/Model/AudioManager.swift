@@ -96,7 +96,19 @@ class AudioManager {
     }
     
     func readTestData(tapHandler:PitchTapHandler) {
-        let fileName = "05_02_CMajor_1_60 2.txt"
+        let fileName:String
+        switch ScalesModel.shared.selectedOctavesIndex {
+        case 0:
+            fileName = "05_02_C_Major_1_60_iPad.txt"
+        case 1:
+            fileName = "05_02_C_Minor_2_60_iPad.txt"
+        default:
+            fileName = ""
+        }
+        let scalesModel = ScalesModel.shared
+        scalesModel.scale.resetMatches()
+        scalesModel.result = nil
+        
         if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
             do {
                 let contents = try String(contentsOfFile: filePath, encoding: .utf8)
@@ -111,8 +123,9 @@ class AudioManager {
                         let reqStartAmpl = Double(fields[2])
                         if let ampFilter = ampFilter {
                             if let startAmple = reqStartAmpl  {
-                                ScalesModel.shared.amplitudeFilter = ampFilter
-                                ScalesModel.shared.requiredStartAmplitude = reqStartAmpl
+                                scalesModel.amplitudeFilter = ampFilter
+                                scalesModel.requiredStartAmplitude = reqStartAmpl
+                                tapHandler.requiredStartAmplitude = reqStartAmpl ?? 0
                             }
                         }
                         continue
@@ -123,7 +136,6 @@ class AudioManager {
                     let ampl = fields[2].split(separator: ":")[1]
                     let f = Float(freq)
                     let a = Float(ampl)
-                    //print("==== read Data", fields.count, "freq:", f, "ampl:", a)
                     if let f = f {
                         if let a = a {
                             tapHandler.tapUpdate([f, f], [a, a])
@@ -131,6 +143,12 @@ class AudioManager {
                     }
                     ctr += 1
                 }
+                tapHandler.stop()
+                scalesModel.stopRecordingScale("End of Test Data")
+                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
+                scalesModel.forceRepaint()
+                Logger.shared.log(self, "Read test data \(lines.count-1) lines")
+                
             } catch {
                 Logger.shared.reportError(self, "Error reading file: \(fileName) \(error)")
             }

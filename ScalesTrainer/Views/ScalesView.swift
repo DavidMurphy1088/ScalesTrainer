@@ -65,7 +65,7 @@ struct ScalesView: View {
     @State var playingSampleFile = false
     
     @State var speechAudioStarted = false
-    @State var showResult = false
+    @State var showResultPopup = false
     
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
@@ -82,7 +82,6 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: keyIndex, {
-                reset()
                 scalesModel.setKey(index: keyIndex)
                 scalesModel.setScale()
             })
@@ -96,7 +95,6 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: scaleTypeIndex, {
-                reset()
                 scalesModel.selectedScaleType = scaleTypeIndex
                 scalesModel.setScale()
             })
@@ -110,7 +108,6 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
-                reset()
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
                 scalesModel.setScale()
             })
@@ -133,7 +130,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
-                reset()
+                
                 scalesModel.setDirection(self.directionIndex)
                 keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
                 scalesModel.forceRepaint()
@@ -141,13 +138,6 @@ struct ScalesView: View {
 
             Spacer()
         }
-    }
-    
-    func reset() {
-        scalesModel.stopListening()
-        metronome.stop()
-        scalesModel.stopRecordingScale("Reset")
-        audioManager.stopPlaySampleFile()
     }
     
 //    var body1: some View {
@@ -191,7 +181,7 @@ struct ScalesView: View {
                         scalesModel.stopListening()
                     }
                     else {
-                        reset()
+                        //reset()
                         scalesModel.startListening()
                     }
                     
@@ -203,7 +193,7 @@ struct ScalesView: View {
                         metronome.stop()
                     }
                     else {
-                        reset()
+                        //reset()
                         metronome.startTimer(notified: scalesModel.scale)
                     }
                 }.padding()
@@ -220,16 +210,18 @@ struct ScalesView: View {
                                                                               recordData: false,
                                                                               scaleMatcher: nil,
                                                                               scale: scalesModel.scale))
+                        scalesModel.setMode(.displayMode)
                     }.padding()
                     
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
                         if scalesModel.recordingScale {
                             scalesModel.stopRecordingScale("Stop Button")
-                            showResult = true
+                            showResultPopup = false
                         }
                         else {
                             ///😡 reset here causes the recording to stop just after its started - no idea why....
                             //reset()
+                            scalesModel.setMode(.displayMode)
                             scalesModel.startRecordingScale(readTestData: false)
                         }
                     }.padding()
@@ -237,36 +229,28 @@ struct ScalesView: View {
                     Spacer()
                     if scalesModel.result != nil {
                         Spacer()
-                        Button("Show Result") {
-                            showResult = true
+                        VStack {
+                            Button("Show Result") {
+                                if let result = scalesModel.result {
+                                    //showResultPopup = true
+                                    scalesModel.processScaleResult(result: result, soundScale: false)
+                                    scalesModel.setMode(.resultMode)
+                                }
+                            }
+                            Button("Show Scale") {
+                                scalesModel.setMode(.displayMode)
+                            }
                         }.padding()
                     }
 
-//                    Button(playingSampleFile ? "Stop Recording Sample" : "File Sample Scale") {
-//                        playingSampleFile.toggle()
-//                        if playingSampleFile {
-//                            reset()
-//                            //let f = "church_4_octave_Cmajor_RH"
-//                            //let f = "4_octave_fast"
-//                            //let f = "one_note_60" //1_octave_slow"
-//                            let fileName = "1_octave_slow"
-//                            audioManager.playSampleFile(fileName: fileName,
-//                                                        tapHandler: PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-//                                                                                    scaleMatcher: scalesModel.getScaleMatcher(), scale: nil))
-//                        }
-//                        else {
-//                            audioManager.stopPlaySampleFile()
-//                            showResult = true
-//                        }
-//                    }.padding()
-                    
                     Spacer()
                     if scalesModel.recordingAvailable {
                         if let result = scalesModel.result {
                             Spacer()
                             Button("Play Recording") {
+                                //scalesModel.setMode(.resultMode)
                                 //audioManager.playRecordedFile()
-                                scalesModel.playUserScale(result: result)
+                                scalesModel.processScaleResult(result: result, soundScale: true)
                             }.padding()
                         }
                     }
@@ -284,7 +268,7 @@ struct ScalesView: View {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
             }
         }
-        .sheet(isPresented: $showResult) {
+        .sheet(isPresented: $showResultPopup) {
             if let result  = scalesModel.result {
                 ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             }

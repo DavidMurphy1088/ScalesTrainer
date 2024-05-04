@@ -15,24 +15,22 @@ public enum ScaleType {
     case chromatic
 }
 
-
 public class ScaleNoteState :ObservableObject, Hashable {
-
     let id = UUID()
     let sequence:Int
-    //@Published The UI Canvas used to pain the piano key does not get updated with published  changes. It draws direct.
-    //private(set) var isPlayingMidi = false
     var midi:Int
     var finger:Int = 0
     var fingerSequenceBreak = false
-    var matchedTime:Date? = nil
-    var matchedAmplitude:Double //? = nil
+    var matchedTimeAscending:Date? = nil
+    var matchedTimeDescending:Date? = nil
+    var matchedAmplitudeAscending:Double? = nil
+    var matchedAmplitudeDescending:Double? = nil
     var pianoKey:PianoKeyModel?
     
-    init(sequence: Int, midi:Int, amplitude:Double) {
+    init(sequence: Int, midi:Int) {
         self.sequence = sequence
         self.midi = midi
-        self.matchedAmplitude = amplitude
+        //self.matchedAmplitude = amplitude
         //isPlayingMidi = false
     }
     
@@ -46,9 +44,9 @@ public class ScaleNoteState :ObservableObject, Hashable {
 }
 
 public class Scale : MetronomeTimerNotificationProtocol {
+    let id = UUID()
     private(set) var key:Key
     private(set) var scaleNoteStates:[ScaleNoteState]
-    //private var metronomeLastPlayedKeyIndex:Int?
     private var metronomeAscending = true
     let octaves:Int
     let scaleType:ScaleType
@@ -142,16 +140,16 @@ public class Scale : MetronomeTimerNotificationProtocol {
         for oct in 0..<octaves {
             for i in 0..<7 {
                 if oct == 0 {
-                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: nextMidi, amplitude: 0))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: nextMidi))
                     nextMidi += scaleOffsets[i]
                 }
                 else {
-                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[i % 8].midi + (oct * 12), amplitude: 0))
+                    scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[i % 8].midi + (oct * 12)))
                 }
                 sequence += 1
             }
             if oct == octaves - 1 {
-                scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[0].midi + (octaves) * 12, amplitude: 0))
+                scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: scaleNoteStates[0].midi + (octaves) * 12))
                 sequence += 1
             }
         }
@@ -170,7 +168,7 @@ public class Scale : MetronomeTimerNotificationProtocol {
                     }
                 }
             }
-            scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: downMidi, amplitude: 0))
+            scaleNoteStates.append(ScaleNoteState(sequence: sequence, midi: downMidi))
             sequence += 1
         }
 
@@ -181,9 +179,9 @@ public class Scale : MetronomeTimerNotificationProtocol {
     }
     
     func debug(_ msg:String) {
-        print("==========scale \(msg)", key.name, key.keyType)
+        print("==========scale \(msg)", key.name, key.keyType, self.id)
         for state in self.scaleNoteStates {
-            print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak)
+            print("Midis", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matchAsc", state.matchedTimeAscending != nil)
         }
     }
     
@@ -240,7 +238,8 @@ public class Scale : MetronomeTimerNotificationProtocol {
     
     func resetMatches() {
         for i in 0..<self.scaleNoteStates.count {
-            self.scaleNoteStates[i].matchedTime = nil
+            self.scaleNoteStates[i].matchedTimeAscending = nil
+            self.scaleNoteStates[i].matchedTimeDescending = nil
         }
     }
 

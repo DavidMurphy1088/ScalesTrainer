@@ -18,18 +18,20 @@ struct ResultView: View {
         var unmatched = 0
         
         for note in result.scale.scaleNoteStates {
-            if note.matchedTime == nil {
+            if note.matchedTimeAscending == nil {
                 unmatched += 1
             }
             else {
-                if note.matchedAmplitude > max {
-                    max = note.matchedAmplitude
-                    maxMidi = note.midi
-                }
-                if note.matchedAmplitude > 0 {
-                    if note.matchedAmplitude < min {
-                        min = note.matchedAmplitude
-                        minMidi = note.midi
+                if let amplitudeAscending = note.matchedAmplitudeAscending {
+                    if amplitudeAscending > max {
+                        max = amplitudeAscending
+                        maxMidi = note.midi
+                    }
+                    if amplitudeAscending > 0 {
+                        if amplitudeAscending < min {
+                            min = amplitudeAscending
+                            minMidi = note.midi
+                        }
                     }
                 }
             }
@@ -39,17 +41,27 @@ struct ResultView: View {
     
     var body: some View {
         VStack {
-            Text("Result \(result.scale.key.getName())").font(.title)
-            Text("Scale Notes").foregroundColor(Color .blue).padding()
-            ScrollView {
-                ForEach(result.scale.scaleNoteStates, id: \.self) { state in
-                    let status = state.matchedTime == nil ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitude ?? ""))"
-                    Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
-                }
-            }
-            Text("In Scale Stats: \(minMax())")
+            Text("Result \(result.scale.key.getName())").font(.title3)
 
-            Text("Not in Scale").foregroundColor(Color .blue).padding()
+            Text("Scale Notes").foregroundColor(Color .blue).font(.title3)//.padding()
+            ScrollView {
+                VStack {
+                    ForEach(result.scale.scaleNoteStates, id: \.self) { state in
+                        let status = state.matchedTimeAscending == nil ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
+                        Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
+                    }
+                }
+                .background(
+                    // Gradient overlay to indicate more content below
+                    LinearGradient(gradient: Gradient(colors: [.clear, .white]), startPoint: .center, endPoint: .bottom)
+                        .frame(height: 60)
+                        .offset(y: 50)
+                )
+            }
+            Text("Stats: \(minMax())").foregroundColor(Color .blue).font(.title3).padding()
+            Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
+            
+            Text("Not in Scale").foregroundColor(Color .blue).font(.title3).padding()
             ScrollView {
                 ForEach(result.notInScale, id: \.self) { unmatch in
                     Text(toStr(unmatch))

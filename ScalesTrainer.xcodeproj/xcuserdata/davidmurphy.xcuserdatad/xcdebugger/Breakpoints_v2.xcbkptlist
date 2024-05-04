@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "89EB354B-7F92-422C-964D-63351CE796A0"
+            uuid = "343F070B-EC6A-484F-A22F-81D1C908A06D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/TapHandler.swift"
+            filePath = "ScalesTrainer/Model/Metronome.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
-            landmarkName = "init(requiredStartAmplitude:recordData:scaleMatcher:scale:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A62A0095-C12F-4C4D-8552-0F33EBABE87C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/TapHandler.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "114"
-            endingLineNumber = "114"
-            landmarkName = "init(requiredStartAmplitude:recordData:scaleMatcher:scale:)"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "startTimer(notified:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

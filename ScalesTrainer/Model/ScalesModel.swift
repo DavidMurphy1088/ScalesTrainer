@@ -2,6 +2,11 @@ import Foundation
 import Speech
 import Combine
 
+enum AppMode {
+    case displayMode
+    case resultMode
+}
+
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     
@@ -15,22 +20,28 @@ public class ScalesModel : ObservableObject {
     @Published var recordingAvailable = false
     @Published var speechLastWord = ""
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
-    
+    @Published var appMode:AppMode
+
     var result:Result? = nil
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
     var selectedKey = Key()
     
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
-    var selectedScaleType = 0
     
+    var selectedScaleType = 0 {
+        didSet {reset()}
+    }
+
     var directionTypes = ["Ascending", "Descending"]
     var selectedDirection = 0
     
     var handTypes = ["Right Hand", "Left Hand"]
 
     let octaveNumberValues = [1,2,3,4]
-    var selectedOctavesIndex = 0
+    var selectedOctavesIndex = 0 {
+        didSet {reset()}
+    }
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -49,6 +60,7 @@ public class ScalesModel : ObservableObject {
     @Published var listening = false
 
     init() {
+        appMode = .displayMode
         scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
@@ -63,18 +75,34 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    func setMode(_ mode:AppMode) {
+        DispatchQueue.main.async {
+            self.appMode = mode
+        }
+    }
+    
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1
         }
     }
     
+    private func reset() {
+        stopListening()
+        MetronomeModel.shared.stop()
+        stopRecordingScale("Reset")
+        audioManager.stopPlaySampleFile()
+        setMode(.displayMode)
+    }
+    
     func setKey(index:Int) {
+        reset()
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)
     }
     
     func setDirection(_ index:Int) {
+        //reset()
         self.selectedDirection = index
         //self.scale.setFingerBreaks(direction: index)
     }
@@ -100,7 +128,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func playUserScale(result:Result) {
+    func processScaleResult(result:Result, soundScale:Bool) {
         guard let result = self.result else {
             return
         }
@@ -111,26 +139,20 @@ public class ScalesModel : ObservableObject {
         
         DispatchQueue.global(qos: .background).async { [self] in
             let events = result.makeEventsSequence()
-            
             for index in 0..<events.count {
-                let event = events[index]
-                sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
-                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
-                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
-                }
 
-                let delay = (60.0 / Double(metronome.tempo)) * 1000000
-                usleep(useconds_t(delay))
-//                    if ascending {
-//                        if index == self.scale.scaleNoteStates.count / 2 {
-//                            ///Turn around to paint the descending scale piano keys
-//                            ascending = false
-//                            //ScalesModel.shared.setDirection(1)
-//                            PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 1)
-//                            ScalesModel.shared.forceRepaint()
-//                        }
-//                    }
-            }
+            let event = events[index]
+                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
+                    let keyStatus:PianoKeyResultStatus = event.inScale ? .correctAscending : .incorrectAscending
+                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setStatusForScalePlay(keyStatus)
+                    if soundScale {
+                        sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
+                        PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
+                        let delay = (60.0 / Double(metronome.tempo)) * 1000000
+                        usleep(useconds_t(delay))
+                    }
+                }
+             }
         }
     }
     

@@ -41,8 +41,8 @@ class ScaleMatcher : ObservableObject {
     init(scale:Scale, mismatchesAllowed:Int) {
         self.scale = scale
         for state in self.scale.scaleNoteStates {
-            state.matchedTime = nil
-            state.matchedAmplitude = 0
+            state.matchedTimeAscending = nil
+            state.matchedAmplitudeAscending = 0
             if state.midi > topMidi {
                 topMidi = state.midi
             }
@@ -89,10 +89,10 @@ class ScaleMatcher : ObservableObject {
 //                }
                 matchedInScale = true
                 let state = scale.scaleNoteStates[indexInScale]
-                if state.matchedTime == nil {
+                if state.matchedTimeAscending == nil {
                     match.status = .correct
-                    state.matchedTime = Date()
-                    state.matchedAmplitude = Double(ampl[0])
+                    state.matchedTimeAscending = Date()
+                    state.matchedAmplitudeAscending = Double(ampl[0])
                     if let lastMidi = lastGoodMidi {
                         if midiOctave < lastMidi || inputMidi == topMidi {
                             ascending = false
@@ -116,7 +116,7 @@ class ScaleMatcher : ObservableObject {
         }
         if !matchedInScale {
             //if !unMatchedToScale.contains(inputMidi) {
-            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi, amplitude: Double(ampl[0]), time: Date()))
+            unMatchedToScale.append(UnMatchedType(notePlayedSequence: notePlayedSequence, midi: inputMidi, amplitude: Double(ampl[0]), time: Date(), ascending: ascending))
             //}
             match.status = .wrongNote
         }
@@ -211,7 +211,7 @@ class ScaleMatcher : ObservableObject {
         var missing = 0
         var correctCount = 0
         for state in self.scale.scaleNoteStates {
-            if state.matchedTime == nil {
+            if state.matchedTimeAscending == nil {
                 missing += 1
             }
             else {
@@ -224,15 +224,15 @@ class ScaleMatcher : ObservableObject {
         var total = 0.0
         //get tempo
         for match in self.scale.scaleNoteStates {
-            if match.matchedTime == nil {
+            if match.matchedTimeAscending == nil {
                 break
             }
             if let lastMatchTime = lastMatchTime {
-                let delta = match.matchedTime!.timeIntervalSince1970 - lastMatchTime.timeIntervalSince1970
+                let delta = match.matchedTimeAscending!.timeIntervalSince1970 - lastMatchTime.timeIntervalSince1970
                 total += delta
                 ctr += 1
             }
-            lastMatchTime = match.matchedTime
+            lastMatchTime = match.matchedTimeAscending
         }
         let avgDuration = total / Double(ctr)
         let tempo = avgDuration > 0 ? Int(60.0 / avgDuration) : 0

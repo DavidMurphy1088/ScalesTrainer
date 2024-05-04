@@ -5,13 +5,15 @@ public class UnMatchedType: Hashable {
     var notePlayedSequence:Int
     var midi:Int
     var amplitude:Double
-    var time:Date// = nil
+    var time:Date
+    var ascending:Bool
     
-    init(notePlayedSequence:Int, midi:Int, amplitude:Double, time:Date) {
+    init(notePlayedSequence:Int, midi:Int, amplitude:Double, time:Date, ascending:Bool) {
         self.notePlayedSequence = notePlayedSequence
         self.midi = midi
         self.amplitude = amplitude
         self.time = time
+        self.ascending = ascending
     }
     
     public static func == (lhs: UnMatchedType, rhs: UnMatchedType) -> Bool {
@@ -39,18 +41,22 @@ public class Event {
 public class Result : ObservableObject {
     @Published var scale:Scale
     var notInScale:[UnMatchedType]
-    
+    let amplitudeFilter:Double
+    let startAmplitude:Double
+
     public init(scale:Scale, notInScale:[UnMatchedType]) {
         self.scale = scale
         self.notInScale = notInScale
+        self.amplitudeFilter = ScalesModel.shared.amplitudeFilter
+        self.startAmplitude = ScalesModel.shared.requiredStartAmplitude ?? 0
     }
     
     ///Merge the scaled matched notes with the unmatched notes by time
     public func makeEventsSequence() -> [Event] {
         var events:[Event] = []
         for note in self.scale.scaleNoteStates {
-            if let time = note.matchedTime {
-                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitude)
+            if let time = note.matchedTimeAscending {
+                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeAscending ?? 0)
                 events.append(event)
             }
         }
@@ -60,8 +66,9 @@ public class Result : ObservableObject {
         }
         events = events.sorted { $0.time < $1.time }
         print("===== events")
+        //normalize unamtched to range of scale
         for e in events {
-            print (e.time, e.inScale, e.midi, String(format: "%.4f", e.amplitude))
+            print ("event", e.time, "\tmidi:", e.midi, "ampl:", String(format: "%.4f", e.amplitude), "\tinScale:", e.inScale )
         }
         return events
     }

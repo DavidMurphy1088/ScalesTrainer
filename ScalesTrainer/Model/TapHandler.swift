@@ -85,10 +85,10 @@ class PitchTapHandler : TapHandler {
     let scale:Scale?
     var wrongNoteFound = false
     var tapNumber = 0
-    let requiredStartAmplitude:Double
+    var requiredStartAmplitude:Double
     let recordData:Bool
     
-    var matchAscending = true
+    var ascending = true
     var matchNotInScale:[UnMatchedType]=[]
     var fileURL:URL?
     
@@ -207,25 +207,35 @@ class PitchTapHandler : TapHandler {
         }
         ///1May - Matcher no longer used. Tap handler must update scale with matched notes
         if let scale = scaleForNote {
-            if let index = scale.getMidiIndex(midi: midi, direction: matchAscending ? 0 : 1) {
+            if let index = scale.getMidiIndex(midi: midi, direction: ascending ? 0 : 1) {
                 let scaleNote = scale.scaleNoteStates[index]
-                scaleNote.matchedTime = Date()
-                scaleNote.matchedAmplitude = Double(amplitude)
+                if ascending {
+                    if scaleNote.matchedTimeAscending == nil {
+                        scaleNote.matchedTimeAscending = Date()
+                        scaleNote.matchedAmplitudeAscending = Double(amplitude)
+                    }
+                }
+                else {
+                    if scaleNote.matchedTimeDescending == nil {
+                        scaleNote.matchedTimeDescending = Date()
+                        scaleNote.matchedAmplitudeDescending = Double(amplitude)
+                    }
+                }
                 scaleNote.pianoKey?.setPlayingMidi("tap handler scale note")
                 if index == scale.scaleNoteStates.count / 2 {
-                    matchAscending = false
+                    ascending = false
                 }
             }
             else {
                 var found = false
                 for unMatch in matchNotInScale {
-                    if unMatch.midi == midi {
+                    if unMatch.midi == midi && unMatch.ascending == ascending {
                         found = true
                         break
                     }
                 }
                 if !found {
-                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: Double(amplitude), time: Date()))
+                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: Double(amplitude), time: Date(), ascending: ascending))
                 }
                 if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(midi) {
                     PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")

@@ -1,5 +1,13 @@
 import SwiftUI
   
+public enum PianoKeyResultStatus {
+    case none
+    case correctAscending
+    case correctDescending
+    case incorrectAscending
+    case incorrectDescending
+}
+
 public class PianoKeyModel: Identifiable {
     ///ObservableObject - no point since the drawing of all keys is done by a single context struct that cannot listen to @Published
     let scalesModel = ScalesModel.shared
@@ -9,7 +17,8 @@ public class PianoKeyModel: Identifiable {
     ///A key on the piano is associated with a scale note state based on if the scale is ascending or descending
     var scaleNote:ScaleNoteState?
     var isPlayingMidi = false
-    
+    var resultStatus = PianoKeyResultStatus.none
+
     var keyIndex: Int = 0
     
     public var touchDown = false
@@ -21,6 +30,11 @@ public class PianoKeyModel: Identifiable {
         //self.scaleNote = scaleNote
         //self.delegate = delegate
         self.keyIndex = keyIndex
+    }
+    
+    public func setStatusForScalePlay(_ way:PianoKeyResultStatus) {
+        self.resultStatus = way
+        self.keyboardModel.redraw()
     }
     
     public func setPlayingMidi(_ ctx:String) {
