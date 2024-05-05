@@ -59,17 +59,21 @@ public class Result : ObservableObject {
                 let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeAscending ?? 0)
                 events.append(event)
             }
+            if let time = note.matchedTimeDescending {
+                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeDescending ?? 0)
+                events.append(event)
+            }
         }
         for unmatch in self.notInScale {
             let event = Event(time: unmatch.time, inScale: false, midi: unmatch.midi, amplitude: unmatch.amplitude)
             events.append(event)
         }
         events = events.sorted { $0.time < $1.time }
-        print("===== events")
+        //print("===== events")
         //normalize unamtched to range of scale
-        for e in events {
-            print ("event", e.time, "\tmidi:", e.midi, "ampl:", String(format: "%.4f", e.amplitude), "\tinScale:", e.inScale )
-        }
+//        for e in events {
+//            print ("event", e.time, "\tmidi:", e.midi, "ampl:", String(format: "%.4f", e.amplitude), "\tinScale:", e.inScale )
+//        }
         return events
     }
 }

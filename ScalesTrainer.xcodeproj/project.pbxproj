@@ -30,14 +30,33 @@
 		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
+		799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */; };
+		799FC10E2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */; };
+		799FC10F2BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */; };
+		799FC1102BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1092BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt */; };
+		799FC1112BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC10A2BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */; };
+		799FC1122BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC10B2BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt */; };
+		799FC1132BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC10C2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt */; };
+		799FC1352BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1222BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt */; };
+		799FC1372BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1242BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt */; };
+		799FC1382BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1252BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt */; };
+		799FC1392BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1262BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt */; };
+		799FC13B2BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1282BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt */; };
+		799FC13C2BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1292BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt */; };
+		799FC14B2BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC13E2BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Desc.txt */; };
+		799FC14C2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC13F2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt */; };
+		799FC14D2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1402BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt */; };
+		799FC14E2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1412BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt */; };
+		799FC14F2BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1422BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt */; };
+		799FC1502BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1432BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt */; };
+		799FC1512BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1442BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt */; };
+		799FC1522BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1452BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt */; };
+		799FC1532BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1462BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt */; };
+		799FC1542BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_5.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1472BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_5.txt */; };
+		799FC1552BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1482BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt */; };
+		799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */; };
+		799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
-		79C0D2632BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */; };
-		79C0D2642BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */; };
-		79C0D2652BE37EFF0036CC91 /* 05_02_C_Major_4_48_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */; };
-		79C0D2662BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */; };
-		79C0D2672BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */; };
-		79C0D2682BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */; };
-		79C0D2692BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */; };
 		79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79C7CB732BCEA48D00F45257 /* one_note_60.m4a */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
 		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
@@ -81,15 +100,34 @@
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_1_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_1_60_iPad.txt; sourceTree = SOURCE_ROOT; };
+		799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_02_C_Major_2_60_iPad 2.txt"; path = "ScalesTrainer/Data/05_02_C_Major_2_60_iPad 2.txt"; sourceTree = SOURCE_ROOT; };
+		799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_4_48_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_4_48_iPad.txt; sourceTree = SOURCE_ROOT; };
+		799FC1092BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Minor_2_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_Minor_2_60_iPad.txt; sourceTree = SOURCE_ROOT; };
+		799FC10A2BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_02_A♭_MelodicMinor_2_56_iPad.txt"; path = "ScalesTrainer/Data/05_02_A♭_MelodicMinor_2_56_iPad.txt"; sourceTree = SOURCE_ROOT; };
+		799FC10B2BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_MelodicMinor_2_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_MelodicMinor_2_60_iPad.txt; sourceTree = SOURCE_ROOT; };
+		799FC10C2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_2_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_2_60_iPad.txt; sourceTree = SOURCE_ROOT; };
+		799FC1222BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_4.txt; sourceTree = "<group>"; };
+		799FC1242BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_6.txt; sourceTree = "<group>"; };
+		799FC1252BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_7.txt; sourceTree = "<group>"; };
+		799FC1262BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Minor_1_60_iPad.txt; sourceTree = "<group>"; };
+		799FC1282BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_3_48_iPad_Good.txt; sourceTree = "<group>"; };
+		799FC1292BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_Good.txt; sourceTree = "<group>"; };
+		799FC13E2BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_1_60_iPad_Desc.txt; sourceTree = "<group>"; };
+		799FC13F2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_2_60_iPad_Desc.txt; sourceTree = "<group>"; };
+		799FC1402BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_2_60_iPad_Asc.txt; sourceTree = "<group>"; };
+		799FC1412BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_2_60_iPad_Desc.txt; sourceTree = "<group>"; };
+		799FC1422BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_Asc.txt; sourceTree = "<group>"; };
+		799FC1432BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_2_60_iPad_Good.txt; sourceTree = "<group>"; };
+		799FC1442BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_1_60_iPad_Good.txt; sourceTree = "<group>"; };
+		799FC1452BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_2_60_iPad_Asc.txt; sourceTree = "<group>"; };
+		799FC1462BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_1_60_iPad_Asc.txt; sourceTree = "<group>"; };
+		799FC1472BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_5.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_5.txt; sourceTree = "<group>"; };
+		799FC1482BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_1_60_iPad_Desc.txt; sourceTree = "<group>"; };
+		799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_2_60_iPad_14.txt; sourceTree = "<group>"; };
+		799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_2_60_iPad_Good.txt; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_2_60_iPad.txt; sourceTree = "<group>"; };
-		79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "05_02_C_Major_2_60_iPad 2.txt"; sourceTree = "<group>"; };
-		79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_4_48_iPad.txt; sourceTree = "<group>"; };
-		79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "05_02_A♭_MelodicMinor_2_56_iPad.txt"; sourceTree = "<group>"; };
-		79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_MelodicMinor_2_60_iPad.txt; sourceTree = "<group>"; };
-		79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Minor_2_60_iPad.txt; sourceTree = "<group>"; };
-		79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_02_C_Major_1_60_iPad.txt; sourceTree = "<group>"; };
 		79C7CB732BCEA48D00F45257 /* one_note_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = one_note_60.m4a; path = ../../../../Downloads/one_note_60.m4a; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
 		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
@@ -143,6 +181,13 @@
 		794D495D2BCD34080005A173 /* AudioFiles */ = {
 			isa = PBXGroup;
 			children = (
+				799FC10A2BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */,
+				799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */,
+				799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */,
+				799FC10C2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt */,
+				799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */,
+				799FC10B2BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt */,
+				799FC1092BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt */,
 				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
 				795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */,
 				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
@@ -156,16 +201,52 @@
 			path = AudioFiles;
 			sourceTree = "<group>";
 		};
+		79562C252BE6F7F10016A457 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				799FC1582BE702E300BB0969 /* May5_Good */,
+				799FC1172BE6FFC700BB0969 /* May5 */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
+		799FC1172BE6FFC700BB0969 /* May5 */ = {
+			isa = PBXGroup;
+			children = (
+				799FC1472BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_5.txt */,
+				799FC13E2BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Desc.txt */,
+				799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */,
+				799FC1222BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt */,
+				799FC1242BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt */,
+				799FC1252BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt */,
+				799FC1262BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt */,
+			);
+			path = May5;
+			sourceTree = "<group>";
+		};
+		799FC1582BE702E300BB0969 /* May5_Good */ = {
+			isa = PBXGroup;
+			children = (
+				799FC1412BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt */,
+				799FC1462BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt */,
+				799FC1442BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt */,
+				799FC1422BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt */,
+				799FC1482BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt */,
+				799FC1432BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt */,
+				799FC1402BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt */,
+				799FC13F2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt */,
+				799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */,
+				799FC1282BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt */,
+				799FC1452BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt */,
+				799FC1292BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt */,
+			);
+			path = May5_Good;
+			sourceTree = "<group>";
+		};
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				79C0D25F2BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */,
-				79C0D2622BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt */,
-				79C0D25D2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt */,
-				79C0D25C2BE37EFE0036CC91 /* 05_02_C_Major_2_60_iPad.txt */,
-				79C0D25E2BE37EFE0036CC91 /* 05_02_C_Major_4_48_iPad.txt */,
-				79C0D2602BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt */,
-				79C0D2612BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt */,
+				79562C252BE6F7F10016A457 /* Data */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -335,24 +416,43 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				799FC1542BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_5.txt in Resources */,
+				799FC14B2BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Desc.txt in Resources */,
+				799FC1512BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt in Resources */,
+				799FC1502BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt in Resources */,
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
-				79C0D2642BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */,
+				799FC1122BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */,
+				799FC10E2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */,
+				799FC14D2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
+				799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
-				79C0D2632BE37EFF0036CC91 /* 05_02_C_Major_2_60_iPad.txt in Resources */,
+				799FC1112BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */,
+				799FC14F2BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt in Resources */,
+				799FC1392BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
+				799FC1102BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt in Resources */,
 				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
-				79C0D2652BE37EFF0036CC91 /* 05_02_C_Major_4_48_iPad.txt in Resources */,
+				799FC1132BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt in Resources */,
+				799FC14C2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
+				799FC1552BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt in Resources */,
+				799FC10F2BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt in Resources */,
+				799FC1372BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt in Resources */,
+				799FC1532BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt in Resources */,
+				799FC1382BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt in Resources */,
+				799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
-				79C0D2682BE37EFF0036CC91 /* 05_02_C_Minor_2_60_iPad.txt in Resources */,
-				79C0D2672BE37EFF0036CC91 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */,
+				799FC1522BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt in Resources */,
+				799FC14E2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
-				79C0D2662BE37EFF0036CC91 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */,
+				799FC13B2BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
-				79C0D2692BE37EFF0036CC91 /* 05_02_C_Major_1_60_iPad.txt in Resources */,
+				799FC1352BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt in Resources */,
+				799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */,
+				799FC13C2BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

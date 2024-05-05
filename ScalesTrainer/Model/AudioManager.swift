@@ -20,6 +20,7 @@ class AudioManager {
     var mic:AudioEngine.InputNode? = nil
     var speechManager:SpeechManager?
     let speech = SpeechManager.shared
+    var recordedFileSequenceNum = 0
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -99,9 +100,9 @@ class AudioManager {
         let fileName:String
         switch ScalesModel.shared.selectedOctavesIndex {
         case 0:
-            fileName = "05_02_C_Major_1_60_iPad.txt"
+            fileName = "05_05_C_MelodicMinor_1_60_iPad_Good.txt"
         case 1:
-            fileName = "05_02_C_Minor_2_60_iPad.txt"
+            fileName = "05_05_C_MelodicMinor_2_60_iPad_17.txt"
         default:
             fileName = ""
         }

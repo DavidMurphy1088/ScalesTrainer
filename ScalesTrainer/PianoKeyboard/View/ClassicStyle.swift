@@ -127,26 +127,30 @@ public struct ClassicStyle {
                 let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
                 if key.finger.count > 0 {
                     if let scaleNote = key.scaleNote {
-                        let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
-                        let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
-                        if scalesModel.appMode == .displayMode {
-                            let col = Color.yellow.opacity(0.4)
-                            if scaleNote.fingerSequenceBreak {
-                                let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
-                                context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
-                            }
-                        }
-                        else {
-                            let col:Color = keyModel.resultStatus == .correctAscending ? Color.green.opacity(0.4) :  Color.red.opacity(0.4)
-                            let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
-                            context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
-                        }
                         context.draw(
                             Text(String(scaleNote.finger)).foregroundColor(Color.blue)
                                 .font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         )
                     }
+                }
+                
+                ///----------- Note status -----------
+                let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
+                let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
+                if scalesModel.appMode == .displayMode {
+                    let col = Color.yellow.opacity(0.4)
+                        if let scaleNote = key.scaleNote {
+                            if scaleNote.fingerSequenceBreak {
+                            let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+                            context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
+                        }
+                    }
+                }
+                else {
+                    let col:Color = keyModel.resultStatus == .correctAscending ? Color.green.opacity(0.4) :  Color.red.opacity(0.4)
+                    let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+                    context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                 }
 
                 xpos += naturalXIncr
@@ -229,7 +233,7 @@ public struct ClassicStyle {
                         lineWidth: 3)
                 }
                 
-                ///----------- Finger number -----------
+                ///----------- Finger number Note Status-----------
                 let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
                 if key.finger.count > 0 {
                     if let scaleNote = key.scaleNote {

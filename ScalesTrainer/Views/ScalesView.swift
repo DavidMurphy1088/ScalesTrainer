@@ -230,6 +230,14 @@ struct ScalesView: View {
                     if scalesModel.result != nil {
                         Spacer()
                         VStack {
+                            Button("Show Popup") {
+                                if let result = scalesModel.result {
+                                    showResultPopup = true
+                                    scalesModel.processScaleResult(result: result, soundScale: false)
+                                    scalesModel.setMode(.resultMode)
+                                }
+                            }
+                            .padding()
                             Button("Show Result") {
                                 if let result = scalesModel.result {
                                     //showResultPopup = true
@@ -237,9 +245,11 @@ struct ScalesView: View {
                                     scalesModel.setMode(.resultMode)
                                 }
                             }
+                            .padding()
                             Button("Show Scale") {
                                 scalesModel.setMode(.displayMode)
                             }
+                            .padding()
                         }.padding()
                     }
 

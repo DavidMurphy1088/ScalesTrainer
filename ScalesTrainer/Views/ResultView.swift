@@ -47,7 +47,7 @@ struct ResultView: View {
             ScrollView {
                 VStack {
                     ForEach(result.scale.scaleNoteStates, id: \.self) { state in
-                        let status = state.matchedTimeAscending == nil ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
+                        let status = (state.matchedTimeAscending == nil && state.matchedTimeDescending == nil) ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
                         Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
                     }
                 }

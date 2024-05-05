@@ -91,6 +91,7 @@ class PitchTapHandler : TapHandler {
     var ascending = true
     var matchNotInScale:[UnMatchedType]=[]
     var fileURL:URL?
+    var lastGoodMidi:Int?
     
     init(requiredStartAmplitude:Double, recordData:Bool, scaleMatcher:ScaleMatcher?, scale:Scale?) {
         self.scaleMatcher = scaleMatcher
@@ -110,7 +111,10 @@ class PitchTapHandler : TapHandler {
                 keyName += String(Scale.getTypeName(type: scale.scaleType))
                 keyName = keyName.replacingOccurrences(of: " ", with: "")
                 var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"
-                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteStates[0].midi) + "_" + modelName + ".txt"
+                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteStates[0].midi) + "_" + modelName
+                fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
+                fileName += ".txt"
+                AudioManager.shared.recordedFileSequenceNum += 1
                 let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                 // Create the file URL by appending the file name to the directory
                 fileURL = documentDirectoryURL.appendingPathComponent(fileName)
@@ -221,10 +225,16 @@ class PitchTapHandler : TapHandler {
                         scaleNote.matchedAmplitudeDescending = Double(amplitude)
                     }
                 }
+
                 scaleNote.pianoKey?.setPlayingMidi("tap handler scale note")
-                if index == scale.scaleNoteStates.count / 2 {
-                    ascending = false
+                if ascending {
+                    if let lastGoodMidi = self.lastGoodMidi {
+                        if scaleNote.midi < lastGoodMidi {
+                            ascending = false
+                        }
+                    }
                 }
+                lastGoodMidi = scaleNote.midi
             }
             else {
                 var found = false
