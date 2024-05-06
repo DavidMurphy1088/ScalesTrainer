@@ -81,7 +81,7 @@ class CallibrationTapHandler : TapHandler {
 }
 
 class PitchTapHandler : TapHandler {
-    let scaleMatcher:ScaleMatcher?
+    //let scaleMatcher:ScaleMatcher?
     let scale:Scale?
     var wrongNoteFound = false
     var tapNumber = 0
@@ -93,8 +93,8 @@ class PitchTapHandler : TapHandler {
     var fileURL:URL?
     var lastGoodMidi:Int?
     
-    init(requiredStartAmplitude:Double, recordData:Bool, scaleMatcher:ScaleMatcher?, scale:Scale?) {
-        self.scaleMatcher = scaleMatcher
+    init(requiredStartAmplitude:Double, recordData:Bool, scale:Scale?) {
+        //self.scaleMatcher = scaleMatcher
         self.scale = scale
         self.recordData = recordData
         self.requiredStartAmplitude = requiredStartAmplitude
@@ -111,7 +111,7 @@ class PitchTapHandler : TapHandler {
                 keyName += String(Scale.getTypeName(type: scale.scaleType))
                 keyName = keyName.replacingOccurrences(of: " ", with: "")
                 var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"
-                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteStates[0].midi) + "_" + modelName
+                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteFinger[0].midi) + "_" + modelName
                 fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
                 fileName += ".txt"
                 AudioManager.shared.recordedFileSequenceNum += 1
@@ -174,11 +174,9 @@ class PitchTapHandler : TapHandler {
             frequency = frequencies[1]
             amplitude = amplitudes[1]
         }
-        //if scaleMatcher != nil {
-            if tapNumber == 0 {
-                guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
-            }
-        //}
+        if tapNumber == 0 {
+            guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
+        }
         
         let midi = Util.frequencyToMIDI(frequency: frequency)
 
@@ -190,67 +188,37 @@ class PitchTapHandler : TapHandler {
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
         
-//        if let scaleMatcher = scaleMatcher {
-//            let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: [midi], ampl: amplitudes)
-//            msg += "\t\(matchedStatus.dispStatus())"
-//            if let message = matchedStatus.msg {
-//                msg += "  " + message //"\t \(message)"
-//            }
-//            if matchedStatus.status == .wrongNote {
-//                wrongNoteFound = true
-//            }
-//        }
-//        
-        var scaleForNote:Scale?
-        ///Listening has a scale but not a matcher
-        if scale == nil {
-            scaleForNote = scaleMatcher?.scale
-        }
-        else {
-            scaleForNote = scale
-        }
-        ///1May - Matcher no longer used. Tap handler must update scale with matched notes
-        if let scale = scaleForNote {
-            if let index = scale.getMidiIndex(midi: midi, direction: ascending ? 0 : 1) {
-                let scaleNote = scale.scaleNoteStates[index]
-                if ascending {
-                    if scaleNote.matchedTimeAscending == nil {
-                        scaleNote.matchedTimeAscending = Date()
-                        scaleNote.matchedAmplitudeAscending = Double(amplitude)
-                    }
-                }
-                else {
-                    if scaleNote.matchedTimeDescending == nil {
-                        scaleNote.matchedTimeDescending = Date()
-                        scaleNote.matchedAmplitudeDescending = Double(amplitude)
-                    }
-                }
-
-                scaleNote.pianoKey?.setPlayingMidi("tap handler scale note")
-                if ascending {
-                    if let lastGoodMidi = self.lastGoodMidi {
-                        if scaleNote.midi < lastGoodMidi {
-                            ascending = false
-                        }
-                    }
-                }
-                lastGoodMidi = scaleNote.midi
+        let keyboardModel = PianoKeyboardModel.shared
+        
+        if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
+            let key = keyboardModel.pianoKeyModel[index]
+            var atTurnaround = false
+            if let scaleNote = key.noteFingering {
+                atTurnaround = scaleNote.midi == midi
             }
-            else {
-                var found = false
-                for unMatch in matchNotInScale {
-                    if unMatch.midi == midi && unMatch.ascending == ascending {
-                        found = true
-                        break
+            if ascending {
+                if let lastGoodMidi = lastGoodMidi {
+                    if midi < lastGoodMidi {
+                        ascending = false
+                        atTurnaround = true
                     }
-                }
-                if !found {
-                    matchNotInScale.append(UnMatchedType(notePlayedSequence: tapNumber, midi: midi, amplitude: Double(amplitude), time: Date(), ascending: ascending))
-                }
-                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(midi) {
-                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
                 }
             }
+ 
+            if ascending || atTurnaround {
+                if key.state.matchedTimeAscending == nil {
+                    key.state.matchedTimeAscending = Date()
+                    key.state.matchedAmplitudeAscending = Double(amplitude)
+                }
+            }
+            if !ascending || atTurnaround {
+                if key.state.matchedTimeDescending == nil {
+                    key.state.matchedTimeDescending = Date()
+                    key.state.matchedAmplitudeDescending = Double(amplitude)
+                }
+            }
+            key.setPlayingMidi("tap handler scale note")
+           lastGoodMidi = midi
         }
         
         log(msg, Double(amplitude))
@@ -258,16 +226,16 @@ class PitchTapHandler : TapHandler {
     }
     
     override func stop() {
-        if let scaleMatcher = scaleMatcher {
-            log("PitchTapHandler:" + scaleMatcher.stats())
-            ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
-        }
-        else {
+//        if let scaleMatcher = scaleMatcher {
+//            log("PitchTapHandler:" + scaleMatcher.stats())
+//            ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
+//        }
+//        else {
             if let scale = self.scale {
                 ScalesModel.shared.setStatusMessage("from Tap Handler")
                 ScalesModel.shared.result = Result(scale: scale, notInScale: self.matchNotInScale)
             }
-        }
+        //}
         log("PitchTapHandler in stop()")
         Logger.shared.calcValueLimits()
     }
@@ -275,14 +243,14 @@ class PitchTapHandler : TapHandler {
 
 ///Handle a raw FFT
 class FFTTapHandler :TapHandler {
-    let scaleMatcher:ScaleMatcher?
+    //let scaleMatcher:ScaleMatcher?
     var wrongNoteFound = false
     var canStartAnalysis = false
     var requiredStartAmplitude:Double
     var firstTap = true
     
-    init(requiredStartAmplitude:Double, scaleMatcher:ScaleMatcher?) {
-        self.scaleMatcher = scaleMatcher
+    init(requiredStartAmplitude:Double) {
+        //self.scaleMatcher = scaleMatcher
         self.requiredStartAmplitude = requiredStartAmplitude
         super.init()
         startTime = Date()
@@ -326,11 +294,11 @@ class FFTTapHandler :TapHandler {
             Double(index) * sampleRate / (Double(fftSize) * magic)
         }
 
-        if scaleMatcher != nil {
+        //if scaleMatcher != nil {
             if firstTap {
                 guard maxAmplitudes[0].element > AUValue(self.requiredStartAmplitude) else { return }
             }
-        }
+        //}
         firstTap = false
         
         var logMsg = ""
@@ -374,16 +342,16 @@ class FFTTapHandler :TapHandler {
             logMsg += " NONE"
         }
         else {
-            if let scaleMatcher = scaleMatcher {
-                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest, ampl: frequencyAmplitudes)
-                logMsg += "\t\(matchedStatus.dispStatus())"
-                if let message = matchedStatus.msg {
-                    logMsg += "  " + message //"\t \(message)"
-                }
-                if matchedStatus.status == .wrongNote {
-                    wrongNoteFound = true
-                }
-            }
+//            if let scaleMatcher = scaleMatcher {
+//                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest, ampl: frequencyAmplitudes)
+//                logMsg += "\t\(matchedStatus.dispStatus())"
+//                if let message = matchedStatus.msg {
+//                    logMsg += "  " + message //"\t \(message)"
+//                }
+//                if matchedStatus.status == .wrongNote {
+//                    wrongNoteFound = true
+//                }
+//            }
         }
 
         //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))

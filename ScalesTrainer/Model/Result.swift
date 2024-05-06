@@ -54,16 +54,16 @@ public class Result : ObservableObject {
     ///Merge the scaled matched notes with the unmatched notes by time
     public func makeEventsSequence() -> [Event] {
         var events:[Event] = []
-        for note in self.scale.scaleNoteStates {
-            if let time = note.matchedTimeAscending {
-                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeAscending ?? 0)
-                events.append(event)
-            }
-            if let time = note.matchedTimeDescending {
-                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeDescending ?? 0)
-                events.append(event)
-            }
-        }
+//        for note in self.scale.scaleNoteStates {
+//            if let time = note.matchedTimeAscending {
+//                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeAscending ?? 0)
+//                events.append(event)
+//            }
+//            if let time = note.matchedTimeDescending {
+//                let event = Event(time: time, inScale: true, midi: note.midi, amplitude: note.matchedAmplitudeDescending ?? 0)
+//                events.append(event)
+//            }
+//        }
         for unmatch in self.notInScale {
             let event = Event(time: unmatch.time, inScale: false, midi: unmatch.midi, amplitude: unmatch.amplitude)
             events.append(event)

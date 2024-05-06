@@ -63,7 +63,9 @@ struct ScalesView: View {
     @State var asynchHandle = true
 
     @State var playingSampleFile = false
-    
+    @State var hearingScale = false
+    @State var hearingPlayedScale = false
+
     @State var speechAudioStarted = false
     @State var showResultPopup = false
     
@@ -84,6 +86,7 @@ struct ScalesView: View {
             .onChange(of: keyIndex, {
                 scalesModel.setKey(index: keyIndex)
                 scalesModel.setScale()
+                scalesModel.setMode(.displayMode)
             })
             
             Spacer()
@@ -97,6 +100,7 @@ struct ScalesView: View {
             .onChange(of: scaleTypeIndex, {
                 scalesModel.selectedScaleType = scaleTypeIndex
                 scalesModel.setScale()
+                scalesModel.setMode(.displayMode)
             })
             
             Spacer()
@@ -110,6 +114,7 @@ struct ScalesView: View {
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
                 scalesModel.setScale()
+                scalesModel.setMode(.displayMode)
             })
             
             Spacer()
@@ -120,6 +125,7 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
+            //scalesModel.setMode(.displayMode)
 
             Spacer()
             Text("Direction")
@@ -130,9 +136,8 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
-                
                 scalesModel.setDirection(self.directionIndex)
-                keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
+                //keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
                 scalesModel.forceRepaint()
             })
 
@@ -188,13 +193,13 @@ struct ScalesView: View {
                 }.padding()
                 
                 Spacer()
-                Button(metronome.isTiming ? "Stop Hearing Scale" : "Hear Scale") {
-                    if metronome.isTiming {
-                        metronome.stop()
+                Button(hearingScale ? "Stop Hearing Scale" : "Hear Scale") {
+                    hearingScale.toggle()
+                    if hearingScale {
+                        metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {self.hearingScale = false})
                     }
                     else {
-                        //reset()
-                        metronome.startTimer(notified: scalesModel.scale)
+                        metronome.stop()
                     }
                 }.padding()
                 Spacer()
@@ -208,9 +213,9 @@ struct ScalesView: View {
                         audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
                                                                                 scalesModel.requiredStartAmplitude ?? 0,
                                                                               recordData: false,
-                                                                              scaleMatcher: nil,
                                                                               scale: scalesModel.scale))
-                        scalesModel.setMode(.displayMode)
+                        //scalesModel.setMode(.displayMode)
+                        scalesModel.setMode(.resultMode)
                     }.padding()
                     
                     Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
@@ -257,10 +262,14 @@ struct ScalesView: View {
                     if scalesModel.recordingAvailable {
                         if let result = scalesModel.result {
                             Spacer()
-                            Button("Play Recording") {
-                                //scalesModel.setMode(.resultMode)
-                                //audioManager.playRecordedFile()
-                                scalesModel.processScaleResult(result: result, soundScale: true)
+                            Button(self.hearingPlayedScale ? "Stop Playing" : "Play Your Recording") {
+                                self.hearingPlayedScale.toggle()
+                                if self.hearingPlayedScale {
+                                    metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {self.hearingPlayedScale = false})
+                                }
+                                else {
+                                    metronome.stop()
+                                }
                             }.padding()
                         }
                     }

@@ -100,14 +100,14 @@ class AudioManager {
         let fileName:String
         switch ScalesModel.shared.selectedOctavesIndex {
         case 0:
-            fileName = "05_05_C_MelodicMinor_1_60_iPad_Good.txt"
+            fileName = "05_05_C_Major_1_60_iPad_Asc.txt"
         case 1:
             fileName = "05_05_C_MelodicMinor_2_60_iPad_17.txt"
         default:
             fileName = ""
         }
         let scalesModel = ScalesModel.shared
-        scalesModel.scale.resetMatches()
+        //scalesModel.scale.resetMatches()
         scalesModel.result = nil
         
         if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
@@ -146,8 +146,9 @@ class AudioManager {
                 }
                 tapHandler.stop()
                 scalesModel.stopRecordingScale("End of Test Data")
-                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
+                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
                 scalesModel.forceRepaint()
+                PianoKeyboardModel.shared.debug("End test read")
                 Logger.shared.log(self, "Read test data \(lines.count-1) lines")
                 
             } catch {
@@ -192,7 +193,7 @@ class AudioManager {
     func playSampleFile(fileName:String, tapHandler: TapHandler) {
         Logger.shared.clearLog()
         ScalesModel.shared.result = nil
-        ScalesModel.shared.scale.resetMatches()
+        //ScalesModel.shared.scale.resetMatches()
         guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
             Logger.shared.reportError(self, "Audio file not found \(fileName)")
             return

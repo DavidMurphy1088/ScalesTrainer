@@ -17,25 +17,25 @@ struct ResultView: View {
         var maxMidi = 0
         var unmatched = 0
         
-        for note in result.scale.scaleNoteStates {
-            if note.matchedTimeAscending == nil {
-                unmatched += 1
-            }
-            else {
-                if let amplitudeAscending = note.matchedAmplitudeAscending {
-                    if amplitudeAscending > max {
-                        max = amplitudeAscending
-                        maxMidi = note.midi
-                    }
-                    if amplitudeAscending > 0 {
-                        if amplitudeAscending < min {
-                            min = amplitudeAscending
-                            minMidi = note.midi
-                        }
-                    }
-                }
-            }
-        }
+//        for note in result.scale.scaleNoteStates {
+//            if note.matchedTimeAscending == nil {
+//                unmatched += 1
+//            }
+//            else {
+//                if let amplitudeAscending = note.matchedAmplitudeAscending {
+//                    if amplitudeAscending > max {
+//                        max = amplitudeAscending
+//                        maxMidi = note.midi
+//                    }
+//                    if amplitudeAscending > 0 {
+//                        if amplitudeAscending < min {
+//                            min = amplitudeAscending
+//                            minMidi = note.midi
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return "Unmatched:\(unmatched)  [min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
     }
     
@@ -44,20 +44,20 @@ struct ResultView: View {
             Text("Result \(result.scale.key.getName())").font(.title3)
 
             Text("Scale Notes").foregroundColor(Color .blue).font(.title3)//.padding()
-            ScrollView {
-                VStack {
-                    ForEach(result.scale.scaleNoteStates, id: \.self) { state in
-                        let status = (state.matchedTimeAscending == nil && state.matchedTimeDescending == nil) ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
-                        Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
-                    }
-                }
-                .background(
-                    // Gradient overlay to indicate more content below
-                    LinearGradient(gradient: Gradient(colors: [.clear, .white]), startPoint: .center, endPoint: .bottom)
-                        .frame(height: 60)
-                        .offset(y: 50)
-                )
-            }
+//            ScrollView {
+//                VStack {
+//                    ForEach(result.scale.scaleNoteStates, id: \.self) { state in
+//                        let status = (state.matchedTimeAscending == nil && state.matchedTimeDescending == nil) ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
+//                        Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
+//                    }
+//                }
+//                .background(
+//                    // Gradient overlay to indicate more content below
+//                    LinearGradient(gradient: Gradient(colors: [.clear, .white]), startPoint: .center, endPoint: .bottom)
+//                        .frame(height: 60)
+//                        .offset(y: 50)
+//                )
+//            }
             Text("Stats: \(minMax())").foregroundColor(Color .blue).font(.title3).padding()
             Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
             
@@ -67,7 +67,6 @@ struct ResultView: View {
                     Text(toStr(unmatch))
                 }
             }
-
         }
     }
 }

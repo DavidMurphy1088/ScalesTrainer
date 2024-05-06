@@ -30,7 +30,7 @@ public class ScalesModel : ObservableObject {
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
     
     var selectedScaleType = 0 {
-        didSet {reset()}
+        didSet {stopAudioTasks()}
     }
 
     var directionTypes = ["Ascending", "Descending"]
@@ -40,13 +40,13 @@ public class ScalesModel : ObservableObject {
 
     let octaveNumberValues = [1,2,3,4]
     var selectedOctavesIndex = 0 {
-        didSet {reset()}
+        didSet {stopAudioTasks()}
     }
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, recordData: false, scaleMatcher: nil, scale: nil)
+    let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
     var recordDataMode = false
@@ -80,31 +80,31 @@ public class ScalesModel : ObservableObject {
             self.appMode = mode
         }
     }
-    
+        
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1
         }
     }
     
-    private func reset() {
+    private func stopAudioTasks() {
         stopListening()
         MetronomeModel.shared.stop()
         stopRecordingScale("Reset")
         audioManager.stopPlaySampleFile()
-        setMode(.displayMode)
     }
     
     func setKey(index:Int) {
-        reset()
+        stopAudioTasks()
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)
     }
     
     func setDirection(_ index:Int) {
-        //reset()
+        stopAudioTasks()
         self.selectedDirection = index
-        //self.scale.setFingerBreaks(direction: index)
+        PianoKeyboardModel.shared.setFingers(direction: index)
+        PianoKeyboardModel.shared.debug("SalesView::SetDirection dir:\(index)")
     }
 
     func setRecordDataMode(_ way:Bool) {
@@ -137,23 +137,23 @@ public class ScalesModel : ObservableObject {
         let metronome = MetronomeModel.shared
         var ascending = true
         
-        DispatchQueue.global(qos: .background).async { [self] in
-            let events = result.makeEventsSequence()
-            for index in 0..<events.count {
-
-            let event = events[index]
-                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
-                    let keyStatus:PianoKeyResultStatus = event.inScale ? .correctAscending : .incorrectAscending
-                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setStatusForScalePlay(keyStatus)
-                    if soundScale {
-                        sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
-                        PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
-                        let delay = (60.0 / Double(metronome.tempo)) * 1000000
-                        usleep(useconds_t(delay))
-                    }
-                }
-             }
-        }
+//        DispatchQueue.global(qos: .background).async { [self] in
+//            let events = result.makeEventsSequence()
+//            for index in 0..<events.count {
+//
+//            let event = events[index]
+//                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
+//                    let keyStatus:PianoKeyResultStatus = event.inScale ? .correctAscending : .incorrectAscending
+//                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setStatusForScalePlay(keyStatus)
+//                    if soundScale {
+//                        sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
+//                        PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
+//                        let delay = (60.0 / Double(metronome.tempo)) * 1000000
+//                        usleep(useconds_t(delay))
+//                    }
+//                }
+//             }
+//        }
     }
     
     func processSpeech(speech: String) {
@@ -195,9 +195,9 @@ public class ScalesModel : ObservableObject {
         PianoKeyboardModel.shared.configureKeyboardSize()
     }
     
-    func getScaleMatcher() -> ScaleMatcher  {
-        return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
-    }
+//    func getScaleMatcher() -> ScaleMatcher  {
+//        return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
+//    }
 
     func startListening() {
         if let requiredAmplitude = self.requiredStartAmplitude {
@@ -206,7 +206,7 @@ public class ScalesModel : ObservableObject {
             DispatchQueue.main.async {
                 self.listening = true
             }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, recordData: false, scaleMatcher: nil, scale:self.scale)
+            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, recordData: false, scale:self.scale)
             self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: false)
         }
     }
@@ -220,7 +220,7 @@ public class ScalesModel : ObservableObject {
     }
     
     func startRecordingScale(readTestData:Bool) {
-        self.scale.resetMatches()
+        //self.scale.resetMatches()
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
                 sleep(1)
@@ -236,7 +236,7 @@ public class ScalesModel : ObservableObject {
             //let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher(), scale: nil)
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
                                                     recordData: ScalesModel.shared.recordDataMode,
-                                                    scaleMatcher: nil, 
+                                                    //scaleMatcher: nil, 
                                                   scale:self.scale)
             if readTestData {
                 self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)

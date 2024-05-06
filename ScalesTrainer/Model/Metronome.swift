@@ -15,9 +15,10 @@ class MetronomeModel: ObservableObject {
     public static let shared = MetronomeModel()
     
     //@Published private(set) var isRunning = false
-    @Published var tempo: Int = 90 //90
+    @Published var tempo: Int = 120 //90
     //@Published private(set) var playingScale:Bool = false
-    @Published var isTiming = false
+    //@Published 
+    var isTiming = false
 
     private let scalesModel = ScalesModel.shared
     private var audioPlayers:[AudioPlayer] = []
@@ -61,11 +62,8 @@ class MetronomeModel: ObservableObject {
         }
     }
     
-    public func startTimer(notified: MetronomeTimerNotificationProtocol) {
-        //DispatchQueue.main.async { [self] in
-        //need isTiming true immediately for loop to start
-            self.isTiming = true
-        //}
+    public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
+        self.isTiming = true
         for player in self.audioPlayers {
             audioManager.mixer.addInput(player)
         }
@@ -114,6 +112,9 @@ class MetronomeModel: ObservableObject {
                 let delay = (1.2) * 1000000
                 usleep(useconds_t(delay))
                 self.stopTicking(notified: notified)
+                if let onDone = onDone {
+                    onDone()
+                }
             }
         }
     }

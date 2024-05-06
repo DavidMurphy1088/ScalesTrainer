@@ -8,61 +8,55 @@ public enum PianoKeyResultStatus {
     case incorrectDescending
 }
 
+public class PianoKeyState { //}: ObservableObject, Hashable {
+    let id = UUID()
+    var matchedTimeAscending:Date? = nil
+    var matchedTimeDescending:Date? = nil
+    var matchedAmplitudeAscending:Double? = nil
+    var matchedAmplitudeDescending:Double? = nil
+    
+    public init() {
+    }
+}
+
 public class PianoKeyModel: Identifiable {
+    public let id = UUID()
     ///ObservableObject - no point since the drawing of all keys is done by a single context struct that cannot listen to @Published
     let scalesModel = ScalesModel.shared
     let keyboardModel:PianoKeyboardModel
-    let scale:Scale
+    let scale:Scale = ScalesModel.shared.scale
     
-    ///A key on the piano is associated with a scale note state based on if the scale is ascending or descending
-    var scaleNote:ScaleNoteState?
+    var noteFingering:ScaleNoteFinger?
     var isPlayingMidi = false
-    var resultStatus = PianoKeyResultStatus.none
-
+    var state:PianoKeyState
     var keyIndex: Int = 0
-    
+    var midi: Int
+
     public var touchDown = false
     public var latched = false
 
-    init(keyboardModel:PianoKeyboardModel, scale:Scale, keyIndex:Int) {
-        self.scale = scale
+    init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
-        //self.scaleNote = scaleNote
-        //self.delegate = delegate
         self.keyIndex = keyIndex
+        self.state = PianoKeyState()
+        self.midi = midi
     }
     
-    public func setStatusForScalePlay(_ way:PianoKeyResultStatus) {
-        self.resultStatus = way
-        self.keyboardModel.redraw()
-    }
+//    public func setStatusForScalePlay(_ way:PianoKeyResultStatus) {
+//        //self.resultStatus = way
+//        self.keyboardModel.redraw()
+//    }
     
     public func setPlayingMidi(_ ctx:String) {
-        //DispatchQueue.main.async {
-        ///Canvas is direct draw, not background thread draw)
-        //print(" ON=========================>>\(ctx)", self.id, "last", self.keyboardModel.lastKeyPlayed?.id ?? "None")
-        self.isPlayingMidi = true
-        
-        if let last = self.keyboardModel.lastKeyPlayed {
-            if last.id != self.id {
-                //DispatchQueue.main.async {.
-                DispatchQueue.global(qos: .background).async { [self] in
-                    usleep(1000000 * UInt32(0.5))
-                    //sleep(1)
-                    //print("OFF=========================\(ctx)", last.id)
-                    last.isPlayingMidi = false
-                    self.keyboardModel.redraw()
-                }
-            }
-        }
+        self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+        self.isPlayingMidi = true
         self.keyboardModel.redraw()
-        self.keyboardModel.lastKeyPlayed = self
     }
     
-    public var id: Int {
-        noteMidiNumber
-    }
+//    public var id: Int {
+//        noteMidiNumber
+//    }
 
     public var noteMidiNumber: Int {
         keyIndex + self.keyboardModel.firstKeyMidi
@@ -73,9 +67,8 @@ public class PianoKeyModel: Identifiable {
     }
     
     public var finger: String {
-        let midi = noteMidiNumber
         var fingerName = ""
-        if let scaleNote = self.scaleNote {
+        if let scaleNote = self.noteFingering {
             //let off = scaleOffset == nil ? "X" : String(scaleOffset!)
             //return "\(noteMidiNumber) \(fingerName)"
             //let seq = sequence(midi: midi)
