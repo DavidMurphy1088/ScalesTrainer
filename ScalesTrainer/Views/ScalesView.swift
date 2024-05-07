@@ -6,7 +6,6 @@ struct SpeechView : View {
     var body: some View {
         HStack {
             HStack() {
-                //Text("Speech Listen")
                 Toggle("Speech Listen", isOn: $setSpeechListenMode)
             }
             .frame(width: UIScreen.main.bounds.width * 0.15)
@@ -22,7 +21,7 @@ struct SpeechView : View {
     }
 }
 
-struct DataModeView : View {
+struct TestDataModeView : View {
     @ObservedObject private var scalesModel = ScalesModel.shared
     @State var dataMode = false
     var body: some View {
@@ -63,8 +62,9 @@ struct ScalesView: View {
     @State var asynchHandle = true
 
     @State var playingSampleFile = false
-    @State var hearingScale = false
-    @State var hearingPlayedScale = false
+    @State var hearingGivenScale = false
+    @State var hearingUserScale = false
+    @State var recordingScale = false
 
     @State var speechAudioStarted = false
     @State var showResultPopup = false
@@ -86,7 +86,7 @@ struct ScalesView: View {
             .onChange(of: keyIndex, {
                 scalesModel.setKey(index: keyIndex)
                 scalesModel.setScale()
-                scalesModel.setMode(.displayMode)
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
             })
             
             Spacer()
@@ -100,7 +100,7 @@ struct ScalesView: View {
             .onChange(of: scaleTypeIndex, {
                 scalesModel.selectedScaleType = scaleTypeIndex
                 scalesModel.setScale()
-                scalesModel.setMode(.displayMode)
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
             })
             
             Spacer()
@@ -114,7 +114,7 @@ struct ScalesView: View {
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
                 scalesModel.setScale()
-                scalesModel.setMode(.displayMode)
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
             })
             
             Spacer()
@@ -160,7 +160,7 @@ struct ScalesView: View {
             HStack {
                 SpeechView()
                 Spacer()
-                DataModeView()
+                TestDataModeView()
                 Spacer()
                 MetronomeView()
             }
@@ -175,28 +175,22 @@ struct ScalesView: View {
 //                .padding()
             
             HStack {
-//                Spacer()
-//                Button(metronome.isTiming ? "Stop Metronome" : "Start Metronome") {
-//                    //metronome.setTimer(!metronome.isTiming)
-//                }.padding()
-                
                 Spacer()
                 Button(scalesModel.listening ? "Stop Listening" : "Listen") {
                     if scalesModel.listening {
                         scalesModel.stopListening()
                     }
                     else {
-                        //reset()
                         scalesModel.startListening()
                     }
                     
                 }.padding()
                 
                 Spacer()
-                Button(hearingScale ? "Stop Hearing Scale" : "Hear Scale") {
-                    hearingScale.toggle()
-                    if hearingScale {
-                        metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {self.hearingScale = false})
+                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
+                    hearingGivenScale.toggle()
+                    if hearingGivenScale {
+                        metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: false, onDone: {self.hearingGivenScale = false})
                     }
                     else {
                         metronome.stop()
@@ -209,70 +203,48 @@ struct ScalesView: View {
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
-                    Button("READ_TEST_DATA") {
-                        audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
-                                                                                scalesModel.requiredStartAmplitude ?? 0,
-                                                                              recordData: false,
-                                                                              scale: scalesModel.scale))
-                        //scalesModel.setMode(.displayMode)
-                        scalesModel.setMode(.resultMode)
-                    }.padding()
-                    
-                    Button(scalesModel.recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
-                        if scalesModel.recordingScale {
+                    Button(recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
+                        if recordingScale {
                             scalesModel.stopRecordingScale("Stop Button")
                             showResultPopup = false
+                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                            recordingScale = false
                         }
                         else {
-                            ///😡 reset here causes the recording to stop just after its started - no idea why....
-                            //reset()
-                            scalesModel.setMode(.displayMode)
-                            scalesModel.startRecordingScale(readTestData: false)
+                            recordingScale = true
+                            scalesModel.setAppMode(.displayMode, resetRecorded: true)
+                            scalesModel.startRecordingScale(onDone: {
+                                scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                                scalesModel.setDirection(0)
+                            })
                         }
                     }.padding()
                     
-                    Spacer()
-                    if scalesModel.result != nil {
+                    if scalesModel.recordingAvailable {
                         Spacer()
-                        VStack {
-                            Button("Show Popup") {
-                                if let result = scalesModel.result {
-                                    showResultPopup = true
-                                    scalesModel.processScaleResult(result: result, soundScale: false)
-                                    scalesModel.setMode(.resultMode)
-                                }
+                        Button(scalesModel.appMode == .resultMode ? "Show Given Scale" : "Show Your Scale") {
+                            if scalesModel.appMode == .displayMode {
+                                scalesModel.setAppMode(.resultMode, resetRecorded: false)
                             }
-                            .padding()
-                            Button("Show Result") {
-                                if let result = scalesModel.result {
-                                    //showResultPopup = true
-                                    scalesModel.processScaleResult(result: result, soundScale: false)
-                                    scalesModel.setMode(.resultMode)
-                                }
+                            else {
+                                scalesModel.setAppMode(.displayMode, resetRecorded: false)
                             }
-                            .padding()
-                            Button("Show Scale") {
-                                scalesModel.setMode(.displayMode)
+                        }
+                        .padding()
+                        
+                        Spacer()
+                        Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
+                            hearingUserScale.toggle()
+                            if hearingUserScale {
+                                metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, onDone: {self.hearingUserScale = false})
                             }
-                            .padding()
-                        }.padding()
+                            else {
+                                metronome.stop()
+                            }
+                        }
+                        .padding()
                     }
 
-                    Spacer()
-                    if scalesModel.recordingAvailable {
-                        if let result = scalesModel.result {
-                            Spacer()
-                            Button(self.hearingPlayedScale ? "Stop Playing" : "Play Your Recording") {
-                                self.hearingPlayedScale.toggle()
-                                if self.hearingPlayedScale {
-                                    metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {self.hearingPlayedScale = false})
-                                }
-                                else {
-                                    metronome.stop()
-                                }
-                            }.padding()
-                        }
-                    }
                     Spacer()
                 }
                 else {
@@ -280,18 +252,27 @@ struct ScalesView: View {
                 }
             }
             .commonFrameStyle(backgroundColor: .clear).padding()
-
+            
+            Spacer()
+            Button("READ_TEST_DATA") {
+                audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
+                                                                        scalesModel.requiredStartAmplitude ?? 0,
+                                                                      recordData: false,
+                                                                      scale: scalesModel.scale))
+                scalesModel.setAppMode(.resultMode, resetRecorded: true)
+            }.padding()
+            
             //StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
             Spacer()
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
             }
         }
-        .sheet(isPresented: $showResultPopup) {
-            if let result  = scalesModel.result {
-                ResultView(result: result)//4.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
-            }
-        }
+//        .sheet(isPresented: $showResultPopup) {
+//            //if let result  = scalesModel.result {
+//                ResultView(keyboardModel: keyboardModel)
+//            //}
+//        }
         .onAppear {
             pianoKeyboardViewModel.keyboardAudioManager = audioManager //keyboardAudioEngine
         }

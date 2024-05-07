@@ -46,6 +46,28 @@ public struct ClassicStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
+    func getKeyStatusColor(_ keyModel:PianoKeyModel) -> Color {
+        let scalesModel = ScalesModel.shared
+        var color:Color
+        if let scaleNote = keyModel.noteFingering {
+            if scalesModel.selectedDirection == 0 {
+                color = keyModel.state.matchedTimeAscending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
+            }
+            else {
+                color = keyModel.state.matchedTimeDescending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
+            }
+        }
+        else {
+            if scalesModel.selectedDirection == 0 {
+                color = keyModel.state.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+            }
+            else {
+                color = keyModel.state.matchedTimeDescending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+            }
+        }
+        return color
+    }
+    
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let scalesModel = ScalesModel.shared
@@ -119,7 +141,6 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note status -----------
-                
                 let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
                 if scalesModel.appMode == .displayMode {
@@ -132,23 +153,7 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    var color:Color = .clear
-                    if let scaleNote = key.noteFingering {
-                        if scalesModel.selectedDirection == 0 {
-                            color = keyModel.state.matchedTimeAscending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
-                        }
-                        else {
-                            color = keyModel.state.matchedTimeDescending != nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
-                        }
-                    }
-                    else {
-                        if scalesModel.selectedDirection == 0 {
-                            color = keyModel.state.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
-                        }
-                        else {
-                            color = keyModel.state.matchedTimeDescending != nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
-                        }
-                    }
+                    let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }
@@ -250,27 +255,10 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    var color:Color = .clear
-                    if let scaleNote = key.noteFingering {
-                        if scalesModel.selectedDirection == 0 {
-                            color = keyModel.state.matchedTimeAscending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
-                        }
-                        else {
-                            color = keyModel.state.matchedTimeDescending != nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
-                        }
-                    }
-                    else {
-                        if scalesModel.selectedDirection == 0 {
-                            color = keyModel.state.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
-                        }
-                        else {
-                            color = keyModel.state.matchedTimeDescending != nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
-                        }
-                    }
+                    let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }
-                
                 
                 ///----------- Finger number
                 let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear

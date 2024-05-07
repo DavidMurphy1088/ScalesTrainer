@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>131</string>
+					<string>130</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>130</string>
+					<string>129</string>
 					<key>Timestamp</key>
-					<string>736678307.1329</string>
+					<string>736773525.405391</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func processScaleResult(result:Result, soundScale:Bool) {
+				<string>    func processSpeech(speech: String) {
 </string>
 				<key>leading</key>
 				<string>    }
     
 </string>
 				<key>trailing</key>
-				<string>        guard let result = self.result else {
+				<string>        let words = speech.split(separator: " ")
+        guard words.count &gt; 0 else {
             return
-        }
 </string>
 			</dict>
 			<key>type</key>
@@ -83,7 +83,7 @@
 </string>
 				<key>leading</key>
 				<string>                }
-                tapHandler.stop()
+                tapHandler.stopTapping()
 </string>
 				<key>trailing</key>
 				<string>                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)

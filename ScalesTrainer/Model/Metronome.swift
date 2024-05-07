@@ -7,7 +7,7 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol {
     func metronomeStart()
-    func metronomeTicked(timerTickerNumber:Int) -> Bool
+    func metronomeTicked(timerTickerNumber:Int, userScale:Bool) -> Bool
     func metronomeStop()
 }
 
@@ -62,7 +62,7 @@ class MetronomeModel: ObservableObject {
         }
     }
     
-    public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
+    public func startTimer(notified: MetronomeTimerNotificationProtocol, userScale:Bool, onDone:(() -> Void)?) {
         self.isTiming = true
         for player in self.audioPlayers {
             audioManager.mixer.addInput(player)
@@ -81,7 +81,7 @@ class MetronomeModel: ObservableObject {
                             self.stopTicking(notified: notified)
                         }
                         else {
-                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber, userScale: userScale)
                             if stop {
                                 self.isTiming = false
                             }
@@ -95,7 +95,7 @@ class MetronomeModel: ObservableObject {
         else {
             DispatchQueue.global(qos: .background).async { [self] in
                 while self.isTiming {
-                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber, userScale: userScale)
                     if stop {
                         DispatchQueue.main.async { [self] in
                             self.isTiming = false

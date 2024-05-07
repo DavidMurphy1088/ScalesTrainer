@@ -13,7 +13,7 @@ import UIKit
 
 protocol TapHanderProtocol {
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
-    func stop()
+    func stopTapping()
 }
 
 class TapHandler : TapHanderProtocol {
@@ -32,7 +32,7 @@ class TapHandler : TapHanderProtocol {
     func showConfig() {
     }
     
-    func stop(){
+    func stopTapping(){
     }
     
     func log(_ m:String, _ value:Double? = nil) {
@@ -71,7 +71,7 @@ class CallibrationTapHandler : TapHandler {
         log(msg, Double(amplitudesIn[0]))
     }
     
-    override func stop() {
+    override func stopTapping() {
         if type != .none {
             ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
         }
@@ -81,7 +81,6 @@ class CallibrationTapHandler : TapHandler {
 }
 
 class PitchTapHandler : TapHandler {
-    //let scaleMatcher:ScaleMatcher?
     let scale:Scale?
     var wrongNoteFound = false
     var tapNumber = 0
@@ -89,16 +88,15 @@ class PitchTapHandler : TapHandler {
     let recordData:Bool
     
     var ascending = true
-    var matchNotInScale:[UnMatchedType]=[]
     var fileURL:URL?
-    var lastGoodMidi:Int?
+    var lastGoodKey:PianoKeyModel?
     
     init(requiredStartAmplitude:Double, recordData:Bool, scale:Scale?) {
-        //self.scaleMatcher = scaleMatcher
         self.scale = scale
         self.recordData = recordData
         self.requiredStartAmplitude = requiredStartAmplitude
-
+        ScalesModel.shared.recordedEvents = TapEvents()
+        
         super.init()
         if recordData {
             if let scale = scale {
@@ -193,49 +191,46 @@ class PitchTapHandler : TapHandler {
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
             let key = keyboardModel.pianoKeyModel[index]
             var atTurnaround = false
-            if let scaleNote = key.noteFingering {
-                atTurnaround = scaleNote.midi == midi
-            }
+
             if ascending {
-                if let lastGoodMidi = lastGoodMidi {
-                    if midi < lastGoodMidi {
+                if let lastGoodKey = lastGoodKey {
+                    if midi < lastGoodKey.midi {
                         ascending = false
                         atTurnaround = true
                     }
                 }
             }
- 
-            if ascending || atTurnaround {
+
+            if ascending {
                 if key.state.matchedTimeAscending == nil {
                     key.state.matchedTimeAscending = Date()
                     key.state.matchedAmplitudeAscending = Double(amplitude)
                 }
             }
-            if !ascending || atTurnaround {
+            if !ascending  {
                 if key.state.matchedTimeDescending == nil {
                     key.state.matchedTimeDescending = Date()
                     key.state.matchedAmplitudeDescending = Double(amplitude)
                 }
             }
+            if atTurnaround {
+                if let lastGoodKey = lastGoodKey {
+                    lastGoodKey.state.matchedTimeDescending = lastGoodKey.state.matchedTimeAscending
+                    lastGoodKey.state.matchedAmplitudeDescending = lastGoodKey.state.matchedAmplitudeAscending
+                }
+            }
             key.setPlayingMidi("tap handler scale note")
-           lastGoodMidi = midi
+            lastGoodKey = key
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, midi: midi, amplitude: amplitude, key: key))
         }
-        
+        else {
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, midi: midi, amplitude: amplitude, key: nil))
+        }
         log(msg, Double(amplitude))
         tapNumber += 1
     }
     
-    override func stop() {
-//        if let scaleMatcher = scaleMatcher {
-//            log("PitchTapHandler:" + scaleMatcher.stats())
-//            ScalesModel.shared.setStatusMessage(scaleMatcher.stats())
-//        }
-//        else {
-            if let scale = self.scale {
-                ScalesModel.shared.setStatusMessage("from Tap Handler")
-                ScalesModel.shared.result = Result(scale: scale, notInScale: self.matchNotInScale)
-            }
-        //}
+    override func stopTapping() {
         log("PitchTapHandler in stop()")
         Logger.shared.calcValueLimits()
     }

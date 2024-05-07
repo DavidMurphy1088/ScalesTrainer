@@ -2,20 +2,22 @@ import Foundation
 import SwiftUI
 
 struct ResultView: View {
-    @ObservedObject var result:Result
+    let scalesModel = ScalesModel.shared
+    //@ObservedObject
+    var keyboardModel:PianoKeyboardModel
     
-    func toStr(_ unmatch:UnMatchedType) -> String {
-        let amp = String(format: "%.4f", unmatch.amplitude)
-        return "TapNumber:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi) Ampl:\(amp)"
-    }
+//    func toStr(_ unmatch:UnMatchedType) -> String {
+//        let amp = String(format: "%.4f", unmatch.amplitude)
+//        return "TapNumber:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi) Ampl:\(amp)"
+//    }
     
     func minMax() -> String {
-        var stats = ""
-        var min = Double.infinity
-        var minMidi = 0
-        var max = 0.0
-        var maxMidi = 0
-        var unmatched = 0
+//        var stats = ""
+//        var min = Double.infinity
+//        var minMidi = 0
+//        var max = 0.0
+//        var maxMidi = 0
+//        var unmatched = 0
         
 //        for note in result.scale.scaleNoteStates {
 //            if note.matchedTimeAscending == nil {
@@ -36,37 +38,39 @@ struct ResultView: View {
 //                }
 //            }
 //        }
-        return "Unmatched:\(unmatched)  [min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
+ //       return "Unmatched:\(unmatched)  [min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
+        return ""
     }
     
+    func amplData(key:PianoKeyModel) -> String {
+        var asc:String = "______"
+        if let a = key.state.matchedAmplitudeAscending {
+            asc = String(format: "%.4f", a)
+        }
+        return asc
+    }
+        
     var body: some View {
         VStack {
-            Text("Result \(result.scale.key.getName())").font(.title3)
+            Text("Result").font(.title3)
 
             Text("Scale Notes").foregroundColor(Color .blue).font(.title3)//.padding()
-//            ScrollView {
-//                VStack {
-//                    ForEach(result.scale.scaleNoteStates, id: \.self) { state in
-//                        let status = (state.matchedTimeAscending == nil && state.matchedTimeDescending == nil) ? "--- Not found ---" : "Found \(String(format: "%.4f", state.matchedAmplitudeAscending ?? ""))"
-//                        Text("Seq:\(state.sequence) midi:\(state.midi) \(status)")
-//                    }
-//                }
-//                .background(
-//                    // Gradient overlay to indicate more content below
-//                    LinearGradient(gradient: Gradient(colors: [.clear, .white]), startPoint: .center, endPoint: .bottom)
-//                        .frame(height: 60)
-//                        .offset(y: 50)
-//                )
+//            ForEach(keyboardModel.pianoKeyModel, id: \.self) { key in
+//                Text("Key \(key.midi) \(amplData(key: key))")
 //            }
-            Text("Stats: \(minMax())").foregroundColor(Color .blue).font(.title3).padding()
-            Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
-            
-            Text("Not in Scale").foregroundColor(Color .blue).font(.title3).padding()
-            ScrollView {
-                ForEach(result.notInScale, id: \.self) { unmatch in
-                    Text(toStr(unmatch))
+            if let tapEvents = scalesModel.recordedEvents {
+                ScrollView {
+                    ForEach(tapEvents.event, id: \.self) { event in
+                        Text(event.tapData())
+                    }
                 }
             }
+
+            Text("Stats: \(minMax())").foregroundColor(Color .blue).font(.title3).padding()
+            //Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
+            
+//            Text("Not in Scale").foregroundColor(Color .blue).font(.title3).padding()
+
         }
     }
 }

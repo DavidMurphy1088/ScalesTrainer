@@ -9,20 +9,16 @@ enum AppMode {
 
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
-    
     var scale:Scale
     
+    @Published var appMode:AppMode
     @Published var requiredStartAmplitude:Double? = nil
     @Published var amplitudeFilter:Double = 0.0
-    
-    @Published var statusMessage = ""
-    @Published var speechListenMode = false
     @Published var recordingAvailable = false
-    @Published var speechLastWord = ""
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
-    @Published var appMode:AppMode
+    @Published var listening = false
 
-    var result:Result? = nil
+    var recordedEvents:TapEvents? = nil
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
     var selectedKey = Key()
@@ -46,19 +42,19 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let callibrationTapHandler = PitchTapHandler(requiredStartAmplitude: 0, recordData: false, scale: nil)
+    let callibrationTapHandler:PitchTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
     var recordDataMode = false
+    var onRecordingDoneCallback:(()->Void)?
     
     ///Speech
+    @Published var speechListenMode = false
+    @Published var speechLastWord = ""
     let speechManager = SpeechManager.shared
     var speechWords:[String] = []
     var speechCommandsReceived = 0
     
-    @Published var recordingScale = false
-    @Published var listening = false
-
     init() {
         appMode = .displayMode
         scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
@@ -73,11 +69,15 @@ public class ScalesModel : ObservableObject {
         if value > 0 {
             self.amplitudeFilter = value
         }
+        self.callibrationTapHandler = nil
     }
-    
-    func setMode(_ mode:AppMode) {
+
+    func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
         DispatchQueue.main.async {
             self.appMode = mode
+            if resetRecorded {
+                self.recordedEvents = nil
+            }
         }
     }
         
@@ -101,7 +101,6 @@ public class ScalesModel : ObservableObject {
     }
     
     func setDirection(_ index:Int) {
-        stopAudioTasks()
         self.selectedDirection = index
         PianoKeyboardModel.shared.setFingers(direction: index)
         PianoKeyboardModel.shared.debug("SalesView::SetDirection dir:\(index)")
@@ -128,34 +127,6 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func processScaleResult(result:Result, soundScale:Bool) {
-        guard let result = self.result else {
-            return
-        }
-        let audioManager = AudioManager.shared
-        let sampler = audioManager.midiSampler
-        let metronome = MetronomeModel.shared
-        var ascending = true
-        
-//        DispatchQueue.global(qos: .background).async { [self] in
-//            let events = result.makeEventsSequence()
-//            for index in 0..<events.count {
-//
-//            let event = events[index]
-//                if let keyNumber = PianoKeyboardModel.shared.getKeyIndexForMidi(event.midi) {
-//                    let keyStatus:PianoKeyResultStatus = event.inScale ? .correctAscending : .incorrectAscending
-//                    PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setStatusForScalePlay(keyStatus)
-//                    if soundScale {
-//                        sampler.play(noteNumber: UInt8(event.midi), velocity: 64, channel: 0)
-//                        PianoKeyboardModel.shared.pianoKeyModel[keyNumber].setPlayingMidi("tap handler out of scale")
-//                        let delay = (60.0 / Double(metronome.tempo)) * 1000000
-//                        usleep(useconds_t(delay))
-//                    }
-//                }
-//             }
-//        }
-    }
-    
     func processSpeech(speech: String) {
         let words = speech.split(separator: " ")
         guard words.count > 0 else {
@@ -166,7 +137,7 @@ public class ScalesModel : ObservableObject {
         logger.log(self, m)
         if words[0].uppercased() == "START" {
             speechManager.stopAudioEngine()
-            startRecordingScale(readTestData: false)
+            startRecordingScale(onDone: {})
         }
         DispatchQueue.main.async {
             self.speechLastWord = String(words[0])
@@ -177,7 +148,6 @@ public class ScalesModel : ObservableObject {
     }
     
     func setScale() {
-        //let key = Key(name: selectedKey, keyType: .major)
         var scaleType:ScaleType = .major
         switch self.selectedScaleType {
         case 1:
@@ -194,14 +164,9 @@ public class ScalesModel : ObservableObject {
                            octaves: self.octaveNumberValues[self.selectedOctavesIndex])
         PianoKeyboardModel.shared.configureKeyboardSize()
     }
-    
-//    func getScaleMatcher() -> ScaleMatcher  {
-//        return ScaleMatcher(scale: self.scale, mismatchesAllowed: 8)
-//    }
 
     func startListening() {
         if let requiredAmplitude = self.requiredStartAmplitude {
-            self.result = nil
             Logger.shared.log(self, "Start listening")
             DispatchQueue.main.async {
                 self.listening = true
@@ -219,63 +184,45 @@ public class ScalesModel : ObservableObject {
         audioManager.stopRecording()
     }
     
-    func startRecordingScale(readTestData:Bool) {
-        //self.scale.resetMatches()
+    func startRecordingScale(onDone:@escaping ()->Void) {
+        self.onRecordingDoneCallback = onDone
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
                 sleep(1)
                 self.speechManager.speak("Please start your scale")
                 sleep(2)
             }
-            self.result = nil
             Logger.shared.log(self, "Start recording scale")
             DispatchQueue.main.async {
-                self.recordingScale = true
                 self.recordingAvailable = false
             }
-            //let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, scaleMatcher: self.getScaleMatcher(), scale: nil)
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                    recordData: ScalesModel.shared.recordDataMode,
-                                                    //scaleMatcher: nil, 
-                                                  scale:self.scale)
-            if readTestData {
-                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
-            }
-            else {
-                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
-            }
+                                                recordData: ScalesModel.shared.recordDataMode,
+                                                scale:self.scale)
+            self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
         }
     }
     
     func stopRecordingScale(_ ctx:String) {
         let duration = self.audioManager.recorder?.recordedDuration
         Logger.shared.log(self, "Stop recording scale, duration:\(duration), ctx:\(ctx)")
-        DispatchQueue.main.async {
-            self.recordingScale = false
-        }
         audioManager.stopRecording()
         DispatchQueue.main.async {
 //            self.speechManager.startAudioEngine()
 //            self.speechManager.startSpeechRecognition()
-            
-            if let file = self.audioManager.recorder?.audioFile {
-                ///Comments should be removed after testing... 👉
-                //if file.duration > 0 {
-                    self.recordingAvailable = true
+            self.recordingAvailable = true
+            //if let file = self.audioManager.recorder?.audioFile {
                 //}
                 //else {
                     //Logger.shared.reportError(self, "Recorded file is zero length")
                 //}
-            }
+            //}
+        }
+        if let onDone = self.onRecordingDoneCallback {
+            onDone()
         }
     }
-    
-    func setStatusMessage(_ msg:String) {
-        DispatchQueue.main.async {
-            self.statusMessage = msg
-        }
-    }
-    
+        
     func doCallibration(type:CallibrationType, amplitudes:[Float]) {
         let n = 4
         guard amplitudes.count >= n else {

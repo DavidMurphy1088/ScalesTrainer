@@ -43,6 +43,7 @@ struct ScalesTrainerApp: App {
                     .tag(3)
             }
             .onAppear() {
+                let shared = ScalesModel.shared
                 if ScalesModel.shared.requiredStartAmplitude == nil {
                     self.selectedTab = 2
                 }

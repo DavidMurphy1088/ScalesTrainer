@@ -15,7 +15,7 @@ public enum ScaleType {
     case chromatic
 }
 
-public class ScaleNoteFinger { //}:ObservableObject, Hashable {
+public class ScaleNoteFinger { 
     let id = UUID()
     let sequence:Int
     var midi:Int
@@ -28,7 +28,7 @@ public class ScaleNoteFinger { //}:ObservableObject, Hashable {
     }
 }
 
-public class Scale { //}: MetronomeTimerNotificationProtocol {
+public class Scale { 
     let id = UUID()
     private(set) var key:Key
     private(set) var scaleNoteFinger:[ScaleNoteFinger]

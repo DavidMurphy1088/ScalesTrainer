@@ -25,7 +25,6 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     weak var keyboardAudioManager: AudioManager?
     
     public init() {
-        //configureKeys(direction: ScalesModel.shared.selectedDirection)
     }
     
     ///MetronomeTimerNotificationProtocol
@@ -35,11 +34,11 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         nextKeyToPlayIndex = nil
     }
     
-    func metronomeTicked(timerTickerNumber: Int) -> Bool {            
+    func metronomeTicked(timerTickerNumber: Int, userScale:Bool) -> Bool {
         let audioManager = AudioManager.shared
         let sampler = audioManager.midiSampler
 
-        if scalesModel.appMode == .displayMode {
+        if !userScale {
             if timerTickerNumber < ScalesModel.shared.scale.scaleNoteFinger.count {
                 let scaleNote = ScalesModel.shared.scale.scaleNoteFinger[timerTickerNumber]
                 //Velocity specifies the volume with which the note is played.Range: 0 -> 127
@@ -76,6 +75,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                         else {
                             nextKeyToPlayIndex = keyToPlay - 1
                         }
+                        
                         return false
                     }
                 }
@@ -229,15 +229,6 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             }
         }
     }
-    
-//    public func getKeyIndexForMidi(_ midi: Int) -> Int? {
-//        for i in 0..<self.pianoKeyModel.count {
-//            if self.pianoKeyModel[i].id == midi {
-//                return i
-//            }
-//        }
-//        return nil
-//    }
 
     private func getKeyContaining(_ point: CGPoint) -> Int? {
         var keyNum: Int?
@@ -265,33 +256,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
     public func getKeyIndexForMidi(midi:Int, direction:Int) -> Int? {
-        //var endIndex:Int
-        //var startIndex:Int = 0
-//        let cnt = self.scaleNoteFingers.count
-//        if cnt == 0 {
-//            return nil
-//        }
-//        if direction == 0 {
-//            startIndex = 0
-//            endIndex = (cnt / 2) + 1
-//        }
-//        else {
-//            startIndex = (cnt / 2) ///Middle scale note is returned in both ascending and descending
-//            endIndex = cnt
-//        }
-
-//        for i in startIndex..<endIndex {
-//            if scaleNoteFingers[i].midi == midi {
-//                return i
-//            }
-//        }
-//        for i in startIndex..<endIndex {
-//            if scaleNoteFingers[i].midi == midi {
-//                return i
-//            }
-//        }
         let x = self.pianoKeyModel.first(where: { $0.midi == midi })
         return x == nil ? nil : x?.keyIndex
-        
     }
 }
