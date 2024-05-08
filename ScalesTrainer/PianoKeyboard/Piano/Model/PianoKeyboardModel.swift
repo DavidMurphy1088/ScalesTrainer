@@ -167,10 +167,10 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             let key = self.pianoKeyModel[i]
             key.noteFingering = scale.getFingerForMidi(midi: key.midi, direction: direction)
         }
-        debug("set fingers")
+        //debug("set fingers")
     }
     
-    func debug(_ ctx:String) {
+    func debug1(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
@@ -243,11 +243,13 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         return keyNum
     }
 
-    private func reset() {
+    public func reset() {
         for i in 0..<numberOfKeys {
             pianoKeyModel[i].touchDown = false
             pianoKeyModel[i].latched = false
             keyboardAudioManager?.pianoKeyUp(pianoKeyModel[i].noteMidiNumber)
+            pianoKeyModel[i].state.matchedTimeAscending = nil
+            pianoKeyModel[i].state.matchedTimeDescending = nil
         }
     }
     

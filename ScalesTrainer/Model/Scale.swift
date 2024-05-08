@@ -160,10 +160,10 @@ public class Scale {
         setFingers()
         
         setFingerBreaks()
-        debug("Constructor")
+        //debug("Constructor")
     }
     
-    func debug(_ msg:String) {
+    func debug1(_ msg:String) {
         print("==========scale \(msg)", key.name, key.keyType, self.id)
         for finger in self.scaleNoteFinger {
             print("Midi:", finger.midi,  "finger", finger.finger, "break", finger.fingerSequenceBreak) 
@@ -181,57 +181,26 @@ public class Scale {
         return nil
     }
     
-//    func metronomeStart() {
-//        //metronomeNoteIndex = 0
-//        //metronomeLastPlayedKeyIndex = nil
-//        metronomeAscending = true
-//        ScalesModel.shared.setDirection(0)
-//        PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
-//        //ScalesModel.shared.forceRepaint()
-//    }
+    func highestMidi() -> Int {
+        let i = self.scaleNoteFinger.count / 2
+        return self.scaleNoteFinger[i].midi
+    }
     
-//    func metronomeTicked(timerTickerNumber: Int) -> Bool {
-//        let audioManager = AudioManager.shared
-//        let sampler = audioManager.midiSampler
-//        
-//        let noteIndex = timerTickerNumber
-//
-//        let scaleNote = self.scaleNoteStates[noteIndex]
-//        if let key = scaleNote.pianoKey {
-//            key.setPlayingMidi("metronome tick")
-//        }
-//
-//        //scaleNote.setPlayingMidi(true)
-//        //ScalesModel.shared.forceRepaint()
-//        sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-//        //metronomeLastPlayedKeyIndex = noteIndex
-//        
-//        if metronomeAscending {
-//            if timerTickerNumber == self.scaleNoteStates.count / 2 {
-//                ///Turn around to paint the descending scale piano keys
-//                metronomeAscending = false
-//                ScalesModel.shared.setDirection(1)
-//                PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 1)
-//                ScalesModel.shared.forceRepaint()
-//            }
-//        }
-//        return timerTickerNumber >= self.scaleNoteStates.count - 1
-//    }
-    
-//    func metronomeStop() {
-////        for note in self.scaleNoteStates {
-////            note.setPlayingMidi(false)
-////        }
-//        PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
-//        ScalesModel.shared.forceRepaint()
-//    }
-    
-//    func resetMatches() {
-//        for i in 0..<self.scaleNoteStates.count {
-//            self.scaleNoteStates[i].matchedTimeAscending = nil
-//            self.scaleNoteStates[i].matchedTimeDescending = nil
-//        }
-//    }
+    ///Return the nearest scale midi to a given keyboard midi
+    func getNearestMidi(midi:Int, direction:Int) -> Int {
+        let start = direction == 0 ? 0 : self.scaleNoteFinger.count / 2
+        let end = direction == 0 ? self.scaleNoteFinger.count / 2 : self.scaleNoteFinger.count - 1
+        var minDiff:Int = Int(Int64.max)
+        var minIndex = 0
+        for i in start...end {
+            let diff = abs(self.scaleNoteFinger[i].midi - midi)
+            if diff < minDiff {
+                minDiff = diff
+                minIndex = i
+            }
+        }
+        return self.scaleNoteFinger[minIndex].midi
+    }
 
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key

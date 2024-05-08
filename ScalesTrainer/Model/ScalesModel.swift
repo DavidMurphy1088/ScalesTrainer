@@ -75,10 +75,12 @@ public class ScalesModel : ObservableObject {
     func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
         DispatchQueue.main.async {
             self.appMode = mode
-            if resetRecorded {
-                self.recordedEvents = nil
-            }
         }
+        if resetRecorded {
+            self.recordedEvents = nil
+            PianoKeyboardModel.shared.reset()
+        }
+
     }
         
     func forceRepaint() {
@@ -103,7 +105,7 @@ public class ScalesModel : ObservableObject {
     func setDirection(_ index:Int) {
         self.selectedDirection = index
         PianoKeyboardModel.shared.setFingers(direction: index)
-        PianoKeyboardModel.shared.debug("SalesView::SetDirection dir:\(index)")
+        //PianoKeyboardModel.shared.debug("SalesView::SetDirection dir:\(index)")
     }
 
     func setRecordDataMode(_ way:Bool) {
@@ -137,7 +139,7 @@ public class ScalesModel : ObservableObject {
         logger.log(self, m)
         if words[0].uppercased() == "START" {
             speechManager.stopAudioEngine()
-            startRecordingScale(onDone: {})
+            startRecordingScale(testData: false, onDone: {})
         }
         DispatchQueue.main.async {
             self.speechLastWord = String(words[0])
@@ -184,7 +186,7 @@ public class ScalesModel : ObservableObject {
         audioManager.stopRecording()
     }
     
-    func startRecordingScale(onDone:@escaping ()->Void) {
+    func startRecordingScale(testData:Bool, onDone:@escaping ()->Void) {
         self.onRecordingDoneCallback = onDone
         if let requiredAmplitude = self.requiredStartAmplitude {
             if self.speechListenMode {
@@ -199,7 +201,15 @@ public class ScalesModel : ObservableObject {
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
                                                 recordData: ScalesModel.shared.recordDataMode,
                                                 scale:self.scale)
-            self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            if !testData {
+                audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            }
+            else {
+                audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
+                                                                        requiredStartAmplitude ?? 0,
+                                                                      recordData: false,
+                                                                      scale: scale))
+            }
         }
     }
     

@@ -51,10 +51,10 @@ public struct ClassicStyle {
         var color:Color
         if let scaleNote = keyModel.noteFingering {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.state.matchedTimeAscending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.state.matchedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
             else {
-                color = keyModel.state.matchedTimeDescending == nil ? Color.red.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.state.matchedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
         }
         else {
@@ -129,7 +129,7 @@ public struct ClassicStyle {
                                        width: w, height: w)
                     let color:Color
                     if keyModel.noteFingering != nil {
-                        color = .blue
+                        color = .green
                     }
                     else {
                         color = .red
@@ -168,6 +168,15 @@ public struct ClassicStyle {
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         )
                     //}
+                }
+                else {
+                    if key.state.matchedTimeAscending != nil {
+                        context.draw(
+                        Text("X").foregroundColor(Color.red)
+                            .font(.title).bold(),
+                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+                        )
+                    }
                 }
                 
                 xpos += naturalXIncr
@@ -233,7 +242,7 @@ public struct ClassicStyle {
                                        width: w, height: w)
                     let color:Color
                     if keyModel.noteFingering != nil {
-                        color = .blue
+                        color = .green
                     }
                     else {
                         color = .red
@@ -268,6 +277,15 @@ public struct ClassicStyle {
                             .font(.title).bold(),
                         at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                     )
+                }
+                else {
+                    if key.state.matchedTimeAscending != nil {
+                        context.draw(
+                        Text("X").foregroundColor(Color.red)
+                            .font(.title).bold(),
+                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+                        )
+                    }
                 }
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }

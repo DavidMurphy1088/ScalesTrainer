@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>130</string>
+					<string>132</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>129</string>
+					<string>131</string>
 					<key>Timestamp</key>
-					<string>736773525.405391</string>
+					<string>736816205.612909</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -88,7 +88,7 @@
 				<key>trailing</key>
 				<string>                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
                 scalesModel.forceRepaint()
-                PianoKeyboardModel.shared.debug("End test read")
+                //PianoKeyboardModel.shared.debug("End test read")
 </string>
 			</dict>
 			<key>type</key>

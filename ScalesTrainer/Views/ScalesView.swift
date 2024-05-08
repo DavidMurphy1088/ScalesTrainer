@@ -64,6 +64,7 @@ struct ScalesView: View {
     @State var playingSampleFile = false
     @State var hearingGivenScale = false
     @State var hearingUserScale = false
+    @State var showingTapData = false
     @State var recordingScale = false
 
     @State var speechAudioStarted = false
@@ -200,6 +201,10 @@ struct ScalesView: View {
             }
             .commonFrameStyle(backgroundColor: .clear).padding()
             
+            if scalesModel.recordingAvailable {
+                ResultView(keyboardModel: PianoKeyboardModel.shared).commonFrameStyle(backgroundColor: .clear).padding()
+            }
+            
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                     Spacer()
@@ -213,7 +218,7 @@ struct ScalesView: View {
                         else {
                             recordingScale = true
                             scalesModel.setAppMode(.displayMode, resetRecorded: true)
-                            scalesModel.startRecordingScale(onDone: {
+                            scalesModel.startRecordingScale(testData: false, onDone: {
                                 scalesModel.setAppMode(.resultMode, resetRecorded: false)
                                 scalesModel.setDirection(0)
                             })
@@ -243,6 +248,15 @@ struct ScalesView: View {
                             }
                         }
                         .padding()
+                        
+                        Spacer()
+                        Button(showingTapData ? "Close Tap Data" : "Show Tap Data") {
+                            showingTapData.toggle()
+                            //if showingTapData {
+                            //}
+                        }
+                        .padding()
+
                     }
 
                     Spacer()
@@ -255,11 +269,13 @@ struct ScalesView: View {
             
             Spacer()
             Button("READ_TEST_DATA") {
-                audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
-                                                                        scalesModel.requiredStartAmplitude ?? 0,
-                                                                      recordData: false,
-                                                                      scale: scalesModel.scale))
-                scalesModel.setAppMode(.resultMode, resetRecorded: true)
+                recordingScale = true
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
+                scalesModel.startRecordingScale(testData: true, onDone: {
+                    scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                    scalesModel.setDirection(0)
+                })
+                //scalesModel.setAppMode(.resultMode, resetRecorded: true)
             }.padding()
             
             //StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
@@ -268,11 +284,11 @@ struct ScalesView: View {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
             }
         }
-//        .sheet(isPresented: $showResultPopup) {
-//            //if let result  = scalesModel.result {
-//                ResultView(keyboardModel: keyboardModel)
-//            //}
-//        }
+        .sheet(isPresented: $showingTapData) {
+            //if let result  = scalesModel.result {
+            TapDataView(keyboardModel: PianoKeyboardModel.shared)
+            //}
+        }
         .onAppear {
             pianoKeyboardViewModel.keyboardAudioManager = audioManager //keyboardAudioEngine
         }

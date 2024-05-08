@@ -227,18 +227,18 @@
 		799FC1582BE702E300BB0969 /* May5_Good */ = {
 			isa = PBXGroup;
 			children = (
-				799FC1412BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt */,
-				799FC1462BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt */,
-				799FC1442BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt */,
 				799FC1422BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt */,
 				799FC1482BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt */,
-				799FC1432BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt */,
+				799FC1292BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt */,
 				799FC1402BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt */,
-				799FC13F2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt */,
+				799FC1412BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt */,
 				799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */,
 				799FC1282BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt */,
+				799FC1462BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt */,
+				799FC1442BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Good.txt */,
 				799FC1452BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt */,
-				799FC1292BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt */,
+				799FC13F2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt */,
+				799FC1432BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Good.txt */,
 			);
 			path = May5_Good;
 			sourceTree = "<group>";

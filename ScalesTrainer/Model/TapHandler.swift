@@ -81,7 +81,7 @@ class CallibrationTapHandler : TapHandler {
 }
 
 class PitchTapHandler : TapHandler {
-    let scale:Scale?
+    let scale:Scale
     var wrongNoteFound = false
     var tapNumber = 0
     var requiredStartAmplitude:Double
@@ -89,17 +89,22 @@ class PitchTapHandler : TapHandler {
     
     var ascending = true
     var fileURL:URL?
+    var pressedKeys:[PianoKeyModel]
+    var lastAmplitude:Float?
+    var lastScaleMatchIndex:Int
     var lastGoodKey:PianoKeyModel?
     
-    init(requiredStartAmplitude:Double, recordData:Bool, scale:Scale?) {
+    init(requiredStartAmplitude:Double, recordData:Bool, scale:Scale) {
         self.scale = scale
         self.recordData = recordData
         self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
-        
+        self.pressedKeys = []
+        lastScaleMatchIndex = 0
+
         super.init()
         if recordData {
-            if let scale = scale {
+            //if let scale = scale {
                 let calendar = Calendar.current
                 let month = calendar.component(.month, from: Date())
                 let day = calendar.component(.day, from: Date())
@@ -125,7 +130,7 @@ class PitchTapHandler : TapHandler {
                 catch {
                     Logger.shared.reportError(self, "Error creating file: \(error)")
                 }
-            }
+            //}
         }
     }
     
@@ -137,16 +142,16 @@ class PitchTapHandler : TapHandler {
     
     override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         if recordData {
-            recordTapData(frequencies, amplitudes)
+            recordTapDataToFile(frequencies, amplitudes)
         }
         else {
             processTapData(frequencies, amplitudes)
         }
     }
     
-    func recordTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+    func recordTapDataToFile(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         let timeInterval = Date().timeIntervalSince1970
-        var tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
+        let tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
         if let fileURL = fileURL {
             do {
                 let data = tapData.data(using: .utf8)!
@@ -176,7 +181,7 @@ class PitchTapHandler : TapHandler {
             guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
         }
         
-        let midi = Util.frequencyToMIDI(frequency: frequency)
+        let tapMidi = Util.frequencyToMIDI(frequency: frequency)
 
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -184,33 +189,77 @@ class PitchTapHandler : TapHandler {
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " amp:\(String(format: "%.4f", amplitude))"
         msg += "  fr:\(String(format: "%.0f", frequency))"
-        msg += "  MIDI \(String(describing: midi))"
-        
+        msg += "  MIDI \(String(describing: tapMidi))"
+
+        var amplDiff:Float = 0.0
+        if let lastAmplitude:Float = lastAmplitude {
+            if lastAmplitude > 0 {
+                amplDiff = 100 * (amplitude - lastAmplitude) / lastAmplitude
+            }
+        }
         let keyboardModel = PianoKeyboardModel.shared
+        var pressedKey = false
         
+        var midi = tapMidi
+        ///Adjust to expected octave. e.g. A middle C = 60 might arrive as 72. 72 matches the scale and causes a note played at key 72
+        ///So treat the 72 as middle C = 60 so its not treated as the top of the scale (and then that everything that follows is descending)
+
+        let offsets = [0, 12, -12, 24, -24]
+        var minDist = 1000000
+        var minIndex = 0
+        let scaleMidi = scale.scaleNoteFinger[lastScaleMatchIndex].midi
+        //let scaleMidi = scale.getNearestMidi(midi: <#T##Int#>, direction: <#T##Int#>)
+
+        for i in 0..<offsets.count {
+            let dist = abs((tapMidi  + offsets[i]) - scaleMidi)
+            if dist < minDist {
+                minDist = dist
+                minIndex = i
+            }
+        }
+        midi = tapMidi + offsets[minIndex]
+        if tapMidi == 52 {
+            print("==============")
+        }
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
             let key = keyboardModel.pianoKeyModel[index]
             var atTurnaround = false
 
-            if ascending {
-                if let lastGoodKey = lastGoodKey {
-                    if midi < lastGoodKey.midi {
-                        ascending = false
-                        atTurnaround = true
-                    }
-                }
-            }
+//            if ascending {
+//                if let lastGoodKey = lastGoodKey {
+//                    if midi < lastGoodKey.midi {
+//                        ascending = false
+//                        //atTurnaround = true
+//                    }
+//                }
+//            }
 
             if ascending {
                 if key.state.matchedTimeAscending == nil {
                     key.state.matchedTimeAscending = Date()
                     key.state.matchedAmplitudeAscending = Double(amplitude)
+                    pressedKey = true
+                    if midi == scale.scaleNoteFinger[lastScaleMatchIndex].midi {
+                        if lastScaleMatchIndex < scale.scaleNoteFinger.count - 1  {
+                            lastScaleMatchIndex += 1
+                        }
+                    }
+                    if midi == scale.highestMidi() {
+                        ascending = false
+                    }
+
                 }
             }
             if !ascending  {
                 if key.state.matchedTimeDescending == nil {
                     key.state.matchedTimeDescending = Date()
                     key.state.matchedAmplitudeDescending = Double(amplitude)
+                    pressedKey = true
+                    if midi == scale.scaleNoteFinger[lastScaleMatchIndex].midi {
+                        if lastScaleMatchIndex < scale.scaleNoteFinger.count - 1  {
+                            lastScaleMatchIndex += 1
+                        }
+                    }
                 }
             }
             if atTurnaround {
@@ -220,14 +269,22 @@ class PitchTapHandler : TapHandler {
                 }
             }
             key.setPlayingMidi("tap handler scale note")
+            pressedKeys.append(key)
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: true, 
+                                                                     scaleMid: lastScaleMatchIndex,
+                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                     pressedKey:pressedKey, amplDiff: Double(amplDiff), ascending: ascending, key: key))
             lastGoodKey = key
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, midi: midi, amplitude: amplitude, key: key))
         }
         else {
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, midi: midi, amplitude: amplitude, key: nil))
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: false,
+                                                                     scaleMid: lastScaleMatchIndex, 
+                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                     pressedKey:false, amplDiff: Double(amplDiff), ascending: ascending, key: nil))
         }
         log(msg, Double(amplitude))
         tapNumber += 1
+        lastAmplitude = amplitude
     }
     
     override func stopTapping() {
