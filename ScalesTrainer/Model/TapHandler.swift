@@ -11,36 +11,36 @@ import UIKit
 ///By default, the bufferSize is set to 4096 samples. Assuming a typical sample rate of 44,100 Hz, this means that the closure will be called approximately 10.7 times per second (44,100 / 4096).
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
-protocol TapHanderProtocol {
+protocol TapHandlerProtocol {
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping()
 }
 
-class TapHandler : TapHanderProtocol {
-    var startTime:Date
-    
-    init() {
-        startTime = Date()
-    }
-    
-    func tapUpdate(_ frequency: [AudioKit.AUValue], _ amplitude: [AudioKit.AUValue]) {
-    }
-    
-    func tapUpdate(_ frequencys: [Float]) {
-    }
-
-    func showConfig() {
-    }
-    
-    func stopTapping(){
-    }
-    
-    func log(_ m:String, _ value:Double? = nil) {
-        //if false {
-            Logger.shared.log(self, m, value)
-        //}
-    }
-}
+//class TapHandler : TapHanderProtocol {
+//    var startTime:Date
+//    
+//    init() {
+//        startTime = Date()
+//    }
+//    
+//    func tapUpdate(_ frequency: [AudioKit.AUValue], _ amplitude: [AudioKit.AUValue]) {
+//    }
+//    
+//    func tapUpdate(_ frequencys: [Float]) {
+//    }
+//
+//    func showConfig() {
+//    }
+//    
+//    func stopTapping(){
+//    }
+//    
+//    func log(_ m:String, _ value:Double? = nil) {
+//        //if false {
+//            Logger.shared.log(self, m, value)
+//        //}
+//    }
+//}
 
 public enum CallibrationType {
     case startAmplitude
@@ -48,15 +48,16 @@ public enum CallibrationType {
     case none
 }
 
-class CallibrationTapHandler : TapHandler {
+class CallibrationTapHandler : TapHandlerProtocol {
     let type:CallibrationType
     private var amplitudes:[Float] = []
+    let startTime:Date = Date()
     
-    init(type: CallibrationType) {
+    init(type:CallibrationType) {
         self.type = type
     }
     
-    override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
+    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
         //let n = 3
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -68,42 +69,80 @@ class CallibrationTapHandler : TapHandler {
         let midi = Util.frequencyToMIDI(frequency: frequency)
         msg += " \tMidi:"+String(midi)
 
-        log(msg, Double(amplitudesIn[0]))
+        Logger.shared.log(self, msg)
     }
     
-    override func stopTapping() {
-        if type != .none {
-            ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
-        }
-        log("ended callibration, type:\(self.type)")
+    func stopTapping() {
+        ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
+        Logger.shared.log(self, "ended callibration")
         Logger.shared.calcValueLimits()
     }
 }
 
-class PitchTapHandler : TapHandler {
+class PracticeTapHandler : TapHandlerProtocol {
+    let startTime:Date = Date()
+
+    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        var frequency:Float
+        var amplitude:Float
+        if amplitudes[0] > amplitudes[1] {
+            frequency = frequencies[0]
+            amplitude = amplitudes[0]
+        }
+        else {
+            frequency = frequencies[1]
+            amplitude = amplitudes[1]
+        }
+        let midi = Util.frequencyToMIDI(frequency: frequency)
+        
+        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+        let secs = Double(ms) / 1000.0
+        var msg = ""
+        msg += "secs:\(String(format: "%.2f", secs))"
+        msg += " amp:\(String(format: "%.4f", amplitude))"
+        msg += "  fr:\(String(format: "%.0f", frequency))"
+        msg += "  MIDI \(String(describing: midi))"
+        let keyboardModel = PianoKeyboardModel.shared
+        let scalesModel = ScalesModel.shared
+
+        if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
+            let keyboardKey = keyboardModel.pianoKeyModel[index]
+            
+//            if scalesModel.selectedDirection == 0 {
+//                keyboardKey.keyState.matchedTimeAscending = Date()
+//                keyboardKey.keyState.matchedAmplitudeAscending = Double(amplitude)
+//            }
+//            if scalesModel.selectedDirection == 1 {
+//                keyboardKey.keyState.matchedTimeDescending = Date()
+//                keyboardKey.keyState.matchedAmplitudeDescending = Double(amplitude)
+//            }
+            keyboardKey.setPlayingMidi()
+            keyboardKey.setPlayingKey()
+        }
+        Logger.shared.log(self, msg)
+    }
+    
+    func stopTapping() {
+    }
+}
+
+class PitchTapHandler : TapHandlerProtocol  {
+    var startTime:Date = Date()
     let scale:Scale
     var wrongNoteFound = false
     var tapNumber = 0
     var requiredStartAmplitude:Double
-    let recordData:Bool
-    
-    var ascending = true
+    let saveTappingToFile:Bool
     var fileURL:URL?
-    var pressedKeys:[PianoKeyModel]
     var lastAmplitude:Float?
-    var lastScaleMatchIndex:Int
-    var lastGoodKey:PianoKeyModel?
     
-    init(requiredStartAmplitude:Double, recordData:Bool, scale:Scale) {
+    init(requiredStartAmplitude:Double, saveTappingToFile:Bool, scale:Scale) {
         self.scale = scale
-        self.recordData = recordData
+        self.saveTappingToFile = saveTappingToFile
         self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
-        self.pressedKeys = []
-        lastScaleMatchIndex = 0
 
-        super.init()
-        if recordData {
+        if saveTappingToFile {
             //if let scale = scale {
                 let calendar = Calendar.current
                 let month = calendar.component(.month, from: Date())
@@ -114,7 +153,7 @@ class PitchTapHandler : TapHandler {
                 keyName += String(Scale.getTypeName(type: scale.scaleType))
                 keyName = keyName.replacingOccurrences(of: " ", with: "")
                 var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"
-                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteFinger[0].midi) + "_" + modelName
+                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[0].midi) + "_" + modelName
                 fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
                 fileName += ".txt"
                 AudioManager.shared.recordedFileSequenceNum += 1
@@ -134,14 +173,14 @@ class PitchTapHandler : TapHandler {
         }
     }
     
-    override func showConfig() {
+    func showConfig() {
         let s = String(format: "%.2f", requiredStartAmplitude)
         let m = "PitchTapHandler required_start_amplitude:\(s)"
-        log(m)
+        Logger.shared.log(self, m)
     }
     
-    override func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        if recordData {
+    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        if saveTappingToFile {
             recordTapDataToFile(frequencies, amplitudes)
         }
         else {
@@ -182,7 +221,7 @@ class PitchTapHandler : TapHandler {
         }
         
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
-
+        
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
         var msg = ""
@@ -190,7 +229,7 @@ class PitchTapHandler : TapHandler {
         msg += " amp:\(String(format: "%.4f", amplitude))"
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: tapMidi))"
-
+        
         var amplDiff:Float = 0.0
         if let lastAmplitude:Float = lastAmplitude {
             if lastAmplitude > 0 {
@@ -201,214 +240,198 @@ class PitchTapHandler : TapHandler {
         var pressedKey = false
         
         var midi = tapMidi
+        
         ///Adjust to expected octave. e.g. A middle C = 60 might arrive as 72. 72 matches the scale and causes a note played at key 72
         ///So treat the 72 as middle C = 60 so its not treated as the top of the scale (and then that everything that follows is descending)
-
-        let offsets = [0, 12, -12, 24, -24]
+        //let offsets = [0, 12, -12, 24, -24]
+        let offsets = [0, 12, -12]
         var minDist = 1000000
         var minIndex = 0
-        let scaleMidi = scale.scaleNoteFinger[lastScaleMatchIndex].midi
-        //let scaleMidi = scale.getNearestMidi(midi: <#T##Int#>, direction: <#T##Int#>)
-
-        for i in 0..<offsets.count {
-            let dist = abs((tapMidi  + offsets[i]) - scaleMidi)
-            if dist < minDist {
-                minDist = dist
-                minIndex = i
+        let nextExpectedNote = scale.getNextExpectedNote()
+        
+        if let nextExpectedNote = nextExpectedNote {
+            for i in 0..<offsets.count {
+                let dist = abs((tapMidi  + offsets[i]) - nextExpectedNote.midi)
+                if dist < minDist {
+                    minDist = dist
+                    minIndex = i
+                }
             }
+            midi = tapMidi + offsets[minIndex]
         }
-        midi = tapMidi + offsets[minIndex]
-        if tapMidi == 52 {
-            print("==============")
-        }
+        
+        let ascending = nextExpectedNote == nil || nextExpectedNote!.sequence <= scale.scaleNoteState.count / 2
+        let atTop = nextExpectedNote != nil && nextExpectedNote!.sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNote!.midi
+
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
-            let key = keyboardModel.pianoKeyModel[index]
-            var atTurnaround = false
-
-//            if ascending {
-//                if let lastGoodKey = lastGoodKey {
-//                    if midi < lastGoodKey.midi {
-//                        ascending = false
-//                        //atTurnaround = true
-//                    }
-//                }
-//            }
-
-            if ascending {
-                if key.state.matchedTimeAscending == nil {
-                    key.state.matchedTimeAscending = Date()
-                    key.state.matchedAmplitudeAscending = Double(amplitude)
+            let keyboardKey = keyboardModel.pianoKeyModel[index]
+            
+            if ascending || atTop {
+                if keyboardKey.keyState.matchedTimeAscending == nil {
+                    keyboardKey.keyState.matchedTimeAscending = Date()
+                    keyboardKey.keyState.matchedAmplitudeAscending = Double(amplitude)
                     pressedKey = true
-                    if midi == scale.scaleNoteFinger[lastScaleMatchIndex].midi {
-                        if lastScaleMatchIndex < scale.scaleNoteFinger.count - 1  {
-                            lastScaleMatchIndex += 1
-                        }
+                    if let nextExpectedNote = nextExpectedNote {
+                        nextExpectedNote.matchedTime = Date()
+                        nextExpectedNote.matchedAmplitude = Double(amplitude)
                     }
-                    if midi == scale.highestMidi() {
-                        ascending = false
-                    }
-
                 }
             }
-            if !ascending  {
-                if key.state.matchedTimeDescending == nil {
-                    key.state.matchedTimeDescending = Date()
-                    key.state.matchedAmplitudeDescending = Double(amplitude)
+            if !ascending || atTop  {
+                if keyboardKey.keyState.matchedTimeDescending == nil {
+                    keyboardKey.keyState.matchedTimeDescending = Date()
+                    keyboardKey.keyState.matchedAmplitudeDescending = Double(amplitude)
                     pressedKey = true
-                    if midi == scale.scaleNoteFinger[lastScaleMatchIndex].midi {
-                        if lastScaleMatchIndex < scale.scaleNoteFinger.count - 1  {
-                            lastScaleMatchIndex += 1
-                        }
+                    if let nextExpectedNote = nextExpectedNote {
+                        nextExpectedNote.matchedTime = Date()
+                        nextExpectedNote.matchedAmplitude = Double(amplitude)
                     }
                 }
             }
-            if atTurnaround {
-                if let lastGoodKey = lastGoodKey {
-                    lastGoodKey.state.matchedTimeDescending = lastGoodKey.state.matchedTimeAscending
-                    lastGoodKey.state.matchedAmplitudeDescending = lastGoodKey.state.matchedAmplitudeAscending
-                }
-            }
-            key.setPlayingMidi("tap handler scale note")
-            pressedKeys.append(key)
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: true, 
-                                                                     scaleMid: lastScaleMatchIndex,
+
+            keyboardKey.setPlayingMidi()
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: true,
+                                                                     scaleSequence: nextExpectedNote?.sequence,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
-                                                                     pressedKey:pressedKey, amplDiff: Double(amplDiff), ascending: ascending, key: key))
-            lastGoodKey = key
+                                                                     pressedKey:pressedKey, amplDiff: Double(amplDiff), ascending: ascending, key: keyboardKey))
         }
         else {
             ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: false,
-                                                                     scaleMid: lastScaleMatchIndex, 
+                                                                     scaleSequence: nil,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      pressedKey:false, amplDiff: Double(amplDiff), ascending: ascending, key: nil))
         }
-        log(msg, Double(amplitude))
+        //print("\n============== tapped", tapMidi, "midi", midi, "expected:", nextExpectedNote?.midi ?? "None", "asc", ascending, "top", atTop)
+        //scale.debug1("herex")
+        //keyboardModel.debug1("herex")
+
+        Logger.shared.log(self,msg)
         tapNumber += 1
         lastAmplitude = amplitude
     }
     
-    override func stopTapping() {
-        log("PitchTapHandler in stop()")
+    func stopTapping() {
+        Logger.shared.log(self, "PitchTapHandler stop")
         Logger.shared.calcValueLimits()
     }
 }
 
 ///Handle a raw FFT
-class FFTTapHandler :TapHandler {
-    //let scaleMatcher:ScaleMatcher?
-    var wrongNoteFound = false
-    var canStartAnalysis = false
-    var requiredStartAmplitude:Double
-    var firstTap = true
-    
-    init(requiredStartAmplitude:Double) {
-        //self.scaleMatcher = scaleMatcher
-        self.requiredStartAmplitude = requiredStartAmplitude
-        super.init()
-        startTime = Date()
-    }
-
-    override func showConfig() {
-        let s = String(format: "%.2f", requiredStartAmplitude)
-        let m = "FFTTapHandler required_start_amplitude:\(s)"
-        log(m)
-    }
-    
-    func frequencyForBin(forBinIndex binIndex: Int, sampleRate: Double = 44100.0, fftSize: Int = 1024) -> Double {
-        return Double(binIndex) * sampleRate / Double(fftSize)
-    }
-    
-    func frequencyToMIDINote(frequency: Double) -> Int {
-        let midiNote = 69 + 12 * log2(frequency / 440)
-        return Int(round(midiNote))
-    }
-    
-    override func tapUpdate(_ frequencyAmplitudes: [Float]) {
-//        if wrongNoteFound {
-//            return
-//        }
-        
-        let n = 3
-        let fftSize = frequencyAmplitudes.count //1024
-        let sampleRate: Double = 44100  // 44.1 kHz
-        
-        let maxAmplitudes = frequencyAmplitudes.enumerated()
-            .sorted { $0.element > $1.element }
-            .prefix(n)
-//        for i in 0..<maxAmplitudes.count {
-//            maxAmplitudes[i].element *= 1
-//        }
-        let indicesOfMaxAmplitudes = maxAmplitudes
-            .map { $0.offset }
-        let magic = 13.991667622214578 //56.545038167938931 //somehow makes the frequencies right?
-        // Calculate the corresponding frequencies
-        let frequencies = indicesOfMaxAmplitudes.map { index in
-            Double(index) * sampleRate / (Double(fftSize) * magic)
-        }
-
-        //if scaleMatcher != nil {
-            if firstTap {
-                guard maxAmplitudes[0].element > AUValue(self.requiredStartAmplitude) else { return }
-            }
-        //}
-        firstTap = false
-        
-        var logMsg = ""
-        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
-        let secs = Double(ms) / 1000.0
-        logMsg += "secs:\(String(format: "%.2f", secs))"
-        logMsg += "  ind:  "
-        for idx in indicesOfMaxAmplitudes {
-            logMsg += " " + String(idx)
-        }
-        //var log = ""
-        logMsg += "    ampl: "
-        for a in maxAmplitudes  {
-            logMsg += "  " + String(format: "%.2f", a.element * 1000)
-        }
-        
+//class FFTTapHandler :: TapHanderProtocol  {
+//    //let scaleMatcher:ScaleMatcher?
+//    var wrongNoteFound = false
+//    var canStartAnalysis = false
+//    var requiredStartAmplitude:Double
+//    var firstTap = true
+//    
+//    init(requiredStartAmplitude:Double) {
+//        //self.scaleMatcher = scaleMatcher
+//        self.requiredStartAmplitude = requiredStartAmplitude
+//        super.init()
+//        startTime = Date()
+//    }
 //
-//        log += " ampl:"
-//        for ampl in maxAmplitudes {
-//            log += String(format: "%.2f", ampl.element * 1000)+","
+//    override func showConfig() {
+//        let s = String(format: "%.2f", requiredStartAmplitude)
+//        let m = "FFTTapHandler required_start_amplitude:\(s)"
+//        log(m)
+//    }
+//    
+//    func frequencyForBin(forBinIndex binIndex: Int, sampleRate: Double = 44100.0, fftSize: Int = 1024) -> Double {
+//        return Double(binIndex) * sampleRate / Double(fftSize)
+//    }
+//    
+//    func frequencyToMIDINote(frequency: Double) -> Int {
+//        let midiNote = 69 + 12 * log2(frequency / 440)
+//        return Int(round(midiNote))
+//    }
+//    
+//    override func tapUpdate(_ frequencyAmplitudes: [Float]) {
+////        if wrongNoteFound {
+////            return
+////        }
+//        
+//        let n = 3
+//        let fftSize = frequencyAmplitudes.count //1024
+//        let sampleRate: Double = 44100  // 44.1 kHz
+//        
+//        let maxAmplitudes = frequencyAmplitudes.enumerated()
+//            .sorted { $0.element > $1.element }
+//            .prefix(n)
+////        for i in 0..<maxAmplitudes.count {
+////            maxAmplitudes[i].element *= 1
+////        }
+//        let indicesOfMaxAmplitudes = maxAmplitudes
+//            .map { $0.offset }
+//        let magic = 13.991667622214578 //56.545038167938931 //somehow makes the frequencies right?
+//        // Calculate the corresponding frequencies
+//        let frequencies = indicesOfMaxAmplitudes.map { index in
+//            Double(index) * sampleRate / (Double(fftSize) * magic)
 //        }
-        logMsg += "    freq:"
-        for freq in frequencies {
-            logMsg += String(format: "%.2f", freq)+","
-        }
-        logMsg += "    mid:"
-        var midisToTest:[Int] = []
-        for freq in frequencies {
-            let midi = Util.frequencyToMIDI(frequency: Float(freq)) + 10
-            logMsg += String(midi)+","
-            midisToTest.append(midi)
-        }
-
-        if maxAmplitudes[0].element > 4.0 / 1000.0 {
-            //print("", String(format: "%.2f", secs), "\t", amps, "\t", ind)
-            log(logMsg, Double(maxAmplitudes[0].element))
-        }
-        
-        logMsg += " midis:\(midisToTest) "
-        if midisToTest.count == 0 {
-            logMsg += " NONE"
-        }
-        else {
-//            if let scaleMatcher = scaleMatcher {
-//                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest, ampl: frequencyAmplitudes)
-//                logMsg += "\t\(matchedStatus.dispStatus())"
-//                if let message = matchedStatus.msg {
-//                    logMsg += "  " + message //"\t \(message)"
-//                }
-//                if matchedStatus.status == .wrongNote {
-//                    wrongNoteFound = true
-//                }
+//
+//        //if scaleMatcher != nil {
+//            if firstTap {
+//                guard maxAmplitudes[0].element > AUValue(self.requiredStartAmplitude) else { return }
 //            }
-        }
+//        //}
+//        firstTap = false
+//        
+//        var logMsg = ""
+//        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+//        let secs = Double(ms) / 1000.0
+//        logMsg += "secs:\(String(format: "%.2f", secs))"
+//        logMsg += "  ind:  "
+//        for idx in indicesOfMaxAmplitudes {
+//            logMsg += " " + String(idx)
+//        }
+//        //var log = ""
+//        logMsg += "    ampl: "
+//        for a in maxAmplitudes  {
+//            logMsg += "  " + String(format: "%.2f", a.element * 1000)
+//        }
+//        
+////
+////        log += " ampl:"
+////        for ampl in maxAmplitudes {
+////            log += String(format: "%.2f", ampl.element * 1000)+","
+////        }
+//        logMsg += "    freq:"
+//        for freq in frequencies {
+//            logMsg += String(format: "%.2f", freq)+","
+//        }
+//        logMsg += "    mid:"
+//        var midisToTest:[Int] = []
+//        for freq in frequencies {
+//            let midi = Util.frequencyToMIDI(frequency: Float(freq)) + 10
+//            logMsg += String(midi)+","
+//            midisToTest.append(midi)
+//        }
+//
+//        if maxAmplitudes[0].element > 4.0 / 1000.0 {
+//            //print("", String(format: "%.2f", secs), "\t", amps, "\t", ind)
+//            log(logMsg, Double(maxAmplitudes[0].element))
+//        }
+//        
+//        logMsg += " midis:\(midisToTest) "
+//        if midisToTest.count == 0 {
+//            logMsg += " NONE"
+//        }
+//        else {
+////            if let scaleMatcher = scaleMatcher {
+////                let matchedStatus = scaleMatcher.match(timestamp: Date(), midis: midisToTest, ampl: frequencyAmplitudes)
+////                logMsg += "\t\(matchedStatus.dispStatus())"
+////                if let message = matchedStatus.msg {
+////                    logMsg += "  " + message //"\t \(message)"
+////                }
+////                if matchedStatus.status == .wrongNote {
+////                    wrongNoteFound = true
+////                }
+////            }
+//        }
+//
+//        //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
+//    }
+//    
 
-        //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
-    }
-    
-
-}
+//}
     

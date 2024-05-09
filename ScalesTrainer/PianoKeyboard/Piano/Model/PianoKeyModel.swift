@@ -1,14 +1,14 @@
 import SwiftUI
   
-public enum PianoKeyResultStatus {
-    case none
-    case correctAscending
-    case correctDescending
-    case incorrectAscending
-    case incorrectDescending
-}
+//public enum PianoKeyResultStatus {
+//    case none
+//    case correctAscending
+//    case correctDescending
+//    case incorrectAscending
+//    case incorrectDescending
+//}
 
-public class PianoKeyState { //}: ObservableObject, Hashable {
+public class PianoKeyState { 
     let id = UUID()
     var matchedTimeAscending:Date? = nil
     var matchedTimeDescending:Date? = nil
@@ -25,10 +25,10 @@ public class PianoKeyModel: Identifiable, Hashable {
     let scalesModel = ScalesModel.shared
     let keyboardModel:PianoKeyboardModel
     let scale:Scale = ScalesModel.shared.scale
+    var keyState:PianoKeyState
+    var scaleNoteState:ScaleNoteState?
     
-    var noteFingering:ScaleNoteFinger?
     var isPlayingMidi = false
-    var state:PianoKeyState
     var keyIndex: Int = 0
     var midi: Int
 
@@ -38,17 +38,24 @@ public class PianoKeyModel: Identifiable, Hashable {
     init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
         self.keyIndex = keyIndex
-        self.state = PianoKeyState()
+        self.keyState = PianoKeyState()
         self.midi = midi
     }
     
-    public func setPlayingMidi(_ ctx:String) {
+    public func setPlayingMidi() {
         self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.isPlayingMidi = true
         self.keyboardModel.redraw()
     }
-
+    
+    public func setPlayingKey() {
+        self.keyboardModel.clearAllPlayingKey(besidesID: self.id)
+        self.keyState.matchedTimeAscending = Date()
+        self.keyState.matchedTimeDescending = Date()
+        self.keyboardModel.redraw()
+    }
+    
     public var noteMidiNumber: Int {
         keyIndex + self.keyboardModel.firstKeyMidi
     }
@@ -59,7 +66,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     public var finger: String {
         var fingerName = ""
-        if let scaleNote = self.noteFingering {
+        if let scaleNote = self.scaleNoteState {
             fingerName = String(scaleNote.finger)
         }
         return fingerName

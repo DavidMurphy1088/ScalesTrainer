@@ -16,12 +16,18 @@ public class ScalesModel : ObservableObject {
     @Published var amplitudeFilter:Double = 0.0
     @Published var recordingAvailable = false
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
-    @Published var listening = false
-
+    @Published var isPracticing = false
+    @Published var recordingScale = false
+    @Published var selectedDirection = 0
     var recordedEvents:TapEvents? = nil
+    var notesHidden = false
+    
+    //let pianoKeyboardModel = PianoKeyboardModel.shared
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
-    var selectedKey = Key()
+    var selectedKey = Key() {
+        didSet {stopAudioTasks()}
+    }
     
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
     
@@ -30,7 +36,7 @@ public class ScalesModel : ObservableObject {
     }
 
     var directionTypes = ["Ascending", "Descending"]
-    var selectedDirection = 0
+
     
     var handTypes = ["Right Hand", "Left Hand"]
 
@@ -78,9 +84,8 @@ public class ScalesModel : ObservableObject {
         }
         if resetRecorded {
             self.recordedEvents = nil
-            PianoKeyboardModel.shared.reset()
+            PianoKeyboardModel.shared.resetDisplayState()
         }
-
     }
         
     func forceRepaint() {
@@ -90,22 +95,26 @@ public class ScalesModel : ObservableObject {
     }
     
     private func stopAudioTasks() {
-        stopListening()
+        if self.isPracticing {
+            stopListening()
+        }
+        if self.recordingScale {
+            stopRecordingScale("Reset")
+        }
         MetronomeModel.shared.stop()
-        stopRecordingScale("Reset")
-        audioManager.stopPlaySampleFile()
+        //audioManager.stopPlaySampleFile()
     }
     
     func setKey(index:Int) {
-        stopAudioTasks()
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)
     }
     
     func setDirection(_ index:Int) {
-        self.selectedDirection = index
-        PianoKeyboardModel.shared.setFingers(direction: index)
-        //PianoKeyboardModel.shared.debug("SalesView::SetDirection dir:\(index)")
+        DispatchQueue.main.async {
+            self.selectedDirection = index
+            PianoKeyboardModel.shared.setFingers(direction: index)
+        }
     }
 
     func setRecordDataMode(_ way:Bool) {
@@ -168,20 +177,20 @@ public class ScalesModel : ObservableObject {
     }
 
     func startListening() {
-        if let requiredAmplitude = self.requiredStartAmplitude {
-            Logger.shared.log(self, "Start listening")
-            DispatchQueue.main.async {
-                self.listening = true
-            }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude, recordData: false, scale:self.scale)
-            self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: false)
+        DispatchQueue.main.async {
+            self.isPracticing = true
+            PianoKeyboardModel.shared.resetDisplayState()
+            PianoKeyboardModel.shared.resetScaleMatchState()
         }
+        let practiceTapHandler = PracticeTapHandler()
+        self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
     }
 
     func stopListening() {
-        Logger.shared.log(self, "Stop recording scale")
+        Logger.shared.log(self, "Stop listening to microphone")
         DispatchQueue.main.async {
-            self.listening = false
+            self.isPracticing = false
+            PianoKeyboardModel.shared.resetDisplayState()
         }
         audioManager.stopRecording()
     }
@@ -194,33 +203,38 @@ public class ScalesModel : ObservableObject {
                 self.speechManager.speak("Please start your scale")
                 sleep(2)
             }
+            scale.resetMatchedData()
+            PianoKeyboardModel.shared.resetScaleMatchState()
+            PianoKeyboardModel.shared.resetDisplayState()
             Logger.shared.log(self, "Start recording scale")
             DispatchQueue.main.async {
                 self.recordingAvailable = false
+                self.recordingScale = true
             }
             let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                recordData: ScalesModel.shared.recordDataMode,
-                                                scale:self.scale)
+                                                  saveTappingToFile: ScalesModel.shared.recordDataMode,
+                                                  scale:self.scale)
             if !testData {
                 audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
             }
             else {
                 audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
                                                                         requiredStartAmplitude ?? 0,
-                                                                      recordData: false,
-                                                                      scale: scale))
+                                                                        saveTappingToFile: false,
+                                                                        scale: scale))
             }
         }
     }
     
     func stopRecordingScale(_ ctx:String) {
-        let duration = self.audioManager.recorder?.recordedDuration
+        let duration = self.audioManager.microphoneRecorder?.recordedDuration
         Logger.shared.log(self, "Stop recording scale, duration:\(duration), ctx:\(ctx)")
         audioManager.stopRecording()
         DispatchQueue.main.async {
 //            self.speechManager.startAudioEngine()
 //            self.speechManager.startSpeechRecognition()
             self.recordingAvailable = true
+            self.recordingScale = false
             //if let file = self.audioManager.recorder?.audioFile {
                 //}
                 //else {

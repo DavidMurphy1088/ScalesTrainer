@@ -9,23 +9,23 @@ struct ResultView: View {
         var missedCountDesc = 0
         var wrongCountAsc = 0
         var wrongCountDesc = 0
-
+        //keyboardModel.debug1("result")
         for i in 0..<keyboardModel.pianoKeyModel.count {
             let key = keyboardModel.pianoKeyModel[i]
-            if let finger = key.noteFingering {
-                if key.state.matchedTimeAscending == nil {
+            if let scaleNoteState = key.scaleNoteState {
+                if key.keyState.matchedTimeAscending == nil {
                     missedCountAsc += 1                    
                 }
-                if key.state.matchedTimeDescending == nil {
+                if key.keyState.matchedTimeDescending == nil {
                     missedCountDesc += 1
                 }
             }
             else {
-                if key.state.matchedTimeAscending != nil {
+                if key.keyState.matchedTimeAscending != nil {
                     wrongCountAsc += 1
                 }
-                if key.state.matchedTimeDescending != nil {
-                    wrongCountAsc += 1
+                if key.keyState.matchedTimeDescending != nil {
+                    wrongCountDesc += 1
                 }
             }
         }
@@ -76,12 +76,11 @@ struct TapDataView: View {
 //    }
     
     func minMax() -> String {
-        var stats = ""
         var min = Double.infinity
         var minMidi = 0
         var max = 0.0
         var maxMidi = 0
-        var unmatched = 0
+        //var unmatched = 0
         
         if let taps = scalesModel.recordedEvents {
             for event in taps.event {
@@ -102,7 +101,7 @@ struct TapDataView: View {
     
     func amplData(key:PianoKeyModel) -> String {
         var asc:String = "______"
-        if let a = key.state.matchedAmplitudeAscending {
+        if let a = key.keyState.matchedAmplitudeAscending {
             asc = String(format: "%.4f", a)
         }
         return asc
@@ -122,7 +121,7 @@ struct TapDataView: View {
     }
     
     func getStats() ->String {
-        var stats = minMax()
+        let stats = minMax()
         return stats
     }
     

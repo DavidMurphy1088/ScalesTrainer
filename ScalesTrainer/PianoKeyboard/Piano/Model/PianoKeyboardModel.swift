@@ -8,16 +8,17 @@ public protocol PianoKeyboardDelegate: AnyObject {
 public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationProtocol {
     public static var shared = PianoKeyboardModel()
     let scalesModel = ScalesModel.shared
-    
-    @Published public var scale:Scale = ScalesModel.shared.scale
     @Published public var pianoKeyModel: [PianoKeyModel] = []
     @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
+
+    //@Published
+    public var scale:Scale = ScalesModel.shared.scale
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
     private var ascending = true
     
     @Published public var latch = false {
-        didSet { reset() }
+        didSet { resetDisplayState() }
     }
     
     public var keyRects: [CGRect] = []
@@ -29,9 +30,12 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     
     ///MetronomeTimerNotificationProtocol
     func metronomeStart() {
-        PianoKeyboardModel.shared.setFingers(direction: 0)
+        resetDisplayState()
+        //setFingers(direction: 0)
+        scalesModel.setDirection(0)
         ascending = true
         nextKeyToPlayIndex = nil
+        self.debug2("start")
     }
     
     func metronomeTicked(timerTickerNumber: Int, userScale:Bool) -> Bool {
@@ -39,20 +43,23 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         let sampler = audioManager.midiSampler
 
         if !userScale {
-            if timerTickerNumber < ScalesModel.shared.scale.scaleNoteFinger.count {
-                let scaleNote = ScalesModel.shared.scale.scaleNoteFinger[timerTickerNumber]
-                //Velocity specifies the volume with which the note is played.Range: 0 -> 127
+            ///Playing the app's scale
+            if timerTickerNumber < ScalesModel.shared.scale.scaleNoteState.count {
+                let scaleNote = ScalesModel.shared.scale.scaleNoteState[timerTickerNumber]
                 if let keyIndex = getKeyIndexForMidi(midi:scaleNote.midi, direction:0) {
-                    self.pianoKeyModel[keyIndex].setPlayingMidi("metronome, scale")
+                    self.pianoKeyModel[keyIndex].setPlayingMidi()
                 }
                 sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
                 ///Scale turnaround
-                if timerTickerNumber == ScalesModel.shared.scale.scaleNoteFinger.count / 2 {
-                    setFingers(direction: 1)
+                if timerTickerNumber == ScalesModel.shared.scale.scaleNoteState.count / 2 {
+                    scalesModel.setDirection(1)
+                    //scalesModel.forceRepaint()
+                    //setFingers(direction: 1)
                 }
             }
-            return timerTickerNumber >= ScalesModel.shared.scale.scaleNoteFinger.count - 1
+            return timerTickerNumber >= ScalesModel.shared.scale.scaleNoteState.count - 1
         } else {
+            ///Playing the users recorded scale
             var keyToPlay:Int = nextKeyToPlayIndex == nil ? 0 : nextKeyToPlayIndex!
             var hitTurnaround = false
             if nextKeyToPlayIndex ?? 0 < 0 {
@@ -61,13 +68,13 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             while true {
                 let key = self.pianoKeyModel[keyToPlay]
                 ///Find the next key to play
-                var matches = (ascending && key.state.matchedTimeAscending != nil) || (!ascending && key.state.matchedTimeDescending != nil)
+                var matches = (ascending && key.keyState.matchedTimeAscending != nil) || (!ascending && key.keyState.matchedTimeDescending != nil)
                 if matches {
                     if hitTurnaround {
                         hitTurnaround = false
                     }
                     else {
-                        key.setPlayingMidi("metronome, scale")
+                        key.setPlayingMidi()
                         sampler.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
                         if ascending {
                             nextKeyToPlayIndex = keyToPlay + 1
@@ -86,6 +93,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                         setFingers(direction: 1)
                         ///Dont play the top note twice
                         hitTurnaround = true
+                        scalesModel.setDirection(1)
                         ascending = false
                     }
                 }
@@ -104,6 +112,19 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 DispatchQueue.global(qos: .background).async { [self] in
                     usleep(1000000 * UInt32(0.5))
                     last.isPlayingMidi = false
+                    self.redraw()
+                }
+            }
+        }
+    }
+    
+    func clearAllPlayingKey(besidesID:UUID? = nil) {
+        if let last = self.pianoKeyModel.first(where: { $0.keyState.matchedTimeAscending != nil || $0.keyState.matchedTimeDescending != nil}) {
+            if besidesID == nil || last.id != besidesID! {
+                DispatchQueue.global(qos: .background).async { [self] in
+                    usleep(1000000 * UInt32(0.5))
+                    last.keyState.matchedTimeAscending = nil
+                    last.keyState.matchedTimeDescending = nil
                     self.redraw()
                 }
             }
@@ -133,7 +154,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     func configureKeyboardSize() {
         self.scale = self.scalesModel.scale
         self.firstKeyMidi = 60
-        if self.scale.scaleNoteFinger[0].midi < 60 {
+        if self.scale.scaleNoteState[0].midi < 60 {
             self.firstKeyMidi -= 12
         }
         if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
@@ -165,18 +186,18 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     public func setFingers(direction:Int) {
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
-            key.noteFingering = scale.getFingerForMidi(midi: key.midi, direction: direction)
+            key.scaleNoteState = scale.getStateForMidi(midi: key.midi, direction: direction)
         }
         //debug("set fingers")
     }
     
-    func debug1(_ ctx:String) {
+    func debug2(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
-            print(key.keyIndex, "midi:", key.midi, "finger:", key.noteFingering?.finger ?? "_____",
-                  key.noteFingering?.fingerSequenceBreak ?? "", terminator: "")
-            print("\tascMatch", key.state.matchedTimeAscending != nil, "\tdescMatch", key.state.matchedTimeDescending != nil)
+            print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
+                  key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
+            print("\tascMatch", key.keyState.matchedTimeAscending != nil, "\tdescMatch", key.keyState.matchedTimeDescending != nil)
         }
     }
     
@@ -218,7 +239,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                         keyboardAudioManager?.pianoKeyUp(noteNumber)
                     }
                     pianoKeyModel[index].touchDown = keyDownAt[index]
-                    pianoKeyModel[index].setPlayingMidi("key pressed down")
+                    pianoKeyModel[index].setPlayingMidi()
                 }
             } else {
                 if pianoKeyModel[index].touchDown && keyDownAt[index] && pianoKeyModel[index].latched {
@@ -243,16 +264,22 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         return keyNum
     }
 
-    public func reset() {
+    public func resetDisplayState() {
         for i in 0..<numberOfKeys {
             pianoKeyModel[i].touchDown = false
             pianoKeyModel[i].latched = false
             keyboardAudioManager?.pianoKeyUp(pianoKeyModel[i].noteMidiNumber)
-            pianoKeyModel[i].state.matchedTimeAscending = nil
-            pianoKeyModel[i].state.matchedTimeDescending = nil
+            pianoKeyModel[i].isPlayingMidi = false
         }
     }
     
+    public func resetScaleMatchState() {
+        for i in 0..<numberOfKeys {
+            pianoKeyModel[i].keyState.matchedTimeAscending = nil
+            pianoKeyModel[i].keyState.matchedTimeDescending = nil
+        }
+    }
+
     ///Get the offset in the keyboard for the given midi
     ///The search is direction specific since melodic minors have different notes in the descending direction
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes

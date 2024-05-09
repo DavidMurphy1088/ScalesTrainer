@@ -69,6 +69,7 @@ struct ScalesView: View {
 
     @State var speechAudioStarted = false
     @State var showResultPopup = false
+    @State var notesHidden = false
     
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
@@ -129,35 +130,35 @@ struct ScalesView: View {
             //scalesModel.setMode(.displayMode)
 
             Spacer()
-            Text("Direction")
+            Text("Viewing\nDirection")
             Picker("Select Value", selection: $directionIndex) {
                 ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
-                    Text("\(scalesModel.directionTypes[index])")
+                    if scalesModel.selectedDirection >= 0 {
+                        Text("\(scalesModel.directionTypes[index])")
+                    }
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setDirection(self.directionIndex)
-                //keyboardModel.mapPianoKeysToScaleNotes(direction: self.directionIndex)
-                scalesModel.forceRepaint()
+                scalesModel.scale.resetMatchedData() ///in listen mode clear wrong notes
             })
-
+            .onChange(of: scalesModel.selectedDirection, {
+                self.directionIndex = scalesModel.selectedDirection
+            })
             Spacer()
         }
     }
     
 //    var body1: some View {
 //        VStack {
-//            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
-//                .frame(height: 320)
-//                .padding()
 //        }
 //    }
     
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
-            
+
             HStack {
                 SpeechView()
                 Spacer()
@@ -175,10 +176,41 @@ struct ScalesView: View {
 //                .frame(height: 320)
 //                .padding()
             
+            if scalesModel.recordingAvailable {
+                ResultView(keyboardModel: PianoKeyboardModel.shared).commonFrameStyle(backgroundColor: .clear).padding()
+            }
+            
             HStack {
                 Spacer()
-                Button(scalesModel.listening ? "Stop Listening" : "Listen") {
-                    if scalesModel.listening {
+                Button(action: {
+                    notesHidden.toggle()
+                    scalesModel.notesHidden = notesHidden
+                    scalesModel.forceRepaint()
+                }) {
+                    if notesHidden {
+                        VStack {
+                            Text("Show Notes")
+                            Image(systemName: "lock.open")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40)
+                        }
+                    }
+                    else {
+                        VStack {
+                            Text("Hide Notes")
+                            Image(systemName: "lock")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40)
+                        }
+                    }
+                }
+                .padding()
+
+                Spacer()
+                Button(scalesModel.isPracticing ? "Stop Practicing" : "Practice") {
+                    if scalesModel.isPracticing {
                         scalesModel.stopListening()
                     }
                     else {
@@ -200,10 +232,6 @@ struct ScalesView: View {
                 Spacer()
             }
             .commonFrameStyle(backgroundColor: .clear).padding()
-            
-            if scalesModel.recordingAvailable {
-                ResultView(keyboardModel: PianoKeyboardModel.shared).commonFrameStyle(backgroundColor: .clear).padding()
-            }
             
             HStack {
                 if let requiredAmplitude = scalesModel.requiredStartAmplitude {
@@ -272,13 +300,16 @@ struct ScalesView: View {
                 recordingScale = true
                 scalesModel.setAppMode(.displayMode, resetRecorded: true)
                 scalesModel.startRecordingScale(testData: true, onDone: {
-                    scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                    PianoKeyboardModel.shared.debug2("end of test read")
+                    //scalesModel.setAppMode(.resultMode, resetRecorded: false)
                     scalesModel.setDirection(0)
+                    PianoKeyboardModel.shared.debug2("end of test read")
+                    self.recordingScale = false
                 })
-                //scalesModel.setAppMode(.resultMode, resetRecorded: true)
             }.padding()
             
             //StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
+            
             Spacer()
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")

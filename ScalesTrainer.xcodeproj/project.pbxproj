@@ -75,6 +75,20 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
+		79E8AF2A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt */; };
+		79E8AF2B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt */; };
+		79E8AF2C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt */; };
+		79E8AF2D2BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_MISREAD_63.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1D2BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_MISREAD_63.txt */; };
+		79E8AF2F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt */; };
+		79E8AF302BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF202BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_0.txt */; };
+		79E8AF312BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF212BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt */; };
+		79E8AF322BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF222BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt */; };
+		79E8AF332BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF232BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt */; };
+		79E8AF342BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_6.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF242BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_6.txt */; };
+		79E8AF352BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF252BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt */; };
+		79E8AF362BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF262BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt */; };
+		79E8AF372BEC9BF200C2D5B3 /* 05_09_C_Major_4_48_iPad_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF272BEC9BF200C2D5B3 /* 05_09_C_Major_4_48_iPad_0.txt */; };
+		79E8AF392BEC9BF200C2D5B3 /* 05_09_A♭_Major_3_44_iPad_2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF292BEC9BF200C2D5B3 /* 05_09_A♭_Major_3_44_iPad_2.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -144,6 +158,20 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
+		79E8AF1A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_D_Major_3_50_iPad_Desc.txt; path = May9/05_09_D_Major_3_50_iPad_Desc.txt; sourceTree = "<group>"; };
+		79E8AF1B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_2_60_iPad_0.txt; path = May9/05_09_C_Major_2_60_iPad_0.txt; sourceTree = "<group>"; };
+		79E8AF1C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_HarmonicMinor_2_60_iPad_4.txt; path = May9/05_09_C_HarmonicMinor_2_60_iPad_4.txt; sourceTree = "<group>"; };
+		79E8AF1D2BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_MISREAD_63.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_3_48_iPad_MISREAD_63.txt; path = May9/05_09_C_Major_3_48_iPad_MISREAD_63.txt; sourceTree = "<group>"; };
+		79E8AF1F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_2_60_iPad_Arpeggio.txt; path = May9/05_09_C_Major_2_60_iPad_Arpeggio.txt; sourceTree = "<group>"; };
+		79E8AF202BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_3_48_iPad_0.txt; path = May9/05_09_C_Major_3_48_iPad_0.txt; sourceTree = "<group>"; };
+		79E8AF212BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Minor_3_48_iPad_8.txt; path = May9/05_09_C_Minor_3_48_iPad_8.txt; sourceTree = "<group>"; };
+		79E8AF222BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_MelodicMinor_3_48_iPad_1.txt; path = May9/05_09_C_MelodicMinor_3_48_iPad_1.txt; sourceTree = "<group>"; };
+		79E8AF232BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_MelodicMinor_3_48_iPad_2.txt; path = May9/05_09_C_MelodicMinor_3_48_iPad_2.txt; sourceTree = "<group>"; };
+		79E8AF242BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_6.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_MelodicMinor_3_48_iPad_6.txt; path = May9/05_09_C_MelodicMinor_3_48_iPad_6.txt; sourceTree = "<group>"; };
+		79E8AF252BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt; path = May9/05_09_C_HarmonicMinor_2_60_iPad_Correct.txt; sourceTree = "<group>"; };
+		79E8AF262BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_HarmonicMinor_2_60_iPad_3.txt; path = May9/05_09_C_HarmonicMinor_2_60_iPad_3.txt; sourceTree = "<group>"; };
+		79E8AF272BEC9BF200C2D5B3 /* 05_09_C_Major_4_48_iPad_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_4_48_iPad_0.txt; path = May9/05_09_C_Major_4_48_iPad_0.txt; sourceTree = "<group>"; };
+		79E8AF292BEC9BF200C2D5B3 /* 05_09_A♭_Major_3_44_iPad_2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_09_A♭_Major_3_44_iPad_2.txt"; path = "May9/05_09_A♭_Major_3_44_iPad_2.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -204,6 +232,16 @@
 		79562C252BE6F7F10016A457 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				79E8AF292BEC9BF200C2D5B3 /* 05_09_A♭_Major_3_44_iPad_2.txt */,
+				79E8AF262BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt */,
+				79E8AF1C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt */,
+				79E8AF1B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt */,
+				79E8AF202BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_0.txt */,
+				79E8AF1A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt */,
+				79E8AF272BEC9BF200C2D5B3 /* 05_09_C_Major_4_48_iPad_0.txt */,
+				79E8AF222BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt */,
+				79E8AF232BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt */,
+				79E8AF242BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_6.txt */,
 				799FC1582BE702E300BB0969 /* May5_Good */,
 				799FC1172BE6FFC700BB0969 /* May5 */,
 			);
@@ -246,6 +284,7 @@
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				79E8AF3A2BEC9EAE00C2D5B3 /* Good */,
 				79562C252BE6F7F10016A457 /* Data */,
 			);
 			path = Data;
@@ -346,6 +385,17 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		79E8AF3A2BEC9EAE00C2D5B3 /* Good */ = {
+			isa = PBXGroup;
+			children = (
+				79E8AF1F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt */,
+				79E8AF1D2BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_MISREAD_63.txt */,
+				79E8AF212BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt */,
+				79E8AF252BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt */,
+			);
+			name = Good;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -427,31 +477,45 @@
 				799FC14D2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */,
+				79E8AF302BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_0.txt in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				79E8AF392BEC9BF200C2D5B3 /* 05_09_A♭_Major_3_44_iPad_2.txt in Resources */,
 				799FC1112BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt in Resources */,
+				79E8AF2C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt in Resources */,
 				799FC14F2BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Asc.txt in Resources */,
+				79E8AF342BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_6.txt in Resources */,
+				79E8AF372BEC9BF200C2D5B3 /* 05_09_C_Major_4_48_iPad_0.txt in Resources */,
 				799FC1392BE6FFC700BB0969 /* 05_05_C_Minor_1_60_iPad.txt in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
+				79E8AF362BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt in Resources */,
 				799FC1102BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt in Resources */,
 				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
 				799FC1132BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt in Resources */,
+				79E8AF322BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt in Resources */,
 				799FC14C2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt in Resources */,
+				79E8AF352BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				799FC1552BE702A800BB0969 /* 05_05_C_Major_1_60_iPad_Desc.txt in Resources */,
+				79E8AF2B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt in Resources */,
 				799FC10F2BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt in Resources */,
 				799FC1372BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_6.txt in Resources */,
 				799FC1532BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt in Resources */,
 				799FC1382BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt in Resources */,
+				79E8AF312BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt in Resources */,
 				799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */,
+				79E8AF332BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
 				799FC1522BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt in Resources */,
 				799FC14E2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				799FC13B2BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt in Resources */,
+				79E8AF2D2BEC9BF200C2D5B3 /* 05_09_C_Major_3_48_iPad_MISREAD_63.txt in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
 				799FC1352BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt in Resources */,
+				79E8AF2F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt in Resources */,
 				799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */,
+				79E8AF2A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt in Resources */,
 				799FC13C2BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_Good.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
