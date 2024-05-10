@@ -1,43 +1,5 @@
 import SwiftUI
 
-struct SpeechView : View {
-    @ObservedObject private var scalesModel = ScalesModel.shared
-    @State var setSpeechListenMode = false
-    var body: some View {
-        HStack {
-            HStack() {
-                Toggle("Speech Listen", isOn: $setSpeechListenMode)
-            }
-            .frame(width: UIScreen.main.bounds.width * 0.15)
-            .padding()
-            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-            .onChange(of: setSpeechListenMode, {scalesModel.setSpeechListenMode(setSpeechListenMode)})
-            .padding()
-            if scalesModel.speechListenMode {
-                let c = String(scalesModel.speechCommandsReceived)
-                Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
-            }
-        }
-    }
-}
-
-struct TestDataModeView : View {
-    @ObservedObject private var scalesModel = ScalesModel.shared
-    @State var dataMode = false
-    var body: some View {
-        HStack {
-            HStack() {
-                Toggle("Record Data Mode", isOn: $dataMode)
-            }
-            .frame(width: UIScreen.main.bounds.width * 0.15)
-            .padding()
-            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-            .onChange(of: dataMode, {scalesModel.setRecordDataMode(dataMode)})
-            .padding()
-        }
-    }
-}
-
 struct ScalesView: View {
     @ObservedObject private var scalesModel = ScalesModel.shared
     private var keyboardModel = PianoKeyboardModel.shared
@@ -70,7 +32,8 @@ struct ScalesView: View {
     @State var speechAudioStarted = false
     @State var showResultPopup = false
     @State var notesHidden = false
-    
+    @State var staffHidden = false
+
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
     }
@@ -150,170 +113,207 @@ struct ScalesView: View {
         }
     }
     
-//    var body1: some View {
-//        VStack {
-//        }
-//    }
+    func PracticeView() -> some View {
+        HStack {
+            Spacer()
+            Button(action: {
+                staffHidden.toggle()
+                //scalesModel.notesHidden = notesHidden
+                scalesModel.forceRepaint()
+            }) {
+                if staffHidden {
+                    VStack {
+                        Text("Show Staff")
+                        Image("eye_closed_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+                else {
+                    VStack {
+                        Text("Hide Staff")
+                        Image("eye_open_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+            }
+            .padding()
+            
+            Spacer()
+            Button(action: {
+                notesHidden.toggle()
+                scalesModel.notesHidden = notesHidden
+                scalesModel.forceRepaint()
+            }) {
+                if notesHidden {
+                    VStack {
+                        Text("Show Notes")
+                        Image("eye_closed_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+                else {
+                    VStack {
+                        Text("Hide Notes")
+                        Image("eye_open_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+            }
+            .padding()
+
+            Spacer()
+            Button(scalesModel.isPracticing ? "Stop Practicing" : "Practice") {
+                if scalesModel.isPracticing {
+                    scalesModel.stopListening()
+                }
+                else {
+                    scalesModel.startListening()
+                }
+                
+            }.padding()
+            
+            Spacer()
+            Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
+                hearingGivenScale.toggle()
+                if hearingGivenScale {
+                    metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: false, onDone: {self.hearingGivenScale = false})
+                }
+                else {
+                    metronome.stop()
+                }
+            }.padding()
+            
+            Spacer()
+            Button("TEST_DATA") {
+                recordingScale = true
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
+                scalesModel.startRecordingScale(testData: true, onDone: {
+                    //PianoKeyboardModel.shared.debug2("end of test read")
+                    //scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                    scalesModel.setDirection(0)
+                    //PianoKeyboardModel.shared.debug2("end of test read")
+                    self.recordingScale = false
+                })
+            }.padding()
+            Spacer()
+        }
+    }
+    
+    func RecordingView() -> some View {
+        HStack {
+            if let requiredAmplitude = scalesModel.requiredStartAmplitude {
+                Spacer()
+                Button(recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
+                    if recordingScale {
+                        scalesModel.stopRecordingScale("Stop Button")
+                        showResultPopup = false
+                        scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                        recordingScale = false
+                    }
+                    else {
+                        recordingScale = true
+                        scalesModel.setAppMode(.displayMode, resetRecorded: true)
+                        scalesModel.startRecordingScale(testData: false, onDone: {
+                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                            scalesModel.setDirection(0)
+                        })
+                    }
+                }.padding()
+                
+                if scalesModel.recordingAvailable {
+                    Spacer()
+                    Button(scalesModel.appMode == .resultMode ? "Show Given Scale" : "Show Your Scale") {
+                        if scalesModel.appMode == .displayMode {
+                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                        }
+                        else {
+                            scalesModel.setAppMode(.displayMode, resetRecorded: false)
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer()
+                    Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
+                        hearingUserScale.toggle()
+                        if hearingUserScale {
+                            metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, onDone: {self.hearingUserScale = false})
+                        }
+                        else {
+                            metronome.stop()
+                        }
+                    }
+                    .padding()
+                    
+                    Spacer()
+                    Button(showingTapData ? "Close Tap Data" : "Show Tap Data") {
+                        showingTapData.toggle()
+                        //if showingTapData {
+                        //}
+                    }
+                    .padding()
+
+                }
+
+                Spacer()
+            }
+            else {
+                Text("Calibration is required in Settings").padding()
+            }
+        }
+
+    }
+    func getScore() -> Score {
+        let score = Score(key: StaffKey(type: .major, keySig: KeySignature(type: .sharp, count: 0)), timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
+        let staff = Staff(score: score, type: .treble, staffNum: 0, linesInStaff: 5)
+        score.addStaff(num: 0, staff: staff)
+       
+        for i in 0..<scalesModel.scale.scaleNoteState.count {
+            if i % 4 == 0 && i > 0 {
+                score.addBarLine()
+            }
+            let note = scalesModel.scale.scaleNoteState[i]
+            let ts = score.createTimeSlice()
+            ts.addNote(n: Note(timeSlice: ts, num: note.midi, staffNum: 0))
+        }
+        //staff.score.addBarLine()
+        //staff.score.addT
+        return score
+    }
     
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
 
-            HStack {
-                SpeechView()
-                Spacer()
-                TestDataModeView()
-                Spacer()
-                MetronomeView()
-            }
-            
             SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding()
             
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
-                .frame(height: 320)
-                .padding()
+                .frame(height: UIScreen.main.bounds.size.height / 4)
+                .commonFrameStyle(backgroundColor: .clear).padding()
 //            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(scale: getScale()))
 //                .frame(height: 320)
 //                .padding()
+            
+            if !self.staffHidden {
+                ScoreView(score: getScore(), widthPadding: false).commonFrameStyle(backgroundColor: .clear).padding()
+            }
             
             if scalesModel.recordingAvailable {
                 ResultView(keyboardModel: PianoKeyboardModel.shared).commonFrameStyle(backgroundColor: .clear).padding()
             }
             
-            HStack {
-                Spacer()
-                Button(action: {
-                    notesHidden.toggle()
-                    scalesModel.notesHidden = notesHidden
-                    scalesModel.forceRepaint()
-                }) {
-                    if notesHidden {
-                        VStack {
-                            Text("Show Notes")
-                            Image(systemName: "lock.open")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40)
-                        }
-                    }
-                    else {
-                        VStack {
-                            Text("Hide Notes")
-                            Image(systemName: "lock")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40)
-                        }
-                    }
-                }
-                .padding()
-
-                Spacer()
-                Button(scalesModel.isPracticing ? "Stop Practicing" : "Practice") {
-                    if scalesModel.isPracticing {
-                        scalesModel.stopListening()
-                    }
-                    else {
-                        scalesModel.startListening()
-                    }
-                    
-                }.padding()
-                
-                Spacer()
-                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
-                    hearingGivenScale.toggle()
-                    if hearingGivenScale {
-                        metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: false, onDone: {self.hearingGivenScale = false})
-                    }
-                    else {
-                        metronome.stop()
-                    }
-                }.padding()
-                Spacer()
-            }
-            .commonFrameStyle(backgroundColor: .clear).padding()
+            PracticeView().commonFrameStyle(backgroundColor: .clear).padding()
             
-            HStack {
-                if let requiredAmplitude = scalesModel.requiredStartAmplitude {
-                    Spacer()
-                    Button(recordingScale ? "Stop Recording Scale" : "Record Your Scale") {
-                        if recordingScale {
-                            scalesModel.stopRecordingScale("Stop Button")
-                            showResultPopup = false
-                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                            recordingScale = false
-                        }
-                        else {
-                            recordingScale = true
-                            scalesModel.setAppMode(.displayMode, resetRecorded: true)
-                            scalesModel.startRecordingScale(testData: false, onDone: {
-                                scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                                scalesModel.setDirection(0)
-                            })
-                        }
-                    }.padding()
-                    
-                    if scalesModel.recordingAvailable {
-                        Spacer()
-                        Button(scalesModel.appMode == .resultMode ? "Show Given Scale" : "Show Your Scale") {
-                            if scalesModel.appMode == .displayMode {
-                                scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                            }
-                            else {
-                                scalesModel.setAppMode(.displayMode, resetRecorded: false)
-                            }
-                        }
-                        .padding()
-                        
-                        Spacer()
-                        Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
-                            hearingUserScale.toggle()
-                            if hearingUserScale {
-                                metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, onDone: {self.hearingUserScale = false})
-                            }
-                            else {
-                                metronome.stop()
-                            }
-                        }
-                        .padding()
-                        
-                        Spacer()
-                        Button(showingTapData ? "Close Tap Data" : "Show Tap Data") {
-                            showingTapData.toggle()
-                            //if showingTapData {
-                            //}
-                        }
-                        .padding()
-
-                    }
-
-                    Spacer()
-                }
-                else {
-                    Text("Calibration is required in Settings").padding()
-                }
-            }
-            .commonFrameStyle(backgroundColor: .clear).padding()
+            RecordingView().commonFrameStyle(backgroundColor: .clear).padding()
             
             Spacer()
-            Button("READ_TEST_DATA") {
-                recordingScale = true
-                scalesModel.setAppMode(.displayMode, resetRecorded: true)
-                scalesModel.startRecordingScale(testData: true, onDone: {
-                    PianoKeyboardModel.shared.debug2("end of test read")
-                    //scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                    scalesModel.setDirection(0)
-                    PianoKeyboardModel.shared.debug2("end of test read")
-                    self.recordingScale = false
-                })
-            }.padding()
-            
-            //StaveView()//.commonFrameStyle(backgroundColor: .clear, borderColor: .red)
-            
-            Spacer()
-            if let req = scalesModel.requiredStartAmplitude {
-                Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
-            }
         }
         .sheet(isPresented: $showingTapData) {
             //if let result  = scalesModel.result {

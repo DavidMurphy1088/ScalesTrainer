@@ -61,7 +61,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     }
 
     public var name: String {
-        Note.name(for: noteMidiNumber, preferSharps: !(keyboardModel.scale.key.flats > 0))
+        NoteName.name(for: noteMidiNumber, preferSharps: !(keyboardModel.scale.key.flats > 0))
     }
     
     public var finger: String {

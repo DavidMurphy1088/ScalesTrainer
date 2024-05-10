@@ -17,14 +17,11 @@ struct ScalesTrainerApp: App {
                         Label("Home", systemImage: "house")
                     }
                     .tag(0)
-                SpriteKitAudioView()
+
+                SettingsView()
                     .tabItem {
-                        Label("Game", systemImage: "house")
+                        Label("Settings", systemImage: "gear")
                     }
-//                MetronomeView()
-//                    .tabItem {
-//                        Label("Metronome", systemImage: "house")
-//                    }
 //
 //                StaveView()
 //                    .tabItem {
@@ -41,6 +38,11 @@ struct ScalesTrainerApp: App {
                         Label("Log", systemImage: "gear")
                     }
                     .tag(3)
+                
+                SpriteKitAudioView()
+                    .tabItem {
+                        Label("Game", systemImage: "house")
+                    }
             }
             .onAppear() {
                 let shared = ScalesModel.shared

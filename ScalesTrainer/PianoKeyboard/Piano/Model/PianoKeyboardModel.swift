@@ -31,11 +31,10 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     ///MetronomeTimerNotificationProtocol
     func metronomeStart() {
         resetDisplayState()
-        //setFingers(direction: 0)
         scalesModel.setDirection(0)
         ascending = true
         nextKeyToPlayIndex = nil
-        self.debug2("start")
+        //self.debug2("start")
     }
     
     func metronomeTicked(timerTickerNumber: Int, userScale:Bool) -> Bool {
@@ -191,7 +190,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         //debug("set fingers")
     }
     
-    func debug2(_ ctx:String) {
+    func debug22(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]

@@ -14,7 +14,6 @@
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
 		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
 		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
-		794D494E2BCD216A0005A173 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494D2BCD216A0005A173 /* Staff.swift */; };
 		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
 		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
 		794D49562BCD29090005A173 /* TapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* TapHandler.swift */; };
@@ -30,6 +29,17 @@
 		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
+		797013842BEE36E2009F85D6 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137C2BEE36E1009F85D6 /* Score.swift */; };
+		797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137E2BEE36E1009F85D6 /* StaffNote.swift */; };
+		797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137F2BEE36E1009F85D6 /* KeySignature.swift */; };
+		797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013802BEE36E1009F85D6 /* StaffKey.swift */; };
+		797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013812BEE36E1009F85D6 /* TimeSlice.swift */; };
+		7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013822BEE36E1009F85D6 /* TimeSignature.swift */; };
+		797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970138F2BEE3E45009F85D6 /* ScoreView.swift */; };
+		797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */; };
+		797013962BEE3E45009F85D6 /* StaffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013912BEE3E45009F85D6 /* StaffView.swift */; };
+		797013972BEE3E45009F85D6 /* StemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013922BEE3E45009F85D6 /* StemView.swift */; };
+		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */; };
 		799FC10E2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */; };
 		799FC10F2BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */; };
@@ -57,12 +67,13 @@
 		799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */; };
 		799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
-		79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79C7CB732BCEA48D00F45257 /* one_note_60.m4a */; };
+		79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D6F2BEE426B00454BB6 /* Staff.swift */; };
+		79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* SettingsView.swift */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
 		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
 		79D7C2972BD10DB500AE0B24 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2962BD10DB500AE0B24 /* Key.swift */; };
 		79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */; };
-		79D7C2A02BD112FF00AE0B24 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29F2BD112FF00AE0B24 /* Note.swift */; };
+		79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29F2BD112FF00AE0B24 /* NoteName.swift */; };
 		79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */; };
 		79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */; };
 		79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */; };
@@ -99,7 +110,6 @@
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = akai_steinway.sf2; sourceTree = "<group>"; };
-		794D494D2BCD216A0005A173 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		794D49552BCD29090005A173 /* TapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapHandler.swift; sourceTree = "<group>"; };
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
@@ -114,6 +124,17 @@
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		7970137C2BEE36E1009F85D6 /* Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
+		7970137E2BEE36E1009F85D6 /* StaffNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffNote.swift; sourceTree = "<group>"; };
+		7970137F2BEE36E1009F85D6 /* KeySignature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeySignature.swift; sourceTree = "<group>"; };
+		797013802BEE36E1009F85D6 /* StaffKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffKey.swift; sourceTree = "<group>"; };
+		797013812BEE36E1009F85D6 /* TimeSlice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSlice.swift; sourceTree = "<group>"; };
+		797013822BEE36E1009F85D6 /* TimeSignature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSignature.swift; sourceTree = "<group>"; };
+		7970138F2BEE3E45009F85D6 /* ScoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
+		797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreEntriesView.swift; sourceTree = "<group>"; };
+		797013912BEE3E45009F85D6 /* StaffView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffView.swift; sourceTree = "<group>"; };
+		797013922BEE3E45009F85D6 /* StemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StemView.swift; sourceTree = "<group>"; };
+		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_1_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_1_60_iPad.txt; sourceTree = SOURCE_ROOT; };
 		799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_02_C_Major_2_60_iPad 2.txt"; path = "ScalesTrainer/Data/05_02_C_Major_2_60_iPad 2.txt"; sourceTree = SOURCE_ROOT; };
 		799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_4_48_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_4_48_iPad.txt; sourceTree = SOURCE_ROOT; };
@@ -142,12 +163,13 @@
 		799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_2_60_iPad_Good.txt; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		79C7CB732BCEA48D00F45257 /* one_note_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = one_note_60.m4a; path = ../../../../Downloads/one_note_60.m4a; sourceTree = "<group>"; };
+		79CF5D6F2BEE426B00454BB6 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
+		79CF5D712BEE46C900454BB6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
 		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		79D7C2962BD10DB500AE0B24 /* Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardModel.swift; sourceTree = "<group>"; };
-		79D7C29F2BD112FF00AE0B24 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		79D7C29F2BD112FF00AE0B24 /* NoteName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteName.swift; sourceTree = "<group>"; };
 		79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardView.swift; sourceTree = "<group>"; };
 		79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyModel.swift; sourceTree = "<group>"; };
 		79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornersShape.swift; sourceTree = "<group>"; };
@@ -224,7 +246,6 @@
 				794D494B2BCD16E60005A173 /* akai_steinway.sf2 */,
 				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
-				79C7CB732BCEA48D00F45257 /* one_note_60.m4a */,
 			);
 			path = AudioFiles;
 			sourceTree = "<group>";
@@ -246,6 +267,32 @@
 				799FC1172BE6FFC700BB0969 /* May5 */,
 			);
 			name = Data;
+			sourceTree = "<group>";
+		};
+		7970138D2BEE3DE0009F85D6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7970137F2BEE36E1009F85D6 /* KeySignature.swift */,
+				7970137C2BEE36E1009F85D6 /* Score.swift */,
+				797013802BEE36E1009F85D6 /* StaffKey.swift */,
+				7970137E2BEE36E1009F85D6 /* StaffNote.swift */,
+				797013822BEE36E1009F85D6 /* TimeSignature.swift */,
+				797013812BEE36E1009F85D6 /* TimeSlice.swift */,
+				79CF5D6F2BEE426B00454BB6 /* Staff.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7970138E2BEE3DF2009F85D6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */,
+				7970138F2BEE3E45009F85D6 /* ScoreView.swift */,
+				797013912BEE3E45009F85D6 /* StaffView.swift */,
+				797013922BEE3E45009F85D6 /* StemView.swift */,
+				797013932BEE3E45009F85D6 /* TimeSliceView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		799FC1172BE6FFC700BB0969 /* May5 */ = {
@@ -293,7 +340,7 @@
 		79D7C2AD2BD1181A00AE0B24 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				79D7C29F2BD112FF00AE0B24 /* Note.swift */,
+				79D7C29F2BD112FF00AE0B24 /* NoteName.swift */,
 				79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */,
 				79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */,
 			);
@@ -331,6 +378,7 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
 				79C0D2532BE30E7B0036CC91 /* Data */,
 				7943AE602BD6539500E94AC7 /* Games */,
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
@@ -362,7 +410,7 @@
 				79552FB52BDB975D00A27531 /* ResultView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				790D5A242BD2319C00C31A8F /* CalibrationView.swift */,
-				794D494D2BCD216A0005A173 /* Staff.swift */,
+				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -394,6 +442,15 @@
 				79E8AF252BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_Correct.txt */,
 			);
 			name = Good;
+			sourceTree = "<group>";
+		};
+		79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */ = {
+			isa = PBXGroup;
+			children = (
+				7970138E2BEE3DF2009F85D6 /* View */,
+				7970138D2BEE3DE0009F85D6 /* Model */,
+			);
+			path = MusicStaff;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -489,7 +546,6 @@
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79E8AF362BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_3.txt in Resources */,
 				799FC1102BE6F9CB00BB0969 /* 05_02_C_Minor_2_60_iPad.txt in Resources */,
-				79C7CB742BCEA48D00F45257 /* one_note_60.m4a in Resources */,
 				799FC1132BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad.txt in Resources */,
 				79E8AF322BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_1.txt in Resources */,
 				799FC14C2BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Desc.txt in Resources */,
@@ -530,30 +586,42 @@
 				7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */,
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
+				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
+				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,
+				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
+				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* ResultView.swift in Sources */,
 				790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
+				79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */,
+				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
+				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
 				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
+				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
 				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
+				797013972BEE3E45009F85D6 /* StemView.swift in Sources */,
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
-				79D7C2A02BD112FF00AE0B24 /* Note.swift in Sources */,
+				79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */,
+				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
-				794D494E2BCD216A0005A173 /* Staff.swift in Sources */,
+				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* Key.swift in Sources */,
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
+				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,
+				797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
