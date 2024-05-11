@@ -676,7 +676,7 @@ public class Score : ObservableObject {
     
     public func clearAllStatus() {
         for ts in self.getAllTimeSlices() {
-            ts.setStatusTag("clearAllStatus", .noTag)
+            ts.setStatusTag(.noTag)
         }
     }
     
@@ -808,7 +808,7 @@ public class Score : ObservableObject {
 
     func clearTags() {
         for ts in getAllTimeSlices() {
-            ts.setStatusTag("clearTags", StatusTag.noTag)
+            ts.setStatusTag(StatusTag.noTag)
         }
     }
     

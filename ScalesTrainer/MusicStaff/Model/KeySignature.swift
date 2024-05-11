@@ -6,7 +6,6 @@ public class KeySignature {
     public var accidentalType:AccidentalType
     var sharps:[Int] = [] //Notes of this pitch dont require individual accidentals, their accidental is implied by the key signature
     public var accidentalCount:Int
-    //var maxAccidentals = 7
     
     public init(type:AccidentalType, count:Int) {
         self.accidentalType = type

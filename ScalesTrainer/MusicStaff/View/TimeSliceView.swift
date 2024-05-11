@@ -36,10 +36,15 @@ public struct NoteHiliteView: View {
     
     public var body: some View {
         VStack {
-            if entry.hilite {
-                //Text("hHH")
+            if entry.hilite == 1 {
                 Ellipse()
-                    .stroke(Color.blue, lineWidth: 3)
+                    .stroke(Color.green, lineWidth: 3)
+                    .frame(width: width, height: width)
+                    .position(x: x, y:y)
+            }
+            if entry.hilite == 2 {
+                Ellipse()
+                    .stroke(Color.red, lineWidth: 3)
                     .frame(width: width, height: width)
                     .position(x: x, y:y)
             }

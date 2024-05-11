@@ -41,7 +41,8 @@ struct ScalesView: View {
     func SelectScaleView() -> some View {
         HStack {
             Spacer()
-            Text("Key")
+            //Text("Key")
+            Text(LocalizedStringResource("Key"))
             Picker("Select Value", selection: $keyIndex) {
                 ForEach(scalesModel.keyValues.indices, id: \.self) { index in
                     Text("\(scalesModel.keyValues[index])")
@@ -55,7 +56,7 @@ struct ScalesView: View {
             })
             
             Spacer()
-            Text("Scale").padding(0)
+            Text(LocalizedStringResource("Scale")).padding(0)
             Picker("Select Value", selection: $scaleTypeIndex) {
                 ForEach(scalesModel.scaleTypes.indices, id: \.self) { index in
                     Text("\(scalesModel.scaleTypes[index])")
@@ -93,7 +94,7 @@ struct ScalesView: View {
             //scalesModel.setMode(.displayMode)
 
             Spacer()
-            Text("Viewing\nDirection")
+            Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
                 ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
                     if scalesModel.selectedDirection >= 0 {
@@ -118,7 +119,7 @@ struct ScalesView: View {
             Spacer()
             Button(action: {
                 staffHidden.toggle()
-                //scalesModel.notesHidden = notesHidden
+                scalesModel.scoreHidden = staffHidden
                 scalesModel.forceRepaint()
             }) {
                 if staffHidden {
@@ -270,23 +271,6 @@ struct ScalesView: View {
         }
 
     }
-    func getScore() -> Score {
-        let score = Score(key: StaffKey(type: .major, keySig: KeySignature(type: .sharp, count: 0)), timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
-        let staff = Staff(score: score, type: .treble, staffNum: 0, linesInStaff: 5)
-        score.addStaff(num: 0, staff: staff)
-       
-        for i in 0..<scalesModel.scale.scaleNoteState.count {
-            if i % 4 == 0 && i > 0 {
-                score.addBarLine()
-            }
-            let note = scalesModel.scale.scaleNoteState[i]
-            let ts = score.createTimeSlice()
-            ts.addNote(n: Note(timeSlice: ts, num: note.midi, staffNum: 0))
-        }
-        //staff.score.addBarLine()
-        //staff.score.addT
-        return score
-    }
     
     var body: some View {
         VStack() {
@@ -302,7 +286,9 @@ struct ScalesView: View {
 //                .padding()
             
             if !self.staffHidden {
-                ScoreView(score: getScore(), widthPadding: false).commonFrameStyle(backgroundColor: .clear).padding()
+                if let score = scalesModel.score {
+                    ScoreView(score: score, widthPadding: false).commonFrameStyle(backgroundColor: .clear).padding()
+                }
             }
             
             if scalesModel.recordingAvailable {
@@ -321,6 +307,7 @@ struct ScalesView: View {
             //}
         }
         .onAppear {
+            scalesModel.setKey(index: 0)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager //keyboardAudioEngine
         }
         .onDisappear {

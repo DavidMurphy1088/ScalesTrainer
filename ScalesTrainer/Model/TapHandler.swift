@@ -107,17 +107,9 @@ class PracticeTapHandler : TapHandlerProtocol {
 
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
-            
-//            if scalesModel.selectedDirection == 0 {
-//                keyboardKey.keyState.matchedTimeAscending = Date()
-//                keyboardKey.keyState.matchedAmplitudeAscending = Double(amplitude)
-//            }
-//            if scalesModel.selectedDirection == 1 {
-//                keyboardKey.keyState.matchedTimeDescending = Date()
-//                keyboardKey.keyState.matchedAmplitudeDescending = Double(amplitude)
-//            }
             keyboardKey.setPlayingMidi()
             keyboardKey.setPlayingKey()
+            scalesModel.setPianoKeyPlayed(midi: keyboardKey.midi)
         }
         Logger.shared.log(self, msg)
     }

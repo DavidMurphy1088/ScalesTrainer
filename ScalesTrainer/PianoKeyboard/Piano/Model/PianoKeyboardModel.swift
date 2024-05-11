@@ -49,6 +49,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                     self.pianoKeyModel[keyIndex].setPlayingMidi()
                 }
                 sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
+                scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)
                 ///Scale turnaround
                 if timerTickerNumber == ScalesModel.shared.scale.scaleNoteState.count / 2 {
                     scalesModel.setDirection(1)
@@ -75,6 +76,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                     else {
                         key.setPlayingMidi()
                         sampler.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
+                        scalesModel.setPianoKeyPlayed(midi: key.midi)
                         if ascending {
                             nextKeyToPlayIndex = keyToPlay + 1
                         }

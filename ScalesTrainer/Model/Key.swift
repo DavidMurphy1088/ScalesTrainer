@@ -12,7 +12,8 @@ public class Key {
     let flats:Int
     var keyType:KeyType
     var name:String
-
+    let keySignature:KeySignature
+    
     init(sharps:Int=0, flats:Int=0, type:KeyType = .major) {
         self.sharps = sharps
         self.flats = flats
@@ -74,6 +75,7 @@ public class Key {
                 }
             }
         }
+        self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
     }
     
     init(name:String, keyType:KeyType) {
@@ -143,6 +145,7 @@ public class Key {
                 self.sharps = 0
             }
         }
+        self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
     }
     
     func getName() -> String {

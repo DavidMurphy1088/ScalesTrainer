@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* CalibrationView.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
@@ -103,6 +104,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790D5A242BD2319C00C31A8F /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 		79DA82092BCCE95F008AC492 = {
 			isa = PBXGroup;
 			children = (
+				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
 				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
 				79DA82132BCCE95F008AC492 /* Products */,
 			);
@@ -378,17 +381,17 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
-				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
+				79DA82192BCCE960008AC492 /* Assets.xcassets */,
+				794D495D2BCD34080005A173 /* AudioFiles */,
 				79C0D2532BE30E7B0036CC91 /* Data */,
 				7943AE602BD6539500E94AC7 /* Games */,
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
-				794D495D2BCD34080005A173 /* AudioFiles */,
-				794D492E2BCD07220005A173 /* PianoKeyboard */,
 				79DA822C2BCCED24008AC492 /* Model */,
-				79DA82232BCCEA6A008AC492 /* Views */,
-				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
-				79DA82192BCCE960008AC492 /* Assets.xcassets */,
+				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
+				794D492E2BCD07220005A173 /* PianoKeyboard */,
 				79DA821B2BCCE960008AC492 /* Preview Content */,
+				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
+				79DA82232BCCEA6A008AC492 /* Views */,
 			);
 			path = ScalesTrainer;
 			sourceTree = "<group>";
@@ -501,6 +504,9 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-HK",
+				hi,
+				"zh-Hans",
 			);
 			mainGroup = 79DA82092BCCE95F008AC492;
 			packageReferences = (
@@ -558,6 +564,7 @@
 				799FC1532BE702A800BB0969 /* 05_05_C_MelodicMinor_1_60_iPad_Asc.txt in Resources */,
 				799FC1382BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_7.txt in Resources */,
 				79E8AF312BEC9BF200C2D5B3 /* 05_09_C_Minor_3_48_iPad_8.txt in Resources */,
+				790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */,
 				799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */,
 				79E8AF332BEC9BF200C2D5B3 /* 05_09_C_MelodicMinor_3_48_iPad_2.txt in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,

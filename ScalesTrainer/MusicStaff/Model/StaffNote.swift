@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
-    @Published public var hilite = false
+    @Published public var hilite = 0
 
     public let id = UUID()
     public var staffNum:Int //Narrow the display of the note to just one staff
@@ -60,31 +60,34 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         if timeSlice.statusTag == .pitchError {
             out = Color(.red)
         }
-        if timeSlice.statusTag == .rhythmError {
-            out = Color(.red)
+        else {
+            out = Color(.black)
         }
-        if timeSlice.statusTag == .afterErrorVisible {
-            out = Color(.lightGray)
-        }
-        if timeSlice.statusTag == .afterErrorInvisible {
-            out = Color(.clear)
-        }
-
-        if timeSlice.statusTag == .hilightAsCorrect {
-            if self.staffNum == staff.staffNum {
-                out = Color(red: 0.0, green: 0.6, blue: 0.0)
-            }
-        }
-        //Attempt to color notes based on their relative +/- vs the tempo, rubato...
-        if out == nil {
-            //print("=============== getColor", ctx, "\tsecs:", self.timeSlice.tapSecondsNormalizedToTempo, "\tratio", self.timeSlice.tapTempoRatio)
-            if let tap = timeSlice.tapTempoRatio {
-                out = Color(gradualColorForValue(tap))
-            }
-            else {
-                out = Color(staffNum == staff.staffNum ? .black : .clear)
-            }
-        }
+//        if timeSlice.statusTag == .rhythmError {
+//            out = Color(.red)
+//        }
+//        if timeSlice.statusTag == .afterErrorVisible {
+//            out = Color(.lightGray)
+//        }
+//        if timeSlice.statusTag == .afterErrorInvisible {
+//            out = Color(.clear)
+//        }
+//
+//        if timeSlice.statusTag == .hilightAsCorrect {
+//            if self.staffNum == staff.staffNum {
+//                out = Color(red: 0.0, green: 0.6, blue: 0.0)
+//            }
+//        }
+//        //Attempt to color notes based on their relative +/- vs the tempo, rubato...
+//        if out == nil {
+//            //print("=============== getColor", ctx, "\tsecs:", self.timeSlice.tapSecondsNormalizedToTempo, "\tratio", self.timeSlice.tapTempoRatio)
+//            if let tap = timeSlice.tapTempoRatio {
+//                out = Color(gradualColorForValue(tap))
+//            }
+//            else {
+//                out = Color(staffNum == staff.staffNum ? .black : .clear)
+//            }
+//        }
         return out!
     }
 
@@ -239,7 +242,7 @@ public class Note : TimeSliceEntry, Comparable {
         self.beamType = note.beamType
     }
     
-    func setHilite(hilite: Bool) {
+    func setHilite(hilite: Int) {
         DispatchQueue.main.async {
             self.hilite = hilite
         }

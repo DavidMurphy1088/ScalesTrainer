@@ -1,0 +1,233 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    " " : {
+
+    },
+    " %lld" : {
+
+    },
+    " C" : {
+
+    },
+    "?" : {
+
+    },
+    "." : {
+
+    },
+    "%@" : {
+
+    },
+    "%lld" : {
+
+    },
+    "𝄞" : {
+
+    },
+    "𝄢" : {
+
+    },
+    "Amplitude Filter" : {
+
+    },
+    "Amplitude filter set at:%@" : {
+
+    },
+    "Calibration" : {
+
+    },
+    "Calibration is required in Settings" : {
+
+    },
+    "Close Tap Data" : {
+
+    },
+    "Decrease" : {
+
+    },
+    "Game" : {
+
+    },
+    "Hand:" : {
+
+    },
+    "Hear Scale" : {
+
+    },
+    "Hear Your Scale" : {
+
+    },
+    "Hide Notes" : {
+
+    },
+    "Hide Staff" : {
+
+    },
+    "Home" : {
+
+    },
+    "Increase" : {
+
+    },
+    "Key" : {
+      "localizations" : {
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "चाबी"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "钥匙"
+          }
+        }
+      }
+    },
+    "Key 1" : {
+      "extractionState" : "manual"
+    },
+    "Last Word Number:%@ Word:%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last Word Number:%1$@ Word:%2$@"
+          }
+        }
+      }
+    },
+    "Log" : {
+
+    },
+    "Octaves:" : {
+
+    },
+    "Practice" : {
+
+    },
+    "Record Data Mode" : {
+
+    },
+    "Record Your Scale" : {
+
+    },
+    "Required Start Amplitude:%@    ampFilter:%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Required Start Amplitude:%1$@    ampFilter:%2$@"
+          }
+        }
+      }
+    },
+    "Result" : {
+
+    },
+    "Scale" : {
+      "localizations" : {
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "पैमाना"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "规模"
+          }
+        }
+      }
+    },
+    "Scale Notes" : {
+
+    },
+    "Scale start filter set at:%@" : {
+
+    },
+    "Scales Trainer" : {
+
+    },
+    "Select Value" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Show Given Scale" : {
+
+    },
+    "Show Notes" : {
+
+    },
+    "Show Staff" : {
+
+    },
+    "Show Tap Data" : {
+
+    },
+    "Show Your Scale" : {
+
+    },
+    "Speech Listen" : {
+
+    },
+    "Start Calibrating" : {
+
+    },
+    "Start Scale Amplitude" : {
+
+    },
+    "Stats: %@" : {
+
+    },
+    "Stop" : {
+
+    },
+    "Stop Hearing Scale" : {
+
+    },
+    "Stop Hearing Your Scale" : {
+
+    },
+    "Stop Practicing" : {
+
+    },
+    "Stop Recording Scale" : {
+
+    },
+    "TEST_DATA" : {
+
+    },
+    "The app needs to hear you play a reglar (mf) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating." : {
+
+    },
+    "The app needs to hear you play a very soft (pp) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C very softly on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating." : {
+
+    },
+    "Viewing\nDirection" : {
+      "localizations" : {
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "देखना\\nदिशा"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "观看\\n方向"
+          }
+        }
+      }
+    },
+    "X" : {
+
+    }
+  },
+  "version" : "1.0"
+}

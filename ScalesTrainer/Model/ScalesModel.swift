@@ -19,6 +19,8 @@ public class ScalesModel : ObservableObject {
     @Published var isPracticing = false
     @Published var recordingScale = false
     @Published var selectedDirection = 0
+    @Published var score:Score?
+    var scoreHidden = false
     var recordedEvents:TapEvents? = nil
     var notesHidden = false
     
@@ -26,13 +28,17 @@ public class ScalesModel : ObservableObject {
     
     let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
     var selectedKey = Key() {
-        didSet {stopAudioTasks()}
+        didSet {
+            stopAudioTasks()
+        }
     }
     
     let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
     
     var selectedScaleType = 0 {
-        didSet {stopAudioTasks()}
+        didSet {
+            stopAudioTasks()
+        }
     }
 
     var directionTypes = ["Ascending", "Descending"]
@@ -77,7 +83,87 @@ public class ScalesModel : ObservableObject {
         }
         self.callibrationTapHandler = nil
     }
+    
+    ///Set the score note hilighted.
+    ///If the midi specified does not have a score note, find the nearest note and mark it red for a brief time
+    func setPianoKeyPlayed(midi:Int) {
+        if self.scoreHidden {
+            return
+        }
+        guard let score = self.score else {
+            return 
+        }
+        let timeSlices = score.getAllTimeSlices()
+        var nearestIndex:Int?
+        var nearestDist = Int(Int64.max)
+        var noteFound = false
+        for i in 0..<timeSlices.count {
+            let ts = timeSlices[i]
+            let entry = ts.entries[0]
+            let note = entry as! Note
+            if note.midiNumber == midi {
+                note.setHilite(hilite: 1)
+                noteFound = true
+            }
+            else {
+                if note.hilite > 0 {
+                    ts.unsetPitchError()
+                    note.setHilite(hilite: 0)
+                    ts.setStatusTag(.noTag)
+                }
+                let dist = abs(note.midiNumber - midi)
+                if dist < nearestDist {
+                    nearestDist = dist
+                    nearestIndex = i
+                }
+            }
+        }
+        if noteFound {
+            return
+        }
 
+        guard let nearestIndex = nearestIndex else {
+            return
+        }
+        let ts = timeSlices[nearestIndex]
+        guard ts.entries.count > 0 else {
+            return
+        }
+
+        let newNote = Note(timeSlice: ts, num: midi, staffNum: 0)
+        ts.setPitchError(note: newNote)
+        
+//        DispatchQueue.global(qos: .background).async {
+//            usleep(1000000 * UInt32(2.5))
+//            DispatchQueue.main.async {
+//                ts.unsetPitchError()
+//            }
+//        }
+    }
+    
+    func setScore() {
+        let keySig = self.selectedKey.keySignature
+        score = Score(key: StaffKey(type: .major,
+                                    keySig: keySig),
+                                    timeSignature: TimeSignature(top: 4, bottom: 4),
+                                    linesPerStaff: 5)
+        guard let score = score else {
+            return
+        }
+        let staff = Staff(score: score, type: .treble, staffNum: 0, linesInStaff: 5)
+        score.addStaff(num: 0, staff: staff)
+       
+        for i in 0..<scale.scaleNoteState.count {
+            if i % 4 == 0 && i > 0 {
+                score.addBarLine()
+            }
+            let note = scale.scaleNoteState[i]
+            let ts = score.createTimeSlice()
+            ts.addNote(n: Note(timeSlice: ts, num: note.midi, staffNum: 0))
+        }
+
+    }
+    
     func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
         DispatchQueue.main.async {
             self.appMode = mode
@@ -108,6 +194,7 @@ public class ScalesModel : ObservableObject {
     func setKey(index:Int) {
         let name = keyValues[index]
         self.selectedKey = Key(name: name, keyType: .major)
+        setScore()
     }
     
     func setDirection(_ index:Int) {
@@ -174,6 +261,7 @@ public class ScalesModel : ObservableObject {
                            scaleType: scaleType,
                            octaves: self.octaveNumberValues[self.selectedOctavesIndex])
         PianoKeyboardModel.shared.configureKeyboardSize()
+        setScore()
     }
 
     func startListening() {
