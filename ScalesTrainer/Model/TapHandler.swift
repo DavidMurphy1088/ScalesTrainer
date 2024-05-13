@@ -109,7 +109,9 @@ class PracticeTapHandler : TapHandlerProtocol {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
             keyboardKey.setPlayingMidi()
             keyboardKey.setPlayingKey()
-            scalesModel.setPianoKeyPlayed(midi: keyboardKey.midi)
+//            if let score = scalesModel.score {
+//                score.setScoreNotePlayed(midi: keyboardKey.midi, direction: scalesModel.selectedDirection, clear: false)
+//            }
         }
         Logger.shared.log(self, msg)
     }
@@ -259,9 +261,9 @@ class PitchTapHandler : TapHandlerProtocol  {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
             
             if ascending || atTop {
-                if keyboardKey.keyState.matchedTimeAscending == nil {
-                    keyboardKey.keyState.matchedTimeAscending = Date()
-                    keyboardKey.keyState.matchedAmplitudeAscending = Double(amplitude)
+                if keyboardKey.keyMatchedState.matchedTimeAscending == nil {
+                    keyboardKey.keyMatchedState.matchedTimeAscending = Date()
+                    keyboardKey.keyMatchedState.matchedAmplitudeAscending = Double(amplitude)
                     pressedKey = true
                     if let nextExpectedNote = nextExpectedNote {
                         nextExpectedNote.matchedTime = Date()
@@ -270,9 +272,9 @@ class PitchTapHandler : TapHandlerProtocol  {
                 }
             }
             if !ascending || atTop  {
-                if keyboardKey.keyState.matchedTimeDescending == nil {
-                    keyboardKey.keyState.matchedTimeDescending = Date()
-                    keyboardKey.keyState.matchedAmplitudeDescending = Double(amplitude)
+                if keyboardKey.keyMatchedState.matchedTimeDescending == nil {
+                    keyboardKey.keyMatchedState.matchedTimeDescending = Date()
+                    keyboardKey.keyMatchedState.matchedAmplitudeDescending = Double(amplitude)
                     pressedKey = true
                     if let nextExpectedNote = nextExpectedNote {
                         nextExpectedNote.matchedTime = Date()

@@ -27,7 +27,7 @@ public struct ScoreView: View {
                             .frame(height: score.getStaffHeight())
                             //.border(Color .red, width: 2)
                     }
-                    .border(Color.red)
+                    //.border(Color.red)
                 }
             }
         }

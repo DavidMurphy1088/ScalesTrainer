@@ -8,7 +8,7 @@ import SwiftUI
 //    case incorrectDescending
 //}
 
-public class PianoKeyState { 
+public class PianoKeyMatchedState { 
     let id = UUID()
     var matchedTimeAscending:Date? = nil
     var matchedTimeDescending:Date? = nil
@@ -25,7 +25,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     let scalesModel = ScalesModel.shared
     let keyboardModel:PianoKeyboardModel
     let scale:Scale = ScalesModel.shared.scale
-    var keyState:PianoKeyState
+    var keyMatchedState:PianoKeyMatchedState
     var scaleNoteState:ScaleNoteState?
     
     var isPlayingMidi = false
@@ -38,21 +38,25 @@ public class PianoKeyModel: Identifiable, Hashable {
     init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
         self.keyIndex = keyIndex
-        self.keyState = PianoKeyState()
+        self.keyMatchedState = PianoKeyMatchedState()
         self.midi = midi
     }
     
     public func setPlayingMidi() {
         self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
-        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.isPlayingMidi = true
+        if let score  = scalesModel.score {
+            score.setScoreNotePlayed(midi: self.midi, direction: scalesModel.selectedDirection)
+            score.clearAllPlayingNotes(besidesMidi: self.midi)
+        }
+        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
     }
     
     public func setPlayingKey() {
         self.keyboardModel.clearAllPlayingKey(besidesID: self.id)
-        self.keyState.matchedTimeAscending = Date()
-        self.keyState.matchedTimeDescending = Date()
+        self.keyMatchedState.matchedTimeAscending = Date()
+        self.keyMatchedState.matchedTimeDescending = Date()
         self.keyboardModel.redraw()
     }
     

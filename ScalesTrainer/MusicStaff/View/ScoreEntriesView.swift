@@ -1,56 +1,56 @@
 import SwiftUI
 import CoreData
 
-struct TimeSliceLabelView: View {
-    var score:Score
-    var staff:Staff
-    @ObservedObject var timeSlice:TimeSlice
-    @State var showPopover = false
-    @State var font = Font.system(size:0)
-
-    var body: some View {
-        ZStack {
-            if staff.staffNum == 0 {
-                if let tag = timeSlice.tagHigh {
-                    VStack {
-                        if tag.enablePopup {
-                            if tag.popup != nil {
-                                Button(action: {
-                                    showPopover.toggle()
-                                }) {
-                                    Text(tag.content).font(font)
-                                }
-                            }
-                            else {
-                                Text(tag.content).font(font)
-                            }
-                        }
-                        else {
-                            //Text(tag.content).font(font).defaultTextStyle()
-                            //Text(tag.content).defaultTextStyle()
-                        }
-                        Spacer()
-                    }
-                    .popover(isPresented: $showPopover) {
-                        Text(tag.popup ?? "").font(font).padding()
-                    }
-                }
-                if let tag = timeSlice.tagLow {
-                    VStack {
-                        Spacer()
-                        Text(tag).font(font)//.defaultTextStyle()
-                        //Text(tag).defaultTextStyle()
-                    }
-                }
-            }
-        }
-        .onAppear() {
-            font = Font.custom("TimesNewRomanPS-BoldMT", size: score.lineSpacing * 2.0)
-        }
-        //.border(Color.red)
-    }
-}
-
+//struct TimeSliceLabelView: View {
+//    var score:Score
+//    var staff:Staff
+//    @ObservedObject var timeSlice:TimeSlice
+//    @State var showPopover = false
+//    @State var font = Font.system(size:0)
+//
+//    var body: some View {
+//        ZStack {
+//            if staff.staffNum == 0 {
+//                if let tag = timeSlice.tagHigh {
+//                    VStack {
+//                        if tag.enablePopup {
+//                            if tag.popup != nil {
+//                                Button(action: {
+//                                    showPopover.toggle()
+//                                }) {
+//                                    Text(tag.content).font(font)
+//                                }
+//                            }
+//                            else {
+//                                Text(tag.content).font(font)
+//                            }
+//                        }
+//                        else {
+//                            //Text(tag.content).font(font).defaultTextStyle()
+//                            //Text(tag.content).defaultTextStyle()
+//                        }
+//                        Spacer()
+//                    }
+//                    .popover(isPresented: $showPopover) {
+//                        Text(tag.popup ?? "").font(font).padding()
+//                    }
+//                }
+//                if let tag = timeSlice.tagLow {
+//                    VStack {
+//                        Spacer()
+//                        Text(tag).font(font)//.defaultTextStyle()
+//                        //Text(tag).defaultTextStyle()
+//                    }
+//                }
+//            }
+//        }
+//        .onAppear() {
+//            font = Font.custom("TimesNewRomanPS-BoldMT", size: score.lineSpacing * 2.0)
+//        }
+//        //.border(Color.red)
+//    }
+//}
+//
 
 struct ScoreEntriesView: View {
     //@ObservedObject 
@@ -148,7 +148,8 @@ struct ScoreEntriesView: View {
     }
     
     func getQuaverImage(note:Note) -> Image {
-        return Image(note.midiNumber > 71 ? "quaver_arm_flipped_grayscale" : "quaver_arm_grayscale")
+        //return Image(note.midiNumber > 71 ? "quaver_arm_flipped_grayscale" : "quaver_arm_grayscale")
+        return Image("")
     }
     
     func quaverBeamView(line: (CGPoint, CGPoint), startNote:Note, endNote:Note, lineSpacing: Double) -> some View {
@@ -228,17 +229,17 @@ struct ScoreEntriesView: View {
 
                              }
                             //.border(Color.red)
-                            .overlay(
-                                HStack {
-                                    TimeSliceLabelView(score:score, staff:staff, timeSlice: entry as! TimeSlice)
-                                        //.frame(height: score.getStaffHeight())
-                                        .frame(height: Double(staff.linesInStaff) * score.lineSpacing * 2.3)
-                                }
-                                
-                                //.border(Color.red)
-                                ///Must be enough width for 2 chars (as of the current version...)
-                                .frame(width: score.lineSpacing * 5)
-                            )
+//                            .overlay(
+//                                HStack {
+//                                    TimeSliceLabelView(score:score, staff:staff, timeSlice: entry as! TimeSlice)
+//                                        //.frame(height: score.getStaffHeight())
+//                                        .frame(height: Double(staff.linesInStaff) * score.lineSpacing * 2.3)
+//                                }
+//                                
+//                                //.border(Color.red)
+//                                ///Must be enough width for 2 chars (as of the current version...)
+//                                .frame(width: score.lineSpacing * 5)
+//                            )
                         }
                         if entry is BarLine {
                             GeometryReader { geometry in

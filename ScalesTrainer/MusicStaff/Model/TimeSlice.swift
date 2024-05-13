@@ -1,15 +1,15 @@
 import Foundation
 
-public class TagHigh : ObservableObject {
-    @Published public var content:String
-    public var popup:String?
-    public var enablePopup:Bool
-    init(content:String, popup:String?, enablePopup:Bool) {
-        self.content = content
-        self.popup = popup
-        self.enablePopup = enablePopup
-    }
-}
+//public class TagHigh : ObservableObject {
+//    @Published public var content:String
+//    public var popup:String?
+//    public var enablePopup:Bool
+//    init(content:String, popup:String?, enablePopup:Bool) {
+//        self.content = content
+//        self.popup = popup
+//        self.enablePopup = enablePopup
+//    }
+//}
 
 public enum StatusTag {
     case noTag
@@ -22,9 +22,9 @@ public enum StatusTag {
 
 public class TimeSlice : ScoreEntry {
     @Published public var entries:[TimeSliceEntry]
-    @Published public var tagHigh:TagHigh?
-    @Published public var tagLow:String?
-    @Published var notesLength:Int?
+    //@Published public var tagHigh:TagHigh?
+    //@Published public var tagLow:String?
+    //@Published var notesLength:Int?
     @Published public var statusTag:StatusTag = .noTag
 
     var score:Score
@@ -54,21 +54,21 @@ public class TimeSlice : ScoreEntry {
         self.setStatusTag(.pitchError)
     }
     
-    func unsetPitchError() {
-        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
-            return
-        }
-        let note:Note = self.pitchReplacedEntry!
-        self.pitchReplacedEntry = nil
-        self.removeNote(index: 0)
-        self.addNote(n: note)
-        self.setStatusTag(.noTag)
-    }
+//    func unsetPitchError() {
+//        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
+//            return
+//        }
+//        let note:Note = self.pitchReplacedEntry!
+//        self.pitchReplacedEntry = nil
+//        self.removeNote(index: 0)
+//        self.addNote(n: note)
+//        self.setStatusTag(.noTag)
+//    }
 
-    func inError() -> Bool {
-        return [StatusTag.pitchError, StatusTag.rhythmError].contains(self.statusTag)
-    }
-    
+//    func inError() -> Bool {
+//        return [StatusTag.pitchError, StatusTag.rhythmError].contains(self.statusTag)
+//    }
+//    
     public func setStatusTag(_ tag: StatusTag) {
         //DispatchQueue.main.async {
             self.statusTag = tag
@@ -115,12 +115,12 @@ public class TimeSlice : ScoreEntry {
 //        score.updateStaffs()
 //    }
     
-    public func setTags(high:TagHigh, low:String) {
-        //DispatchQueue.main.async {
-            self.tagHigh = high
-            self.tagLow = low
-        //}
-    }
+//    public func setTags(high:TagHigh, low:String) {
+//        //DispatchQueue.main.async {
+//            //self.tagHigh = high
+//            //self.tagLow = low
+//        //}
+//    }
     
     static func == (lhs: TimeSlice, rhs: TimeSlice) -> Bool {
         return lhs.id == rhs.id

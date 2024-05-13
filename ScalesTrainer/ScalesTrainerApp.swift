@@ -1,11 +1,5 @@
 import SwiftUI
 
-//func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-//    //ScalesModel.staticInstance = ScalesModel()
-//    //PianoKeyboardModel.staticInstance = PianoKeyboardModel()
-//    return true
-//}
-
 @main
 struct ScalesTrainerApp: App {
     @State private var selectedTab = 0

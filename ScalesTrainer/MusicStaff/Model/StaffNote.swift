@@ -1,8 +1,15 @@
 import Foundation
 import SwiftUI
 
+public enum TimeSliceEntryStatusType {
+    case none
+    case playedCorrectly
+    case wrongPitch
+    case wrongValue
+}
+
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
-    @Published public var hilite = 0
+    @Published public var status:TimeSliceEntryStatusType = .none
 
     public let id = UUID()
     public var staffNum:Int //Narrow the display of the note to just one staff
@@ -242,9 +249,9 @@ public class Note : TimeSliceEntry, Comparable {
         self.beamType = note.beamType
     }
     
-    func setHilite(hilite: Int) {
+    func setStatus(status: TimeSliceEntryStatusType) {
         DispatchQueue.main.async {
-            self.hilite = hilite
+            self.status = status
         }
     }
         

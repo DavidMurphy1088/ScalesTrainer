@@ -123,21 +123,23 @@ struct ScalesView: View {
                 scalesModel.forceRepaint()
             }) {
                 if staffHidden {
-                    VStack {
+                    HStack {
                         Text("Show Staff")
                         Image("eye_closed_trans")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.green)
                     }
                 }
                 else {
-                    VStack {
+                    HStack {
                         Text("Hide Staff")
                         Image("eye_open_trans")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.red)
                     }
                 }
             }
@@ -150,21 +152,23 @@ struct ScalesView: View {
                 scalesModel.forceRepaint()
             }) {
                 if notesHidden {
-                    VStack {
+                    HStack {
                         Text("Show Notes")
                         Image("eye_closed_trans")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.green)
                     }
                 }
                 else {
-                    VStack {
+                    HStack {
                         Text("Hide Notes")
                         Image("eye_open_trans")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 40, height: 40)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.red)
                     }
                 }
             }
@@ -245,7 +249,8 @@ struct ScalesView: View {
                     Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
                         hearingUserScale.toggle()
                         if hearingUserScale {
-                            metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, onDone: {self.hearingUserScale = false})
+                            metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, 
+                                                 onDone: {self.hearingUserScale = false})
                         }
                         else {
                             metronome.stop()

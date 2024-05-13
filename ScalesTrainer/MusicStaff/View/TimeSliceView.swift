@@ -36,18 +36,18 @@ public struct NoteHiliteView: View {
     
     public var body: some View {
         VStack {
-            if entry.hilite == 1 {
+            if entry.status  == .playedCorrectly {
                 Ellipse()
                     .stroke(Color.green, lineWidth: 3)
                     .frame(width: width, height: width)
                     .position(x: x, y:y)
             }
-            if entry.hilite == 2 {
-                Ellipse()
-                    .stroke(Color.red, lineWidth: 3)
-                    .frame(width: width, height: width)
-                    .position(x: x, y:y)
-            }
+//            if entry.hilite == .playedInCorrectly {
+//                Ellipse()
+//                    .stroke(Color.red, lineWidth: 3)
+//                    .frame(width: width, height: width)
+//                    .position(x: x, y:y)
+//            }
         }
     }
 }
@@ -233,6 +233,20 @@ public struct TimeSliceView: View {
                     
                 }
                 if [Note.VALUE_QUARTER, Note.VALUE_QUAVER, Note.VALUE_SEMIQUAVER].contains(noteValueUnDotted )  {
+//                    if note.midiNumber == 71 {
+//                        Ellipse()
+//                        //Closed ellipse
+//                            .foregroundColor(.red)
+//                            .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
+//                            .position(x: noteFrameWidth/2  - 6, y: noteEllipseMidpoint)
+//                    }
+//                    if note.midiNumber == 64 {
+//                        Ellipse()
+//                        //Closed ellipse
+//                            .foregroundColor(.red)
+//                            .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
+//                            .position(x: noteFrameWidth/2  + 6, y: noteEllipseMidpoint)
+//                    }
                     Ellipse()
                     //Closed ellipse
                         .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff))
@@ -274,7 +288,6 @@ public struct TimeSliceView: View {
                         }
                         .stroke(note.getColor(ctx: "NoteView6", staff: staff), lineWidth: 1)
                     }
-                    //}
                 }
             }
         }

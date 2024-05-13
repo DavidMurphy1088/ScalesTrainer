@@ -136,7 +136,70 @@ public class Score : ObservableObject {
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
     }
+    
+    func clearAllPlayingNotes(besidesMidi:Int) {
+        for timeslice in getAllTimeSlices() {
+            let note = timeslice.entries[0] as! Note
+            if note.midiNumber != besidesMidi {
+                if note.status == .playedCorrectly {
+                    DispatchQueue.global(qos: .background).async { //in
+                        usleep(1000000 * UInt32(0.5))
+                        note.setStatus(status: .none)
+                    }
+                }
+            }
+        }
+    }
+    
+    public func setScoreNotePlayed(midi: Int, direction: Int) {
+        let timeSlices = getAllTimeSlices()
+        var nearestDist = Int(Int64.max)
+        let startIndex = direction == 0 ? 0 : timeSlices.count-1
+        let endIndex = direction == 0 ? timeSlices.count-1 :0
+        var noteFound = false
+        var nearestIndex = Int(Int64.max)
+        
+        for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
+            let ts = timeSlices[i]
+            let entry = ts.entries[0]
+            let note = entry as! Note
+            if note.midiNumber == midi {
+                note.setStatus(status: .playedCorrectly)
+                noteFound = true
+                break
+            }
+            else {
+                let dist = abs(note.midiNumber - midi)
+                if dist < nearestDist {
+                    nearestDist = dist
+                    nearestIndex = i
+                }
+            }
+        }
+        if noteFound {
+            return
+        }
+//        guard let nearestIndex = nearestIndex else {
+//            return
+//        }
+        
+        ///Show a wrong pitch
+        let ts = timeSlices[nearestIndex]
+        guard ts.entries.count > 0 else {
+            return
+        }
 
+        let newNote = Note(timeSlice: ts, num: midi, staffNum: 0)
+        ts.setPitchError(note: newNote)
+        
+        DispatchQueue.global(qos: .background).async {
+            usleep(1000000 * UInt32(2.5))
+            DispatchQueue.main.async {
+                //ts.unsetPitchError()
+            }
+        }
+    }
+    
     public func createTimeSlice() -> TimeSlice {
         let ts = TimeSlice(score: self)
         ts.sequence = self.scoreEntries.count
@@ -196,23 +259,23 @@ public class Score : ObservableObject {
         return result
     }
     
-    public func addTriadNotes() {
-        let taggedSlices = searchTimeSlices{ (timeSlice: TimeSlice) -> Bool in
-            return timeSlice.tagHigh != nil
-        }
-        
-        for tagSlice in taggedSlices {
-            if let triad = tagSlice.tagLow {
-                let notes = key.getTriadNoteNames(triadSymbol:triad)
-                if let hiTag:TagHigh = tagSlice.tagHigh {
-                    hiTag.popup = notes
-                    if let loTag = tagSlice.tagLow {
-                        tagSlice.setTags(high:hiTag, low:loTag)
-                    }
-                }
-            }
-        }
-    }
+//    public func addTriadNotes() {
+//        let taggedSlices = searchTimeSlices{ (timeSlice: TimeSlice) -> Bool in
+//            return timeSlice.tagHigh != nil
+//        }
+//        
+//        for tagSlice in taggedSlices {
+//            if let triad = tagSlice.tagLow {
+//                let notes = key.getTriadNoteNames(triadSymbol:triad)
+//                if let hiTag:TagHigh = tagSlice.tagHigh {
+//                    hiTag.popup = notes
+//                    if let loTag = tagSlice.tagLow {
+//                        tagSlice.setTags(high:hiTag, low:loTag)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     public func getTimeSlicesForBar(bar:Int) -> [TimeSlice] {
         var result:[TimeSlice] = []

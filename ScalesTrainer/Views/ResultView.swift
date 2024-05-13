@@ -13,18 +13,18 @@ struct ResultView: View {
         for i in 0..<keyboardModel.pianoKeyModel.count {
             let key = keyboardModel.pianoKeyModel[i]
             if let scaleNoteState = key.scaleNoteState {
-                if key.keyState.matchedTimeAscending == nil {
+                if key.keyMatchedState.matchedTimeAscending == nil {
                     missedCountAsc += 1                    
                 }
-                if key.keyState.matchedTimeDescending == nil {
+                if key.keyMatchedState.matchedTimeDescending == nil {
                     missedCountDesc += 1
                 }
             }
             else {
-                if key.keyState.matchedTimeAscending != nil {
+                if key.keyMatchedState.matchedTimeAscending != nil {
                     wrongCountAsc += 1
                 }
-                if key.keyState.matchedTimeDescending != nil {
+                if key.keyMatchedState.matchedTimeDescending != nil {
                     wrongCountDesc += 1
                 }
             }
@@ -101,7 +101,7 @@ struct TapDataView: View {
     
     func amplData(key:PianoKeyModel) -> String {
         var asc:String = "______"
-        if let a = key.keyState.matchedAmplitudeAscending {
+        if let a = key.keyMatchedState.matchedAmplitudeAscending {
             asc = String(format: "%.4f", a)
         }
         return asc

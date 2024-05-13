@@ -86,60 +86,15 @@ public class ScalesModel : ObservableObject {
     
     ///Set the score note hilighted.
     ///If the midi specified does not have a score note, find the nearest note and mark it red for a brief time
-    func setPianoKeyPlayed(midi:Int) {
-        if self.scoreHidden {
-            return
-        }
-        guard let score = self.score else {
-            return 
-        }
-        let timeSlices = score.getAllTimeSlices()
-        var nearestIndex:Int?
-        var nearestDist = Int(Int64.max)
-        var noteFound = false
-        for i in 0..<timeSlices.count {
-            let ts = timeSlices[i]
-            let entry = ts.entries[0]
-            let note = entry as! Note
-            if note.midiNumber == midi {
-                note.setHilite(hilite: 1)
-                noteFound = true
-            }
-            else {
-                if note.hilite > 0 {
-                    ts.unsetPitchError()
-                    note.setHilite(hilite: 0)
-                    ts.setStatusTag(.noTag)
-                }
-                let dist = abs(note.midiNumber - midi)
-                if dist < nearestDist {
-                    nearestDist = dist
-                    nearestIndex = i
-                }
-            }
-        }
-        if noteFound {
-            return
-        }
-
-        guard let nearestIndex = nearestIndex else {
-            return
-        }
-        let ts = timeSlices[nearestIndex]
-        guard ts.entries.count > 0 else {
-            return
-        }
-
-        let newNote = Note(timeSlice: ts, num: midi, staffNum: 0)
-        ts.setPitchError(note: newNote)
-        
-//        DispatchQueue.global(qos: .background).async {
-//            usleep(1000000 * UInt32(2.5))
-//            DispatchQueue.main.async {
-//                ts.unsetPitchError()
-//            }
+//    func setPianoKeyPlayed(midi:Int, direction:Int) {
+//        if self.scoreHidden {
+//            return
 //        }
-    }
+//        guard let score = self.score else {
+//            return 
+//        }
+//        score.setPianoKeyPlayed(midi:Int, direction:Int)
+//    }
     
     func setScore() {
         let keySig = self.selectedKey.keySignature
@@ -159,7 +114,7 @@ public class ScalesModel : ObservableObject {
             }
             let note = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
-            ts.addNote(n: Note(timeSlice: ts, num: note.midi, staffNum: 0))
+            ts.addNote(n: Note(timeSlice: ts, num: note.midi, value: Note.VALUE_QUAVER, staffNum: 0))
         }
 
     }

@@ -51,18 +51,18 @@ public struct ClassicStyle {
         var color:Color
         if let scaleNote = keyModel.scaleNoteState {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyState.matchedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.keyMatchedState.matchedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
             else {
-                color = keyModel.keyState.matchedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.keyMatchedState.matchedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
         }
         else {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyState.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+                color = keyModel.keyMatchedState.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
             }
             else {
-                color = keyModel.keyState.matchedTimeDescending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+                color = keyModel.keyMatchedState.matchedTimeDescending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
             }
         }
         return color
@@ -172,8 +172,8 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    if  (scalesModel.selectedDirection == 0 && key.keyState.matchedTimeAscending != nil) ||
-                        (scalesModel.selectedDirection == 1 && key.keyState.matchedTimeDescending != nil)  {
+                    if  (scalesModel.selectedDirection == 0 && key.keyMatchedState.matchedTimeAscending != nil) ||
+                        (scalesModel.selectedDirection == 1 && key.keyMatchedState.matchedTimeDescending != nil)  {
                         context.draw(
                         Text("X").foregroundColor(Color.red)
                             .font(.title).bold(),
@@ -288,8 +288,8 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    if (scalesModel.selectedDirection == 0 && key.keyState.matchedTimeAscending != nil) ||
-                    (scalesModel.selectedDirection == 1 && key.keyState.matchedTimeDescending != nil) {
+                    if (scalesModel.selectedDirection == 0 && key.keyMatchedState.matchedTimeAscending != nil) ||
+                    (scalesModel.selectedDirection == 1 && key.keyMatchedState.matchedTimeDescending != nil) {
                         context.draw(
                         Text("X").foregroundColor(Color.red)
                             .font(.title).bold(),

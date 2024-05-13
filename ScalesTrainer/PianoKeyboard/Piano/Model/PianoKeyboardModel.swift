@@ -49,7 +49,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                     self.pianoKeyModel[keyIndex].setPlayingMidi()
                 }
                 sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-                scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)
+                //scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)
                 ///Scale turnaround
                 if timerTickerNumber == ScalesModel.shared.scale.scaleNoteState.count / 2 {
                     scalesModel.setDirection(1)
@@ -68,7 +68,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             while true {
                 let key = self.pianoKeyModel[keyToPlay]
                 ///Find the next key to play
-                var matches = (ascending && key.keyState.matchedTimeAscending != nil) || (!ascending && key.keyState.matchedTimeDescending != nil)
+                var matches = (ascending && key.keyMatchedState.matchedTimeAscending != nil) || (!ascending && key.keyMatchedState.matchedTimeDescending != nil)
                 if matches {
                     if hitTurnaround {
                         hitTurnaround = false
@@ -76,7 +76,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                     else {
                         key.setPlayingMidi()
                         sampler.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
-                        scalesModel.setPianoKeyPlayed(midi: key.midi)
+                        //scalesModel.setPianoKeyPlayed(midi: key.midi)
                         if ascending {
                             nextKeyToPlayIndex = keyToPlay + 1
                         }
@@ -101,6 +101,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
            }
         }
     }
+
     
     func metronomeStop() {
         clearAllPlayingMidi()
@@ -120,12 +121,12 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     }
     
     func clearAllPlayingKey(besidesID:UUID? = nil) {
-        if let last = self.pianoKeyModel.first(where: { $0.keyState.matchedTimeAscending != nil || $0.keyState.matchedTimeDescending != nil}) {
+        if let last = self.pianoKeyModel.first(where: { $0.keyMatchedState.matchedTimeAscending != nil || $0.keyMatchedState.matchedTimeDescending != nil}) {
             if besidesID == nil || last.id != besidesID! {
                 DispatchQueue.global(qos: .background).async { [self] in
                     usleep(1000000 * UInt32(0.5))
-                    last.keyState.matchedTimeAscending = nil
-                    last.keyState.matchedTimeDescending = nil
+                    last.keyMatchedState.matchedTimeAscending = nil
+                    last.keyMatchedState.matchedTimeDescending = nil
                     self.redraw()
                 }
             }
@@ -198,7 +199,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             let key = self.pianoKeyModel[i]
             print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
                   key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
-            print("\tascMatch", key.keyState.matchedTimeAscending != nil, "\tdescMatch", key.keyState.matchedTimeDescending != nil)
+            print("\tascMatch", key.keyMatchedState.matchedTimeAscending != nil, "\tdescMatch", key.keyMatchedState.matchedTimeDescending != nil)
         }
     }
     
@@ -276,8 +277,8 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     
     public func resetScaleMatchState() {
         for i in 0..<numberOfKeys {
-            pianoKeyModel[i].keyState.matchedTimeAscending = nil
-            pianoKeyModel[i].keyState.matchedTimeDescending = nil
+            pianoKeyModel[i].keyMatchedState.matchedTimeAscending = nil
+            pianoKeyModel[i].keyMatchedState.matchedTimeDescending = nil
         }
     }
 
