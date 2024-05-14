@@ -1,16 +1,5 @@
 import Foundation
 
-//public class TagHigh : ObservableObject {
-//    @Published public var content:String
-//    public var popup:String?
-//    public var enablePopup:Bool
-//    init(content:String, popup:String?, enablePopup:Bool) {
-//        self.content = content
-//        self.popup = popup
-//        self.enablePopup = enablePopup
-//    }
-//}
-
 public enum StatusTag {
     case noTag
     case rhythmError
@@ -54,16 +43,16 @@ public class TimeSlice : ScoreEntry {
         self.setStatusTag(.pitchError)
     }
     
-//    func unsetPitchError() {
-//        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
-//            return
-//        }
-//        let note:Note = self.pitchReplacedEntry!
-//        self.pitchReplacedEntry = nil
-//        self.removeNote(index: 0)
-//        self.addNote(n: note)
-//        self.setStatusTag(.noTag)
-//    }
+    func unsetPitchError() {
+        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
+            return
+        }
+        let note:Note = self.pitchReplacedEntry!
+        self.pitchReplacedEntry = nil
+        self.removeNote(index: 0)
+        self.addNote(n: note)
+        self.setStatusTag(.noTag)
+    }
 
 //    func inError() -> Bool {
 //        return [StatusTag.pitchError, StatusTag.rhythmError].contains(self.statusTag)

@@ -37,6 +37,8 @@ public class Scale {
         self.octaves = octaves
         self.scaleType = scaleType
         scaleNoteState = []
+        
+        ///https://musescore.com/user/27091525/scores/6509601
         var nextMidi = 0 ///The start of the scale
         if key.keyType == .major {
             if key.sharps > 0 {
@@ -49,6 +51,8 @@ public class Scale {
                     nextMidi = 57  //A
                 case 4:
                     nextMidi = 64
+                case 5:
+                    nextMidi = 59
                 default:
                     nextMidi = 60
                 }
@@ -59,11 +63,12 @@ public class Scale {
                     nextMidi = 65 //F
                 case 2:
                     nextMidi = 58 //B♭
-                    //next = 70 //B♭
                 case 3:
                     nextMidi = 63 //E♭
                 case 4:
                     nextMidi = 56 //A♭
+                case 5:
+                    nextMidi = 61 //D♭
                 default:
                     nextMidi = 60
                 }
@@ -80,6 +85,8 @@ public class Scale {
                     nextMidi = 66  //F#
                 case 4:
                     nextMidi = 61
+                case 5:
+                    nextMidi = 56
                 default:
                     nextMidi = 57
                 }
@@ -94,14 +101,42 @@ public class Scale {
                     nextMidi = 60 //C
                 case 4:
                     nextMidi = 65 //F
+                case 5:
+                    nextMidi = 65 //B flat
                 default:
-                    nextMidi = 60
+                    nextMidi = 58
                 }
             }
         }
-        if octaves > 2 {
-            nextMidi -= 12
+//        if octaves > 2 {
+//            nextMidi -= 12
+//        }
+        
+        ///Some keys just below C drop their first note for 2 octaves
+        if octaves > 1 {
+            if key.keyType == .major {
+                if [1].contains(key.sharps) {
+                    nextMidi -= 12
+                }
+                if [6].contains(key.flats) {
+                    nextMidi -= 12
+                }
+            }
+            else {
+                if key.flats == 0 && key.sharps == 0 {
+                    nextMidi -= 12
+                }
+                else {
+                    if [2,3,5,7].contains(key.sharps) {
+                        nextMidi -= 12
+                    }
+                    if [2,5,7].contains(key.flats) {
+                        nextMidi -= 12
+                    }
+                }
+            }
         }
+
         ///Set midi values in scale
         var scaleOffsets:[Int] = []
         if scaleType == .major {
@@ -156,10 +191,10 @@ public class Scale {
         setFingers()
         
         setFingerBreaks()
-        //debug("Constructor")
+        debug("Constructor")
     }
     
-    func debug3(_ msg:String) {
+    func debug(_ msg:String) {
         print("==========scale \(msg)", key.name, key.keyType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)

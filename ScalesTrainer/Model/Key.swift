@@ -14,11 +14,11 @@ public class Key {
     var name:String
     let keySignature:KeySignature
     
-    init(sharps:Int=0, flats:Int=0, type:KeyType = .major) {
+    init(sharps:Int=0, flats:Int=0, keyType:KeyType) {
         self.sharps = sharps
         self.flats = flats
-        self.keyType = type
-        if type == .minor {
+        self.keyType = keyType
+        if keyType == .minor {
             if flats == 0 {
                 switch sharps {
                 case 1:
@@ -29,6 +29,8 @@ public class Key {
                     name = "F#"
                 case 4:
                     name = "C#"
+                case 5:
+                    name = "A♭"
                 default:
                     name = "A"
                 }
@@ -41,6 +43,8 @@ public class Key {
                     name = "C"
                 case 4:
                     name = "F"
+                case 5:
+                    name = "B♭"
                 default:
                     name = "D"
                 }
@@ -57,7 +61,9 @@ public class Key {
                 case 3:
                     name = "A"
                 case 4:
-                    name = "D"
+                    name = "E"
+                case 5:
+                    name = "B"
                 default:
                     name = "C"
                 }
@@ -70,12 +76,15 @@ public class Key {
                     name = "E♭"
                 case 4:
                     name = "A♭"
+                case 5:
+                    name = "D♭"
                 default:
                     name = "F"
                 }
             }
         }
-        self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
+        //self.keySignature = KeySignature(keyType: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
+        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
     }
     
     init(name:String, keyType:KeyType) {
@@ -95,7 +104,10 @@ public class Key {
             case "C#":
                 self.flats = 0
                 self.sharps = 4
-                
+            case "A♭":
+                self.flats = 0
+                self.sharps = 5
+
             case "D":
                 self.flats = 1
                 self.sharps = 0
@@ -107,6 +119,9 @@ public class Key {
                 self.sharps = 0
             case "F":
                 self.flats = 4
+                self.sharps = 0
+            case "B♭":
+                self.flats = 5
                 self.sharps = 0
             default:
                 self.flats = 0
@@ -127,7 +142,10 @@ public class Key {
             case "E":
                 self.flats = 0
                 self.sharps = 4
-                
+            case "B":
+                self.flats = 0
+                self.sharps = 5
+
             case "F":
                 self.flats = 1
                 self.sharps = 0
@@ -140,12 +158,16 @@ public class Key {
             case "A♭":
                 self.flats = 4
                 self.sharps = 0
+            case "D♭":
+                self.flats = 5
+                self.sharps = 0
             default:
                 self.flats = 0
                 self.sharps = 0
             }
         }
-        self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
+        //self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
+        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
     }
     
     func getName() -> String {

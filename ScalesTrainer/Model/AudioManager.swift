@@ -216,7 +216,7 @@ class AudioManager {
                         continue
                     }
                     let fields = line.split(separator: "\t")
-                    let time = fields[0].split(separator: ":")[1]
+                    //let time = fields[0].split(separator: ":")[1]
                     let freq = fields[1].split(separator: ":")[1]
                     let ampl = fields[2].split(separator: ":")[1]
                     let f = Float(freq)

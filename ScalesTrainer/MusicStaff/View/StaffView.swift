@@ -125,6 +125,7 @@ struct CleffView: View {
 }
 
 struct KeySignatureView: View {
+
     var score:Score
     var staffOffsets:[Int]
     
@@ -139,13 +140,15 @@ struct KeySignatureView: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(staffOffsets, id: \.self) { offset in
+                //let yAdjust = score.key.keySig.flats.count > 0 ? score.lineSpacing / 1.1 : 0
                 VStack {
-                    Image("sharp")
+                    Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "Flat")
                         .resizable()
                         .foregroundColor(.black)
                         .scaledToFit()
                         .frame(width: score.lineSpacing * getWidthMultiplier())
                         .offset(y: 0 - Double(offset) * score.lineSpacing / 2.0)
+                        .border(Color.red)
                 }
                 .padding(0)
                 .frame(width: score.lineSpacing * getWidthMultiplier())
@@ -192,38 +195,39 @@ public struct StaffView: View {
         var offsets:[Int] = []
         if staff.type == .treble {
             //Key Sig offsets on staff
-            if keySignture.accidentalCount > 0 {
+            if keySignture.sharps.count > 0 {
                 offsets.append(4)
             }
-            if keySignture.accidentalCount > 1 {
+            if keySignture.sharps.count > 1 {
                 offsets.append(1)
             }
-            if keySignture.accidentalCount > 2 {
+            if keySignture.sharps.count > 2 {
                 offsets.append(5)
             }
-            if keySignture.accidentalCount > 3 {
+            if keySignture.sharps.count > 3 {
                 offsets.append(2)
             }
-            if keySignture.accidentalCount > 4 {
+            if keySignture.sharps.count > 4 {
                 offsets.append(-1)
+            }
+            
+            if keySignture.flats.count > 0 {
+                offsets.append(0)
+            }
+            if keySignture.flats.count > 1 {
+                offsets.append(3)
+            }
+            if keySignture.flats.count > 2 {
+                offsets.append(-1)
+            }
+            if keySignture.flats.count > 3 {
+                offsets.append(2)
+            }
+            if keySignture.flats.count > 4 {
+                offsets.append(-2)
             }
         }
         else {
-            if keySignture.accidentalCount > 0 {
-                offsets.append(2)
-            }
-            if keySignture.accidentalCount > 1 {
-                offsets.append(-1)
-            }
-            if keySignture.accidentalCount > 2 {
-                offsets.append(3)
-            }
-            if keySignture.accidentalCount > 3 {
-                offsets.append(0)
-            }
-            if keySignture.accidentalCount > 4 {
-                offsets.append(-3)
-            }
 
         }
         return offsets
@@ -244,6 +248,7 @@ public struct StaffView: View {
                         KeySignatureView(score: score,
                                          staffOffsets: keySigOffsets(staff: staff, keySignture: score.key.keySig))
                             .frame(height: score.getStaffHeight())
+                            
                     }
                 }
 

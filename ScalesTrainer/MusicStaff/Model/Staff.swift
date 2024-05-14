@@ -241,55 +241,55 @@ public class Staff : ObservableObject, Identifiable {
         }
     }
 
-    func keyColumn() -> Int {
-        //    Key   C    D♭   D    E♭   E    F    G♭   G    A♭   A    B♭   B
-        //m.append("0    0    0,0  0    0,0  0    0    0    0    0,0  0    0,0")  //C
-
-        if score.key.keySig.accidentalType == AccidentalType.sharp {
-            switch score.key.keySig.accidentalCount {
-            case 0:
-                return 0
-            case 1:
-                return 7
-            case 2:
-                return 2
-            case 3:
-                return 9
-            case 4:
-                return 4
-            case 5:
-                return 11
-            case 6:
-                return 6
-            case 7:
-                return 1
-            default:
-                return 0
-            }
-        }
-        else {
-            switch score.key.keySig.accidentalCount {
-            case 0:
-                return 0
-            case 1:
-                return 5
-            case 2:
-                return 10
-            case 3:
-                return 3
-            case 4:
-                return 8
-            case 5:
-                return 1
-            case 6:
-                return 6
-            case 7:
-                return 11
-            default:
-                return 0
-            }
-        }
-     }
+//    func keyColumn() -> Int {
+//        //    Key   C    D♭   D    E♭   E    F    G♭   G    A♭   A    B♭   B
+//        //m.append("0    0    0,0  0    0,0  0    0    0    0    0,0  0    0,0")  //C
+//
+//        if score.key.keySig.accidentalType == AccidentalType.sharp {
+//            switch score.key.keySig.accidentalCount {
+//            case 0:
+//                return 0
+//            case 1:
+//                return 7
+//            case 2:
+//                return 2
+//            case 3:
+//                return 9
+//            case 4:
+//                return 4
+//            case 5:
+//                return 11
+//            case 6:
+//                return 6
+//            case 7:
+//                return 1
+//            default:
+//                return 0
+//            }
+//        }
+//        else {
+//            switch score.key.keySig.accidentalCount {
+//            case 0:
+//                return 0
+//            case 1:
+//                return 5
+//            case 2:
+//                return 10
+//            case 3:
+//                return 3
+//            case 4:
+//                return 8
+//            case 5:
+//                return 1
+//            case 6:
+//                return 6
+//            case 7:
+//                return 11
+//            default:
+//                return 0
+//            }
+//        }
+//     }
 
     //Tell a note how to display itself
     //Note offset from middle of staff is dependendent on the staff

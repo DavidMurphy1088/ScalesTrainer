@@ -158,7 +158,8 @@ public class Score : ObservableObject {
         let endIndex = direction == 0 ? timeSlices.count-1 :0
         var noteFound = false
         var nearestIndex = Int(Int64.max)
-        
+        var nearestNote:Note?
+
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
             let entry = ts.entries[0]
@@ -173,29 +174,28 @@ public class Score : ObservableObject {
                 if dist < nearestDist {
                     nearestDist = dist
                     nearestIndex = i
+                    nearestNote = note
                 }
             }
         }
         if noteFound {
             return
         }
-//        guard let nearestIndex = nearestIndex else {
-//            return
-//        }
         
         ///Show a wrong pitch
         let ts = timeSlices[nearestIndex]
         guard ts.entries.count > 0 else {
             return
         }
-
-        let newNote = Note(timeSlice: ts, num: midi, staffNum: 0)
-        ts.setPitchError(note: newNote)
+        if let nearestNote = nearestNote {
+            let newNote = Note(timeSlice: ts, num: midi, value: nearestNote.getValue(), staffNum: 0)
+            ts.setPitchError(note: newNote)
+        }
         
         DispatchQueue.global(qos: .background).async {
-            usleep(1000000 * UInt32(2.5))
+            usleep(1000000 * UInt32(2.0))
             DispatchQueue.main.async {
-                //ts.unsetPitchError()
+                ts.unsetPitchError()
             }
         }
     }

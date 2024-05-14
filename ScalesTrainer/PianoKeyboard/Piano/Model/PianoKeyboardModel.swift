@@ -156,14 +156,13 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     func configureKeyboardSize() {
         self.scale = self.scalesModel.scale
         self.firstKeyMidi = 60
-        if self.scale.scaleNoteState[0].midi < 60 {
-            self.firstKeyMidi -= 12
-        }
+
+        //["G", "A", "F", "B♭", "A♭"]
         if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
             self.firstKeyMidi = 65
-            if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
+            //if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
                 self.firstKeyMidi -= 12
-            }
+            //}
         }
         var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
         numKeys += 2

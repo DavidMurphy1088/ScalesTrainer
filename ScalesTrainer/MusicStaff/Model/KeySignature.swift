@@ -3,34 +3,47 @@ import AVKit
 import AVFoundation
 
 public class KeySignature {
-    public var accidentalType:AccidentalType
+    var keyType:StaffKey.KeyType
     var sharps:[Int] = [] //Notes of this pitch dont require individual accidentals, their accidental is implied by the key signature
-    public var accidentalCount:Int
-    
-    public init(type:AccidentalType, count:Int) {
-        self.accidentalType = type
-        self.accidentalCount = count
-        setAccidentals()
-    }
-    
-    public init(keyName:String, type:StaffKey.KeyType) {
+    var flats:[Int] = [] //Notes of this pitch dont require individual accidentals, their accidental is implied by the key signature
+    public var accidentalCount:Int = 0
+    var accidentalType:AccidentalType
+
+    public init(keyName:String, keyType:StaffKey.KeyType) {
+        //self.accidentalCount
+        self.keyType = keyType
+        //var flats = false
         self.accidentalType = .sharp
-        self.accidentalCount = 0
         
-        var count:Int?
-        if type == .major {
+        var count:Int = 0
+        if keyType == .major {
             switch keyName {
             case "C":
                 count = 0
             case "G":
                 count = 1
+            case "F":
+                self.accidentalType = .flat
+                count = 1
             case "D":
+                count = 2
+            case "B♭":
+                self.accidentalType = .flat
                 count = 2
             case "A":
                 count = 3
+            case "E♭":
+                self.accidentalType = .flat
+                count = 3
             case "E":
                 count = 4
+            case "A♭":
+                self.accidentalType = .flat
+                count = 4
             case "B":
+                count = 5
+            case "D♭":
+                self.accidentalType = .flat
                 count = 5
             default:
                 count = 0
@@ -38,60 +51,70 @@ public class KeySignature {
         }
         else {
             switch keyName {
+            case "A":
+                count = 0
+            case "E":
+                count = 1
+            case "D":
+                count = 1
+            case "B":
+                count = 2
+            case "G":
+                count = 2
+            case "F#":
+                count = 3
+            case "C":
+                count = 3
+            case "C#":
+                count = 4
+            case "F":
+                count = 4
             case "A♭":
-                count = 7
+                count = 5
+            case "B♭":
+                count = 5
             default:
                 count = 0
             }
         }
-        
-        if let count = count {
-            self.accidentalCount = count
-            setAccidentals()
-        }
-        else {
-            Logger.shared.reportError(self, "Unknown Key \(keyName), \(type)")
-        }
-        //            if !(["C", "G", "D", "A", "E", "B", "A♭"].contains(keyName)) {
-        //                Logger.logger.reportError(self, "Unknown Key \(keyName)")
-        //            }
+        self.accidentalCount = count
+        setAccidentals(keyType: keyType, accidentalType: self.accidentalType)
     }
     
-    func setAccidentals() {
+    func setAccidentals(keyType:StaffKey.KeyType, accidentalType:AccidentalType) {
         if accidentalType == .sharp {
-            if self.accidentalCount == 1 {
+            if self.accidentalCount >= 1 {
                 //self.accidentalCount = 1
                 sharps.append(Note.MIDDLE_C + 6) //F#
             }
-            if self.accidentalCount == 2 {
-                //self.accidentalCount = 2
-                sharps.append(Note.MIDDLE_C + 6) //F#
+            if self.accidentalCount >= 2 {
                 sharps.append(Note.MIDDLE_C + 1) //C#
             }
-            if self.accidentalCount == 3 {
-                //self.accidentalCount = 3
-                sharps.append(Note.MIDDLE_C + 6) //F#
-                sharps.append(Note.MIDDLE_C + 1) //C#
-                sharps.append(Note.MIDDLE_C + 7) //G#
-            }
-            if self.accidentalCount == 4 {
-                //self.accidentalCount = 4
-                sharps.append(Note.MIDDLE_C + 6) //F#
-                sharps.append(Note.MIDDLE_C + 1) //C#
+            if self.accidentalCount >= 3 {
                 sharps.append(Note.MIDDLE_C + 8) //G#
+            }
+            if self.accidentalCount >= 4 {
                 sharps.append(Note.MIDDLE_C + 3) //D#
             }
-            if self.accidentalCount == 5 {
-                //self.accidentalCount = 5
-                sharps.append(Note.MIDDLE_C + 6) //F#
-                sharps.append(Note.MIDDLE_C + 1) //C#
-                sharps.append(Note.MIDDLE_C + 8) //G#
-                sharps.append(Note.MIDDLE_C + 3) //D#
+            if self.accidentalCount >= 5 {
                 sharps.append(Note.MIDDLE_C + 10) //A#
             }
         }
         else {
-            if self.accidentalCount == 7 {
+            if self.accidentalCount >= 1 {
+                flats.append(Note.MIDDLE_C + 10) //B♭
+            }
+            if self.accidentalCount >= 2 {
+                flats.append(Note.MIDDLE_C + 3) //E♭
+            }
+            if self.accidentalCount >= 3 {
+                flats.append(Note.MIDDLE_C + 8) //A♭
+            }
+            if self.accidentalCount >= 4 {
+                flats.append(Note.MIDDLE_C + 1) //D♭
+            }
+            if self.accidentalCount >= 5 {
+                flats.append(Note.MIDDLE_C + 6) //G♭
             }
         }
     }

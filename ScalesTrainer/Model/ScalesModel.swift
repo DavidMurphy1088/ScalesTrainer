@@ -26,8 +26,8 @@ public class ScalesModel : ObservableObject {
     
     //let pianoKeyboardModel = PianoKeyboardModel.shared
     
-    let keyValues = ["C", "G", "D", "A", "E", "F", "B♭", "E♭", "A♭"]
-    var selectedKey = Key() {
+    let keyValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
+    var selectedKey = Key(name: "C", keyType: .major) {
         didSet {
             stopAudioTasks()
         }
@@ -46,11 +46,13 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right Hand", "Left Hand"]
 
-    let octaveNumberValues = [1,2,3,4]
+    ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
+    let octaveNumberValues = [1,2]
     var selectedOctavesIndex = 0 {
         didSet {stopAudioTasks()}
     }
-    
+    var selectedHandIndex = 0 
+
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
@@ -98,6 +100,7 @@ public class ScalesModel : ObservableObject {
     
     func setScore() {
         let keySig = self.selectedKey.keySignature
+        let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
         score = Score(key: StaffKey(type: .major,
                                     keySig: keySig),
                                     timeSignature: TimeSignature(top: 4, bottom: 4),
@@ -105,7 +108,7 @@ public class ScalesModel : ObservableObject {
         guard let score = score else {
             return
         }
-        let staff = Staff(score: score, type: .treble, staffNum: 0, linesInStaff: 5)
+        let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
        
         for i in 0..<scale.scaleNoteState.count {
@@ -114,7 +117,7 @@ public class ScalesModel : ObservableObject {
             }
             let note = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
-            ts.addNote(n: Note(timeSlice: ts, num: note.midi, value: Note.VALUE_QUAVER, staffNum: 0))
+            ts.addNote(n: Note(timeSlice: ts, num: note.midi, value: Note.VALUE_QUARTER, staffNum: 0))
         }
 
     }

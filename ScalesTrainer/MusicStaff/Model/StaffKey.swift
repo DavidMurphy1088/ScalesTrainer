@@ -77,26 +77,26 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         }
     }
     
-    static public func getAllKeys(type:AccidentalType) -> [StaffKey] {
-        var result:[StaffKey] = []
-        if type == .sharp {
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 0)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 1)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 2)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 3)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 4)))
-        }
-        if type == .flat {
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 0)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 1)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 2)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 3)))
-            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 4)))
-            //result.append(Key(type: Key.KeyType.major, keySig: KeySignature(type: .flat, count: 7)))
-            //result.append(Key(type: Key.KeyType.minor, keySig: KeySignature(type: .flat, count: 7)))
-        }
-        return result
-    }
+//    static public func getAllKeys(type:AccidentalType) -> [StaffKey] {
+//        var result:[StaffKey] = []
+//        if type == .sharp {
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 0)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 1)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 2)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 3)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 4)))
+//        }
+//        if type == .flat {
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 0)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 1)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 2)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 3)))
+//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 4)))
+//            //result.append(Key(type: Key.KeyType.major, keySig: KeySignature(type: .flat, count: 7)))
+//            //result.append(Key(type: Key.KeyType.minor, keySig: KeySignature(type: .flat, count: 7)))
+//        }
+//        return result
+//    }
     
     public func hasKeySignatureNote(note:Int) -> Bool {
         var result:Bool = false

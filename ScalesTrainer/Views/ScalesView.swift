@@ -91,7 +91,11 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
-            //scalesModel.setMode(.displayMode)
+            .onChange(of: handIndex, {
+                scalesModel.selectedHandIndex = handIndex
+                scalesModel.setScale()
+                scalesModel.setAppMode(.displayMode, resetRecorded: true)
+            })
 
             Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
@@ -182,12 +186,12 @@ struct ScalesView: View {
                 else {
                     scalesModel.startListening()
                 }
-                
             }.padding()
             
             Spacer()
             Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
                 hearingGivenScale.toggle()
+                scalesModel.stopListening()
                 if hearingGivenScale {
                     metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: false, onDone: {self.hearingGivenScale = false})
                 }
@@ -285,15 +289,19 @@ struct ScalesView: View {
             
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
                 .frame(height: UIScreen.main.bounds.size.height / 4)
-                .commonFrameStyle(backgroundColor: .clear).padding()
-//            PianoKeyboardView(viewModel: pianoKeyboardViewModel, style: ClassicStyle(scale: getScale()))
-//                .frame(height: 320)
-//                .padding()
+                .commonFrameStyle(backgroundColor: .clear).padding()            
+            
+//            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
+//                .frame(height: UIScreen.main.bounds.size.height / 4)
+//                .commonFrameStyle(backgroundColor: .clear).padding()
             
             if !self.staffHidden {
-                if let score = scalesModel.score {
-                    ScoreView(score: score, widthPadding: false).commonFrameStyle(backgroundColor: .clear).padding()
-                }
+                VStack {
+                    if let score = scalesModel.score {
+                        ScoreView(score: score, widthPadding: false)
+                        //ScoreView(score: score, widthPadding: false)
+                    }
+                }.commonFrameStyle(backgroundColor: .clear).padding()
             }
             
             if scalesModel.recordingAvailable {
