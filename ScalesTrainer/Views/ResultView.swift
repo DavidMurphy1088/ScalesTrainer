@@ -38,17 +38,22 @@ struct ResultView: View {
             if wrongCountAsc > 0 {
                 status += "\nYou played \(wrongCountAsc) wrong \(wrongCountAsc > 1 ? "notes" : "note") ascending. "
             }
+            else {
+                ///Only show this if there were no wrong notes
+                if missedCountAsc > 0 {
+                    status += "\nYou missed \(missedCountAsc) \(missedCountAsc > 1 ? "notes" : "note") ascending. "
+                }
+            }
             if wrongCountDesc > 0 {
                 status += "\nYou played \(wrongCountDesc) wrong \(wrongCountDesc > 1 ? "notes" : "note") descending. "
             }
-            if missedCountAsc > 0 {
-                status += "\nYou missed \(missedCountAsc) \(missedCountAsc > 1 ? "notes" : "note") ascending. "
-            }
-            if missedCountDesc > 0 {
-                status += "\nYou missed \(missedCountDesc) \(missedCountDesc > 1 ? "notes" : "note") descending. "
+            else {
+                if missedCountDesc > 0 {
+                    status += "\nYou missed \(missedCountDesc) \(missedCountDesc > 1 ? "notes" : "note") descending. "
+                }
             }
         }
-        var correct = wrongCountAsc == 0 && wrongCountDesc == 0 && missedCountAsc == 0 && missedCountDesc == 0
+        let correct = wrongCountAsc == 0 && wrongCountDesc == 0 && missedCountAsc == 0 && missedCountDesc == 0
         return (correct, status)
     }
     

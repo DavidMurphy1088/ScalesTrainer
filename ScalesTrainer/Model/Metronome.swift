@@ -11,13 +11,9 @@ protocol MetronomeTimerNotificationProtocol {
     func metronomeStop()
 }
 
-class MetronomeModel: ObservableObject {
+class MetronomeModel {
     public static let shared = MetronomeModel()
-    
-    //@Published private(set) var isRunning = false
-    @Published var tempo: Int = 120 //90
-    //@Published private(set) var playingScale:Bool = false
-    //@Published 
+
     var isTiming = false
 
     private let scalesModel = ScalesModel.shared
@@ -68,7 +64,7 @@ class MetronomeModel: ObservableObject {
             audioManager.mixer.addInput(player)
         }
         timerTickerNumber = 0
-        let delay = 60.0 / Double(self.tempo)
+        let delay = 60.0 / Double(scalesModel.getTempo())
         notified.metronomeStart()
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if false {
@@ -104,7 +100,7 @@ class MetronomeModel: ObservableObject {
                     }
                     else {
                         self.timerTickerNumber += 1
-                        let delay = (60.0 / Double(self.tempo)) * 1000000
+                        let delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
                         usleep(useconds_t(delay))
                     }
                 }

@@ -46,7 +46,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             if timerTickerNumber < ScalesModel.shared.scale.scaleNoteState.count {
                 let scaleNote = ScalesModel.shared.scale.scaleNoteState[timerTickerNumber]
                 if let keyIndex = getKeyIndexForMidi(midi:scaleNote.midi, direction:0) {
-                    self.pianoKeyModel[keyIndex].setPlayingMidi()
+                    self.pianoKeyModel[keyIndex].setPlayingMidi(ascending: scalesModel.selectedDirection)
                 }
                 sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
                 //scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)
@@ -66,6 +66,9 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 return true
             }
             while true {
+                if keyToPlay >= self.pianoKeyModel.count {
+                    return true
+                }
                 let key = self.pianoKeyModel[keyToPlay]
                 ///Find the next key to play
                 var matches = (ascending && key.keyMatchedState.matchedTimeAscending != nil) || (!ascending && key.keyMatchedState.matchedTimeDescending != nil)
@@ -74,7 +77,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                         hitTurnaround = false
                     }
                     else {
-                        key.setPlayingMidi()
+                        key.setPlayingMidi(ascending: ascending ? 0 : 1)
                         sampler.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
                         //scalesModel.setPianoKeyPlayed(midi: key.midi)
                         if ascending {
@@ -158,11 +161,14 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         self.firstKeyMidi = 60
 
         //["G", "A", "F", "B♭", "A♭"]
-        if ["G", "A", "F", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
+        if ["F", "B", "B♭", "A", "A♭", "G"].contains(self.scalesModel.selectedKey.name) {
             self.firstKeyMidi = 65
-            //if ["A", "B♭", "A♭"].contains(self.scalesModel.selectedKey.name) {
+            if ["B", "B♭", "A", "A♭"].contains(self.scalesModel.selectedKey.name) {
                 self.firstKeyMidi -= 12
-            //}
+            }
+            if ["G"].contains(self.scalesModel.selectedKey.name) && scale.octaves > 1 {
+                self.firstKeyMidi -= 12
+            }
         }
         var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
         numKeys += 2
@@ -240,7 +246,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                         keyboardAudioManager?.pianoKeyUp(noteNumber)
                     }
                     pianoKeyModel[index].touchDown = keyDownAt[index]
-                    pianoKeyModel[index].setPlayingMidi()
+                    pianoKeyModel[index].setPlayingMidi(ascending: scalesModel.selectedDirection)
                 }
             } else {
                 if pianoKeyModel[index].touchDown && keyDownAt[index] && pianoKeyModel[index].latched {

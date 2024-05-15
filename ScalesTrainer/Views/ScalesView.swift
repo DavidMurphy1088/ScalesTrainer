@@ -5,7 +5,7 @@ struct ScalesView: View {
     private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
     @ObservedObject private var speech = SpeechManager.shared
-    @ObservedObject private var metronome = MetronomeModel.shared
+    private var metronome = MetronomeModel.shared
 
     private let audioManager = AudioManager.shared
 
@@ -14,6 +14,7 @@ struct ScalesView: View {
     @State private var keyIndex = 0
     @State private var scaleTypeIndex = 0
     @State private var directionIndex = 0
+    @State private var tempoIndex = 4
 
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
@@ -114,6 +115,22 @@ struct ScalesView: View {
             .onChange(of: scalesModel.selectedDirection, {
                 self.directionIndex = scalesModel.selectedDirection
             })
+            
+            Spacer()
+            Text(LocalizedStringResource("Tempo"))
+            Picker("Select Value", selection: $tempoIndex) {
+                ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
+                    //if scalesModel.selectedDirection >= 0 {
+                        Text("\(scalesModel.tempoSettings[index])")
+                    //}
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: tempoIndex, {
+                scalesModel.setTempo(self.tempoIndex)
+                //scalesModel.scale.resetMatchedData() ///in listen mode clear wrong notes
+            })
+
             Spacer()
         }
     }

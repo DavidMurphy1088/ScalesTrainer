@@ -6,22 +6,24 @@ import Foundation
 import AudioKitEX
 import Speech
 
-class AudioManager {
+class AudioManager : MetronomeTimerNotificationProtocol {
     static let shared = AudioManager()
-    //var audioPlayer = AudioPlayer()
     public var engine = AudioEngine()
-    var tapHandler: BaseTap?
+    var installedTap: BaseTap?
+    var tapHandler: TapHandlerProtocol?
     let midiSampler = MIDISampler()
     //let scalesModel = ScalesModel.shared ///Causes start up exception
     var microphoneRecorder: NodeRecorder?
     var silencer: Fader?
     var mixer = Mixer()
     var fader:Fader?
-    //var currentTapHandler:TapHandler? = nil
     var mic:AudioEngine.InputNode? = nil
     var speechManager:SpeechManager?
     let speech = SpeechManager.shared
     var recordedFileSequenceNum = 0
+    var metronomeAudioPlayerLow:AVAudioPlayer?
+    var metronomeAudioPlayerHigh:AVAudioPlayer?
+    var metronomeCount = 0
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -74,35 +76,43 @@ class AudioManager {
         }
     }
     
-//    func startRecordingMicrophoneNew(tapHandler:TapHandler, recordAudio:Bool) {
-//        self.engine = AudioEngine()
-//
-//        guard let inputNode = self.engine.input else {
-//            fatalError("Microphone not available")
-//        }
-//
-//        fader = Fader(inputNode, gain: 0)
-//        mixer = Mixer(fader!)
-//        //mixer = Mixer() ///😡 causes IPad exception on tap start
-//        self.engine.output = mixer
-//
-//        do {
-//            try self.engine.start()
-//        } catch {
-//            print("Error starting the engine: \(error)")
-//        }
-//
-//        self.tap = PitchTap(inputNode) {
-//            pitches, amplitude in
-//            print("Detected pitch: \(pitches)")
-//        }
-//
-//        //do {
-//            self.tap?.start()
-////        } catch let err {
-////            print(err)
-////        }
-//    }
+    func loadAudioPlayer(name:String) -> AVAudioPlayer? {
+        let clapURL = Bundle.main.url(forResource: name, withExtension: "aiff")
+
+        do {
+            let audioPlayer = try AVAudioPlayer(contentsOf: clapURL!)
+            audioPlayer.prepareToPlay()
+            audioPlayer.volume = 1.0 // Set the volume to full
+            audioPlayer.rate = 2.0
+            return audioPlayer
+        }
+        catch  {
+            Logger.shared.reportError(self, "Cannot prepare AVAudioPlayer")
+        }
+
+        Logger.shared.log(self, "Loaded audio players")
+        return nil
+    }
+    
+    func metronomeStart() {
+        metronomeAudioPlayerLow = loadAudioPlayer(name: "metronome_mechanical_low")
+        metronomeAudioPlayerHigh = loadAudioPlayer(name: "metronome_mechanical_high")
+        metronomeCount = 0
+    }
+    
+    func metronomeTicked(timerTickerNumber: Int, userScale: Bool) -> Bool {
+        if metronomeCount % 4 == 0 {
+            metronomeAudioPlayerHigh!.play()
+        }
+        else {
+            metronomeAudioPlayerLow!.play()
+        }
+        metronomeCount += 1
+        return metronomeCount >= 8
+    }
+    
+    func metronomeStop() {        
+    }
 
     func startRecordingMicrophone(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
         Logger.shared.clearLog()
@@ -125,7 +135,7 @@ class AudioManager {
                     Logger.shared.log(self, "Recording started...")
                 }
             }
-            self.tapHandler?.start()
+            self.installedTap?.start()
             //currentTapHandler = tapHandler
         } catch let err {
             print(err)
@@ -134,8 +144,8 @@ class AudioManager {
     
     func stopRecording() {
         microphoneRecorder?.stop()
-        self.tapHandler?.stop()
-        self.tapHandler?.stop()
+        self.installedTap?.stop()
+        self.tapHandler?.stopTapping()
     }
     
     func startEngine() {
@@ -244,24 +254,8 @@ class AudioManager {
     }
 
     func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) {
-        
-//        if tapHandler is PitchTapHandler {
-//            self.tapHandler = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-//                if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
-//                    if asynch {
-//                        DispatchQueue.main.async {
-//                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-//                        }
-//                    }
-//                    else {
-//                        tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-//                    }
-//                }
-//            }
-//        }
-//        else {
-        self.tapHandler = PitchTap(node,
-                       bufferSize:UInt32(bufferSize)) { pitch, amplitude in
+        self.tapHandler = tapHandler
+        self.installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
             if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
                 if asynch {
                     DispatchQueue.main.async {
@@ -273,29 +267,6 @@ class AudioManager {
                 }
             }
         }
-        //self.tapHandler?.start()
-//        }
-        
-//        if tapHandler is FFTTapHandler {
-//            let node:Node
-//            if let filePlayer = self.filePlayer {
-//                node = filePlayer
-//            }
-//            else {
-//                node = mic
-//            }
-//            tap = FFTTap(node, bufferSize:UInt32(bufferSize)) { freqs in
-//                if asynch {
-//                    DispatchQueue.main.async {
-//                        tapHandler.tapUpdate(freqs)
-//                    }
-//                }
-//                else {
-//                    tapHandler.tapUpdate(freqs)
-//                }
-//            }
-//            (tap as! FFTTap).isNormalized = false
-//        }
     }
     
     func checkMicPermission(completion: @escaping (Bool) -> Void) {

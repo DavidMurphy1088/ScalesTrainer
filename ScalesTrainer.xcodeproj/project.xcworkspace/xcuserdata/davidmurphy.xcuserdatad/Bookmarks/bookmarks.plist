@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>186</string>
+					<string>188</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>185</string>
+					<string>187</string>
 					<key>Timestamp</key>
-					<string>737365186.262955</string>
+					<string>737462273.7241139</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>232</string>
+					<string>242</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>231</string>
+					<string>241</string>
 					<key>Timestamp</key>
-					<string>736942881.0845701</string>
+					<string>737462762.3391581</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -89,6 +89,51 @@
 				<string>                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
                 scalesModel.forceRepaint()
                 //PianoKeyboardModel.shared.debug("End test read")
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>249</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>248</string>
+					<key>Timestamp</key>
+					<string>737462356.736951</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Views/ScalesView.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>                        scalesModel.setAppMode(.displayMode, resetRecorded: true)
+</string>
+				<key>leading</key>
+				<string>                    else {
+                        recordingScale = true
+</string>
+				<key>trailing</key>
+				<string>                        scalesModel.startRecordingScale(testData: false, onDone: {
+                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
+                            scalesModel.setDirection(0)
 </string>
 			</dict>
 			<key>type</key>

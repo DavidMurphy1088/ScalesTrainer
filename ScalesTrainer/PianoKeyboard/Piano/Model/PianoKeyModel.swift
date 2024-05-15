@@ -42,23 +42,23 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.midi = midi
     }
     
-    public func setPlayingMidi() {
+    public func setPlayingMidi(ascending:Int) {
         self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         self.isPlayingMidi = true
         if let score  = scalesModel.score {
-            score.setScoreNotePlayed(midi: self.midi, direction: scalesModel.selectedDirection)
+            score.setScoreNotePlayed(midi: self.midi, direction: ascending)
             score.clearAllPlayingNotes(besidesMidi: self.midi)
         }
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
     }
     
-    public func setPlayingKey() {
-        self.keyboardModel.clearAllPlayingKey(besidesID: self.id)
-        self.keyMatchedState.matchedTimeAscending = Date()
-        self.keyMatchedState.matchedTimeDescending = Date()
-        self.keyboardModel.redraw()
-    }
+//    public func setPlayingKey() {
+//        self.keyboardModel.clearAllPlayingKey(besidesID: self.id)
+//        self.keyMatchedState.matchedTimeAscending = Date()
+//        self.keyMatchedState.matchedTimeDescending = Date()
+//        self.keyboardModel.redraw()
+//    }
     
     public var noteMidiNumber: Int {
         keyIndex + self.keyboardModel.firstKeyMidi

@@ -50,23 +50,41 @@ import Speech
 //    }
 //}
 
-class SpeechManager : NSObject, SFSpeechRecognitionTaskDelegate, ObservableObject {
+class SpeechManager : NSObject, MetronomeTimerNotificationProtocol, SFSpeechRecognitionTaskDelegate, ObservableObject {
     static let shared = SpeechManager()
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine() //AudioManager.shared.engine //AVAudioEngine()
     
-    let speakSynthesizer = AVSpeechSynthesizer()
+    let speechSynthesizer = AVSpeechSynthesizer()
     
     var isRunning = false
-    //let taskDelegate = SpeechRecognitionManager()
     var ctr = 0
+    let countInWords = ["one", "two", "three", "four"]
+    var wordIndex = 0
     
     private override init() {
         super.init()
         Logger.shared.log(self, "Inited")
         requestPermissions()
+    }
+    
+    func metronomeStart() {
+        wordIndex = 0
+    }
+    
+    func metronomeTicked(timerTickerNumber: Int, userScale: Bool) -> Bool {
+        let utterance = AVSpeechUtterance(string: countInWords[wordIndex])
+        //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.5 // Adjust the rate as needed
+        speechSynthesizer.speak(utterance)
+        wordIndex += 1
+        return wordIndex >= countInWords.count
+    }
+    
+    func metronomeStop() {
+        
     }
     
     func speak(_ text: String) {
@@ -77,7 +95,7 @@ class SpeechManager : NSObject, SFSpeechRecognitionTaskDelegate, ObservableObjec
         //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.25  // Adjust the rate of speech here
         utterance.volume = 0.1
-        speakSynthesizer.speak(utterance)
+        speechSynthesizer.speak(utterance)
     }
     
     func startAudioEngine() {

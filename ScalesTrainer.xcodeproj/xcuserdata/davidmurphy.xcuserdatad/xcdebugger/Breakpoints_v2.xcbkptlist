@@ -7,63 +7,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C40D0FF6-497B-43C7-917E-9592AA290253"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/Score.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
-            landmarkName = "setScoreNotePlayed(midi:direction:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "537A4BC1-E7CE-43EF-A8E9-578ACA0594D7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/Score.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
-            landmarkName = "setScoreNotePlayed(midi:direction:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "22F0F4F4-4464-4E77-8DAE-C4418D12F6E0"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/Score.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "setScoreNotePlayed(midi:direction:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C61BE306-D2E0-4C84-BDB4-64B666F1ECDE"
+            uuid = "5992611F-3DA0-448B-A26A-FE393BCBBFBF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/Scale.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "init(key:scaleType:octaves:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -71,39 +23,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CC462532-F512-4625-B422-5B6CCE272729"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "init(key:scaleType:octaves:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "CC9042A3-8436-4883-94D9-AE76EB977494"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
-            landmarkName = "configureKeyboardSize()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A7A3CC8F-63A4-4A09-B2E4-D1D76A2FA017"
+            uuid = "DF2DD53B-0939-41E7-804D-6F69F95E9659"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -114,309 +34,69 @@
             endingLineNumber = "116"
             landmarkName = "init(key:scaleType:octaves:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "A7A3CC8F-63A4-4A09-B2E4-D1D76A2FA017 - f74090bf2448d334"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.Scale.init(key: ScalesTrainer.Key, scaleType: ScalesTrainer.ScaleType, octaves: Swift.Int) -&gt; ScalesTrainer.Scale"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "116"
-                  endingLineNumber = "116"
-                  offsetFromSymbolStart = "1680">
-               </Location>
-               <Location
-                  uuid = "A7A3CC8F-63A4-4A09-B2E4-D1D76A2FA017 - f74090bf2448d334"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.Scale.init(key: ScalesTrainer.Key, scaleType: ScalesTrainer.ScaleType, octaves: Swift.Int) -&gt; ScalesTrainer.Scale"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "116"
-                  endingLineNumber = "116"
-                  offsetFromSymbolStart = "1420">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "609ED718-21AA-484D-96D5-316750ECB317"
+            uuid = "88D02AFE-DA15-4723-9002-EFE7D7AD01C0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/Scale.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "init(key:scaleType:octaves:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "609ED718-21AA-484D-96D5-316750ECB317 - f74090bf2448dcaf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.Scale.init(key: ScalesTrainer.Key, scaleType: ScalesTrainer.ScaleType, octaves: Swift.Int) -&gt; ScalesTrainer.Scale"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43"
-                  offsetFromSymbolStart = "504">
-               </Location>
-               <Location
-                  uuid = "609ED718-21AA-484D-96D5-316750ECB317 - f74090bf2448dcaf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.Scale.init(key: ScalesTrainer.Key, scaleType: ScalesTrainer.ScaleType, octaves: Swift.Int) -&gt; ScalesTrainer.Scale"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43"
-                  offsetFromSymbolStart = "552">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C6245377-5C30-461E-AD2F-1369D45229FC"
+            uuid = "5143219E-5E80-48E1-B0E8-E42B69578C35"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Key.swift"
+            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
-            landmarkName = "init(sharps:flats:keyType:)"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "configureKeyboardSize()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2BC31E97-B8F2-40D8-8544-9A462F2E23C8"
+            uuid = "C37B159A-CC2D-40E9-BAF8-59796FAE0D6B"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Key.swift"
+            filePath = "ScalesTrainer/Model/TapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "20"
-            endingLineNumber = "20"
-            landmarkName = "init(sharps:flats:keyType:)"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "tapUpdate(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5CAAB864-BF51-46DF-A17C-C20DF0BF6B04"
+            uuid = "0BC448B1-5FA9-4086-AD81-87E975670E18"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
-            landmarkName = "setKey(index:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "84FCBB34-3946-4DD8-88C5-30D0311CF0D1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Key.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "init(name:keyType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "37D91112-6AA4-4973-8515-EF8FEF43954D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9AAECA39-3FE9-449E-848B-1B09920F5C46"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "196"
-            endingLineNumber = "196"
-            landmarkName = "keySigOffsets(staff:keySignture:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3DEC13B7-CFF5-41D9-97ED-F5EB94822AE7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "01163B82-91B9-4FC4-A490-327C49026B53"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0FD3A624-F1C8-49EC-9A9D-0154C59256DC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6AA1D7D0-5EE8-48FF-820F-ED7917B2720C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "133"
-            endingLineNumber = "133"
-            landmarkName = "getWidthMultiplier()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9CC6DF56-A7AE-42A4-93A4-8AD8CBD2D944"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/View/StaffView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "61E4820E-A62F-4BE2-B092-501463CEE1C4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/KeySignature.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "85"
-            endingLineNumber = "85"
-            landmarkName = "setAccidentals(keyType:accidentalType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DF9415AC-3DBE-4607-A1CD-FFF488695081"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/KeySignature.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "init(keyName:keyType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C13ED850-394B-4A3E-A501-3D7B506E91E6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/MusicStaff/Model/KeySignature.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "init(keyName:keyType:)"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "startListening()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

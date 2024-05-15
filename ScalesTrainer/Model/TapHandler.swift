@@ -16,32 +16,6 @@ protocol TapHandlerProtocol {
     func stopTapping()
 }
 
-//class TapHandler : TapHanderProtocol {
-//    var startTime:Date
-//    
-//    init() {
-//        startTime = Date()
-//    }
-//    
-//    func tapUpdate(_ frequency: [AudioKit.AUValue], _ amplitude: [AudioKit.AUValue]) {
-//    }
-//    
-//    func tapUpdate(_ frequencys: [Float]) {
-//    }
-//
-//    func showConfig() {
-//    }
-//    
-//    func stopTapping(){
-//    }
-//    
-//    func log(_ m:String, _ value:Double? = nil) {
-//        //if false {
-//            Logger.shared.log(self, m, value)
-//        //}
-//    }
-//}
-
 public enum CallibrationType {
     case startAmplitude
     case amplitudeFilter
@@ -58,7 +32,6 @@ class CallibrationTapHandler : TapHandlerProtocol {
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
-        //let n = 3
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
         var msg = ""
@@ -68,7 +41,6 @@ class CallibrationTapHandler : TapHandlerProtocol {
         let frequency:Float = frequencies[0]
         let midi = Util.frequencyToMIDI(frequency: frequency)
         msg += " \tMidi:"+String(midi)
-
         Logger.shared.log(self, msg)
     }
     
@@ -77,12 +49,16 @@ class CallibrationTapHandler : TapHandlerProtocol {
         Logger.shared.log(self, "ended callibration")
         Logger.shared.calcValueLimits()
     }
+
 }
 
 class PracticeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        let keyboardModel = PianoKeyboardModel.shared
+        let scalesModel = ScalesModel.shared
+
         var frequency:Float
         var amplitude:Float
         if amplitudes[0] > amplitudes[1] {
@@ -94,7 +70,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         let midi = Util.frequencyToMIDI(frequency: frequency)
-        
+
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
         var msg = ""
@@ -102,16 +78,10 @@ class PracticeTapHandler : TapHandlerProtocol {
         msg += " amp:\(String(format: "%.4f", amplitude))"
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
-        let keyboardModel = PianoKeyboardModel.shared
-        let scalesModel = ScalesModel.shared
-
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
-            keyboardKey.setPlayingMidi()
-            keyboardKey.setPlayingKey()
-//            if let score = scalesModel.score {
-//                score.setScoreNotePlayed(midi: keyboardKey.midi, direction: scalesModel.selectedDirection, clear: false)
-//            }
+            keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
+            //keyboardKey.setPlayingKey() ????
         }
         Logger.shared.log(self, msg)
     }
@@ -177,9 +147,7 @@ class PitchTapHandler : TapHandlerProtocol  {
         if saveTappingToFile {
             recordTapDataToFile(frequencies, amplitudes)
         }
-        else {
-            processTapData(frequencies, amplitudes)
-        }
+        processTapData(frequencies, amplitudes)
     }
     
     func recordTapDataToFile(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -283,7 +251,7 @@ class PitchTapHandler : TapHandlerProtocol  {
                 }
             }
 
-            keyboardKey.setPlayingMidi()
+            keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
             ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: true,
                                                                      scaleSequence: nextExpectedNote?.sequence,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,

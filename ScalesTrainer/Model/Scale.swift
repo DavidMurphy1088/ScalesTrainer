@@ -39,7 +39,10 @@ public class Scale {
         scaleNoteState = []
         
         ///https://musescore.com/user/27091525/scores/6509601
-        var nextMidi = 0 ///The start of the scale
+        ///B, B♭, A, A♭ drop below Middle C for one and two octaves
+        ///G drops below Middle C only for 2 octaves
+        ///The start of the scale for one octave -
+        var nextMidi = 0
         if key.keyType == .major {
             if key.sharps > 0 {
                 switch key.sharps {
@@ -52,7 +55,7 @@ public class Scale {
                 case 4:
                     nextMidi = 64
                 case 5:
-                    nextMidi = 59
+                    nextMidi = 59 //B
                 default:
                     nextMidi = 60
                 }
@@ -78,41 +81,38 @@ public class Scale {
             if key.sharps > 0 {
                 switch key.sharps {
                 case 1:
-                    nextMidi = 64
+                    nextMidi = 64  //G -> E
                 case 2:
-                    nextMidi = 59
+                    nextMidi = 59  //D -> B
                 case 3:
-                    nextMidi = 66  //F#
+                    nextMidi = 66  //A -> F#
                 case 4:
-                    nextMidi = 61
+                    nextMidi = 61  //E -> C#
                 case 5:
-                    nextMidi = 56
+                    nextMidi = 56  //B -> Ab
                 default:
-                    nextMidi = 57
+                    nextMidi = 56
                 }
             }
             else {
                 switch key.flats {
                 case 1:
-                    nextMidi = 62 //D
+                    nextMidi = 62 //F -> D
                 case 2:
-                    nextMidi = 67 //G
+                    nextMidi = 67 //B flat -> G
                 case 3:
-                    nextMidi = 60 //C
+                    nextMidi = 60 //E flat -> C
                 case 4:
-                    nextMidi = 65 //F
+                    nextMidi = 65 //A flat -> F
                 case 5:
-                    nextMidi = 65 //B flat
+                    nextMidi = 58 //D flat -> B flat
                 default:
                     nextMidi = 58
                 }
             }
         }
-//        if octaves > 2 {
-//            nextMidi -= 12
-//        }
         
-        ///Some keys just below C drop their first note for 2 octaves
+        ///Some keys just below C drop their first note for 1 octaves
         if octaves > 1 {
             if key.keyType == .major {
                 if [1].contains(key.sharps) {
@@ -170,7 +170,7 @@ public class Scale {
             }
         }
         
-        ///Downwards
+        ///Write the downwards direction
         let up = Array(scaleNoteState)
         for i in stride(from: up.count - 2, through: 0, by: -1) {
             var downMidi = up[i].midi
@@ -187,9 +187,7 @@ public class Scale {
             scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: downMidi))
             sequence += 1
         }
-
         setFingers()
-        
         setFingerBreaks()
         debug("Constructor")
     }
@@ -228,22 +226,6 @@ public class Scale {
         }
         return nil
     }
-    
-//    ///Return the nearest scale midi to a given keyboard midi
-//    func getNearestMidi(midi:Int, direction:Int) -> Int {
-//        let start = direction == 0 ? 0 : self.scaleNoteState.count / 2
-//        let end = direction == 0 ? self.scaleNoteState.count / 2 : self.scaleNoteState.count - 1
-//        var minDiff:Int = Int(Int64.max)
-//        var minIndex = 0
-//        for i in start...end {
-//            let diff = abs(self.scaleNoteState[i].midi - midi)
-//            if diff < minDiff {
-//                minDiff = diff
-//                minIndex = i
-//            }
-//        }
-//        return self.scaleNoteState[minIndex].midi
-//    }
 
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key
@@ -263,9 +245,17 @@ public class Scale {
         }
     }
     
+    func getMinMax() -> (Int, Int) {
+        let mid = self.scaleNoteState.count / 2
+        return (self.scaleNoteState[0].midi, self.scaleNoteState[mid].midi)
+    }
+    
     func setFingers() {
         var currentFinger = 1
 
+        if ["D♭"].contains(key.name) {
+            currentFinger = 2
+        }
         if ["B♭"].contains(key.name) {
             currentFinger = 4
         }
@@ -284,6 +274,8 @@ public class Scale {
             sequenceBreaks = [1, 5]
         case "A♭":
             sequenceBreaks = [2, 5]
+        case "D♭":
+            sequenceBreaks = [2, 6]
         default:
             sequenceBreaks = [3, 7]
         }

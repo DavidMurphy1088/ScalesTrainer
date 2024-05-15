@@ -50,7 +50,7 @@ struct SettingsView: View {
                 Spacer()
                 TestDataModeView()
                 Spacer()
-                MetronomeView()
+                //MetronomeView()
             }
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
