@@ -63,15 +63,16 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 let silencer = Fader(input, gain: 0)
                 self.silencer = silencer
                 mixer.addInput(silencer)
+            
+                //mixer.addInput(audioPlayer)
+                setupSampler()
+                mixer.addInput(midiSampler)
+                
+                self.speechManager = SpeechManager.shared
+                
+                engine.output = mixer
+                setSession()
             }
-            //mixer.addInput(audioPlayer)
-            setupSampler()
-            mixer.addInput(midiSampler)
-            
-            self.speechManager = SpeechManager.shared
-            
-            engine.output = mixer
-            setSession()
             startEngine()
         }
     }
@@ -108,7 +109,8 @@ class AudioManager : MetronomeTimerNotificationProtocol {
             metronomeAudioPlayerLow!.play()
         }
         metronomeCount += 1
-        return metronomeCount >= 8
+        //return metronomeCount >= 8
+        return metronomeCount >= 1
     }
     
     func metronomeStop() {        
@@ -185,8 +187,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         var fileName:String
         switch ScalesModel.shared.selectedOctavesIndex {
         case 0:
-            fileName = "05_05_C_Major_1_60_iPad_Desc"
-            //fileName = "05_09_C_Major_1_60_iPad_0"
+            fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
         case 1:
             //fileName = "05_05_C_MelodicMinor_2_60_iPad_17.txt"
             fileName = "05_09_C_Major_2_60_iPad_3"
@@ -218,8 +219,10 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                         let reqStartAmpl = Double(fields[2])
                         if let ampFilter = ampFilter {
                             if let startAmple = reqStartAmpl  {
-                                scalesModel.amplitudeFilter = ampFilter
-                                scalesModel.requiredStartAmplitude = reqStartAmpl
+                                DispatchQueue.main.async {
+                                    scalesModel.amplitudeFilter = ampFilter
+                                    scalesModel.requiredStartAmplitude = reqStartAmpl
+                                }
                                 tapHandler.requiredStartAmplitude = reqStartAmpl ?? 0
                             }
                         }
@@ -234,6 +237,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                     if let f = f {
                         if let a = a {
                             tapHandler.tapUpdate([f, f], [a, a])
+                            usleep(1000000 * UInt32(0.5))
                         }
                     }
                     ctr += 1

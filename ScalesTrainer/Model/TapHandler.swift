@@ -54,6 +54,14 @@ class CallibrationTapHandler : TapHandlerProtocol {
 
 class PracticeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
+    let minMidi:Int
+    let maxMidi:Int
+    var direction = 0
+    
+    init() {
+        minMidi = ScalesModel.shared.scale.getMinMax().0
+        maxMidi = ScalesModel.shared.scale.getMinMax().1
+    }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         let keyboardModel = PianoKeyboardModel.shared
@@ -80,10 +88,17 @@ class PracticeTapHandler : TapHandlerProtocol {
         msg += "  MIDI \(String(describing: midi))"
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
-            keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
-            //keyboardKey.setPlayingKey() ????
+            keyboardKey.setPlayingMidi(ascending: direction)
+            if keyboardKey.midi == minMidi {
+                scalesModel.setDirection(0)
+                direction = 1
+            }
+            if keyboardKey.midi == maxMidi {
+                scalesModel.setDirection(1)
+                direction = 1
+            }
         }
-        Logger.shared.log(self, msg)
+        //Logger.shared.log(self, msg)
     }
     
     func stopTapping() {
@@ -99,42 +114,15 @@ class PitchTapHandler : TapHandlerProtocol  {
     let saveTappingToFile:Bool
     var fileURL:URL?
     var lastAmplitude:Float?
+    var lastKeyPressedMidi:Int?
+    var tapRecords:[String] = []
+    var unmatchedCount = 0
     
     init(requiredStartAmplitude:Double, saveTappingToFile:Bool, scale:Scale) {
         self.scale = scale
         self.saveTappingToFile = saveTappingToFile
         self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
-
-        if saveTappingToFile {
-            //if let scale = scale {
-                let calendar = Calendar.current
-                let month = calendar.component(.month, from: Date())
-                let day = calendar.component(.day, from: Date())
-                let device = UIDevice.current
-                let modelName = device.model
-                var keyName = scale.key.name + "_" 
-                keyName += String(Scale.getTypeName(type: scale.scaleType))
-                keyName = keyName.replacingOccurrences(of: " ", with: "")
-                var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"
-                fileName += keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[0].midi) + "_" + modelName
-                fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
-                fileName += ".txt"
-                AudioManager.shared.recordedFileSequenceNum += 1
-                let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                // Create the file URL by appending the file name to the directory
-                fileURL = documentDirectoryURL.appendingPathComponent(fileName)
-                do {
-                    if let fileURL = fileURL {
-                        let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
-                        try config.write(to: fileURL, atomically: true, encoding: .utf8)
-                    }
-                }
-                catch {
-                    Logger.shared.reportError(self, "Error creating file: \(error)")
-                }
-            //}
-        }
     }
     
     func showConfig() {
@@ -153,18 +141,7 @@ class PitchTapHandler : TapHandlerProtocol  {
     func recordTapDataToFile(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         let timeInterval = Date().timeIntervalSince1970
         let tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
-        if let fileURL = fileURL {
-            do {
-                let data = tapData.data(using: .utf8)!
-                let fileHandle = try FileHandle(forWritingTo: fileURL)
-                fileHandle.seekToEndOfFile()        // Move to the end of the file
-                fileHandle.write(data)              // Append the data
-                fileHandle.closeFile()              // Close the file
-                print("========== data written", fileURL)
-            } catch {
-                print("Error writing to file: \(error)")
-            }
-        }
+        tapRecords.append(tapData)
     }
     
     func processTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -199,71 +176,101 @@ class PitchTapHandler : TapHandlerProtocol  {
             }
         }
         let keyboardModel = PianoKeyboardModel.shared
-        var pressedKey = false
+
+        guard let nextExpectedNote = scale.getNextExpectedNote() else {
+            ///All scales notes are already matched
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
+                                                                     expectedScaleNoteState: nil,
+                                                                     midi: tapMidi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                     amplDiff: Double(amplDiff), ascending: false, key: nil))
+            return
+        }
         
         var midi = tapMidi
         
-        ///Adjust to expected octave. e.g. A middle C = 60 might arrive as 72. 72 matches the scale and causes a note played at key 72
+        ///Adjust to the pitch in the expected octave. e.g. A middle C = 60 might arrive as 72. 72 matches the scale and causes a note played at key 72
         ///So treat the 72 as middle C = 60 so its not treated as the top of the scale (and then that everything that follows is descending)
         //let offsets = [0, 12, -12, 24, -24]
         let offsets = [0, 12, -12]
         var minDist = 1000000
         var minIndex = 0
-        let nextExpectedNote = scale.getNextExpectedNote()
         
-        if let nextExpectedNote = nextExpectedNote {
-            for i in 0..<offsets.count {
-                let dist = abs((tapMidi  + offsets[i]) - nextExpectedNote.midi)
-                if dist < minDist {
-                    minDist = dist
-                    minIndex = i
-                }
+        for i in 0..<offsets.count {
+            let dist = abs((tapMidi  + offsets[i]) - nextExpectedNote.midi)
+            if dist < minDist {
+                minDist = dist
+                minIndex = i
             }
-            midi = tapMidi + offsets[minIndex]
+        }
+        midi = tapMidi + offsets[minIndex]
+        let ascending = nextExpectedNote.sequence <= scale.scaleNoteState.count / 2
+        let atTop = nextExpectedNote.sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNote.midi
+        if midi == 72 {
+            print("========== 72x", ascending, nextExpectedNote.midi)
+        }
+
+        ///Does the notification represents a key that could be pressed on the keyboard?
+        guard let keyboardIndex = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
+                                                                     expectedScaleNoteState: nil,
+                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                     amplDiff: Double(amplDiff), ascending: ascending, key: nil))
+            return
         }
         
-        let ascending = nextExpectedNote == nil || nextExpectedNote!.sequence <= scale.scaleNoteState.count / 2
-        let atTop = nextExpectedNote != nil && nextExpectedNote!.sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNote!.midi
-
-        if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
-            let keyboardKey = keyboardModel.pianoKeyModel[index]
-            
-            if ascending || atTop {
-                if keyboardKey.keyMatchedState.matchedTimeAscending == nil {
-                    keyboardKey.keyMatchedState.matchedTimeAscending = Date()
-                    keyboardKey.keyMatchedState.matchedAmplitudeAscending = Double(amplitude)
-                    pressedKey = true
-                    if let nextExpectedNote = nextExpectedNote {
-                        nextExpectedNote.matchedTime = Date()
-                        nextExpectedNote.matchedAmplitude = Double(amplitude)
-                    }
-                }
+        if let lastKeyPressedMidi = lastKeyPressedMidi {
+            guard midi != lastKeyPressedMidi else {
+                ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .continued,
+                                                                         expectedScaleNoteState: nil,
+                                                                         midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                         amplDiff: Double(amplDiff), ascending: ascending, key: nil))
+                return
             }
-            if !ascending || atTop  {
-                if keyboardKey.keyMatchedState.matchedTimeDescending == nil {
-                    keyboardKey.keyMatchedState.matchedTimeDescending = Date()
-                    keyboardKey.keyMatchedState.matchedAmplitudeDescending = Double(amplitude)
-                    pressedKey = true
-                    if let nextExpectedNote = nextExpectedNote {
-                        nextExpectedNote.matchedTime = Date()
-                        nextExpectedNote.matchedAmplitude = Double(amplitude)
-                    }
-                }
-            }
+        }
 
-            keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: true,
-                                                                     scaleSequence: nextExpectedNote?.sequence,
-                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
-                                                                     pressedKey:pressedKey, amplDiff: Double(amplDiff), ascending: ascending, key: keyboardKey))
+        let keyboardKey = keyboardModel.pianoKeyModel[keyboardIndex]
+
+        ///We assume now that errors will be only off by a note or two so any midi's that are different than the expected by too much are treated as noise.
+        ///Harmonics, bumps, noise etc. They should not cause key presses or scale note matches.
+        
+        let tapEventStatus:TapEventStatus
+
+        let diffToExpected = abs(midi - nextExpectedNote.midi)
+        if diffToExpected > 2 {
+            tapEventStatus = .farFromExpected
         }
         else {
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, onKeyboard: false,
-                                                                     scaleSequence: nil,
-                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
-                                                                     pressedKey:false, amplDiff: Double(amplDiff), ascending: ascending, key: nil))
+            if nextExpectedNote.midi == midi {
+                nextExpectedNote.matchedTime = Date()
+                nextExpectedNote.matchedAmplitude = Double(amplitude)
+                tapEventStatus = .causedKeyPressWithScaleMatch
+                unmatchedCount = 0
+            }
+            else {
+                ///Only advance the expected next note when one note was missed.
+                ///e.g. they play E instead of E♭ advance the expected next to F but dont advance it further
+                if unmatchedCount == 0 {
+                    nextExpectedNote.unmatchedTime = Date()
+                }
+                unmatchedCount += 1
+                tapEventStatus = .causedKeyPressWithoutScaleMatch
+            }
+            if ascending || atTop {
+                keyboardKey.keyClickedState.tappedTimeAscending = Date()
+                keyboardKey.keyClickedState.tappedAmplitudeAscending = Double(amplitude)
+            }
+            if !ascending || atTop  {
+                keyboardKey.keyClickedState.tappedTimeDescending = Date()
+                keyboardKey.keyClickedState.tappedAmplitudeDescending = Double(amplitude)
+            }
+            keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
+            lastKeyPressedMidi = keyboardKey.midi
         }
-        //print("\n============== tapped", tapMidi, "midi", midi, "expected:", nextExpectedNote?.midi ?? "None", "asc", ascending, "top", atTop)
+        ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
+                                                                 expectedScaleNoteState: nextExpectedNote,
+                                                                 midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                 amplDiff: Double(amplDiff),
+                                                                 ascending: ascending, key: keyboardKey))
         //scale.debug1("herex")
         //keyboardModel.debug1("herex")
 
@@ -275,6 +282,55 @@ class PitchTapHandler : TapHandlerProtocol  {
     func stopTapping() {
         Logger.shared.log(self, "PitchTapHandler stop")
         Logger.shared.calcValueLimits()
+        
+        //PianoKeyboardModel.shared.debug2("")
+        let result = Result()
+        result.makeResult()
+        
+        if saveTappingToFile {
+            let calendar = Calendar.current
+            let month = calendar.component(.month, from: Date())
+            let day = calendar.component(.day, from: Date())
+            let hour = calendar.component(.hour, from: Date())
+            let minute = calendar.component(.minute, from: Date())
+            let device = UIDevice.current
+            let modelName = device.model
+            var keyName = scale.key.name + "_"
+            keyName += String(Scale.getTypeName(type: scale.scaleType))
+            keyName = keyName.replacingOccurrences(of: " ", with: "")
+            var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
+            fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[0].midi) + "_" + modelName
+            fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
+            fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
+            
+            fileName += ".txt"
+            AudioManager.shared.recordedFileSequenceNum += 1
+            let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            // Create the file URL by appending the file name to the directory
+            fileURL = documentDirectoryURL.appendingPathComponent(fileName)
+            do {
+                if let fileURL = fileURL {
+                    let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
+                    try config.write(to: fileURL, atomically: true, encoding: .utf8)
+                }
+            }
+            catch {
+                Logger.shared.reportError(self, "Error creating file: \(error)")
+            }
+            if let fileURL = fileURL {
+                do {
+                    let fileHandle = try FileHandle(forWritingTo: fileURL)
+                    for record in self.tapRecords {
+                        let data = record.data(using: .utf8)!
+                        fileHandle.seekToEndOfFile()        // Move to the end of the file
+                        fileHandle.write(data)              // Append the data
+                    }
+                    try fileHandle.close()
+                } catch {
+                    print("Error writing to file: \(error)")
+                }
+            }
+        }
     }
 }
 

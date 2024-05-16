@@ -137,36 +137,39 @@ public class Score : ObservableObject {
         self.heightPaddingEnabled = heightPaddingEnabled
     }
     
-    func clearAllPlayingNotes(besidesMidi:Int) {
-        for timeslice in getAllTimeSlices() {
-            let note = timeslice.entries[0] as! Note
-            if note.midiNumber != besidesMidi {
-                if note.status == .playedCorrectly {
-                    DispatchQueue.global(qos: .background).async { //in
-                        usleep(1000000 * UInt32(0.5))
-                        note.setStatus(status: .none)
-                    }
-                }
-            }
-        }
-    }
+//    func clearAllPlayingNotes(besidesMidi:Int) {
+//        for timeslice in getAllTimeSlices() {
+//            let note = timeslice.entries[0] as! Note
+//            if note.midiNumber != besidesMidi {
+//                if note.status == .playedCorrectly {
+//                    DispatchQueue.global(qos: .background).async { //in
+//                        usleep(1000000 * UInt32(0.5))
+//                        note.setStatus(status: .none)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
-    public func setScoreNotePlayed(midi: Int, direction: Int) {
+    public func setScoreNotePlayed(midi: Int, direction: Int) -> Note? {
         let timeSlices = getAllTimeSlices()
         var nearestDist = Int(Int64.max)
         let startIndex = direction == 0 ? 0 : timeSlices.count-1
         let endIndex = direction == 0 ? timeSlices.count-1 :0
-        var noteFound = false
+        var noteFound:Note?
         var nearestIndex = Int(Int64.max)
         var nearestNote:Note?
 
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
+            if ts.entries.count == 0 {
+                print("==== HERE EMPTY")
+            }
             let entry = ts.entries[0]
             let note = entry as! Note
             if note.midiNumber == midi {
                 note.setStatus(status: .playedCorrectly)
-                noteFound = true
+                noteFound = note
                 break
             }
             else {
@@ -178,14 +181,15 @@ public class Score : ObservableObject {
                 }
             }
         }
-        if noteFound {
-            return
+        if let noteFound = noteFound {
+            return noteFound
         }
-        
+        ///beyond here when reading notifcaions from test data causes a zero count in a timeslice
+        return nil
         ///Show a wrong pitch
         let ts = timeSlices[nearestIndex]
         guard ts.entries.count > 0 else {
-            return
+            return nil
         }
         if let nearestNote = nearestNote {
             let newNote = Note(timeSlice: ts, num: midi, value: nearestNote.getValue(), staffNum: 0)
@@ -198,6 +202,7 @@ public class Score : ObservableObject {
                 ts.unsetPitchError()
             }
         }
+        return nil
     }
     
     public func createTimeSlice() -> TimeSlice {

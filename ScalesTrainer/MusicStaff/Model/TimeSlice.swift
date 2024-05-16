@@ -73,21 +73,25 @@ public class TimeSlice : ScoreEntry {
     
     public func removeNote(index:Int) {
         if self.entries.count > index {
-            self.entries.remove(at: index)
-            score.updateStaffs()
-            score.addStemAndBeamCharaceteristics()
+            DispatchQueue.main.async {
+                self.entries.remove(at: index)
+                self.score.updateStaffs()
+                self.score.addStemAndBeamCharaceteristics()
+            }
         }
     }
 
     public func addNote(n:Note) {
         n.timeSlice = self
-        self.entries.append(n)
-
-        for i in 0..<score.staffs.count {
-            n.setNotePlacementAndAccidental(score:score, staff: score.staffs[i])
+        DispatchQueue.main.async {
+            self.entries.append(n)
+            
+            for i in 0..<self.score.staffs.count {
+                n.setNotePlacementAndAccidental(score:self.score, staff: self.score.staffs[i])
+            }
+            self.score.updateStaffs()
+            self.score.addStemAndBeamCharaceteristics()
         }
-        score.updateStaffs()
-        score.addStemAndBeamCharaceteristics()
     }
     
     public func addRest(rest:Rest) {

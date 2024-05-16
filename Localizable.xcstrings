@@ -43,7 +43,10 @@
     "Close Tap Data" : {
 
     },
-    "Decrease" : {
+    "Correctly Played" : {
+
+    },
+    "Finger Change" : {
 
     },
     "Game" : {
@@ -67,7 +70,7 @@
     "Home" : {
 
     },
-    "Increase" : {
+    "Incorrectly Played" : {
 
     },
     "Key" : {
@@ -102,10 +105,16 @@
     "Log" : {
 
     },
-    "Octaves:" : {
+    "Missing" : {
 
     },
-    "Practice" : {
+    "Not in Scale" : {
+
+    },
+    "Notification Status" : {
+
+    },
+    "Octaves:" : {
 
     },
     "Record Data Mode" : {
@@ -124,9 +133,6 @@
         }
       }
     },
-    "Result" : {
-
-    },
     "Scale" : {
       "localizations" : {
         "hi" : {
@@ -142,9 +148,6 @@
           }
         }
       }
-    },
-    "Scale Notes" : {
-
     },
     "Scale start filter set at:%@" : {
 
@@ -192,9 +195,6 @@
 
     },
     "Stop Hearing Your Scale" : {
-
-    },
-    "Stop Practicing" : {
 
     },
     "Stop Recording Scale" : {

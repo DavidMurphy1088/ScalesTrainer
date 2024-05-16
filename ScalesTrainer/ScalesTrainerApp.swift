@@ -1,6 +1,14 @@
 import SwiftUI
 
 @main
+
+//class AppDelegate: UIResponder, UIApplicationDelegate {
+//    var window: UIWindow?
+////    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+////        return .portrait
+////    }
+//}
+
 struct ScalesTrainerApp: App {
     @State private var selectedTab = 0
     var body: some Scene {

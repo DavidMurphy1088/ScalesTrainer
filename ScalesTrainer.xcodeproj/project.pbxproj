@@ -87,6 +87,7 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
+		79E0E6242BF5D51D003FE95B /* 05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E0E6232BF5D51D003FE95B /* 05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt */; };
 		79E8AF2A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt */; };
 		79E8AF2B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt */; };
 		79E8AF2C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79E8AF1C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt */; };
@@ -182,6 +183,7 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
+		79E0E6232BF5D51D003FE95B /* 05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt"; path = "../../../../Downloads/05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt"; sourceTree = "<group>"; };
 		79E8AF1A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_D_Major_3_50_iPad_Desc.txt; path = May9/05_09_D_Major_3_50_iPad_Desc.txt; sourceTree = "<group>"; };
 		79E8AF1B2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_Major_2_60_iPad_0.txt; path = May9/05_09_C_Major_2_60_iPad_0.txt; sourceTree = "<group>"; };
 		79E8AF1C2BEC9BF200C2D5B3 /* 05_09_C_HarmonicMinor_2_60_iPad_4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_09_C_HarmonicMinor_2_60_iPad_4.txt; path = May9/05_09_C_HarmonicMinor_2_60_iPad_4.txt; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				79E0E6232BF5D51D003FE95B /* 05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt */,
 				79E8AF3A2BEC9EAE00C2D5B3 /* Good */,
 				79562C252BE6F7F10016A457 /* Data */,
 			);
@@ -537,6 +540,7 @@
 				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				799FC1122BE6F9CB00BB0969 /* 05_02_C_MelodicMinor_2_60_iPad.txt in Resources */,
 				799FC10E2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */,
+				79E0E6242BF5D51D003FE95B /* 05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7.txt in Resources */,
 				799FC14D2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Asc.txt in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */,
@@ -772,8 +776,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -806,8 +809,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

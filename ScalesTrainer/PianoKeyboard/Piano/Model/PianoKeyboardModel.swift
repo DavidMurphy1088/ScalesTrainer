@@ -11,7 +11,6 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     @Published public var pianoKeyModel: [PianoKeyModel] = []
     @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
 
-    //@Published
     public var scale:Scale = ScalesModel.shared.scale
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
@@ -66,12 +65,12 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 return true
             }
             while true {
-                if keyToPlay >= self.pianoKeyModel.count {
+                if keyToPlay < 0 || keyToPlay >= self.pianoKeyModel.count {
                     return true
                 }
                 let key = self.pianoKeyModel[keyToPlay]
                 ///Find the next key to play
-                var matches = (ascending && key.keyMatchedState.matchedTimeAscending != nil) || (!ascending && key.keyMatchedState.matchedTimeDescending != nil)
+                var matches = (ascending && key.keyClickedState.tappedTimeAscending != nil) || (!ascending && key.keyClickedState.tappedTimeDescending != nil)
                 if matches {
                     if hitTurnaround {
                         hitTurnaround = false
@@ -107,29 +106,16 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
 
     
     func metronomeStop() {
-        clearAllPlayingMidi()
         scalesModel.setDirection(0)
     }
-    
-    func clearAllPlayingMidi(besidesID:UUID? = nil) {
-        if let last = self.pianoKeyModel.first(where: { $0.isPlayingMidi}) {
-            if besidesID == nil || last.id != besidesID! {
-                DispatchQueue.global(qos: .background).async { [self] in
-                    usleep(1000000 * UInt32(0.5))
-                    last.isPlayingMidi = false
-                    self.redraw()
-                }
-            }
-        }
-    }
-    
+        
     func clearAllPlayingKey(besidesID:UUID? = nil) {
-        if let last = self.pianoKeyModel.first(where: { $0.keyMatchedState.matchedTimeAscending != nil || $0.keyMatchedState.matchedTimeDescending != nil}) {
+        if let last = self.pianoKeyModel.first(where: { $0.keyClickedState.tappedTimeAscending != nil || $0.keyClickedState.tappedTimeDescending != nil}) {
             if besidesID == nil || last.id != besidesID! {
                 DispatchQueue.global(qos: .background).async { [self] in
                     usleep(1000000 * UInt32(0.5))
-                    last.keyMatchedState.matchedTimeAscending = nil
-                    last.keyMatchedState.matchedTimeDescending = nil
+                    last.keyClickedState.tappedTimeAscending = nil
+                    last.keyClickedState.tappedTimeDescending = nil
                     self.redraw()
                 }
             }
@@ -198,13 +184,13 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         //debug("set fingers")
     }
     
-    func debug22(_ ctx:String) {
+    func debug2(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
             print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
                   key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
-            print("\tascMatch", key.keyMatchedState.matchedTimeAscending != nil, "\tdescMatch", key.keyMatchedState.matchedTimeDescending != nil)
+            print("\tascMatch", key.keyClickedState.tappedTimeAscending != nil, "\tdescMatch", key.keyClickedState.tappedTimeDescending != nil)
         }
     }
     
@@ -282,8 +268,8 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     
     public func resetScaleMatchState() {
         for i in 0..<numberOfKeys {
-            pianoKeyModel[i].keyMatchedState.matchedTimeAscending = nil
-            pianoKeyModel[i].keyMatchedState.matchedTimeDescending = nil
+            pianoKeyModel[i].keyClickedState.tappedTimeAscending = nil
+            pianoKeyModel[i].keyClickedState.tappedTimeDescending = nil
         }
     }
 

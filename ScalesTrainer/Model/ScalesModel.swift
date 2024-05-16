@@ -3,7 +3,7 @@ import Speech
 import Combine
 
 enum AppMode {
-    case displayMode
+    case practiceMode
     case resultMode
 }
 
@@ -61,7 +61,7 @@ public class ScalesModel : ObservableObject {
     let callibrationTapHandler:PitchTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
-    var recordDataMode = false
+    var recordDataMode = true
     var onRecordingDoneCallback:(()->Void)?
     
     ///Speech
@@ -71,8 +71,10 @@ public class ScalesModel : ObservableObject {
     var speechWords:[String] = []
     var speechCommandsReceived = 0
     
+    var result:Result?
+    
     init() {
-        appMode = .displayMode
+        appMode = .practiceMode
         scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
@@ -118,6 +120,12 @@ public class ScalesModel : ObservableObject {
     }
     
     func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
+        if mode == .practiceMode {
+            self.startPracticeHandler()
+        }
+        else {
+            self.stopPracticeHandler()
+        }
         DispatchQueue.main.async {
             self.appMode = mode
         }
@@ -135,7 +143,7 @@ public class ScalesModel : ObservableObject {
     
     private func stopAudioTasks() {
         if self.isPracticing {
-            stopListening()
+            stopPracticeHandler()
         }
         if self.recordingScale {
             stopRecordingScale("Reset")
@@ -224,11 +232,10 @@ public class ScalesModel : ObservableObject {
         setScore()
     }
 
-    func startListening() {
+    func startPracticeHandler() {
         DispatchQueue.main.async {
             self.isPracticing = true
             self.scale.resetMatchedData()
-            self.setAppMode(.displayMode, resetRecorded: true)
 //            PianoKeyboardModel.shared.resetDisplayState()
 //            PianoKeyboardModel.shared.resetScaleMatchState()
         }
@@ -236,7 +243,7 @@ public class ScalesModel : ObservableObject {
         self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
     }
 
-    func stopListening() {
+    func stopPracticeHandler() {
         Logger.shared.log(self, "Stop listening to microphone")
         DispatchQueue.main.async {
             self.isPracticing = false
@@ -281,8 +288,6 @@ public class ScalesModel : ObservableObject {
                                                                            scale: self.scale))
             }
         })
-        
-
     }
     
     func stopRecordingScale(_ ctx:String) {

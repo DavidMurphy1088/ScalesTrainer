@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>188</string>
+					<string>196</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>187</string>
+					<string>195</string>
 					<key>Timestamp</key>
-					<string>737462273.7241139</string>
+					<string>737511472.233879</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>242</string>
+					<string>246</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>241</string>
+					<string>245</string>
 					<key>Timestamp</key>
-					<string>737462762.3391581</string>
+					<string>737536479.576454</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>249</string>
+					<string>298</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>248</string>
+					<string>297</string>
 					<key>Timestamp</key>
-					<string>737462356.736951</string>
+					<string>737549855.98052</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -124,11 +124,11 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                        scalesModel.setAppMode(.displayMode, resetRecorded: true)
+				<string>                        scalesModel.setAppMode(.resultMode, resetRecorded: true)
 </string>
 				<key>leading</key>
-				<string>                    else {
-                        recordingScale = true
+				<string>                        recordingScale = true
+                        scalesModel.stopPracticeHandler()
 </string>
 				<key>trailing</key>
 				<string>                        scalesModel.startRecordingScale(testData: false, onDone: {

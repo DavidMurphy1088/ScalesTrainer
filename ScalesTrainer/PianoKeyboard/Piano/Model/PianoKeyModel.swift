@@ -1,19 +1,11 @@
 import SwiftUI
   
-//public enum PianoKeyResultStatus {
-//    case none
-//    case correctAscending
-//    case correctDescending
-//    case incorrectAscending
-//    case incorrectDescending
-//}
-
-public class PianoKeyMatchedState { 
+public class PianoKeyClickedState { 
     let id = UUID()
-    var matchedTimeAscending:Date? = nil
-    var matchedTimeDescending:Date? = nil
-    var matchedAmplitudeAscending:Double? = nil
-    var matchedAmplitudeDescending:Double? = nil
+    var tappedTimeAscending:Date? = nil
+    var tappedTimeDescending:Date? = nil
+    var tappedAmplitudeAscending:Double? = nil
+    var tappedAmplitudeDescending:Double? = nil
     
     public init() {
     }
@@ -25,7 +17,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     let scalesModel = ScalesModel.shared
     let keyboardModel:PianoKeyboardModel
     let scale:Scale = ScalesModel.shared.scale
-    var keyMatchedState:PianoKeyMatchedState
+    var keyClickedState:PianoKeyClickedState
     var scaleNoteState:ScaleNoteState?
     
     var isPlayingMidi = false
@@ -38,19 +30,34 @@ public class PianoKeyModel: Identifiable, Hashable {
     init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
         self.keyIndex = keyIndex
-        self.keyMatchedState = PianoKeyMatchedState()
+        self.keyClickedState = PianoKeyClickedState()
         self.midi = midi
     }
     
     public func setPlayingMidi(ascending:Int) {
-        self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
+        //self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         self.isPlayingMidi = true
-        if let score  = scalesModel.score {
-            score.setScoreNotePlayed(midi: self.midi, direction: ascending)
-            score.clearAllPlayingNotes(besidesMidi: self.midi)
+        DispatchQueue.global(qos: .background).async {
+            usleep(1000000 * UInt32(1.0))
+            DispatchQueue.main.async {
+                self.isPlayingMidi = false
+                self.keyboardModel.redraw()
+            }
         }
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
+
+        if let score  = scalesModel.score {
+            if let note = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
+                //score.clearAllPlayingNotes(besidesMidi: self.midi)
+                DispatchQueue.global(qos: .background).async {
+                    usleep(1000000 * UInt32(1.0))
+                    DispatchQueue.main.async {
+                        note.setStatus(status: .none)
+                    }
+                }
+            }
+        }
     }
     
 //    public func setPlayingKey() {

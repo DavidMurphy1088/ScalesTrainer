@@ -51,18 +51,18 @@ public struct ClassicStyle {
         var color:Color
         if let scaleNote = keyModel.scaleNoteState {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyMatchedState.matchedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
             else {
-                color = keyModel.keyMatchedState.matchedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.keyClickedState.tappedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
             }
         }
         else {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyMatchedState.matchedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
             }
             else {
-                color = keyModel.keyMatchedState.matchedTimeDescending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
+                color = keyModel.keyClickedState.tappedTimeDescending == nil ? Color.clear.opacity(0.4) :  Color.red.opacity(0.4)
             }
         }
         return color
@@ -143,10 +143,10 @@ public struct ClassicStyle {
                 ///----------- Note status -----------
                 let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
-                if scalesModel.appMode == .displayMode {
+                if scalesModel.appMode == .practiceMode {
                     if !scalesModel.notesHidden {
                         if let scaleNote = key.scaleNoteState {
-                            if scalesModel.appMode == .displayMode {
+                            if scalesModel.appMode == .practiceMode {
                                 let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
                                 let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                                 context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
@@ -172,8 +172,8 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    if  (scalesModel.selectedDirection == 0 && key.keyMatchedState.matchedTimeAscending != nil) ||
-                        (scalesModel.selectedDirection == 1 && key.keyMatchedState.matchedTimeDescending != nil)  {
+                    if  (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
+                        (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil)  {
                         context.draw(
                         Text("X").foregroundColor(Color.red)
                             .font(.title).bold(),
@@ -261,7 +261,7 @@ public struct ClassicStyle {
                 ///----------- Note Status-----------
                 let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
-                if scalesModel.appMode == .displayMode {
+                if scalesModel.appMode == .practiceMode {
                     if !scalesModel.notesHidden {
                         if let scaleNote = key.scaleNoteState {
                             let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
@@ -288,8 +288,8 @@ public struct ClassicStyle {
                     }
                 }
                 else {
-                    if (scalesModel.selectedDirection == 0 && key.keyMatchedState.matchedTimeAscending != nil) ||
-                    (scalesModel.selectedDirection == 1 && key.keyMatchedState.matchedTimeDescending != nil) {
+                    if (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
+                    (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil) {
                         context.draw(
                         Text("X").foregroundColor(Color.red)
                             .font(.title).bold(),

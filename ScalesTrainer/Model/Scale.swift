@@ -16,6 +16,7 @@ public class ScaleNoteState {
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
+    var unmatchedTime:Date? = nil ///The time the note was flagged as missed in the scale playing
     var matchedAmplitude:Double? = nil
 
     init(sequence: Int, midi:Int) {
@@ -203,13 +204,15 @@ public class Scale {
         for state in self.scaleNoteState {
             state.matchedAmplitude = nil
             state.matchedTime = nil
+            state.unmatchedTime = nil
         }
     }
     
     ///Return the next expected note in a scale playing
     func getNextExpectedNote() -> ScaleNoteState? {
         for i in 0..<self.scaleNoteState.count {
-            if self.scaleNoteState[i].matchedTime == nil {
+            if self.scaleNoteState[i].matchedTime == nil &&
+                self.scaleNoteState[i].unmatchedTime == nil {
                 return self.scaleNoteState[i]
             }
         }

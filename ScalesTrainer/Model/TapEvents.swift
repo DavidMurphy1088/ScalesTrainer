@@ -1,27 +1,36 @@
 import Foundation
 
+public enum TapEventStatus {
+    case causedKeyPressWithoutScaleMatch
+    case causedKeyPressWithScaleMatch
+    case continued
+    case farFromExpected
+    case pastEndOfScale
+    case keyNotOnKeyboard
+}
+
 public class TapEvent:Hashable {
     let id = UUID()
     let midi:Int ///The octave adjusted midi used for matching
+    let status:TapEventStatus
     let tapMidi:Int ///The origianl taop midi
-    let scaleSequence:Int? ///The scale sequence index
+    let expectedScaleNoteState:ScaleNoteState? ///The scale sequence index
     let amplitude:Float
     let key:PianoKeyModel?
     let tapNum:Int
-    let pressedKey:Bool
     let ascending:Bool
-    let onKeyboard:Bool
     let amplDiff:Double
 
-    public init(tapNum:Int, onKeyboard:Bool, scaleSequence:Int?, midi:Int, tapMidi:Int, amplitude:Float, pressedKey: Bool, amplDiff:Double, ascending: Bool, key:PianoKeyModel?) {
+    public init(tapNum:Int, status:TapEventStatus, expectedScaleNoteState:ScaleNoteState?, midi:Int, tapMidi:Int, amplitude:Float,
+                amplDiff:Double, ascending: Bool, key:PianoKeyModel?) {
         self.tapNum = tapNum
+        self.status = status
         self.midi = midi
-        self.scaleSequence = scaleSequence
-        self.pressedKey = pressedKey
+        self.expectedScaleNoteState = expectedScaleNoteState
         self.amplitude = amplitude
         self.key = key
         self.ascending = ascending
-        self.onKeyboard = onKeyboard
+        
         self.amplDiff = amplDiff
         self.tapMidi = tapMidi
     }
@@ -38,7 +47,10 @@ public class TapEvent:Hashable {
         let amps = String(format: "%.2f", self.amplitude)
         let ampDiff = String(format: "%.2f", self.amplDiff)
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
-        let row = "P:\(self.onKeyboard ? 1:0) \tM:\(self.midi),\(self.tapMidi) \tAsc:\(self.ascending ? 1:0) \tKey:\(self.pressedKey ? 1:0)\t\tAm:\(amps)\t▵:\(ampDiff)"
+        var row = "M:\(self.midi),\(self.tapMidi) \tAsc:\(self.ascending ? 1:0) \t\(self.status)"
+        let expected:Int = expectedScaleNoteState?.midi ?? 0
+        row += "\tExpect:\(expected)"
+        row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
         return row
     }
 }
