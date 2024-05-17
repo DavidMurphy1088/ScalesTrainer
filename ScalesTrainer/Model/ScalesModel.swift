@@ -24,24 +24,17 @@ public class ScalesModel : ObservableObject {
     @Published var score:Score?
     var scoreHidden = false
     var recordedEvents:TapEvents? = nil
-    var notesHidden = false
+    var staffHidden = false
     
     //let pianoKeyboardModel = PianoKeyboardModel.shared
     
-    let keyValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
-    var selectedKey = Key(name: "C", keyType: .major) {
-        didSet {
-            stopAudioTasks()
-        }
-    }
+    let keyNameValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
+    var selectedKeyNameIndex = 0
+    //var selectedKey = Key(name: "C", keyType: .major)
+
+    let scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
+    var selectedScaleTypeNameIndex = 0
     
-    let scaleTypes = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
-    
-    var selectedScaleType = 0 {
-        didSet {
-            stopAudioTasks()
-        }
-    }
     var directionTypes = ["⬆", "⬇"]
     
     var handTypes = ["Right", "Left"]
@@ -96,27 +89,45 @@ public class ScalesModel : ObservableObject {
     }
     
     func setScore() {
-        let keySig = self.selectedKey.keySignature
         let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
-        score = Score(key: StaffKey(type: .major,
-                                    keySig: keySig),
-                                    timeSignature: TimeSignature(top: 4, bottom: 4),
-                                    linesPerStaff: 5)
+//        score = Score(key: StaffKey(type: self.scale.keyType == .minor ? .minor : .major,
+//                                    keySig: self.selectedKey.keySignature),
+//                                    timeSignature: TimeSignature(top: 4, bottom: 4),
+//                                    linesPerStaff: 5)
+        let staffKeyType:StaffKey.KeyType = scale.key.keyType == .major ? .major : .minor
+        let keyName = scale.key.name
+        let keySignature = KeySignature(keyName: keyName, keyType: staffKeyType)
+        let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
+        score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
+        
         guard let score = score else {
             return
         }
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
-       
+        var inBarCount = 0
+        var lastNote:Note?
+        
         for i in 0..<scale.scaleNoteState.count {
             if i % 4 == 0 && i > 0 {
                 score.addBarLine()
+                inBarCount = 0
             }
-            let note = scale.scaleNoteState[i]
+            let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
-            ts.addNote(n: Note(timeSlice: ts, num: note.midi, value: Note.VALUE_QUARTER, staffNum: 0))
+            let note = Note(timeSlice: ts, num: noteState.midi, value: Note.VALUE_QUARTER, staffNum: 0)
+            ts.addNote(n: note)
+            inBarCount += 1
+            lastNote = note
         }
-
+        if let lastNote = lastNote {
+            if inBarCount == 3 {
+                lastNote.setValue(value: 2)
+            }
+            if inBarCount == 1 {
+                lastNote.setValue(value: 4)
+            }
+        }
     }
     
     func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
@@ -128,13 +139,69 @@ public class ScalesModel : ObservableObject {
         }
         DispatchQueue.main.async {
             self.appMode = mode
+            if let score = self.score {
+                self.placeScaleInScore(score: score, useGiven: mode == .practiceMode)
+            }
         }
         if resetRecorded {
             self.recordedEvents = nil
             PianoKeyboardModel.shared.resetDisplayState()
         }
     }
+    
+    ///Place either the given or the students scale into the score.
+    ///For the student score hilight notes that are not in the scale.
+    func placeScaleInScore(score:Score, useGiven:Bool) {
+        score.clear()
+        if useGiven {
+            setScore()
+            return
+        }
         
+        let piano = PianoKeyboardModel.shared
+        var noteCount = 0
+        piano.debug2("")
+        
+        for direction in [0,1] {
+            piano.setFingers(direction: direction)
+            var start:Int
+            var end:Int
+            if direction == 0 {
+                start = 0
+                end = piano.pianoKeyModel.count - 1
+            }
+            else {
+                start = piano.pianoKeyModel.count - 2
+                end = 0
+            }
+            
+            for i in stride(from: start, through: end, by: direction == 0 ? 1 : -1) {
+                let key = piano.pianoKeyModel[i]
+                if direction == 0 {
+                    if key.keyClickedState.tappedTimeAscending == nil {
+                        continue
+                    }
+                }
+                if direction == 1 {
+                    if key.keyClickedState.tappedTimeDescending == nil {
+                        continue
+                    }
+                }
+                if noteCount > 0 && noteCount % 4 == 0 {
+                    score.addBarLine()
+                }
+                let ts = score.createTimeSlice()
+                let note = Note(timeSlice: ts, num: key.midi, staffNum: 0)
+                ts.addNote(n: note)
+                if key.scaleNoteState == nil {
+                    ts.setStatusTag(.pitchError)
+                }
+                noteCount += 1
+            }
+        }
+        piano.setFingers(direction: 0)
+    }
+    
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1
@@ -152,10 +219,18 @@ public class ScalesModel : ObservableObject {
         //audioManager.stopPlaySampleFile()
     }
     
-    func setKey(index:Int) {
-        let name = keyValues[index]
-        self.selectedKey = Key(name: name, keyType: .major)
-        setScore()
+    func setKeyAndScale() {
+        let name = keyNameValues[self.selectedKeyNameIndex]
+        let scaleTypeName = scaleTypeNames[selectedScaleTypeNameIndex]
+        let keyType:KeyType = scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
+        self.scale = Scale(key: Key(name: name, keyType: keyType),
+                           scaleType: Scale.getScaleType(name: scaleTypeName),
+                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
+        //self.scale.debug("")
+        
+        PianoKeyboardModel.shared.configureKeyboardSize()
+        PianoKeyboardModel.shared.redraw()
+        self.setScore()
     }
     
     func setDirection(_ index:Int) {
@@ -213,24 +288,30 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func setScale() {
-        var scaleType:ScaleType = .major
-        switch self.selectedScaleType {
-        case 1:
-            scaleType = .naturalMinor
-        case 2:
-            scaleType = .harmonicMinor
-        case 3:
-            scaleType = .melodicMinor
-        default:
-            scaleType = .major
-        }
-        self.scale = Scale(key: self.selectedKey,
-                           scaleType: scaleType,
-                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
-        PianoKeyboardModel.shared.configureKeyboardSize()
-        setScore()
-    }
+//    func setScaleName() {
+//        var scaleType:ScaleType = .major
+//        switch self.selectedScaleTypeNameIndex {
+//        case 1:
+//            scaleType = .naturalMinor
+//        case 2:
+//            scaleType = .harmonicMinor
+//        case 3:
+//            scaleType = .melodicMinor
+//        case 4:
+//            scaleType = .arpeggio
+//        case 5:
+//            scaleType = .chromatic
+//        default:
+//            scaleType = .major
+//        }
+//        var keyName =  self.keyNameValues[self.selectedKeyNameIndex]
+//        self.selectedKey = Key(sharps: self.selectedKey.sharps, flats: self.selectedKey.flats, keyType: .minor)
+//        self.scale = Scale(key: self.selectedKey,
+//                           scaleType: scaleType,
+//                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
+//        PianoKeyboardModel.shared.configureKeyboardSize()
+//        setScore()
+//    }
 
     func startPracticeHandler() {
         DispatchQueue.main.async {

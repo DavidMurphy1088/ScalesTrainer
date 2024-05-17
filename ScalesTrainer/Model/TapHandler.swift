@@ -117,12 +117,15 @@ class PitchTapHandler : TapHandlerProtocol  {
     var lastKeyPressedMidi:Int?
     var tapRecords:[String] = []
     var unmatchedCount = 0
-    
+    var maxScaleMidi = 0
+    var minScaleMidi = 0
+
     init(requiredStartAmplitude:Double, saveTappingToFile:Bool, scale:Scale) {
         self.scale = scale
         self.saveTappingToFile = saveTappingToFile
         self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
+        (minScaleMidi, maxScaleMidi) = scale.getMinMax()
     }
     
     func showConfig() {
@@ -218,6 +221,7 @@ class PitchTapHandler : TapHandlerProtocol  {
             return
         }
         
+        ///Same as last note?
         if let lastKeyPressedMidi = lastKeyPressedMidi {
             guard midi != lastKeyPressedMidi else {
                 ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .continued,
@@ -226,6 +230,15 @@ class PitchTapHandler : TapHandlerProtocol  {
                                                                          amplDiff: Double(amplDiff), ascending: ascending, key: nil))
                 return
             }
+        }
+        
+        ///Within the scale?
+        guard midi >= minScaleMidi && midi <= maxScaleMidi else {
+            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .outsideScale,
+                                                                     expectedScaleNoteState: nil,
+                                                                     midi: midi, tapMidi: tapMidi, amplitude: amplitude,
+                                                                     amplDiff: Double(amplDiff), ascending: ascending, key: nil))
+            return
         }
 
         let keyboardKey = keyboardModel.pianoKeyModel[keyboardIndex]

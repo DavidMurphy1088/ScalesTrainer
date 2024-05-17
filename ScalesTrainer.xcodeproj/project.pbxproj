@@ -394,7 +394,7 @@
 				794D492E2BCD07220005A173 /* PianoKeyboard */,
 				79DA821B2BCCE960008AC492 /* Preview Content */,
 				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
-				79DA82232BCCEA6A008AC492 /* Views */,
+				79DA82232BCCEA6A008AC492 /* View */,
 			);
 			path = ScalesTrainer;
 			sourceTree = "<group>";
@@ -407,7 +407,7 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		79DA82232BCCEA6A008AC492 /* Views */ = {
+		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
@@ -418,7 +418,7 @@
 				790D5A242BD2319C00C31A8F /* CalibrationView.swift */,
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 			);
-			path = Views;
+			path = View;
 			sourceTree = "<group>";
 		};
 		79DA822C2BCCED24008AC492 /* Model */ = {

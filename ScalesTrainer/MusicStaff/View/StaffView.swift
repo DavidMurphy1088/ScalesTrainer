@@ -125,7 +125,6 @@ struct CleffView: View {
 }
 
 struct KeySignatureView: View {
-
     var score:Score
     var staffOffsets:[Int]
     
@@ -142,13 +141,14 @@ struct KeySignatureView: View {
             ForEach(staffOffsets, id: \.self) { offset in
                 //let yAdjust = score.key.keySig.flats.count > 0 ? score.lineSpacing / 1.1 : 0
                 VStack {
-                    Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "Flat")
+                    Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "music_flat")
                         .resizable()
                         .foregroundColor(.black)
                         .scaledToFit()
-                        .frame(width: score.lineSpacing * getWidthMultiplier())
+                    ///no idea why flat image wont scale
+                        .frame(width: score.lineSpacing * getWidthMultiplier() * (score.key.keySig.sharps.count > 0 ? 1 : 4))
                         .offset(y: 0 - Double(offset) * score.lineSpacing / 2.0)
-                        .border(Color.red)
+//                        .border(Color.red)
                 }
                 .padding(0)
                 .frame(width: score.lineSpacing * getWidthMultiplier())
@@ -225,6 +225,12 @@ public struct StaffView: View {
             }
             if keySignture.flats.count > 4 {
                 offsets.append(-2)
+            }
+            if keySignture.flats.count > 5 {
+                offsets.append(1) //C Flat
+            }
+            if keySignture.flats.count > 6 {
+                offsets.append(-3)
             }
         }
         else {

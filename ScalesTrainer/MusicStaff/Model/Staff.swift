@@ -94,12 +94,11 @@ public class NoteOffsetsInStaffByKey {
         noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1     0,1   1    0    1,0  0,1")  //C#, D♭
         noteOffsetByKey.append("1     1,1  1    1    1    1    1,1   1     1,1  1    1    1")    //D
         noteOffsetByKey.append("2,-1  2    2,-1 2    1,1  2,0  2     2,-1  2    1,2  2    1,1")  //D#, E♭
-      //noteOffsetByKey.append("1,1   2    2,-1 2    1,1  2,0  2     2,-1  2    1,2  2    1,1")  //D#, E♭
         noteOffsetByKey.append("2     2,1  2    2,1  2    2    2,1   2     2,1  2    2,1  2")    //E
         noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
         noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4     3,1   4,0  3    4,0  3,1")  //F#, G♭
         noteOffsetByKey.append("4     4,1  4    4    4    4    4,1   4     4    4,1  4    4")    //G
-        noteOffsetByKey.append("4,1   5    4,1  5    4,1  5,0  5     4,1   5    4    5,0  4,1")  //G#, A♭
+        noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0  5     4,1   5    4    5,0  4,1")  //G#, A♭
         noteOffsetByKey.append("5     5,1  5    5,1  5    5    5,1   5     5,1  5    5    5")    //A
         noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    6     6,-1  6    6,0  6    5,1")  //A#, B♭
         noteOffsetByKey.append("6     6,1  6    6,1  6    6,1  6,1   6     6,1  6    6,1  6")    //B
@@ -171,20 +170,39 @@ public class Staff : ObservableObject, Identifiable {
         //Determine the staff placement for each note pitch
 
         var keyNumber:Int = 0
-        if score.key.keySig.accidentalCount == 1 {
-            keyNumber = 7
+        if score.key.keySig.accidentalType == .sharp {
+            if score.key.keySig.accidentalCount == 1 {
+                keyNumber = 7
+            }
+            if score.key.keySig.accidentalCount == 2 {
+                keyNumber = 2
+            }
+            if score.key.keySig.accidentalCount == 3 {
+                keyNumber = 9
+            }
+            if score.key.keySig.accidentalCount == 4 {
+                keyNumber = 4
+            }
+            if score.key.keySig.accidentalCount == 5 {
+                keyNumber = 11
+            }
         }
-        if score.key.keySig.accidentalCount == 2 {
-            keyNumber = 2
-        }
-        if score.key.keySig.accidentalCount == 3 {
-            keyNumber = 9
-        }
-        if score.key.keySig.accidentalCount == 4 {
-            keyNumber = 4
-        }
-        if score.key.keySig.accidentalCount == 5 {
-            keyNumber = 11
+        if score.key.keySig.accidentalType == .flat {
+            if score.key.keySig.accidentalCount == 1 {
+                keyNumber = 5
+            }
+            if score.key.keySig.accidentalCount == 2 {
+                keyNumber = 10
+            }
+            if score.key.keySig.accidentalCount == 3 {
+                keyNumber = 3
+            }
+            if score.key.keySig.accidentalCount == 4 {
+                keyNumber = 8
+            }
+            if score.key.keySig.accidentalCount == 5 {
+                keyNumber = 1
+            }
         }
 
         for noteValue in 0...highestNoteValue {

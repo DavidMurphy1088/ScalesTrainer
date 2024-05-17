@@ -7,6 +7,7 @@ public enum TapEventStatus {
     case farFromExpected
     case pastEndOfScale
     case keyNotOnKeyboard
+    case outsideScale
 }
 
 public class TapEvent:Hashable {

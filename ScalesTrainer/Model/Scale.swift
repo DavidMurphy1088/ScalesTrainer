@@ -44,7 +44,7 @@ public class Scale {
         ///G drops below Middle C only for 2 octaves
         ///The start of the scale for one octave -
         var nextMidi = 0
-        if key.keyType == .major {
+        if [.major].contains(key.keyType) {
             if key.sharps > 0 {
                 switch key.sharps {
                 case 1:
@@ -78,9 +78,11 @@ public class Scale {
                 }
             }
         }
-        else {
+        if [.minor, .harmonicMinor, .melodicMinor].contains(key.keyType)  {
             if key.sharps > 0 {
                 switch key.sharps {
+                case 0:
+                    nextMidi = 57
                 case 1:
                     nextMidi = 64  //G -> E
                 case 2:
@@ -97,6 +99,8 @@ public class Scale {
             }
             else {
                 switch key.flats {
+                case 0:
+                    nextMidi = 57 //
                 case 1:
                     nextMidi = 62 //F -> D
                 case 2:
@@ -107,6 +111,10 @@ public class Scale {
                     nextMidi = 65 //A flat -> F
                 case 5:
                     nextMidi = 58 //D flat -> B flat
+                case 6:
+                    nextMidi = 63
+                case 8:
+                    nextMidi = 61
                 default:
                     nextMidi = 58
                 }
@@ -152,10 +160,13 @@ public class Scale {
         if scaleType == .melodicMinor {
             scaleOffsets = [2,1,2,2,2,2,1]
         }
-        
+        if scaleType == .chromatic {
+            scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
+        }
+
         var sequence = 0
         for oct in 0..<octaves {
-            for i in 0..<7 {
+            for i in 0..<scaleOffsets.count {
                 if oct == 0 {
                     scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: nextMidi))
                     nextMidi += scaleOffsets[i]
@@ -331,5 +342,24 @@ public class Scale {
             name += "Major"
         }
         return name
+    }
+    
+    static func getScaleType(name:String) -> ScaleType {
+        switch name {
+        case "Minor":
+            return ScaleType.naturalMinor
+        case "Major":
+            return ScaleType.major
+        case "Harmonic Minor":
+            return ScaleType.harmonicMinor
+        case "Melodic Minor":
+            return ScaleType.melodicMinor
+        case "Chromatic":
+            return ScaleType.chromatic
+        case "Arpeggio":
+            return ScaleType.arpeggio
+        default:
+            return ScaleType.major
+        }
     }
 }

@@ -57,22 +57,34 @@ public class KeySignature {
                 count = 1
             case "D":
                 count = 1
+                self.accidentalType = .flat
             case "B":
                 count = 2
             case "G":
                 count = 2
+                self.accidentalType = .flat
             case "F#":
                 count = 3
             case "C":
                 count = 3
+                self.accidentalType = .flat
             case "C#":
                 count = 4
             case "F":
                 count = 4
-            case "A♭":
-                count = 5
+                self.accidentalType = .flat
             case "B♭":
                 count = 5
+                self.accidentalType = .flat
+            case "E♭":
+                count = 6
+                self.accidentalType = .flat
+            case "A♭":
+                count = 7
+                self.accidentalType = .flat
+            case "D♭":
+                count = 8
+                self.accidentalType = .flat
             default:
                 count = 0
             }
@@ -115,6 +127,12 @@ public class KeySignature {
             }
             if self.accidentalCount >= 5 {
                 flats.append(Note.MIDDLE_C + 6) //G♭
+            }
+            if self.accidentalCount >= 6 {
+                flats.append(Note.MIDDLE_C + 11) //C flat
+            }
+            if self.accidentalCount >= 7 {
+                flats.append(Note.MIDDLE_C + 5) 
             }
         }
     }

@@ -147,21 +147,21 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         self.firstKeyMidi = 60
 
         //["G", "A", "F", "B♭", "A♭"]
-        if ["F", "B", "B♭", "A", "A♭", "G"].contains(self.scalesModel.selectedKey.name) {
+        if ["F", "B", "B♭", "A", "A♭", "G"].contains(self.scalesModel.scale.key.name) {
             self.firstKeyMidi = 65
-            if ["B", "B♭", "A", "A♭"].contains(self.scalesModel.selectedKey.name) {
+            if ["B", "B♭", "A", "A♭"].contains(self.scalesModel.scale.key.name) {
                 self.firstKeyMidi -= 12
             }
-            if ["G"].contains(self.scalesModel.selectedKey.name) && scale.octaves > 1 {
+            if ["G"].contains(self.scalesModel.scale.key.name) && scale.octaves > 1 {
                 self.firstKeyMidi -= 12
             }
         }
         var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
         numKeys += 2
-        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.selectedKey.name) {
+        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.key.name) {
             numKeys += 4
         }
-        if ["B", "B♭"].contains(self.scalesModel.selectedKey.name) {
+        if ["B", "B♭"].contains(self.scalesModel.scale.key.name) {
             numKeys += 6
         }
         self.numberOfKeys = numKeys

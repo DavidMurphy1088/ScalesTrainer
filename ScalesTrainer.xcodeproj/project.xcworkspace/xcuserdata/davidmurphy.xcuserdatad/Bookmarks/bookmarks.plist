@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>196</string>
+					<string>271</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>195</string>
+					<string>270</string>
 					<key>Timestamp</key>
-					<string>737511472.233879</string>
+					<string>737635760.476739</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -134,6 +134,50 @@
 				<string>                        scalesModel.startRecordingScale(testData: false, onDone: {
                             scalesModel.setAppMode(.resultMode, resetRecorded: false)
                             scalesModel.setDirection(0)
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>8</string>
+					<key>EndingLineNumber</key>
+					<string>92</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>92</string>
+					<key>Timestamp</key>
+					<string>737614910.977652</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/MusicStaff/Model/Staff.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>        </string>
+				<key>leading</key>
+				<string>        //31Aug2023 - done for C, G, D, E
+        //  Key                 C     D♭   D    E♭   E    F    G♭    G     A♭   A    B♭   B
+</string>
+				<key>trailing</key>
+				<string>noteOffsetByKey.append("0     0    0    0    0    0    0,1   0     0    0,1  0    0")    //C
+        noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1     0,1   1    0    1,0  0,1")  //C#, D♭
+        noteOffsetByKey.append("1     1,1  1    1    1    1    1,1   1     1,1  1    1    1")    //D
 </string>
 			</dict>
 			<key>type</key>

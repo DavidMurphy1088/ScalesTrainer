@@ -89,20 +89,20 @@ public struct ClassicStyle {
                 guard key.isNatural else {
                     continue
                 }
-
+                
                 let rect = CGRect(
                     origin: CGPoint(x: xpos, y: 0),
                     size: CGSize(width: naturalWidth, height: height)
                 )
-
+                
                 let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
                     .path(in: rect)
-
+                
                 let gradient = Gradient(colors: [
                     naturalColor(key.touchDown),
                     Color(red: 1, green: 1, blue: 1),
                 ])
-
+                
                 context.fill(path, with: .linearGradient(
                     gradient,
                     startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
@@ -112,7 +112,7 @@ public struct ClassicStyle {
                 let keyModel = viewModel.pianoKeyModel[index]
                 
                 /// ----------- Note name ----------
-                if !scalesModel.notesHidden {
+                if !scalesModel.staffHidden {
                     if key.finger.count > 0 {
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(.black),
@@ -120,7 +120,7 @@ public struct ClassicStyle {
                         )
                     }
                 }
-
+                
                 /// ----------- Playing the note ----------
                 if keyModel.isPlayingMidi {
                     let innerContext = context
@@ -141,14 +141,15 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note status -----------
-                let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
-                let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
+                let width = playingMidiRadius * 1.1
+                let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
+                let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
                 if scalesModel.appMode == .practiceMode {
-                    if !scalesModel.notesHidden {
+                    if !scalesModel.staffHidden {
                         if let scaleNote = key.scaleNoteState {
                             if scalesModel.appMode == .practiceMode {
                                 let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
-                                let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+                                let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                                 context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                             }
                         }
@@ -156,32 +157,32 @@ public struct ClassicStyle {
                 }
                 else {
                     let color = getKeyStatusColor(key)
-                    let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }
-
-                ///----------- Finger number -----------
-                let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
-                if let scaleNote = key.scaleNoteState {
-                    if !scalesModel.notesHidden {
+                
+                ///----------- Finger number
+                if !scalesModel.staffHidden {
+                    if let scaleNote = key.scaleNoteState {
                         context.draw(
                             Text(String(scaleNote.finger)).foregroundColor(Color.blue)
                                 .font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         )
                     }
-                }
-                else {
-                    if  (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
-                        (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil)  {
-                        context.draw(
-                        Text("X").foregroundColor(Color.red)
-                            .font(.title).bold(),
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-                        )
+                    else {
+                        if scalesModel.appMode == .resultMode {
+//                            if (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
+//                                (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil) {
+//                                context.draw(
+//                                    Text("X").foregroundColor(Color.red)
+//                                        .font(.title).bold(),
+//                                    at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+//                                )
+//                            }
+                        }
                     }
                 }
-                
                 xpos += naturalXIncr
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }
@@ -230,7 +231,7 @@ public struct ClassicStyle {
                 let keyModel = viewModel.pianoKeyModel[index]
                 
                 ///------------- Note name -----
-                if !scalesModel.notesHidden {
+                if !scalesModel.staffHidden {
                     if key.finger.count > 0 {
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(.white),
@@ -259,44 +260,50 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                let x = rect.origin.x + rect.width / 2.0 - playingMidiRadius/CGFloat(2)
-                let y = rect.origin.y + rect.height * 0.80 - playingMidiRadius/CGFloat(2)
                 if scalesModel.appMode == .practiceMode {
-                    if !scalesModel.notesHidden {
+                    let width = playingMidiRadius * 1.3
+                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
+                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
+
+                    if !scalesModel.staffHidden {
                         if let scaleNote = key.scaleNoteState {
                             let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
-                            let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+                            let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                             context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                         }
                     }
                 }
                 else {
+                    let width = playingMidiRadius * 1.0
+                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
+                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
+
                     let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }
                 
                 ///----------- Finger number
-                //let color = Color.black //key.name.prefix(1) == "C" ? labelColor : .clear
-                if let scaleNote = key.scaleNoteState {
-                    if !scalesModel.notesHidden {
+                if !scalesModel.staffHidden {
+                    if let scaleNote = key.scaleNoteState {
                         context.draw(
                             Text(String(scaleNote.finger)).foregroundColor(Color.blue)
                                 .font(.title).bold(),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         )
                     }
-                }
-                else {
-                    if (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
-                    (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil) {
-                        context.draw(
-                        Text("X").foregroundColor(Color.red)
-                            .font(.title).bold(),
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-                        )
+                    else {
+                        if (scalesModel.selectedDirection == 0 && key.keyClickedState.tappedTimeAscending != nil) ||
+                            (scalesModel.selectedDirection == 1 && key.keyClickedState.tappedTimeDescending != nil) {
+//                            context.draw(
+//                                Text("X").foregroundColor(Color.red)
+//                                    .font(.title).bold(),
+//                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+//                            )
+                        }
                     }
                 }
+                
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }
         }

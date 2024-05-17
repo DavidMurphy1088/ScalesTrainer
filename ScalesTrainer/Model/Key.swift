@@ -123,6 +123,16 @@ public class Key {
             case "B♭":
                 self.flats = 5
                 self.sharps = 0
+            case "E♭":
+                self.flats = 6
+                self.sharps = 0
+//            case "A♭":
+//                self.flats = 7
+//                self.sharps = 0
+            case "D♭":
+                self.flats = 8
+                self.sharps = 0
+
             default:
                 self.flats = 0
                 self.sharps = 0
@@ -166,7 +176,6 @@ public class Key {
                 self.sharps = 0
             }
         }
-        //self.keySignature = KeySignature(type: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
         self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
     }
     

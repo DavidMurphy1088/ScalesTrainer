@@ -219,19 +219,8 @@ public class Score : ObservableObject {
     }
 
     public func getStaffHeight() -> Double {
-        //leave enough space above and below the staff for the Timeslice view to show its tags
-        //var height = Double(getTotalStaffLineCount() + 2) * self.lineSpacing
-        var height = Double(getTotalStaffLineCount() + 2) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
-
+        var height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
         let cnt = staffs.count
-//        if self.heightPaddingEnabled {
-//            ///Allow some extra height spacing when possible
-//            if cnt == 1 {
-//                //if !UIGlobalsCommon.isLandscape() {
-//                height = height * 1.6
-//                //}
-//            }
-//        }
         return height
     }
     

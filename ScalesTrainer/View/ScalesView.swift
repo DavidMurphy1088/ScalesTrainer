@@ -11,8 +11,8 @@ struct ScalesView: View {
 
     @State private var octaveNumberIndex = 0
     @State private var handIndex = 0
-    @State private var keyIndex = 0
-    @State private var scaleTypeIndex = 0
+    @State private var keyNameIndex = 0
+    @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
     @State private var tempoIndex = 4
 
@@ -50,12 +50,12 @@ struct ScalesView: View {
                 Circle()
                     .stroke(Color.green, lineWidth: 2)
                     .frame(width: width())
-                Text("Correctly Played")
+                Text("Playing")
                 Spacer()
                 Circle()
                     .stroke(Color.red, lineWidth: 2)
                     .frame(width: width())
-                Text("Incorrectly Played")
+                Text("Playing But Not in Scale")
                 Spacer()
                 
                 Circle()
@@ -74,12 +74,12 @@ struct ScalesView: View {
                 Circle()
                     .fill(Color.red.opacity(0.6))
                     .frame(width: width())
-                Text("Not in Scale")
+                Text("Played But Not in Scale")
                 Spacer()
                 Circle()
                     .fill(Color.yellow.opacity(0.6))
                     .frame(width: width())
-                Text("Missing")
+                Text("In Scale But Not Played")
 
                 Spacer()
             }
@@ -89,31 +89,30 @@ struct ScalesView: View {
     func SelectScaleView() -> some View {
         HStack {
             Spacer()
-            //Text("Key")
             Text(LocalizedStringResource("Key"))
-            Picker("Select Value", selection: $keyIndex) {
-                ForEach(scalesModel.keyValues.indices, id: \.self) { index in
-                    Text("\(scalesModel.keyValues[index])")
+            Picker("Select Value", selection: $keyNameIndex) {
+                ForEach(scalesModel.keyNameValues.indices, id: \.self) { index in
+                    Text("\(scalesModel.keyNameValues[index])")
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: keyIndex, {
-                scalesModel.setKey(index: keyIndex)
-                scalesModel.setScale()
+            .onChange(of: keyNameIndex, {
+                scalesModel.selectedKeyNameIndex = keyNameIndex
+                scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.practiceMode, resetRecorded: true)
             })
             
             Spacer()
             Text(LocalizedStringResource("Scale")).padding(0)
-            Picker("Select Value", selection: $scaleTypeIndex) {
-                ForEach(scalesModel.scaleTypes.indices, id: \.self) { index in
-                    Text("\(scalesModel.scaleTypes[index])")
+            Picker("Select Value", selection: $scaleTypeNameIndex) {
+                ForEach(scalesModel.scaleTypeNames.indices, id: \.self) { index in
+                    Text("\(scalesModel.scaleTypeNames[index])")
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: scaleTypeIndex, {
-                scalesModel.selectedScaleType = scaleTypeIndex
-                scalesModel.setScale()
+            .onChange(of: scaleTypeNameIndex, {
+                scalesModel.selectedScaleTypeNameIndex = scaleTypeNameIndex
+                scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.practiceMode, resetRecorded: true)
             })
             
@@ -127,7 +126,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
-                scalesModel.setScale()
+                scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.practiceMode, resetRecorded: true)
             })
             
@@ -141,7 +140,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: handIndex, {
                 scalesModel.selectedHandIndex = handIndex
-                scalesModel.setScale()
+                scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.practiceMode, resetRecorded: true)
             })
 
@@ -216,7 +215,7 @@ struct ScalesView: View {
             Spacer()
             Button(action: {
                 notesHidden.toggle()
-                scalesModel.notesHidden = notesHidden
+                scalesModel.staffHidden = notesHidden
                 scalesModel.forceRepaint()
             }) {
                 if notesHidden {
@@ -352,20 +351,16 @@ struct ScalesView: View {
 
             SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding()
             
-            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
+            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / 4)
                 .commonFrameStyle(backgroundColor: .clear).padding()    
             
             LegendView()
-//            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel) //, style: ClassicStyle())
-//                .frame(height: UIScreen.main.bounds.size.height / 4)
-//                .commonFrameStyle(backgroundColor: .clear).padding()
             
             if !self.staffHidden {
                 VStack {
                     if let score = scalesModel.score {
                         ScoreView(score: score, widthPadding: false)
-                        //ScoreView(score: score, widthPadding: false)
                     }
                 }.commonFrameStyle(backgroundColor: .clear).padding()
             }
@@ -386,7 +381,7 @@ struct ScalesView: View {
             TapDataView(keyboardModel: PianoKeyboardModel.shared)
         }
         .onAppear {
-            scalesModel.setKey(index: 0)
+            //scalesModel.setKeyName(index: 0)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
             scalesModel.startPracticeHandler()
         }
