@@ -144,18 +144,34 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     
     func configureKeyboardSize() {
         self.scale = self.scalesModel.scale
-        self.firstKeyMidi = 60
+        self.firstKeyMidi = scale.scaleNoteState[0].midi
+        
+        ///Decide first key to show on the keyboard - either the F key or the C key
+        switch self.scalesModel.scale.key.name {
+        case "D♭":
+            self.firstKeyMidi -= 1
+        case "D":
+            self.firstKeyMidi -= 2
+        case "E♭":
+            self.firstKeyMidi -= 3
+        case "E":
+            self.firstKeyMidi -= 4
+            
+        case "G":
+            self.firstKeyMidi -= 2
+        case "A♭":
+            self.firstKeyMidi -= 3
+        case "A":
+            self.firstKeyMidi -= 4
+        case "B♭":
+            self.firstKeyMidi -= 5
+        case "B":
+            self.firstKeyMidi -= 6
 
-        //["G", "A", "F", "B♭", "A♭"]
-        if ["F", "B", "B♭", "A", "A♭", "G"].contains(self.scalesModel.scale.key.name) {
-            self.firstKeyMidi = 65
-            if ["B", "B♭", "A", "A♭"].contains(self.scalesModel.scale.key.name) {
-                self.firstKeyMidi -= 12
-            }
-            if ["G"].contains(self.scalesModel.scale.key.name) && scale.octaves > 1 {
-                self.firstKeyMidi -= 12
-            }
+        default:
+            self.firstKeyMidi -= 0
         }
+                
         var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
         numKeys += 2
         if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.key.name) {
@@ -174,7 +190,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         self.setFingers(direction: ScalesModel.shared.selectedDirection)
     }
     
-    ///Create map each piano key to a scale note, if there is one.
+    ///Create the map for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
     public func setFingers(direction:Int) {
         for i in 0..<numberOfKeys {

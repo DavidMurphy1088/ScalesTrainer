@@ -98,7 +98,7 @@ class PracticeTapHandler : TapHandlerProtocol {
                 direction = 1
             }
         }
-        //Logger.shared.log(self, msg)
+        Logger.shared.log(self, msg)
     }
     
     func stopTapping() {
@@ -180,9 +180,10 @@ class PitchTapHandler : TapHandlerProtocol  {
         }
         let keyboardModel = PianoKeyboardModel.shared
 
-        guard let nextExpectedNote = scale.getNextExpectedNote() else {
+        let nextExpectedNotes = scale.getNextExpectedNotes(count: 2)
+        guard nextExpectedNotes.count > 0 else {
             ///All scales notes are already matched
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
+            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: tapMidi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: false, key: nil))
@@ -199,22 +200,19 @@ class PitchTapHandler : TapHandlerProtocol  {
         var minIndex = 0
         
         for i in 0..<offsets.count {
-            let dist = abs((tapMidi  + offsets[i]) - nextExpectedNote.midi)
+            let dist = abs((tapMidi  + offsets[i]) - nextExpectedNotes[0].midi)
             if dist < minDist {
                 minDist = dist
                 minIndex = i
             }
         }
         midi = tapMidi + offsets[minIndex]
-        let ascending = nextExpectedNote.sequence <= scale.scaleNoteState.count / 2
-        let atTop = nextExpectedNote.sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNote.midi
-        if midi == 72 {
-            print("========== 72x", ascending, nextExpectedNote.midi)
-        }
+        let ascending = nextExpectedNotes[0].sequence <= scale.scaleNoteState.count / 2
+        let atTop = nextExpectedNotes[0].sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNotes[0].midi
 
         ///Does the notification represents a key that could be pressed on the keyboard?
         guard let keyboardIndex = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
+            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -224,7 +222,7 @@ class PitchTapHandler : TapHandlerProtocol  {
         ///Same as last note?
         if let lastKeyPressedMidi = lastKeyPressedMidi {
             guard midi != lastKeyPressedMidi else {
-                ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .continued,
+                ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .continued,
                                                                          expectedScaleNoteState: nil,
                                                                          midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                          amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -234,7 +232,7 @@ class PitchTapHandler : TapHandlerProtocol  {
         
         ///Within the scale?
         guard midi >= minScaleMidi && midi <= maxScaleMidi else {
-            ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: .outsideScale,
+            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .outsideScale,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -246,27 +244,40 @@ class PitchTapHandler : TapHandlerProtocol  {
         ///We assume now that errors will be only off by a note or two so any midi's that are different than the expected by too much are treated as noise.
         ///Harmonics, bumps, noise etc. They should not cause key presses or scale note matches.
         
-        let tapEventStatus:TapEventStatus
-
-        let diffToExpected = abs(midi - nextExpectedNote.midi)
+        var tapEventStatus:TapEventStatus = .none
+        if midi == 82 {
+            print("=======")
+        }
+        let diffToExpected = abs(midi - nextExpectedNotes[0].midi)
         if diffToExpected > 2 {
             tapEventStatus = .farFromExpected
         }
         else {
-            if nextExpectedNote.midi == midi {
-                nextExpectedNote.matchedTime = Date()
-                nextExpectedNote.matchedAmplitude = Double(amplitude)
-                tapEventStatus = .causedKeyPressWithScaleMatch
-                unmatchedCount = 0
+            var match = false
+            for i in [0,1] {
+                if i < nextExpectedNotes.count {
+                    if nextExpectedNotes[i].midi == midi {
+                        nextExpectedNotes[i].matchedTime = Date()
+                        nextExpectedNotes[i].matchedAmplitude = Double(amplitude)
+                        tapEventStatus = .keyPressWithScaleMatch
+                        unmatchedCount = 0
+                        match = true
+                        if i > 0 {
+                            nextExpectedNotes[0].unmatchedTime = Date()
+                        }
+                        break
+                    }
+                }
             }
-            else {
+
+            if !match {
                 ///Only advance the expected next note when one note was missed.
                 ///e.g. they play E instead of E♭ advance the expected next to F but dont advance it further
                 if unmatchedCount == 0 {
-                    nextExpectedNote.unmatchedTime = Date()
+                    nextExpectedNotes[0].unmatchedTime = Date()
                 }
                 unmatchedCount += 1
-                tapEventStatus = .causedKeyPressWithoutScaleMatch
+                tapEventStatus = .keyPressWithoutScaleMatch
             }
             if ascending || atTop {
                 keyboardKey.keyClickedState.tappedTimeAscending = Date()
@@ -279,8 +290,8 @@ class PitchTapHandler : TapHandlerProtocol  {
             keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
             lastKeyPressedMidi = keyboardKey.midi
         }
-        ScalesModel.shared.recordedEvents?.event.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
-                                                                 expectedScaleNoteState: nextExpectedNote,
+        ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
+                                                                 expectedScaleNoteState: nextExpectedNotes[0],
                                                                  midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                  amplDiff: Double(amplDiff),
                                                                  ascending: ascending, key: keyboardKey))

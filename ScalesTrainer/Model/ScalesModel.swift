@@ -3,6 +3,7 @@ import Speech
 import Combine
 
 enum AppMode {
+    case none
     case practiceMode
     case resultMode
 }
@@ -40,14 +41,14 @@ public class ScalesModel : ObservableObject {
     var handTypes = ["Right", "Left"]
 
     var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
+    var selectedHandIndex = 0
     
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
     let octaveNumberValues = [1,2]
     var selectedOctavesIndex = 0 {
         didSet {stopAudioTasks()}
     }
-    var selectedHandIndex = 0 
-
+    
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
@@ -68,7 +69,7 @@ public class ScalesModel : ObservableObject {
     
     init() {
         appMode = .practiceMode
-        scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1)
+        scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
         }
@@ -90,10 +91,6 @@ public class ScalesModel : ObservableObject {
     
     func setScore() {
         let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
-//        score = Score(key: StaffKey(type: self.scale.keyType == .minor ? .minor : .major,
-//                                    keySig: self.selectedKey.keySignature),
-//                                    timeSignature: TimeSignature(top: 4, bottom: 4),
-//                                    linesPerStaff: 5)
         let staffKeyType:StaffKey.KeyType = scale.key.keyType == .major ? .major : .minor
         let keyName = scale.key.name
         let keySignature = KeySignature(keyName: keyName, keyType: staffKeyType)
@@ -130,6 +127,26 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    func setKeyAndScale() {
+        let name = self.keyNameValues[self.selectedKeyNameIndex]
+        let scaleTypeName = self.scaleTypeNames[self.selectedScaleTypeNameIndex]
+        let keyType:KeyType = scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
+        self.scale = Scale(key: Key(name: name, keyType: keyType),
+                           scaleType: Scale.getScaleType(name: scaleTypeName),
+                           octaves: self.octaveNumberValues[self.selectedOctavesIndex],
+                           hand: self.selectedHandIndex)
+        //self.scale.debug("")
+        
+        PianoKeyboardModel.shared.configureKeyboardSize()
+        PianoKeyboardModel.shared.redraw()
+        DispatchQueue.main.async {
+            ///Absolutely no idea why but if not here the score wont display 😡
+            DispatchQueue.main.async {
+                self.setScore()
+            }
+        }
+    }
+    
     func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
         if mode == .practiceMode {
             self.startPracticeHandler()
@@ -139,6 +156,7 @@ public class ScalesModel : ObservableObject {
         }
         DispatchQueue.main.async {
             self.appMode = mode
+            self.setDirection(0)
             if let score = self.score {
                 self.placeScaleInScore(score: score, useGiven: mode == .practiceMode)
             }
@@ -218,21 +236,7 @@ public class ScalesModel : ObservableObject {
         MetronomeModel.shared.stop()
         //audioManager.stopPlaySampleFile()
     }
-    
-    func setKeyAndScale() {
-        let name = keyNameValues[self.selectedKeyNameIndex]
-        let scaleTypeName = scaleTypeNames[selectedScaleTypeNameIndex]
-        let keyType:KeyType = scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
-        self.scale = Scale(key: Key(name: name, keyType: keyType),
-                           scaleType: Scale.getScaleType(name: scaleTypeName),
-                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
-        //self.scale.debug("")
         
-        PianoKeyboardModel.shared.configureKeyboardSize()
-        PianoKeyboardModel.shared.redraw()
-        self.setScore()
-    }
-    
     func setDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index

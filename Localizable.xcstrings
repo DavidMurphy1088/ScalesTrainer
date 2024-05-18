@@ -4,6 +4,9 @@
     " " : {
 
     },
+    "  Listening to you play  " : {
+
+    },
     " %lld" : {
 
     },
@@ -44,9 +47,6 @@
 
     },
     "Correctly Played" : {
-
-    },
-    "Finger Change" : {
 
     },
     "Game" : {
@@ -118,6 +118,9 @@
 
     },
     "Playing But Not in Scale" : {
+
+    },
+    "Practice" : {
 
     },
     "Record Data Mode" : {
@@ -198,6 +201,9 @@
 
     },
     "Stop Hearing Your Scale" : {
+
+    },
+    "Stop Practicing" : {
 
     },
     "Stop Recording Scale" : {

@@ -185,26 +185,33 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     
     func readTestData(tapHandler:PitchTapHandler) {
         var fileName:String
-        switch ScalesModel.shared.selectedOctavesIndex {
-        case 0:
-            fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
-        case 1:
-            //fileName = "05_05_C_MelodicMinor_2_60_iPad_17.txt"
-            fileName = "05_09_C_Major_2_60_iPad_3"
-            fileName = "05_09_C_HarmonicMinor_2_60_iPad_4"
-        case 2:
-            //fileName = "05_05_C_MelodicMinor_2_60_iPad_17.txt"
-            fileName = "05_09_C_Minor_3_48_iPad_8"
-            fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
-            fileName = "05_09_C_Major_3_48_iPad_0"
-        default:
-            fileName = ""
+        let scalesModel = ScalesModel.shared
+        if scalesModel.selectedHandIndex == 0 {
+            switch scalesModel.selectedOctavesIndex {
+            case 0:
+                fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
+            case 1:
+                fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
+            case 2:
+                fileName = "05_09_C_Minor_3_48_iPad_8"
+                fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
+                fileName = "05_09_C_Major_3_48_iPad_0"
+            default:
+                fileName = ""
+            }
+        }
+        else {
+            switch scalesModel.selectedOctavesIndex {
+            case 0:
+                fileName = "05_18_17_35_C_Major_1_48_iPad_0,0,1,1_5"
+            case 1:
+                fileName = "05_18_17_37_C_Major_2_36_iPad_0,0,1,1_9"
+            default:
+                fileName = ""
+            }
         }
         fileName += ".txt"
-        let scalesModel = ScalesModel.shared
-        //scalesModel.scale.resetMatches()
-        //scalesModel.result = nil
-        
+
         if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
             do {
                 let contents = try String(contentsOfFile: filePath, encoding: .utf8)
@@ -260,7 +267,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) {
         self.tapHandler = tapHandler
         self.installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-            if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
+            //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
                 if asynch {
                     DispatchQueue.main.async {
                         tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
@@ -269,7 +276,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 else {
                     tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                 }
-            }
+            //}
         }
     }
     

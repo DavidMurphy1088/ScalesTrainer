@@ -1,8 +1,9 @@
 import Foundation
 
 public enum TapEventStatus {
-    case causedKeyPressWithoutScaleMatch
-    case causedKeyPressWithScaleMatch
+    case none
+    case keyPressWithoutScaleMatch
+    case keyPressWithScaleMatch
     case continued
     case farFromExpected
     case pastEndOfScale
@@ -48,20 +49,45 @@ public class TapEvent:Hashable {
         let amps = String(format: "%.2f", self.amplitude)
         let ampDiff = String(format: "%.2f", self.amplDiff)
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
-        var row = "M:\(self.midi),\(self.tapMidi) \tAsc:\(self.ascending ? 1:0) \t\(self.status)"
         let expected:Int = expectedScaleNoteState?.midi ?? 0
-        row += "\tExpect:\(expected)"
-        row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
+
+        var row = "M:\(self.midi),\(self.tapMidi) Exp:\(expected)"
+        var status = "\(self.status)"
+        status = String(status.prefix(12))
+        row += "\tA:\(self.ascending ? 1:0) \(status)"
+        //row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
+        row += "  Am:\(amps)"
         return row
     }
 }
 
 public class TapEvents {
-    var event:[TapEvent] = []
+    var events:[TapEvent] = []
     
     func debug11() {
-        for event in event {
+        for event in events {
             print(event.tapData())
         }
+    }
+    
+    func minMax() -> String {
+        var min = Double.infinity
+        var minMidi = 0
+        var max = 0.0
+        var maxMidi = 0
+        
+        for event in events {
+            if Double(event.amplitude) > max {
+                max = Double(event.amplitude)
+                maxMidi = event.midi
+            }
+            if event.amplitude > 0 {
+                if Double(event.amplitude) < min {
+                    min = Double(event.amplitude)
+                    minMidi = event.midi
+                }
+            }
+        }
+        return "[MAX Ampl:\(String(format: "%.4f", max)) maxMidi:\(maxMidi)] [MIN Amp:\(String(format: "%.4f", min)) minMidi:\(minMidi)]    "
     }
 }

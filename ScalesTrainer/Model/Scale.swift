@@ -33,7 +33,7 @@ public class Scale {
     let octaves:Int
     let scaleType:ScaleType
 
-    public init(key:Key, scaleType:ScaleType, octaves:Int) {
+    public init(key:Key, scaleType:ScaleType, octaves:Int, hand:Int) {
         self.key = key
         self.octaves = octaves
         self.scaleType = scaleType
@@ -121,6 +121,18 @@ public class Scale {
             }
         }
         
+        if hand == 1 {
+            if ["E", "F", "G"].contains(key.name) {
+                nextMidi -= 12
+            }
+            if octaves == 1 {
+                nextMidi -= 12
+            }
+            else {
+                nextMidi -= 24
+            }
+        }
+        
         ///Some keys just below C drop their first note for 1 octaves
         if octaves > 1 {
             if key.keyType == .major {
@@ -199,12 +211,17 @@ public class Scale {
             scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: downMidi))
             sequence += 1
         }
-        setFingers()
+        if hand == 0 {
+            setFingersRightHand()
+        }
+        else {
+            setFingersLeftHand()
+        }
         setFingerBreaks()
-        debug("Constructor")
+        debug1("Scale Constructor key:\(key.name) hand:\(hand)")
     }
     
-    func debug(_ msg:String) {
+    func debug1(_ msg:String) {
         print("==========scale \(msg)", key.name, key.keyType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
@@ -220,14 +237,18 @@ public class Scale {
     }
     
     ///Return the next expected note in a scale playing
-    func getNextExpectedNote() -> ScaleNoteState? {
+    func getNextExpectedNotes(count:Int) -> [ScaleNoteState] {
+        var result:[ScaleNoteState] = []
         for i in 0..<self.scaleNoteState.count {
             if self.scaleNoteState[i].matchedTime == nil &&
                 self.scaleNoteState[i].unmatchedTime == nil {
-                return self.scaleNoteState[i]
+                result.append(scaleNoteState[i])
+                if result.count >= count {
+                    break
+                }
             }
         }
-        return nil
+        return result
     }
     
     func getStateForMidi(midi:Int, direction:Int) -> ScaleNoteState? {
@@ -247,16 +268,18 @@ public class Scale {
         for note in self.scaleNoteState {
             note.fingerSequenceBreak = false
         }
-        var lastFinger = self.scaleNoteState[0].finger
-        for i in 1..<self.scaleNoteState.count/2 {
-            let finger = self.scaleNoteState[i].finger
-            let diff = abs(finger - lastFinger)
-            if diff > 1 {
-                self.scaleNoteState[i].fingerSequenceBreak = true
-                self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
+        //if ScalesModel.shared.selectedHandIndex == 0 {
+            var lastFinger = self.scaleNoteState[0].finger
+            for i in 1..<self.scaleNoteState.count/2 {
+                let finger = self.scaleNoteState[i].finger
+                let diff = abs(finger - lastFinger)
+                if diff > 1 {
+                    self.scaleNoteState[i].fingerSequenceBreak = true
+                    self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
+                }
+                lastFinger = self.scaleNoteState[i].finger
             }
-            lastFinger = self.scaleNoteState[i].finger
-        }
+        //}
     }
     
     func getMinMax() -> (Int, Int) {
@@ -264,7 +287,7 @@ public class Scale {
         return (self.scaleNoteState[0].midi, self.scaleNoteState[mid].midi)
     }
     
-    func setFingers() {
+    func setFingersRightHand() {
         var currentFinger = 1
 
         if ["D♭"].contains(key.name) {
@@ -317,6 +340,7 @@ public class Scale {
         for i in (halfway+1..<scaleNoteState.count) {
             scaleNoteState[i].finger = fingerPattern[f % fingerPattern.count]
             if f == 0 {
+                ///Force a break
                 f = 7
             }
             else {
@@ -325,6 +349,75 @@ public class Scale {
         }
     }
     
+    func setFingersLeftHand() {
+        ///Set the fingering from highest to lowest first then mirror image it to the ascending section of the scale
+        ///i.e. the currentFinger initialises as the finger used by the LH to play the scales highest note
+        var currentFinger = 1
+
+        if ["B♭"].contains(key.name) {
+            currentFinger = 2
+        }
+        if ["A♭"].contains(key.name) {
+            currentFinger = 3
+        }
+        if ["E♭"].contains(key.name) {
+            currentFinger = 2
+        }
+        if ["D♭"].contains(key.name) {
+            currentFinger = 2
+        }
+
+        var sequenceBreaks:[Int] = [] //Offsets where the fingering sequence breaks
+        ///the offsets in the scale where the finger is not one up from the last
+        switch key.name {
+        case "F":
+            sequenceBreaks = [3, 7]
+        case "B♭":
+            sequenceBreaks = [3, 6]
+        case "E♭":
+            sequenceBreaks = [2, 6]
+        case "A♭":
+            sequenceBreaks = [1, 5]
+        case "D♭":
+            sequenceBreaks = [1, 5]
+
+        default:
+            sequenceBreaks = [3, 7]
+        }
+        var fingerPattern:[Int] = Array(repeating: 0, count: 7)
+        
+        for i in 0..<7 {
+            fingerPattern[i] = currentFinger
+            let index = i+1
+            if sequenceBreaks.contains(index) {
+                //breaks.removeFirst()
+                currentFinger = 1
+            }
+            else {
+                currentFinger += 1
+            }
+        }
+        let halfway = scaleNoteState.count / 2
+        var f = 0
+        for i in stride(from: scaleNoteState.count-1, through: 0, by: -1) {
+            scaleNoteState[i].finger = fingerPattern[f % fingerPattern.count]
+            f += 1
+        }
+        f += 1
+        scaleNoteState[0].finger = fingerPattern[fingerPattern.count-1] + 1
+//        for i in 0..<halfway {
+//        //for i in (halfway-1..<scaleNoteState.count) {
+//            scaleNoteState[i].finger = scaleNoteState[scaleNoteState.count - i - 1].finger //fingerPattern[f % fingerPattern.count]
+////            if f == 0 {
+////                f = 7
+////            }
+////            else {
+////                f -= 1
+////            }
+//        }
+        //debug("LH")
+    }
+
     static func getTypeName(type:ScaleType) -> String {
         var name = ""
         switch type {

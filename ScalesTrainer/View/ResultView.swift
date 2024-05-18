@@ -9,7 +9,7 @@ class Result {
     
     func makeResult() {
         PianoKeyboardModel.shared.debug2("test datax")
-        ScalesModel.shared.scale.debug("test datax")
+        //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared
 
         //keyboardModel.debug1("result")
@@ -105,29 +105,29 @@ struct TapDataView: View {
 //        return "TapNumber:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi) Ampl:\(amp)"
 //    }
     
-    func minMax() -> String {
-        var min = Double.infinity
-        var minMidi = 0
-        var max = 0.0
-        var maxMidi = 0
-        //var unmatched = 0
-        
-        if let taps = scalesModel.recordedEvents {
-            for event in taps.event {
-                if Double(event.amplitude) > max {
-                    max = Double(event.amplitude)
-                        maxMidi = event.midi
-                    }
-                if event.amplitude > 0 {
-                    if Double(event.amplitude) < min {
-                        min = Double(event.amplitude)
-                        minMidi = event.midi
-                    }
-                }
-            }
-        }
-        return "[min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
-    }
+//    func minMax() -> String {
+//        var min = Double.infinity
+//        var minMidi = 0
+//        var max = 0.0
+//        var maxMidi = 0
+//        //var unmatched = 0
+//        
+//        if let taps = scalesModel.recordedEvents {
+//            for event in taps.event {
+//                if Double(event.amplitude) > max {
+//                    max = Double(event.amplitude)
+//                        maxMidi = event.midi
+//                    }
+//                if event.amplitude > 0 {
+//                    if Double(event.amplitude) < min {
+//                        min = Double(event.amplitude)
+//                        minMidi = event.midi
+//                    }
+//                }
+//            }
+//        }
+//        return "[min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
+//    }
     
     func amplData(key:PianoKeyModel) -> String {
         var asc:String = "______"
@@ -139,19 +139,14 @@ struct TapDataView: View {
     
     func getColor(_ event:TapEvent) -> Color {
         var color = event.ascending ? Color.gray : Color.green
-        if event.status == .causedKeyPressWithScaleMatch {
+        if event.status == .keyPressWithScaleMatch {
             color = .blue
         }
-        if event.status == .causedKeyPressWithoutScaleMatch {
+        if event.status == .keyPressWithoutScaleMatch {
             color = .red
         }
 
         return color
-    }
-    
-    func getStats() ->String {
-        let stats = minMax()
-        return stats
     }
     
     var body: some View {
@@ -160,13 +155,14 @@ struct TapDataView: View {
 
             if let tapEvents = scalesModel.recordedEvents {
                 ScrollView {
-                    ForEach(tapEvents.event, id: \.self) { event in
+                    ForEach(tapEvents.events, id: \.self) { event in
                         Text(event.tapData()).foregroundColor(getColor(event))
                     }
                 }
             }
-
-            Text("Stats: \(getStats())").foregroundColor(Color .blue).font(.title3).padding()
+            if let events = scalesModel.recordedEvents {
+                Text("Stats: \(events.minMax())").foregroundColor(Color .blue).font(.title3).padding()
+            }
             //Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
 //            Text("Not in Scale").foregroundColor(Color .blue).font(.title3).padding()
         }

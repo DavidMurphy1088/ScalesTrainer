@@ -27,6 +27,7 @@ struct ScalesView: View {
     @State var playingSampleFile = false
     @State var hearingGivenScale = false
     @State var hearingUserScale = false
+    @State var practicing = false
     @State var showingTapData = false
     @State var recordingScale = false
 
@@ -43,10 +44,42 @@ struct ScalesView: View {
         return CGFloat(UIScreen.main.bounds.size.width / 50)
     }
     
+    func fingerChangeName() -> String {
+        var name:String
+        if scalesModel.selectedHandIndex == 0 {
+            if scalesModel.selectedDirection == 0 {
+                name = "Thumb Under"
+            }
+            else {
+                name = "Finger Over"
+            }
+        }
+        else {
+            if scalesModel.selectedDirection == 0 {
+                name = "Finger Over"
+            }
+            else {
+                name = "Thumb Under"
+            }
+        }
+        return name
+    }
+    
     func LegendView() -> some View {
         HStack {
-            if scalesModel.appMode == .practiceMode {
+            if scalesModel.appMode == .practiceMode || scalesModel.appMode == .none {
                 Spacer()
+                if scalesModel.appMode == .practiceMode {
+                    Text("  Listening to you play  ")
+                        //.padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.blue)
+                        )
+                        .foregroundColor(.white) // Change the text color to white for better contrast
+                        //.padding()
+                }
+                
                 Circle()
                     .stroke(Color.green, lineWidth: 2)
                     .frame(width: width())
@@ -61,10 +94,10 @@ struct ScalesView: View {
                 Circle()
                     .fill(Color.yellow.opacity(0.6))
                     .frame(width: width())
-                Text("Finger Change")
+                Text(fingerChangeName())
                 Spacer()
             }
-            else {
+            if scalesModel.appMode == .resultMode {
                 Spacer()
                 Circle()
                     .fill(Color.green.opacity(0.6))
@@ -99,7 +132,7 @@ struct ScalesView: View {
             .onChange(of: keyNameIndex, {
                 scalesModel.selectedKeyNameIndex = keyNameIndex
                 scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.practiceMode, resetRecorded: true)
+                scalesModel.setAppMode(.none, resetRecorded: true)
             })
             
             Spacer()
@@ -113,7 +146,7 @@ struct ScalesView: View {
             .onChange(of: scaleTypeNameIndex, {
                 scalesModel.selectedScaleTypeNameIndex = scaleTypeNameIndex
                 scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.practiceMode, resetRecorded: true)
+                scalesModel.setAppMode(.none, resetRecorded: true)
             })
             
             Spacer()
@@ -127,7 +160,7 @@ struct ScalesView: View {
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
                 scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.practiceMode, resetRecorded: true)
+                scalesModel.setAppMode(.none, resetRecorded: true)
             })
             
             Spacer()
@@ -141,7 +174,7 @@ struct ScalesView: View {
             .onChange(of: handIndex, {
                 scalesModel.selectedHandIndex = handIndex
                 scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.practiceMode, resetRecorded: true)
+                scalesModel.setAppMode(.none, resetRecorded: true)
             })
 
             Spacer()
@@ -256,6 +289,19 @@ struct ScalesView: View {
                 }
             }.padding()
             Spacer()
+            
+            Button(practicing ? "Stop Practicing" : "Practice") {
+                practicing.toggle()
+                scalesModel.setAppMode(practicing ? .practiceMode : .none, resetRecorded: false)
+//                if practicing {
+//                    scalesModel.startPracticeHandler()
+//                }
+//                else {
+//                    scalesModel.stopPracticeHandler()
+//                }
+            }.padding()
+            
+            Spacer()
         }
     }
     
@@ -271,7 +317,7 @@ struct ScalesView: View {
                     scalesModel.setAppMode(.resultMode, resetRecorded: true)
                     scalesModel.startRecordingScale(testData: true, onDone: {
                         recordingScale = false
-                        scalesModel.setAppMode(.practiceMode, resetRecorded: false)
+                        scalesModel.setAppMode(.none, resetRecorded: false)
                         scalesModel.setDirection(0)
 
                         scalesModel.result = Result()
@@ -286,7 +332,7 @@ struct ScalesView: View {
                         showResultPopup = false
                         scalesModel.result = Result()
                         scalesModel.result?.makeResult()
-                        scalesModel.setAppMode(.practiceMode, resetRecorded: false)
+                        scalesModel.setAppMode(.none, resetRecorded: false)
                         recordingScale = false
                         //scalesModel.startPracticeHandler()
                     }
@@ -296,8 +342,8 @@ struct ScalesView: View {
                         scalesModel.stopPracticeHandler()
                         scalesModel.setAppMode(.resultMode, resetRecorded: true)
                         scalesModel.startRecordingScale(testData: false, onDone: {
-                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                            scalesModel.setDirection(0)
+                            scalesModel.setAppMode(.none, resetRecorded: false)
+                            
                         })
                     }
                 }.padding()
@@ -305,12 +351,12 @@ struct ScalesView: View {
                 if scalesModel.recordingAvailable {
                     Spacer()
                     Button(scalesModel.appMode == .resultMode ? "Show Given Scale" : "Show Your Scale") {
-                        if scalesModel.appMode == .practiceMode {
-                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                        }
-                        else {
-                            scalesModel.setAppMode(.practiceMode, resetRecorded: false)
-                        }
+//                        if scalesModel.appMode == .practiceMode {
+//                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
+//                        }
+//                        else {
+//                            scalesModel.setAppMode(.practiceMode, resetRecorded: false)
+//                        }
                     }
                     .padding()
                     
@@ -381,12 +427,12 @@ struct ScalesView: View {
             TapDataView(keyboardModel: PianoKeyboardModel.shared)
         }
         .onAppear {
-            //scalesModel.setKeyName(index: 0)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            scalesModel.startPracticeHandler()
+            scalesModel.setAppMode(.none, resetRecorded: false)
+            scalesModel.setKeyAndScale()
+
         }
         .onDisappear {
-            //audioManager.stopPlaySampleFile()
         }
     }
 }

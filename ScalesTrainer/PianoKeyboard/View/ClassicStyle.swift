@@ -51,7 +51,7 @@ public struct ClassicStyle {
         var color:Color
         if let scaleNote = keyModel.scaleNoteState {
             if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
+                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(1.0) :  Color.green.opacity(0.4)
             }
             else {
                 color = keyModel.keyClickedState.tappedTimeDescending == nil ? Color.yellow.opacity(0.4) :  Color.green.opacity(0.4)
@@ -144,15 +144,13 @@ public struct ClassicStyle {
                 let width = playingMidiRadius * 1.1
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
-                if scalesModel.appMode == .practiceMode {
-                    if !scalesModel.staffHidden {
-                        if let scaleNote = key.scaleNoteState {
-                            if scalesModel.appMode == .practiceMode {
-                                let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
-                                let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-                                context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
-                            }
-                        }
+                if scalesModel.appMode == .practiceMode || scalesModel.appMode == .none {
+                    if let scaleNote = key.scaleNoteState {
+                        //if scalesModel.appMode == .practiceMode {
+                            let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
+                            let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
+                            context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
+                        //}
                     }
                 }
                 else {
@@ -260,7 +258,7 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                if scalesModel.appMode == .practiceMode {
+                if scalesModel.appMode == .practiceMode || scalesModel.appMode == .none {
                     let width = playingMidiRadius * 1.3
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
