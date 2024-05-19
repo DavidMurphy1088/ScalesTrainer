@@ -1,6 +1,9 @@
 import Foundation
 import SwiftUI
 import Combine
+import SwiftUI
+import AVFoundation
+import AudioKit
 
 struct SpeechView : View {
     @ObservedObject private var scalesModel = ScalesModel.shared
@@ -41,11 +44,120 @@ struct TestDataModeView : View {
     }
 }
 
+func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
+    var availableMicrophones: [AVAudioSessionPortDescription] = []
+    //var selectedMicrophone: AVAudioSessionPortDescription? = nil
+    let audioSession = AVAudioSession.sharedInstance()
+    availableMicrophones = audioSession.availableInputs ?? []
+    return availableMicrophones
+}
+
+func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
+    let audioSession = AVAudioSession.sharedInstance()
+    do {
+        try audioSession.setPreferredInput(microphone)
+        //selectedMicrophone = microphone
+        print("Selected Microphone: \(microphone.portName)")
+    } catch {
+        print("Failed to set preferred input: \(error)")
+    }
+}
+
+//class MicAudioManager: ObservableObject {
+//    private var engine = AudioEngine()
+//    private var mic: AudioEngine.InputNode!
+//    private var mixer: Mixer!
+//    
+//    @Published var availableMicrophones: [AVAudioSessionPortDescription] = []
+//    @Published var selectedMicrophone: AVAudioSessionPortDescription? = nil
+//
+//    init() {
+//        setupAudioSession()
+//        setupAudioKit()
+//        fetchAvailableMicrophones()
+//    }
+//    
+//    private func setupAudioSession() {
+//        let audioSession = AVAudioSession.sharedInstance()
+//        do {
+//            try audioSession.setCategory(.playAndRecord, mode: .default, options: [])
+//            try audioSession.setActive(true)
+//        } catch {
+//            print("Failed to set up audio session: \(error)")
+//        }
+//    }
+//    
+//    private func setupAudioKit() {
+//        mic = engine.input
+//        mixer = Mixer(mic)
+//        engine.output = mixer
+//        do {
+//            try engine.start()
+//        } catch {
+//            print("AudioKit did not start: \(error)")
+//        }
+//    }
+//    
+//    func fetchAvailableMicrophones() {
+//        let audioSession = AVAudioSession.sharedInstance()
+//        do {
+//            try audioSession.setCategory(.playAndRecord, mode: .default, options: [])
+//        }
+//        catch {
+//            print(error.localizedDescription)
+//        }
+//        availableMicrophones = audioSession.availableInputs ?? []
+//        for m in availableMicrophones {
+//            let mic:AVAudioSessionPortDescription = m
+//            print("====MIC", mic.portName, mic.portType, mic.selectedDataSource)
+//        }
+//    }
+//    
+//    func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
+//        let audioSession = AVAudioSession.sharedInstance()
+//        do {
+//            try audioSession.setPreferredInput(microphone)
+//            selectedMicrophone = microphone
+//            print("Selected Microphone: \(microphone.portName)")
+//        } catch {
+//            print("Failed to set preferred input: \(error)")
+//        }
+//    }
+//}
+//
+//struct MicrophoneView: View {
+//    @StateObject var audioManager = MicAudioManager()
+//    
+//    var body: some View {
+//        VStack {
+//            List(audioManager.availableMicrophones, id: \.uid) { mic in
+//                HStack {
+//                    Text(mic.portName)
+//                    Spacer()
+//                    if mic == audioManager.selectedMicrophone {
+//                        Image(systemName: "checkmark")
+//                    }
+//                }
+//                .contentShape(Rectangle())
+//                .onTapGesture {
+//                    audioManager.selectMicrophone(mic)
+//                }
+//            }
+//            .navigationTitle("Select Microphone")
+//        }
+//        .onAppear {
+//            audioManager.fetchAvailableMicrophones()
+//        }
+//    }
+//}
+
 struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     var body: some View {
         VStack {
-            HStack {
+            VStack {
+                //Spacer()
+                //MicrophoneView()
                 SpeechView()
                 Spacer()
                 TestDataModeView()

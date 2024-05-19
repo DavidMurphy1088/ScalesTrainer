@@ -126,6 +126,7 @@ class PitchTapHandler : TapHandlerProtocol  {
         self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
         (minScaleMidi, maxScaleMidi) = scale.getMinMax()
+        ScalesModel.shared.recordedTapsFileURL = nil
     }
     
     func showConfig() {
@@ -181,6 +182,9 @@ class PitchTapHandler : TapHandlerProtocol  {
         let keyboardModel = PianoKeyboardModel.shared
 
         let nextExpectedNotes = scale.getNextExpectedNotes(count: 2)
+        if nextExpectedNotes.count > 0 {
+            msg += " expect:\(nextExpectedNotes[0].midi) "
+        }
         guard nextExpectedNotes.count > 0 else {
             ///All scales notes are already matched
             ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
@@ -209,7 +213,8 @@ class PitchTapHandler : TapHandlerProtocol  {
         midi = tapMidi + offsets[minIndex]
         let ascending = nextExpectedNotes[0].sequence <= scale.scaleNoteState.count / 2
         let atTop = nextExpectedNotes[0].sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNotes[0].midi
-
+        msg += " asc:\(ascending) top:\(atTop)"
+        
         ///Does the notification represents a key that could be pressed on the keyboard?
         guard let keyboardIndex = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
             ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
@@ -245,9 +250,7 @@ class PitchTapHandler : TapHandlerProtocol  {
         ///Harmonics, bumps, noise etc. They should not cause key presses or scale note matches.
         
         var tapEventStatus:TapEventStatus = .none
-        if midi == 82 {
-            print("=======")
-        }
+
         let diffToExpected = abs(midi - nextExpectedNotes[0].midi)
         if diffToExpected > 2 {
             tapEventStatus = .farFromExpected
@@ -286,6 +289,13 @@ class PitchTapHandler : TapHandlerProtocol  {
             if !ascending || atTop  {
                 keyboardKey.keyClickedState.tappedTimeDescending = Date()
                 keyboardKey.keyClickedState.tappedAmplitudeDescending = Double(amplitude)
+            }
+            if atTop {
+                //keyboardModel.setFingers(direction: 1)
+//                DispatchQueue.main.async {
+//                    ScalesModel.shared.setDirection(1)
+//                    keyboardModel.redraw()
+//                }
             }
             keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
             lastKeyPressedMidi = keyboardKey.midi
@@ -348,6 +358,7 @@ class PitchTapHandler : TapHandlerProtocol  {
                         let data = record.data(using: .utf8)!
                         fileHandle.seekToEndOfFile()        // Move to the end of the file
                         fileHandle.write(data)              // Append the data
+                        ScalesModel.shared.recordedTapsFileURL = fileURL
                     }
                     try fileHandle.close()
                 } catch {

@@ -416,12 +416,12 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				790D5A242BD2319C00C31A8F /* CalibrationView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
 				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
 				79552FB52BDB975D00A27531 /* ResultView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
-				790D5A242BD2319C00C31A8F /* CalibrationView.swift */,
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 			);
 			path = View;

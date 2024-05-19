@@ -4,8 +4,8 @@ import Combine
 
 enum AppMode {
     case none
-    case practiceMode
-    case resultMode
+    case practicingMode
+    case playingWithScale
 }
 
 public class ScalesModel : ObservableObject {
@@ -26,6 +26,7 @@ public class ScalesModel : ObservableObject {
     var scoreHidden = false
     var recordedEvents:TapEvents? = nil
     var staffHidden = false
+    var recordedTapsFileURL:URL? //File where recorded taps were written
     
     //let pianoKeyboardModel = PianoKeyboardModel.shared
     
@@ -45,9 +46,7 @@ public class ScalesModel : ObservableObject {
     
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
     let octaveNumberValues = [1,2]
-    var selectedOctavesIndex = 0 {
-        didSet {stopAudioTasks()}
-    }
+    var selectedOctavesIndex = 0
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -68,7 +67,7 @@ public class ScalesModel : ObservableObject {
     var result:Result?
     
     init() {
-        appMode = .practiceMode
+        appMode = .none
         scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
@@ -147,29 +146,94 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func setAppMode(_ mode:AppMode, resetRecorded:Bool) {
-        if mode == .practiceMode {
-            self.startPracticeHandler()
+    ///.none -> user can see finger nunbers and tap virtual keyboard - notes are hilighted if in scale
+    ///.practice -> user can use acoustic piano. keyboard display same as .none
+    ///.playingWithScale -> acoustic piano, note played and unplayed in scale are marked. Result is gradable.
+    func setAppMode(_ mode:AppMode) {
+        audioManager.stopRecording()
+        
+        if mode == .practicingMode {
+            let practiceTapHandler = PracticeTapHandler()
+            self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
         }
-        else {
-            self.stopPracticeHandler()
+        
+        if mode == .playingWithScale {
+            self.recordedEvents = nil
         }
+
         DispatchQueue.main.async {
             self.appMode = mode
+            self.placeScaleInScore()
+            self.scale.resetMatchedData()
+            let keyboard = PianoKeyboardModel.shared
+            keyboard.resetScaleMatchState()
             self.setDirection(0)
-            if let score = self.score {
-                self.placeScaleInScore(score: score, useGiven: mode == .practiceMode)
-            }
-        }
-        if resetRecorded {
-            self.recordedEvents = nil
-            PianoKeyboardModel.shared.resetDisplayState()
+            PianoKeyboardModel.shared.redraw()
         }
     }
     
+    func startRecordingScale(testData:Bool, onDone:@escaping ()->Void) {
+        self.onRecordingDoneCallback = onDone
+        guard let requiredAmplitude = self.requiredStartAmplitude else {
+            onDone()
+            return
+        }
+
+        MetronomeModel.shared.startTimer(notified: AudioManager.shared, userScale: false, onDone: {
+            if self.speechListenMode {
+                sleep(1)
+                self.speechManager.speak("Please start your scale")
+                sleep(2)
+            }
+            self.scale.resetMatchedData()
+            PianoKeyboardModel.shared.resetScaleMatchState()
+            PianoKeyboardModel.shared.resetKeyDownKeyUpState()
+            Logger.shared.log(self, "Start recording scale")
+            DispatchQueue.main.async {
+                self.recordingAvailable = false
+                self.recordingScale = true
+            }
+            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
+                                                  saveTappingToFile: ScalesModel.shared.recordDataMode,
+                                                  scale:self.scale)
+            if !testData {
+                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
+            }
+            else {
+                self.audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
+                                                                            self.requiredStartAmplitude ?? 0,
+                                                                        saveTappingToFile: false,
+                                                                           scale: self.scale))
+            }
+        })
+    }
+    
+    func stopRecordingScale(_ ctx:String) {
+        let duration = self.audioManager.microphoneRecorder?.recordedDuration
+        Logger.shared.log(self, "Stop recording scale, duration:\(String(describing: duration)), ctx:\(ctx)")
+        audioManager.stopRecording()
+        DispatchQueue.main.async {
+//            self.speechManager.startAudioEngine()
+//            self.speechManager.startSpeechRecognition()
+            self.recordingAvailable = true
+            self.recordingScale = false
+            //if let file = self.audioManager.recorder?.audioFile {
+                //}
+                //else {
+                    //Logger.shared.reportError(self, "Recorded file is zero length")
+                //}
+            //}
+        }
+        if let onDone = self.onRecordingDoneCallback {
+            onDone()
+        }
+    }
     ///Place either the given or the students scale into the score.
     ///For the student score hilight notes that are not in the scale.
-    func placeScaleInScore(score:Score, useGiven:Bool) {
+    func placeScaleInScore(useGiven:Bool = true) {
+        guard let score = self.score else {
+            return
+        }
         score.clear()
         if useGiven {
             setScore()
@@ -178,7 +242,6 @@ public class ScalesModel : ObservableObject {
         
         let piano = PianoKeyboardModel.shared
         var noteCount = 0
-        piano.debug2("")
         
         for direction in [0,1] {
             piano.setFingers(direction: direction)
@@ -224,17 +287,6 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             self.forcePublish += 1
         }
-    }
-    
-    private func stopAudioTasks() {
-        if self.isPracticing {
-            stopPracticeHandler()
-        }
-        if self.recordingScale {
-            stopRecordingScale("Reset")
-        }
-        MetronomeModel.shared.stop()
-        //audioManager.stopPlaySampleFile()
     }
         
     func setDirection(_ index:Int) {
@@ -292,110 +344,6 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-//    func setScaleName() {
-//        var scaleType:ScaleType = .major
-//        switch self.selectedScaleTypeNameIndex {
-//        case 1:
-//            scaleType = .naturalMinor
-//        case 2:
-//            scaleType = .harmonicMinor
-//        case 3:
-//            scaleType = .melodicMinor
-//        case 4:
-//            scaleType = .arpeggio
-//        case 5:
-//            scaleType = .chromatic
-//        default:
-//            scaleType = .major
-//        }
-//        var keyName =  self.keyNameValues[self.selectedKeyNameIndex]
-//        self.selectedKey = Key(sharps: self.selectedKey.sharps, flats: self.selectedKey.flats, keyType: .minor)
-//        self.scale = Scale(key: self.selectedKey,
-//                           scaleType: scaleType,
-//                           octaves: self.octaveNumberValues[self.selectedOctavesIndex])
-//        PianoKeyboardModel.shared.configureKeyboardSize()
-//        setScore()
-//    }
-
-    func startPracticeHandler() {
-        DispatchQueue.main.async {
-            self.isPracticing = true
-            self.scale.resetMatchedData()
-//            PianoKeyboardModel.shared.resetDisplayState()
-//            PianoKeyboardModel.shared.resetScaleMatchState()
-        }
-        let practiceTapHandler = PracticeTapHandler()
-        self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
-    }
-
-    func stopPracticeHandler() {
-        Logger.shared.log(self, "Stop listening to microphone")
-        DispatchQueue.main.async {
-            self.isPracticing = false
-            PianoKeyboardModel.shared.resetDisplayState()
-        }
-        audioManager.stopRecording()
-    }
-    
-    func startRecordingScale(testData:Bool, onDone:@escaping ()->Void) {
-        self.onRecordingDoneCallback = onDone
-        guard let requiredAmplitude = self.requiredStartAmplitude else {
-            onDone()
-            return
-        }
-//        let delay = 2 * 1000000
-//        usleep(useconds_t(delay))
-        //MetronomeModel.shared.startTimer(notified: SpeechManager.shared, userScale: false, onDone: {
-        MetronomeModel.shared.startTimer(notified: AudioManager.shared, userScale: false, onDone: {
-            if self.speechListenMode {
-                sleep(1)
-                self.speechManager.speak("Please start your scale")
-                sleep(2)
-            }
-            self.scale.resetMatchedData()
-            PianoKeyboardModel.shared.resetScaleMatchState()
-            PianoKeyboardModel.shared.resetDisplayState()
-            Logger.shared.log(self, "Start recording scale")
-            DispatchQueue.main.async {
-                self.recordingAvailable = false
-                self.recordingScale = true
-            }
-            let pitchTapHandler = PitchTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                  saveTappingToFile: ScalesModel.shared.recordDataMode,
-                                                  scale:self.scale)
-            if !testData {
-                self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
-            }
-            else {
-                self.audioManager.readTestData(tapHandler: PitchTapHandler(requiredStartAmplitude:
-                                                                            self.requiredStartAmplitude ?? 0,
-                                                                        saveTappingToFile: false,
-                                                                           scale: self.scale))
-            }
-        })
-    }
-    
-    func stopRecordingScale(_ ctx:String) {
-        let duration = self.audioManager.microphoneRecorder?.recordedDuration
-        Logger.shared.log(self, "Stop recording scale, duration:\(String(describing: duration)), ctx:\(ctx)")
-        audioManager.stopRecording()
-        DispatchQueue.main.async {
-//            self.speechManager.startAudioEngine()
-//            self.speechManager.startSpeechRecognition()
-            self.recordingAvailable = true
-            self.recordingScale = false
-            //if let file = self.audioManager.recorder?.audioFile {
-                //}
-                //else {
-                    //Logger.shared.reportError(self, "Recorded file is zero length")
-                //}
-            //}
-        }
-        if let onDone = self.onRecordingDoneCallback {
-            onDone()
-        }
-    }
-        
     func doCallibration(type:CallibrationType, amplitudes:[Float]) {
         let n = 4
         guard amplitudes.count >= n else {

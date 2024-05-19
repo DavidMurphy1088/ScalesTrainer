@@ -4,13 +4,16 @@
     " " : {
 
     },
-    "  Listening to you play  " : {
+    "  Listening to your scale  " : {
 
     },
     " %lld" : {
 
     },
     " C" : {
+
+    },
+    "-1-" : {
 
     },
     "?" : {
@@ -31,6 +34,9 @@
     "𝄢" : {
 
     },
+    "1" : {
+
+    },
     "Amplitude Filter" : {
 
     },
@@ -47,6 +53,9 @@
 
     },
     "Correctly Played" : {
+
+    },
+    "Finger Number" : {
 
     },
     "Game" : {
@@ -71,6 +80,9 @@
 
     },
     "In Scale But Not Played" : {
+
+    },
+    "Keep Taps File?" : {
 
     },
     "Key" : {
@@ -105,16 +117,22 @@
     "Log" : {
 
     },
+    "No" : {
+
+    },
+    "Note is Playing" : {
+
+    },
     "Notification Status" : {
 
     },
     "Octaves:" : {
 
     },
-    "Played But Not in Scale" : {
+    "Play Your Scale" : {
 
     },
-    "Playing" : {
+    "Played But Not in Scale" : {
 
     },
     "Playing But Not in Scale" : {
@@ -124,9 +142,6 @@
 
     },
     "Record Data Mode" : {
-
-    },
-    "Record Your Scale" : {
 
     },
     "Required Start Amplitude:%@    ampFilter:%@" : {
@@ -203,10 +218,10 @@
     "Stop Hearing Your Scale" : {
 
     },
-    "Stop Practicing" : {
+    "Stop Playing Your Scale" : {
 
     },
-    "Stop Recording Scale" : {
+    "Stop Practicing" : {
 
     },
     "Tempo" : {
@@ -238,6 +253,9 @@
       }
     },
     "X" : {
+
+    },
+    "Yes" : {
 
     }
   },

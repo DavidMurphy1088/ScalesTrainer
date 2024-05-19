@@ -73,7 +73,12 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 engine.output = mixer
                 setSession()
             }
-            startEngine()
+            do {
+                try engine.start()
+            }
+            catch {
+                Logger.shared.reportError(self, "Could not start engind", error)
+            }
         }
     }
     
@@ -119,13 +124,13 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     func startRecordingMicrophone(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
         Logger.shared.clearLog()
         Logger.shared.log(self, "startRecordingMicrophone with ampl filter:\(ScalesModel.shared.amplitudeFilter)")
-        //engine.removeTap(onBus: 0)
         
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
             try AudioManager.shared.engine.start()
+            //if AudioManager.shared.engine.s
             installTapHandler(node: mic!,
                               bufferSize: 4096,
                               tapHandler: tapHandler,
@@ -137,8 +142,12 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                     Logger.shared.log(self, "Recording started...")
                 }
             }
-            self.installedTap?.start()
-            //currentTapHandler = tapHandler
+            if let tap = self.installedTap {
+                tap.start()
+            }
+            else {
+                Logger.shared.reportError(self, "No tap handler")
+            }
         } catch let err {
             print(err)
         }
@@ -150,15 +159,15 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         self.tapHandler?.stopTapping()
     }
     
-    func startEngine() {
-        do {
-            try engine.start()
-            //Logger.shared.log(self, "Engine started \n\(engine.connectionTreeDescription)")
-            Logger.shared.log(self, "Engine started")
-        } catch {
-            Logger.shared.reportError(self, "Error starting engine: \(error)")
-        }
-    }
+//    func startEngine() {
+//        do {
+//            try engine.start()
+//            //Logger.shared.log(self, "Engine started \n\(engine.connectionTreeDescription)")
+//            Logger.shared.log(self, "Engine started")
+//        } catch {
+//            Logger.shared.reportError(self, "Error starting engine: \(error)")
+//        }
+//    }
     
     func setSession() {
         ///nightmare
@@ -189,7 +198,8 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         if scalesModel.selectedHandIndex == 0 {
             switch scalesModel.selectedOctavesIndex {
             case 0:
-                fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
+                //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
+                fileName = "05_02_C_Major_1_60_iPad"
             case 1:
                 fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
             case 2:
@@ -244,7 +254,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                     if let f = f {
                         if let a = a {
                             tapHandler.tapUpdate([f, f], [a, a])
-                            usleep(1000000 * UInt32(0.5))
+                            usleep(1000000 * UInt32(1.0))
                         }
                     }
                     ctr += 1

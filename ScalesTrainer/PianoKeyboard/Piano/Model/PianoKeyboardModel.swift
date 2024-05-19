@@ -17,7 +17,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     private var ascending = true
     
     @Published public var latch = false {
-        didSet { resetDisplayState() }
+        didSet { resetKeyDownKeyUpState() }
     }
     
     public var keyRects: [CGRect] = []
@@ -29,7 +29,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     
     ///MetronomeTimerNotificationProtocol
     func metronomeStart() {
-        resetDisplayState()
+        resetKeyDownKeyUpState()
         scalesModel.setDirection(0)
         ascending = true
         nextKeyToPlayIndex = nil
@@ -135,7 +135,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     }
 
     var touches: [CGPoint] = [] {
-        didSet { updateKeys() }
+        didSet { updateKeysForUpDown() }
     }
 
     func naturalKeyWidth(_ width: CGFloat, space: CGFloat) -> CGFloat {
@@ -197,20 +197,20 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             let key = self.pianoKeyModel[i]
             key.scaleNoteState = scale.getStateForMidi(midi: key.midi, direction: direction)
         }
-        //debug("set fingers")
+        //debug2("set fingers")
     }
     
-    func debug2(_ ctx:String) {
+    func debug3(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
             print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
-                  key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
+                  "fingerBreak:", key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
             print("\tascMatch", key.keyClickedState.tappedTimeAscending != nil, "\tdescMatch", key.keyClickedState.tappedTimeDescending != nil)
         }
     }
     
-    private func updateKeys() {
+    private func updateKeysForUpDown() {
         var keyDownAt = Array(repeating: false, count: numberOfKeys)
 
         for touch in touches {
@@ -273,7 +273,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         return keyNum
     }
 
-    public func resetDisplayState() {
+    public func resetKeyDownKeyUpState() {
         for i in 0..<numberOfKeys {
             pianoKeyModel[i].touchDown = false
             pianoKeyModel[i].latched = false

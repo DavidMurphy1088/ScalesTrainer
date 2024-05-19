@@ -8,7 +8,7 @@ class Result {
     var wrongCountDesc = 0
     
     func makeResult() {
-        PianoKeyboardModel.shared.debug2("test datax")
+        //PianoKeyboardModel.shared.debug2("test datax")
         //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared
 
@@ -99,36 +99,7 @@ struct ResultView: View {
 struct TapDataView: View {
     let scalesModel = ScalesModel.shared
     var keyboardModel:PianoKeyboardModel
-    
-//    func toStr(_ unmatch:UnMatchedType) -> String {
-//        let amp = String(format: "%.4f", unmatch.amplitude)
-//        return "TapNumber:\(unmatch.notePlayedSequence) Midi:\(unmatch.midi) Ampl:\(amp)"
-//    }
-    
-//    func minMax() -> String {
-//        var min = Double.infinity
-//        var minMidi = 0
-//        var max = 0.0
-//        var maxMidi = 0
-//        //var unmatched = 0
-//        
-//        if let taps = scalesModel.recordedEvents {
-//            for event in taps.event {
-//                if Double(event.amplitude) > max {
-//                    max = Double(event.amplitude)
-//                        maxMidi = event.midi
-//                    }
-//                if event.amplitude > 0 {
-//                    if Double(event.amplitude) < min {
-//                        min = Double(event.amplitude)
-//                        minMidi = event.midi
-//                    }
-//                }
-//            }
-//        }
-//        return "[min:\(minMidi), \(String(format: "%.4f", min))]    [max:\(maxMidi), \(String(format: "%.4f", max))]"
-//    }
-    
+        
     func amplData(key:PianoKeyModel) -> String {
         var asc:String = "______"
         if let a = key.keyClickedState.tappedAmplitudeAscending {
