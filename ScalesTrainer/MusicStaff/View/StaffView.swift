@@ -193,48 +193,46 @@ public struct StaffView: View {
     
     func keySigOffsets(staff:Staff, keySignture:KeySignature) -> [Int] {
         var offsets:[Int] = []
-        if staff.type == .treble {
-            //Key Sig offsets on staff
-            if keySignture.sharps.count > 0 {
-                offsets.append(4)
-            }
-            if keySignture.sharps.count > 1 {
-                offsets.append(1)
-            }
-            if keySignture.sharps.count > 2 {
-                offsets.append(5)
-            }
-            if keySignture.sharps.count > 3 {
-                offsets.append(2)
-            }
-            if keySignture.sharps.count > 4 {
-                offsets.append(-1)
-            }
-            
-            if keySignture.flats.count > 0 {
-                offsets.append(0)
-            }
-            if keySignture.flats.count > 1 {
-                offsets.append(3)
-            }
-            if keySignture.flats.count > 2 {
-                offsets.append(-1)
-            }
-            if keySignture.flats.count > 3 {
-                offsets.append(2)
-            }
-            if keySignture.flats.count > 4 {
-                offsets.append(-2)
-            }
-            if keySignture.flats.count > 5 {
-                offsets.append(1) //C Flat
-            }
-            if keySignture.flats.count > 6 {
-                offsets.append(-3)
-            }
+        //Key Sig offsets on staff
+        if keySignture.sharps.count > 0 {
+            offsets.append(4)
         }
-        else {
-
+        if keySignture.sharps.count > 1 {
+            offsets.append(1)
+        }
+        if keySignture.sharps.count > 2 {
+            offsets.append(5)
+        }
+        if keySignture.sharps.count > 3 {
+            offsets.append(2)
+        }
+        if keySignture.sharps.count > 4 {
+            offsets.append(-1)
+        }
+        
+        if keySignture.flats.count > 0 {
+            offsets.append(0)
+        }
+        if keySignture.flats.count > 1 {
+            offsets.append(3)
+        }
+        if keySignture.flats.count > 2 {
+            offsets.append(-1)
+        }
+        if keySignture.flats.count > 3 {
+            offsets.append(2)
+        }
+        if keySignture.flats.count > 4 {
+            offsets.append(-2)
+        }
+        if keySignture.flats.count > 5 {
+            offsets.append(1) //C Flat
+        }
+        if keySignture.flats.count > 6 {
+            offsets.append(-3)
+        }
+        if staff.type == .bass {
+            offsets = offsets.map { $0 - 2 }
         }
         return offsets
     }

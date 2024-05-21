@@ -1,19 +1,22 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     " " : {
 
     },
-    "  Listening to your scale  " : {
+    "  Practicing  " : {
+
+    },
+    "  Record your scale  " : {
 
     },
     " %lld" : {
 
     },
     " C" : {
-
-    },
-    "-1-" : {
 
     },
     "?" : {
@@ -129,9 +132,6 @@
     "Octaves:" : {
 
     },
-    "Play Your Scale" : {
-
-    },
     "Played But Not in Scale" : {
 
     },
@@ -139,6 +139,9 @@
 
     },
     "Practice" : {
+
+    },
+    "READ_TEST_DATA" : {
 
     },
     "Record Data Mode" : {
@@ -182,9 +185,6 @@
     "Settings" : {
 
     },
-    "Show Given Scale" : {
-
-    },
     "Show Notes" : {
 
     },
@@ -192,9 +192,6 @@
 
     },
     "Show Tap Data" : {
-
-    },
-    "Show Your Scale" : {
 
     },
     "Speech Listen" : {
@@ -218,16 +215,10 @@
     "Stop Hearing Your Scale" : {
 
     },
-    "Stop Playing Your Scale" : {
-
-    },
     "Stop Practicing" : {
 
     },
     "Tempo" : {
-
-    },
-    "TEST_DATA" : {
 
     },
     "The app needs to hear you play a reglar (mf) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating." : {

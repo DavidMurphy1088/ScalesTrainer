@@ -42,12 +42,6 @@ public struct NoteHiliteView: View {
                     .frame(width: width, height: width)
                     .position(x: x, y:y)
             }
-//            if entry.hilite == .playedInCorrectly {
-//                Ellipse()
-//                    .stroke(Color.red, lineWidth: 3)
-//                    .frame(width: width, height: width)
-//                    .position(x: x, y:y)
-//            }
         }
     }
 }
@@ -67,21 +61,37 @@ public struct TimeSliceView: View {
         self.color = Color.black
         self.lineSpacing = lineSpacing
     }
-    
+
     func getAccidental(accidental:Int) -> String {
-        if accidental < 0 {
-            return "\u{266D}"
-        }
-        else {
-            if accidental > 0 {
-                return "\u{266F}"
+        if false {
+            ///requires quite a bit of work in staff placement to get the accidental correct
+            ///for scales (thus far) if an acciental is specified for note display (given the key) that accidental will always be a natural e.g. harmonic and melodic minor scales
+            if accidental < 0 {
+                return "\u{266D}"
             }
             else {
-                return "\u{266E}"
+                if accidental > 0 {
+                    return "\u{266F}"
+                }
+                else {
+                    return "\u{266E}"
+                }
+            }
+        }
+        else {
+            if accidental < 0 {
+                return "\u{266E}" //natural
+            }
+            else {
+                if accidental > 0 {
+                    return "\u{266E}"
+                }
+                else {
+                    return "\u{266E}"
+                }
             }
         }
     }
-    
     struct LedgerLine:Hashable, Identifiable {
         var id = UUID()
         var offsetVertical:Double
@@ -211,14 +221,14 @@ public struct TimeSliceView: View {
                 Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
                 if note.staffNum == staff.staffNum  {
-                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.5)
+                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
                 }
             }
             else {
                 //if ![StatusTag.afterErrorVisible, StatusTag.afterErrorInvisible].contains(statusTag) {
                 if ![StatusTag.afterErrorInvisible].contains(statusTag) {
                     if note.staffNum == staff.staffNum  {
-                        NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.5)
+                        NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
                     }
                 }
                 
@@ -233,23 +243,10 @@ public struct TimeSliceView: View {
                     
                 }
                 if [Note.VALUE_QUARTER, Note.VALUE_QUAVER, Note.VALUE_SEMIQUAVER].contains(noteValueUnDotted )  {
-//                    if note.midiNumber == 71 {
-//                        Ellipse()
-//                        //Closed ellipse
-//                            .foregroundColor(.red)
-//                            .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
-//                            .position(x: noteFrameWidth/2  - 6, y: noteEllipseMidpoint)
-//                    }
-//                    if note.midiNumber == 64 {
-//                        Ellipse()
-//                        //Closed ellipse
-//                            .foregroundColor(.red)
-//                            .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
-//                            .position(x: noteFrameWidth/2  + 6, y: noteEllipseMidpoint)
-//                    }
                     Ellipse()
                     //Closed ellipse
                         .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff))
+                        //.foregroundColor(.green)
                         .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
                         .position(x: noteFrameWidth/2  - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
                 }
@@ -292,6 +289,10 @@ public struct TimeSliceView: View {
             }
         }
     }
+    func tempoColor() -> Color {
+        let v:[Color] = [.blue, .green, .red]
+        return v.randomElement()!.opacity(0.5)
+    }
     
     public var body: some View {
         GeometryReader { geometry in
@@ -312,6 +313,22 @@ public struct TimeSliceView: View {
                         }
                     }
                 }
+                //if ScalesModel.shared.result != nil {
+                    VStack {
+                        Spacer()
+                        let colorx = tempoColor()
+                        let o = 0.5
+                        Rectangle()
+                            .fill(LinearGradient(
+                                gradient: Gradient(colors: [colorx, Color.green.opacity(o)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ))
+                        //.opacity(1)
+                            .frame(width: noteFrameWidth, height: 12)
+                        Text("")
+                    }
+                //}
             }
         }
     }

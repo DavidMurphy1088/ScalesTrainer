@@ -44,120 +44,47 @@ public class Scale {
         ///G drops below Middle C only for 2 octaves
         ///The start of the scale for one octave -
         var nextMidi = 0
-        if [.major].contains(key.keyType) {
-            if key.sharps > 0 {
-                switch key.sharps {
-                case 1:
-                    nextMidi = 67
-                case 2:
-                    nextMidi = 62
-                case 3:
-                    nextMidi = 57  //A
-                case 4:
-                    nextMidi = 64
-                case 5:
-                    nextMidi = 59 //B
-                default:
-                    nextMidi = 60
-                }
-            }
-            else {
-                switch key.flats {
-                case 1:
-                    nextMidi = 65 //F
-                case 2:
-                    nextMidi = 58 //B♭
-                case 3:
-                    nextMidi = 63 //E♭
-                case 4:
-                    nextMidi = 56 //A♭
-                case 5:
-                    nextMidi = 61 //D♭
-                default:
-                    nextMidi = 60
-                }
-            }
-        }
-        if [.minor, .harmonicMinor, .melodicMinor].contains(key.keyType)  {
-            if key.sharps > 0 {
-                switch key.sharps {
-                case 0:
-                    nextMidi = 57
-                case 1:
-                    nextMidi = 64  //G -> E
-                case 2:
-                    nextMidi = 59  //D -> B
-                case 3:
-                    nextMidi = 66  //A -> F#
-                case 4:
-                    nextMidi = 61  //E -> C#
-                case 5:
-                    nextMidi = 56  //B -> Ab
-                default:
-                    nextMidi = 56
-                }
-            }
-            else {
-                switch key.flats {
-                case 0:
-                    nextMidi = 57 //
-                case 1:
-                    nextMidi = 62 //F -> D
-                case 2:
-                    nextMidi = 67 //B flat -> G
-                case 3:
-                    nextMidi = 60 //E flat -> C
-                case 4:
-                    nextMidi = 65 //A flat -> F
-                case 5:
-                    nextMidi = 58 //D flat -> B flat
-                case 6:
-                    nextMidi = 63
-                case 8:
-                    nextMidi = 61
-                default:
-                    nextMidi = 58
-                }
-            }
-        }
-        
-        if hand == 1 {
-            if ["E", "F", "G"].contains(key.name) {
-                nextMidi -= 12
-            }
-            if octaves == 1 {
-                nextMidi -= 12
-            }
-            else {
-                nextMidi -= 24
-            }
+        switch key.name {
+        case "C":
+            nextMidi = 60
+        case "D♭":
+            nextMidi = 61
+        case "D":
+            nextMidi = 62
+        case "E♭":
+            nextMidi = 63
+        case "E":
+            nextMidi = 64
+        case "F":
+            nextMidi = 65
+        case "G":
+            nextMidi = 67
+        case "A♭":
+            nextMidi = 68 - 12
+        case "A":
+            nextMidi = 69 - 12
+        case "B♭":
+            nextMidi = 70 - 12
+        case "B":
+            nextMidi = 71 - 12
+        default:
+            nextMidi = 60
         }
         
         ///Some keys just below C drop their first note for 1 octaves
         if octaves > 1 {
-            if key.keyType == .major {
-                if [1].contains(key.sharps) {
-                    nextMidi -= 12
-                }
-                if [6].contains(key.flats) {
-                    nextMidi -= 12
-                }
-            }
-            else {
-                if key.flats == 0 && key.sharps == 0 {
-                    nextMidi -= 12
-                }
-                else {
-                    if [2,3,5,7].contains(key.sharps) {
-                        nextMidi -= 12
-                    }
-                    if [2,5,7].contains(key.flats) {
-                        nextMidi -= 12
-                    }
-                }
+            if ["G"].contains(key.name) {
+                nextMidi -= 12
             }
         }
-
+        
+        if hand == 1 {
+            nextMidi -= 12
+            if octaves > 1 {
+                nextMidi -= 12
+            }
+        }
+        
         ///Set midi values in scale
         var scaleOffsets:[Int] = []
         if scaleType == .major {
@@ -194,7 +121,7 @@ public class Scale {
             }
         }
         
-        ///Write the downwards direction
+        ///Add notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         for i in stride(from: up.count - 2, through: 0, by: -1) {
             var downMidi = up[i].midi
@@ -208,7 +135,8 @@ public class Scale {
                     }
                 }
             }
-            scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: downMidi))
+            let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi)
+            scaleNoteState.append(descendingNote )
             sequence += 1
         }
         if hand == 0 {
@@ -217,11 +145,11 @@ public class Scale {
         else {
             setFingersLeftHand()
         }
-        setFingerBreaks()
-        debug1("Scale Constructor key:\(key.name) hand:\(hand)")
+        setFingerBreaks(hand: hand)
+        debug11("Scale Constructor key:\(key.name) hand:\(hand)")
     }
     
-    func debug1(_ msg:String) {
+    func debug11(_ msg:String) {
         print("==========scale \(msg)", key.name, key.keyType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
@@ -264,22 +192,25 @@ public class Scale {
 
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key
-    func setFingerBreaks() {
+    private func setFingerBreaks(hand:Int) {
         for note in self.scaleNoteState {
             note.fingerSequenceBreak = false
         }
-        //if ScalesModel.shared.selectedHandIndex == 0 {
-            var lastFinger = self.scaleNoteState[0].finger
-            for i in 1..<self.scaleNoteState.count/2 {
-                let finger = self.scaleNoteState[i].finger
-                let diff = abs(finger - lastFinger)
-                if diff > 1 {
-                    self.scaleNoteState[i].fingerSequenceBreak = true
-                    self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
-                }
-                lastFinger = self.scaleNoteState[i].finger
+        var range = self.scaleNoteState.count/2-1
+        if hand == 1 {
+            range += 1
+        }
+        var lastFinger = self.scaleNoteState[0].finger
+        for i in 1...range {
+            let finger = self.scaleNoteState[i].finger
+            let diff = abs(finger - lastFinger)
+            if diff > 1 {
+                self.scaleNoteState[i].fingerSequenceBreak = true
+                self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
             }
-        //}
+            lastFinger = self.scaleNoteState[i].finger
+        }
+
     }
     
     func getMinMax() -> (Int, Int) {
@@ -355,7 +286,7 @@ public class Scale {
         var currentFinger = 1
 
         if ["B♭"].contains(key.name) {
-            currentFinger = 2
+            currentFinger = 3
         }
         if ["A♭"].contains(key.name) {
             currentFinger = 3
@@ -364,7 +295,7 @@ public class Scale {
             currentFinger = 2
         }
         if ["D♭"].contains(key.name) {
-            currentFinger = 2
+            currentFinger = 3
         }
 
         var sequenceBreaks:[Int] = [] //Offsets where the fingering sequence breaks
@@ -373,7 +304,9 @@ public class Scale {
         case "F":
             sequenceBreaks = [3, 7]
         case "B♭":
-            sequenceBreaks = [3, 6]
+            sequenceBreaks = [1, 5]
+        case "B":
+            sequenceBreaks = [4, 7]
         case "E♭":
             sequenceBreaks = [2, 6]
         case "A♭":
@@ -398,24 +331,17 @@ public class Scale {
             }
         }
         let halfway = scaleNoteState.count / 2
+        
         var f = 0
-        for i in stride(from: scaleNoteState.count-1, through: 0, by: -1) {
-            scaleNoteState[i].finger = fingerPattern[f % fingerPattern.count]
+        for i in stride(from: halfway, through: scaleNoteState.count-1, by: 1) {
+            let finger = fingerPattern[i % fingerPattern.count]
+            scaleNoteState[i].finger = finger
+            scaleNoteState[halfway - f].finger = finger
             f += 1
         }
-        f += 1
+
         scaleNoteState[0].finger = fingerPattern[fingerPattern.count-1] + 1
-//        for i in 0..<halfway {
-//        //for i in (halfway-1..<scaleNoteState.count) {
-//            scaleNoteState[i].finger = scaleNoteState[scaleNoteState.count - i - 1].finger //fingerPattern[f % fingerPattern.count]
-////            if f == 0 {
-////                f = 7
-////            }
-////            else {
-////                f -= 1
-////            }
-//        }
-        //debug("LH")
+        scaleNoteState[scaleNoteState.count-1].finger = fingerPattern[fingerPattern.count-1] + 1
     }
 
     static func getTypeName(type:ScaleType) -> String {

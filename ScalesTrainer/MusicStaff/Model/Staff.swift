@@ -105,6 +105,7 @@ public class NoteOffsetsInStaffByKey {
     }
 
     func getValue(scaleDegree:Int, keyNum:Int) -> NoteStaffPlacement? {
+
         guard scaleDegree < self.noteOffsetByKey.count else {
             Logger.shared.reportError(self, "Invalid degree \(scaleDegree)")
             return nil
@@ -213,7 +214,9 @@ public class Staff : ObservableObject, Identifiable {
             if noteValue < middleNoteValue - 6 * Note.OCTAVE || noteValue >= middleNoteValue + 6 * Note.OCTAVE {
                 continue
             }
-
+//            if noteValue == 71 {
+//                print("====xxxx")
+//            }
             var offsetFromTonic = (noteValue - Note.MIDDLE_C) % Note.OCTAVE
             if offsetFromTonic < 0 {
                 offsetFromTonic = 12 + offsetFromTonic

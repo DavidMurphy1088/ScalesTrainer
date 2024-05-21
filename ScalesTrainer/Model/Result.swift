@@ -7,27 +7,34 @@ class Result {
     var wrongCountAsc = 0
     var wrongCountDesc = 0
     
-    func makeResult() {
+    func buildResult() {
         //PianoKeyboardModel.shared.debug2("test datax")
         //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared
 
-        //keyboardModel.debug1("result")
-        
+        guard let score = ScalesModel.shared.score else {
+            return
+        }
         ///the mapping of keys to scale notes can be different ascending vs. descending. e.g. melodic minor
         for direction in [0,1] {
-            keyboardModel.setFingers(direction: direction)
+            keyboardModel.mapScaleFingersToKeyboard(direction: direction)
             for i in 0..<keyboardModel.pianoKeyModel.count {
                 let key = keyboardModel.pianoKeyModel[i]
                 if let scaleNoteState = key.scaleNoteState {
                     if direction == 0 {
                         if key.keyClickedState.tappedTimeAscending == nil {
                             missedCountAsc += 1
+                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                                timeSlice.setStatusTag(.missingError)
+                            }
                         }
                     }
                     if direction == 1 {
                         if key.keyClickedState.tappedTimeDescending == nil {
                             missedCountDesc += 1
+                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                                timeSlice.setStatusTag(.missingError)
+                            }
                         }
                     }
                 }
@@ -36,16 +43,23 @@ class Result {
                         if key.keyClickedState.tappedTimeAscending != nil {
                             wrongCountAsc += 1
                         }
+                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                            timeSlice.setStatusTag(.pitchError)
+                        }
+
                     }
                     if direction == 1 {
                         if key.keyClickedState.tappedTimeDescending != nil {
                             wrongCountDesc += 1
                         }
+                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                            timeSlice.setStatusTag(.pitchError)
+                        }
+
                     }
                 }
             }
         }
-        keyboardModel.setFingers(direction: 0)
     }
 }
 
@@ -110,8 +124,11 @@ struct TapDataView: View {
     
     func getColor(_ event:TapEvent) -> Color {
         var color = event.ascending ? Color.gray : Color.green
-        if event.status == .keyPressWithScaleMatch {
+        if event.status == .keyPressWithNextScaleMatch {
             color = .blue
+        }
+        if event.status == .keyPressWithFollowingScaleMatch {
+            color = .red
         }
         if event.status == .keyPressWithoutScaleMatch {
             color = .red

@@ -56,7 +56,6 @@ class PracticeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let minMidi:Int
     let maxMidi:Int
-    var direction = 0
     
     init() {
         minMidi = ScalesModel.shared.scale.getMinMax().0
@@ -78,7 +77,6 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         let midi = Util.frequencyToMIDI(frequency: frequency)
-
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
         var msg = ""
@@ -88,15 +86,16 @@ class PracticeTapHandler : TapHandlerProtocol {
         msg += "  MIDI \(String(describing: midi))"
         if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
             let keyboardKey = keyboardModel.pianoKeyModel[index]
-            keyboardKey.setPlayingMidi(ascending: direction)
-            if keyboardKey.midi == minMidi {
-                scalesModel.setDirection(0)
-                direction = 1
-            }
-            if keyboardKey.midi == maxMidi {
-                scalesModel.setDirection(1)
-                direction = 1
-            }
+            keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
+            ///Just show staff notes on ascending notes
+//            if keyboardKey.midi == minMidi {
+//                scalesModel.setDirection(0)
+//                direction = 1
+//            }
+//            if keyboardKey.midi == maxMidi {
+//                scalesModel.setDirection(1)
+//                direction = 1
+//            }
         }
         Logger.shared.log(self, msg)
     }
@@ -105,7 +104,7 @@ class PracticeTapHandler : TapHandlerProtocol {
     }
 }
 
-class PitchTapHandler : TapHandlerProtocol  {
+class ScaleTapHandler : TapHandlerProtocol  {
     var startTime:Date = Date()
     let scale:Scale
     var wrongNoteFound = false
@@ -262,10 +261,11 @@ class PitchTapHandler : TapHandlerProtocol  {
                     if nextExpectedNotes[i].midi == midi {
                         nextExpectedNotes[i].matchedTime = Date()
                         nextExpectedNotes[i].matchedAmplitude = Double(amplitude)
-                        tapEventStatus = .keyPressWithScaleMatch
+                        tapEventStatus = i == 0 ? .keyPressWithNextScaleMatch : .keyPressWithFollowingScaleMatch
                         unmatchedCount = 0
                         match = true
                         if i > 0 {
+                            ///Set any previously expected note unmatched
                             nextExpectedNotes[0].unmatchedTime = Date()
                         }
                         break
@@ -290,15 +290,14 @@ class PitchTapHandler : TapHandlerProtocol  {
                 keyboardKey.keyClickedState.tappedTimeDescending = Date()
                 keyboardKey.keyClickedState.tappedAmplitudeDescending = Double(amplitude)
             }
-            if atTop {
-                //keyboardModel.setFingers(direction: 1)
-//                DispatchQueue.main.async {
-//                    ScalesModel.shared.setDirection(1)
-//                    keyboardModel.redraw()
-//                }
-            }
             keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
             lastKeyPressedMidi = keyboardKey.midi
+            if atTop {
+                DispatchQueue.main.async {
+                    ScalesModel.shared.setDirection(1)
+                    keyboardModel.redraw()
+                }
+            }
         }
         ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
                                                                  expectedScaleNoteState: nextExpectedNotes[0],
@@ -309,6 +308,11 @@ class PitchTapHandler : TapHandlerProtocol  {
         //keyboardModel.debug1("herex")
 
         Logger.shared.log(self,msg)
+        if tapNumber > 0 {
+            if midi == scale.scaleNoteState[0].midi {
+                ScalesModel.shared.stopRecordingScale("from tap handler")
+            }
+        }
         tapNumber += 1
         lastAmplitude = amplitude
     }
@@ -317,9 +321,9 @@ class PitchTapHandler : TapHandlerProtocol  {
         Logger.shared.log(self, "PitchTapHandler stop")
         Logger.shared.calcValueLimits()
         
-        //PianoKeyboardModel.shared.debug2("")
         let result = Result()
-        result.makeResult()
+        ScalesModel.shared.result = result
+        result.buildResult()
         
         if saveTappingToFile {
             let calendar = Calendar.current

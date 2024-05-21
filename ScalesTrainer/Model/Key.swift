@@ -45,6 +45,10 @@ public class Key {
                     name = "F"
                 case 5:
                     name = "B♭"
+                case 6:
+                    name = "E♭"
+                case 7:
+                    name = "D♭"
                 default:
                     name = "D"
                 }
@@ -104,9 +108,9 @@ public class Key {
             case "C#":
                 self.flats = 0
                 self.sharps = 4
-            case "A♭":
-                self.flats = 0
-                self.sharps = 5
+//            case "A♭":
+//                self.flats = 0
+//                self.sharps = 5
 
             case "D":
                 self.flats = 1
@@ -126,9 +130,9 @@ public class Key {
             case "E♭":
                 self.flats = 6
                 self.sharps = 0
-//            case "A♭":
-//                self.flats = 7
-//                self.sharps = 0
+            case "A♭":
+                self.flats = 7
+                self.sharps = 0
             case "D♭":
                 self.flats = 8
                 self.sharps = 0

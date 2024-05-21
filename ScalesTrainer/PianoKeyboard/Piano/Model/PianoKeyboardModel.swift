@@ -93,7 +93,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 
                 if ascending {
                     if keyToPlay >= self.pianoKeyModel.count-1 {
-                        setFingers(direction: 1)
+                        mapScaleFingersToKeyboard(direction: 1)
                         ///Dont play the top note twice
                         hitTurnaround = true
                         scalesModel.setDirection(1)
@@ -187,28 +187,27 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
         }
-        self.setFingers(direction: ScalesModel.shared.selectedDirection)
+        self.mapScaleFingersToKeyboard(direction: ScalesModel.shared.selectedDirection)
     }
     
     ///Create the map for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
-    public func setFingers(direction:Int) {
+    public func mapScaleFingersToKeyboard(direction:Int) {
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
             key.scaleNoteState = scale.getStateForMidi(midi: key.midi, direction: direction)
         }
-        //debug2("set fingers")
     }
     
-    func debug3(_ ctx:String) {
-        print("=== Keyboard status === \(ctx)")
-        for i in 0..<numberOfKeys {
-            let key = self.pianoKeyModel[i]
-            print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
-                  "fingerBreak:", key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
-            print("\tascMatch", key.keyClickedState.tappedTimeAscending != nil, "\tdescMatch", key.keyClickedState.tappedTimeDescending != nil)
-        }
-    }
+//    func debug3(_ ctx:String) {
+//        print("=== Keyboard status === \(ctx)")
+//        for i in 0..<numberOfKeys {
+//            let key = self.pianoKeyModel[i]
+//            print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
+//                  "fingerBreak:", key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
+//            print("\tascMatch", key.keyClickedState.tappedTimeAscending != nil, "\tdescMatch", key.keyClickedState.tappedTimeDescending != nil)
+//        }
+//    }
     
     private func updateKeysForUpDown() {
         var keyDownAt = Array(repeating: false, count: numberOfKeys)
@@ -218,7 +217,6 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 keyDownAt[index] = true
             }
         }
-        //print("======= KeyboardModel::UpdateKeys \(self.keyChangeNum)")
         ///👉 😡 Do not remove this repaint. Removing it causes keydowns on the keyboard not to draw the down or up state changes
         self.forceRepaint1 += 1
         for index in 0..<numberOfKeys {

@@ -32,8 +32,7 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
     }
     
 //    func log(ctx:String) -> Bool {
-//        print("====>TimeSliceEntry", ctx, "ID", id, sequence, "hilit", self.hilite)
-//        return true
+
 //    }
     
     public func getValue() -> Double {
@@ -60,41 +59,18 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }
 
-    //Cause notes that are set for specifc staff to be transparent on other staffs
     public func getColor(ctx:String, staff:Staff, log:Bool? = false) -> Color {
         var out:Color? = nil
 
         if timeSlice.statusTag == .pitchError {
             out = Color(.red)
         }
-        else {
+        if timeSlice.statusTag == .missingError {
+            out = Color(.yellow)
+        }
+        if out == nil {
             out = Color(.black)
         }
-//        if timeSlice.statusTag == .rhythmError {
-//            out = Color(.red)
-//        }
-//        if timeSlice.statusTag == .afterErrorVisible {
-//            out = Color(.lightGray)
-//        }
-//        if timeSlice.statusTag == .afterErrorInvisible {
-//            out = Color(.clear)
-//        }
-//
-//        if timeSlice.statusTag == .hilightAsCorrect {
-//            if self.staffNum == staff.staffNum {
-//                out = Color(red: 0.0, green: 0.6, blue: 0.0)
-//            }
-//        }
-//        //Attempt to color notes based on their relative +/- vs the tempo, rubato...
-//        if out == nil {
-//            //print("=============== getColor", ctx, "\tsecs:", self.timeSlice.tapSecondsNormalizedToTempo, "\tratio", self.timeSlice.tapTempoRatio)
-//            if let tap = timeSlice.tapTempoRatio {
-//                out = Color(gradualColorForValue(tap))
-//            }
-//            else {
-//                out = Color(staffNum == staff.staffNum ? .black : .clear)
-//            }
-//        }
         return out!
     }
 
@@ -398,11 +374,14 @@ public class Note : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
+        if self.midiNumber == 71 {
+            print("========= XX")
+        }
+
         let barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
-
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }

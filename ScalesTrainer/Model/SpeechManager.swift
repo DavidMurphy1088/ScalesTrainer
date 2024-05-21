@@ -103,9 +103,7 @@ class SpeechManager : NSObject, MetronomeTimerNotificationProtocol, SFSpeechReco
         audioEngine.inputNode.removeTap(onBus: 0)
         let bufferSize = 1024 //1024
         audioEngine.inputNode.installTap(onBus: 0, bufferSize: AVAudioFrameCount(bufferSize), format: recordingFormat) { [unowned self] (buffer, when) in
-//            if ctr % 20 == 0 {
-//                Logger.shared.log(self, "===========> In speech tap closure, ctr:\(ctr)")
-//            }
+
             ctr += 1
             self.recognitionRequest?.append(buffer)
         }

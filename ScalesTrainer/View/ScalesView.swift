@@ -68,13 +68,22 @@ struct ScalesView: View {
     
     func LegendView() -> some View {
         HStack {
-            if scalesModel.appMode == .none || scalesModel.appMode == .practicingMode {
+            if scalesModel.appMode == .none || scalesModel.appMode == .practiceMode {
+                if scalesModel.appMode == .practiceMode {
+                    Text("  Practicing  ")
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.blue)
+                        )
+                        .foregroundColor(.white)
+                        .padding()
+                }
                 Spacer()
                 Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
                 Text("Finger Number")
                 
                 Spacer()
-                Text("-1-").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
+                Text("1").foregroundColor(.orange).font(.title2).bold()
                 Text(fingerChangeName())
                 
                 Spacer()
@@ -91,29 +100,27 @@ struct ScalesView: View {
                 Spacer()
             }
             
-            if scalesModel.appMode == .playingWithScale {
-                Spacer()
-                if scalesModel.appMode == .playingWithScale {
-                    Text("  Listening to your scale  ")
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.blue)
-                        )
-                        .foregroundColor(.white) // Change the text color to white for better contrast
-                }
+            if scalesModel.appMode == .assessWithScale {
+                Text("  Record your scale  ")
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.blue)
+                    )
+                    .foregroundColor(.white)
+                    .padding()
                 Spacer()
                 Circle()
-                    .fill(Color.green.opacity(0.6))
+                    .fill(Color.green.opacity(0.4))
                     .frame(width: width())
                 Text("Correctly Played")
                 Spacer()
                 Circle()
-                    .fill(Color.red.opacity(0.6))
+                    .fill(Color.red.opacity(0.4))
                     .frame(width: width())
                 Text("Played But Not in Scale")
                 Spacer()
                 Circle()
-                    .fill(Color.yellow.opacity(0.6))
+                    .fill(Color.yellow.opacity(0.4))
                     .frame(width: width())
                 Text("In Scale But Not Played")
 
@@ -136,6 +143,7 @@ struct ScalesView: View {
                 scalesModel.selectedKeyNameIndex = keyNameIndex
                 scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.none)
+                self.directionIndex = 0
             })
             
             Spacer()
@@ -150,20 +158,7 @@ struct ScalesView: View {
                 scalesModel.selectedScaleTypeNameIndex = scaleTypeNameIndex
                 scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.none)
-            })
-            
-            Spacer()
-            Text("Octaves:").padding(0)
-            Picker("Select Value", selection: $octaveNumberIndex) {
-                ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
-                    Text("\(scalesModel.octaveNumberValues[index])")
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: octaveNumberIndex, {
-                scalesModel.selectedOctavesIndex = octaveNumberIndex
-                scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.none)
+                self.directionIndex = 0
             })
             
             Spacer()
@@ -178,8 +173,23 @@ struct ScalesView: View {
                 scalesModel.selectedHandIndex = handIndex
                 scalesModel.setKeyAndScale()
                 scalesModel.setAppMode(.none)
+                self.directionIndex = 0
             })
-
+            Spacer()
+            
+            Text("Octaves:").padding(0)
+            Picker("Select Value", selection: $octaveNumberIndex) {
+                ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
+                    Text("\(scalesModel.octaveNumberValues[index])")
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: octaveNumberIndex, {
+                scalesModel.selectedOctavesIndex = octaveNumberIndex
+                scalesModel.setKeyAndScale()
+                scalesModel.setAppMode(.none)
+            })
+            
             Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
@@ -192,10 +202,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setDirection(self.directionIndex)
-                scalesModel.scale.resetMatchedData() ///in listen mode clear wrong notes
-            })
-            .onChange(of: scalesModel.selectedDirection, {
-                self.directionIndex = scalesModel.selectedDirection
+                //scalesModel.scale.debug111("dir change")
             })
             
             Spacer()
@@ -295,7 +302,7 @@ struct ScalesView: View {
             Spacer()
             Button(practicing ? "Stop Practicing" : "Practice") {
                 practicing.toggle()
-                scalesModel.setAppMode(practicing ? .practicingMode : .none)
+                scalesModel.setAppMode(practicing ? .practiceMode : .none)
             }.padding()
             
             Spacer()
@@ -306,26 +313,15 @@ struct ScalesView: View {
         HStack {
             if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                 Spacer()
-                
-                Button("TEST_DATA") {
-                    scalesModel.result = nil
-                    recordingScale = true
-                    scalesModel.setAppMode(.playingWithScale)
-                    scalesModel.startRecordingScale(testData: true, onDone: {
-                        recordingScale = false
-                        scalesModel.result = Result()
-                        scalesModel.result?.makeResult()
-                    })
-                }.padding()
-                
-                Spacer()
-                Button(recordingScale ? "Stop Playing Your Scale" : "Play Your Scale") {
+                let label = "Record Your Scale" + (scalesModel.appMode == .assessWithScale ? " Again" : "")
+                Button(recordingScale ? "Stop Playing Your Scale" : label) {
                     recordingScale.toggle()
                     if recordingScale {
                         scalesModel.result = nil
-                        scalesModel.setAppMode(.playingWithScale)
+                        scalesModel.setAppMode(.assessWithScale)
                         scalesModel.startRecordingScale(testData: false, onDone: {
                             askKeepTapsFile = true
+                            recordingScale = false
                         })
                         self.practicing = false
                         
@@ -334,8 +330,7 @@ struct ScalesView: View {
                         scalesModel.stopRecordingScale("Stop Button")
                         showResultPopup = false
                         scalesModel.result = Result()
-                        scalesModel.result?.makeResult()
-                        scalesModel.setAppMode(.none)
+                        //scalesModel.result?.makeResult()
                         self.practicing = false
                     }
                 }.padding()
@@ -359,18 +354,18 @@ struct ScalesView: View {
                     )
                 }
                 
-                if scalesModel.recordingAvailable {
-                    Spacer()
-                    Button(scalesModel.appMode == .playingWithScale ? "Show Given Scale" : "Show Your Scale") {
-                        //scalesModel.setAppMode(.recordingMode)
-                        if scalesModel.appMode == .practicingMode {
-                            scalesModel.setAppMode(.playingWithScale)
-                        }
-                        else {
-                            scalesModel.setAppMode(.none)
-                        }
-                    }
-                    .padding()
+                if scalesModel.appMode == .assessWithScale {
+//                    Spacer()
+//                    Button(scalesModel.appMode == .assessWithScale ? "Show Given Scale" : "Show Your Scale") {
+//                        //scalesModel.setAppMode(.recordingMode)
+//                        if scalesModel.appMode == .practiceMode {
+//                            
+//                        }
+//                        else {
+//                            
+//                        }
+//                    }
+//                    .padding()
                     
                     Spacer()
                     Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
@@ -421,15 +416,23 @@ struct ScalesView: View {
                 }.commonFrameStyle(backgroundColor: .clear).padding()
             }
             
-            if scalesModel.recordingAvailable {
-                if let result = scalesModel.result {
-                    ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding()
-                }
+            if let result = scalesModel.result {
+                ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding()
             }
             
             PracticeView().commonFrameStyle(backgroundColor: .clear).padding()
             
             RecordingView().commonFrameStyle(backgroundColor: .clear).padding()
+            
+            Spacer()
+            Button("READ_TEST_DATA") {
+                scalesModel.result = nil
+                recordingScale = true
+                scalesModel.setAppMode(.assessWithScale)
+                scalesModel.startRecordingScale(testData: true, onDone: {
+                    recordingScale = false
+                })
+            }.padding()
             
             Spacer()
         }

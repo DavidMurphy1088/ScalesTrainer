@@ -3,7 +3,8 @@ import Foundation
 public enum TapEventStatus {
     case none
     case keyPressWithoutScaleMatch
-    case keyPressWithScaleMatch
+    case keyPressWithNextScaleMatch
+    case keyPressWithFollowingScaleMatch
     case continued
     case farFromExpected
     case pastEndOfScale
@@ -13,6 +14,7 @@ public enum TapEventStatus {
 
 public class TapEvent:Hashable {
     let id = UUID()
+    let timestamp = Date()
     let midi:Int ///The octave adjusted midi used for matching
     let status:TapEventStatus
     let tapMidi:Int ///The origianl taop midi

@@ -162,9 +162,7 @@ public class Score : ObservableObject {
 
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
-            if ts.entries.count == 0 {
-                print("==== HERE EMPTY")
-            }
+
             let entry = ts.entries[0]
             let note = entry as! Note
             if note.midiNumber == midi {
@@ -191,17 +189,17 @@ public class Score : ObservableObject {
         guard ts.entries.count > 0 else {
             return nil
         }
-        if let nearestNote = nearestNote {
-            let newNote = Note(timeSlice: ts, num: midi, value: nearestNote.getValue(), staffNum: 0)
-            ts.setPitchError(note: newNote)
-        }
+//        if let nearestNote = nearestNote {
+//            let newNote = Note(timeSlice: ts, num: midi, value: nearestNote.getValue(), staffNum: 0)
+//            ts.setPitchError(note: newNote)
+//        }
         
-        DispatchQueue.global(qos: .background).async {
-            usleep(1000000 * UInt32(2.0))
-            DispatchQueue.main.async {
-                ts.unsetPitchError()
-            }
-        }
+//        DispatchQueue.global(qos: .background).async {
+//            usleep(1000000 * UInt32(2.0))
+//            DispatchQueue.main.async {
+//                ts.unsetPitchError()
+//            }
+//        }
         return nil
     }
     
@@ -248,6 +246,26 @@ public class Score : ObservableObject {
             if scoreEntry is TimeSlice {
                 let ts = scoreEntry as! TimeSlice
                 result.append(ts)
+            }
+        }
+        return result
+    }
+    
+    public func getTimeSliceForMidi(midi:Int, count:Int) -> TimeSlice? {
+        let ts = getAllTimeSlices()
+        var cnt = 0
+        var result:TimeSlice?
+        for t in ts {
+            let ns = t.getTimeSliceNotes()
+            if ns.count > 0 {
+                let note = ns[0]
+                if note.midiNumber == midi {
+                    if cnt == count {
+                        result = t
+                        break
+                    }
+                    cnt += 1
+                }
             }
         }
         return result
@@ -811,7 +829,6 @@ public class Score : ObservableObject {
             if let ts = self.self.scoreEntries[i] as? TimeSlice {
                 if let ratio = ts.tapTempoRatio {
                     let scaled = (ratio - minRatio) / (maxRatio - minRatio)
-                    //print("====== ADJUST", ts.sequence, "\tratio", ratio, "scaled", scaled)
                     ts.tapTempoRatio = scaled
                 }
             }

@@ -7,19 +7,6 @@
 		<dict>
 			<key>destination</key>
 			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>327</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>326</string>
-					<key>Timestamp</key>
-					<string>737808721.9112231</string>
-				</dict>
 				<key>rebasable-url</key>
 				<dict>
 					<key>base</key>
@@ -27,158 +14,11 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>ScalesTrainer/Model/ScalesModel.swift</string>
+						<string>ScalesTrainer/MusicStaff/Model/StaffNote.swift</string>
 					</dict>
 				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>    func processSpeech(speech: String) {
-</string>
-				<key>leading</key>
-				<string>    }
-    
-</string>
-				<key>trailing</key>
-				<string>        let words = speech.split(separator: " ")
-        guard words.count &gt; 0 else {
-            return
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>263</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>262</string>
-					<key>Timestamp</key>
-					<string>737809778.169399</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Model/AudioManager.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>                scalesModel.stopRecordingScale("End of Test Data")
-</string>
-				<key>leading</key>
-				<string>                }
-                tapHandler.stopTapping()
-</string>
-				<key>trailing</key>
-				<string>                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
-                scalesModel.forceRepaint()
-                //PianoKeyboardModel.shared.debug("End test read")
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>298</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>297</string>
-					<key>Timestamp</key>
-					<string>737549855.98052</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Views/ScalesView.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>                        scalesModel.setAppMode(.resultMode, resetRecorded: true)
-</string>
-				<key>leading</key>
-				<string>                        recordingScale = true
-                        scalesModel.stopPracticeHandler()
-</string>
-				<key>trailing</key>
-				<string>                        scalesModel.startRecordingScale(testData: false, onDone: {
-                            scalesModel.setAppMode(.resultMode, resetRecorded: false)
-                            scalesModel.setDirection(0)
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>8</string>
-					<key>EndingLineNumber</key>
-					<string>92</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>92</string>
-					<key>Timestamp</key>
-					<string>737614910.977652</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/MusicStaff/Model/Staff.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>        </string>
-				<key>leading</key>
-				<string>        //31Aug2023 - done for C, G, D, E
-        //  Key                 C     D♭   D    E♭   E    F    G♭    G     A♭   A    B♭   B
-</string>
-				<key>trailing</key>
-				<string>noteOffsetByKey.append("0     0    0    0    0    0    0,1   0     0    0,1  0    0")    //C
-        noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1     0,1   1    0    1,0  0,1")  //C#, D♭
-        noteOffsetByKey.append("1     1,1  1    1    1    1    1,1   1     1,1  1    1    1")    //D
-</string>
+				<key>type</key>
+				<string>DVTDocumentLocation</string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>

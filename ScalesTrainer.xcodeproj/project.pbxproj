@@ -23,7 +23,7 @@
 		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
 		795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */; };
 		795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */; };
-		79552FB62BDB975D00A27531 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79552FB52BDB975D00A27531 /* ResultView.swift */; };
+		79552FB62BDB975D00A27531 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79552FB52BDB975D00A27531 /* Result.swift */; };
 		79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FBF2BDBB41100A27531 /* Home_1_60.m4a */; };
 		79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC02BDBB41100A27531 /* Home_2_60.m4a */; };
 		79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC12BDBB41100A27531 /* Home_3_60.m4a */; };
@@ -122,7 +122,7 @@
 		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_low.aiff; sourceTree = "<group>"; };
 		795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_high.aiff; sourceTree = "<group>"; };
-		79552FB52BDB975D00A27531 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		79552FB52BDB975D00A27531 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		79552FBF2BDBB41100A27531 /* Home_1_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_1_60.m4a; sourceTree = "<group>"; };
 		79552FC02BDBB41100A27531 /* Home_2_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_2_60.m4a; sourceTree = "<group>"; };
 		79552FC12BDBB41100A27531 /* Home_3_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_3_60.m4a; sourceTree = "<group>"; };
@@ -420,7 +420,6 @@
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
 				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
-				79552FB52BDB975D00A27531 /* ResultView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 			);
@@ -434,6 +433,7 @@
 				79D7C2962BD10DB500AE0B24 /* Key.swift */,
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
+				79552FB52BDB975D00A27531 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
@@ -614,7 +614,7 @@
 				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
 				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
-				79552FB62BDB975D00A27531 /* ResultView.swift in Sources */,
+				79552FB62BDB975D00A27531 /* Result.swift in Sources */,
 				790D5A252BD2319C00C31A8F /* CalibrationView.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */,

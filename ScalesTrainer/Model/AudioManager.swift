@@ -192,7 +192,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         }
     }
     
-    func readTestData(tapHandler:PitchTapHandler) {
+    func readTestData(tapHandler:ScaleTapHandler) {
         var fileName:String
         let scalesModel = ScalesModel.shared
         if scalesModel.selectedHandIndex == 0 {
@@ -254,7 +254,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                     if let f = f {
                         if let a = a {
                             tapHandler.tapUpdate([f, f], [a, a])
-                            usleep(1000000 * UInt32(1.0))
+                            usleep(1000000 * UInt32(0.2))
                         }
                     }
                     ctr += 1

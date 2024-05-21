@@ -87,7 +87,6 @@ public struct ClassicStyle {
             let resultStatusRadius = naturalWidth * 0.20
             let playingMidiRadius = naturalWidth * 0.5
 
-            //print("=================== Canvas paint LAYOUT", PianoKeyboardModel.shared.forceRepaint1)
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 guard key.isNatural else {
                     continue
@@ -148,7 +147,7 @@ public struct ClassicStyle {
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
                 ///Show finger break only outside practice or record
-                if scalesModel.appMode == .playingWithScale {
+                if scalesModel.appMode == .assessWithScale {
                     let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
@@ -159,25 +158,25 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         context.draw(
-                            Text(String(scaleNote.finger)).foregroundColor( Color.blue)
+                            Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
                                 .font(.title).bold(),
                             at: point
                         )
-                        if scaleNote.fingerSequenceBreak {
-                            let width = rect.width * 0.1
-                            for w in [width, 0 - width] {
-                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
-                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
-                                context.stroke(
-                                    Path { path in
-                                        path.move(to: point1)
-                                        path.addLine(to: point2)
-                                    },
-                                    with: .color(.blue),
-                                    lineWidth: 2
-                               )
-                            }
-                        }
+//                        if scaleNote.fingerSequenceBreak {
+//                            let width = rect.width * 0.1
+//                            for w in [width, 0 - width] {
+//                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
+//                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
+//                                context.stroke(
+//                                    Path { path in
+//                                        path.move(to: point1)
+//                                        path.addLine(to: point2)
+//                                    },
+//                                    with: .color(.blue),
+//                                    lineWidth: 2
+//                               )
+//                            }
+//                        }
                     }
                 }
                 xpos += naturalXIncr
@@ -258,7 +257,7 @@ public struct ClassicStyle {
                 
                 ///----------- Note Status-----------
                 //if scalesModel.appMode == .practicingMode || scalesModel.appMode == .none {
-                if scalesModel.appMode == .playingWithScale {
+                if scalesModel.appMode == .assessWithScale {
 //                    let width = playingMidiRadius * 1.3
 //                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
 //                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
@@ -295,26 +294,27 @@ public struct ClassicStyle {
                                 context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                             }
                             context.draw(
-                                Text(String(scaleNote.finger)).foregroundColor(Color.blue)
+                                Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
                                     .font(.title).bold(),
                                 at: point
                             )
                         }
                         ///Draw a midline thru the finger number to indicate a finger break
-                        if scaleNote.fingerSequenceBreak {
-                            for w in [width, 0 - width] {
-                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
-                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
-                                    context.stroke(
-                                        Path { path in
-                                            path.move(to: point1)
-                                            path.addLine(to: point2)
-                                        },
-                                        with: .color(.blue),
-                                        lineWidth: 2
-                                   )
-                            }
-                        }
+//                        if scaleNote.fingerSequenceBreak {
+//                            let width = rect.width * 0.2
+//                            for w in [width, 0 - width] {
+//                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
+//                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
+//                                    context.stroke(
+//                                        Path { path in
+//                                            path.move(to: point1)
+//                                            path.addLine(to: point2)
+//                                        },
+//                                        with: .color(.blue),
+//                                        lineWidth: 2
+//                                   )
+//                            }
+//                        }
                     }
 
                 }

@@ -4,6 +4,7 @@ public enum StatusTag {
     case noTag
     case rhythmError
     case pitchError
+    case missingError
     case afterErrorVisible //e.g. all rhythm after a rhythm error is moot
     case afterErrorInvisible 
     case hilightAsCorrect //hilight the correct note that was expected
@@ -20,7 +21,7 @@ public class TimeSlice : ScoreEntry {
     var footnote:String?
     var barLine:Int = 0
     var beatNumber:Double = 0.0 //the beat in the bar that the timeslice is at
-    var pitchReplacedEntry:Note?
+    //var pitchReplacedEntry:Note?
     
     //Used when recording a tap sequence into a score
     public var tapSecondsNormalizedToTempo:Double?
@@ -33,35 +34,35 @@ public class TimeSlice : ScoreEntry {
         //tapSecondsNormalizedToTempo = 0.0
     }
     
-    func setPitchError(note:Note) {
-        guard entries.count > 0 else {
-            return
-        }
-        self.pitchReplacedEntry = entries[0] as? Note
-        self.removeNote(index: 0)
-        self.addNote(n: note)
-        self.setStatusTag(.pitchError)
-    }
+//    func setPitchError(note:Note) {
+//        guard entries.count > 0 else {
+//            return
+//        }
+//        self.pitchReplacedEntry = entries[0] as? Note
+//        self.removeNote(index: 0)
+//        self.addNote(n: note)
+//        self.setStatusTag(.pitchError)
+//    }
     
-    func unsetPitchError() {
-        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
-            return
-        }
-        let note:Note = self.pitchReplacedEntry!
-        self.pitchReplacedEntry = nil
-        self.removeNote(index: 0)
-        self.addNote(n: note)
-        self.setStatusTag(.noTag)
-    }
+//    func unsetPitchError() {
+//        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
+//            return
+//        }
+//        let note:Note = self.pitchReplacedEntry!
+//        self.pitchReplacedEntry = nil
+//        self.removeNote(index: 0)
+//        self.addNote(n: note)
+//        self.setStatusTag(.noTag)
+//    }
 
 //    func inError() -> Bool {
 //        return [StatusTag.pitchError, StatusTag.rhythmError].contains(self.statusTag)
 //    }
 //    
     public func setStatusTag(_ tag: StatusTag) {
-        //DispatchQueue.main.async {
+        DispatchQueue.main.async {
             self.statusTag = tag
-        //}
+        }
     }
 
     public func getValue() -> Double {
@@ -71,15 +72,15 @@ public class TimeSlice : ScoreEntry {
         return 0
     }
     
-    public func removeNote(index:Int) {
-        if self.entries.count > index {
-            DispatchQueue.main.async {
-                self.entries.remove(at: index)
-                self.score.updateStaffs()
-                self.score.addStemAndBeamCharaceteristics()
-            }
-        }
-    }
+//    public func removeNote(index:Int) {
+//        if self.entries.count > index {
+//            DispatchQueue.main.async {
+//                self.entries.remove(at: index)
+//                self.score.updateStaffs()
+//                self.score.addStemAndBeamCharaceteristics()
+//            }
+//        }
+//    }
 
     public func addNote(n:Note) {
         n.timeSlice = self
