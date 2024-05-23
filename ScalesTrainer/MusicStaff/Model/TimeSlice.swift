@@ -34,31 +34,6 @@ public class TimeSlice : ScoreEntry {
         //tapSecondsNormalizedToTempo = 0.0
     }
     
-//    func setPitchError(note:Note) {
-//        guard entries.count > 0 else {
-//            return
-//        }
-//        self.pitchReplacedEntry = entries[0] as? Note
-//        self.removeNote(index: 0)
-//        self.addNote(n: note)
-//        self.setStatusTag(.pitchError)
-//    }
-    
-//    func unsetPitchError() {
-//        guard entries.count > 0 && self.pitchReplacedEntry != nil else {
-//            return
-//        }
-//        let note:Note = self.pitchReplacedEntry!
-//        self.pitchReplacedEntry = nil
-//        self.removeNote(index: 0)
-//        self.addNote(n: note)
-//        self.setStatusTag(.noTag)
-//    }
-
-//    func inError() -> Bool {
-//        return [StatusTag.pitchError, StatusTag.rhythmError].contains(self.statusTag)
-//    }
-//    
     public func setStatusTag(_ tag: StatusTag) {
         DispatchQueue.main.async {
             self.statusTag = tag
@@ -84,7 +59,7 @@ public class TimeSlice : ScoreEntry {
 
     public func addNote(n:Note) {
         n.timeSlice = self
-        DispatchQueue.main.async {
+        //DispatchQueue.main.async {
             self.entries.append(n)
             
             for i in 0..<self.score.staffs.count {
@@ -92,7 +67,7 @@ public class TimeSlice : ScoreEntry {
             }
             self.score.updateStaffs()
             self.score.addStemAndBeamCharaceteristics()
-        }
+        //}
     }
     
     public func addRest(rest:Rest) {

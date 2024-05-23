@@ -374,9 +374,6 @@ public class Note : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-        if self.midiNumber == 71 {
-            print("========= XX")
-        }
 
         let barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)

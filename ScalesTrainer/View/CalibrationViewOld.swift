@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct CallibrationView: View {
+public struct CallibrationViewOld: View {
     @ObservedObject var scalesModel = ScalesModel.shared
     let audioManager = AudioManager.shared
     
@@ -123,7 +123,6 @@ public struct CallibrationView: View {
             amplitudeFilterAdjust = scalesModel.amplitudeFilter
         }
         .onDisappear() {
-            //scalesModel.amplitudeFilter = amplitudeFilterAdjust
             scalesModel.saveSetting(type: .amplitudeFilter, value: amplitudeFilterAdjust)
             scalesModel.amplitudeFilter = amplitudeFilterAdjust 
         }

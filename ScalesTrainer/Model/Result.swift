@@ -2,10 +2,15 @@ import Foundation
 import SwiftUI
 
 class Result {
+    let feedbackType:AppMode
     var missedCountAsc = 0
     var missedCountDesc = 0
     var wrongCountAsc = 0
     var wrongCountDesc = 0
+    
+    init(type:AppMode) {
+        self.feedbackType = type
+    }
     
     func buildResult() {
         //PianoKeyboardModel.shared.debug2("test datax")
@@ -15,12 +20,13 @@ class Result {
         guard let score = ScalesModel.shared.score else {
             return
         }
+        
         ///the mapping of keys to scale notes can be different ascending vs. descending. e.g. melodic minor
         for direction in [0,1] {
             keyboardModel.mapScaleFingersToKeyboard(direction: direction)
             for i in 0..<keyboardModel.pianoKeyModel.count {
                 let key = keyboardModel.pianoKeyModel[i]
-                if let scaleNoteState = key.scaleNoteState {
+                if key.scaleNoteState != nil {
                     if direction == 0 {
                         if key.keyClickedState.tappedTimeAscending == nil {
                             missedCountAsc += 1
@@ -46,7 +52,6 @@ class Result {
                         if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                             timeSlice.setStatusTag(.pitchError)
                         }
-
                     }
                     if direction == 1 {
                         if key.keyClickedState.tappedTimeDescending != nil {
@@ -60,6 +65,10 @@ class Result {
                 }
             }
         }
+//        score.calculateTapToValueRatios()
+//        for t in score.getAllTimeSlices() {
+//            print(t.tapTempoRatio)
+//        }
     }
 }
 
@@ -67,7 +76,7 @@ struct ResultView: View {
     var keyboardModel:PianoKeyboardModel
     let result:Result
     
-    func status() -> (Bool, String) {
+    func recordStatus() -> (Bool, String) {
         var status = ""
         if result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0 {
             status = "Good job, your scale was correct."
@@ -92,20 +101,39 @@ struct ResultView: View {
                 }
             }
         }
+        if let tempo = ScalesModel.shared.scale.getTempo() {
+            status += " Your tempo was \(tempo)."
+        }
         let correct = result.wrongCountAsc == 0 && result.wrongCountDesc == 0 && result.missedCountAsc == 0 && result.missedCountDesc == 0
         return (correct, status)
     }
     
+    func scaleFollowStatus() -> (Bool, String) {
+        return (true, "finished scale follow")
+    }
+    
+    func status() -> (Bool, String)? {
+        if result.feedbackType == .assessWithScale {
+            return recordStatus()
+        }
+        if result.feedbackType == .scaleFollow {
+            return scaleFollowStatus()
+        }
+        return nil
+    }
+    
     var body: some View {
         HStack {
-            if status().0 {
-                Image(systemName: "face.smiling")
-                    .renderingMode(.template)
-                    .foregroundColor(.green)
-                    .font(.largeTitle)
-                    .padding()
+            if let status = status() {
+                if status.0 {
+                    Image(systemName: "face.smiling")
+                        .renderingMode(.template)
+                        .foregroundColor(.green)
+                        .font(.largeTitle)
+                        .padding()
+                }
+                Text(status.1).padding()
             }
-            Text(status().1).padding()
         }
     }
 }

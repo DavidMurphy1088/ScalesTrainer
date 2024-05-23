@@ -58,7 +58,11 @@ class AudioManager : MetronomeTimerNotificationProtocol {
 #if targetEnvironment(simulator)
             simulator = true
 #endif
-            if !simulator {
+            if simulator {
+                setupSampler()
+                engine.output = midiSampler
+            }
+            else {
                 ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
                 let silencer = Fader(input, gain: 0)
                 self.silencer = silencer
@@ -106,7 +110,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         metronomeCount = 0
     }
     
-    func metronomeTicked(timerTickerNumber: Int, userScale: Bool) -> Bool {
+    func metronomeTicked(timerTickerNumber: Int) -> Bool {
         if metronomeCount % 4 == 0 {
             metronomeAudioPlayerHigh!.play()
         }
@@ -206,6 +210,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 fileName = "05_09_C_Minor_3_48_iPad_8"
                 fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
                 fileName = "05_09_C_Major_3_48_iPad_0"
+                fileName = "05_22_14_32_A_Major_2_33_iPad_0,0,0,0_1"
             default:
                 fileName = ""
             }

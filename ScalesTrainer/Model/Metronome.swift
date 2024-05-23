@@ -7,7 +7,7 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol {
     func metronomeStart()
-    func metronomeTicked(timerTickerNumber:Int, userScale:Bool) -> Bool
+    func metronomeTicked(timerTickerNumber:Int) -> Bool
     func metronomeStop()
 }
 
@@ -58,13 +58,13 @@ class MetronomeModel {
         }
     }
     
-    public func startTimer(notified: MetronomeTimerNotificationProtocol, userScale:Bool, onDone:(() -> Void)?) {
+    public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
         self.isTiming = true
         for player in self.audioPlayers {
             audioManager.mixer.addInput(player)
         }
         timerTickerNumber = 0
-        let delay = 60.0 / Double(scalesModel.getTempo())
+        let delay = (60.0 / Double(scalesModel.getTempo())) * 1000000 * 0.5
         notified.metronomeStart()
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if false {
@@ -77,7 +77,7 @@ class MetronomeModel {
                             self.stopTicking(notified: notified)
                         }
                         else {
-                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber, userScale: userScale)
+                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
                             if stop {
                                 self.isTiming = false
                             }
@@ -91,7 +91,7 @@ class MetronomeModel {
         else {
             DispatchQueue.global(qos: .background).async { [self] in
                 while self.isTiming {
-                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber, userScale: userScale)
+                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
                     if stop {
                         DispatchQueue.main.async { [self] in
                             self.isTiming = false
@@ -100,7 +100,6 @@ class MetronomeModel {
                     }
                     else {
                         self.timerTickerNumber += 1
-                        let delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
                         usleep(useconds_t(delay))
                     }
                 }

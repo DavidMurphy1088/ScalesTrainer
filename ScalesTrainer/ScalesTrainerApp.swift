@@ -35,6 +35,12 @@ struct ScalesTrainerApp: App {
                         Label("Calibration", systemImage: "gear")
                     }
                     .tag(2)
+
+                CallibrationViewOld()
+                    .tabItem {
+                        Label("OldCalibration", systemImage: "gear")
+                    }
+                    .tag(2)
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "gear")

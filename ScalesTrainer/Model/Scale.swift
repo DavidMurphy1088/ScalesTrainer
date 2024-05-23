@@ -146,14 +146,41 @@ public class Scale {
             setFingersLeftHand()
         }
         setFingerBreaks(hand: hand)
-        debug11("Scale Constructor key:\(key.name) hand:\(hand)")
+        //debug11("Scale Constructor key:\(key.name) hand:\(hand)")
     }
     
-    func debug11(_ msg:String) {
+    func debug111(_ msg:String) {
         print("==========scale \(msg)", key.name, key.keyType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
         }
+    }
+    
+    public func getTempo() -> Int? {
+        guard self.scaleNoteState.count > 4 else {
+            return nil
+        }
+        guard self.scaleNoteState[0].matchedTime != nil else {
+            return nil
+        }
+        var timeIntervals:[Double] = []
+        
+        var lastMatch:Date? = self.scaleNoteState[0].matchedTime
+        for note in self.scaleNoteState {
+            if let matched = note.matchedTime {
+                if lastMatch == nil {
+                    lastMatch = matched
+                    continue
+                }
+                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
+                timeIntervals.append(delta)
+                lastMatch = matched
+            }
+        }
+        let sum = timeIntervals.reduce(0, +)
+        let average = Double(sum) / Double(timeIntervals.count)
+        let tempo = 60.0 * 1.0 / average
+        return Int(tempo)
     }
     
     func resetMatchedData() {

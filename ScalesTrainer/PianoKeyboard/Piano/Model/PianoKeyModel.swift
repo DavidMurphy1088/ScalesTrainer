@@ -19,11 +19,14 @@ public class PianoKeyModel: Identifiable, Hashable {
     let scale:Scale = ScalesModel.shared.scale
     var keyClickedState:PianoKeyClickedState
     var scaleNoteState:ScaleNoteState?
-    
+    let keyPlayingSeconds = 1.0 /// How long the key stays hilighed when played
     var isPlayingMidi = false
     var keyIndex: Int = 0
     var midi: Int
-
+    
+    var hilightKey = false
+    var callback:(()->Void)?
+    
     public var touchDown = false
     public var latched = false
 
@@ -38,7 +41,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         //self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         self.isPlayingMidi = true
         DispatchQueue.global(qos: .background).async {
-            usleep(1000000 * UInt32(1.0))
+            usleep(1000000 * UInt32(self.keyPlayingSeconds))
             DispatchQueue.main.async {
                 self.isPlayingMidi = false
                 self.keyboardModel.redraw()
@@ -51,12 +54,15 @@ public class PianoKeyModel: Identifiable, Hashable {
             if let note = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
                 //score.clearAllPlayingNotes(besidesMidi: self.midi)
                 DispatchQueue.global(qos: .background).async {
-                    usleep(1000000 * UInt32(1.0))
+                    usleep(1000000 * UInt32(self.keyPlayingSeconds))
                     DispatchQueue.main.async {
                         note.setStatus(status: .none)
                     }
                 }
             }
+        }
+        if let callback = self.callback {
+            callback()
         }
     }
     

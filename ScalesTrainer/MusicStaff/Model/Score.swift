@@ -108,7 +108,6 @@ public class Score : ObservableObject {
     @Published public var barLayoutPositions:BarLayoutPositions
 
     @Published public var scoreEntries:[ScoreEntry] = []
-    @Published public var showTempos:Bool? = nil //nil=>dont show on/off UI, false=>show regular notes, on=>show tempo colored notes
 
     let ledgerLineCount =  2 //3//4 is required to represent low E
     public var staffs:[Staff] = []
@@ -306,7 +305,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore5(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,

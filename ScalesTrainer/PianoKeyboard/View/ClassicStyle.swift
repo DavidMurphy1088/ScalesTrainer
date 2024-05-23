@@ -12,9 +12,11 @@ public struct ClassicStyle {
     public let naturalKeySpace: CGFloat
 
     public init(
-        //sfKeyWidthMultiplier: CGFloat = 0.65,
-        sfKeyWidthMultiplier: CGFloat = 0.55,
+        //sfKeyWidthMultiplier: CGFloat = 0.55,
+        sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
+        //sfKeyHeightMultiplier: CGFloat = 0.70,
+
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
         naturalKeySpace: CGFloat = 3,
@@ -33,9 +35,14 @@ public struct ClassicStyle {
     public func naturalColor(_ down: Bool) -> Color {
         return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
     }
-
+    
+    public func hiliteKeyColor(_ down: Bool) -> Color {
+        return down ? Color(red: 0.4, green: 0.6, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
+    }
+    
     public func sharpFlatColor(_ down: Bool) -> Color {
-        down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.5, green: 0.5, blue: 0.5)
+        //down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.5, green: 0.5, blue: 0.5)
+        down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.6, green: 0.6, blue: 0.6)
     }
 
     public func labelColor(_ noteNumber: Int) -> Color {
@@ -52,7 +59,7 @@ public struct ClassicStyle {
         let fullOpacity = 0.4
         let halfOpacity = 0.4
 
-        if let scaleNote = keyModel.scaleNoteState {
+        if let scaleNote1 = keyModel.scaleNoteState {
             if scalesModel.selectedDirection == 0 {
                 color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
             }
@@ -86,12 +93,13 @@ public struct ClassicStyle {
             var xpos: CGFloat = 0.0
             let resultStatusRadius = naturalWidth * 0.20
             let playingMidiRadius = naturalWidth * 0.5
-
+            
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 guard key.isNatural else {
                     continue
                 }
-                
+                let keyModel = viewModel.pianoKeyModel[index]
+
                 let rect = CGRect(
                     origin: CGPoint(x: xpos, y: 0),
                     size: CGSize(width: naturalWidth, height: height)
@@ -101,7 +109,7 @@ public struct ClassicStyle {
                     .path(in: rect)
                 
                 let gradient = Gradient(colors: [
-                    naturalColor(key.touchDown),
+                    keyModel.hilightKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     Color(red: 1, green: 1, blue: 1),
                 ])
                 
@@ -110,8 +118,6 @@ public struct ClassicStyle {
                     startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
                 ))
-                
-                let keyModel = viewModel.pianoKeyModel[index]
                 
                 /// ----------- Note name ----------
                 if !scalesModel.staffHidden {
@@ -194,7 +200,7 @@ public struct ClassicStyle {
                     xpos += naturalXIncr
                     continue
                 }
-
+                let keyModel = viewModel.pianoKeyModel[index]
                 let rect = CGRect(
                     origin: CGPoint(x: xpos - (sfKeyWidth / 2.0), y: 0),
                     size: CGSize(width: sfKeyWidth, height: sfKeyHeight)
@@ -213,19 +219,26 @@ public struct ClassicStyle {
                 let pathInset = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius / 2.0)
                     .path(in: insetRect)
 
+//                let gradientInset = Gradient(colors: [
+//                    keyModel.midi % 12 == 0 ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+//                    sharpFlatColor(key.touchDown),
+//                ])
                 let gradientInset = Gradient(colors: [
-                    Color(red: 0.3, green: 0.3, blue: 0.3),
                     sharpFlatColor(key.touchDown),
+                    keyModel.hilightKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    
                 ])
+//                let gradientInset = Gradient(colors: [
+//                    Color(red: 0.3, green: 0.3, blue: 0.3),
+//                    sharpFlatColor(key.touchDown),
+//                ])
                 
                 context.fill(pathInset, with: .linearGradient(
                     gradientInset,
                     startPoint: CGPoint(x: rect.width / 2.0, y: 0),
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
                 ))
-                
-                let keyModel = viewModel.pianoKeyModel[index]
-                
+
                 ///------------- Note name -----
                 if !scalesModel.staffHidden {
                     if key.finger.count > 0 {
@@ -258,18 +271,6 @@ public struct ClassicStyle {
                 ///----------- Note Status-----------
                 //if scalesModel.appMode == .practicingMode || scalesModel.appMode == .none {
                 if scalesModel.appMode == .assessWithScale {
-//                    let width = playingMidiRadius * 1.3
-//                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
-//                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
-//
-//                    if !scalesModel.staffHidden {
-//                        if let scaleNote = key.scaleNoteState {
-//                            let col = scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) : Color.white.opacity(0.6)
-//                            let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-//                            context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
-//                        }
-//                    }
-
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
@@ -285,13 +286,16 @@ public struct ClassicStyle {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
 
                         if !scalesModel.staffHidden {
-                            ///White background for finger number on a black key
-                            if let scaleNote = key.scaleNoteState {
-                                let edge = rect.width * 0.05
-                                let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
-                                let width = rect.width - 2 * edge
-                                let backgroundRect = CGRect(x: rect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
-                                context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
+                            if false {
+                                ///White background for finger number on a black key
+                                ///23May dropped and instead make black keys less black
+                                if let scaleNote = key.scaleNoteState {
+                                    let edge = rect.width * 0.05
+                                    let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
+                                    let width = rect.width - 2 * edge
+                                    let backgroundRect = CGRect(x: rect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
+                                    context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
+                                }
                             }
                             context.draw(
                                 Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)

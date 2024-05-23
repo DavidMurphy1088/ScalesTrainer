@@ -14,7 +14,7 @@ struct ScalesView: View {
     @State private var keyNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
-    @State private var tempoIndex = 4
+    @State private var tempoIndex = 2
 
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
@@ -27,7 +27,9 @@ struct ScalesView: View {
     @State var playingSampleFile = false
     @State var hearingGivenScale = false
     @State var hearingUserScale = false
+    @State var hearingBacking = false
     @State var practicing = false
+    @State var scaleFollow = false
     @State var showingTapData = false
     @State var recordingScale = false
 
@@ -41,92 +43,15 @@ struct ScalesView: View {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
     }
     
-    func width() -> CGFloat {
-        return CGFloat(UIScreen.main.bounds.size.width / 50)
-    }
-    
-    func fingerChangeName() -> String {
-        var name:String
-        if scalesModel.selectedHandIndex == 0 {
-            if scalesModel.selectedDirection == 0 {
-                name = "Thumb Under"
-            }
-            else {
-                name = "Finger Over"
-            }
-        }
-        else {
-            if scalesModel.selectedDirection == 0 {
-                name = "Finger Over Note"
-            }
-            else {
-                name = "Thumb Under Note"
-            }
-        }
-        return name
-    }
-    
-    func LegendView() -> some View {
-        HStack {
-            if scalesModel.appMode == .none || scalesModel.appMode == .practiceMode {
-                if scalesModel.appMode == .practiceMode {
-                    Text("  Practicing  ")
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.blue)
-                        )
-                        .foregroundColor(.white)
-                        .padding()
-                }
-                Spacer()
-                Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                Text("Finger Number")
-                
-                Spacer()
-                Text("1").foregroundColor(.orange).font(.title2).bold()
-                Text(fingerChangeName())
-                
-                Spacer()
-                Circle()
-                    .stroke(Color.green, lineWidth: 2)
-                    .frame(width: width())
-                Text("Note is Playing")
-                Spacer()
-                Circle()
-                    .stroke(Color.red, lineWidth: 2)
-                    .frame(width: width())
-                Text("Playing But Not in Scale")
-
-                Spacer()
-            }
-            
-            if scalesModel.appMode == .assessWithScale {
-                Text("  Record your scale  ")
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.blue)
-                    )
-                    .foregroundColor(.white)
-                    .padding()
-                Spacer()
-                Circle()
-                    .fill(Color.green.opacity(0.4))
-                    .frame(width: width())
-                Text("Correctly Played")
-                Spacer()
-                Circle()
-                    .fill(Color.red.opacity(0.4))
-                    .frame(width: width())
-                Text("Played But Not in Scale")
-                Spacer()
-                Circle()
-                    .fill(Color.yellow.opacity(0.4))
-                    .frame(width: width())
-                Text("In Scale But Not Played")
-
-                Spacer()
-            }
-        }
+    ///Set state of the model and the view
+    func setState(_ ctx:String) {
+        scalesModel.setKeyAndScale()
+        scalesModel.setAppMode(.none, ctx)
+        self.hearingGivenScale = false
+        self.hearingUserScale = false
+        self.practicing = false
+        self.scaleFollow = false
+        self.directionIndex = 0
     }
     
     func SelectScaleView() -> some View {
@@ -141,9 +66,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: keyNameIndex, {
                 scalesModel.selectedKeyNameIndex = keyNameIndex
-                scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.none)
-                self.directionIndex = 0
+                setState("KeyChange")
             })
             
             Spacer()
@@ -156,9 +79,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: scaleTypeNameIndex, {
                 scalesModel.selectedScaleTypeNameIndex = scaleTypeNameIndex
-                scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.none)
-                self.directionIndex = 0
+                setState("ScaleTypeChange")
             })
             
             Spacer()
@@ -171,9 +92,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: handIndex, {
                 scalesModel.selectedHandIndex = handIndex
-                scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.none)
-                self.directionIndex = 0
+                setState("HandChange")
             })
             Spacer()
             
@@ -186,8 +105,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
-                scalesModel.setKeyAndScale()
-                scalesModel.setAppMode(.none)
+                setState("OctavesChange")
             })
             
             Spacer()
@@ -202,22 +120,18 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setDirection(self.directionIndex)
-                //scalesModel.scale.debug111("dir change")
             })
             
             Spacer()
             Text(LocalizedStringResource("Tempo"))
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
-                    //if scalesModel.selectedDirection >= 0 {
-                        Text("\(scalesModel.tempoSettings[index])")
-                    //}
+                    Text("\(scalesModel.tempoSettings[index])")
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: tempoIndex, {
                 scalesModel.setTempo(self.tempoIndex)
-                //scalesModel.scale.resetMatchedData() ///in listen mode clear wrong notes
             })
 
             Spacer()
@@ -287,9 +201,21 @@ struct ScalesView: View {
             Spacer()
             Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
                 hearingGivenScale.toggle()
-                //scalesModel.stopPracticeHandler()
                 if hearingGivenScale {
-                    metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: false, onDone: {
+                    metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {
+                        self.hearingGivenScale = false
+                        //scalesModel.startPracticeHandler()
+                    })
+                }
+                else {
+                    metronome.stop()
+                }
+            }.padding()
+            
+            Button(hearingBacking ? "Stop Backing" : "Hear Backing") {
+                hearingBacking.toggle()
+                if hearingBacking {
+                    metronome.startTimer(notified: Backer(), onDone: {
                         self.hearingGivenScale = false
                         //scalesModel.startPracticeHandler()
                     })
@@ -302,7 +228,7 @@ struct ScalesView: View {
             Spacer()
             Button(practicing ? "Stop Practicing" : "Practice") {
                 practicing.toggle()
-                scalesModel.setAppMode(practicing ? .practiceMode : .none)
+                scalesModel.setAppMode(practicing ? .practiceMode : .none, "practiceMode")
             }.padding()
             
             Spacer()
@@ -311,14 +237,22 @@ struct ScalesView: View {
     
     func RecordingView() -> some View {
         HStack {
+            Spacer()
+            Button(scaleFollow ? "Stop Following" : "Follow Scale") {
+                scaleFollow.toggle()
+                scalesModel.setAppMode(scaleFollow ? .scaleFollow : .none, "followMode")
+            }.padding()
+
             if let requiredAmplitude = scalesModel.requiredStartAmplitude {
                 Spacer()
                 let label = "Record Your Scale" + (scalesModel.appMode == .assessWithScale ? " Again" : "")
                 Button(recordingScale ? "Stop Playing Your Scale" : label) {
                     recordingScale.toggle()
                     if recordingScale {
-                        scalesModel.result = nil
-                        scalesModel.setAppMode(.assessWithScale)
+                        DispatchQueue.main.async {
+                            scalesModel.result = nil
+                        }
+                        scalesModel.setAppMode(.assessWithScale, "scaleMode")
                         scalesModel.startRecordingScale(testData: false, onDone: {
                             askKeepTapsFile = true
                             recordingScale = false
@@ -329,7 +263,9 @@ struct ScalesView: View {
                     else {
                         scalesModel.stopRecordingScale("Stop Button")
                         showResultPopup = false
-                        scalesModel.result = Result()
+                        DispatchQueue.main.async {
+                            scalesModel.result = Result(type: .practiceMode)
+                        }
                         //scalesModel.result?.makeResult()
                         self.practicing = false
                     }
@@ -348,7 +284,7 @@ struct ScalesView: View {
                                     print("File deleted successfully.")
                                 }
                             } catch {
-                                print("Failed to delete file: \(error)")
+                                Logger.shared.reportError(scalesModel, "Failed to delete file: \(error)")
                             }
                         }
                     )
@@ -371,7 +307,7 @@ struct ScalesView: View {
                     Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
                         hearingUserScale.toggle()
                         if hearingUserScale {
-                            metronome.startTimer(notified: PianoKeyboardModel.shared, userScale: true, 
+                            metronome.startTimer(notified: PianoKeyboardModel.shared,
                                                  onDone: {self.hearingUserScale = false})
                         }
                         else {
@@ -428,7 +364,7 @@ struct ScalesView: View {
             Button("READ_TEST_DATA") {
                 scalesModel.result = nil
                 recordingScale = true
-                scalesModel.setAppMode(.assessWithScale)
+                scalesModel.setAppMode(.assessWithScale, "readTestData")
                 scalesModel.startRecordingScale(testData: true, onDone: {
                     recordingScale = false
                 })
@@ -441,7 +377,7 @@ struct ScalesView: View {
         }
         .onAppear {
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            scalesModel.setAppMode(.none)
+            scalesModel.setAppMode(.none, "onAppear")
             scalesModel.setKeyAndScale()
         }
         .onDisappear {

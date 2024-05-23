@@ -49,7 +49,7 @@ public class TapEvent:Hashable {
     
     func tapData() -> String {
         let amps = String(format: "%.2f", self.amplitude)
-        let ampDiff = String(format: "%.2f", self.amplDiff)
+        //let ampDiff = String(format: "%.2f", self.amplDiff)
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
         let expected:Int = expectedScaleNoteState?.midi ?? 0
 
@@ -66,7 +66,7 @@ public class TapEvent:Hashable {
 public class TapEvents {
     var events:[TapEvent] = []
     
-    func debug11() {
+    func debug112() {
         for event in events {
             print(event.tapData())
         }

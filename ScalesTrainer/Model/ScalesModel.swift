@@ -9,6 +9,7 @@ import Combine
 enum AppMode {
     case none
     case practiceMode
+    case scaleFollow
     case assessWithScale
 }
 
@@ -19,12 +20,11 @@ public class ScalesModel : ObservableObject {
     @Published var appMode:AppMode
     @Published var requiredStartAmplitude:Double? = nil
     @Published var amplitudeFilter:Double = 0.0
-    //@Published var recordingAvailable = false
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
     @Published var recordingScale = false
     @Published var selectedDirection = 0
-    var selectedTempoIndex = 4
+    var selectedTempoIndex = 2
     
     @Published var score:Score?
     var scoreHidden = false
@@ -45,7 +45,7 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
+    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120"]
     var selectedHandIndex = 0
     
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
@@ -68,7 +68,7 @@ public class ScalesModel : ObservableObject {
     var speechWords:[String] = []
     var speechCommandsReceived = 0
     
-    var result:Result?
+    @Published var result:Result?
     
     init() {
         appMode = .none
@@ -87,27 +87,90 @@ public class ScalesModel : ObservableObject {
         self.callibrationTapHandler = nil
     }
     
-    func setAppMode(_ mode:AppMode) {
-        audioManager.stopRecording()
+    func scaleFollow() {
+        DispatchQueue.global(qos: .background).async {
+            let semaphore = DispatchSemaphore(value: 0)
+            let keyboard = PianoKeyboardModel.shared
+            var scaleIndex = 0
+            while true {
+                if scaleIndex < 0 || scaleIndex >= self.scale.scaleNoteState.count - 1 {
+                    break
+                }
+                let note = self.scale.scaleNoteState[scaleIndex]
+                guard let keyIndex = keyboard.getKeyIndexForMidi(midi:note.midi, direction:0) else {
+                    scaleIndex += 1
+                    continue
+                }
+                let pianoKey = keyboard.pianoKeyModel[keyIndex]
+                pianoKey.hilightKey = true
+
+                pianoKey.callback = {
+                    semaphore.signal()
+                    pianoKey.hilightKey = false
+                    pianoKey.callback = nil
+                }
+
+                DispatchQueue.global(qos: .background).async {
+                    ///appmode is None at start since its set (for publish)  in main thread
+                    while true {
+                        sleep(1)
+                        if self.appMode != .scaleFollow {
+                            break
+                        }
+                    }
+                    semaphore.signal()
+                }
+                semaphore.wait()
+//                if self.appMode != .scaleFollow {
+//                    break
+//                }
+                scaleIndex += 1
+                if scaleIndex > 2 {
+                    break
+                }
+            }
+            self.setAppMode(.none, "endOfFollow")
+            DispatchQueue.main.async {
+                self.result = Result(type: .scaleFollow)
+                keyboard.clearAllKeyHilights()
+            }
+        }
+    }
+    
+    func setAppMode(_ mode:AppMode, _ ctx:String) {
+        Logger.shared.log(self, "Set app mode ctx:\(ctx) mode:\(mode)")
+        //self.appMode = mode
+        self.audioManager.stopRecording()
         
-        if mode == .practiceMode {
+        if mode == AppMode.practiceMode || mode == AppMode.scaleFollow {
+            self.recordedEvents = nil
+            DispatchQueue.main.async {
+                ScalesModel.shared.result = nil
+            }
             let practiceTapHandler = PracticeTapHandler()
             self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
         }
         
-        if mode == .assessWithScale {
-            self.recordedEvents = nil
+        if mode == .scaleFollow {
+            scaleFollow()
         }
-
+        
         DispatchQueue.main.async {
             self.appMode = mode
-            //self.placeScaleInScore()
+            if let score = self.score {
+                DispatchQueue.main.async {
+                    score.resetTapToValueRatios()
+                    self.setScore()
+                }
+            }
             self.scale.resetMatchedData()
+            
             let keyboard = PianoKeyboardModel.shared
             keyboard.resetScaleMatchState()
             self.setDirection(0)
             PianoKeyboardModel.shared.redraw()
         }
+        
     }
     
     func getTempo() -> Int {
@@ -132,13 +195,14 @@ public class ScalesModel : ObservableObject {
         var lastNote:Note?
         
         for i in 0..<scale.scaleNoteState.count {
-            if i % 4 == 0 && i > 0 {
+            if i % 8 == 0 && i > 0 {
                 score.addBarLine()
                 inBarCount = 0
             }
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
             let note = Note(timeSlice: ts, num: noteState.midi, value: Note.VALUE_QUARTER, staffNum: 0)
+            note.setValue(value: 0.5)
             ts.addNote(n: note)
             inBarCount += 1
             lastNote = note
@@ -183,7 +247,7 @@ public class ScalesModel : ObservableObject {
             return
         }
 
-        MetronomeModel.shared.startTimer(notified: AudioManager.shared, userScale: false, onDone: {
+        MetronomeModel.shared.startTimer(notified: AudioManager.shared, onDone: {
             if self.speechListenMode {
                 sleep(1)
                 self.speechManager.speak("Please start your scale")
@@ -226,59 +290,60 @@ public class ScalesModel : ObservableObject {
     }
     ///Place either the given or the students scale into the score.
     ///For the student score hilight notes that are not in the scale.
-    func placeScaleInScore(useGiven:Bool = true) {
-        guard let score = self.score else {
-            return
-        }
-        score.clear()
-        if useGiven {
-            setScore()
-            return
-        }
-        
-        let piano = PianoKeyboardModel.shared
-        var noteCount = 0
-        
-        for direction in [0,1] {
-            piano.mapScaleFingersToKeyboard(direction: direction)
-            var start:Int
-            var end:Int
-            if direction == 0 {
-                start = 0
-                end = piano.pianoKeyModel.count - 1
-            }
-            else {
-                start = piano.pianoKeyModel.count - 2
-                end = 0
-            }
-            
-            for i in stride(from: start, through: end, by: direction == 0 ? 1 : -1) {
-                let key = piano.pianoKeyModel[i]
-                if direction == 0 {
-                    if key.keyClickedState.tappedTimeAscending == nil {
-                        continue
-                    }
-                }
-                if direction == 1 {
-                    if key.keyClickedState.tappedTimeDescending == nil {
-                        continue
-                    }
-                }
-                if noteCount > 0 && noteCount % 4 == 0 {
-                    score.addBarLine()
-                }
-                let ts = score.createTimeSlice()
-                let note = Note(timeSlice: ts, num: key.midi, staffNum: 0)
-                ts.addNote(n: note)
-                if key.scaleNoteState == nil {
-                    ts.setStatusTag(.pitchError)
-                }
-                noteCount += 1
-            }
-        }
-        piano.mapScaleFingersToKeyboard(direction: 0)
-    }
-    
+//    func placeScaleInScore(useGiven:Bool = true) {
+//        guard let score = self.score else {
+//            return
+//        }
+//        score.clear()
+//        if useGiven {
+//            setScore()
+//            return
+//        }
+//        
+//        let piano = PianoKeyboardModel.shared
+//        var noteCount = 0
+//        
+//        for direction in [0,1] {
+//            piano.mapScaleFingersToKeyboard(direction: direction)
+//            var start:Int
+//            var end:Int
+//            if direction == 0 {
+//                start = 0
+//                end = piano.pianoKeyModel.count - 1
+//            }
+//            else {
+//                start = piano.pianoKeyModel.count - 2
+//                end = 0
+//            }
+//            
+//            for i in stride(from: start, through: end, by: direction == 0 ? 1 : -1) {
+//                let key = piano.pianoKeyModel[i]
+//                if direction == 0 {
+//                    if key.keyClickedState.tappedTimeAscending == nil {
+//                        continue
+//                    }
+//                }
+//                if direction == 1 {
+//                    if key.keyClickedState.tappedTimeDescending == nil {
+//                        continue
+//                    }
+//                }
+//                if noteCount > 0 && noteCount % 8 == 0 {
+//                    score.addBarLine()
+//                }
+//                let ts = score.createTimeSlice()
+//                let note = Note(timeSlice: ts, num: key.midi, staffNum: 0)
+//                note.setValue(value: 0.5)
+//                ts.addNote(n: note)
+//                if key.scaleNoteState == nil {
+//                    ts.setStatusTag(.pitchError)
+//                }
+//                noteCount += 1
+//            }
+//        }
+//        piano.mapScaleFingersToKeyboard(direction: 0)
+//    }
+//    
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1

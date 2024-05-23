@@ -56,10 +56,12 @@ class PracticeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let minMidi:Int
     let maxMidi:Int
+    var tapNum = 0
     
     init() {
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
+        Logger.shared.log(self, "PracticeTapHandler filter:\(ScalesModel.shared.amplitudeFilter)")
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -76,6 +78,8 @@ class PracticeTapHandler : TapHandlerProtocol {
             frequency = frequencies[1]
             amplitude = amplitudes[1]
         }
+        
+        let aboveFilter =  amplitude > AUValue(ScalesModel.shared.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -84,20 +88,19 @@ class PracticeTapHandler : TapHandlerProtocol {
         msg += " amp:\(String(format: "%.4f", amplitude))"
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
-        if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
-            let keyboardKey = keyboardModel.pianoKeyModel[index]
-            keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
-            ///Just show staff notes on ascending notes
-//            if keyboardKey.midi == minMidi {
-//                scalesModel.setDirection(0)
-//                direction = 1
-//            }
-//            if keyboardKey.midi == maxMidi {
-//                scalesModel.setDirection(1)
-//                direction = 1
-//            }
+        msg += "  >amplFilter:\(aboveFilter)"
+        msg += "  >filter:\(String(format: "%.4f", ScalesModel.shared.amplitudeFilter))"
+
+        if aboveFilter {
+            if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
+                let keyboardKey = keyboardModel.pianoKeyModel[index]
+                keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
+            }
         }
-        Logger.shared.log(self, msg)
+        if tapNum % 20 == 0 {
+            Logger.shared.log(self, msg)
+        }
+        tapNum += 1
     }
     
     func stopTapping() {
@@ -308,65 +311,69 @@ class ScaleTapHandler : TapHandlerProtocol  {
         //keyboardModel.debug1("herex")
 
         Logger.shared.log(self,msg)
-        if tapNumber > 0 {
-            if midi == scale.scaleNoteState[0].midi {
-                ScalesModel.shared.stopRecordingScale("from tap handler")
+        ///Stop the recording if at end of scale.
+        if tapEventStatus == .keyPressWithNextScaleMatch {
+            if tapNumber > scale.scaleNoteState.count / 2 {
+                if midi == scale.scaleNoteState[0].midi {
+                    ScalesModel.shared.stopRecordingScale("from tap handler")
+                }
             }
         }
+
         tapNumber += 1
         lastAmplitude = amplitude
     }
     
     func stopTapping() {
         Logger.shared.log(self, "PitchTapHandler stop")
-        Logger.shared.calcValueLimits()
-        
-        let result = Result()
-        ScalesModel.shared.result = result
-        result.buildResult()
-        
+        Logger.shared.calcValueLimits()        
         if saveTappingToFile {
-            let calendar = Calendar.current
-            let month = calendar.component(.month, from: Date())
-            let day = calendar.component(.day, from: Date())
-            let hour = calendar.component(.hour, from: Date())
-            let minute = calendar.component(.minute, from: Date())
-            let device = UIDevice.current
-            let modelName = device.model
-            var keyName = scale.key.name + "_"
-            keyName += String(Scale.getTypeName(type: scale.scaleType))
-            keyName = keyName.replacingOccurrences(of: " ", with: "")
-            var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
-            fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[0].midi) + "_" + modelName
-            fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
-            fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
-            
-            fileName += ".txt"
-            AudioManager.shared.recordedFileSequenceNum += 1
-            let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            // Create the file URL by appending the file name to the directory
-            fileURL = documentDirectoryURL.appendingPathComponent(fileName)
-            do {
-                if let fileURL = fileURL {
-                    let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
-                    try config.write(to: fileURL, atomically: true, encoding: .utf8)
-                }
-            }
-            catch {
-                Logger.shared.reportError(self, "Error creating file: \(error)")
-            }
-            if let fileURL = fileURL {
+            DispatchQueue.main.async {
+                let result = Result(type: .scaleFollow)
+                ScalesModel.shared.result = result
+                result.buildResult()
+                let calendar = Calendar.current
+                let month = calendar.component(.month, from: Date())
+                let day = calendar.component(.day, from: Date())
+                let hour = calendar.component(.hour, from: Date())
+                let minute = calendar.component(.minute, from: Date())
+                let device = UIDevice.current
+                let modelName = device.model
+                var keyName = self.scale.key.name + "_"
+                keyName += String(Scale.getTypeName(type: self.scale.scaleType))
+                keyName = keyName.replacingOccurrences(of: " ", with: "")
+                var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
+                fileName += "_"+keyName + "_"+String(self.scale.octaves) + "_" + String(self.scale.scaleNoteState[0].midi) + "_" + modelName
+                fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
+                fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
+                
+                fileName += ".txt"
+                AudioManager.shared.recordedFileSequenceNum += 1
+                let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                    // Create the file URL by appending the file name to the directory
+                self.fileURL = documentDirectoryURL.appendingPathComponent(fileName)
                 do {
-                    let fileHandle = try FileHandle(forWritingTo: fileURL)
-                    for record in self.tapRecords {
-                        let data = record.data(using: .utf8)!
-                        fileHandle.seekToEndOfFile()        // Move to the end of the file
-                        fileHandle.write(data)              // Append the data
-                        ScalesModel.shared.recordedTapsFileURL = fileURL
+                    if let fileURL = self.fileURL {
+                        let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
+                        try config.write(to: fileURL, atomically: true, encoding: .utf8)
                     }
-                    try fileHandle.close()
-                } catch {
-                    print("Error writing to file: \(error)")
+                }
+                catch {
+                    Logger.shared.reportError(self, "Error creating file: \(error)")
+                }
+                if let fileURL = self.fileURL {
+                    do {
+                        let fileHandle = try FileHandle(forWritingTo: fileURL)
+                        for record in self.tapRecords {
+                            let data = record.data(using: .utf8)!
+                            fileHandle.seekToEndOfFile()        // Move to the end of the file
+                            fileHandle.write(data)              // Append the data
+                            ScalesModel.shared.recordedTapsFileURL = fileURL
+                        }
+                        try fileHandle.close()
+                    } catch {
+                        Logger.shared.reportError(self, "Error writing to file: \(error)")
+                    }
                 }
             }
         }

@@ -1,13 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     " " : {
 
     },
-    "  Practicing  " : {
+    "  %@  " : {
 
     },
     "  Record your scale  " : {
@@ -61,10 +58,16 @@
     "Finger Number" : {
 
     },
+    "Follow Scale" : {
+
+    },
     "Game" : {
 
     },
     "Hand:" : {
+
+    },
+    "Hear Backing" : {
 
     },
     "Hear Scale" : {
@@ -123,6 +126,9 @@
     "No" : {
 
     },
+    "Not in Scale" : {
+
+    },
     "Note is Playing" : {
 
     },
@@ -132,10 +138,10 @@
     "Octaves:" : {
 
     },
-    "Played But Not in Scale" : {
+    "OldCalibration" : {
 
     },
-    "Playing But Not in Scale" : {
+    "Played But Not in Scale" : {
 
     },
     "Practice" : {
@@ -207,6 +213,12 @@
 
     },
     "Stop" : {
+
+    },
+    "Stop Backing" : {
+
+    },
+    "Stop Following" : {
 
     },
     "Stop Hearing Scale" : {

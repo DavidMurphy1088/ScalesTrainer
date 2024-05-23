@@ -57,9 +57,9 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
     do {
         try audioSession.setPreferredInput(microphone)
         //selectedMicrophone = microphone
-        print("Selected Microphone: \(microphone.portName)")
+        //print("Selected Microphone: \(microphone.portName)")
     } catch {
-        print("Failed to set preferred input: \(error)")
+        //Logger.shared.reportError(self, "Failed to set preferred input: \(error)")
     }
 }
 

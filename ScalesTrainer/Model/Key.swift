@@ -53,7 +53,6 @@ public class Key {
                     name = "D"
                 }
             }
-
         }
         else {
             if flats == 0 {
@@ -196,5 +195,24 @@ public class Key {
             name += "Major"
         }
         return name
+    }
+    
+    func getRootMidi() -> Int {
+        var midi = 0
+        switch name {
+        case "D":
+            midi = 62
+        case "E":
+            midi = 64
+        case "F":
+            midi = 65
+        case "G":
+            midi = 67
+        case "A":
+            midi = 69
+        default:
+            midi = 60
+        }
+        return midi
     }
 }

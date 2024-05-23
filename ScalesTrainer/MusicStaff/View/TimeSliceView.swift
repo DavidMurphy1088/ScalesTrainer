@@ -48,6 +48,7 @@ public struct NoteHiliteView: View {
 
 public struct TimeSliceView: View {
     @ObservedObject var timeSlice:TimeSlice
+    @ObservedObject var scalesModel:ScalesModel
     var staff:Staff
     var color: Color
     var lineSpacing:Double
@@ -60,6 +61,7 @@ public struct TimeSliceView: View {
         self.noteWidth = noteWidth
         self.color = Color.black
         self.lineSpacing = lineSpacing
+        scalesModel = ScalesModel.shared
     }
 
     func getAccidental(accidental:Int) -> String {
@@ -313,22 +315,23 @@ public struct TimeSliceView: View {
                         }
                     }
                 }
-                //if ScalesModel.shared.result != nil {
-                    VStack {
-                        Spacer()
-                        let colorx = tempoColor()
-                        let o = 0.5
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [colorx, Color.green.opacity(o)]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
-                        //.opacity(1)
-                            .frame(width: noteFrameWidth, height: 12)
-                        Text("")
-                    }
-                //}
+//                if scalesModel.result != nil {
+//                    VStack {
+//                        Spacer()
+//                        let colorx = tempoColor()
+//                        let o = 0.5
+//                        Rectangle()
+//                            .fill(LinearGradient(
+//                                gradient: Gradient(colors: [colorx, Color.green.opacity(o)]),
+//                                startPoint: .leading,
+//                                endPoint: .trailing
+//                            ))
+//                        //.opacity(1)
+//                            .frame(width: noteFrameWidth, height: 12)
+//                        let t = String(timeSlice.tapTempoRatio ?? 0)
+//                        Text("\(t)")
+//                    }
+//                }
             }
         }
     }
