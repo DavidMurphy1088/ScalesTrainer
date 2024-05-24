@@ -12,7 +12,6 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     var installedTap: BaseTap?
     var tapHandler: TapHandlerProtocol?
     let midiSampler = MIDISampler()
-    //let scalesModel = ScalesModel.shared ///Causes start up exception
     var microphoneRecorder: NodeRecorder?
     var silencer: Fader?
     var mixer = Mixer()
@@ -24,6 +23,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     var metronomeAudioPlayerLow:AVAudioPlayer?
     var metronomeAudioPlayerHigh:AVAudioPlayer?
     var metronomeCount = 0
+    var simulator = false
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -54,7 +54,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
         
         if true {
-            var simulator = false
+            simulator = false
 #if targetEnvironment(simulator)
             simulator = true
 #endif
@@ -133,24 +133,55 @@ class AudioManager : MetronomeTimerNotificationProtocol {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
-            try AudioManager.shared.engine.start()
-            //if AudioManager.shared.engine.s
-            installTapHandler(node: mic!,
-                              bufferSize: 4096,
-                              tapHandler: tapHandler,
-                              asynch: true)
-            //WARNING 😣 - .record must come before tap.start
-            if recordAudio {
-                try microphoneRecorder?.record() ///😡Causes exception if tap handler is Callibration
-                if microphoneRecorder != nil && microphoneRecorder!.isRecording {
-                    Logger.shared.log(self, "Recording started...")
+            var engine = AudioManager.shared.engine
+            if false || AudioManager.shared.simulator {
+                ///prolong and wasted attempts to make simulator not crash 😡
+                //try engine.start()
+                engine.stop()
+                print("====DESC", "engine.connectionTreeDescription")
+                //engine.
+                self.tapHandler = tapHandler
+                self.installedTap = PitchTap(mic!, bufferSize:UInt32(4096)) { pitch, amplitude in
+                    //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
+                        if true {
+                            DispatchQueue.main.async {
+                                tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
+                            }
+                        }
+                        else {
+                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
+                        }
+                    //}
+                }
+                if let tap = self.installedTap {
+                    try engine.start()
+                    tap.start()
+                    
+                }
+                else {
+                    Logger.shared.reportError(self, "No tap handler")
                 }
             }
-            if let tap = self.installedTap {
-                tap.start()
-            }
             else {
-                Logger.shared.reportError(self, "No tap handler")
+                try engine.start()
+                installTapHandler(node: mic!,
+                                  bufferSize: 4096,
+                                  tapHandler: tapHandler,
+                                  asynch: true)
+                //WARNING 😣 - .record must come before tap.start
+                if recordAudio {
+                    try microphoneRecorder?.record() ///😡Causes exception if tap handler is Callibration
+                    if microphoneRecorder != nil && microphoneRecorder!.isRecording {
+                        Logger.shared.log(self, "Recording started...")
+                    }
+                }
+                
+                if let tap = self.installedTap {
+                    tap.start()
+                }
+                else {
+                    Logger.shared.reportError(self, "No tap handler")
+                }
             }
         } catch let err {
             print(err)

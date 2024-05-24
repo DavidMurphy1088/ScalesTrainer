@@ -240,9 +240,11 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         }
     }
     
-    public func clearAllKeyHilights() {
+    public func clearAllKeyHilights(except:Int?) {
         for i in 0..<numberOfKeys {
-            pianoKeyModel[i].hilightKey = false
+            if except == nil || i != except {
+                pianoKeyModel[i].hilightKey = false
+            }
         }
     }
 

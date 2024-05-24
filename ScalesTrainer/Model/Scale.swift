@@ -58,7 +58,7 @@ public class Scale {
         case "F":
             nextMidi = 65
         case "G":
-            nextMidi = 67
+            nextMidi = 67 - 12
         case "A♭":
             nextMidi = 68 - 12
         case "A":
@@ -71,16 +71,23 @@ public class Scale {
             nextMidi = 60
         }
         
-        ///Some keys just below C drop their first note for 1 octaves
-        if octaves > 1 {
-            if ["G"].contains(key.name) {
+        ///For a 3 octave scale start one octave lower
+        let dropForThreeOcataves = false
+        
+        if octaves > 2 {
+            if dropForThreeOcataves {
                 nextMidi -= 12
             }
+            else {
+                if octaves > 3 {
+                    nextMidi -= 12
+                }
+            }
         }
-        
+
+        ///All are low and some drop off 88-key keyboard
         if hand == 1 {
-            nextMidi -= 12
-            if octaves > 1 {
+            if octaves == 4 {
                 nextMidi -= 12
             }
         }
@@ -146,7 +153,7 @@ public class Scale {
             setFingersLeftHand()
         }
         setFingerBreaks(hand: hand)
-        //debug11("Scale Constructor key:\(key.name) hand:\(hand)")
+        debug111("Scale Constructor key:\(key.name) hand:\(hand)")
     }
     
     func debug111(_ msg:String) {

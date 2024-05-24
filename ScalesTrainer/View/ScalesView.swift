@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ScalesView: View {
     @ObservedObject private var scalesModel = ScalesModel.shared
+    @StateObject private var orientationObserver = DeviceOrientationObserver()
+
     private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
     @ObservedObject private var speech = SpeechManager.shared
@@ -29,7 +31,6 @@ struct ScalesView: View {
     @State var hearingUserScale = false
     @State var hearingBacking = false
     @State var practicing = false
-    @State var scaleFollow = false
     @State var showingTapData = false
     @State var recordingScale = false
 
@@ -38,7 +39,10 @@ struct ScalesView: View {
     @State var notesHidden = false
     @State var staffHidden = false
     @State var askKeepTapsFile = false
-    
+
+    //@State var scaleFollow = false
+    @State var scaleFollowWithSound = false
+
     init() {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
     }
@@ -49,9 +53,70 @@ struct ScalesView: View {
         scalesModel.setAppMode(.none, ctx)
         self.hearingGivenScale = false
         self.hearingUserScale = false
+        //self.scaleFollow = false
         self.practicing = false
-        self.scaleFollow = false
         self.directionIndex = 0
+    }
+    func ConfigView() -> some View {
+        HStack {
+            Spacer()
+            Button(action: {
+                staffHidden.toggle()
+                scalesModel.scoreHidden = staffHidden
+                scalesModel.forceRepaint()
+            }) {
+                if staffHidden {
+                    HStack {
+                        Text("Show Staff")
+                        Image("eye_closed_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.green)
+                    }
+                }
+                else {
+                    HStack {
+                        Text("Hide Staff")
+                        Image("eye_open_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .padding()
+            
+            Spacer()
+            Button(action: {
+                notesHidden.toggle()
+                scalesModel.staffHidden = notesHidden
+                scalesModel.forceRepaint()
+            }) {
+                if notesHidden {
+                    HStack {
+                        Text("Show Notes")
+                        Image("eye_closed_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.green)
+                    }
+                }
+                else {
+                    HStack {
+                        Text("Hide Notes")
+                        Image("eye_open_trans")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.red)
+                    }
+                }
+            }
+            .padding()
+        }
     }
     
     func SelectScaleView() -> some View {
@@ -140,63 +205,7 @@ struct ScalesView: View {
     
     func PracticeView() -> some View {
         HStack {
-            Spacer()
-            Button(action: {
-                staffHidden.toggle()
-                scalesModel.scoreHidden = staffHidden
-                scalesModel.forceRepaint()
-            }) {
-                if staffHidden {
-                    HStack {
-                        Text("Show Staff")
-                        Image("eye_closed_trans")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.green)
-                    }
-                }
-                else {
-                    HStack {
-                        Text("Hide Staff")
-                        Image("eye_open_trans")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .padding()
-            
-            Spacer()
-            Button(action: {
-                notesHidden.toggle()
-                scalesModel.staffHidden = notesHidden
-                scalesModel.forceRepaint()
-            }) {
-                if notesHidden {
-                    HStack {
-                        Text("Show Notes")
-                        Image("eye_closed_trans")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.green)
-                    }
-                }
-                else {
-                    HStack {
-                        Text("Hide Notes")
-                        Image("eye_open_trans")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .padding()
+            ConfigView().padding()
             
             Spacer()
             Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear Scale") {
@@ -232,15 +241,25 @@ struct ScalesView: View {
             }.padding()
             
             Spacer()
+            Button("READ_TEST_DATA") {
+                scalesModel.result = nil
+                recordingScale = true
+                scalesModel.setAppMode(.assessWithScale, "readTestData")
+                scalesModel.startRecordingScale(testData: true, onDone: {
+                    recordingScale = false
+                })
+            }.padding()
+            
+            Spacer()
         }
     }
     
     func RecordingView() -> some View {
         HStack {
             Spacer()
-            Button(scaleFollow ? "Stop Following" : "Follow Scale") {
-                scaleFollow.toggle()
-                scalesModel.setAppMode(scaleFollow ? .scaleFollow : .none, "followMode")
+            Button(scalesModel.appMode == .scaleFollow ? "Stop Following" : "Follow Scale") {
+                //scaleFollow.toggle()
+                scalesModel.setAppMode(scalesModel.appMode == .none ? .scaleFollow : .none, "followMode")
             }.padding()
 
             if let requiredAmplitude = scalesModel.requiredStartAmplitude {
@@ -265,8 +284,9 @@ struct ScalesView: View {
                         showResultPopup = false
                         DispatchQueue.main.async {
                             scalesModel.result = Result(type: .practiceMode)
+                            scalesModel.result?.buildResult(feedbackType: .assessWithScale)
                         }
-                        //scalesModel.result?.makeResult()
+                        
                         self.practicing = false
                     }
                 }.padding()
@@ -335,50 +355,59 @@ struct ScalesView: View {
     var body: some View {
         VStack() {
             Text("Scales Trainer").font(.title).bold()
-
-            SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding()
+            
+            SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
             
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / 4)
-                .commonFrameStyle(backgroundColor: .clear).padding()    
+                .commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
             
-            LegendView()
+            if !orientationObserver.orientation.isAnyLandscape {
+                LegendView()
+            }
             
             if !self.staffHidden {
                 VStack {
                     if let score = scalesModel.score {
                         ScoreView(score: score, widthPadding: false)
                     }
-                }.commonFrameStyle(backgroundColor: .clear).padding()
+                }.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
             }
             
-            if let result = scalesModel.result {
-                ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding()
+            if scalesModel.appMode == .scaleFollow {
+                HStack {
+//                    Spacer()
+//                    Toggle("With Sound", isOn: $scaleFollowWithSound)
+                    Spacer()
+                    ConfigView().padding()
+                    Button("Stop Following") {
+//                        scaleFollow = false
+                        scalesModel.setAppMode(.none, "followMode")
+                    }.padding()
+                    Spacer()
+                }
             }
-            
-            PracticeView().commonFrameStyle(backgroundColor: .clear).padding()
-            
-            RecordingView().commonFrameStyle(backgroundColor: .clear).padding()
-            
-            Spacer()
-            Button("READ_TEST_DATA") {
-                scalesModel.result = nil
-                recordingScale = true
-                scalesModel.setAppMode(.assessWithScale, "readTestData")
-                scalesModel.startRecordingScale(testData: true, onDone: {
-                    recordingScale = false
-                })
-            }.padding()
+            else {
+                if let result = scalesModel.result {
+                    ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                }
+                
+                PracticeView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                
+                RecordingView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+            }
             
             Spacer()
         }
         .sheet(isPresented: $showingTapData) {
             TapDataView(keyboardModel: PianoKeyboardModel.shared)
         }
+        ///Every time the view appears, not just the first.
         .onAppear {
+            ///Required to get the score to paint on entry
+            scalesModel.setKeyAndScale()
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
             scalesModel.setAppMode(.none, "onAppear")
-            scalesModel.setKeyAndScale()
         }
         .onDisappear {
         }

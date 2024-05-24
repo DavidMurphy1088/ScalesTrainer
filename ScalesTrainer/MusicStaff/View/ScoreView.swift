@@ -31,13 +31,13 @@ public struct ScoreView: View {
                 }
             }
         }
-
+        
         .onAppear() {
             //self.setOrientationLineSize(ctx: "🤢.Score View .onAppear") //, geometryWidth: geometry.size.width)
-            //UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         }
         .onDisappear {
-            //UIDevice.current.endGeneratingDeviceOrientationNotifications()
+            UIDevice.current.endGeneratingDeviceOrientationNotifications()
         }
         .coordinateSpace(name: "ScoreView")
         //.roundedBorderRectangle()

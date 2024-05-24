@@ -11,27 +11,31 @@ import Speech
 class Backer :MetronomeTimerNotificationProtocol{
     let audioManager = AudioManager.shared
     var callNum = 0
-    var chords:[Key] = []
+    var chordRoots:[Int] = []
     
     func metronomeStart() {
-        chords.append(Key(name:"C", keyType: .major))
-        chords.append(Key(name:"A", keyType: .minor))
-        chords.append(Key(name:"F", keyType: .major))
-        chords.append(Key(name:"G", keyType: .major))
+        let scale = ScalesModel.shared.scale
+        var root = scale.scaleNoteState[0].midi
+        root -= 12
+        chordRoots.append(root)
+        chordRoots.append(root - 3)
+        chordRoots.append(root - 7)
+        chordRoots.append(root - 5)
     }
     
     func metronomeStop() {
     }
     
     func getMidi(bar:Int, beat:Int) -> Int {
-        let key = chords[bar % 4]
-        let root = key.getRootMidi()
+        //let key = chords[bar % 4]
+        let root = chordRoots[bar % 4]
         var midi = 0
         switch beat {
         case 1:
             midi = root + 7
         case 2:
-            midi = key.keyType == .minor ? root + 3 : root + 4
+            midi = bar % 4 == 1 ? root + 3 : root + 4
+            //midi = root + 4
         case 3:
             midi = root + 7
         default:
@@ -46,7 +50,7 @@ class Backer :MetronomeTimerNotificationProtocol{
         var midi = 0
         let bar = callNum / 4
         midi = getMidi(bar: bar, beat: beat)
-        audioManager.midiSampler.play(noteNumber: MIDINoteNumber(midi), velocity: 64, channel: 0)
+        audioManager.midiSampler.play(noteNumber: MIDINoteNumber(midi), velocity: 32, channel: 0)
         callNum += 1
         return false
     }

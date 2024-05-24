@@ -32,7 +32,7 @@ public struct CallibrationView: View {
         }
         .onAppear() {
             scalesModel.selectedKeyNameIndex = 0
-            scalesModel.selectedOctavesIndex = 1
+            //1scalesModel.selectedOctavesIndex = 1
             scalesModel.setKeyAndScale()
             scalesModel.setAppMode(.practiceMode, "Callibration Appear")
             self.amplitudeFilterAdjust = scalesModel.amplitudeFilter

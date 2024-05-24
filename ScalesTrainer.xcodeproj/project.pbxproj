@@ -47,6 +47,8 @@
 		799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A52BFDDBC5004B19F6 /* Backer.swift */; };
 		799BE2A82BFF4322004B19F6 /* CallibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CallibrationView.swift */; };
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
+		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
+		799BE2AE2C002EF5004B19F6 /* DeviceOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */; };
 		799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */; };
 		799FC10E2BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */; };
 		799FC10F2BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */; };
@@ -152,6 +154,8 @@
 		799BE2A52BFDDBC5004B19F6 /* Backer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backer.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CallibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallibrationView.swift; sourceTree = "<group>"; };
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
+		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
+		799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientation.swift; sourceTree = "<group>"; };
 		799FC1062BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_1_60_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_1_60_iPad.txt; sourceTree = SOURCE_ROOT; };
 		799FC1072BE6F9CB00BB0969 /* 05_02_C_Major_2_60_iPad 2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "05_02_C_Major_2_60_iPad 2.txt"; path = "ScalesTrainer/Data/05_02_C_Major_2_60_iPad 2.txt"; sourceTree = SOURCE_ROOT; };
 		799FC1082BE6F9CB00BB0969 /* 05_02_C_Major_4_48_iPad.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 05_02_C_Major_4_48_iPad.txt; path = ScalesTrainer/Data/05_02_C_Major_4_48_iPad.txt; sourceTree = SOURCE_ROOT; };
@@ -431,6 +435,7 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
 				790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */,
 				799BE2A72BFF4322004B19F6 /* CallibrationView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
@@ -439,6 +444,7 @@
 				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
+				799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -629,9 +635,11 @@
 				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
+				799BE2AE2C002EF5004B19F6 /* DeviceOrientation.swift in Sources */,
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,
+				799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */,
 				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
 				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
@@ -809,6 +817,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -842,6 +851,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

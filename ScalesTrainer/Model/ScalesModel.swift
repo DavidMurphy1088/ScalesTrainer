@@ -49,7 +49,7 @@ public class ScalesModel : ObservableObject {
     var selectedHandIndex = 0
     
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
-    let octaveNumberValues = [1,2]
+    let octaveNumberValues = [1,2,3,4]
     var selectedOctavesIndex = 0
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
@@ -89,11 +89,17 @@ public class ScalesModel : ObservableObject {
     
     func scaleFollow() {
         DispatchQueue.global(qos: .background).async {
+            ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
+            if self.scale.scaleNoteState.count > 0 {
+                self.audioManager.midiSampler.play(noteNumber: UInt8(self.scale.scaleNoteState[0].midi), velocity: 64, channel: 0)
+                sleep(1)
+            }
+            
             let semaphore = DispatchSemaphore(value: 0)
             let keyboard = PianoKeyboardModel.shared
             var scaleIndex = 0
             while true {
-                if scaleIndex < 0 || scaleIndex >= self.scale.scaleNoteState.count - 1 {
+                if scaleIndex >= self.scale.scaleNoteState.count {
                     break
                 }
                 let note = self.scale.scaleNoteState[scaleIndex]
@@ -104,12 +110,15 @@ public class ScalesModel : ObservableObject {
                 let pianoKey = keyboard.pianoKeyModel[keyIndex]
                 pianoKey.hilightKey = true
 
+                ///Listen for piano key pressed
+                keyboard.clearAllKeyHilights(except: keyIndex)
                 pianoKey.callback = {
                     semaphore.signal()
-                    pianoKey.hilightKey = false
+                    keyboard.redraw()
                     pianoKey.callback = nil
                 }
 
+                ///Listen for cancel activity
                 DispatchQueue.global(qos: .background).async {
                     ///appmode is None at start since its set (for publish)  in main thread
                     while true {
@@ -121,18 +130,21 @@ public class ScalesModel : ObservableObject {
                     semaphore.signal()
                 }
                 semaphore.wait()
-//                if self.appMode != .scaleFollow {
+                
+                ///Change direction
+                let highest = self.scale.getMinMax().1
+                if pianoKey.midi == highest {
+                    self.setDirection(1)
+                }
+                scaleIndex += 1
+//                if scaleIndex > 2 {
 //                    break
 //                }
-                scaleIndex += 1
-                if scaleIndex > 2 {
-                    break
-                }
             }
             self.setAppMode(.none, "endOfFollow")
             DispatchQueue.main.async {
                 self.result = Result(type: .scaleFollow)
-                keyboard.clearAllKeyHilights()
+                keyboard.clearAllKeyHilights(except: nil)
             }
         }
     }
@@ -151,10 +163,6 @@ public class ScalesModel : ObservableObject {
             self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
         }
         
-        if mode == .scaleFollow {
-            scaleFollow()
-        }
-        
         DispatchQueue.main.async {
             self.appMode = mode
             if let score = self.score {
@@ -164,13 +172,15 @@ public class ScalesModel : ObservableObject {
                 }
             }
             self.scale.resetMatchedData()
-            
             let keyboard = PianoKeyboardModel.shared
             keyboard.resetScaleMatchState()
+            keyboard.clearAllKeyHilights(except: nil)
             self.setDirection(0)
             PianoKeyboardModel.shared.redraw()
+            if mode == .scaleFollow {
+                self.scaleFollow()
+            }
         }
-        
     }
     
     func getTempo() -> Int {

@@ -216,9 +216,15 @@ public struct TimeSliceView: View {
             let placement = note.getNoteDisplayCharacteristics(staff: staff)
             let offsetFromStaffMiddle = placement.offsetFromStaffMidline
             let accidental = placement.accidental
+
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
             let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
-            
+            if placement.showOctaveOverlay {
+                VStack {
+                    Text("...")
+                    Spacer()
+                }
+            }
             if statusTag == .rhythmError  {
                 Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)

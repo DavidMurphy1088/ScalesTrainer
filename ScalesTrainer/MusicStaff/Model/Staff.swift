@@ -132,7 +132,7 @@ public class NoteOffsetsInStaffByKey {
                 let accStr = offsetAndAccidental[1]
                 accidental = Int(accStr)
             }
-            let placement = NoteStaffPlacement(offsetFroMidLine: offset, accidental: accidental)
+            let placement = NoteStaffPlacement(offsetFroMidLine: offset, accidental: accidental, octaveOverlay: offset > 8)
             return placement
         }
         else {
@@ -209,7 +209,7 @@ public class Staff : ObservableObject, Identifiable {
         for noteValue in 0...highestNoteValue {
             //Fix - longer? - offset should be from middle C, notes should be displayed on both staffs from a single traversal of the score's timeslices
 
-            let placement = NoteStaffPlacement(offsetFroMidLine: 0)
+            let placement = NoteStaffPlacement(offsetFroMidLine: 0, octaveOverlay: false)
             noteStaffPlacement.append(placement)
             if noteValue < middleNoteValue - 6 * Note.OCTAVE || noteValue >= middleNoteValue + 6 * Note.OCTAVE {
                 continue
@@ -238,6 +238,10 @@ public class Staff : ObservableObject, Identifiable {
             offsetFromMidLine += (octave - 1) * 7 //8 offsets to next octave
             offsetFromMidLine += type == .treble ? 1 : -1
             placement.offsetFromStaffMidline = offsetFromMidLine
+            if offsetFromMidLine > 8 {
+                placement.offsetFromStaffMidline -= 7
+                placement.showOctaveOverlay = true
+            }
 
             placement.accidental = noteOffset.accidental
             noteStaffPlacement[noteValue] = placement
@@ -313,10 +317,17 @@ public class Staff : ObservableObject, Identifiable {
     //Tell a note how to display itself
     //Note offset from middle of staff is dependendent on the staff
     func getNoteViewPlacement(note:Note) -> NoteStaffPlacement {
-        let defaultPlacement = noteStaffPlacement[note.midiNumber]
+        let defaultPlacement:NoteStaffPlacement
+        if note.midiNumber < 0 || note.midiNumber > noteStaffPlacement.count-1 {
+            defaultPlacement = noteStaffPlacement[0]
+        }
+        else {
+            defaultPlacement = noteStaffPlacement[note.midiNumber]
+        }
         let placement = NoteStaffPlacement(offsetFroMidLine: defaultPlacement.offsetFromStaffMidline,
-                                           accidental: defaultPlacement.accidental
-        )
+                                           accidental: defaultPlacement.accidental,
+                                           octaveOverlay: defaultPlacement.showOctaveOverlay)
+        
         return placement
     }
 

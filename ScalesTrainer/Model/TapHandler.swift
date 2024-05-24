@@ -327,11 +327,13 @@ class ScaleTapHandler : TapHandlerProtocol  {
     func stopTapping() {
         Logger.shared.log(self, "PitchTapHandler stop")
         Logger.shared.calcValueLimits()        
+        let result = Result(type: .scaleFollow)
+        result.buildResult(feedbackType: .assessWithScale)
+        ScalesModel.shared.result = result
+        
         if saveTappingToFile {
             DispatchQueue.main.async {
-                let result = Result(type: .scaleFollow)
-                ScalesModel.shared.result = result
-                result.buildResult()
+
                 let calendar = Calendar.current
                 let month = calendar.component(.month, from: Date())
                 let day = calendar.component(.day, from: Date())

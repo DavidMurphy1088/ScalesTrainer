@@ -12,7 +12,7 @@ class Result {
         self.feedbackType = type
     }
     
-    func buildResult() {
+    func buildResult(feedbackType:AppMode) {
         //PianoKeyboardModel.shared.debug2("test datax")
         //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared
@@ -108,18 +108,18 @@ struct ResultView: View {
         return (correct, status)
     }
     
-    func scaleFollowStatus() -> (Bool, String) {
-        return (true, "finished scale follow")
-    }
+//    func scaleFollowStatus() -> (Bool, String) {
+//        return (true, "finished scale follow")
+//    }
     
     func status() -> (Bool, String)? {
-        if result.feedbackType == .assessWithScale {
+//        if result.feedbackType == .assessWithScale {
             return recordStatus()
-        }
-        if result.feedbackType == .scaleFollow {
-            return scaleFollowStatus()
-        }
-        return nil
+//        }
+//        if result.feedbackType == .scaleFollow {
+            //return scaleFollowStatus()
+//        }
+//        return nil
     }
     
     var body: some View {

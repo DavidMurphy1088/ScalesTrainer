@@ -47,10 +47,10 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(3)
                 
-                SpriteKitAudioView()
-                    .tabItem {
-                        Label("Game", systemImage: "house")
-                    }
+//                SpriteKitAudioView()
+//                    .tabItem {
+//                        Label("Game", systemImage: "house")
+//                    }
             }
             .onAppear() {
                 let shared = ScalesModel.shared
