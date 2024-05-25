@@ -14,9 +14,14 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {
-                ScalesView()
+                HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")
+                    }
+                    .tag(0)
+                ScalesView()
+                    .tabItem {
+                        Label("Scales", systemImage: "music.note.list")
                     }
                     .tag(0)
 
@@ -36,11 +41,11 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(2)
 
-                CallibrationViewOld()
-                    .tabItem {
-                        Label("OldCalibration", systemImage: "gear")
-                    }
-                    .tag(2)
+//                CallibrationViewOld()
+//                    .tabItem {
+//                        Label("OldCalibration", systemImage: "gear")
+//                    }
+//                    .tag(2)
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "gear")

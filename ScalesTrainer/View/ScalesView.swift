@@ -353,64 +353,69 @@ struct ScalesView: View {
     }
     
     var body: some View {
-        VStack() {
-            Text("Scales Trainer").font(.title).bold()
-            
-            SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-            
-            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
-                .frame(height: UIScreen.main.bounds.size.height / 4)
-                .commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-            
-            if !orientationObserver.orientation.isAnyLandscape {
-                LegendView()
-            }
-            
-            if !self.staffHidden {
-                VStack {
-                    if let score = scalesModel.score {
-                        ScoreView(score: score, widthPadding: false)
+        //NavigationView {
+            VStack() {
+                //CustomBackButton()
+                //Text("Scales Trainer").font(.title).bold()
+                
+                SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                
+                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
+                    .frame(height: UIScreen.main.bounds.size.height / 4)
+                    .commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                
+                if !orientationObserver.orientation.isAnyLandscape {
+                    LegendView()
+                }
+                
+                if !self.staffHidden {
+                    VStack {
+                        if let score = scalesModel.score {
+                            ScoreView(score: score, widthPadding: false)
+                        }
+                    }.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                }
+                
+                if scalesModel.appMode == .scaleFollow {
+                    HStack {
+                        //                    Spacer()
+                        //                    Toggle("With Sound", isOn: $scaleFollowWithSound)
+                        Spacer()
+                        ConfigView().padding()
+                        Button("Stop Following") {
+                            //                        scaleFollow = false
+                            scalesModel.setAppMode(.none, "followMode")
+                        }.padding()
+                        Spacer()
                     }
-                }.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-            }
-            
-            if scalesModel.appMode == .scaleFollow {
-                HStack {
-//                    Spacer()
-//                    Toggle("With Sound", isOn: $scaleFollowWithSound)
-                    Spacer()
-                    ConfigView().padding()
-                    Button("Stop Following") {
-//                        scaleFollow = false
-                        scalesModel.setAppMode(.none, "followMode")
-                    }.padding()
-                    Spacer()
                 }
-            }
-            else {
-                if let result = scalesModel.result {
-                    ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                else {
+                    if let result = scalesModel.result {
+                        ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    }
+                    
+                    PracticeView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    
+                    RecordingView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                 }
                 
-                PracticeView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                
-                RecordingView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                Spacer()
             }
-            
-            Spacer()
-        }
-        .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.shared)
-        }
-        ///Every time the view appears, not just the first.
-        .onAppear {
-            ///Required to get the score to paint on entry
-            scalesModel.setKeyAndScale()
-            pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            scalesModel.setAppMode(.none, "onAppear")
-        }
-        .onDisappear {
-        }
+            .sheet(isPresented: $showingTapData) {
+                TapDataView(keyboardModel: PianoKeyboardModel.shared)
+            }
+            ///Every time the view appears, not just the first.
+            .onAppear {
+                ///Required to get the score to paint on entry
+                scalesModel.setKeyAndScale()
+                pianoKeyboardViewModel.keyboardAudioManager = audioManager
+                scalesModel.setAppMode(.none, "onAppear")
+            }
+            .onDisappear {
+            }
+        //}
+        .navigationBarBackButtonHidden(true)
+        //.navigationBarItems(leading: CustomBackButton(label: "In scales View"))
     }
 }
 

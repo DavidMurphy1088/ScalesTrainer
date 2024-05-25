@@ -28,6 +28,9 @@
     "%@" : {
 
     },
+    "%@ - Select Scales Topic" : {
+
+    },
     "%lld" : {
 
     },
@@ -44,6 +47,9 @@
 
     },
     "Amplitude filter set at:%@" : {
+
+    },
+    "Back %@" : {
 
     },
     "Calibration" : {
@@ -138,9 +144,6 @@
     "Octaves:" : {
 
     },
-    "OldCalibration" : {
-
-    },
     "Played But Not in Scale" : {
 
     },
@@ -182,7 +185,16 @@
     "Scale start filter set at:%@" : {
 
     },
-    "Scales Trainer" : {
+    "Scales" : {
+
+    },
+    "Select a Scale Set1" : {
+
+    },
+    "Select a Scale Set2" : {
+
+    },
+    "Select a Scale Set3" : {
 
     },
     "Select Value" : {
