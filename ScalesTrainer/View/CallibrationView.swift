@@ -34,12 +34,12 @@ public struct CallibrationView: View {
             scalesModel.selectedKeyNameIndex = 0
             //1scalesModel.selectedOctavesIndex = 1
             scalesModel.setKeyAndScale()
-            scalesModel.setAppMode(.practiceMode, "Callibration Appear")
+            scalesModel.setMicMode(.onWithPractice, "Callibration Appear")
             self.amplitudeFilterAdjust = scalesModel.amplitudeFilter
         }
         .onDisappear() {
             scalesModel.saveSetting(type: .amplitudeFilter, value: scalesModel.amplitudeFilter)
-            scalesModel.setAppMode(.none, "Callibration Disappear")
+            scalesModel.setMicMode(.off, "Callibration Disappear")
         }
     }
 }

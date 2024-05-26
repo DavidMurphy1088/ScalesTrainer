@@ -14,32 +14,28 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {
+                ScalesView(activityMode: ActivityMode(name: "All", imageName: "", showStaff: false, showFingers: true))
+                    .tabItem {
+                        Label("Scales", systemImage: "music.note.list")
+                    }
+                    .tag(0)
+                
                 HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(0)
-                ScalesView()
-                    .tabItem {
-                        Label("Scales", systemImage: "music.note.list")
-                    }
-                    .tag(0)
 
-                SettingsView()
-                    .tabItem {
-                        Label("Settings", systemImage: "gear")
-                    }
-//
-//                StaveView()
-//                    .tabItem {
-//                        Label("Notes", systemImage: "house")
-//                    }
-//                    .tag(1)
                 CallibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "gear")
                     }
                     .tag(2)
+                
+                SettingsView()
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
 
 //                CallibrationViewOld()
 //                    .tabItem {

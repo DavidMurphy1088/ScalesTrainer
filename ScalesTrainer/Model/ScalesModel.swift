@@ -6,18 +6,19 @@ import Combine
 ///Practice -> user can use acoustic piano. keyboard display same as .none
 ///assessWithScale -> acoustic piano, note played and unplayed in scale are marked. Result is gradable. Result is displayed
 
-enum AppMode {
-    case none
-    case practiceMode
-    case scaleFollow
-    case assessWithScale
+enum MicMode {
+    case off
+    case onWithPractice
+    case onWithScale
 }
 
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     var scale:Scale
     
-    @Published var appMode:AppMode
+    //@Published
+    //var activityMode:ActivityMode
+    
     @Published var requiredStartAmplitude:Double? = nil
     @Published var amplitudeFilter:Double = 0.0
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -29,7 +30,7 @@ public class ScalesModel : ObservableObject {
     @Published var score:Score?
     var scoreHidden = false
     var recordedEvents:TapEvents? = nil
-    var staffHidden = false
+    
     var recordedTapsFileURL:URL? //File where recorded taps were written
     
     //let pianoKeyboardModel = PianoKeyboardModel.shared
@@ -45,7 +46,7 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120"]
+    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
     var selectedHandIndex = 0
     
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
@@ -58,7 +59,7 @@ public class ScalesModel : ObservableObject {
     let callibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
-    var recordDataMode = true
+    
     var onRecordingDoneCallback:(()->Void)?
     
     ///Speech
@@ -70,8 +71,40 @@ public class ScalesModel : ObservableObject {
     
     @Published var result:Result?
     
+    @Published private(set) var showStaff = false
+    func setShowStaff(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.showStaff = newValue
+            print("========= show staff set:\(self.showStaff)")
+        }
+    }
+    
+    @Published private(set) var showFingers = true
+    func setShowFingers(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.showFingers = newValue
+        }
+    }
+
+    @Published private(set) var followScale = false
+    func setFollowScale(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.followScale = newValue
+        }
+        if newValue == true {
+            setMicMode(.onWithPractice, "follow scale")
+            self.followScaleProcess(onDone: {
+                PianoKeyboardModel.shared.clearAllKeyHilights(except: nil)
+                self.setFollowScale(false)
+            })
+        }
+        else {
+            PianoKeyboardModel.shared.clearAllKeyHilights(except: nil)
+        }
+    }
+
     init() {
-        appMode = .none
+        //appMode = .none
         scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
@@ -87,17 +120,23 @@ public class ScalesModel : ObservableObject {
         self.callibrationTapHandler = nil
     }
     
-    func scaleFollow() {
+    ///Allow user to follow notes hilighted on the keyboard
+    ///Wait till user hits correct key before moving to and highlighting the next note
+    func followScaleProcess(onDone:(()->Void)?) {
         DispatchQueue.global(qos: .background).async {
             ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
+            ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.scaleNoteState.count > 0 {
                 self.audioManager.midiSampler.play(noteNumber: UInt8(self.scale.scaleNoteState[0].midi), velocity: 64, channel: 0)
-                sleep(1)
+                ///Without delay here the fist note wont hilight - no idea why
+                sleep(3)
             }
             
             let semaphore = DispatchSemaphore(value: 0)
             let keyboard = PianoKeyboardModel.shared
             var scaleIndex = 0
+            var highestHit = false
+            
             while true {
                 if scaleIndex >= self.scale.scaleNoteState.count {
                     break
@@ -108,10 +147,12 @@ public class ScalesModel : ObservableObject {
                     continue
                 }
                 let pianoKey = keyboard.pianoKeyModel[keyIndex]
+                keyboard.clearAllKeyHilights(except: keyIndex)
                 pianoKey.hilightKey = true
+                keyboard.redraw()
 
                 ///Listen for piano key pressed
-                keyboard.clearAllKeyHilights(except: keyIndex)
+                
                 pianoKey.callback = {
                     semaphore.signal()
                     keyboard.redraw()
@@ -123,9 +164,6 @@ public class ScalesModel : ObservableObject {
                     ///appmode is None at start since its set (for publish)  in main thread
                     while true {
                         sleep(1)
-                        if self.appMode != .scaleFollow {
-                            break
-                        }
                     }
                     semaphore.signal()
                 }
@@ -135,26 +173,26 @@ public class ScalesModel : ObservableObject {
                 let highest = self.scale.getMinMax().1
                 if pianoKey.midi == highest {
                     self.setDirection(1)
+                    highestHit = true
+                }
+                if scaleIndex > self.scale.scaleNoteState.count - 1 {
+                    break
                 }
                 scaleIndex += 1
-//                if scaleIndex > 2 {
-//                    break
-//                }
             }
-            self.setAppMode(.none, "endOfFollow")
-            DispatchQueue.main.async {
-                self.result = Result(type: .scaleFollow)
-                keyboard.clearAllKeyHilights(except: nil)
+            self.setMicMode(.off, "endOfFollow")
+            if let onDone = onDone {
+                onDone()
             }
         }
     }
     
-    func setAppMode(_ mode:AppMode, _ ctx:String) {
+    func setMicMode(_ mode:MicMode, _ ctx:String) {
         Logger.shared.log(self, "Set app mode ctx:\(ctx) mode:\(mode)")
         //self.appMode = mode
         self.audioManager.stopRecording()
         
-        if mode == AppMode.practiceMode || mode == AppMode.scaleFollow {
+        if mode == .onWithPractice {
             self.recordedEvents = nil
             DispatchQueue.main.async {
                 ScalesModel.shared.result = nil
@@ -162,9 +200,10 @@ public class ScalesModel : ObservableObject {
             let practiceTapHandler = PracticeTapHandler()
             self.audioManager.startRecordingMicrophone(tapHandler: practiceTapHandler, recordAudio: false)
         }
-        
+        //self.activityMode = mode
+        self.setDirection(0)
+
         DispatchQueue.main.async {
-            self.appMode = mode
             if let score = self.score {
                 DispatchQueue.main.async {
                     score.resetTapToValueRatios()
@@ -175,11 +214,10 @@ public class ScalesModel : ObservableObject {
             let keyboard = PianoKeyboardModel.shared
             keyboard.resetScaleMatchState()
             keyboard.clearAllKeyHilights(except: nil)
-            self.setDirection(0)
-            PianoKeyboardModel.shared.redraw()
-            if mode == .scaleFollow {
-                self.scaleFollow()
-            }
+             PianoKeyboardModel.shared.redraw()
+//            if mode == .scaleFollow {
+//                self.scaleFollow()
+//            }
         }
     }
     
@@ -257,7 +295,7 @@ public class ScalesModel : ObservableObject {
             return
         }
 
-        MetronomeModel.shared.startTimer(notified: AudioManager.shared, onDone: {
+        MetronomeModel.shared.startTimer(notified: AudioManager.shared, tempoMultiplier: 1.0, onDone: {
             if self.speechListenMode {
                 sleep(1)
                 self.speechManager.speak("Please start your scale")
@@ -272,7 +310,7 @@ public class ScalesModel : ObservableObject {
                 self.recordingScale = true
             }
             let pitchTapHandler = ScaleTapHandler(requiredStartAmplitude: requiredAmplitude,
-                                                  saveTappingToFile: ScalesModel.shared.recordDataMode,
+                                                  saveTappingToFile: Settings.shared.recordDataMode,
                                                   scale:self.scale)
             if !testData {
                 self.audioManager.startRecordingMicrophone(tapHandler: pitchTapHandler, recordAudio: true)
@@ -372,10 +410,6 @@ public class ScalesModel : ObservableObject {
             self.selectedTempoIndex = index
             //PianoKeyboardModel.shared.setFingers(direction: index)
         //}
-    }
-
-    func setRecordDataMode(_ way:Bool) {
-        self.recordDataMode = way
     }
     
     func setSpeechListenMode(_ way:Bool) {

@@ -58,13 +58,14 @@ class MetronomeModel {
         }
     }
     
-    public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
+    public func startTimer(notified: MetronomeTimerNotificationProtocol, tempoMultiplier:Double, onDone:(() -> Void)?) {
         self.isTiming = true
         for player in self.audioPlayers {
             audioManager.mixer.addInput(player)
         }
         timerTickerNumber = 0
-        let delay = (60.0 / Double(scalesModel.getTempo())) * 1000000 * 0.5
+        var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
+        delay = delay * tempoMultiplier
         notified.metronomeStart()
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if false {

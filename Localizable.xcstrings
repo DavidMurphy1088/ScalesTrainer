@@ -4,10 +4,7 @@
     " " : {
 
     },
-    "  %@  " : {
-
-    },
-    "  Record your scale  " : {
+    " %@ " : {
 
     },
     " %lld" : {
@@ -28,7 +25,7 @@
     "%@" : {
 
     },
-    "%@ - Select Scales Topic" : {
+    "%@ Activities" : {
 
     },
     "%lld" : {
@@ -52,19 +49,19 @@
     "Back %@" : {
 
     },
+    "Backing Off" : {
+
+    },
+    "Backing On" : {
+
+    },
     "Calibration" : {
-
-    },
-    "Calibration is required in Settings" : {
-
-    },
-    "Close Tap Data" : {
 
     },
     "Correctly Played" : {
 
     },
-    "Finger Number" : {
+    "Finger" : {
 
     },
     "Follow Scale" : {
@@ -73,16 +70,10 @@
     "Hand:" : {
 
     },
-    "Hear Backing" : {
+    "Hear The Scale" : {
 
     },
-    "Hear Scale" : {
-
-    },
-    "Hear Your Scale" : {
-
-    },
-    "Hide Notes" : {
+    "Hide Fingers" : {
 
     },
     "Hide Staff" : {
@@ -126,16 +117,13 @@
         }
       }
     },
+    "Load" : {
+
+    },
     "Log" : {
 
     },
     "No" : {
-
-    },
-    "Not in Scale" : {
-
-    },
-    "Note is Playing" : {
 
     },
     "Notification Status" : {
@@ -156,6 +144,12 @@
     "Record Data Mode" : {
 
     },
+    "Record your scale" : {
+
+    },
+    "Record Your Scale" : {
+
+    },
     "Required Start Amplitude:%@    ampFilter:%@" : {
       "localizations" : {
         "en" : {
@@ -165,6 +159,9 @@
           }
         }
       }
+    },
+    "Save" : {
+
     },
     "Scale" : {
       "localizations" : {
@@ -188,13 +185,7 @@
     "Scales" : {
 
     },
-    "Select a Scale Set1" : {
-
-    },
-    "Select a Scale Set2" : {
-
-    },
-    "Select a Scale Set3" : {
+    "Select Syllabus" : {
 
     },
     "Select Value" : {
@@ -203,13 +194,10 @@
     "Settings" : {
 
     },
-    "Show Notes" : {
+    "Show Fingers" : {
 
     },
     "Show Staff" : {
-
-    },
-    "Show Tap Data" : {
 
     },
     "Speech Listen" : {
@@ -227,16 +215,16 @@
     "Stop" : {
 
     },
-    "Stop Backing" : {
+    "Stop Following" : {
 
     },
-    "Stop Following" : {
+    "Stop Following Scale" : {
 
     },
     "Stop Hearing Scale" : {
 
     },
-    "Stop Hearing Your Scale" : {
+    "Stop Playing Your Scale" : {
 
     },
     "Stop Practicing" : {

@@ -2,17 +2,17 @@ import Foundation
 import SwiftUI
 
 class Result {
-    let feedbackType:AppMode
+    let feedbackType:ActivityMode
     var missedCountAsc = 0
     var missedCountDesc = 0
     var wrongCountAsc = 0
     var wrongCountDesc = 0
     
-    init(type:AppMode) {
+    init(type:ActivityMode) {
         self.feedbackType = type
     }
     
-    func buildResult(feedbackType:AppMode) {
+    func buildResult(feedbackType:ActivityMode) {
         //PianoKeyboardModel.shared.debug2("test datax")
         //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared

@@ -29,6 +29,8 @@ struct SpeechView : View {
 
 struct TestDataModeView : View {
     @ObservedObject private var scalesModel = ScalesModel.shared
+    var settings = Settings.shared
+
     @State var dataMode = false
     var body: some View {
         HStack {
@@ -38,7 +40,7 @@ struct TestDataModeView : View {
             .frame(width: UIScreen.main.bounds.width * 0.15)
             .padding()
             .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-            .onChange(of: dataMode, {scalesModel.setRecordDataMode(dataMode)})
+            .onChange(of: dataMode, {settings.recordDataMode = dataMode})
             .padding()
         }
     }
@@ -153,6 +155,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 
 struct SettingsView: View {
     let scalesModel = ScalesModel.shared
+    let settings = Settings.shared
     var body: some View {
         VStack {
             VStack {
@@ -163,6 +166,13 @@ struct SettingsView: View {
                 TestDataModeView()
                 Spacer()
                 //MetronomeView()
+                Button("Save") {
+                    settings.save()
+                }
+                Button("Load") {
+                    settings.load()
+                }
+                .padding()
             }
             if let req = scalesModel.requiredStartAmplitude {
                 Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")

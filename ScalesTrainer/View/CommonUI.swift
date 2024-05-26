@@ -20,6 +20,19 @@ struct CommonFrameStyle: ViewModifier {
     }
 }
 
+struct Hilighted: ViewModifier {
+    var backgroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(backgroundColor)
+            )
+            .foregroundColor(.white)
+            .padding()
+    }
+}
+
 extension View {
     func commonFrameStyle(backgroundColor: Color = .white,
                           cornerRadius: CGFloat = 10,
@@ -30,4 +43,9 @@ extension View {
                                   borderColor: borderColor,
                                   borderWidth: borderWidth))
     }
+    
+    func hilighted(backgroundColor: Color = .green) -> some View {
+        modifier(Hilighted(backgroundColor: backgroundColor))
+    }
+
 }

@@ -120,7 +120,7 @@ public struct ClassicStyle {
                 ))
                 
                 /// ----------- Note name ----------
-                if !scalesModel.staffHidden {
+                if scalesModel.showFingers {
                     if key.finger.count > 0 {
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(.black),
@@ -153,14 +153,14 @@ public struct ClassicStyle {
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
                 ///Show finger break only outside practice or record
-                if scalesModel.appMode == .assessWithScale {
+                if false { //scalesModel.appMode == .assessWithScale {
                     let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }
                 
                 ///----------- Finger number
-                if !scalesModel.staffHidden {
+                if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         context.draw(
@@ -219,19 +219,11 @@ public struct ClassicStyle {
                 let pathInset = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius / 2.0)
                     .path(in: insetRect)
 
-//                let gradientInset = Gradient(colors: [
-//                    keyModel.midi % 12 == 0 ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
-//                    sharpFlatColor(key.touchDown),
-//                ])
                 let gradientInset = Gradient(colors: [
                     sharpFlatColor(key.touchDown),
                     keyModel.hilightKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     
                 ])
-//                let gradientInset = Gradient(colors: [
-//                    Color(red: 0.3, green: 0.3, blue: 0.3),
-//                    sharpFlatColor(key.touchDown),
-//                ])
                 
                 context.fill(pathInset, with: .linearGradient(
                     gradientInset,
@@ -240,7 +232,7 @@ public struct ClassicStyle {
                 ))
 
                 ///------------- Note name -----
-                if !scalesModel.staffHidden {
+                if scalesModel.showFingers {
                     if key.finger.count > 0 {
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(.white),
@@ -270,7 +262,7 @@ public struct ClassicStyle {
                 
                 ///----------- Note Status-----------
                 //if scalesModel.appMode == .practicingMode || scalesModel.appMode == .none {
-                if scalesModel.appMode == .assessWithScale {
+                if false { //scalesModel.appMode == .assessWithScale {
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
@@ -281,11 +273,11 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Finger number
-                if !scalesModel.staffHidden {
+                if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
 
-                        if !scalesModel.staffHidden {
+                        if !scalesModel.showStaff {
                             if false {
                                 ///White background for finger number on a black key
                                 ///23May dropped and instead make black keys less black

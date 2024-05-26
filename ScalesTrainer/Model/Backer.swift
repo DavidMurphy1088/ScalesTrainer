@@ -15,31 +15,60 @@ class Backer :MetronomeTimerNotificationProtocol{
     
     func metronomeStart() {
         let scale = ScalesModel.shared.scale
+        let key = scale.key
         var root = scale.scaleNoteState[0].midi
         root -= 12
-        chordRoots.append(root)
-        chordRoots.append(root - 3)
-        chordRoots.append(root - 7)
-        chordRoots.append(root - 5)
+        if key.keyType == .major {
+            chordRoots.append(root)
+            chordRoots.append(root - 3) //ii minoir
+            chordRoots.append(root - 7) //IV
+            chordRoots.append(root - 5) //V
+        }
+        else {
+            chordRoots.append(root) // i
+            chordRoots.append(root - 7) //iv
+            chordRoots.append(root - 5) //V
+            chordRoots.append(root) //i
+        }
     }
     
     func metronomeStop() {
     }
     
     func getMidi(bar:Int, beat:Int) -> Int {
-        //let key = chords[bar % 4]
+        let scale = ScalesModel.shared.scale
         let root = chordRoots[bar % 4]
         var midi = 0
-        switch beat {
-        case 1:
-            midi = root + 7
-        case 2:
-            midi = bar % 4 == 1 ? root + 3 : root + 4
-            //midi = root + 4
-        case 3:
-            midi = root + 7
-        default:
-            midi = root
+        ///Make Alberti pattern
+        if scale.key.keyType == .major {
+            switch beat {
+            case 0:
+                midi = root
+            case 1:
+                midi = root + 7
+            case 2:
+                midi = bar % 4 == 1 ? root + 3 : root + 4
+                //midi = root + 4
+            case 3:
+                midi = root + 7
+            default:
+                midi = root
+            }
+        }
+        else {
+            switch beat {
+            case 0:
+                midi = root
+            case 1:
+                midi = root + 7
+            case 2:
+                midi = [0,1,3].contains(bar % 4) ? root + 3 : root + 4
+                //midi = root + 4
+            case 3:
+                midi = root + 7
+            default:
+                midi = root
+            }
         }
         return midi
     }
@@ -50,7 +79,7 @@ class Backer :MetronomeTimerNotificationProtocol{
         var midi = 0
         let bar = callNum / 4
         midi = getMidi(bar: bar, beat: beat)
-        audioManager.midiSampler.play(noteNumber: MIDINoteNumber(midi), velocity: 32, channel: 0)
+        audioManager.midiSampler.play(noteNumber: MIDINoteNumber(midi), velocity: 60, channel: 0)
         callNum += 1
         return false
     }
