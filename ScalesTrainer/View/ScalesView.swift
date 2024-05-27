@@ -5,7 +5,8 @@ struct ScalesView: View {
 
     @ObservedObject private var scalesModel = ScalesModel.shared
     @StateObject private var orientationObserver = DeviceOrientationObserver()
-
+    let settings = Settings.shared
+    
     private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
     @ObservedObject private var speech = SpeechManager.shared
@@ -24,7 +25,6 @@ struct ScalesView: View {
     
     @State var amplitudeFilter: Double = 0.00
 
-    //@State var playingSampleFile = false
     @State var hearingGivenScale = false
     @State var hearingUserScale = false
     @State var hearingBacking = false
@@ -32,14 +32,13 @@ struct ScalesView: View {
     @State var showingTapData = false
     @State var recordingScale = false
 
-    //@State var speechAudioStarted = false
     @State var showResultPopup = false
     @State var notesHidden = false
     @State var askKeepTapsFile = false
 
-    //@State var scaleFollow = false
     @State var scaleFollowWithSound = false
-
+    @State var showingFeedback = false
+    
     init(activityMode:ActivityMode) {
         //self.staffHidden = staffHidden
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
@@ -160,7 +159,7 @@ struct ScalesView: View {
             
             if followEnabled {
                 Spacer()
-                Button(scalesModel.followScale ? "Stop Following" : "Follow Scale") {
+                Button(scalesModel.followScale ? "Stop Following" : "Follow The Scale") {
                     scalesModel.setFollowScale(!scalesModel.followScale)
                     //if scalesModel.followScale
                     //scalesModel.setAppMode(scalesModel.appMode == .none ? .scaleFollow : .none, "followMode")
@@ -271,11 +270,8 @@ struct ScalesView: View {
     
     var body: some View {
         VStack() {
-            //CustomBackButton()
-            //Text("Scales Trainer").font(.title).bold()
-            
             SelectScaleView().commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-            
+            Text(scalesModel.scale.getScaleName()).font(.title).padding()//.hilighted()
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / (orientationObserver.orientation.isPortrait ? 4 : 3))
                 .commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
@@ -323,8 +319,8 @@ struct ScalesView: View {
                         .commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                 }
             }
-            
-            if false {
+            Text(scalesModel.scale.getScaleName())
+            if settings.recordDataMode {
                 Spacer()
                 Button("READ_TEST_DATA") {
                     scalesModel.result = nil
@@ -340,7 +336,17 @@ struct ScalesView: View {
         }
         .sheet(isPresented: $showingTapData) {
             TapDataView(keyboardModel: PianoKeyboardModel.shared)
+        }        
+        
+        .alert(isPresented: $showingFeedback) {
+            Alert(
+                title: Text("Followed \(scalesModel.scale.getScaleName())"),
+                message: Text(scalesModel.userFeedback ?? "None"),
+                dismissButton: .default(Text("OK"))
+            )
         }
+        .onChange(of: scalesModel.userFeedback, {showingFeedback = scalesModel.userFeedback != nil})
+        
         ///Every time the view appears, not just the first.
         .onAppear {
             ///Required to get the score to paint on entry

@@ -138,6 +138,16 @@ struct ResultView: View {
     }
 }
 
+//struct UserFeedbackView: View {
+//    let scalesModel = ScalesModel.shared
+//    let feedbackMsg:String
+//    //var keyboardModel:PianoKeyboardModel
+//    
+//    var body: some View {
+//        Text(feedbackMsg)
+//    }
+//}
+
 struct TapDataView: View {
     let scalesModel = ScalesModel.shared
     var keyboardModel:PianoKeyboardModel

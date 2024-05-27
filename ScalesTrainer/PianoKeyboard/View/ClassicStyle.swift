@@ -277,7 +277,7 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
 
-                        if !scalesModel.showStaff {
+                        //if !scalesModel.showStaff {
                             if false {
                                 ///White background for finger number on a black key
                                 ///23May dropped and instead make black keys less black
@@ -294,7 +294,7 @@ public struct ClassicStyle {
                                     .font(.title).bold(),
                                 at: point
                             )
-                        }
+                        //}
                         ///Draw a midline thru the finger number to indicate a finger break
 //                        if scaleNote.fingerSequenceBreak {
 //                            let width = rect.width * 0.2

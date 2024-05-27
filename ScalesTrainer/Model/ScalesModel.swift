@@ -16,9 +16,6 @@ public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     var scale:Scale
     
-    //@Published
-    //var activityMode:ActivityMode
-    
     @Published var requiredStartAmplitude:Double? = nil
     @Published var amplitudeFilter:Double = 0.0
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -71,6 +68,13 @@ public class ScalesModel : ObservableObject {
     
     @Published var result:Result?
     
+    @Published var userFeedback:String? = nil
+    func setUserFeedback(_ msg:String) {
+        DispatchQueue.main.async {
+            self.userFeedback = msg
+        }
+    }
+
     @Published private(set) var showStaff = false
     func setShowStaff(_ newValue: Bool) {
         DispatchQueue.main.async {
@@ -89,11 +93,12 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var followScale = false
     func setFollowScale(_ newValue: Bool) {
         DispatchQueue.main.async {
+            print("========= SET FOLLOW", newValue)
             self.followScale = newValue
         }
         if newValue == true {
             setMicMode(.onWithPractice, "follow scale")
-            self.followScaleProcess(onDone: {
+            self.followScaleProcess(onDone: {cancelled in 
                 PianoKeyboardModel.shared.clearAllKeyHilights(except: nil)
                 self.setFollowScale(false)
             })
@@ -105,7 +110,7 @@ public class ScalesModel : ObservableObject {
 
     init() {
         //appMode = .none
-        scale = Scale(key: Key(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
+        scale = Scale(key: ScaleRoot(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
         }
@@ -122,7 +127,7 @@ public class ScalesModel : ObservableObject {
     
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note
-    func followScaleProcess(onDone:(()->Void)?) {
+    func followScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async {
             ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
             ///Wait for note to die down otherwise it triggers the first note detection
@@ -136,6 +141,7 @@ public class ScalesModel : ObservableObject {
             let keyboard = PianoKeyboardModel.shared
             var scaleIndex = 0
             var highestHit = false
+            var cancelled = false
             
             while true {
                 if scaleIndex >= self.scale.scaleNoteState.count {
@@ -164,10 +170,17 @@ public class ScalesModel : ObservableObject {
                     ///appmode is None at start since its set (for publish)  in main thread
                     while true {
                         sleep(1)
+                        if !self.followScale {
+                            cancelled = true
+                            break
+                        }
                     }
                     semaphore.signal()
                 }
                 semaphore.wait()
+                if !self.followScale {
+                    break
+                }
                 
                 ///Change direction
                 let highest = self.scale.getMinMax().1
@@ -178,11 +191,15 @@ public class ScalesModel : ObservableObject {
                 if scaleIndex > self.scale.scaleNoteState.count - 1 {
                     break
                 }
+
                 scaleIndex += 1
             }
             self.setMicMode(.off, "endOfFollow")
             if let onDone = onDone {
-                onDone()
+                if !cancelled {
+                    self.setUserFeedback("😊 Good Job 😊")
+                }
+                onDone(cancelled)
             }
         }
     }
@@ -269,7 +286,7 @@ public class ScalesModel : ObservableObject {
         let name = self.keyNameValues[self.selectedKeyNameIndex]
         let scaleTypeName = self.scaleTypeNames[self.selectedScaleTypeNameIndex]
         let keyType:KeyType = scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
-        self.scale = Scale(key: Key(name: name, keyType: keyType),
+        self.scale = Scale(key: ScaleRoot(name: name, keyType: keyType),
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: self.octaveNumberValues[self.selectedOctavesIndex],
                            hand: self.selectedHandIndex)

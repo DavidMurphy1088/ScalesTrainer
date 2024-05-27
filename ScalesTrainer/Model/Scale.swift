@@ -8,8 +8,9 @@ public enum ScaleType {
     case arpeggio
     case chromatic
 }
+///In terms of arpeggios: major, minor, dominant 7ths and diminished 7ths.
 
-public class ScaleNoteState { 
+public class ScaleNoteState {
     let id = UUID()
     let sequence:Int
     var midi:Int
@@ -27,13 +28,13 @@ public class ScaleNoteState {
 
 public class Scale { 
     let id = UUID()
-    private(set) var key:Key
+    private(set) var key:ScaleRoot
     private(set) var scaleNoteState:[ScaleNoteState]
     private var metronomeAscending = true
     let octaves:Int
     let scaleType:ScaleType
 
-    public init(key:Key, scaleType:ScaleType, octaves:Int, hand:Int) {
+    public init(key:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
         self.key = key
         self.octaves = octaves
         self.scaleType = scaleType
@@ -87,9 +88,9 @@ public class Scale {
 
         ///All are low and some drop off 88-key keyboard
         if hand == 1 {
-            if octaves == 4 {
+            //if octaves == 4 {
                 nextMidi -= 12
-            }
+            //}
         }
         
         ///Set midi values in scale
@@ -109,7 +110,8 @@ public class Scale {
         if scaleType == .chromatic {
             scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
         }
-
+        if scaleType == .arpeggio {
+        }
         var sequence = 0
         for oct in 0..<octaves {
             for i in 0..<scaleOffsets.count {
@@ -153,7 +155,7 @@ public class Scale {
             setFingersLeftHand()
         }
         setFingerBreaks(hand: hand)
-        debug111("Scale Constructor key:\(key.name) hand:\(hand)")
+        ///debug111("Scale Constructor key:\(key.name) hand:\(hand)")
     }
     
     func debug111(_ msg:String) {
@@ -244,7 +246,6 @@ public class Scale {
             }
             lastFinger = self.scaleNoteState[i].finger
         }
-
     }
     
     func getMinMax() -> (Int, Int) {
@@ -378,6 +379,11 @@ public class Scale {
         scaleNoteState[scaleNoteState.count-1].finger = fingerPattern[fingerPattern.count-1] + 1
     }
 
+    func getScaleName() -> String {
+        var name = key.name + " " + Scale.getTypeName(type: self.scaleType)
+        return name
+    }
+    
     static func getTypeName(type:ScaleType) -> String {
         var name = ""
         switch type {

@@ -42,6 +42,7 @@ struct ActivityModeView: View {
         ActivityMode(name: "Practice The Scale", imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Practice Journal", imageName: "", showStaff: true, showFingers: true),
+        ActivityMode(name: "Random Choice", imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Test", imageName: "", showStaff: false, showFingers: false),
         ActivityMode(name: "Theory", imageName: "", showStaff: true, showFingers: true)
     ]

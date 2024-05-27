@@ -14,81 +14,81 @@ public class Key {
     var name:String
     let keySignature:KeySignature
     
-    init(sharps:Int=0, flats:Int=0, keyType:KeyType) {
-        self.sharps = sharps
-        self.flats = flats
-        self.keyType = keyType
-        if keyType == .minor {
-            if flats == 0 {
-                switch sharps {
-                case 1:
-                    name = "E"
-                case 2:
-                    name = "B"
-                case 3:
-                    name = "F#"
-                case 4:
-                    name = "C#"
-                case 5:
-                    name = "A♭"
-                default:
-                    name = "A"
-                }
-            }
-            else {
-                switch flats {
-                case 2:
-                    name = "G"
-                case 3:
-                    name = "C"
-                case 4:
-                    name = "F"
-                case 5:
-                    name = "B♭"
-                case 6:
-                    name = "E♭"
-                case 7:
-                    name = "D♭"
-                default:
-                    name = "D"
-                }
-            }
-        }
-        else {
-            if flats == 0 {
-                switch sharps {
-                case 1:
-                    name = "G"
-                case 2:
-                    name = "D"
-                case 3:
-                    name = "A"
-                case 4:
-                    name = "E"
-                case 5:
-                    name = "B"
-                default:
-                    name = "C"
-                }
-            }
-            else {
-                switch flats {
-                case 2:
-                    name = "B♭"
-                case 3:
-                    name = "E♭"
-                case 4:
-                    name = "A♭"
-                case 5:
-                    name = "D♭"
-                default:
-                    name = "F"
-                }
-            }
-        }
-        //self.keySignature = KeySignature(keyType: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
-        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
-    }
+//    init(sharps:Int=0, flats:Int=0, keyType:KeyType) {
+//        self.sharps = sharps
+//        self.flats = flats
+//        self.keyType = keyType
+//        if keyType == .minor {
+//            if flats == 0 {
+//                switch sharps {
+//                case 1:
+//                    name = "E"
+//                case 2:
+//                    name = "B"
+//                case 3:
+//                    name = "F#"
+//                case 4:
+//                    name = "C#"
+//                case 5:
+//                    name = "A♭"
+//                default:
+//                    name = "A"
+//                }
+//            }
+//            else {
+//                switch flats {
+//                case 2:
+//                    name = "G"
+//                case 3:
+//                    name = "C"
+//                case 4:
+//                    name = "F"
+//                case 5:
+//                    name = "B♭"
+//                case 6:
+//                    name = "E♭"
+//                case 7:
+//                    name = "D♭"
+//                default:
+//                    name = "D"
+//                }
+//            }
+//        }
+//        else {
+//            if flats == 0 {
+//                switch sharps {
+//                case 1:
+//                    name = "G"
+//                case 2:
+//                    name = "D"
+//                case 3:
+//                    name = "A"
+//                case 4:
+//                    name = "E"
+//                case 5:
+//                    name = "B"
+//                default:
+//                    name = "C"
+//                }
+//            }
+//            else {
+//                switch flats {
+//                case 2:
+//                    name = "B♭"
+//                case 3:
+//                    name = "E♭"
+//                case 4:
+//                    name = "A♭"
+//                case 5:
+//                    name = "D♭"
+//                default:
+//                    name = "F"
+//                }
+//            }
+//        }
+//        //self.keySignature = KeySignature(keyType: flats > 0 ? .flat : .sharp, count: flats > 0 ? flats : sharps)
+//        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
+//    }
     
     init(name:String, keyType:KeyType) {
         self.keyType = keyType

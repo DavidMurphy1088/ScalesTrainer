@@ -26,25 +26,72 @@ struct SpeechView : View {
     }
 }
 
-
-struct TestDataModeView : View {
-    @ObservedObject private var scalesModel = ScalesModel.shared
-    var settings = Settings.shared
-
-    @State var dataMode = false
+struct SettingsView: View {
+    let scalesModel = ScalesModel.shared
+    let settings = Settings.shared
+    @State var recordDataMode = Settings.shared.recordDataMode
+    
     var body: some View {
-        HStack {
-            HStack() {
-                Toggle("Record Data Mode", isOn: $dataMode)
+        VStack {
+            VStack {
+                //Spacer()
+                //MicrophoneView()
+                SpeechView()
+                
+                Spacer()
+                HStack() {
+                    Toggle("Record Data Mode", isOn: $recordDataMode)
+                }
+                .frame(width: UIScreen.main.bounds.width * 0.25)
+                //.padding()
+                //.background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
+                .onChange(of: recordDataMode, {
+                    settings.recordDataMode = recordDataMode
+                    settings.save()
+                })
+                .padding()
+                
+                Spacer()
+                //MetronomeView()
+                Button("Save") {
+                    settings.save()
+                }
+                Button("Load") {
+                    settings.load()
+                }
+                .padding()
             }
-            .frame(width: UIScreen.main.bounds.width * 0.15)
-            .padding()
-            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-            .onChange(of: dataMode, {settings.recordDataMode = dataMode})
-            .padding()
+            if let req = scalesModel.requiredStartAmplitude {
+                Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
+            }
+
         }
     }
 }
+
+
+//
+//struct TestDataModeView : View {
+//    @ObservedObject private var scalesModel = ScalesModel.shared
+//    var settings = Settings.shared
+//
+//    @State var dataMode = Settings.shared.recordDataMode
+//    var body: some View {
+//        HStack {
+//            HStack() {
+//                Toggle("Record Data Mode", isOn: $dataMode)
+//            }
+//            .frame(width: UIScreen.main.bounds.width * 0.15)
+//            .padding()
+//            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
+//            .onChange(of: dataMode, {
+//                settings.recordDataMode = dataMode
+//                settings.save()
+//            })
+//            .padding()
+//        }
+//    }
+//}
 
 func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
     var availableMicrophones: [AVAudioSessionPortDescription] = []
@@ -69,7 +116,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //    private var engine = AudioEngine()
 //    private var mic: AudioEngine.InputNode!
 //    private var mixer: Mixer!
-//    
+//
 //    @Published var availableMicrophones: [AVAudioSessionPortDescription] = []
 //    @Published var selectedMicrophone: AVAudioSessionPortDescription? = nil
 //
@@ -78,7 +125,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //        setupAudioKit()
 //        fetchAvailableMicrophones()
 //    }
-//    
+//
 //    private func setupAudioSession() {
 //        let audioSession = AVAudioSession.sharedInstance()
 //        do {
@@ -88,7 +135,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //            print("Failed to set up audio session: \(error)")
 //        }
 //    }
-//    
+//
 //    private func setupAudioKit() {
 //        mic = engine.input
 //        mixer = Mixer(mic)
@@ -99,7 +146,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //            print("AudioKit did not start: \(error)")
 //        }
 //    }
-//    
+//
 //    func fetchAvailableMicrophones() {
 //        let audioSession = AVAudioSession.sharedInstance()
 //        do {
@@ -114,7 +161,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //            print("====MIC", mic.portName, mic.portType, mic.selectedDataSource)
 //        }
 //    }
-//    
+//
 //    func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //        let audioSession = AVAudioSession.sharedInstance()
 //        do {
@@ -129,7 +176,7 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //
 //struct MicrophoneView: View {
 //    @StateObject var audioManager = MicAudioManager()
-//    
+//
 //    var body: some View {
 //        VStack {
 //            List(audioManager.availableMicrophones, id: \.uid) { mic in
@@ -152,32 +199,3 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
 //        }
 //    }
 //}
-
-struct SettingsView: View {
-    let scalesModel = ScalesModel.shared
-    let settings = Settings.shared
-    var body: some View {
-        VStack {
-            VStack {
-                //Spacer()
-                //MicrophoneView()
-                SpeechView()
-                Spacer()
-                TestDataModeView()
-                Spacer()
-                //MetronomeView()
-                Button("Save") {
-                    settings.save()
-                }
-                Button("Load") {
-                    settings.load()
-                }
-                .padding()
-            }
-            if let req = scalesModel.requiredStartAmplitude {
-                Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
-            }
-
-        }
-    }
-}

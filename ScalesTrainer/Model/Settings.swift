@@ -1,16 +1,18 @@
 import Foundation
 
-public class Settings : Codable {
-    static let shared = Settings()
+public class Settings : Codable  {
+    
+    static var shared = Settings()
     var recordDataMode = false
     
-    func toJSON() -> String? {
+    init() {
+        load()
+    }
+    
+    private func toJSON() -> String? {
         do {
             let jsonEncoder = JSONEncoder()
-            //jsonEncoder.outputFormatting = .prettyPrinted  // Optional: to pretty-print the JSON
             let jsonData = try jsonEncoder.encode(self)
-            
-            // Step 4: Convert JSON data to a string (optional, for display purposes)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 print(jsonString)
                 return jsonString
@@ -23,6 +25,7 @@ public class Settings : Codable {
     
     func save() {
         let str = toJSON()
+        print("Settings save ====", recordDataMode)
         UserDefaults.standard.set(str, forKey: "settings")
     }
     
@@ -32,8 +35,9 @@ public class Settings : Codable {
                 do {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
-                    shared = decoded
-                    print(decoded.recordDataMode)
+                    let loaded = decoded
+                    self.recordDataMode = loaded.recordDataMode
+                    print("Settings load ====", decoded.recordDataMode)
                 } catch {
                     Logger.shared.reportError(self, "load:" + error.localizedDescription)
                 }

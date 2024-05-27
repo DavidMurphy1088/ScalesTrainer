@@ -64,7 +64,10 @@
     "Finger" : {
 
     },
-    "Follow Scale" : {
+    "Follow The Scale" : {
+
+    },
+    "Followed %@" : {
 
     },
     "Hand:" : {
@@ -130,6 +133,9 @@
 
     },
     "Octaves:" : {
+
+    },
+    "OK" : {
 
     },
     "Played But Not in Scale" : {
