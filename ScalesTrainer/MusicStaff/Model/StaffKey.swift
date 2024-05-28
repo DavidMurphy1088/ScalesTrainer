@@ -7,12 +7,12 @@ import UIKit
 public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
     public let id = UUID()
     public var keySig: KeySignature
-    public var type: KeyType
+    public var type: StaffKeyType
     
     ///The midi closest to middle C
     public var centralMidi = 0
     
-    public enum KeyType {
+    public enum StaffKeyType {
         case major
         case minor
     }
@@ -22,7 +22,7 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         (lhs.keySig.accidentalType == rhs.keySig.accidentalType)
     }
     
-    public init(type: KeyType, keySig:KeySignature) {
+    public init(type: StaffKeyType, keySig:KeySignature) {
         self.keySig = keySig
         self.type = type
         if keySig.accidentalType == .sharp {
@@ -143,15 +143,15 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         if keySig.accidentalType == AccidentalType.sharp {
             switch self.keySig.accidentalCount {
             case 0:
-                desc = self.type == KeyType.major ? "C" : "A"
+                desc = self.type == StaffKeyType.major ? "C" : "A"
             case 1:
-                desc = self.type == KeyType.major ? "G" : "E"
+                desc = self.type == StaffKeyType.major ? "G" : "E"
             case 2:
-                desc = self.type == KeyType.major ? "D" : "B"
+                desc = self.type == StaffKeyType.major ? "D" : "B"
             case 3:
-                desc = self.type == KeyType.major ? "A" : "F#"
+                desc = self.type == StaffKeyType.major ? "A" : "F#"
             case 4:
-                desc = self.type == KeyType.major ? "E" : "C#"
+                desc = self.type == StaffKeyType.major ? "E" : "C#"
             default:
                 desc = "unknown"
             }
@@ -159,30 +159,30 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         else {
             switch self.keySig.accidentalCount {
             case 0:
-                desc = self.type == KeyType.major ? "C" : "A"
+                desc = self.type == StaffKeyType.major ? "C" : "A"
             case 1:
-                desc = self.type == KeyType.major ? "F" : "D"
+                desc = self.type == StaffKeyType.major ? "F" : "D"
             case 2:
-                desc = self.type == KeyType.major ? "B♭" : "G"
+                desc = self.type == StaffKeyType.major ? "B♭" : "G"
             case 3:
-                desc = self.type == KeyType.major ? "E♭" : "C"
+                desc = self.type == StaffKeyType.major ? "E♭" : "C"
             case 4:
-                desc = self.type == KeyType.major ? "A♭" : "F"
+                desc = self.type == StaffKeyType.major ? "A♭" : "F"
             case 5:
-                desc = self.type == KeyType.major ? "D♭" : "B♭"
+                desc = self.type == StaffKeyType.major ? "D♭" : "B♭"
             case 6:
-                desc = self.type == KeyType.major ? "G♭" : "E♭"
+                desc = self.type == StaffKeyType.major ? "G♭" : "E♭"
             case 7:
-                desc = self.type == KeyType.major ? "B" : "A♭"
+                desc = self.type == StaffKeyType.major ? "B" : "A♭"
             default:
                 desc = "unknown"
             }
         }
         if withType {
             switch self.type {
-            case KeyType.major:
+            case StaffKeyType.major:
                 desc += " Major"
-            case KeyType.minor:
+            case StaffKeyType.minor:
                 desc += " Minor"
             }
         }

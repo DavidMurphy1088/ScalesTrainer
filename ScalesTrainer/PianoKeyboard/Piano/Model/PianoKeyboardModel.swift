@@ -100,7 +100,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         self.firstKeyMidi = scale.scaleNoteState[0].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
-        switch self.scalesModel.scale.key.name {
+        switch self.scalesModel.scale.scaleRoot.name {
         case "D♭":
             self.firstKeyMidi -= 1
         case "D":
@@ -127,10 +127,10 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
                 
         var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
         numKeys += 2
-        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.key.name) {
+        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 4
         }
-        if ["B", "B♭"].contains(self.scalesModel.scale.key.name) {
+        if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 6
         }
         self.numberOfKeys = numKeys

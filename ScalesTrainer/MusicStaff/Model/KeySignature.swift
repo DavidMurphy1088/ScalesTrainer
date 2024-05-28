@@ -3,13 +3,13 @@ import AVKit
 import AVFoundation
 
 public class KeySignature {
-    var keyType:StaffKey.KeyType
+    var keyType:StaffKey.StaffKeyType
     var sharps:[Int] = [] //Notes of this pitch dont require individual accidentals, their accidental is implied by the key signature
     var flats:[Int] = [] //Notes of this pitch dont require individual accidentals, their accidental is implied by the key signature
     public var accidentalCount:Int = 0
     var accidentalType:AccidentalType
 
-    public init(keyName:String, keyType:StaffKey.KeyType) {
+    public init(keyName:String, keyType:StaffKey.StaffKeyType) {
         //self.accidentalCount
         self.keyType = keyType
         //var flats = false
@@ -93,7 +93,7 @@ public class KeySignature {
         setAccidentals(keyType: keyType, accidentalType: self.accidentalType)
     }
     
-    func setAccidentals(keyType:StaffKey.KeyType, accidentalType:AccidentalType) {
+    func setAccidentals(keyType:StaffKey.StaffKeyType, accidentalType:AccidentalType) {
         if accidentalType == .sharp {
             if self.accidentalCount >= 1 {
                 //self.accidentalCount = 1

@@ -31,7 +31,7 @@ public struct CallibrationView: View {
 
         }
         .onAppear() {
-            scalesModel.selectedKeyNameIndex = 0
+            scalesModel.selectedScaleRootIndex = 0
             //1scalesModel.selectedOctavesIndex = 1
             scalesModel.setKeyAndScale()
             scalesModel.setMicMode(.onWithPractice, "Callibration Appear")

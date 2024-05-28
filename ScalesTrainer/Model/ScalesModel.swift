@@ -32,11 +32,11 @@ public class ScalesModel : ObservableObject {
     
     //let pianoKeyboardModel = PianoKeyboardModel.shared
     
-    let keyNameValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
-    var selectedKeyNameIndex = 0
+    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
+    var selectedScaleRootIndex = 0
     //var selectedKey = Key(name: "C", keyType: .major)
 
-    let scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Arpeggio", "Chromatic"]
+    var scaleTypeNames:[String] //= ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio""Chromatic"]
     var selectedScaleTypeNameIndex = 0
     
     var directionTypes = ["⬆", "⬇"]
@@ -109,8 +109,13 @@ public class ScalesModel : ObservableObject {
     }
 
     init() {
-        //appMode = .none
-        scale = Scale(key: ScaleRoot(name: "C", keyType: .major), scaleType: .major, octaves: 1, hand: 0)
+        scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor"]
+        //scaleTypeNames.append(["Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio", "Chromatic"])
+        scaleTypeNames.append(contentsOf: ["Major Arpeggio", "Minor Arpeggio", "Diminished Arpeggio"])
+        scaleTypeNames.append(contentsOf: ["Dominant Seventh Arpeggio", "Major Seventh Arpeggio", "Minor Seventh Arpeggio", "Diminished Seventh Arpeggio", "Half Diminished Arpeggio"])
+        //scaleTypeNames.append(contentsOf: ["Chromatic"])
+
+        scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
         }
@@ -245,9 +250,9 @@ public class ScalesModel : ObservableObject {
     
     func setScore() {
         let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
-        let staffKeyType:StaffKey.KeyType = scale.key.keyType == .major ? .major : .minor
-        let keyName = scale.key.name
-        let keySignature = KeySignature(keyName: keyName, keyType: staffKeyType)
+        let staffKeyType:StaffKey.StaffKeyType = [ScaleType.major, ScaleType.arpeggioMajor].contains(scale.scaleType) ? .major : .minor
+        //let keyName = scale.key.name
+        let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
         score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
         
@@ -283,10 +288,10 @@ public class ScalesModel : ObservableObject {
     }
     
     func setKeyAndScale() {
-        let name = self.keyNameValues[self.selectedKeyNameIndex]
+        let name = self.scaleRootValues[self.selectedScaleRootIndex]
         let scaleTypeName = self.scaleTypeNames[self.selectedScaleTypeNameIndex]
-        let keyType:KeyType = scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
-        self.scale = Scale(key: ScaleRoot(name: name, keyType: keyType),
+        //let keyType:Staff.StaffKeyType = KeyType.major //scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
+        self.scale = Scale(scaleRoot: ScaleRoot(name: name),
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: self.octaveNumberValues[self.selectedOctavesIndex],
                            hand: self.selectedHandIndex)

@@ -60,15 +60,15 @@ struct ScalesView: View {
     func SelectScaleView() -> some View {
         HStack {
             Spacer()
-            Text(LocalizedStringResource("Key"))
+            Text(LocalizedStringResource("Root"))
             Picker("Select Value", selection: $keyNameIndex) {
-                ForEach(scalesModel.keyNameValues.indices, id: \.self) { index in
-                    Text("\(scalesModel.keyNameValues[index])")
+                ForEach(scalesModel.scaleRootValues.indices, id: \.self) { index in
+                    Text("\(scalesModel.scaleRootValues[index])")
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: keyNameIndex, {
-                scalesModel.selectedKeyNameIndex = keyNameIndex
+                scalesModel.selectedScaleRootIndex = keyNameIndex
                 setState("KeyChange")
             })
             

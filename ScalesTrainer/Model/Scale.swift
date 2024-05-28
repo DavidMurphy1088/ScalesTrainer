@@ -1,12 +1,26 @@
 import Foundation
 
+enum ScaleShape {
+    case none
+    case scale
+    case arpgeggio
+    case arpgeggio4Note
+}
+
 public enum ScaleType {
     case major
     case naturalMinor
     case harmonicMinor
     case melodicMinor
-    case arpeggio
-    case chromatic
+    case arpeggioMajor
+    case arpeggioMinor
+    case arpeggioDominantSeventh
+    case arpeggioMajorSeventh
+    case arpeggioMinorSeventh
+    case arpeggioDiminished
+    case arpeggioDiminishedSeventh
+    case arpeggioHalfDiminished
+    //case chromatic
 }
 ///In terms of arpeggios: major, minor, dominant 7ths and diminished 7ths.
 
@@ -28,14 +42,15 @@ public class ScaleNoteState {
 
 public class Scale { 
     let id = UUID()
-    private(set) var key:ScaleRoot
+    private(set) var scaleRoot:ScaleRoot
     private(set) var scaleNoteState:[ScaleNoteState]
     private var metronomeAscending = true
     let octaves:Int
     let scaleType:ScaleType
+    var scaleShape:ScaleShape
 
-    public init(key:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
-        self.key = key
+    public init(scaleRoot:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
+        self.scaleRoot = scaleRoot
         self.octaves = octaves
         self.scaleType = scaleType
         scaleNoteState = []
@@ -45,7 +60,7 @@ public class Scale {
         ///G drops below Middle C only for 2 octaves
         ///The start of the scale for one octave -
         var nextMidi = 0
-        switch key.name {
+        switch scaleRoot.name {
         case "C":
             nextMidi = 60
         case "D♭":
@@ -94,24 +109,9 @@ public class Scale {
         }
         
         ///Set midi values in scale
-        var scaleOffsets:[Int] = []
-        if scaleType == .major {
-            scaleOffsets = [2,2,1,2,2,2,2]
-        }
-        if scaleType == .naturalMinor {
-            scaleOffsets = [2,1,2,2,1,2,2]
-        }
-        if scaleType == .harmonicMinor {
-            scaleOffsets = [2,1,2,2,1,3,1]
-        }
-        if scaleType == .melodicMinor {
-            scaleOffsets = [2,1,2,2,2,2,1]
-        }
-        if scaleType == .chromatic {
-            scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
-        }
-        if scaleType == .arpeggio {
-        }
+        self.scaleShape = .none
+        var scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
+
         var sequence = 0
         for oct in 0..<octaves {
             for i in 0..<scaleOffsets.count {
@@ -127,6 +127,18 @@ public class Scale {
             if oct == octaves - 1 {
                 scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[0].midi + (octaves) * 12))
                 sequence += 1
+            }
+        }
+        
+        if (scaleNoteState.count - 1) % 7 == 0 {
+            self.scaleShape = .scale
+        }
+        else {
+            if (scaleNoteState.count - 1) % 3 == 0 {
+                self.scaleShape = .arpgeggio
+            }
+            else {
+                self.scaleShape = .arpgeggio4Note
             }
         }
         
@@ -148,18 +160,51 @@ public class Scale {
             scaleNoteState.append(descendingNote )
             sequence += 1
         }
-        if hand == 0 {
-            setFingersRightHand()
-        }
-        else {
-            setFingersLeftHand()
-        }
+
+        setFingers(hand: hand)
         setFingerBreaks(hand: hand)
-        ///debug111("Scale Constructor key:\(key.name) hand:\(hand)")
+        debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+    }
+    
+    func getScaleOffsets(scaleType : ScaleType) -> [Int] {
+        var scaleOffsets:[Int] = []
+        switch scaleType {
+        case .major:
+            scaleOffsets = [2,2,1,2,2,2,2]
+        case .naturalMinor:
+            scaleOffsets = [2,1,2,2,1,2,2]
+        case .harmonicMinor:
+            scaleOffsets = [2,1,2,2,1,3,1]
+        case .melodicMinor:
+            scaleOffsets = [2,1,2,2,2,2,1]
+        case .arpeggioMajor:
+            scaleOffsets = [4,3,4]
+        case .arpeggioMinor:
+            scaleOffsets = [3,4,4]
+        case .arpeggioDiminished:
+            scaleOffsets = [3,3,6]
+            
+        case .arpeggioDominantSeventh:
+            scaleOffsets = [4,3,3,2]
+        case .arpeggioMajorSeventh:
+            scaleOffsets = [4,3,4,1]
+        case .arpeggioMinorSeventh:
+            scaleOffsets = [3,4,3,2]
+
+        case .arpeggioHalfDiminished:
+            scaleOffsets = [3,3,4,2]
+        case .arpeggioDiminishedSeventh:
+            scaleOffsets = [3,3,3,3]
+
+//        case .chromatic:
+//            scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
+        }
+
+        return scaleOffsets
     }
     
     func debug111(_ msg:String) {
-        print("==========scale \(msg)", key.name, key.keyType, self.id)
+        print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
         }
@@ -232,19 +277,36 @@ public class Scale {
         for note in self.scaleNoteState {
             note.fingerSequenceBreak = false
         }
-        var range = self.scaleNoteState.count/2-1
-        if hand == 1 {
-            range += 1
+        guard self.scaleShape == .scale else {
+            return
         }
-        var lastFinger = self.scaleNoteState[0].finger
-        for i in 1...range {
-            let finger = self.scaleNoteState[i].finger
-            let diff = abs(finger - lastFinger)
-            if diff > 1 {
-                self.scaleNoteState[i].fingerSequenceBreak = true
-                self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
+        var halfway = self.scaleNoteState.count/2-1
+        if hand == 0 {
+            var lastFinger = self.scaleNoteState[0].finger
+            for i in 1...halfway {
+                let finger = self.scaleNoteState[i].finger
+                let diff = abs(finger - lastFinger)
+                if diff > 1 {
+                    self.scaleNoteState[i].fingerSequenceBreak = true
+                    self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
+                }
+                lastFinger = self.scaleNoteState[i].finger
             }
-            lastFinger = self.scaleNoteState[i].finger
+        }
+        else {
+            var lastFinger = self.scaleNoteState[halfway].finger
+            for i in stride(from: halfway-1, to: 0, by: -1) {
+                let finger = self.scaleNoteState[i].finger
+                let diff = abs(finger - lastFinger)
+                if diff > 1 {
+                    self.scaleNoteState[i+1].fingerSequenceBreak = true
+                    let mirror = halfway + (halfway - i) + 2
+                    if mirror < self.scaleNoteState.count - 1 {
+                        self.scaleNoteState[mirror].fingerSequenceBreak = true
+                    }
+                }
+                lastFinger = self.scaleNoteState[i].finger
+            }
         }
     }
     
@@ -253,38 +315,154 @@ public class Scale {
         return (self.scaleNoteState[0].midi, self.scaleNoteState[mid].midi)
     }
     
-    func setFingersRightHand() {
+    func stringIndexToInt(index:Int, fingers:String) -> Int {
+        let index = index % fingers.count
+        let charIndex = fingers.index(fingers.startIndex, offsetBy: index)
+        let character = fingers[charIndex]
+        let characterAsString = String(character)
+        if let intValue = Int(characterAsString) {
+            return intValue
+        }
+        else {
+            return 0
+        }
+    }
+    
+    ///Alfreds page 88. RH read left to right, LH read right to left. Use numbers in paren e.g. (3) instead of 3
+    func setFingers(hand:Int) {
+        var fingers = ""
+        
+        if scaleShape == .arpgeggio {
+            switch self.scaleRoot.name {
+            case "C", "G":
+                fingers = hand == 0 ? "123" : "124"
+            case "B♭":
+                fingers = hand == 0 ? "412" : "312"
+            case "E♭":
+                fingers = hand == 0 ? "412" : "241"
+            case "A♭":
+                fingers = hand == 0 ? "412" : "241"
+            case "D♭":
+                fingers = hand == 0 ? "412" : "241"
+            default:
+                fingers = hand == 0 ? "123" : "123"
+            }
+        }
+        
+        if scaleShape == .scale {
+            switch self.scaleRoot.name {
+            case "B":
+                fingers = hand == 0 ? "1231234" : "1234123"
+            case "F":
+                fingers = hand == 0 ? "1234123" : "1231234"
+            case "B♭":
+                if scaleType == .major {
+                    fingers = hand == 0 ? "4123123" : "2123412"
+                }
+                else {
+                    fingers = hand == 0 ? "4123123" : "2341231"
+                }
+            case "E♭":
+                if scaleType == .major {
+                    fingers = hand == 0 ? "3123412" : "3123412"
+                }
+                else {
+                    fingers = hand == 0 ? "3123412" : "2312341"
+                }
+            case "A♭":
+                fingers = hand == 0 ? "3412312" : "3123412" ///probably need different for minor vs. harmonic minor
+            case "D♭":
+                if scaleType == .major {
+                    fingers = hand == 0 ? "2312341" : "3123412"
+                }
+                else {
+                    fingers = hand == 0 ? "3412312" : "3213412"
+                }
+            default:
+                fingers = "1231234"
+            }
+        }
+        
+        let halfway = scaleNoteState.count / 2
+        if hand == 0 {
+            var f = 0
+            for i in 0..<halfway {
+                scaleNoteState[i].finger = stringIndexToInt(index: i, fingers: fingers)
+                f += 1
+            }
+            f -= 1
+            var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
+            if scaleShape == .arpgeggio {
+                highNoteFinger += 1
+            }
+            scaleNoteState[halfway].finger = highNoteFinger
+            for i in (halfway+1..<scaleNoteState.count) {
+                scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
+                f -= 1
+            }
+        }
+        else {
+            var f = 0
+            ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
+            for i in stride(from: halfway, to: 0, by: -1) {
+                scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
+                scaleNoteState[i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                f += 1
+            }
+            var edgeFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
+            if scaleShape == .arpgeggio {
+                edgeFinger += 1
+            }
+            scaleNoteState[0].finger = edgeFinger
+            scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
+        }
+        debug111("End New")
+    }
+    
+    func setFingersRightHandOld() {
         var currentFinger = 1
 
-        if ["D♭"].contains(key.name) {
+        if ["D♭"].contains(scaleRoot.name) {
             currentFinger = 2
         }
-        if ["B♭"].contains(key.name) {
+        if ["B♭"].contains(scaleRoot.name) {
             currentFinger = 4
         }
-        if ["A♭", "E♭"].contains(key.name) {
+        if ["A♭", "E♭"].contains(scaleRoot.name) {
             currentFinger = 3
         }
 
         var sequenceBreaks:[Int] = [] //Offsets where the fingering sequence breaks
-        ///the offsets in the scale where the finger is not one up from the last
-        switch key.name {
-        case "F":
-            sequenceBreaks = [4, 7]
-        case "B♭":
-            sequenceBreaks = [1, 4]
-        case "E♭":
-            sequenceBreaks = [1, 5]
-        case "A♭":
-            sequenceBreaks = [2, 5]
-        case "D♭":
-            sequenceBreaks = [2, 6]
-        default:
-            sequenceBreaks = [3, 7]
-        }
-        var fingerPattern:[Int] = Array(repeating: 0, count: 7)
+        var fingerPattern:[Int] = []
         
-        for i in 0..<7 {
+        ///the offsets in the scale where the finger is not one up from the last
+        if [ScaleType.major, ScaleType.naturalMinor, ScaleType.melodicMinor, ScaleType.harmonicMinor].contains(self.scaleType) {
+            fingerPattern = Array(repeating: 0, count: 7)
+            switch scaleRoot.name {
+            case "F":
+                sequenceBreaks = [4, 7]
+            case "B♭":
+                sequenceBreaks = [1, 4]
+            case "E♭":
+                sequenceBreaks = [1, 5]
+            case "A♭":
+                sequenceBreaks = [2, 5]
+            case "D♭":
+                sequenceBreaks = [2, 6]
+            default:
+                sequenceBreaks = [3, 7]
+            }
+        }
+        if [ScaleType.arpeggioMajor, ScaleType.arpeggioMinor, ScaleType.arpeggioDiminished].contains(self.scaleType) {
+            fingerPattern = Array(repeating: 0, count: 3)
+            sequenceBreaks = [3]
+        }
+        if [ScaleType.arpeggioDominantSeventh, ScaleType.arpeggioMajorSeventh, ScaleType.arpeggioMinorSeventh, ScaleType.arpeggioHalfDiminished, ScaleType.arpeggioDiminishedSeventh].contains(self.scaleType) {
+            fingerPattern = Array(repeating: 0, count: 4)
+            sequenceBreaks = [4]
+        }
+        
+        for i in 0..<fingerPattern.count {
             fingerPattern[i] = currentFinger
             let index = i+1
             if sequenceBreaks.contains(index) {
@@ -301,8 +479,14 @@ public class Scale {
             scaleNoteState[i].finger = fingerPattern[f % fingerPattern.count]
             f += 1
         }
+        
         f -= 1
-        scaleNoteState[halfway].finger = fingerPattern[fingerPattern.count-1] + 1
+        var highNoteFinger = fingerPattern[fingerPattern.count-1] + 1
+        if [ScaleType.arpeggioMajor, ScaleType.arpeggioMinor, ScaleType.arpeggioDiminished].contains(self.scaleType) {
+            highNoteFinger += 1
+        }
+        scaleNoteState[halfway].finger = highNoteFinger
+        
         for i in (halfway+1..<scaleNoteState.count) {
             scaleNoteState[i].finger = fingerPattern[f % fingerPattern.count]
             if f == 0 {
@@ -314,28 +498,28 @@ public class Scale {
             }
         }
     }
-    
+     
     func setFingersLeftHand() {
         ///Set the fingering from highest to lowest first then mirror image it to the ascending section of the scale
         ///i.e. the currentFinger initialises as the finger used by the LH to play the scales highest note
         var currentFinger = 1
 
-        if ["B♭"].contains(key.name) {
+        if ["B♭"].contains(scaleRoot.name) {
             currentFinger = 3
         }
-        if ["A♭"].contains(key.name) {
+        if ["A♭"].contains(scaleRoot.name) {
             currentFinger = 3
         }
-        if ["E♭"].contains(key.name) {
+        if ["E♭"].contains(scaleRoot.name) {
             currentFinger = 2
         }
-        if ["D♭"].contains(key.name) {
+        if ["D♭"].contains(scaleRoot.name) {
             currentFinger = 3
         }
 
         var sequenceBreaks:[Int] = [] //Offsets where the fingering sequence breaks
         ///the offsets in the scale where the finger is not one up from the last
-        switch key.name {
+        switch scaleRoot.name {
         case "F":
             sequenceBreaks = [3, 7]
         case "B♭":
@@ -380,25 +564,39 @@ public class Scale {
     }
 
     func getScaleName() -> String {
-        var name = key.name + " " + Scale.getTypeName(type: self.scaleType)
+        var name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
         return name
     }
     
     static func getTypeName(type:ScaleType) -> String {
         var name = ""
         switch type {
+        case ScaleType.major:
+            name = "Major"
         case ScaleType.naturalMinor:
             name = "Minor"
         case ScaleType.harmonicMinor:
             name = "Harmonic Minor"
         case .melodicMinor:
             name = "Melodic Minor"
-        case .arpeggio:
-            name = "Arpeggio"
-        case .chromatic:
-            name = "Chromatic"
-        default:
-            name += "Major"
+        case .arpeggioMajor:
+            name = "Major Arpeggio"
+        case .arpeggioMinor:
+            name = "Minor Arpeggio"
+        case .arpeggioDiminished:
+            name = "Diminished Arpeggio"
+        case .arpeggioMajorSeventh:
+            name = "Major Seventh Arpeggio"
+        case .arpeggioDominantSeventh:
+            name = "Dominant Seventh Arpeggio"
+        case .arpeggioDiminishedSeventh:
+            name = "Diminished Seventh Arpeggio"
+        case .arpeggioMinorSeventh:
+            name = "Minor Seventh Arpeggio"
+        case .arpeggioHalfDiminished:
+            name = "Half Diminished Arpeggio"
+//        case .chromatic:
+//            name = "Chromatic"
         }
         return name
     }
@@ -413,10 +611,25 @@ public class Scale {
             return ScaleType.harmonicMinor
         case "Melodic Minor":
             return ScaleType.melodicMinor
-        case "Chromatic":
-            return ScaleType.chromatic
-        case "Arpeggio":
-            return ScaleType.arpeggio
+//        case "Chromatic":
+//            return ScaleType.chromatic
+        case "Major Arpeggio":
+            return ScaleType.arpeggioMajor
+        case "Minor Arpeggio":
+            return ScaleType.arpeggioMinor
+            
+        case "Dominant Seventh Arpeggio":
+            return ScaleType.arpeggioDominantSeventh
+        case "Major Seventh Arpeggio":
+            return ScaleType.arpeggioMajorSeventh
+        case "Minor Seventh Arpeggio":
+            return ScaleType.arpeggioMinorSeventh
+        case "Diminished Arpeggio":
+            return ScaleType.arpeggioDiminished
+        case "Diminished Seventh Arpeggio":
+            return ScaleType.arpeggioDiminishedSeventh
+        case "Half Diminished Arpeggio":
+            return ScaleType.arpeggioHalfDiminished
         default:
             return ScaleType.major
         }

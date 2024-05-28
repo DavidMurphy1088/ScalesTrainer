@@ -341,7 +341,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 let minute = calendar.component(.minute, from: Date())
                 let device = UIDevice.current
                 let modelName = device.model
-                var keyName = self.scale.key.name + "_"
+                var keyName = self.scale.getScaleName()
                 keyName += String(Scale.getTypeName(type: self.scale.scaleType))
                 keyName = keyName.replacingOccurrences(of: " ", with: "")
                 var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)

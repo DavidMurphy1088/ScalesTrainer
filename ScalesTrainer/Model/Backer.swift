@@ -15,10 +15,10 @@ class Backer :MetronomeTimerNotificationProtocol{
     
     func metronomeStart() {
         let scale = ScalesModel.shared.scale
-        let key = scale.key
+        let scaleRoot = scale.scaleRoot
         var root = scale.scaleNoteState[0].midi
         root -= 12
-        if key.keyType == .major {
+        if scale.scaleType == .major {
             chordRoots.append(root)
             chordRoots.append(root - 3) //ii minoir
             chordRoots.append(root - 7) //IV
@@ -40,7 +40,7 @@ class Backer :MetronomeTimerNotificationProtocol{
         let root = chordRoots[bar % 4]
         var midi = 0
         ///Make Alberti pattern
-        if scale.key.keyType == .major {
+        if scale.scaleType == .major {
             switch beat {
             case 0:
                 midi = root

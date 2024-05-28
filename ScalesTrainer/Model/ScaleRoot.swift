@@ -1,18 +1,18 @@
 import Foundation
 
-public enum KeyType {
-    case major
-    case minor
-    case harmonicMinor
-    case melodicMinor
-}
+//public enum KeyType {
+//    case major
+//    case minor
+//    case harmonicMinor
+//    case melodicMinor
+//}
 
-public class Key {
+public class ScaleRoot {
     let sharps:Int
     let flats:Int
-    var keyType:KeyType
+    //var keyType:KeyType
     var name:String
-    let keySignature:KeySignature
+    //let keySignature:KeySignature
     
 //    init(sharps:Int=0, flats:Int=0, keyType:KeyType) {
 //        self.sharps = sharps
@@ -90,10 +90,10 @@ public class Key {
 //        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
 //    }
     
-    init(name:String, keyType:KeyType) {
-        self.keyType = keyType
+    init(name:String) {
+        //self.keyType = keyType
         self.name = name
-        if keyType == .minor {
+        if false {
             switch name {
             case "E":
                 self.flats = 0
@@ -179,23 +179,23 @@ public class Key {
                 self.sharps = 0
             }
         }
-        self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
+        //self.keySignature = KeySignature(keyName: name, keyType: keyType == .major ? .major : .minor)
     }
     
-    func getName() -> String {
-        var name = self.name + " "
-        switch self.keyType {
-        case .minor:
-            name += "Minor"
-        case .harmonicMinor:
-            name += "Harmonic Minor"
-        case .melodicMinor:
-            name += "Melodic Minor"
-        default:
-            name += "Major"
-        }
-        return name
-    }
+//    func getName() -> String {
+//        var name = self.name + " "
+//        switch self.keyType {
+//        case .minor:
+//            name += "Minor"
+//        case .harmonicMinor:
+//            name += "Harmonic Minor"
+//        case .melodicMinor:
+//            name += "Melodic Minor"
+//        default:
+//            name += "Major"
+//        }
+//        return name
+//    }
     
     func getRootMidi() -> Int {
         var midi = 0
