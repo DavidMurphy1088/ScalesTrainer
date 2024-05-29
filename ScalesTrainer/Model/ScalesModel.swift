@@ -89,18 +89,25 @@ public class ScalesModel : ObservableObject {
             self.showFingers = newValue
         }
     }
-
-    @Published private(set) var followScale = false
-    func setFollowScale(_ newValue: Bool) {
+    
+    enum RunningProcess {
+        case none
+        case followingScale
+        case recordingScale
+        case identifyingScale
+    }
+    
+    @Published private(set) var runningProcess:RunningProcess = .none
+    func setRunningProcess(_ newValue: RunningProcess) {
         DispatchQueue.main.async {
             print("========= SET FOLLOW", newValue)
-            self.followScale = newValue
+            self.runningProcess = newValue
         }
-        if newValue == true {
+        if newValue == .followingScale {
             setMicMode(.onWithPractice, "follow scale")
             self.followScaleProcess(onDone: {cancelled in 
                 PianoKeyboardModel.shared.clearAllKeyHilights(except: nil)
-                self.setFollowScale(false)
+                self.setRunningProcess(.none)
             })
         }
         else {
@@ -175,7 +182,7 @@ public class ScalesModel : ObservableObject {
                     ///appmode is None at start since its set (for publish)  in main thread
                     while true {
                         sleep(1)
-                        if !self.followScale {
+                        if self.runningProcess != .followingScale {
                             cancelled = true
                             break
                         }
@@ -183,7 +190,7 @@ public class ScalesModel : ObservableObject {
                     semaphore.signal()
                 }
                 semaphore.wait()
-                if !self.followScale {
+                if self.runningProcess != .followingScale {
                     break
                 }
                 

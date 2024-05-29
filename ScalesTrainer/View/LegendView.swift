@@ -118,7 +118,7 @@ struct LegendView: View {
 //        if scalesModel.appMode == .practiceMode {
 //            title = "Practice"
 //        }
-        if scalesModel.followScale {
+        if scalesModel.runningProcess == .followingScale {
             title = "Follow the Scale"
         }
         return title

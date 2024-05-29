@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790D5A252BD2319C00C31A8F /* CalibrationViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */; };
+		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
@@ -116,6 +117,7 @@
 /* Begin PBXFileReference section */
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationViewOld.swift; sourceTree = "<group>"; };
+		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
@@ -462,6 +464,7 @@
 				794D49552BCD29090005A173 /* TapHandler.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 				7985635C2C0349BF008BAC79 /* Settings.swift */,
+				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -631,6 +634,7 @@
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
 				799BE2AE2C002EF5004B19F6 /* DeviceOrientation.swift in Sources */,
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
+				79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */,
 				7985635D2C0349BF008BAC79 /* Settings.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,

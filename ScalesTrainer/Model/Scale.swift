@@ -130,11 +130,22 @@ public class Scale {
             }
         }
         
-        if (scaleNoteState.count - 1) % 7 == 0 {
+//        if (scaleNoteState.count - 1) % 7 == 0 {
+//            self.scaleShape = .scale
+//        }
+//        else {
+//            if (scaleNoteState.count - 1) % 3 == 0 {
+//                self.scaleShape = .arpgeggio
+//            }
+//            else {
+//                self.scaleShape = .arpgeggio4Note
+//            }
+//        }
+        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
             self.scaleShape = .scale
         }
         else {
-            if (scaleNoteState.count - 1) % 3 == 0 {
+            if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
                 self.scaleShape = .arpgeggio
             }
             else {
@@ -163,7 +174,7 @@ public class Scale {
 
         setFingers(hand: hand)
         setFingerBreaks(hand: hand)
-        debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        ///debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
@@ -331,23 +342,9 @@ public class Scale {
     ///Alfreds page 88. RH read left to right, LH read right to left. Use numbers in paren e.g. (3) instead of 3
     func setFingers(hand:Int) {
         var fingers = ""
+        var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
         
-        if scaleShape == .arpgeggio {
-            switch self.scaleRoot.name {
-            case "C", "G":
-                fingers = hand == 0 ? "123" : "124"
-            case "B♭":
-                fingers = hand == 0 ? "412" : "312"
-            case "E♭":
-                fingers = hand == 0 ? "412" : "241"
-            case "A♭":
-                fingers = hand == 0 ? "412" : "241"
-            case "D♭":
-                fingers = hand == 0 ? "412" : "241"
-            default:
-                fingers = hand == 0 ? "123" : "123"
-            }
-        }
+        ///Regular scale
         
         if scaleShape == .scale {
             switch self.scaleRoot.name {
@@ -357,7 +354,7 @@ public class Scale {
                 fingers = hand == 0 ? "1234123" : "1231234"
             case "B♭":
                 if scaleType == .major {
-                    fingers = hand == 0 ? "4123123" : "2123412"
+                    fingers = hand == 0 ? "4123123" : "3123412"
                 }
                 else {
                     fingers = hand == 0 ? "4123123" : "2341231"
@@ -383,6 +380,86 @@ public class Scale {
             }
         }
         
+        ///Three note arpeggio
+        
+        if scaleShape == .arpgeggio {
+            switch self.scaleRoot.name {
+            case "C", "G":
+                fingers = hand == 0 ? "123" : "124"
+            case "D":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    leftHandLastFingerJump = 2
+                    fingers = hand == 0 ? "123" : "123"
+                }
+                else {
+                    fingers = hand == 0 ? "123" : "124"
+                }
+            case "A":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    leftHandLastFingerJump = 2
+                    fingers = hand == 0 ? "123" : "123"
+                }
+                else {
+                    fingers = hand == 0 ? "123" : "124"
+                }
+            case "E":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    leftHandLastFingerJump = 2
+                    fingers = hand == 0 ? "123" : "123"
+                }
+                else {
+                    fingers = hand == 0 ? "123" : "124"
+                }
+            case "B":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    leftHandLastFingerJump = 2
+                    fingers = hand == 0 ? "123" : "123"
+                }
+                else {
+                    fingers = hand == 0 ? "123" : "124"
+                }
+            case "F":
+                fingers = hand == 0 ? "123" : "124"
+            case "B♭":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    fingers = hand == 0 ? "412" : "312"
+                }
+                else {
+                    fingers = hand == 0 ? "321" : "312"
+                }
+            case "E♭":
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    fingers = hand == 0 ? "412" : "241"
+                }
+                else {
+                    fingers = hand == 0 ? "123" : "124"
+                }
+            case "A♭":
+                fingers = hand == 0 ? "412" : "241"
+            case "D♭":
+                fingers = hand == 0 ? "412" : "241"
+            default:
+                fingers = hand == 0 ? "123" : "123"
+            }
+        }
+        
+        ///Four note arpeggio
+        
+        if scaleShape == .arpgeggio4Note {
+            switch self.scaleRoot.name {
+            case "B♭":
+                fingers = hand == 0 ? "4123" : "2312"
+            case "E♭":
+                fingers = hand == 0 ? "4124" : (self.scaleType == .arpeggioMajorSeventh ? "4123" : "2341")
+            case "A♭":
+                fingers = hand == 0 ? "4124" : "2341"
+            case "D♭":
+                fingers = hand == 0 ? "4123" : "2341"
+            default:
+                fingers = hand == 0 ? "1234" : "1234"
+            }
+        }
+        
         let halfway = scaleNoteState.count / 2
         if hand == 0 {
             var f = 0
@@ -393,7 +470,9 @@ public class Scale {
             f -= 1
             var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
             if scaleShape == .arpgeggio {
-                highNoteFinger += 1
+                if highNoteFinger < 5 {
+                    highNoteFinger += 1
+                }
             }
             scaleNoteState[halfway].finger = highNoteFinger
             for i in (halfway+1..<scaleNoteState.count) {
@@ -404,17 +483,25 @@ public class Scale {
         else {
             var f = 0
             ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
-            for i in stride(from: halfway, to: 0, by: -1) {
+            for i in stride(from: halfway, through: 0, by: -1) {
+            //for i in stride(from: halfway, to: 0, by: -1) {
+                print("==== f", i, stringIndexToInt(index: f, fingers: fingers))
                 scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
                 scaleNoteState[i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
                 f += 1
             }
-            var edgeFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
-            if scaleShape == .arpgeggio {
-                edgeFinger += 1
+            if leftHandLastFingerJump > 0  {
+                var nextToLastFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers)
+                //var edgeFinger = stringIndexToInt(index: 1, fingers: fingers) + 1
+//                if edgeFinger < 5 {
+//                    let midiDiff = abs(scaleNoteState[0].midi - scaleNoteState[1].midi)
+//                    if midiDiff > 2 {
+//                        edgeFinger += 1
+//                    }
+//                }
+                scaleNoteState[0].finger = nextToLastFinger + leftHandLastFingerJump
             }
-            scaleNoteState[0].finger = edgeFinger
-            scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
+            //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
         debug111("End New")
     }

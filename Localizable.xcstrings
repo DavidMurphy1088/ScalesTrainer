@@ -4,6 +4,9 @@
     " " : {
 
     },
+    "                                                                             " : {
+
+    },
     " %@ " : {
 
     },
@@ -25,7 +28,7 @@
     "%@" : {
 
     },
-    "%@ Activities" : {
+    "%@ is under construction" : {
 
     },
     "%lld" : {
@@ -139,10 +142,19 @@
     "OK" : {
 
     },
+    "Other Scale Groups" : {
+
+    },
     "Played But Not in Scale" : {
 
     },
     "Practice" : {
+
+    },
+    "Practice Days" : {
+
+    },
+    "Progress" : {
 
     },
     "READ_TEST_DATA" : {
@@ -195,7 +207,7 @@
     "Scales" : {
 
     },
-    "Select Syllabus" : {
+    "Scales Trainer" : {
 
     },
     "Select Value" : {
@@ -269,6 +281,9 @@
 
     },
     "Yes" : {
+
+    },
+    "Your Journal Scales" : {
 
     }
   },

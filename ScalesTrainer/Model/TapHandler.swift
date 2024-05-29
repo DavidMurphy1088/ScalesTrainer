@@ -327,7 +327,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     func stopTapping() {
         Logger.shared.log(self, "PitchTapHandler stop")
         Logger.shared.calcValueLimits()        
-        let result = Result(type: ActivityMode(name:"", imageName:"", showStaff:false, showFingers:false))
+        let result = Result(type: ActivityMode(name:"", implemented: true, imageName:"", showStaff:false, showFingers:false))
         //result.buildResult(feedbackType: .assessWithScale)
         ScalesModel.shared.result = result
         
