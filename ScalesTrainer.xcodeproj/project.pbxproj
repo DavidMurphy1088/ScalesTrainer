@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
-		790D5A252BD2319C00C31A8F /* CalibrationViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
@@ -116,7 +115,6 @@
 
 /* Begin PBXFileReference section */
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationViewOld.swift; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
@@ -433,7 +431,6 @@
 			isa = PBXGroup;
 			children = (
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
-				790D5A242BD2319C00C31A8F /* CalibrationViewOld.swift */,
 				799BE2A72BFF4322004B19F6 /* CallibrationView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */,
@@ -643,7 +640,6 @@
 				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* Result.swift in Sources */,
-				790D5A252BD2319C00C31A8F /* CalibrationViewOld.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,

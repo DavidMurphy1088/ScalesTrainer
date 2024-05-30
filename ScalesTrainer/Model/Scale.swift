@@ -110,7 +110,7 @@ public class Scale {
         
         ///Set midi values in scale
         self.scaleShape = .none
-        var scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
+        let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
 
         var sequence = 0
         for oct in 0..<octaves {
@@ -291,7 +291,7 @@ public class Scale {
         guard self.scaleShape == .scale else {
             return
         }
-        var halfway = self.scaleNoteState.count/2-1
+        let halfway = self.scaleNoteState.count/2-1
         if hand == 0 {
             var lastFinger = self.scaleNoteState[0].finger
             for i in 1...halfway {
@@ -491,7 +491,7 @@ public class Scale {
                 f += 1
             }
             if leftHandLastFingerJump > 0  {
-                var nextToLastFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers)
+                let nextToLastFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers)
                 //var edgeFinger = stringIndexToInt(index: 1, fingers: fingers) + 1
 //                if edgeFinger < 5 {
 //                    let midiDiff = abs(scaleNoteState[0].midi - scaleNoteState[1].midi)
@@ -651,7 +651,7 @@ public class Scale {
     }
 
     func getScaleName() -> String {
-        var name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
+        let name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
         return name
     }
     

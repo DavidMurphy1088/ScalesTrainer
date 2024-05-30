@@ -127,30 +127,28 @@ class AudioManager : MetronomeTimerNotificationProtocol {
 
     func startRecordingMicrophone(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
         Logger.shared.clearLog()
-        Logger.shared.log(self, "startRecordingMicrophone with ampl filter:\(ScalesModel.shared.amplitudeFilter)")
+        Logger.shared.log(self, "startRecordingMicrophone with ampl filter:\(Settings.shared.amplitudeFilter)")
         
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
-            var engine = AudioManager.shared.engine
+            
             if false || AudioManager.shared.simulator {
                 ///prolong and wasted attempts to make simulator not crash 😡
                 //try engine.start()
                 engine.stop()
-                print("====DESC", "engine.connectionTreeDescription")
-                //engine.
                 self.tapHandler = tapHandler
                 self.installedTap = PitchTap(mic!, bufferSize:UInt32(4096)) { pitch, amplitude in
                     //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
-                        if true {
+//                        if true {
                             DispatchQueue.main.async {
                                 tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                             }
-                        }
-                        else {
-                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-                        }
+//                        }
+//                        else {
+//                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
+//                        }
                     //}
                 }
                 if let tap = self.installedTap {
@@ -271,12 +269,11 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                         let ampFilter = Double(fields[1])
                         let reqStartAmpl = Double(fields[2])
                         if let ampFilter = ampFilter {
-                            if let startAmple = reqStartAmpl  {
+                            if reqStartAmpl != nil  {
                                 DispatchQueue.main.async {
-                                    scalesModel.amplitudeFilter = ampFilter
-                                    scalesModel.requiredStartAmplitude = reqStartAmpl
+                                    Settings.shared.amplitudeFilter = ampFilter
+                                    Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
                                 }
-                                tapHandler.requiredStartAmplitude = reqStartAmpl ?? 0
                             }
                         }
                         continue

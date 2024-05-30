@@ -1,9 +1,10 @@
 import Foundation
 
-public class Settings : Codable  {
-    
+public class Settings : Codable  {    
     static var shared = Settings()
     var recordDataMode = false
+    var requiredScaleRecordStartAmplitude:Double = 0.0
+    var amplitudeFilter:Double = 0.0
     
     init() {
         load()
@@ -14,7 +15,6 @@ public class Settings : Codable  {
             let jsonEncoder = JSONEncoder()
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
-                print(jsonString)
                 return jsonString
             }
         } catch {
@@ -23,9 +23,13 @@ public class Settings : Codable  {
         return nil
     }
     
-    func save() {
-        let str = toJSON()
-        print("Settings save ====", recordDataMode)
+    func save(_ log:Bool = true) {
+        guard let str = toJSON() else {
+            return
+        }
+        if log {
+            Logger.shared.log(self, "Settings saved \(str)")
+        }
         UserDefaults.standard.set(str, forKey: "settings")
     }
     
@@ -37,7 +41,10 @@ public class Settings : Codable  {
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
-                    print("Settings load ====", decoded.recordDataMode)
+                    self.amplitudeFilter = loaded.amplitudeFilter
+                    self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
+                    let str:String = String(data: data, encoding: .utf8) ?? "none"
+                    Logger.shared.log(self, "Settings loaded \(str)")
                 } catch {
                     Logger.shared.reportError(self, "load:" + error.localizedDescription)
                 }

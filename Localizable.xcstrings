@@ -43,9 +43,6 @@
     "1" : {
 
     },
-    "Amplitude Filter" : {
-
-    },
     "Amplitude filter set at:%@" : {
 
     },
@@ -91,9 +88,6 @@
     "In Scale But Not Played" : {
 
     },
-    "Keep Taps File?" : {
-
-    },
     "Key" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -130,9 +124,6 @@
     "Log" : {
 
     },
-    "No" : {
-
-    },
     "Notification Status" : {
 
     },
@@ -143,6 +134,9 @@
 
     },
     "Other Scale Groups" : {
+
+    },
+    "Piano Calibration" : {
 
     },
     "Played But Not in Scale" : {
@@ -163,10 +157,10 @@
     "Record Data Mode" : {
 
     },
-    "Record your scale" : {
+    "Record The Scale" : {
 
     },
-    "Record Your Scale" : {
+    "Record your scale" : {
 
     },
     "Required Start Amplitude:%@    ampFilter:%@" : {
@@ -201,9 +195,6 @@
         }
       }
     },
-    "Scale start filter set at:%@" : {
-
-    },
     "Scales" : {
 
     },
@@ -225,10 +216,7 @@
     "Speech Listen" : {
 
     },
-    "Start Calibrating" : {
-
-    },
-    "Start Scale Amplitude" : {
+    "Start" : {
 
     },
     "Stats: %@" : {
@@ -246,19 +234,16 @@
     "Stop Hearing Scale" : {
 
     },
-    "Stop Playing Your Scale" : {
-
-    },
     "Stop Practicing" : {
 
     },
+    "Stop Recording" : {
+
+    },
+    "Stop Recording Scale" : {
+
+    },
     "Tempo" : {
-
-    },
-    "The app needs to hear you play a reglar (mf) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating." : {
-
-    },
-    "The app needs to hear you play a very soft (pp) note on your piano to calibrate your piano's sound.\n\n•Make sure your device is close to your piano\n•Tap Start Calibrating\n•Play Middle C very softly on your piano a few times\n•Wait a a few seconds\n•Tap Stop Calibrating." : {
 
     },
     "Viewing\nDirection" : {
@@ -278,9 +263,6 @@
       }
     },
     "X" : {
-
-    },
-    "Yes" : {
 
     },
     "Your Journal Scales" : {

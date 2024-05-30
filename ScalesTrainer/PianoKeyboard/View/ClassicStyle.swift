@@ -59,7 +59,7 @@ public struct ClassicStyle {
         let fullOpacity = 0.4
         let halfOpacity = 0.4
 
-        if let scaleNote1 = keyModel.scaleNoteState {
+        if keyModel.scaleNoteState != nil {
             if scalesModel.selectedDirection == 0 {
                 color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
             }
@@ -91,7 +91,7 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-            let resultStatusRadius = naturalWidth * 0.20
+            //let resultStatusRadius = naturalWidth * 0.20
             let playingMidiRadius = naturalWidth * 0.5
             
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
@@ -281,7 +281,7 @@ public struct ClassicStyle {
                             if false {
                                 ///White background for finger number on a black key
                                 ///23May dropped and instead make black keys less black
-                                if let scaleNote = key.scaleNoteState {
+                                if key.scaleNoteState != nil {
                                     let edge = rect.width * 0.05
                                     let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
                                     let width = rect.width - 2 * edge

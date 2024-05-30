@@ -12,56 +12,60 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
+    init(amplitudeFilter:Double)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping()
 }
 
-public enum CallibrationType {
-    case startAmplitude
-    case amplitudeFilter
-    case none
-}
+//public enum CallibrationType {
+//    case startAmplitude
+//    case amplitudeFilter
+//    case none
+//}
 
-class CallibrationTapHandler : TapHandlerProtocol {
-    let type:CallibrationType
-    private var amplitudes:[Float] = []
-    let startTime:Date = Date()
-    
-    init(type:CallibrationType) {
-        self.type = type
-    }
-    
-    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
-        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
-        let secs = Double(ms) / 1000.0
-        var msg = ""
-        msg += "secs:\(String(format: "%.2f", secs))"
-        msg += " \tAmpl:"+String(format: "%.4f", amplitudesIn[0])
-        amplitudes.append(amplitudesIn[0])
-        let frequency:Float = frequencies[0]
-        let midi = Util.frequencyToMIDI(frequency: frequency)
-        msg += " \tMidi:"+String(midi)
-        Logger.shared.log(self, msg)
-    }
-    
-    func stopTapping() {
-        ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
-        Logger.shared.log(self, "ended callibration")
-        Logger.shared.calcValueLimits()
-    }
-
-}
+//class CallibrationTapHandler : TapHandlerProtocol {
+//    let type:CallibrationType
+//    private var amplitudes:[Float] = []
+//    let startTime:Date = Date()
+//    
+//    init(type:CallibrationType) {
+//        self.type = type
+//    }
+//    
+//    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
+//        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+//        let secs = Double(ms) / 1000.0
+//        var msg = ""
+//        msg += "secs:\(String(format: "%.2f", secs))"
+//        msg += " \tAmpl:"+String(format: "%.4f", amplitudesIn[0])
+//        amplitudes.append(amplitudesIn[0])
+//        let frequency:Float = frequencies[0]
+//        let midi = Util.frequencyToMIDI(frequency: frequency)
+//        msg += " \tMidi:"+String(midi)
+//        Logger.shared.log(self, msg)
+//    }
+//    
+//    func stopTapping() {
+//        ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
+//        Logger.shared.log(self, "ended callibration")
+//        Logger.shared.calcValueLimits()
+//    }
+//}
 
 class PracticeTapHandler : TapHandlerProtocol {
+    let amplitudeFilter:Double
     let startTime:Date = Date()
     let minMidi:Int
     let maxMidi:Int
     var tapNum = 0
     
-    init() {
+    required init(amplitudeFilter:Double) {
+        self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
-        Logger.shared.log(self, "PracticeTapHandler filter:\(ScalesModel.shared.amplitudeFilter)")
+        Logger.shared.log(self, "PracticeTapHandler filter:\(Settings.shared.amplitudeFilter)")
+        tapNum = 0
+        ScalesModel.shared.recordedEvents = TapEvents()
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -79,7 +83,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(ScalesModel.shared.amplitudeFilter)
+        let aboveFilter =  amplitude > AUValue(amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -89,7 +93,7 @@ class PracticeTapHandler : TapHandlerProtocol {
         msg += "  fr:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
         msg += "  >amplFilter:\(aboveFilter)"
-        msg += "  >filter:\(String(format: "%.4f", ScalesModel.shared.amplitudeFilter))"
+        msg += "  >filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))"
 
         if aboveFilter {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
@@ -97,6 +101,14 @@ class PracticeTapHandler : TapHandlerProtocol {
                 keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
             }
         }
+        ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNum,
+                                                                  status: TapEventStatus.none,
+                                                                  expectedScaleNoteState: nil,
+                                                                  midi: 0, tapMidi: midi, amplitude: amplitude,
+                                                                  amplDiff: 0,
+                                                                  ascending: true,
+                                                                  key: nil))
+
         if tapNum % 20 == 0 {
             Logger.shared.log(self, msg)
         }
@@ -110,10 +122,10 @@ class PracticeTapHandler : TapHandlerProtocol {
 class ScaleTapHandler : TapHandlerProtocol  {
     var startTime:Date = Date()
     let scale:Scale
+    let amplitudeFilter:Double
     var wrongNoteFound = false
     var tapNumber = 0
-    var requiredStartAmplitude:Double
-    let saveTappingToFile:Bool
+    var saveTappingToFile:Bool = false
     var fileURL:URL?
     var lastAmplitude:Float?
     var lastKeyPressedMidi:Int?
@@ -121,18 +133,28 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var unmatchedCount = 0
     var maxScaleMidi = 0
     var minScaleMidi = 0
-
-    init(requiredStartAmplitude:Double, saveTappingToFile:Bool, scale:Scale) {
-        self.scale = scale
-        self.saveTappingToFile = saveTappingToFile
-        self.requiredStartAmplitude = requiredStartAmplitude
+    
+    required init(amplitudeFilter:Double) {
+        self.amplitudeFilter = amplitudeFilter
+        self.scale = ScalesModel.shared.scale
+        //self.saveTappingToFile = saveTappingToFile
+        //self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedEvents = TapEvents()
         (minScaleMidi, maxScaleMidi) = scale.getMinMax()
         ScalesModel.shared.recordedTapsFileURL = nil
     }
     
+//    init(saveTappingToFile:Bool) {
+//        self.scale = ScalesModel.shared.scale
+//        self.saveTappingToFile = saveTappingToFile
+//        //self.requiredStartAmplitude = requiredStartAmplitude
+//        ScalesModel.shared.recordedEvents = TapEvents()
+//        (minScaleMidi, maxScaleMidi) = scale.getMinMax()
+//        ScalesModel.shared.recordedTapsFileURL = nil
+//    }
+    
     func showConfig() {
-        let s = String(format: "%.2f", requiredStartAmplitude)
+        let s = String(format: "%.2f", Settings.shared.requiredScaleRecordStartAmplitude)
         let m = "PitchTapHandler required_start_amplitude:\(s)"
         Logger.shared.log(self, m)
     }
@@ -162,7 +184,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             amplitude = amplitudes[1]
         }
         if tapNumber == 0 {
-            guard amplitude > AUValue(self.requiredStartAmplitude) else { return }
+            guard amplitude > AUValue(amplitudeFilter) else { return }
         }
         
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
@@ -356,7 +378,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 self.fileURL = documentDirectoryURL.appendingPathComponent(fileName)
                 do {
                     if let fileURL = self.fileURL {
-                        let config = "config:\t\(ScalesModel.shared.amplitudeFilter)\t\(ScalesModel.shared.requiredStartAmplitude ?? 0)\n"
+                        let config = "config:\t\(Settings.shared.amplitudeFilter)\t\(Settings.shared.requiredScaleRecordStartAmplitude)\n"
                         try config.write(to: fileURL, atomically: true, encoding: .utf8)
                     }
                 }

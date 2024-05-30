@@ -4,13 +4,21 @@ public struct CallibrationView: View {
     @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared
     let scalesModel = ScalesModel.shared
     let audioManager = AudioManager.shared
-    //var score = Score(key: StaffKey(type: .major, keySig: KeySignature(keyName: "C", keyType: .major)), timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
-    //var scale = Scale(key: Key(keyType: KeyType.major), scaleType: .major, octaves: 2, hand: 0)
     @State private var amplitudeFilterAdjust:Double = 0
+    @State var callibrating = false
+    
+    func getInstructions() -> String {
+        var msg = "Calibration is required so Scales Trainer can accurately hear your piano."
+        msg += "\n\n👉 Hit Start and then play one or two notes as softly as you can then hit Stop."
+        msg += "\n👉 Adjust callibration if the app is not accurately hearing your scale."
+        msg += "\n👉 You will need to do callibration again if you change the location of where the app is positioned when it listens."
+        return msg
+    }
     
     public var body: some View {
         VStack() {
-            
+            Text("Piano Calibration").font(.title)
+            Text(getInstructions()).padding()
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / 4)
                 .commonFrameStyle(backgroundColor: .clear).padding()
@@ -26,20 +34,31 @@ public struct CallibrationView: View {
             )
             .padding()
             .onChange(of: amplitudeFilterAdjust, {
-                scalesModel.amplitudeFilter = amplitudeFilterAdjust
+                Settings.shared.amplitudeFilter = amplitudeFilterAdjust
+                Settings.shared.save(false)
             })
-
+            Button(callibrating ? "Stop" : "Start") {
+                callibrating.toggle()
+                if callibrating {
+                    scalesModel.startMicrophoneWithTapHandler(.onWithCallibration, "Callibration Appear")
+                }
+                else {
+                    self.audioManager.stopRecording()
+                    scalesModel.calculateCallibration()
+                    amplitudeFilterAdjust = Settings.shared.amplitudeFilter
+                }
+            }
+            .padding()
+            .hilighted(backgroundColor: .blue)
         }
         .onAppear() {
             scalesModel.selectedScaleRootIndex = 0
-            //1scalesModel.selectedOctavesIndex = 1
             scalesModel.setKeyAndScale()
-            scalesModel.setMicMode(.onWithPractice, "Callibration Appear")
-            self.amplitudeFilterAdjust = scalesModel.amplitudeFilter
+            self.amplitudeFilterAdjust = Settings.shared.amplitudeFilter
         }
         .onDisappear() {
-            scalesModel.saveSetting(type: .amplitudeFilter, value: scalesModel.amplitudeFilter)
-            scalesModel.setMicMode(.off, "Callibration Disappear")
+            Settings.shared.save()
+            self.audioManager.stopRecording()
         }
     }
 }

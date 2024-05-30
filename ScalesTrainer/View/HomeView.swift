@@ -47,11 +47,11 @@ class PracticeScale : Identifiable {
     }
     
     func getGradient() -> LinearGradient {
-        let gradient = LinearGradient(
-            gradient: Gradient(colors: [Color.yellow, Color.green]),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
+//        let gradient = LinearGradient(
+//            gradient: Gradient(colors: [Color.yellow, Color.green]),
+//            startPoint: .leading,
+//            endPoint: .trailing
+//        )
         if score < 5 {
             return LinearGradient(
                 gradient: Gradient(stops: [
@@ -165,7 +165,7 @@ struct ActivityModeView: View {
     let options = [
         ActivityMode(name: "Your Practice Journal", implemented: true, imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Learning Mode", implemented: true, imageName: "", showStaff: false, showFingers: true),
-        ActivityMode(name: "Record The Scales", implemented: true, imageName: "", showStaff: true, showFingers: true),
+        ActivityMode(name: "Record Scales", implemented: true, imageName: "", showStaff: false, showFingers: true),
         //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
         ActivityMode(name: "Play A Scale Chosen Randomly", implemented: false, imageName: "", showStaff: true, showFingers: true),

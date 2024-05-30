@@ -61,10 +61,8 @@ struct SettingsView: View {
                 }
                 .padding()
             }
-            if let req = scalesModel.requiredStartAmplitude {
-                Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",scalesModel.amplitudeFilter))")
-            }
-
+            let req = settings.requiredScaleRecordStartAmplitude
+            Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",settings.amplitudeFilter))")
         }
     }
 }

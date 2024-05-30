@@ -48,14 +48,13 @@ struct ScalesView: View {
     ///Set state of the model and the view
     func setState(_ ctx:String) {
         scalesModel.setKeyAndScale()
-        scalesModel.setMicMode(.off, ctx)
+        audioManager.stopRecording()
         self.hearingGivenScale = false
         self.hearingUserScale = false
         //self.scaleFollow = false
         self.practicing = false
         self.directionIndex = 0
     }
-    
     
     func SelectScaleView() -> some View {
         HStack {
@@ -141,22 +140,8 @@ struct ScalesView: View {
         }
     }
     
-    func ActionView(followEnabled:Bool, practiceEnabled:Bool, assessScaleEnabled:Bool, backingEnabled:Bool) -> some View {
+    func ActionView(hearScaleEnabled:Bool, followEnabled:Bool, practiceEnabled:Bool, assessScaleEnabled:Bool, backingEnabled:Bool) -> some View {
         HStack {
-            Spacer()
-            Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear The Scale") {
-                hearingGivenScale.toggle()
-                if hearingGivenScale {
-                    metronome.startTimer(notified: PianoKeyboardModel.shared, tempoMultiplier: 1.0, onDone: {
-                        self.hearingGivenScale = false
-                        //scalesModel.startPracticeHandler()
-                    })
-                }
-                else {
-                    metronome.stop()
-                }
-            }.padding()
-            
             if followEnabled {
                 Spacer()
                 Button(scalesModel.runningProcess == .followingScale ? "Stop Following" : "Follow The Scale") {
@@ -166,9 +151,6 @@ struct ScalesView: View {
                     else {
                         scalesModel.setRunningProcess(.followingScale)
                     }
-                    //scalesModel.setRunningProcess(!scalesModel.followScale)
-                    //if scalesModel.followScale
-                    //scalesModel.setAppMode(scalesModel.appMode == .none ? .scaleFollow : .none, "followMode")
                 }.padding()
             }
             
@@ -176,55 +158,85 @@ struct ScalesView: View {
                 Spacer()
                 Button(practicing ? "Stop Practicing" : "Practice") {
                     practicing.toggle()
-                    scalesModel.setMicMode(practicing ? .onWithPractice : .off, "practiceMode")
+                    scalesModel.startMicrophoneWithTapHandler(practicing ? .onWithPractice : .off, "practiceMode")
+                }.padding()
+            }
+                        
+            if hearScaleEnabled {
+                Spacer()
+                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear The Scale") {
+                    hearingGivenScale.toggle()
+                    if hearingGivenScale {
+                        metronome.startTimer(notified: PianoKeyboardModel.shared, tempoMultiplier: 1.0, onDone: {
+                            self.hearingGivenScale = false
+                            //scalesModel.startPracticeHandler()
+                        })
+                    }
+                    else {
+                        metronome.stop()
+                    }
                 }.padding()
             }
             
             if assessScaleEnabled {
                 Spacer()
-                Button(recordingScale ? "Stop Playing Your Scale" : "Record Your Scale") {
-                    recordingScale.toggle()
-                    if recordingScale {
-                        DispatchQueue.main.async {
-                            scalesModel.result = nil
+                if followEnabled {
+                    Spacer()
+                    Button(scalesModel.runningProcess == .followingScale ? "Stop Recording" : "Record The Scale") {
+                        if scalesModel.runningProcess == .followingScale {
+                            scalesModel.setRunningProcess(.none)
                         }
-                        //scalesModel.setMicMode(.assessWithScale, "scaleMode")
-                        scalesModel.startRecordingScale(testData: false, onDone: {
-                            askKeepTapsFile = true
-                            recordingScale = false
-                        })
-                        self.practicing = false
-                    }
-                    else {
-                        scalesModel.stopRecordingScale("Stop Button")
-                        showResultPopup = false
-                        DispatchQueue.main.async {
-                            //scalesModel.result = Result(type: .practiceMode)
-                            //scalesModel.result?.buildResult(feedbackType: .assessWithScale)
+                        else {
+                            scalesModel.setRunningProcess(.recordingScale)
                         }
-                        self.practicing = false
-                    }
-                }.padding()
-                .alert(isPresented: $askKeepTapsFile) {
-                    Alert(
-                        title: Text("Keep Taps File?"),
-                        message: Text("Keep Taps File?"),
-                        primaryButton: .default(Text("Yes")) {
-                        },
-                        secondaryButton: .cancel(Text("No")) {
-                            let fileManager = FileManager.default
-                            do {
-                                if let url = scalesModel.recordedTapsFileURL {
-                                    try fileManager.removeItem(at: url)
-                                    print("File deleted successfully.")
-                                }
-                            } catch {
-                                Logger.shared.reportError(scalesModel, "Failed to delete file: \(error)")
-                            }
-                        }
-                    )
+                    }.padding()
                 }
             }
+                
+//                Button(recordingScale ? "Stop Playing Your Scale" : "Record Your Scale") {
+//                    recordingScale.toggle()
+//                    scalesModel.setMicMode(recordingScale ? .onWithRecordingScale : .off, "practiceMode")
+//                    if recordingScale {
+//                        DispatchQueue.main.async {
+//                            scalesModel.result = nil
+//                        }
+//                        scalesModel.startRecordingScale(testData: false, onDone: {
+//                            askKeepTapsFile = true
+//                            recordingScale = false
+//                        })
+//                        self.practicing = false
+//                    }
+//                    else {
+//                        scalesModel.stopRecordingScale("Stop Button")
+//                        showResultPopup = false
+//                        DispatchQueue.main.async {
+//                            //scalesModel.result = Result(type: .practiceMode)
+//                            //scalesModel.result?.buildResult(feedbackType: .assessWithScale)
+//                        }
+//                        self.practicing = false
+//                    }
+//                }.padding()
+//                .alert(isPresented: $askKeepTapsFile) {
+//                    Alert(
+//                        title: Text("Keep Taps File?"),
+//                        message: Text("Keep Taps File?"),
+//                        primaryButton: .default(Text("Yes")) {
+//                        },
+//                        secondaryButton: .cancel(Text("No")) {
+//                            let fileManager = FileManager.default
+//                            do {
+//                                if let url = scalesModel.recordedTapsFileURL {
+//                                    try fileManager.removeItem(at: url)
+//                                    print("File deleted successfully.")
+//                                }
+//                            } catch {
+//                                Logger.shared.reportError(scalesModel, "Failed to delete file: \(error)")
+//                            }
+//                        }
+//                    )
+//                }
+//            }
+                
             if backingEnabled {
                 Spacer()
                 Button(hearingBacking ? "Backing Off" : "Backing On") {
@@ -243,52 +255,22 @@ struct ScalesView: View {
             Spacer()
         }
     }
-    
-//    func RecordingView() -> some View {
-//        HStack {
-//
-//            
-////                if scalesModel.appMode == .assessWithScale {
-////
-////                    Spacer()
-////                    Button(hearingUserScale ? "Stop Hearing Your Scale" : "Hear Your Scale") {
-////                        hearingUserScale.toggle()
-////                        if hearingUserScale {
-////                            metronome.startTimer(notified: PianoKeyboardModel.shared, tempoMultiplier: 1.0,
-////                                                 onDone: {self.hearingUserScale = false})
-////                        }
-////                        else {
-////                            metronome.stop()
-////                        }
-////                    }
-////                    .padding()
-////
-////                    Spacer()
-////                    Button(showingTapData ? "Close Tap Data" : "Show Tap Data") {
-////                        showingTapData.toggle()
-////                    }
-////                    .padding()
-////
-////                }
-//            Spacer()
-//        }
-//    }
-    
+        
     var body: some View {
         VStack {
-//            Image("app_background_0_8")
-//                .resizable()
-//                .scaledToFill()
-//                .edgesIgnoringSafeArea(.top)
-//                .opacity(0.2)
+            //            Image("app_background_0_8")
+            //                .resizable()
+            //                .scaledToFill()
+            //                .edgesIgnoringSafeArea(.top)
+            //                .opacity(0.2)
             VStack() {
                 if scalesModel.runningProcess == .none {
                     SelectScaleView().commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                    Text(scalesModel.scale.getScaleName()).font(.title).padding()//.hilighted()
-                    PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
-                        .frame(height: UIScreen.main.bounds.size.height / (orientationObserver.orientation.isPortrait ? 4 : 3))
-                        .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                 }
+                Text(scalesModel.scale.getScaleName()).font(.title).padding()//.hilighted()
+                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
+                    .frame(height: UIScreen.main.bounds.size.height / (orientationObserver.orientation.isPortrait ? 4 : 3))
+                    .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                 
                 if !orientationObserver.orientation.isAnyLandscape {
                     LegendView()
@@ -325,6 +307,18 @@ struct ScalesView: View {
                             Spacer()
                         }
                     }
+                    if scalesModel.runningProcess == .recordingScale {
+                        HStack {
+                            Spacer()
+                            Button("Stop Recording Scale") {
+                                scalesModel.setRunningProcess(.none)
+                            }
+                            .padding()
+                            .hilighted(backgroundColor: .blue)
+                            Spacer()
+                        }
+                    }
+                    
                 }
                 else {
                     if let result = scalesModel.result {
@@ -332,34 +326,35 @@ struct ScalesView: View {
                     }
                     
                     if ["All"].contains(activityMode.name) {
-                        ActionView(followEnabled: true, practiceEnabled: true, assessScaleEnabled: true, backingEnabled: true)
+                        ActionView(hearScaleEnabled: true, followEnabled: true, practiceEnabled: true, assessScaleEnabled: true, backingEnabled: true)
                             .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                     }
                     
                     if ["Learning Mode"].contains(activityMode.name) {
-                        ActionView(followEnabled: true, practiceEnabled: true, assessScaleEnabled: false, backingEnabled: true)
+                        ActionView(hearScaleEnabled: true, followEnabled: true, practiceEnabled: true, assessScaleEnabled: false, backingEnabled: true)
                             .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                     }
                     
-                    if ["Record The Scales"].contains(activityMode.name) {
-                        ActionView(followEnabled: false, practiceEnabled: false, assessScaleEnabled: true, backingEnabled: false)
+                    if ["Record Scales"].contains(activityMode.name) {
+                        ActionView(hearScaleEnabled: false, followEnabled: false, practiceEnabled: false, assessScaleEnabled: true, backingEnabled: false)
                             .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                     }
                     if ["Hear and Identify A Scale"].contains(activityMode.name) {
-                        ActionView(followEnabled: false, practiceEnabled: false, assessScaleEnabled: false, backingEnabled: false)
+                        ActionView(hearScaleEnabled: true, followEnabled: false, practiceEnabled: false, assessScaleEnabled: false, backingEnabled: false)
                             .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                     }
-
+                    
                 }
                 if settings.recordDataMode {
                     Spacer()
                     Button("READ_TEST_DATA") {
                         scalesModel.result = nil
                         recordingScale = true
-                        scalesModel.setMicMode(.onWithScale, "readTestData")
-                        scalesModel.startRecordingScale(testData: true, onDone: {
-                            recordingScale = false
-                        })
+                        scalesModel.startMicrophoneWithTapHandler(.onWithRecordingScale, "readTestData")
+//                        scalesModel.startRecordingScale(testData: true, onDone: {
+//                            recordingScale = false
+//                        })
+                        scalesModel.setRunningProcess(.recordingScale)
                     }.padding()
                 }
                 
@@ -369,7 +364,7 @@ struct ScalesView: View {
         }
         .sheet(isPresented: $showingTapData) {
             TapDataView(keyboardModel: PianoKeyboardModel.shared)
-        }        
+        }
         
         .alert(isPresented: $showingFeedback) {
             Alert(
@@ -385,7 +380,7 @@ struct ScalesView: View {
             ///Required to get the score to paint on entry
             scalesModel.setKeyAndScale()
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            scalesModel.setMicMode(.off, "onAppear")
+            scalesModel.startMicrophoneWithTapHandler(.off, "onAppear")
             ScalesModel.shared.setShowStaff(activityMode.showStaff)
             ScalesModel.shared.setShowFingers(activityMode.showFingers)
             if ["Hear and Identify A Scale"].contains(activityMode.name) {
@@ -404,9 +399,11 @@ struct ScalesView: View {
             }
         }
         .onDisappear {
+            metronome.stop()
         }
         .navigationBarTitle("\(activityMode.name)", displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }
+
 

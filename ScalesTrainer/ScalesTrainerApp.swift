@@ -54,10 +54,9 @@ struct ScalesTrainerApp: App {
                 }
                 //.border(Color.red)
                 .onAppear() {
-                    let shared = ScalesModel.shared
-                    if ScalesModel.shared.requiredStartAmplitude == nil {
-                        self.selectedTab = 2
-                    }
+//                    if ScalesModel.shared.requiredStartAmplitude == nil {
+//                        self.selectedTab = 2
+//                    }
                 }
         }
     }

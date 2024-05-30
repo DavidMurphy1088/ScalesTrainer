@@ -65,22 +65,22 @@ public struct TimeSliceView: View {
     }
 
     func getAccidental(accidental:Int) -> String {
-        if false {
-            ///requires quite a bit of work in staff placement to get the accidental correct
-            ///for scales (thus far) if an acciental is specified for note display (given the key) that accidental will always be a natural e.g. harmonic and melodic minor scales
-            if accidental < 0 {
-                return "\u{266D}"
-            }
-            else {
-                if accidental > 0 {
-                    return "\u{266F}"
-                }
-                else {
-                    return "\u{266E}"
-                }
-            }
-        }
-        else {
+//        if false {
+//            ///requires quite a bit of work in staff placement to get the accidental correct
+//            ///for scales (thus far) if an acciental is specified for note display (given the key) that accidental will always be a natural e.g. harmonic and melodic minor scales
+//            if accidental < 0 {
+//                return "\u{266D}"
+//            }
+//            else {
+//                if accidental > 0 {
+//                    return "\u{266F}"
+//                }
+//                else {
+//                    return "\u{266E}"
+//                }
+//            }
+//        }
+//        else {
             if accidental < 0 {
                 return "\u{266E}" //natural
             }
@@ -92,7 +92,7 @@ public struct TimeSliceView: View {
                     return "\u{266E}"
                 }
             }
-        }
+//        }
     }
     struct LedgerLine:Hashable, Identifiable {
         var id = UUID()
