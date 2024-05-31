@@ -214,7 +214,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug111(_ msg:String) {
+    func debug11(_ msg:String) {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         for state in self.scaleNoteState {
             print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
@@ -503,7 +503,7 @@ public class Scale {
             }
             //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
-        debug111("End New")
+        //debug111("End New")
     }
     
     func setFingersRightHandOld() {

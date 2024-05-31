@@ -10,7 +10,7 @@ import SwiftUI
 //}
 
 struct ScalesTrainerApp: App {
-    @State private var selectedTab = 0
+    @State private var selectedTab = Settings.shared.amplitudeFilter == 0 ? 2 : 0
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {
@@ -18,16 +18,17 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
+                    .tag(0)
 
                 ScalesView(activityMode: ActivityMode(name: "All", implemented: true, imageName: "", showStaff: false, showFingers: true))
                     .tabItem {
-                        Label("Scales", systemImage: "music.note.list")
+                        Label("TEST", systemImage: "music.note.list")
                     }
                     .tag(1)
                 
                 CallibrationView()
                     .tabItem {
-                        Label("Calibration", systemImage: "gear")
+                        Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
                     .tag(2)
                 
@@ -35,17 +36,13 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
-                
-//                CallibrationViewOld()
-//                    .tabItem {
-//                        Label("OldCalibration", systemImage: "gear")
-//                    }
-//                    .tag(2)
+                    .tag(3)
+
                 LogView()
                     .tabItem {
-                        Label("Log", systemImage: "gear")
+                        Label("Log", systemImage: "book.pages")
                     }
-                    .tag(3)
+                    .tag(4)
                     
                 //                SpriteKitAudioView()
                 //                    .tabItem {

@@ -7,6 +7,9 @@
     "                                                                             " : {
 
     },
+    "  👉 %@  " : {
+
+    },
     " %@ " : {
 
     },
@@ -43,6 +46,9 @@
     "1" : {
 
     },
+    "AmplFilter: %@" : {
+
+    },
     "Amplitude filter set at:%@" : {
 
     },
@@ -56,9 +62,6 @@
 
     },
     "Calibration" : {
-
-    },
-    "Correctly Played" : {
 
     },
     "Finger" : {
@@ -124,9 +127,6 @@
     "Log" : {
 
     },
-    "Notification Status" : {
-
-    },
     "Octaves:" : {
 
     },
@@ -137,12 +137,6 @@
 
     },
     "Piano Calibration" : {
-
-    },
-    "Played But Not in Scale" : {
-
-    },
-    "Practice" : {
 
     },
     "Practice Days" : {
@@ -160,18 +154,8 @@
     "Record The Scale" : {
 
     },
-    "Record your scale" : {
+    "Recording Scale Lead in Count" : {
 
-    },
-    "Required Start Amplitude:%@    ampFilter:%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Required Start Amplitude:%1$@    ampFilter:%2$@"
-          }
-        }
-      }
     },
     "Root" : {
 
@@ -195,9 +179,6 @@
         }
       }
     },
-    "Scales" : {
-
-    },
     "Scales Trainer" : {
 
     },
@@ -210,13 +191,22 @@
     "Show Fingers" : {
 
     },
+    "Show Scale Result" : {
+
+    },
     "Show Staff" : {
+
+    },
+    "Show Tap Data" : {
 
     },
     "Speech Listen" : {
 
     },
     "Start" : {
+
+    },
+    "Start Practicing" : {
 
     },
     "Stats: %@" : {
@@ -243,7 +233,13 @@
     "Stop Recording Scale" : {
 
     },
+    "Taps" : {
+
+    },
     "Tempo" : {
+
+    },
+    "TEST" : {
 
     },
     "Viewing\nDirection" : {

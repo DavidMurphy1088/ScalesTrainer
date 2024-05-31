@@ -2,21 +2,20 @@ import Foundation
 import SwiftUI
 
 class Result {
-    let feedbackType:ActivityMode
     var missedCountAsc = 0
     var missedCountDesc = 0
     var wrongCountAsc = 0
     var wrongCountDesc = 0
     
-    init(type:ActivityMode) {
-        self.feedbackType = type
+    init() {
+        //self.feedbackType = type
     }
     
-    func buildResult(feedbackType:ActivityMode) {
-        //PianoKeyboardModel.shared.debug2("test datax")
+    func buildResult() {
         //ScalesModel.shared.scale.debug("test datax")
         let keyboardModel = PianoKeyboardModel.shared
-
+        PianoKeyboardModel.shared.debug("build result")
+        
         guard let score = ScalesModel.shared.score else {
             return
         }
@@ -75,6 +74,7 @@ class Result {
 struct ResultView: View {
     var keyboardModel:PianoKeyboardModel
     let result:Result
+    let scalesModel = ScalesModel.shared
     
     func recordStatus() -> (Bool, String) {
         var status = ""
@@ -108,10 +108,7 @@ struct ResultView: View {
         return (correct, status)
     }
     
-//    func scaleFollowStatus() -> (Bool, String) {
-//        return (true, "finished scale follow")
-//    }
-    
+
     func status() -> (Bool, String)? {
 //        if result.feedbackType == .assessWithScale {
             return recordStatus()
@@ -123,16 +120,19 @@ struct ResultView: View {
     }
     
     var body: some View {
-        HStack {
-            if let status = status() {
-                if status.0 {
-                    Image(systemName: "face.smiling")
-                        .renderingMode(.template)
-                        .foregroundColor(.green)
-                        .font(.largeTitle)
-                        .padding()
+        VStack {
+            HStack {
+                Text(" Result for " + scalesModel.scale.getScaleName() + " ").hilighted()
+                if let status = status() {
+                    if status.0 {
+                        Image(systemName: "face.smiling")
+                            .renderingMode(.template)
+                            .foregroundColor(.green)
+                            .font(.largeTitle)
+                            .padding()
+                    }
+                    Text(status.1).padding()
                 }
-                Text(status.1).padding()
             }
         }
     }
@@ -166,31 +166,29 @@ struct TapDataView: View {
             color = .blue
         }
         if event.status == .keyPressWithFollowingScaleMatch {
-            color = .red
+            color = .purple
         }
         if event.status == .keyPressWithoutScaleMatch {
             color = .red
         }
-
         return color
     }
     
     var body: some View {
         VStack {
-            Text("Notification Status").foregroundColor(Color .blue).font(.title3)//.padding()
+            Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
 
-            if let tapEvents = scalesModel.recordedEvents {
+            if let tapEvents = scalesModel.recordedTapEvents {
                 ScrollView {
                     ForEach(tapEvents.events, id: \.self) { event in
                         Text(event.tapData()).foregroundColor(getColor(event))
                     }
                 }
             }
-            if let events = scalesModel.recordedEvents {
-                Text("Stats: \(events.minMax())").foregroundColor(Color .blue).font(.title3).padding()
+            if let events = scalesModel.recordedTapEvents {
+                Text("Stats: \(events.minMax())").foregroundColor(Color .blue).font(.title3)
             }
-            //Text("Config filter:\(result.amplitudeFilter) start:\(result.startAmplitude)").font(.title3).padding()
-//            Text("Not in Scale").foregroundColor(Color .blue).font(.title3).padding()
+            Text("AmplFilter: \(String(format: "%.4f", Settings.shared.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
         }
     }
 }

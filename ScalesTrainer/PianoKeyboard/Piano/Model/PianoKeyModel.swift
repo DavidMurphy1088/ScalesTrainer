@@ -21,7 +21,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     var scaleNoteState:ScaleNoteState?
     let keyPlayingSeconds = 1.0 /// How long the key stays hilighed when played
     var isPlayingMidi = false
-    var keyIndex: Int = 0
+    var keyOffsetFromLowestKey: Int = 0
     var midi: Int
     
     var hilightKey = false
@@ -32,7 +32,7 @@ public class PianoKeyModel: Identifiable, Hashable {
 
     init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
-        self.keyIndex = keyIndex
+        self.keyOffsetFromLowestKey = keyIndex
         self.keyClickedState = PianoKeyClickedState()
         self.midi = midi
     }
@@ -74,11 +74,11 @@ public class PianoKeyModel: Identifiable, Hashable {
 //    }
     
     public var noteMidiNumber: Int {
-        keyIndex + self.keyboardModel.firstKeyMidi
+        keyOffsetFromLowestKey + self.keyboardModel.firstKeyMidi
     }
 
     public var name: String {
-        NoteName.name(for: noteMidiNumber, preferSharps: !(keyboardModel.scale.scaleRoot.flats > 0))
+        NoteName.name(for: noteMidiNumber, preferSharps: !(scalesModel.scale.scaleRoot.flats > 0))
     }
     
     public var finger: String {

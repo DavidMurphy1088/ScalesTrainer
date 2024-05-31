@@ -30,21 +30,20 @@ struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
+    @State var leadInBarCount = 0
     
     var body: some View {
         VStack {
             VStack {
                 //Spacer()
                 //MicrophoneView()
-                SpeechView()
+                //SpeechView()
                 
                 Spacer()
                 HStack() {
                     Toggle("Record Data Mode", isOn: $recordDataMode)
                 }
                 .frame(width: UIScreen.main.bounds.width * 0.25)
-                //.padding()
-                //.background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
                     settings.save()
@@ -52,17 +51,36 @@ struct SettingsView: View {
                 .padding()
                 
                 Spacer()
-                //MetronomeView()
+                HStack {
+                    Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
+                    Picker("Select Value", selection: $leadInBarCount) {
+                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+                            Text("\(scalesModel.scaleLeadInCounts[index])")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: leadInBarCount, {
+                        settings.scaleLeadInBarCount = leadInBarCount
+                        settings.save()
+                    })
+                }
+                
+                Spacer()
                 Button("Save") {
                     settings.save()
                 }
+                Spacer()
                 Button("Load") {
                     settings.load()
                 }
                 .padding()
+                Spacer()
             }
-            let req = settings.requiredScaleRecordStartAmplitude
-            Text("Required Start Amplitude:\(String(format: "%.4f",req))    ampFilter:\(String(format: "%.4f",settings.amplitudeFilter))")
+            //let req = settings.requiredScaleRecordStartAmplitude
+            Text(Settings.shared.toString())
+        }
+        .onAppear() {
+            leadInBarCount = settings.scaleLeadInBarCount
         }
     }
 }

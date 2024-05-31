@@ -9,9 +9,10 @@ public struct CallibrationView: View {
     
     func getInstructions() -> String {
         var msg = "Calibration is required so Scales Trainer can accurately hear your piano."
-        msg += "\n\n👉 Hit Start and then play one or two notes as softly as you can then hit Stop."
-        msg += "\n👉 Adjust callibration if the app is not accurately hearing your scale."
-        msg += "\n👉 You will need to do callibration again if you change the location of where the app is positioned when it listens."
+        msg += "\n\n- Hit Start and then play one or two notes slowly and very softly then hit Stop."
+        msg += "\n- Adjust callibration if the app is not accurately hearing your scale."
+        msg += "\n- You will need to do callibration again if you change the location of where the app is positioned when it listens."
+        msg += "\n\n👉 For best results your device should be placed near or against your piano"
         return msg
     }
     
@@ -40,11 +41,11 @@ public struct CallibrationView: View {
             Button(callibrating ? "Stop" : "Start") {
                 callibrating.toggle()
                 if callibrating {
-                    scalesModel.startMicrophoneWithTapHandler(.onWithCallibration, "Callibration Appear")
+                    scalesModel.setRunningProcess(.callibrating)
                 }
                 else {
-                    self.audioManager.stopRecording()
                     scalesModel.calculateCallibration()
+                    scalesModel.setRunningProcess(.none)
                     amplitudeFilterAdjust = Settings.shared.amplitudeFilter
                 }
             }

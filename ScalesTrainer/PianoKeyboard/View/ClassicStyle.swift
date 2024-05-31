@@ -91,7 +91,6 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0.0
-            //let resultStatusRadius = naturalWidth * 0.20
             let playingMidiRadius = naturalWidth * 0.5
             
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
@@ -153,7 +152,8 @@ public struct ClassicStyle {
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
                 ///Show finger break only outside practice or record
-                if false { //scalesModel.appMode == .assessWithScale {
+                //if [.recordingScale, .recordingScaleWithData].contains(scalesModel.runningProcess) {
+                if scalesModel.result != nil {
                     let color = getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
@@ -262,7 +262,7 @@ public struct ClassicStyle {
                 
                 ///----------- Note Status-----------
                 //if scalesModel.appMode == .practicingMode || scalesModel.appMode == .none {
-                if false { //scalesModel.appMode == .assessWithScale {
+                if scalesModel.result != nil {
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)

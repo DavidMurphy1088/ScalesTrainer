@@ -58,14 +58,14 @@ class PracticeTapHandler : TapHandlerProtocol {
     let minMidi:Int
     let maxMidi:Int
     var tapNum = 0
-    
+
     required init(amplitudeFilter:Double) {
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
-        Logger.shared.log(self, "PracticeTapHandler filter:\(Settings.shared.amplitudeFilter)")
+        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
         tapNum = 0
-        ScalesModel.shared.recordedEvents = TapEvents()
+        ScalesModel.shared.recordedTapEvents = TapEvents()
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -83,7 +83,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(amplitudeFilter)
+        let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -101,7 +101,7 @@ class PracticeTapHandler : TapHandlerProtocol {
                 keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
             }
         }
-        ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNum,
+        ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNum,
                                                                   status: TapEventStatus.none,
                                                                   expectedScaleNoteState: nil,
                                                                   midi: 0, tapMidi: midi, amplitude: amplitude,
@@ -133,43 +133,26 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var unmatchedCount = 0
     var maxScaleMidi = 0
     var minScaleMidi = 0
+    var matchCount = 0
     
     required init(amplitudeFilter:Double) {
         self.amplitudeFilter = amplitudeFilter
         self.scale = ScalesModel.shared.scale
         //self.saveTappingToFile = saveTappingToFile
         //self.requiredStartAmplitude = requiredStartAmplitude
-        ScalesModel.shared.recordedEvents = TapEvents()
+        ScalesModel.shared.recordedTapEvents = TapEvents()
         (minScaleMidi, maxScaleMidi) = scale.getMinMax()
         ScalesModel.shared.recordedTapsFileURL = nil
-    }
-    
-//    init(saveTappingToFile:Bool) {
-//        self.scale = ScalesModel.shared.scale
-//        self.saveTappingToFile = saveTappingToFile
-//        //self.requiredStartAmplitude = requiredStartAmplitude
-//        ScalesModel.shared.recordedEvents = TapEvents()
-//        (minScaleMidi, maxScaleMidi) = scale.getMinMax()
-//        ScalesModel.shared.recordedTapsFileURL = nil
-//    }
-    
-    func showConfig() {
-        let s = String(format: "%.2f", Settings.shared.requiredScaleRecordStartAmplitude)
-        let m = "PitchTapHandler required_start_amplitude:\(s)"
-        Logger.shared.log(self, m)
+        Logger.shared.log(self, "ScaleTapHandler start. AmplFilter:\(self.amplitudeFilter)")
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         if saveTappingToFile {
-            recordTapDataToFile(frequencies, amplitudes)
+            let timeInterval = Date().timeIntervalSince1970
+            let tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
+            tapRecords.append(tapData)
         }
         processTapData(frequencies, amplitudes)
-    }
-    
-    func recordTapDataToFile(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        let timeInterval = Date().timeIntervalSince1970
-        let tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
-        tapRecords.append(tapData)
     }
     
     func processTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -183,10 +166,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             frequency = frequencies[1]
             amplitude = amplitudes[1]
         }
-        if tapNumber == 0 {
-            guard amplitude > AUValue(amplitudeFilter) else { return }
-        }
-        
+
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
         
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
@@ -194,8 +174,13 @@ class ScaleTapHandler : TapHandlerProtocol  {
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " amp:\(String(format: "%.4f", amplitude))"
-        msg += "  fr:\(String(format: "%.0f", frequency))"
+        msg += "  freq:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: tapMidi))"
+        if tapNumber % 10 == 0 {
+            Logger.shared.log(self, msg)
+        }
+        tapNumber += 1
+        guard amplitude > AUValue(amplitudeFilter) else { return }
         
         var amplDiff:Float = 0.0
         if let lastAmplitude:Float = lastAmplitude {
@@ -211,7 +196,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         guard nextExpectedNotes.count > 0 else {
             ///All scales notes are already matched
-            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
+            ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNumber, status: .pastEndOfScale,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: tapMidi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: false, key: nil))
@@ -241,7 +226,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         
         ///Does the notification represents a key that could be pressed on the keyboard?
         guard let keyboardIndex = keyboardModel.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
-            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
+            ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNumber, status: .keyNotOnKeyboard,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -251,7 +236,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ///Same as last note?
         if let lastKeyPressedMidi = lastKeyPressedMidi {
             guard midi != lastKeyPressedMidi else {
-                ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .continued,
+                ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNumber, status: .continued,
                                                                          expectedScaleNoteState: nil,
                                                                          midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                          amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -261,7 +246,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         
         ///Within the scale?
         guard midi >= minScaleMidi && midi <= maxScaleMidi else {
-            ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: .outsideScale,
+            ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNumber, status: .outsideScale,
                                                                      expectedScaleNoteState: nil,
                                                                      midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                      amplDiff: Double(amplDiff), ascending: ascending, key: nil))
@@ -293,6 +278,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                             ///Set any previously expected note unmatched
                             nextExpectedNotes[0].unmatchedTime = Date()
                         }
+                        matchCount += 1
                         break
                     }
                 }
@@ -324,38 +310,35 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 }
             }
         }
-        ScalesModel.shared.recordedEvents?.events.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
+        ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNumber, status: tapEventStatus,
                                                                  expectedScaleNoteState: nextExpectedNotes[0],
                                                                  midi: midi, tapMidi: tapMidi, amplitude: amplitude,
                                                                  amplDiff: Double(amplDiff),
                                                                  ascending: ascending, key: keyboardKey))
-        //scale.debug1("herex")
-        //keyboardModel.debug1("herex")
 
-        Logger.shared.log(self,msg)
         ///Stop the recording if at end of scale.
         if tapEventStatus == .keyPressWithNextScaleMatch {
-            if tapNumber > scale.scaleNoteState.count / 2 {
+            if matchCount > scale.scaleNoteState.count / 2 {
                 if midi == scale.scaleNoteState[0].midi {
-                    ScalesModel.shared.stopRecordingScale("from tap handler")
+                    //ScalesModel.shared.stopRecordingScale("from tap handler")
+                    ScalesModel.shared.setRunningProcess(.none)
                 }
             }
         }
 
-        tapNumber += 1
         lastAmplitude = amplitude
     }
     
     func stopTapping() {
-        Logger.shared.log(self, "PitchTapHandler stop")
-        Logger.shared.calcValueLimits()        
-        let result = Result(type: ActivityMode(name:"", implemented: true, imageName:"", showStaff:false, showFingers:false))
-        //result.buildResult(feedbackType: .assessWithScale)
+        Logger.shared.log(self, "ScaleTapHandler stop")
+        Logger.shared.calcValueLimits()     
+        //PianoKeyboardModel.shared.debug("=======+++")
+        let result = Result()
+        result.buildResult()
         ScalesModel.shared.result = result
         
         if saveTappingToFile {
             DispatchQueue.main.async {
-
                 let calendar = Calendar.current
                 let month = calendar.component(.month, from: Date())
                 let day = calendar.component(.day, from: Date())
@@ -378,7 +361,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 self.fileURL = documentDirectoryURL.appendingPathComponent(fileName)
                 do {
                     if let fileURL = self.fileURL {
-                        let config = "config:\t\(Settings.shared.amplitudeFilter)\t\(Settings.shared.requiredScaleRecordStartAmplitude)\n"
+                        var config = "config:\t\(Settings.shared.amplitudeFilter)"
+                        //config += "\t\(Settings.shared.requiredScaleRecordStartAmplitude)"
+                        config += "\n"
                         try config.write(to: fileURL, atomically: true, encoding: .utf8)
                     }
                 }

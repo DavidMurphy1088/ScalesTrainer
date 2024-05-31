@@ -13,12 +13,16 @@ class Backer :MetronomeTimerNotificationProtocol{
     var callNum = 0
     var chordRoots:[Int] = []
     
+    func useMajor(_ scale:Scale) -> Bool {
+        return [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh].contains(scale.scaleType)
+    }
+    
     func metronomeStart() {
         let scale = ScalesModel.shared.scale
         //let scaleRoot = scale.scaleRoot
         var root = scale.scaleNoteState[0].midi
         root -= 12
-        if [.arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh].contains(scale.scaleType) {
+        if useMajor(scale) {
             chordRoots.append(root)
             chordRoots.append(root - 3) //ii minoir
             chordRoots.append(root - 7) //IV
@@ -40,7 +44,7 @@ class Backer :MetronomeTimerNotificationProtocol{
         let root = chordRoots[bar % 4]
         var midi = 0
         ///Make Alberti pattern
-        if scale.scaleType == .major {
+        if useMajor(scale) {
             switch beat {
             case 0:
                 midi = root

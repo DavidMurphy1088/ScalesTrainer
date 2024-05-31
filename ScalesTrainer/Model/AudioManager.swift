@@ -6,7 +6,7 @@ import Foundation
 import AudioKitEX
 import Speech
 
-class AudioManager : MetronomeTimerNotificationProtocol {
+class AudioManager {
     static let shared = AudioManager()
     public var engine = AudioEngine()
     var installedTap: BaseTap?
@@ -20,10 +20,9 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     var speechManager:SpeechManager?
     let speech = SpeechManager.shared
     var recordedFileSequenceNum = 0
-    var metronomeAudioPlayerLow:AVAudioPlayer?
-    var metronomeAudioPlayerHigh:AVAudioPlayer?
     var metronomeCount = 0
     var simulator = false
+    var blockTaps = false
     
     init() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -104,85 +103,61 @@ class AudioManager : MetronomeTimerNotificationProtocol {
         return nil
     }
     
-    func metronomeStart() {
-        metronomeAudioPlayerLow = loadAudioPlayer(name: "metronome_mechanical_low")
-        metronomeAudioPlayerHigh = loadAudioPlayer(name: "metronome_mechanical_high")
-        metronomeCount = 0
-    }
-    
-    func metronomeTicked(timerTickerNumber: Int) -> Bool {
-        if metronomeCount % 4 == 0 {
-            metronomeAudioPlayerHigh!.play()
-        }
-        else {
-            metronomeAudioPlayerLow!.play()
-        }
-        metronomeCount += 1
-        //return metronomeCount >= 8
-        return metronomeCount >= 1
-    }
-    
-    func metronomeStop() {        
-    }
-
-    func startRecordingMicrophone(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
-        Logger.shared.clearLog()
-        Logger.shared.log(self, "startRecordingMicrophone with ampl filter:\(Settings.shared.amplitudeFilter)")
-        
+    func startRecordingMicWithTapHandler(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
+        Logger.shared.log(self, "startRecordingMicrophone")
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
             
-            if false || AudioManager.shared.simulator {
-                ///prolong and wasted attempts to make simulator not crash 😡
-                //try engine.start()
-                engine.stop()
-                self.tapHandler = tapHandler
-                self.installedTap = PitchTap(mic!, bufferSize:UInt32(4096)) { pitch, amplitude in
-                    //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
-//                        if true {
-                            DispatchQueue.main.async {
-                                tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-                            }
-//                        }
-//                        else {
-//                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-//                        }
-                    //}
+//            if false || AudioManager.shared.simulator {
+//                ///prolong and wasted attempts to make simulator not crash 😡
+//                //try engine.start()
+//                engine.stop()
+//                self.tapHandler = tapHandler
+//                self.installedTap = PitchTap(mic!, bufferSize:UInt32(4096)) { pitch, amplitude in
+//                    //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
+////                        if true {
+//                            DispatchQueue.main.async {
+//                                tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
+//                            }
+////                        }
+////                        else {
+////                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
+////                        }
+//                    //}
+//                }
+//                if let tap = self.installedTap {
+//                    try engine.start()
+//                    tap.start()
+//                    
+//                }
+//                else {
+//                    Logger.shared.reportError(self, "No tap handler")
+//                }
+//            }
+//            else {
+            try engine.start()
+            installTapHandler(node: mic!,
+                              bufferSize: 4096,
+                              tapHandler: tapHandler,
+                              asynch: true)
+            //WARNING 😣 - .record must come before tap.start
+            if recordAudio {
+                try microphoneRecorder?.record() ///😡Causes exception if tap handler is Callibration
+                if microphoneRecorder != nil && microphoneRecorder!.isRecording {
+                    Logger.shared.log(self, "Recording started...")
                 }
-                if let tap = self.installedTap {
-                    try engine.start()
-                    tap.start()
-                    
-                }
-                else {
-                    Logger.shared.reportError(self, "No tap handler")
-                }
+            }
+            
+            if let tap = self.installedTap {
+                tap.start()
             }
             else {
-                try engine.start()
-                installTapHandler(node: mic!,
-                                  bufferSize: 4096,
-                                  tapHandler: tapHandler,
-                                  asynch: true)
-                //WARNING 😣 - .record must come before tap.start
-                if recordAudio {
-                    try microphoneRecorder?.record() ///😡Causes exception if tap handler is Callibration
-                    if microphoneRecorder != nil && microphoneRecorder!.isRecording {
-                        Logger.shared.log(self, "Recording started...")
-                    }
-                }
-                
-                if let tap = self.installedTap {
-                    tap.start()
-                }
-                else {
-                    Logger.shared.reportError(self, "No tap handler")
-                }
+                Logger.shared.reportError(self, "No tap handler")
             }
         } catch let err {
-            print(err)
+            Logger.shared.reportError(self, err.localizedDescription)
         }
     }
     
@@ -262,6 +237,8 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 let lines = contents.split(separator: "\n")
                 
                 var ctr = 0
+                var freqs:[Float] = []
+                var amps:[Float] = []
                 for line in lines {
                     if ctr == 0 {
                         ctr += 1
@@ -272,7 +249,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                             if reqStartAmpl != nil  {
                                 DispatchQueue.main.async {
                                     Settings.shared.amplitudeFilter = ampFilter
-                                    Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
+                                    //Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
                                 }
                             }
                         }
@@ -286,19 +263,36 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                     let a = Float(ampl)
                     if let f = f {
                         if let a = a {
-                            tapHandler.tapUpdate([f, f], [a, a])
-                            usleep(1000000 * UInt32(0.2))
+                            freqs.append(f)
+                            amps.append(a)
                         }
                     }
                     ctr += 1
                 }
-                tapHandler.stopTapping()
-                scalesModel.stopRecordingScale("End of Test Data")
-                //PianoKeyboardModel.shared.mapPianoKeysToScaleNotes(direction: 0)
-                scalesModel.forceRepaint()
-                //PianoKeyboardModel.shared.debug("End test read")
-                Logger.shared.log(self, "Read test data \(lines.count-1) lines")
                 
+                let backgroundQueue = DispatchQueue.global(qos: .background)
+                    
+                backgroundQueue.async {
+                    for tIndex in 0..<freqs.count {
+                        let semaphore = DispatchSemaphore(value: 0)
+                        let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
+                        let timer = DispatchSource.makeTimerSource(queue: queue)
+                        timer.schedule(deadline: .now() + 0.04, repeating: .never)
+                        timer.setEventHandler {
+                            semaphore.signal()
+                            timer.cancel() // Cancel the timer after it fires once
+                        }
+                        timer.resume()
+                        semaphore.wait()
+                        let f:AUValue = AUValue(freqs[tIndex])
+                        let a:AUValue = amps[tIndex]
+                        tapHandler.tapUpdate([f, f], [a, a])
+                    }
+                    
+                    tapHandler.stopTapping()
+                    scalesModel.forceRepaint()
+                    Logger.shared.log(self, "Read test data \(lines.count-1) lines")
+                }
             } catch {
                 Logger.shared.reportError(self, "Error reading file: \(fileName) \(error)")
             }
@@ -310,7 +304,8 @@ class AudioManager : MetronomeTimerNotificationProtocol {
     func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) {
         self.tapHandler = tapHandler
         self.installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
-            //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
+            //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
+            if !self.blockTaps {
                 if asynch {
                     DispatchQueue.main.async {
                         tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
@@ -319,6 +314,7 @@ class AudioManager : MetronomeTimerNotificationProtocol {
                 else {
                     tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                 }
+            }
             //}
         }
     }

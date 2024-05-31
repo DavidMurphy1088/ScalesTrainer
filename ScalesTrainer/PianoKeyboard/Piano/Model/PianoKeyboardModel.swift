@@ -11,7 +11,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     @Published public var pianoKeyModel: [PianoKeyModel] = []
     @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
 
-    public var scale:Scale = ScalesModel.shared.scale
+    //public var scale:Scale = ScalesModel.shared.scale
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
     private var ascending = true
@@ -96,7 +96,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     }
     
     func configureKeyboardSize() {
-        self.scale = self.scalesModel.scale
+        let scale = self.scalesModel.scale
         self.firstKeyMidi = scale.scaleNoteState[0].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
@@ -148,19 +148,22 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     public func mapScaleFingersToKeyboard(direction:Int) {
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
-            key.scaleNoteState = scale.getStateForMidi(midi: key.midi, direction: direction)
+            key.scaleNoteState = scalesModel.scale.getStateForMidi(midi: key.midi, direction: direction)
         }
     }
     
-//    func debug3(_ ctx:String) {
-//        print("=== Keyboard status === \(ctx)")
-//        for i in 0..<numberOfKeys {
-//            let key = self.pianoKeyModel[i]
-//            print(key.keyIndex, "midi:", key.midi, "finger:", key.scaleNoteState?.finger ?? "_____",
-//                  "fingerBreak:", key.scaleNoteState?.fingerSequenceBreak ?? "", terminator: "")
-//            print("\tascMatch", key.keyClickedState.tappedTimeAscending != nil, "\tdescMatch", key.keyClickedState.tappedTimeDescending != nil)
-//        }
-//    }
+    func debug(_ ctx:String) {
+        print("=== Keyboard status === \(ctx)")
+        for i in 0..<numberOfKeys {
+            let key = self.pianoKeyModel[i]
+            print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "midi:", key.midi, terminator: "")
+            print("   ascMatch", key.keyClickedState.tappedTimeAscending != nil, "descMatch", key.keyClickedState.tappedTimeDescending != nil, terminator: "")
+            if let state = key.scaleNoteState {
+                print("  finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
+            }
+            print("")
+        }
+    }
     
     private func updateKeysForUpDown() {
         var keyDownAt = Array(repeating: false, count: numberOfKeys)
@@ -233,7 +236,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         }
     }
     
-    public func resetScaleMatchState() {
+    public func resetKeysWereClickedState() {
         for i in 0..<numberOfKeys {
             pianoKeyModel[i].keyClickedState.tappedTimeAscending = nil
             pianoKeyModel[i].keyClickedState.tappedTimeDescending = nil
@@ -254,6 +257,6 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
     ///For descending C 1-octave returns same 8 notes
     public func getKeyIndexForMidi(midi:Int, direction:Int) -> Int? {
         let x = self.pianoKeyModel.first(where: { $0.midi == midi })
-        return x == nil ? nil : x?.keyIndex
+        return x == nil ? nil : x?.keyOffsetFromLowestKey
     }
 }

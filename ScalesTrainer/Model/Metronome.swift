@@ -68,28 +68,28 @@ class MetronomeModel {
         delay = delay * tempoMultiplier
         notified.metronomeStart()
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
-        if false {
-            DispatchQueue.global(qos: .background).async { [self] in
-                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
-                    .autoconnect()
-                    .sink { _ in
-                        if !self.isTiming {
-                            self.tickTimer?.cancel()
-                            self.stopTicking(notified: notified)
-                        }
-                        else {
-                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
-                            if stop {
-                                self.isTiming = false
-                            }
-                            else {
-                                self.timerTickerNumber += 1
-                            }
-                        }
-                    }
-            }
-        }
-        else {
+//        if false {
+//            DispatchQueue.global(qos: .background).async { [self] in
+//                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
+//                    .autoconnect()
+//                    .sink { _ in
+//                        if !self.isTiming {
+//                            self.tickTimer?.cancel()
+//                            self.stopTicking(notified: notified)
+//                        }
+//                        else {
+//                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+//                            if stop {
+//                                self.isTiming = false
+//                            }
+//                            else {
+//                                self.timerTickerNumber += 1
+//                            }
+//                        }
+//                    }
+//            }
+//        }
+//        else {
             DispatchQueue.global(qos: .background).async { [self] in
                 while self.isTiming {
                     let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
@@ -112,7 +112,7 @@ class MetronomeModel {
                     onDone()
                 }
             }
-        }
+//        }
     }
     
 }

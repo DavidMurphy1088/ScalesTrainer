@@ -3,8 +3,9 @@ import Foundation
 public class Settings : Codable  {    
     static var shared = Settings()
     var recordDataMode = false
-    var requiredScaleRecordStartAmplitude:Double = 0.0
+    //var requiredScaleRecordStartAmplitude:Double = 0.0
     var amplitudeFilter:Double = 0.0
+    var scaleLeadInBarCount:Int = 0
     
     init() {
         load()
@@ -23,12 +24,20 @@ public class Settings : Codable  {
         return nil
     }
     
+    func toString() -> String {
+        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
+        //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
+        str += " LeadIn:\(self.scaleLeadInBarCount)"
+        str += " RecordDataMode:\(self.recordDataMode)"
+        return str
+    }
+    
     func save(_ log:Bool = true) {
         guard let str = toJSON() else {
             return
         }
         if log {
-            Logger.shared.log(self, "Settings saved \(str)")
+            Logger.shared.log(self, "Setting saved, \(toString())")
         }
         UserDefaults.standard.set(str, forKey: "settings")
     }
@@ -42,9 +51,10 @@ public class Settings : Codable  {
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
                     self.amplitudeFilter = loaded.amplitudeFilter
-                    self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
+                    self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
+                    //self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
                     let str:String = String(data: data, encoding: .utf8) ?? "none"
-                    Logger.shared.log(self, "Settings loaded \(str)")
+                    Logger.shared.log(self, "Settings loaded, \(toString())")
                 } catch {
                     Logger.shared.reportError(self, "load:" + error.localizedDescription)
                 }
