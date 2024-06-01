@@ -165,6 +165,7 @@ class AudioManager {
         microphoneRecorder?.stop()
         self.installedTap?.stop()
         self.tapHandler?.stopTapping()
+        self.tapHandler = nil
     }
     
 //    func startEngine() {
@@ -208,6 +209,7 @@ class AudioManager {
             case 0:
                 //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
                 fileName = "05_02_C_Major_1_60_iPad"
+                //fileName = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0"
             case 1:
                 fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
             case 2:
@@ -244,14 +246,14 @@ class AudioManager {
                         ctr += 1
                         let fields = line.split(separator: "\t")
                         let ampFilter = Double(fields[1])
-                        let reqStartAmpl = Double(fields[2])
+                        //let reqStartAmpl = Double(fields[2])
                         if let ampFilter = ampFilter {
-                            if reqStartAmpl != nil  {
+                            //if reqStartAmpl != nil  {
                                 DispatchQueue.main.async {
                                     Settings.shared.amplitudeFilter = ampFilter
                                     //Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
                                 }
-                            }
+                            //}
                         }
                         continue
                     }

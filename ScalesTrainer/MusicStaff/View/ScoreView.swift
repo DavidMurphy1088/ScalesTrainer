@@ -42,9 +42,7 @@ public struct ScoreView: View {
         .coordinateSpace(name: "ScoreView")
         //.roundedBorderRectangle()
     }
-
 }
-
 
 //    func setOrientationLineSize(ctx:String) {//}, geometryWidth:Double) {
 ///Nov2023 NEVER USE THIS AGAIN. Set the line spacing based on some other criteria than the size of the screen

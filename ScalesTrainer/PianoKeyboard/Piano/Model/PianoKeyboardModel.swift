@@ -250,7 +250,14 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
             }
         }
     }
-
+    
+    public func unmapScaleFingersToKeyboard() {
+        for i in 0..<numberOfKeys {
+            let key = self.pianoKeyModel[i]
+            key.scaleNoteState = nil
+        }
+    }
+    
     ///Get the offset in the keyboard for the given midi
     ///The search is direction specific since melodic minors have different notes in the descending direction
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes

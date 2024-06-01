@@ -126,14 +126,16 @@ public class Score : ObservableObject {
     static var accFlat = "\u{266d}"
     public var label:String? = nil
     public var heightPaddingEnabled:Bool
+    let showTempoVariation:Bool
     
-    public init(key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
+    public init(key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, showTempoVariation:Bool, heightPaddingEnabled:Bool = true) {
         self.id = UUID()
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
+        self.showTempoVariation = showTempoVariation
     }
     
 //    func clearAllPlayingNotes(besidesMidi:Int) {

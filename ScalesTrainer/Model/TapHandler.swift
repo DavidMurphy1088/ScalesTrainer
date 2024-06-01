@@ -125,8 +125,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     let amplitudeFilter:Double
     var wrongNoteFound = false
     var tapNumber = 0
-    var saveTappingToFile:Bool = false
-    var fileURL:URL?
+    var savedTapsFileURL:URL?
     var lastAmplitude:Float?
     var lastKeyPressedMidi:Int?
     var tapRecords:[String] = []
@@ -147,7 +146,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        if saveTappingToFile {
+        if Settings.shared.recordDataMode {
             let timeInterval = Date().timeIntervalSince1970
             let tapData = "time:\(timeInterval)\tfreq:\(frequencies[0])\tampl:\(amplitudes[0])\n"
             tapRecords.append(tapData)
@@ -320,7 +319,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
         if tapEventStatus == .keyPressWithNextScaleMatch {
             if matchCount > scale.scaleNoteState.count / 2 {
                 if midi == scale.scaleNoteState[0].midi {
-                    //ScalesModel.shared.stopRecordingScale("from tap handler")
                     ScalesModel.shared.setRunningProcess(.none)
                 }
             }
@@ -333,56 +331,52 @@ class ScaleTapHandler : TapHandlerProtocol  {
         Logger.shared.log(self, "ScaleTapHandler stop")
         Logger.shared.calcValueLimits()     
         //PianoKeyboardModel.shared.debug("=======+++")
-        let result = Result()
+        let result = Result(runningProcess: .recordingScale, userMessage: "")
         result.buildResult()
-        ScalesModel.shared.result = result
+        ScalesModel.shared.setResult(result)
         
-        if saveTappingToFile {
-            DispatchQueue.main.async {
-                let calendar = Calendar.current
-                let month = calendar.component(.month, from: Date())
-                let day = calendar.component(.day, from: Date())
-                let hour = calendar.component(.hour, from: Date())
-                let minute = calendar.component(.minute, from: Date())
-                let device = UIDevice.current
-                let modelName = device.model
-                var keyName = self.scale.getScaleName()
-                keyName += String(Scale.getTypeName(type: self.scale.scaleType))
-                keyName = keyName.replacingOccurrences(of: " ", with: "")
-                var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
-                fileName += "_"+keyName + "_"+String(self.scale.octaves) + "_" + String(self.scale.scaleNoteState[0].midi) + "_" + modelName
-                fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
-                fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
-                
-                fileName += ".txt"
-                AudioManager.shared.recordedFileSequenceNum += 1
-                let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    // Create the file URL by appending the file name to the directory
-                self.fileURL = documentDirectoryURL.appendingPathComponent(fileName)
+        if Settings.shared.recordDataMode && self.tapRecords.count > 0 {
+            let calendar = Calendar.current
+            let month = calendar.component(.month, from: Date())
+            let day = calendar.component(.day, from: Date())
+            let hour = calendar.component(.hour, from: Date())
+            let minute = calendar.component(.minute, from: Date())
+            let device = UIDevice.current
+            let modelName = device.model
+            var keyName = self.scale.getScaleName()
+            keyName = keyName.replacingOccurrences(of: " ", with: "")
+            var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
+            fileName += "_"+keyName + "_"+String(self.scale.octaves) + "_" + String(self.scale.scaleNoteState[0].midi) + "_" + modelName
+            fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
+            fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
+            
+            fileName += ".txt"
+            AudioManager.shared.recordedFileSequenceNum += 1
+            let documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            self.savedTapsFileURL = documentDirectoryURL.appendingPathComponent(fileName)
+            do {
+                if let fileURL = self.savedTapsFileURL {
+                    var config = "config:\t\(Settings.shared.amplitudeFilter)"
+                    config += "\n"
+                    try config.write(to: fileURL, atomically: true, encoding: .utf8)
+                }
+            }
+            catch {
+                Logger.shared.reportError(self, "Error creating file: \(error)")
+            }
+            if let fileURL = self.savedTapsFileURL {
                 do {
-                    if let fileURL = self.fileURL {
-                        var config = "config:\t\(Settings.shared.amplitudeFilter)"
-                        //config += "\t\(Settings.shared.requiredScaleRecordStartAmplitude)"
-                        config += "\n"
-                        try config.write(to: fileURL, atomically: true, encoding: .utf8)
+                    let fileHandle = try FileHandle(forWritingTo: fileURL)
+                    for record in self.tapRecords {
+                        let data = record.data(using: .utf8)!
+                        fileHandle.seekToEndOfFile()        // Move to the end of the file
+                        fileHandle.write(data)              // Append the data
                     }
-                }
-                catch {
-                    Logger.shared.reportError(self, "Error creating file: \(error)")
-                }
-                if let fileURL = self.fileURL {
-                    do {
-                        let fileHandle = try FileHandle(forWritingTo: fileURL)
-                        for record in self.tapRecords {
-                            let data = record.data(using: .utf8)!
-                            fileHandle.seekToEndOfFile()        // Move to the end of the file
-                            fileHandle.write(data)              // Append the data
-                            ScalesModel.shared.recordedTapsFileURL = fileURL
-                        }
-                        try fileHandle.close()
-                    } catch {
-                        Logger.shared.reportError(self, "Error writing to file: \(error)")
-                    }
+                    ScalesModel.shared.recordedTapsFileURL = fileURL
+                    try fileHandle.close()
+                    Logger.shared.log(self, "Wrote \(self.tapRecords.count) taps to \(fileURL)")
+                } catch {
+                    Logger.shared.reportError(self, "Error writing to file: \(error)")
                 }
             }
         }

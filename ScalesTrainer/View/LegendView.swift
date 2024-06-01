@@ -62,15 +62,12 @@ struct LegendView: View {
     }
 
     func title() -> String? {
-        var title:String = "Symbols"
-//        if scalesModel.appMode == .practiceMode {
-//            title = "Practice"
+        var title:String = "Fingers"
+//        if scalesModel.userFeedback != nil {
+//            title = "Feedback"
 //        }
-        if scalesModel.runningProcess == .followingScale {
-            title = "Follow the Scale"
-        }
-        if [.recordingScale, .recordingScaleWithData].contains(scalesModel.runningProcess) {
-            title = "Recording Scale"
+        if scalesModel.result != nil {
+            title = "Notes"
         }
         return title
     }
@@ -81,57 +78,49 @@ struct LegendView: View {
                 if let title = title() {
                     Text(" \(title) ").hilighted()
                 }
-                if scalesModel.showFingers {
-                    Spacer()
-                    Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                    Text("Finger")
-                    
-                    Spacer()
-                    Text("1").foregroundColor(.orange).font(.title2).bold()
-                    Text(fingerChangeName())
+                if scalesModel.result == nil { //}&& scalesModel.userFeedback == nil {
+                    if scalesModel.showFingers {
+                        Spacer()
+                        Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
+                        Text("Finger")
+                        
+                        Spacer()
+                        Text("1").foregroundColor(.orange).font(.title2).bold()
+                        Text(fingerChangeName())
+                        Spacer()
+                    }
                 }
+//                else {
+//                    if let feedback = scalesModel.userFeedback {
+//                        Text(feedback)
+//                    }
+//                }
                 
                 if scalesModel.result != nil {
-//                    Spacer()
-//                    Circle()
-//                        .fill(Color.green.opacity(0.4))
-//                        .frame(width: width())
-//                    Text("Correctly Played")
-//                    Spacer()
-//                    Circle()
-//                        .fill(Color.red.opacity(0.4))
-//                        .frame(width: width())
-//                    Text("Played But Not in Scale")
-//                    Spacer()
-//                    Circle()
-//                        .fill(Color.yellow.opacity(0.4))
-//                        .frame(width: width())
-//                    Text("In Scale But Not Played")
-//                    
-//                    Spacer()
-//                    List(items, id: \.self) { item in
-//                        Text(item)
-//                    }
-                    Picker("Select Value", selection: $legendIndex ) {
-                        ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
-                            HStack {
-                                //Text("\(scalesModel.directionTypes[index])")
-                                Circle()
-                                    .fill(Color.yellow.opacity(0.4))
-                                    .frame(width: width())
-                                    Text("In Scale But Not Played")
-                            }
-                        }
-                    }
-                    .pickerStyle(.menu)
+                    Spacer()
+                    Circle()
+                        .fill(Color.green.opacity(0.4))
+                        .frame(width: width())
+                    Text("Correctly Played")
+                    Spacer()
+                    Circle()
+                        .fill(Color.red.opacity(0.4))
+                        .frame(width: width())
+                    Text("Played But Not in Scale")
+                    Spacer()
+                    Circle()
+                        .fill(Color.yellow.opacity(0.4))
+                        .frame(width: width())
+                    Text("In Scale But Not Played")
+                    Spacer()
                 }
-
+                Spacer()
                 ConfigView()//.padding()
-            }
-            if let instructions = scalesModel.processInstructions {
-                Text("  👉 \(instructions)  ").hilighted()
+                Spacer()
             }
         }
-
+        if let instructions = scalesModel.processInstructions {
+            Text("  👉 \(instructions)  ").hilighted()
+        }
     }
 }

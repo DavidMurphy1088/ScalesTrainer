@@ -163,7 +163,7 @@ struct ScoreEntriesView: View {
                 getQuaverImage(note:startNote)
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(startNote.getColor(ctx: "quaverBeamView1", staff: staff))
+                    .foregroundColor(startNote.getColor(ctx: "quaverBeamView1", staff: staff, adjustFor: false))
                     .scaledToFit()
                     .frame(height: height)
                     .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset)
@@ -172,7 +172,7 @@ struct ScoreEntriesView: View {
                     getQuaverImage(note:startNote)
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundColor(startNote.getColor(ctx: "quaverBeamView2", staff: staff))
+                        .foregroundColor(startNote.getColor(ctx: "quaverBeamView2", staff: staff, adjustFor: false))
                         .scaledToFit()
                         .frame(height: height)
                         .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset + lineSpacing)
@@ -184,7 +184,7 @@ struct ScoreEntriesView: View {
                     path.move(to: CGPoint(x: line.0.x, y: line.0.y))
                     path.addLine(to: CGPoint(x: line.1.x, y: line.1.y))
                 }
-                .stroke(endNote.getColor(ctx: "quaverBeamView3", staff: staff), lineWidth: 3)
+                .stroke(endNote.getColor(ctx: "quaverBeamView3", staff: staff, adjustFor: false), lineWidth: 3)
             }
         }
     }

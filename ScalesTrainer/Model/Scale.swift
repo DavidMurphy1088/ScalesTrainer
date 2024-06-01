@@ -31,9 +31,12 @@ public class ScaleNoteState {
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
-    var unmatchedTime:Date? = nil ///The time the note was flagged as missed in the scale playing
+    ///The time the note was flagged as missed in the scale playing
+    var unmatchedTime:Date? = nil
     var matchedAmplitude:Double? = nil
-
+    ///The duration (value) of the note
+    var valueNormalized:Double = 0
+    
     init(sequence: Int, midi:Int) {
         self.sequence = sequence
         self.midi = midi
@@ -46,6 +49,7 @@ public class Scale {
     private(set) var scaleNoteState:[ScaleNoteState]
     private var metronomeAscending = true
     let octaves:Int
+    let hand:Int
     let scaleType:ScaleType
     var scaleShape:ScaleShape
 
@@ -54,6 +58,7 @@ public class Scale {
         self.octaves = octaves
         self.scaleType = scaleType
         scaleNoteState = []
+        self.hand = hand
         
         ///https://musescore.com/user/27091525/scores/6509601
         ///B, B♭, A, A♭ drop below Middle C for one and two octaves
@@ -103,9 +108,7 @@ public class Scale {
 
         ///All are low and some drop off 88-key keyboard
         if hand == 1 {
-            //if octaves == 4 {
-                nextMidi -= 12
-            //}
+            nextMidi -= 12
         }
         
         ///Set midi values in scale
@@ -214,14 +217,19 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug11(_ msg:String) {
+    func debug1(_ msg:String) {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         for state in self.scaleNoteState {
-            print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil)
+            print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil, "time", state.matchedTime ?? "",
+                  "durn", String(format:"%.4f", "value", state.valueNormalized))
         }
     }
     
-    public func getTempo() -> Int? {
+    ///Set note durations normalize to the tempo and return an average tempo
+    public func setNoteActualValues() -> Int? {
+        for note in self.scaleNoteState {
+            note.valueNormalized = 0
+        }
         guard self.scaleNoteState.count > 4 else {
             return nil
         }
@@ -230,11 +238,13 @@ public class Scale {
         }
         var timeIntervals:[Double] = []
         
+        ///Calculate the average of the note durations
         var lastMatch:Date? = self.scaleNoteState[0].matchedTime
         for note in self.scaleNoteState {
             if let matched = note.matchedTime {
                 if lastMatch == nil {
                     lastMatch = matched
+                    timeIntervals.append(0)
                     continue
                 }
                 let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
@@ -245,6 +255,11 @@ public class Scale {
         let sum = timeIntervals.reduce(0, +)
         let average = Double(sum) / Double(timeIntervals.count)
         let tempo = 60.0 * 1.0 / average
+        
+        var i = 0
+        for n in 0..<self.scaleNoteState.count - 1 {
+            self.scaleNoteState[n].valueNormalized = timeIntervals[i+1]
+        }
         return Int(tempo)
     }
     
@@ -651,7 +666,8 @@ public class Scale {
     }
 
     func getScaleName() -> String {
-        let name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
+        var name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
+        name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
         return name
     }
     
@@ -721,4 +737,5 @@ public class Scale {
             return ScaleType.major
         }
     }
+    
 }

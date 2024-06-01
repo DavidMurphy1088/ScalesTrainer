@@ -64,13 +64,13 @@
     "Calibration" : {
 
     },
+    "Correctly Played" : {
+
+    },
     "Finger" : {
 
     },
     "Follow The Scale" : {
-
-    },
-    "Followed %@" : {
 
     },
     "Hand:" : {
@@ -89,6 +89,9 @@
 
     },
     "In Scale But Not Played" : {
+
+    },
+    "Keep Taps File?" : {
 
     },
     "Key" : {
@@ -127,16 +130,19 @@
     "Log" : {
 
     },
-    "Octaves:" : {
+    "No" : {
 
     },
-    "OK" : {
+    "Octaves:" : {
 
     },
     "Other Scale Groups" : {
 
     },
     "Piano Calibration" : {
+
+    },
+    "Played But Not in Scale" : {
 
     },
     "Practice Days" : {
@@ -189,9 +195,6 @@
 
     },
     "Show Fingers" : {
-
-    },
-    "Show Scale Result" : {
 
     },
     "Show Staff" : {
@@ -259,6 +262,9 @@
       }
     },
     "X" : {
+
+    },
+    "Yes" : {
 
     },
     "Your Journal Scales" : {

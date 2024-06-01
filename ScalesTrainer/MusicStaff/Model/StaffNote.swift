@@ -59,7 +59,7 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }
 
-    public func getColor(ctx:String, staff:Staff, log:Bool? = false) -> Color {
+    public func getColor(ctx:String, staff:Staff, adjustFor:Bool, log:Bool? = false) -> Color {
         var out:Color? = nil
 
         if timeSlice.statusTag == .pitchError {
@@ -68,6 +68,16 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         if timeSlice.statusTag == .missingError {
             out = Color(.yellow)
         }
+//        if adjustFor {
+//            if Int.random(in: 0...10) < 5  {
+//                if Int.random(in: 0...10) < 5  {
+//                    out = Color(red: Double.random(in: 0.5...0.9), green: 0, blue: 0)
+//                }
+//                else {
+//                    out = Color(red: 0, green: 0, blue: Double.random(in: 0.5...0.9))
+//                }
+//            }
+//        }
         if out == nil {
             out = Color(.black)
         }
@@ -191,6 +201,7 @@ public class Note : TimeSliceEntry, Comparable {
     public var isOnlyRhythmNote = false
     public var writtenAccidental:Int? = nil ///An accidental that was explicitly specified in content
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
+    public var durationSeconds:Double? = nil
     
     ///Placements for the note on treble and bass staff
     var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]

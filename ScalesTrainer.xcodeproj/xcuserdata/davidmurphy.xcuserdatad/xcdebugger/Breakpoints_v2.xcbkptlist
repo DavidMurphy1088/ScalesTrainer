@@ -7,17 +7,49 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0A70AADF-56A0-4542-B6C0-8571917269EF"
-            shouldBeEnabled = "Yes"
+            uuid = "C24AA831-7528-43A6-8AB9-A3EB594D9C40"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/MusicStaff/View/TimeSliceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "437"
-            endingLineNumber = "437"
-            landmarkName = "setTempo(_:)"
+            startingLineNumber = "313"
+            endingLineNumber = "313"
+            landmarkName = "getTempoGradient(note:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C24AA831-7528-43A6-8AB9-A3EB594D9C40 - cc3b3f5eac21a0f6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.TimeSliceView.getGradient() -&gt; SwiftUI.LinearGradient"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/MusicStaff/View/TimeSliceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "313"
+                  endingLineNumber = "313"
+                  offsetFromSymbolStart = "404">
+               </Location>
+               <Location
+                  uuid = "C24AA831-7528-43A6-8AB9-A3EB594D9C40 - fdafb65ad6b70f1d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.TimeSliceView.getTempoGradient(note: ScalesTrainer.Note) -&gt; SwiftUI.LinearGradient"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/MusicStaff/View/TimeSliceView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "313"
+                  endingLineNumber = "313"
+                  offsetFromSymbolStart = "184">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

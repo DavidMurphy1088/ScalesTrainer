@@ -6,7 +6,7 @@ public struct StaffLinesView: View {
     var score:Score
     @ObservedObject var staff:Staff
     var widthPadding:Bool
-
+    
     public var body: some View {
         GeometryReader { geometry in
             
@@ -56,6 +56,15 @@ public struct StaffLinesView: View {
                     path.addLine(to: CGPoint(x: x1, y: bottom))
                 }
                 .stroke(Color.black, lineWidth: 1)
+                
+//                VStack {
+//                    Spacer()
+//                    Rectangle()
+//                        .fill(getGradient())
+//                        .frame(height: 20)
+//                        .border(Color.black, width: 1)
+//                        .opacity(0.4)
+//                }
             }
         }
     }
