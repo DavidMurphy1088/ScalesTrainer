@@ -101,7 +101,7 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
     public func hasKeySignatureNote(note:Int) -> Bool {
         var result:Bool = false
         for n in keySig.sharps {
-            let octaves = Note.getAllOctaves(note: n)
+            let octaves = StaffNote.getAllOctaves(note: n)
             if octaves.contains(note) {
                 result = true
                 break
@@ -208,11 +208,11 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         return keyTag
     }
     
-    public func makeTriadAt(timeSlice:TimeSlice, rootMidi:Int, value:Double, staffNum:Int) -> [Note] {
-        var result:[Note] = []
-        result.append(Note(timeSlice:timeSlice, num: rootMidi, value: value, staffNum: staffNum))
-        result.append(Note(timeSlice:timeSlice, num: rootMidi + 4, value: value, staffNum: staffNum))
-        result.append(Note(timeSlice:timeSlice, num: rootMidi + 7, value: value, staffNum: staffNum))
+    public func makeTriadAt(timeSlice:TimeSlice, rootMidi:Int, value:Double, staffNum:Int) -> [StaffNote] {
+        var result:[StaffNote] = []
+        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi, value: value, staffNum: staffNum))
+        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 4, value: value, staffNum: staffNum))
+        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 7, value: value, staffNum: staffNum))
         return result
     }
     
@@ -230,7 +230,7 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         }
         let firstPitch = centralMidi + rootPos
         for offset in [0, 4, 7] {
-            let name = Note.getNoteName(midiNum: firstPitch + offset)
+            let name = StaffNote.getNoteName(midiNum: firstPitch + offset)
             if result.count > 0 {
                 result = result + " - "
             }

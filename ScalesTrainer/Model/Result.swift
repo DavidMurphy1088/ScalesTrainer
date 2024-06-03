@@ -21,6 +21,7 @@ class Result : Equatable {
         self.runningProcess = runningProcess
     }
     
+    ///Build the result for the the keyboard and the score
     func buildResult() {
         let keyboardModel = PianoKeyboardModel.shared
         PianoKeyboardModel.shared.debug("build result")
@@ -36,6 +37,7 @@ class Result : Equatable {
                 if key.scaleNoteState != nil {
                     if direction == 0 {
                         if key.keyClickedState.tappedTimeAscending == nil {
+
                             missedCountAsc += 1
                             if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                                 timeSlice.setStatusTag(.missingError)
@@ -71,6 +73,7 @@ class Result : Equatable {
                 }
             }
         }
+        score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
     }
 }
 

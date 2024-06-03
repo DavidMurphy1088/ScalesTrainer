@@ -69,21 +69,21 @@ public class ScoreEntry : ObservableObject, Identifiable, Hashable {
         return result
     }
     
-    public func getTimeSliceNotes(staffNum:Int? = nil) -> [Note] {
-        var result:[Note] = []
+    public func getTimeSliceNotes(staffNum:Int? = nil) -> [StaffNote] {
+        var result:[StaffNote] = []
         if self is TimeSlice {
             let ts:TimeSlice = self as! TimeSlice
             let entries = ts.entries
             for entry in entries {
-                if entry is Note {
+                if entry is StaffNote {
                     if let staffNum = staffNum {
-                        let note = entry as! Note
+                        let note = entry as! StaffNote
                         if note.staffNum == staffNum {
                             result.append(note)
                         }
                     }
                     else {
-                        result.append(entry as! Note)
+                        result.append(entry as! StaffNote)
                     }
                 }
             }
@@ -152,20 +152,20 @@ public class Score : ObservableObject {
 //        }
 //    }
     
-    public func setScoreNotePlayed(midi: Int, direction: Int) -> Note? {
+    public func setScoreNotePlayed(midi: Int, direction: Int) -> StaffNote? {
         let timeSlices = getAllTimeSlices()
         var nearestDist = Int(Int64.max)
         let startIndex = direction == 0 ? 0 : timeSlices.count-1
         let endIndex = direction == 0 ? timeSlices.count-1 :0
-        var noteFound:Note?
+        var noteFound:StaffNote?
         var nearestIndex = Int(Int64.max)
-        var nearestNote:Note?
+        var nearestNote:StaffNote?
 
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
 
             let entry = ts.entries[0]
-            let note = entry as! Note
+            let note = entry as! StaffNote
             if note.midiNumber == midi {
                 note.setStatus(status: .playedCorrectly)
                 noteFound = note
@@ -444,7 +444,7 @@ public class Score : ObservableObject {
     }
     
     ///Determine if the stem for the note(s) should go up or down
-    func getStemDirection(staff:Staff, notes:[Note]) -> StemDirection {
+    func getStemDirection(staff:Staff, notes:[StaffNote]) -> StemDirection {
         var totalOffsets = 0
         for n in notes {
             if n.staffNum == staff.staffNum {
@@ -463,7 +463,7 @@ public class Score : ObservableObject {
             return
         }
         addBeatValues()
-        if timeSlice.entries[0] is Note {
+        if timeSlice.entries[0] is StaffNote {
             addStemCharaceteristics()
         }
     }
@@ -483,7 +483,7 @@ public class Score : ObservableObject {
         }
     }
     
-    private func determineStemDirections(staff:Staff, notesUnderBeam:[Note], linesForFullStemLength:Double) {
+    private func determineStemDirections(staff:Staff, notesUnderBeam:[StaffNote], linesForFullStemLength:Double) {
         
         ///Determine if the quaver group has up or down stems based on the overall staff placement of the group
         var totalOffset = 0
@@ -606,7 +606,7 @@ public class Score : ObservableObject {
                 continue
             }
             let note = timeSlice.getTimeSliceNotes()[0]
-            if note.getValue() != Note.VALUE_QUAVER {
+            if note.getValue() != StaffNote.VALUE_QUAVER {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
@@ -630,7 +630,7 @@ public class Score : ObservableObject {
         
         ///Join up adjoining beams where possible. Existing beams only span one main beat and can be joined in some cases
 
-        var lastNote:Note? = nil
+        var lastNote:StaffNote? = nil
         for scoreEntry in self.scoreEntries {
             guard let timeSlice = scoreEntry as? TimeSlice else {
                 lastNote = nil
@@ -667,7 +667,7 @@ public class Score : ObservableObject {
         
         ///Determine stem directions for each quaver beam
         
-        var notesUnderBeam:[Note] = []
+        var notesUnderBeam:[StaffNote] = []
         for scoreEntry in self.scoreEntries {
             guard let timeSlice = scoreEntry as? TimeSlice else {
                 lastNote = nil
@@ -738,7 +738,7 @@ public class Score : ObservableObject {
         for i in fromScoreEntryIndex..<self.scoreEntries.count {
             if let timeSlice = self.scoreEntries[i] as? TimeSlice {
                 if timeSlice.entries.count > 0 {
-                    if timeSlice.entries[0] is Note {
+                    if timeSlice.entries[0] is StaffNote {
                         return true
                     }
                     else {
@@ -749,12 +749,7 @@ public class Score : ObservableObject {
         }
         return false
     }
-    
-    public func clearAllStatus() {
-        for ts in self.getAllTimeSlices() {
-            ts.setStatusTag(.noTag)
-        }
-    }
+
     
     public func resetTapToValueRatios() {
         for i in 0..<self.scoreEntries.count {
@@ -784,7 +779,7 @@ public class Score : ObservableObject {
         for i in 0..<self.scoreEntries.count {
             if let ts = self.scoreEntries[i] as? TimeSlice {
                 if ts.entries.count > 0 {
-                    if let note = ts.entries[0] as? Note {
+                    if let note = ts.entries[0] as? StaffNote {
                         if let index = lastNoteIndex {
                             set(index: index, lastValue: lastValue)
                             lastValue = 0
@@ -872,7 +867,7 @@ public class Score : ObservableObject {
         for e in self.getAllTimeSlices().reversed() {
             if e.getTimeSliceEntries().count > 0 {
                 let entry = e.getTimeSliceEntries()[0]
-                if entry is Note {
+                if entry is StaffNote {
                     break
                 }
                 totalDuration += entry.getValue()
@@ -881,21 +876,21 @@ public class Score : ObservableObject {
         return totalDuration
     }
 
-    func clearTags() {
-        for ts in getAllTimeSlices() {
-            ts.setStatusTag(StatusTag.noTag)
-        }
-    }
+//    func clearTags() {
+//        for ts in getAllTimeSlices() {
+//            ts.setStatusTag(StatusTag.noTag)
+//        }
+//    }
     
-    func getNotesForLastBar(pitch:Int? = nil) -> [Note] {
-        var notes:[Note] = []
+    func getNotesForLastBar(pitch:Int? = nil) -> [StaffNote] {
+        var notes:[StaffNote] = []
         for entry in self.scoreEntries.reversed() {
             if entry is BarLine {
                 break
             }
             if let ts = entry as? TimeSlice {
                 if ts.getTimeSliceNotes().count > 0 {
-                    if let note = ts.entries[0] as? Note {
+                    if let note = ts.entries[0] as? StaffNote {
                         if let pitch = pitch {
                             if note.midiNumber == pitch {
                                 notes.append(note)

@@ -34,8 +34,8 @@ public class ScaleNoteState {
     ///The time the note was flagged as missed in the scale playing
     var unmatchedTime:Date? = nil
     var matchedAmplitude:Double? = nil
-    ///The duration (value) of the note
-    var valueNormalized:Double = 0
+    ///The tempo adjusted normalized duration (value) of the note
+    var valueNormalized:Double? = nil
     
     init(sequence: Int, midi:Int) {
         self.sequence = sequence
@@ -177,7 +177,7 @@ public class Scale {
 
         setFingers(hand: hand)
         setFingerBreaks(hand: hand)
-        ///debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        //debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
@@ -217,18 +217,27 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug1(_ msg:String) {
+    func debug11(_ msg:String)  {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
+        
+        func getValue(_ value:Double?) -> String {
+            if value == nil {
+                return "None"
+            }
+            else {
+                return String(format: "%.2f", value!)
+            }
+        }
         for state in self.scaleNoteState {
-            print("Midi:", state.midi,  "finger", state.finger, "break", state.fingerSequenceBreak, "matched", state.matchedTime != nil, "time", state.matchedTime ?? "",
-                  "durn", String(format:"%.4f", "value", state.valueNormalized))
+            print("Midi:", state.midi,  "finger:", state.finger, "break:", state.fingerSequenceBreak, "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
+                  "valueNormalized:", getValue(state.valueNormalized))
         }
     }
     
     ///Set note durations normalize to the tempo and return an average tempo
-    public func setNoteActualValues() -> Int? {
+    public func setNoteNormalizedValues() -> Int? {
         for note in self.scaleNoteState {
-            note.valueNormalized = 0
+            note.valueNormalized = nil
         }
         guard self.scaleNoteState.count > 4 else {
             return nil
@@ -240,6 +249,9 @@ public class Scale {
         
         ///Calculate the average of the note durations
         var lastMatch:Date? = self.scaleNoteState[0].matchedTime
+        var sum:Double = 0
+        var timedNotesCount = 0
+
         for note in self.scaleNoteState {
             if let matched = note.matchedTime {
                 if lastMatch == nil {
@@ -247,20 +259,32 @@ public class Scale {
                     timeIntervals.append(0)
                     continue
                 }
-                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
-                timeIntervals.append(delta)
+                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970 //{
+                    timeIntervals.append(delta)
+                sum += delta
+                timedNotesCount += 1
                 lastMatch = matched
             }
         }
-        let sum = timeIntervals.reduce(0, +)
-        let average = Double(sum) / Double(timeIntervals.count)
-        let tempo = 60.0 * 1.0 / average
         
-        var i = 0
-        for n in 0..<self.scaleNoteState.count - 1 {
-            self.scaleNoteState[n].valueNormalized = timeIntervals[i+1]
+        ///Calculate the average and apply the deltas to each note
+        if sum > 0 {
+            let average = Double(sum) / Double(timedNotesCount)
+            let tempo = 60.0 * 1.0 / average
+            for n in 0..<self.scaleNoteState.count - 1 {
+                if n+1 < timeIntervals.count {
+                    if timeIntervals[n+1] > 0 {
+                        var note = scaleNoteState[n]
+                        let normalized = timeIntervals[n+1] / average
+                        note.valueNormalized = normalized
+                    }
+                }
+            }
+            return Int(tempo)
         }
-        return Int(tempo)
+        else {
+            return 0
+        }
     }
     
     func resetMatchedData() {

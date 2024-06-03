@@ -1,142 +1,6 @@
 import Foundation
 import SwiftUI
 
-public enum TimeSliceEntryStatusType {
-    case none
-    case playedCorrectly
-    case wrongPitch
-    case wrongValue
-}
-
-public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
-    @Published public var status:TimeSliceEntryStatusType = .none
-
-    public let id = UUID()
-    public var staffNum:Int //Narrow the display of the note to just one staff
-    public var timeSlice:TimeSlice
-
-    private var value:Double = Note.VALUE_QUARTER
-
-    init(timeSlice:TimeSlice, value:Double, staffNum: Int = 0) {
-        self.value = value
-        self.staffNum = staffNum
-        self.timeSlice = timeSlice
-    }
-    
-    public static func == (lhs: TimeSliceEntry, rhs: TimeSliceEntry) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    public func isDotted() -> Bool {
-        return [0.75, 1.5, 3.0].contains(value)
-    }
-    
-//    func log(ctx:String) -> Bool {
-
-//    }
-    
-    public func getValue() -> Double {
-        return self.value
-    }
-
-    func gradualColorForValue(_ value: Double) -> UIColor {
-        // Define start and end colors as RGB
-        let startColor = UIColor.red // Start with red for low values
-        let endColor = UIColor.green // End with green for high values
-        
-        // Extract RGBA components for start and end colors
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
-        startColor.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
-        endColor.getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
-        
-        // Calculate the interpolated color components based on the input value
-        let red = r1 + (r2 - r1) * CGFloat(value) // Interpolate red component
-        let green = g1 + (g2 - g1) * CGFloat(value) // Interpolate green component
-        let blue = b1 + (b2 - b1) * CGFloat(value) // Interpolate blue component (should be minimal in red-green transition)
-        
-        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
-    }
-
-    public func getColor(ctx:String, staff:Staff, adjustFor:Bool, log:Bool? = false) -> Color {
-        var out:Color? = nil
-
-        if timeSlice.statusTag == .pitchError {
-            out = Color(.red)
-        }
-        if timeSlice.statusTag == .missingError {
-            out = Color(.yellow)
-        }
-//        if adjustFor {
-//            if Int.random(in: 0...10) < 5  {
-//                if Int.random(in: 0...10) < 5  {
-//                    out = Color(red: Double.random(in: 0.5...0.9), green: 0, blue: 0)
-//                }
-//                else {
-//                    out = Color(red: 0, green: 0, blue: Double.random(in: 0.5...0.9))
-//                }
-//            }
-//        }
-        if out == nil {
-            out = Color(.black)
-        }
-        return out!
-    }
-
-    func setValue(value:Double) {
-        self.value = value
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    func getNoteValueName() -> String {
-        var name = self.isDotted() ? "dotted " : ""
-        switch self.value {
-        case 0.25 :
-            name += "semi quaver"
-        case 0.50 :
-            name += "quaver"
-        case 1.0 :
-            name += "crotchet"
-        case 1.5 :
-            name += "dotted crotchet"
-        case 2.0 :
-            name += "minim"
-        case 3.0 :
-            name += "minim"
-        default :
-            name += "semibreve"
-        }
-        return name
-    }
-    
-    static func getValueName(value:Double) -> String {
-        var name = ""
-        switch value {
-        case 0.25 :
-            name += "semi quaver"
-        case 0.50 :
-            name += "quaver"
-        case 1.0 :
-            name += "crotchet"
-        case 1.5 :
-            name += "dotted crotchet"
-        case 2.0 :
-            name += "minim"
-        case 3.0 :
-            name += "dotted minim"
-        case 4.0 :
-            name += "semibreve"
-        default :
-            name += "unknown value \(value)"
-        }
-        return name
-    }
-}
-
 public class BarLine : ScoreEntry {
 }
 
@@ -187,7 +51,7 @@ public class NoteStaffPlacement {
     }
 }
 
-public class Note : TimeSliceEntry, Comparable {
+public class StaffNote : TimeSliceEntry, Comparable {
     static let MIDDLE_C = 60 //Midi pitch for C4
     static let OCTAVE = 12
     
@@ -201,8 +65,8 @@ public class Note : TimeSliceEntry, Comparable {
     public var isOnlyRhythmNote = false
     public var writtenAccidental:Int? = nil ///An accidental that was explicitly specified in content
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
-    public var durationSeconds:Double? = nil
     
+
     ///Placements for the note on treble and bass staff
     var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
     
@@ -213,9 +77,9 @@ public class Note : TimeSliceEntry, Comparable {
     public var stemLength:Double = 0.0
     
     //the note where the quaver beam for this note ends
-    var beamEndNote:Note? = nil
+    var beamEndNote:StaffNote? = nil
     
-    public static func < (lhs: Note, rhs: Note) -> Bool {
+    public static func < (lhs: StaffNote, rhs: StaffNote) -> Bool {
         return lhs.midiNumber < rhs.midiNumber
     }
     
@@ -223,13 +87,13 @@ public class Note : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, num:Int, value:Double = Note.VALUE_QUARTER, staffNum:Int, writtenAccidental:Int?=nil) {
+    public init(timeSlice:TimeSlice, num:Int, value:Double = StaffNote.VALUE_QUARTER, staffNum:Int, writtenAccidental:Int?=nil) {
         self.midiNumber = num
         super.init(timeSlice:timeSlice, value: value, staffNum: staffNum)
         self.writtenAccidental = writtenAccidental
     }
     
-    public init(note:Note) {
+    public init(note:StaffNote) {
         self.midiNumber = note.midiNumber
         super.init(timeSlice:note.timeSlice, value: note.getValue(), staffNum: note.staffNum)
         self.timeSlice.sequence = note.timeSlice.sequence
@@ -247,7 +111,7 @@ public class Note : TimeSliceEntry, Comparable {
     public func setIsOnlyRhythm(way: Bool) {
         self.isOnlyRhythmNote = way
         if self.isOnlyRhythmNote {
-            self.midiNumber = Note.MIDDLE_C + Note.OCTAVE - 1
+            self.midiNumber = StaffNote.MIDDLE_C + StaffNote.OCTAVE - 1
         }
     }
     
@@ -304,7 +168,7 @@ public class Note : TimeSliceEntry, Comparable {
     }
     
     public static func getClosestOctave(note:Int, toPitch:Int, onlyHigher: Bool = false) -> Int {
-        let pitches = Note.getAllOctaves(note: note)
+        let pitches = StaffNote.getAllOctaves(note: note)
         var closest:Int = note
         var minDist:Int?
         for p in pitches {
@@ -323,12 +187,12 @@ public class Note : TimeSliceEntry, Comparable {
     }
     
     ///Find the first note for this quaver group
-    public func getBeamStartNote(score:Score, np: NoteLayoutPositions) -> Note {
+    public func getBeamStartNote(score:Score, np: NoteLayoutPositions) -> StaffNote {
         let endNote = self
         if endNote.beamType != .end {
             return endNote
         }
-        var result:Note? = nil
+        var result:StaffNote? = nil
         var idx = score.scoreEntries.count - 1
         var foundEndNote = false
         while idx>=0 {
@@ -347,7 +211,7 @@ public class Note : TimeSliceEntry, Comparable {
                                 break
                             }
                             else {
-                                if note.getValue() == Note.VALUE_QUAVER {
+                                if note.getValue() == StaffNote.VALUE_QUAVER {
                                     if note.beamType == .end {
                                         break
                                     }
@@ -427,7 +291,7 @@ public class Note : TimeSliceEntry, Comparable {
             }
             ///Determine if an accidental for this note is required to cancel the accidental of a previous note in the bar at the same offset.
             ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
-            var lastNoteAtOffset:Note? = nil
+            var lastNoteAtOffset:StaffNote? = nil
             //var lastStaffPlacement:NoteStaffPlacement? = nil
             var barPreviousNotes = score.getNotesForLastBar(pitch:nil)
             if barPreviousNotes.count > 1 {

@@ -295,7 +295,7 @@ public class ScalesModel : ObservableObject {
             //if !cancelled {
             let result = Result(runningProcess: .followingScale, userMessage: cancelled ? "Cancelled" : "😊 Good job 😊")
                 self.setResult(result) //
-                scale.debug1("FOLLOW")
+                //scale.debug1("FOLLOW")
             //}
             if let onDone = onDone {
                 onDone(cancelled)
@@ -314,14 +314,11 @@ public class ScalesModel : ObservableObject {
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
         let score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5, showTempoVariation: showTempoVariation)
-        
-//        guard let score = score else {
-//            return
-//        }
+
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
         var inBarCount = 0
-        var lastNote:Note?
+        var lastNote:StaffNote?
         
         for i in 0..<scale.scaleNoteState.count {
             if i % 8 == 0 && i > 0 {
@@ -330,12 +327,12 @@ public class ScalesModel : ObservableObject {
             }
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
-            let note = Note(timeSlice: ts, num: noteState.midi, value: Note.VALUE_QUARTER, staffNum: 0)
+            let note = StaffNote(timeSlice: ts, num: noteState.midi, value: StaffNote.VALUE_QUARTER, staffNum: 0)
             if showTempoVariation {
-                note.durationSeconds = noteState.durationSeconds
+                note.valueNormalized = noteState.valueNormalized
             }
             else {
-                note.durationSeconds = nil
+                note.valueNormalized = nil
             }
             note.setValue(value: 0.5)
             ts.addNote(n: note)

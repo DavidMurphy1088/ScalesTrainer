@@ -15,14 +15,19 @@ public class TimeSlice : ScoreEntry {
     //@Published public var tagHigh:TagHigh?
     //@Published public var tagLow:String?
     //@Published var notesLength:Int?
-    @Published public var statusTag:StatusTag = .noTag
 
     var score:Score
     var footnote:String?
     var barLine:Int = 0
     var beatNumber:Double = 0.0 //the beat in the bar that the timeslice is at
     //var pitchReplacedEntry:Note?
-    
+    @Published private(set) var statusTag:StatusTag = .noTag
+    public func setStatusTag(_ tag: StatusTag) {
+        DispatchQueue.main.async {
+            self.statusTag = tag
+        }
+    }
+
     //Used when recording a tap sequence into a score
     public var tapSecondsNormalizedToTempo:Double?
     //Used to display tempo slow/fast variation per note based on actual tapped milliseconds
@@ -31,15 +36,8 @@ public class TimeSlice : ScoreEntry {
     public init(score:Score) {
         self.score = score
         self.entries = []
-        //tapSecondsNormalizedToTempo = 0.0
     }
     
-    public func setStatusTag(_ tag: StatusTag) {
-        DispatchQueue.main.async {
-            self.statusTag = tag
-        }
-    }
-
     public func getValue() -> Double {
         if entries.count > 0 {
             return entries[0].getValue()
@@ -57,7 +55,7 @@ public class TimeSlice : ScoreEntry {
 //        }
 //    }
 
-    public func addNote(n:Note) {
+    public func addNote(n:StaffNote) {
         n.timeSlice = self
         //DispatchQueue.main.async {
             self.entries.append(n)
@@ -109,8 +107,8 @@ public class TimeSlice : ScoreEntry {
     
     public func anyNotesRotated() -> Bool {
         for n in entries {
-            if n is Note {
-                let note:Note = n as! Note
+            if n is StaffNote {
+                let note:StaffNote = n as! StaffNote
                 if note.rotated {
                     return true
                 }

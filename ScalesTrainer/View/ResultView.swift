@@ -31,11 +31,11 @@ struct ResultView: View {
             }
         }
         
-        if let tempo = ScalesModel.shared.scale.setNoteDurations() {
+        if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
             status += " Your tempo was \(tempo)."
         }
         let correct = result.wrongCountAsc == 0 && result.wrongCountDesc == 0 && result.missedCountAsc == 0 && result.missedCountDesc == 0
-        ScalesModel.shared.scale.debug1("====Post Build, get tempo")
+        //ScalesModel.shared.scale.debug1("====Post Build, get tempo")
         return (correct, status)
     }
 

@@ -11,7 +11,7 @@ import AVFoundation
 ///This approach makes the whole drawing of quaver beams much simpler - as long as the assumption holds always.
 public class NoteLayoutPositions {//}: ObservableObject {
     //@Published public
-    public var positions:[Note: CGRect] = [:]
+    public var positions:[StaffNote: CGRect] = [:]
 
     var id:Int
     static var nextId = 0
@@ -20,13 +20,13 @@ public class NoteLayoutPositions {//}: ObservableObject {
         self.id = id
     }
 
-    public func getPositions() -> [(Note, CGRect)] {
+    public func getPositions() -> [(StaffNote, CGRect)] {
         //noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence })
-        var result:[(Note, CGRect)] = []
+        var result:[(StaffNote, CGRect)] = []
         let notes = positions.keys.sorted(by: { $0.timeSlice.sequence < $1.timeSlice.sequence })
         for n in notes {
             let rect:CGRect = positions[n]!
-            let newNote = Note(note: n)
+            let newNote = StaffNote(note: n)
             result.append((newNote, rect))
         }
         return result
@@ -41,9 +41,9 @@ public class NoteLayoutPositions {//}: ObservableObject {
         return nil
     }
 
-    public func storePosition(onAppear:Bool, notes: [Note], rect: CGRect) {
+    public func storePosition(onAppear:Bool, notes: [StaffNote], rect: CGRect) {
         if notes.count > 0 {
-            if notes[0].getValue() == Note.VALUE_QUAVER {
+            if notes[0].getValue() == StaffNote.VALUE_QUAVER {
                 let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
                 //DispatchQueue.main.async {
                     ///Make sure this fires after all other UI is rendered
@@ -165,7 +165,7 @@ public class Staff : ObservableObject, Identifiable {
         self.linesInStaff = linesInStaff
         lowestNoteValue = 20 //MIDI C0
         highestNoteValue = 107 //MIDI B7
-        middleNoteValue = type == StaffType.treble ? 71 : Note.MIDDLE_C - Note.OCTAVE + 2
+        middleNoteValue = type == StaffType.treble ? 71 : StaffNote.MIDDLE_C - StaffNote.OCTAVE + 2
         noteLayoutPositions = NoteLayoutPositions(id: 0)
 
         //Determine the staff placement for each note pitch
@@ -211,11 +211,11 @@ public class Staff : ObservableObject, Identifiable {
 
             let placement = NoteStaffPlacement(offsetFroMidLine: 0, octaveOverlay: false)
             noteStaffPlacement.append(placement)
-            if noteValue < middleNoteValue - 6 * Note.OCTAVE || noteValue >= middleNoteValue + 6 * Note.OCTAVE {
+            if noteValue < middleNoteValue - 6 * StaffNote.OCTAVE || noteValue >= middleNoteValue + 6 * StaffNote.OCTAVE {
                 continue
             }
 
-            var offsetFromTonic = (noteValue - Note.MIDDLE_C) % Note.OCTAVE
+            var offsetFromTonic = (noteValue - StaffNote.MIDDLE_C) % StaffNote.OCTAVE
             if offsetFromTonic < 0 {
                 offsetFromTonic = 12 + offsetFromTonic
             }
@@ -227,12 +227,12 @@ public class Staff : ObservableObject, Identifiable {
             var offsetFromMidLine = noteOffset.offsetFromStaffMidline
 
             var octave:Int
-            let referenceNote = type == .treble ? Note.MIDDLE_C : Note.MIDDLE_C - 2 * Note.OCTAVE
+            let referenceNote = type == .treble ? StaffNote.MIDDLE_C : StaffNote.MIDDLE_C - 2 * StaffNote.OCTAVE
             if noteValue >= referenceNote {
-                octave = (noteValue - referenceNote) / Note.OCTAVE
+                octave = (noteValue - referenceNote) / StaffNote.OCTAVE
             }
             else {
-                octave = (referenceNote - noteValue) / Note.OCTAVE
+                octave = (referenceNote - noteValue) / StaffNote.OCTAVE
                 octave -= 1
             }
             offsetFromMidLine += (octave - 1) * 7 //8 offsets to next octave
@@ -316,7 +316,7 @@ public class Staff : ObservableObject, Identifiable {
 
     //Tell a note how to display itself
     //Note offset from middle of staff is dependendent on the staff
-    func getNoteViewPlacement(note:Note) -> NoteStaffPlacement {
+    func getNoteViewPlacement(note:StaffNote) -> NoteStaffPlacement {
         let defaultPlacement:NoteStaffPlacement
         if note.midiNumber < 0 || note.midiNumber > noteStaffPlacement.count-1 {
             defaultPlacement = noteStaffPlacement[0]

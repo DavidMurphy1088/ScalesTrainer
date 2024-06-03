@@ -99,7 +99,7 @@ public struct TimeSliceView: View {
         var offsetVertical:Double
     }
     
-    func getLedgerLines(staff:Staff, note:Note, noteWidth:Double, lineSpacing:Double) -> [LedgerLine] {
+    func getLedgerLines(staff:Staff, note:StaffNote, noteWidth:Double, lineSpacing:Double) -> [LedgerLine] {
         var result:[LedgerLine] = []
         let p = note.getNoteDisplayCharacteristics(staff: staff)
         
@@ -211,7 +211,7 @@ public struct TimeSliceView: View {
         //.border(Color.red)
     }
     
-    func NoteView(note:Note, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:StatusTag) -> some View {
+    func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:StatusTag) -> some View {
         ZStack {
             let placement = note.getNoteDisplayCharacteristics(staff: staff)
             let offsetFromStaffMiddle = placement.offsetFromStaffMidline
@@ -225,7 +225,7 @@ public struct TimeSliceView: View {
                     Spacer()
                 }
             }
-            if statusTag == .rhythmError  {
+            if statusTag != .noTag  {
                 Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
                 if note.staffNum == staff.staffNum  {
@@ -250,7 +250,7 @@ public struct TimeSliceView: View {
                         .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
                     
                 }
-                if [Note.VALUE_QUARTER, Note.VALUE_QUAVER, Note.VALUE_SEMIQUAVER].contains(noteValueUnDotted )  {
+                if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER].contains(noteValueUnDotted )  {
                     Ellipse()
                     //Closed ellipse
                         .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff, adjustFor: true))
@@ -259,7 +259,7 @@ public struct TimeSliceView: View {
                         .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
                         //.position(x: noteFrameWidth/2 * (Int.random(in: 0...10) < 3 ? 1.5 : 1.0), y: noteEllipseMidpoint)
                 }
-                if noteValueUnDotted == Note.VALUE_HALF || noteValueUnDotted == Note.VALUE_WHOLE {
+                if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
                     Ellipse()
                     //Open ellipse
                         .stroke(note.getColor(ctx: "NoteView3", staff: staff, adjustFor: false), lineWidth: 2)
@@ -296,37 +296,41 @@ public struct TimeSliceView: View {
                     }
                 }
             }
-            if let duration = note.durationSeconds {
-                VStack {
-                    Spacer()
-                    Rectangle()
-                    .fill(getTempoGradient(note:note))
-                    .frame(height: geometry.size.height / 10.0)
-                    //.border(Color.black, width: 1)
-                    //.opacity(0.6)
-                }
-            }
+//            if let valueNormalized = note.valueNormalized {
+//                VStack {
+//                    Spacer()
+//                    Rectangle()
+//                    .fill(getTempoGradient(valueNormalized: valueNormalized))
+//                    .frame(height: geometry.size.height / 10.0)
+//                    //.border(Color.gray, width: 1)
+//                    //.opacity(0.6)
+//                }
+//            }
         }
     }
     
-    func getTempoGradient(note:Note) -> LinearGradient {
-        if Int.random(in: 0...10) < 4 {
+    func getTempoGradient(valueNormalized:Double) -> LinearGradient {
+        if valueNormalized < 1.0 {
             return LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: Color.white, location: 0.0),
-                    .init(color: Color(red: 1, green: 0, blue: 0, opacity: 0.6), location: 0.15),
-                    .init(color: Color.white, location: 0.50)
+                    .init(color: Color.white, location: 0.2),
+                    .init(color: Color(red: 1, green: 0, blue: 0, opacity: 0.6), location: 0.55),
+                    .init(color: Color.white, location: 0.55)
                 ]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
         }
-        if Int.random(in: 0...10) > 6 {
+        
+        if valueNormalized >= 1.0 {
             return LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: Color.white, location: 0.0),
-                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.80),
-                    .init(color: Color.white, location: 0.95)
+                    .init(color: Color.white, location: 0.4),
+                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
+                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
+                    .init(color: Color.white, location: 0.75)
                 ]),
                 startPoint: .leading,
                 endPoint: .trailing
@@ -352,8 +356,8 @@ public struct TimeSliceView: View {
                 let noteFrameWidth = geometry.size.width * 1.0 //center the note in the space allocated by the parent for this note's view
                 ForEach(getTimeSliceEntries(), id: \.id) { entry in
                     VStack {
-                        if entry is Note {
-                            NoteView(note: entry as! Note, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
+                        if entry is StaffNote {
+                            NoteView(note: entry as! StaffNote, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
                             //.border(Color.green)
                         }
                         if entry is Rest {
@@ -382,6 +386,9 @@ public struct TimeSliceView: View {
 //                        Text("\(t)")
 //                    }
 //                }
+            }
+            .onAppear() {
+                ScalesModel.shared.score?.debugScore111("__CUCK", withBeam: false, toleranceLevel: 0)
             }
         }
     }

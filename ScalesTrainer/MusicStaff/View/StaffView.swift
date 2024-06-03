@@ -189,13 +189,13 @@ public struct StaffView: View {
         return Double(score.lineSpacing) * 3.0
     }
     
-    func getNotes(entry:ScoreEntry) -> [Note] {
+    func getNotes(entry:ScoreEntry) -> [StaffNote] {
         if entry is TimeSlice {
             let ts = entry as! TimeSlice
             return ts.getTimeSliceNotes()
         }
         else {
-            let n:[Note] = []
+            let n:[StaffNote] = []
             return n
         }
     }

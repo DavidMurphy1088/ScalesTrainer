@@ -97,42 +97,42 @@ public class KeySignature {
         if accidentalType == .sharp {
             if self.accidentalCount >= 1 {
                 //self.accidentalCount = 1
-                sharps.append(Note.MIDDLE_C + 6) //F#
+                sharps.append(StaffNote.MIDDLE_C + 6) //F#
             }
             if self.accidentalCount >= 2 {
-                sharps.append(Note.MIDDLE_C + 1) //C#
+                sharps.append(StaffNote.MIDDLE_C + 1) //C#
             }
             if self.accidentalCount >= 3 {
-                sharps.append(Note.MIDDLE_C + 8) //G#
+                sharps.append(StaffNote.MIDDLE_C + 8) //G#
             }
             if self.accidentalCount >= 4 {
-                sharps.append(Note.MIDDLE_C + 3) //D#
+                sharps.append(StaffNote.MIDDLE_C + 3) //D#
             }
             if self.accidentalCount >= 5 {
-                sharps.append(Note.MIDDLE_C + 10) //A#
+                sharps.append(StaffNote.MIDDLE_C + 10) //A#
             }
         }
         else {
             if self.accidentalCount >= 1 {
-                flats.append(Note.MIDDLE_C + 10) //B♭
+                flats.append(StaffNote.MIDDLE_C + 10) //B♭
             }
             if self.accidentalCount >= 2 {
-                flats.append(Note.MIDDLE_C + 3) //E♭
+                flats.append(StaffNote.MIDDLE_C + 3) //E♭
             }
             if self.accidentalCount >= 3 {
-                flats.append(Note.MIDDLE_C + 8) //A♭
+                flats.append(StaffNote.MIDDLE_C + 8) //A♭
             }
             if self.accidentalCount >= 4 {
-                flats.append(Note.MIDDLE_C + 1) //D♭
+                flats.append(StaffNote.MIDDLE_C + 1) //D♭
             }
             if self.accidentalCount >= 5 {
-                flats.append(Note.MIDDLE_C + 6) //G♭
+                flats.append(StaffNote.MIDDLE_C + 6) //G♭
             }
             if self.accidentalCount >= 6 {
-                flats.append(Note.MIDDLE_C + 11) //C flat
+                flats.append(StaffNote.MIDDLE_C + 11) //C flat
             }
             if self.accidentalCount >= 7 {
-                flats.append(Note.MIDDLE_C + 5) 
+                flats.append(StaffNote.MIDDLE_C + 5) 
             }
         }
     }

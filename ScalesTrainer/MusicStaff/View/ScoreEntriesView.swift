@@ -73,7 +73,7 @@ struct ScoreEntriesView: View {
         self.viewNum = ScoreEntriesView.viewNum
     }
         
-    func getNote(entry:ScoreEntry) -> Note? {
+    func getNote(entry:ScoreEntry) -> StaffNote? {
         if entry is TimeSlice {
             let notes = entry.getTimeSliceNotes()
             if notes.count > 0 {
@@ -115,7 +115,7 @@ struct ScoreEntriesView: View {
 //    }
     
     ///Return the start and end points for the quaver beam based on the note postions that were reported
-    func getBeamLine(endNote:Note, noteWidth:Double, startNote:Note) -> (CGPoint, CGPoint)? {
+    func getBeamLine(endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
         let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
         if [StatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
             return nil
@@ -147,12 +147,12 @@ struct ScoreEntriesView: View {
         return nil
     }
     
-    func getQuaverImage(note:Note) -> Image {
+    func getQuaverImage(note:StaffNote) -> Image {
         //return Image(note.midiNumber > 71 ? "quaver_arm_flipped_grayscale" : "quaver_arm_grayscale")
         return Image("")
     }
     
-    func quaverBeamView(line: (CGPoint, CGPoint), startNote:Note, endNote:Note, lineSpacing: Double) -> some View {
+    func quaverBeamView(line: (CGPoint, CGPoint), startNote:StaffNote, endNote:StaffNote, lineSpacing: Double) -> some View {
         ZStack {
             if startNote.timeSlice.sequence == endNote.timeSlice.sequence {
                 //let l = log(startNote, endNote)
@@ -168,7 +168,7 @@ struct ScoreEntriesView: View {
                     .frame(height: height)
                     .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset)
                 
-                if endNote.getValue() == Note.VALUE_SEMIQUAVER {
+                if endNote.getValue() == StaffNote.VALUE_SEMIQUAVER {
                     getQuaverImage(note:startNote)
                         .resizable()
                         .renderingMode(.template)

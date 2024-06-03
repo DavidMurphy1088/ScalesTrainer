@@ -6,7 +6,7 @@ public struct StemView: View {
     @ObservedObject var score: Score
     @State var staff: Staff
     @State var notePositionLayout: NoteLayoutPositions
-    var notes: [Note]
+    var notes: [StaffNote]
 
     func getStemLength() -> Double {
         var len = 0.0
@@ -20,7 +20,7 @@ public struct StemView: View {
         return score.lineSpacing * 1.2
     }
 
-    func midPointXOffset(notes:[Note], staff:Staff, stemDirection:Double) -> Double {
+    func midPointXOffset(notes:[StaffNote], staff:Staff, stemDirection:Double) -> Double {
         for n in notes {
             if n.rotated {
                 if n.midiNumber < staff.middleNoteValue {
@@ -32,8 +32,8 @@ public struct StemView: View {
         return (stemDirection * -1.0 * getNoteWidth())
     }
 
-    func getStaffNotes(staff:Staff) -> [Note] {
-        var notes:[Note] = []
+    func getStaffNotes(staff:Staff) -> [StaffNote] {
+        var notes:[StaffNote] = []
         for n in self.notes {
             if n.staffNum == staff.staffNum {
                 notes.append(n)
@@ -53,7 +53,7 @@ public struct StemView: View {
                         ///For a group of notes under a quaver beam the the stem direction (and later length...) is determined by only one note in the group
                         let startNote = staffNotes[0].getBeamStartNote(score: score, np: notePositionLayout)
                         let inErrorAjdust = 0.0 //notes.notes[0].noteTag == .inError ? lineSpacing.lineSpacing/2.0 : 0
-                        if startNote.getValue() != Note.VALUE_WHOLE {
+                        if startNote.getValue() != StaffNote.VALUE_WHOLE {
                             //if startNote.debug("VIEW staff:\(staff.staffNum)") {
                                 //Note this code eventually has to go adjust the stem length for notes under a quaver beam
                                 //3.5 lines is a full length stem
@@ -80,7 +80,7 @@ public struct StemView: View {
                                 let midY = geo.size.height / 2.0
                                 let inErrorAjdust = 0.0 //note.noteTag == .inError ? lineSpacing.lineSpacing/2.0 : 0
                                 
-                                if note.getValue() != Note.VALUE_WHOLE {
+                                if note.getValue() != StaffNote.VALUE_WHOLE {
                                     let offsetY = CGFloat(note.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust
                                     Path { path in
                                         path.move(to: CGPoint(x: midX, y: midY - offsetY))
