@@ -160,7 +160,7 @@ struct ScalesView: View {
                     }
                     else {
                         scalesModel.setRunningProcess(.practicing)
-                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. But watch for any wrong notes")
+                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. But watch for any wrong notes.")
                     }
                 }.padding()
             }
@@ -244,32 +244,33 @@ struct ScalesView: View {
             //                .edgesIgnoringSafeArea(.top)
             //                .opacity(0.2)
             VStack() {
-                if scalesModel.runningProcess == .none {
-                    SelectScaleView().commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                }
-                Text(scalesModel.scale.getScaleName()).font(.title).padding()//.hilighted()
-                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
-                    .frame(height: getKeyboardHeight())
+                if scalesModel.showKeyboard {
+                    if scalesModel.runningProcess == .none {
+                        SelectScaleView().commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    }
+                    Text(scalesModel.scale.getScaleName()).font(.title).padding()//.hilighted()
+                    PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
+                        .frame(height: getKeyboardHeight())
                     //.border(Color .red, width: 1)
-                    .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                
-                if scalesModel.showStaff {
-                    VStack {
-                        if let score = scalesModel.score {
-                            ScoreView(score: score, widthPadding: false)
-                        }
-                    }.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                }
-                
-                if !orientationObserver.orientation.isAnyLandscape {
+                        .commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    
+                    if scalesModel.showStaff {
+                        VStack {
+                            if let score = scalesModel.score {
+                                ScoreView(score: score, widthPadding: false)
+                            }
+                        }.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    }
+                    
+                    //if !orientationObserver.orientation.isAnyLandscape {
                     LegendView()
+                    //}
                 }
-                
                 if scalesModel.runningProcess != .none {
                     if scalesModel.runningProcess == .followingScale {
-                        HStack {
-
+                        VStack {
                             Spacer()
+                            ProcessUnderwayView()
                             Button("Stop Following Scale") {
                                 scalesModel.setRunningProcess(.none)
                             }
@@ -279,8 +280,9 @@ struct ScalesView: View {
                         }
                     }
                     if scalesModel.runningProcess == .practicing {
-                        HStack {
+                        VStack {
                             Spacer()
+                            ProcessUnderwayView()
                             Button("Stop Practicing") {
                                 scalesModel.setRunningProcess(.none)
                             }
@@ -301,8 +303,9 @@ struct ScalesView: View {
                         }
                     }
                     if scalesModel.runningProcess == .recordingScale {
-                        HStack {
-                            Spacer()
+                        Spacer()
+                        VStack {
+                            ProcessUnderwayView()
                             Button("Stop Recording Scale") {
                                 scalesModel.setRunningProcess(.none)
                                 if Settings.shared.recordDataMode {
@@ -311,18 +314,22 @@ struct ScalesView: View {
                             }
                             .padding()
                             .hilighted(backgroundColor: .blue)
-                            Spacer()
                         }
+                        Spacer()
                     }
-                    
                 }
                 else {
+                    if let userMessage = scalesModel.userMessage {
+                        Text(userMessage)
+                    }
+
                     if let result = scalesModel.result {
                         VStack {
-                            if let score = scalesModel.score {
-                                let scoreWithDurations = scalesModel.createScore(scale: scalesModel.scale, showTempoVariation: true)
-                                ScoreView(score: scoreWithDurations, widthPadding: false)
-                            }
+//                            if let score = scalesModel.score {
+//                                let scoreWithDurations = scalesModel.createScore(scale: scalesModel.scale, showTempoVariation: true)
+//                                //scalesModel.setShowStaff(true)
+//                                ScoreView(score: scoreWithDurations, widthPadding: false)
+//                            }
                         }
                         //.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
                         ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)

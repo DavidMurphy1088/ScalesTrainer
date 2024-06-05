@@ -66,7 +66,6 @@ public class StaffNote : TimeSliceEntry, Comparable {
     public var writtenAccidental:Int? = nil ///An accidental that was explicitly specified in content
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
     
-
     ///Placements for the note on treble and bass staff
     var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
     
@@ -102,9 +101,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
         self.beamType = note.beamType
     }
     
-    func setStatus(status: TimeSliceEntryStatusType) {
+    func setShowIsPlaying(_ way:Bool) { //status: TimeSliceEntryStatusType) {
         DispatchQueue.main.async {
-            self.status = status
+            self.showIsPlaying = way
         }
     }
         

@@ -5,9 +5,13 @@ struct ResultView: View {
     let result:Result
     let scalesModel = ScalesModel.shared
     
+    func getaAllCorrect() -> Bool {
+        return result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0
+
+    }
     func recordStatus() -> (Bool, String) {
         var status = ""
-        if result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0 {
+        if getaAllCorrect() {
             status = "Good job, your scale was correct."
         }
         else {
@@ -30,13 +34,13 @@ struct ResultView: View {
                 }
             }
         }
-        
-        if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
-            status += " Your tempo was \(tempo)."
+        if getaAllCorrect() {
+            if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
+                status += " Your tempo was \(tempo)."
+            }
         }
-        let correct = result.wrongCountAsc == 0 && result.wrongCountDesc == 0 && result.missedCountAsc == 0 && result.missedCountDesc == 0
         //ScalesModel.shared.scale.debug1("====Post Build, get tempo")
-        return (correct, status)
+        return (getaAllCorrect(), status)
     }
 
     func status() -> (Bool, String)? {
@@ -52,15 +56,15 @@ struct ResultView: View {
     var body: some View {
         VStack {
             HStack {
-                Text(scalesModel.scale.getScaleName() + " ").hilighted()
+                Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
                 if let status = status() {
-                    if status.0 {
-                        Image(systemName: "face.smiling")
-                            .renderingMode(.template)
-                            .foregroundColor(.green)
-                            .font(.largeTitle)
-                            .padding()
-                    }
+//                    if status.0 {
+//                        Image(systemName: "face.smiling")
+//                            .renderingMode(.template)
+//                            .foregroundColor(.green)
+//                            .font(.largeTitle)
+//                            .padding()
+//                    }
                     Text(status.1).padding()
                 }
             }
@@ -84,7 +88,7 @@ struct TapDataView: View {
         
     func amplData(key:PianoKeyModel) -> String {
         var asc:String = "______"
-        if let a = key.keyClickedState.tappedAmplitudeAscending {
+        if let a = key.keyWasPlayedState.tappedAmplitudeAscending {
             asc = String(format: "%.4f", a)
         }
         return asc

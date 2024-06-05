@@ -126,16 +126,15 @@ public class Score : ObservableObject {
     static var accFlat = "\u{266d}"
     public var label:String? = nil
     public var heightPaddingEnabled:Bool
-    let showTempoVariation:Bool
+    let showTempoVariation:Bool = false
     
-    public init(key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, showTempoVariation:Bool, heightPaddingEnabled:Bool = true) {
+    public init(key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
         self.id = UUID()
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
-        self.showTempoVariation = showTempoVariation
     }
     
 //    func clearAllPlayingNotes(besidesMidi:Int) {
@@ -158,25 +157,24 @@ public class Score : ObservableObject {
         let startIndex = direction == 0 ? 0 : timeSlices.count-1
         let endIndex = direction == 0 ? timeSlices.count-1 :0
         var noteFound:StaffNote?
-        var nearestIndex = Int(Int64.max)
-        var nearestNote:StaffNote?
+        //var nearestIndex = Int(Int64.max)
+        //var nearestNote:StaffNote?
 
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
-
             let entry = ts.entries[0]
-            let note = entry as! StaffNote
-            if note.midiNumber == midi {
-                note.setStatus(status: .playedCorrectly)
-                noteFound = note
+            let staffNote = entry as! StaffNote
+            if staffNote.midiNumber == midi {
+                staffNote.setShowIsPlaying(true) //setStatus(status: .playedCorrectly)
+                noteFound = staffNote
                 break
             }
             else {
-                let dist = abs(note.midiNumber - midi)
+                let dist = abs(staffNote.midiNumber - midi)
                 if dist < nearestDist {
                     nearestDist = dist
-                    nearestIndex = i
-                    nearestNote = note
+                    //nearestIndex = i
+                    //nearestNote = note
                 }
             }
         }
@@ -186,22 +184,11 @@ public class Score : ObservableObject {
         ///beyond here when reading notifcaions from test data causes a zero count in a timeslice
         return nil
         ///Show a wrong pitch
-        let ts = timeSlices[nearestIndex]
-        guard ts.entries.count > 0 else {
-            return nil
-        }
-//        if let nearestNote = nearestNote {
-//            let newNote = Note(timeSlice: ts, num: midi, value: nearestNote.getValue(), staffNum: 0)
-//            ts.setPitchError(note: newNote)
+//        let ts = timeSlices[nearestIndex]
+//        guard ts.entries.count > 0 else {
+//            return nil
 //        }
-        
-//        DispatchQueue.global(qos: .background).async {
-//            usleep(1000000 * UInt32(2.0))
-//            DispatchQueue.main.async {
-//                ts.unsetPitchError()
-//            }
-//        }
-        return nil
+//        return nil
     }
     
     public func createTimeSlice() -> TimeSlice {
@@ -218,8 +205,8 @@ public class Score : ObservableObject {
     }
 
     public func getStaffHeight() -> Double {
-        var height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
-        let cnt = staffs.count
+        let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
+        //let cnt = staffs.count
         return height
     }
     
@@ -272,24 +259,6 @@ public class Score : ObservableObject {
         return result
     }
     
-//    public func addTriadNotes() {
-//        let taggedSlices = searchTimeSlices{ (timeSlice: TimeSlice) -> Bool in
-//            return timeSlice.tagHigh != nil
-//        }
-//        
-//        for tagSlice in taggedSlices {
-//            if let triad = tagSlice.tagLow {
-//                let notes = key.getTriadNoteNames(triadSymbol:triad)
-//                if let hiTag:TagHigh = tagSlice.tagHigh {
-//                    hiTag.popup = notes
-//                    if let loTag = tagSlice.tagLow {
-//                        tagSlice.setTags(high:hiTag, low:loTag)
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     public func getTimeSlicesForBar(bar:Int) -> [TimeSlice] {
         var result:[TimeSlice] = []
         var barNum = 0
@@ -307,7 +276,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -688,48 +657,16 @@ public class Score : ObservableObject {
             }
         }
     }
-
-//    public func copyEntries(from:Score, count:Int? = nil) {
-//        let staff = self.staffs[0]
-//        createStaff(num: 0, staff: Staff(score: self, type: staff.type, staffNum: 0, linesInStaff: staff.linesInStaff))
-//
-//        self.scoreEntries = []
+    
+//    public func errorCount() -> Int {
 //        var cnt = 0
-//        for entry in from.scoreEntries {
-//            if let fromTs = entry as? TimeSlice {
-//                let ts = self.createTimeSlice()
-//                for t in fromTs.getTimeSliceEntries() {
-//                    if let note = t as? Note {
-//                        ts.addNote(n: Note(note: note))
-//                    }
-//                    else {
-//                        if let rest = t as? Rest {
-//                            ts.addRest(rest: Rest(r: rest))
-//                        }
-//                    }
-//                }
-//            }
-//            else {
-//                self.scoreEntries.append(entry)
-//            }
-//            if let count = count {
+//        for timeSlice in self.getAllTimeSlices() {
+//            if [TimeSliceStatusTag.pitchError, TimeSliceStatusTag.rhythmError].contains(timeSlice.statusTag) {
 //                cnt += 1
-//                if cnt >= count {
-//                    break
-//                }
 //            }
 //        }
+//        return cnt
 //    }
-    
-    public func errorCount() -> Int {
-        var cnt = 0
-        for timeSlice in self.getAllTimeSlices() {
-            if [StatusTag.pitchError, StatusTag.rhythmError].contains(timeSlice.statusTag) {
-                cnt += 1
-            }
-        }
-        return cnt
-    }
     
     public func isNextTimeSliceANote(fromScoreEntryIndex:Int) -> Bool {
         if fromScoreEntryIndex > self.scoreEntries.count - 1 {
@@ -751,14 +688,22 @@ public class Score : ObservableObject {
     }
 
     
-    public func resetTapToValueRatios() {
+//    public func resetTapToValueRatios() {
+//        for i in 0..<self.scoreEntries.count {
+//            if let ts = self.scoreEntries[i] as? TimeSlice {
+//                ts.tapTempoRatio = nil
+//            }
+//        }
+//    }
+    
+    public func processAllTimeSlices(processFunction:(_:TimeSlice) -> Void) {
         for i in 0..<self.scoreEntries.count {
             if let ts = self.scoreEntries[i] as? TimeSlice {
-                ts.tapTempoRatio = nil
+                processFunction(ts)
             }
         }
     }
-        
+    
     public func calculateTapToValueRatios() {
         ///Calculate tapped time to note value with any trailing rests
         ///The tapped value for a note must be compared against the note's value plus and traling rests
@@ -875,12 +820,6 @@ public class Score : ObservableObject {
         }
         return totalDuration
     }
-
-//    func clearTags() {
-//        for ts in getAllTimeSlices() {
-//            ts.setStatusTag(StatusTag.noTag)
-//        }
-//    }
     
     func getNotesForLastBar(pitch:Int? = nil) -> [StaffNote] {
         var notes:[StaffNote] = []

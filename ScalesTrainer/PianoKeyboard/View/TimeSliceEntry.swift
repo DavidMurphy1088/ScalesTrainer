@@ -1,16 +1,11 @@
 import Foundation
 import SwiftUI
 
-public enum TimeSliceEntryStatusType {
-    case none
-    case playedCorrectly
-    case wrongPitch
-    case wrongValue
-}
 
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
-    @Published public var status:TimeSliceEntryStatusType = .none
-    
+    //@Published public var showPlaying:TimeSliceEntryStatusType = .none
+    @Published public var showIsPlaying:Bool = false
+
     public let id = UUID()
     public var staffNum:Int //Narrow the display of the note to just one staff
     public var timeSlice:TimeSlice
@@ -32,37 +27,34 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         return [0.75, 1.5, 3.0].contains(value)
     }
     
-//    func log(ctx:String) -> Bool {
-
-//    }
-    
     public func getValue() -> Double {
         return self.value
     }
 
     public func getColor(ctx:String, staff:Staff, adjustFor:Bool, log:Bool? = false) -> Color {
-        var out:Color? = nil
-
-        if timeSlice.statusTag == .pitchError {
-            out = Color(.red)
-        }
-        if timeSlice.statusTag == .missingError {
-            out = Color(.yellow)
-        }
-//        if adjustFor {
-//            if Int.random(in: 0...10) < 5  {
-//                if Int.random(in: 0...10) < 5  {
-//                    out = Color(red: Double.random(in: 0.5...0.9), green: 0, blue: 0)
-//                }
-//                else {
-//                    out = Color(red: 0, green: 0, blue: Double.random(in: 0.5...0.9))
-//                }
-//            }
+        return Color.black
+//        var out:Color? = nil
+//
+//        if timeSlice.statusTag == .pitchError {
+//            out = Color(.red)
 //        }
-        if out == nil {
-            out = Color(.black)
-        }
-        return out!
+//        if timeSlice.statusTag == .missingError {
+//            out = Color(.yellow)
+//        }
+////        if adjustFor {
+////            if Int.random(in: 0...10) < 5  {
+////                if Int.random(in: 0...10) < 5  {
+////                    out = Color(red: Double.random(in: 0.5...0.9), green: 0, blue: 0)
+////                }
+////                else {
+////                    out = Color(red: 0, green: 0, blue: Double.random(in: 0.5...0.9))
+////                }
+////            }
+////        }
+//        if out == nil {
+//            out = Color(.black)
+//        }
+//        return out!
     }
 
     func setValue(value:Double) {

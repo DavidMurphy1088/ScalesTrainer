@@ -13,6 +13,7 @@
 		79312DAF2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79312DAE2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt */; };
 		79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* ResultView.swift */; };
 		79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */; };
+		79312DB52C106D3D005FDE8B /* ProcessUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
@@ -124,6 +125,7 @@
 		79312DAE2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt"; path = "../../../../Downloads/06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt"; sourceTree = "<group>"; };
 		79312DB02C0B2B7E005FDE8B /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSliceEntry.swift; sourceTree = "<group>"; };
+		79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUnderwayView.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
@@ -451,6 +453,7 @@
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 				79312DB02C0B2B7E005FDE8B /* ResultView.swift */,
+				79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -681,6 +684,7 @@
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
 				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */,
+				79312DB52C106D3D005FDE8B /* ProcessUnderwayView.swift in Sources */,
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,

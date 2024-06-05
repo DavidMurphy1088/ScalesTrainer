@@ -1,28 +1,27 @@
 import Foundation
 
-public enum StatusTag {
+public enum TimeSliceStatusTag {
     case noTag
-    case rhythmError
-    case pitchError
+    //case rhythmError
+    //case pitchError
     case missingError
-    case afterErrorVisible //e.g. all rhythm after a rhythm error is moot
-    case afterErrorInvisible 
-    case hilightAsCorrect //hilight the correct note that was expected
+    case correct
+    //case missingError
+    //case afterErrorVisible //e.g. all rhythm after a rhythm error is moot
+    //case afterErrorInvisible
+    //case hilightAsCorrect //hilight the correct note that was expected
 }
 
 public class TimeSlice : ScoreEntry {
     @Published public var entries:[TimeSliceEntry]
-    //@Published public var tagHigh:TagHigh?
-    //@Published public var tagLow:String?
-    //@Published var notesLength:Int?
 
     var score:Score
     var footnote:String?
     var barLine:Int = 0
     var beatNumber:Double = 0.0 //the beat in the bar that the timeslice is at
     //var pitchReplacedEntry:Note?
-    @Published private(set) var statusTag:StatusTag = .noTag
-    public func setStatusTag(_ tag: StatusTag) {
+    @Published private(set) var statusTag:TimeSliceStatusTag = .noTag
+    public func setStatusTag(_ tag: TimeSliceStatusTag) {
         DispatchQueue.main.async {
             self.statusTag = tag
         }

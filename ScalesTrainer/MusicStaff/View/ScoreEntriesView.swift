@@ -117,9 +117,9 @@ struct ScoreEntriesView: View {
     ///Return the start and end points for the quaver beam based on the note postions that were reported
     func getBeamLine(endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
         let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
-        if [StatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
-            return nil
-        }
+//        if [TimeSliceStatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
+//            return nil
+//        }
         let stemLength = max(startNote.stemLength, endNote.stemLength) * score.lineSpacing
         //let endNotePos = noteLayoutPositions.positions[endNote]
         let endNotePos = noteLayoutPositions.getPositionForSequence(sequence: endNote.timeSlice.sequence)
@@ -207,11 +207,11 @@ struct ScoreEntriesView: View {
                                     ///Record and store the note's postion so we can later draw its stems which maybe dependent on the note being in a quaver group with a quaver beam
                                     Color.clear
                                         .onAppear {
-                                            if timeSlice.statusTag != .rhythmError {
+                                            //if timeSlice.statusTag != .rhythmError {
                                                 if staff.staffNum == 0 {
                                                     noteLayoutPositions.storePosition(onAppear: true, notes: entries.getTimeSliceNotes(),rect: geometry.frame(in: .named("HStack")))
                                                 }
-                                            }
+                                            //}
                                         }
                                         .onChange(of: score.lineSpacing) { newValue in
                                             if staff.staffNum == 0 {
@@ -220,12 +220,12 @@ struct ScoreEntriesView: View {
                                         }
                                 })
                                 
-                                if timeSlice.statusTag != .rhythmError  {
+                                //if timeSlice.statusTag != .rhythmError  {
                                     StemView(score:score,
                                              staff:staff,
                                              notePositionLayout: noteLayoutPositions,
                                              notes: entries.getTimeSliceNotes())
-                                }
+                                //}
 
                              }
                             //.border(Color.red)

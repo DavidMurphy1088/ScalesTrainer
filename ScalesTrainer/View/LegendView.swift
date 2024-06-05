@@ -37,10 +37,10 @@ struct LegendView: View {
     }
     
     func width() -> CGFloat {
-        return CGFloat(UIScreen.main.bounds.size.width / 50)
+        return CGFloat(UIScreen.main.bounds.size.width / 30)
     }
     
-    func ConfigView() -> some View {
+    func SettingsView() -> some View {
         HStack {
             Spacer()
             Button(action: {
@@ -76,7 +76,7 @@ struct LegendView: View {
         VStack {
             HStack {
                 if let title = title() {
-                    Text(" \(title) ").hilighted()
+                    Text("  \(title)  ").hilighted()
                 }
                 if scalesModel.result == nil { //}&& scalesModel.userFeedback == nil {
                     if scalesModel.showFingers {
@@ -115,7 +115,7 @@ struct LegendView: View {
                     Spacer()
                 }
                 Spacer()
-                ConfigView()//.padding()
+                SettingsView()//.padding()
                 Spacer()
             }
         }

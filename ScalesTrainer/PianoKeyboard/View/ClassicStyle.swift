@@ -53,31 +53,6 @@ public struct ClassicStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
 
-    func getKeyStatusColor(_ keyModel:PianoKeyModel) -> Color {
-        let scalesModel = ScalesModel.shared
-        var color:Color
-        let fullOpacity = 0.4
-        let halfOpacity = 0.4
-
-        if keyModel.scaleNoteState != nil {
-            if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-            }
-            else {
-                color = keyModel.keyClickedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-            }
-        }
-        else {
-            if scalesModel.selectedDirection == 0 {
-                color = keyModel.keyClickedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-            else {
-                color = keyModel.keyClickedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-        }
-        return color
-    }
-    
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let scalesModel = ScalesModel.shared
@@ -107,8 +82,9 @@ public struct ClassicStyle {
                 let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
                     .path(in: rect)
                 
+                ///Hilight the key if in following keys mode
                 let gradient = Gradient(colors: [
-                    keyModel.hilightKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     Color(red: 1, green: 1, blue: 1),
                 ])
                 
@@ -129,7 +105,7 @@ public struct ClassicStyle {
                 }
                 
                 /// ----------- Playing the note ----------
-                if keyModel.isPlayingMidi {
+                if keyModel.keyIsSounding {
                     let innerContext = context
                     let w = playingMidiRadius + 7.0
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
@@ -151,14 +127,11 @@ public struct ClassicStyle {
                 let width = playingMidiRadius * 1.1
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
-                ///Show finger break only outside practice or record
-                //if [.recordingScale, .recordingScaleWithData].contains(scalesModel.runningProcess) {
-                if scalesModel.result != nil {
-                    let color = getKeyStatusColor(key)
-                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
-                }
-                
+
+                let color = scalesModel.getKeyStatusColor(key)
+                let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
+                context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
+            
                 ///----------- Finger number
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
@@ -221,7 +194,7 @@ public struct ClassicStyle {
 
                 let gradientInset = Gradient(colors: [
                     sharpFlatColor(key.touchDown),
-                    keyModel.hilightKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     
                 ])
                 
@@ -241,8 +214,8 @@ public struct ClassicStyle {
                     }
                 }
                 
-                /// ----------- Playing the note ----------
-                if keyModel.isPlayingMidi {
+                /// ----------- The note from the key touch is playiong ----------
+                if keyModel.keyIsSounding {
                     let innerContext = context
                     let w = playingMidiRadius + 7.0
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
@@ -261,13 +234,12 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                //if scalesModel.appMode == .practicingMode || scalesModel.appMode == .none {
                 if scalesModel.result != nil {
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
 
-                    let color = getKeyStatusColor(key)
+                    let color = scalesModel.getKeyStatusColor(key) //getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }

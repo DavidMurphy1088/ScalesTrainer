@@ -24,56 +24,70 @@ class Result : Equatable {
     ///Build the result for the the keyboard and the score
     func buildResult() {
         let keyboardModel = PianoKeyboardModel.shared
-        PianoKeyboardModel.shared.debug("build result")
+        //PianoKeyboardModel.shared.debug("build result")
         guard let score = ScalesModel.shared.score else {
             return
         }
         
+        ///Set result  status for keyboard keys, score notes
         ///the mapping of keys to scale notes can be different ascending vs. descending. e.g. melodic minor
+
         for direction in [0,1] {
-            keyboardModel.mapScaleFingersToKeyboard(direction: direction)
+            keyboardModel.linkScaleFingersToKeyboardKeys(direction: direction)
             for i in 0..<keyboardModel.pianoKeyModel.count {
                 let key = keyboardModel.pianoKeyModel[i]
                 if key.scaleNoteState != nil {
                     if direction == 0 {
-                        if key.keyClickedState.tappedTimeAscending == nil {
-
+                        if key.keyWasPlayedState.tappedTimeAscending == nil {
                             missedCountAsc += 1
                             if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                                 timeSlice.setStatusTag(.missingError)
                             }
                         }
+                        else {
+                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                                timeSlice.setStatusTag(.correct)
+                            }
+                        }
                     }
                     if direction == 1 {
-                        if key.keyClickedState.tappedTimeDescending == nil {
+                        if key.keyWasPlayedState.tappedTimeDescending == nil {
                             missedCountDesc += 1
                             if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                                 timeSlice.setStatusTag(.missingError)
                             }
                         }
+                        else {
+                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+                                timeSlice.setStatusTag(.correct)
+                            }
+                        }
                     }
                 }
+                ///The key is not in the scale
                 else {
                     if direction == 0 {
-                        if key.keyClickedState.tappedTimeAscending != nil {
+                        if key.keyWasPlayedState.tappedTimeAscending != nil {
                             wrongCountAsc += 1
                         }
                         if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
-                            timeSlice.setStatusTag(.pitchError)
+                            ///Not in scale => The note is not in the score
+                            //timeSlice.setStatusTag(.pitchError)
                         }
                     }
                     if direction == 1 {
-                        if key.keyClickedState.tappedTimeDescending != nil {
+                        if key.keyWasPlayedState.tappedTimeDescending != nil {
                             wrongCountDesc += 1
                         }
                         if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
-                            timeSlice.setStatusTag(.pitchError)
+                            ///Not in scale => The note is not in the score
+                            //timeSlice.setStatusTag(.pitchError)
                         }
                     }
                 }
             }
         }
-        score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
+        //score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
     }
 }
 

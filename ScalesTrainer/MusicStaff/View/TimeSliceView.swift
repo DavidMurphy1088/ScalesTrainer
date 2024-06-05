@@ -36,12 +36,12 @@ public struct NoteHiliteView: View {
     
     public var body: some View {
         VStack {
-            if entry.status  == .playedCorrectly {
+            //if entry.showIsPlaying { //}== .playedCorrectly {
                 Ellipse()
                     .stroke(Color.green, lineWidth: 3)
                     .frame(width: width, height: width)
                     .position(x: x, y:y)
-            }
+            //}
         }
     }
 }
@@ -211,7 +211,7 @@ public struct TimeSliceView: View {
         //.border(Color.red)
     }
     
-    func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:StatusTag) -> some View {
+    func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:TimeSliceStatusTag) -> some View {
         ZStack {
             let placement = note.getNoteDisplayCharacteristics(staff: staff)
             let offsetFromStaffMiddle = placement.offsetFromStaffMidline
@@ -219,23 +219,22 @@ public struct TimeSliceView: View {
 
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
             let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
-            if placement.showOctaveOverlay {
-                VStack {
-                    Text("...")
-                    Spacer()
-                }
-            }
-            if statusTag != .noTag  {
-                Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
-                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+//            if placement.showOctaveOverlay {
+//                VStack {
+//                    Text("...")
+//                    Spacer()
+//                }
+//            }
+//            if statusTag != .noTag  {
+//                Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
+//                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+//                if note.staffNum == staff.staffNum  {
+//                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
+//                }
+//            }
+//            else {
                 if note.staffNum == staff.staffNum  {
-                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
-                }
-            }
-            else {
-                //if ![StatusTag.afterErrorVisible, StatusTag.afterErrorInvisible].contains(statusTag) {
-                if ![StatusTag.afterErrorInvisible].contains(statusTag) {
-                    if note.staffNum == staff.staffNum  {
+                    if note.showIsPlaying {
                         NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
                     }
                 }
@@ -268,7 +267,6 @@ public struct TimeSliceView: View {
                         .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
                 }
                 
-                //dotted
                 if note.isDotted() {
                     //the dot needs to be moved off the note center to move the dot off a staff line
                     let yOffset = offsetFromStaffMiddle % 2 == 0 ? lineSpacing / 3.0 : 0
@@ -294,7 +292,7 @@ public struct TimeSliceView: View {
                         }
                         .stroke(note.getColor(ctx: "NoteView6", staff: staff, adjustFor: false), lineWidth: 1)
                     }
-                }
+                //}
             }
 //            if let valueNormalized = note.valueNormalized {
 //                VStack {
@@ -345,10 +343,9 @@ public struct TimeSliceView: View {
             endPoint: .trailing
         )
     }
-//    func tempoColor() -> Color {
-//        let v:[Color] = [.blue, .green, .red]
-//        return v.randomElement()!.opacity(0.5)
-//    }
+    func statusWidth() -> CGFloat {
+        return CGFloat(UIScreen.main.bounds.size.width / 50)
+    }
     
     public var body: some View {
         GeometryReader { geometry in
@@ -366,6 +363,22 @@ public struct TimeSliceView: View {
                             //Spacer()
                                 .position(x: geometry.size.width / 2.0, y: geometry.size.height / 2.0)
                             //.border(Color.blue)
+                        }
+                        
+                    }
+                }
+                if timeSlice.statusTag != .noTag {
+                    VStack {
+                        Spacer()
+                        if timeSlice.statusTag == .missingError {
+                            Circle()
+                                .fill(Color.yellow.opacity(0.4))
+                                .frame(width: statusWidth())
+                        }
+                        if timeSlice.statusTag == .correct {
+                            Circle()
+                                .fill(Color.green.opacity(0.4))
+                                .frame(width: statusWidth())
                         }
                     }
                 }
@@ -388,7 +401,7 @@ public struct TimeSliceView: View {
 //                }
             }
             .onAppear() {
-                ScalesModel.shared.score?.debugScore111("__CUCK", withBeam: false, toleranceLevel: 0)
+                //ScalesModel.shared.score?.debugScore111("__CUCK", withBeam: false, toleranceLevel: 0)
             }
         }
     }

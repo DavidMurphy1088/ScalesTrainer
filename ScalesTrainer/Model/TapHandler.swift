@@ -12,7 +12,7 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
-    init(amplitudeFilter:Double)
+    init(amplitudeFilter:Double, hilightPlayingNotes:Bool)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping()
 }
@@ -58,14 +58,17 @@ class PracticeTapHandler : TapHandlerProtocol {
     let minMidi:Int
     let maxMidi:Int
     var tapNum = 0
-
-    required init(amplitudeFilter:Double) {
+    var hilightPlayingNotes:Bool
+    
+    required init(amplitudeFilter:Double, hilightPlayingNotes:Bool) {
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
-        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
         tapNum = 0
         ScalesModel.shared.recordedTapEvents = TapEvents()
+        self.hilightPlayingNotes = hilightPlayingNotes
+        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
+
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -98,7 +101,7 @@ class PracticeTapHandler : TapHandlerProtocol {
         if aboveFilter {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
                 let keyboardKey = keyboardModel.pianoKeyModel[index]
-                keyboardKey.setPlayingMidi(ascending: scalesModel.selectedDirection)
+                keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: self.hilightPlayingNotes)
             }
         }
         ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNum,
@@ -133,15 +136,16 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var maxScaleMidi = 0
     var minScaleMidi = 0
     var matchCount = 0
+    var hilightPlayingNotes:Bool
     
-    required init(amplitudeFilter:Double) {
+    required init(amplitudeFilter:Double, hilightPlayingNotes:Bool) {
         self.amplitudeFilter = amplitudeFilter
         self.scale = ScalesModel.shared.scale
-        //self.saveTappingToFile = saveTappingToFile
-        //self.requiredStartAmplitude = requiredStartAmplitude
         ScalesModel.shared.recordedTapEvents = TapEvents()
         (minScaleMidi, maxScaleMidi) = scale.getMinMax()
         ScalesModel.shared.recordedTapsFileURL = nil
+        
+        self.hilightPlayingNotes = hilightPlayingNotes
         Logger.shared.log(self, "ScaleTapHandler start. AmplFilter:\(self.amplitudeFilter)")
     }
     
@@ -257,6 +261,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ///We assume now that errors will be only off by a note or two so any midi's that are different than the expected by too much are treated as noise.
         ///Harmonics, bumps, noise etc. They should not cause key presses or scale note matches.
         
+        ///If the key maps to a scale note update the scale note's matched state
+        ///Also update the key's clickedState
         var tapEventStatus:TapEventStatus = .none
 
         let diffToExpected = abs(midi - nextExpectedNotes[0].midi)
@@ -292,15 +298,18 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 unmatchedCount += 1
                 tapEventStatus = .keyPressWithoutScaleMatch
             }
+            
+            ///Update key tapped state
             if ascending || atTop {
-                keyboardKey.keyClickedState.tappedTimeAscending = Date()
-                keyboardKey.keyClickedState.tappedAmplitudeAscending = Double(amplitude)
+                keyboardKey.keyWasPlayedState.tappedTimeAscending = Date()
+                keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(amplitude)
             }
             if !ascending || atTop  {
-                keyboardKey.keyClickedState.tappedTimeDescending = Date()
-                keyboardKey.keyClickedState.tappedAmplitudeDescending = Double(amplitude)
+                keyboardKey.keyWasPlayedState.tappedTimeDescending = Date()
+                keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(amplitude)
             }
-            keyboardKey.setPlayingMidi(ascending: ascending ? 0 : 1)
+            keyboardKey.setKeyPlaying(ascending: ascending ? 0 : 1, hilight: self.hilightPlayingNotes)
+            
             lastKeyPressedMidi = keyboardKey.midi
             if atTop {
                 DispatchQueue.main.async {
@@ -330,7 +339,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
     func stopTapping() {
         Logger.shared.log(self, "ScaleTapHandler stop")
         Logger.shared.calcValueLimits()     
-        //PianoKeyboardModel.shared.debug("=======+++")
+        PianoKeyboardModel.shared.debug1("-->End Tap")
+        ScalesModel.shared.scale.debug11("End Tap")
         let result = Result(runningProcess: .recordingScale, userMessage: "")
         result.buildResult()
         ScalesModel.shared.setResult(result)

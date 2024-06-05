@@ -1,6 +1,7 @@
 import Foundation
 import Speech
 import Combine
+import SwiftUI
 
 ///None -> user can see finger numbers and tap virtual keyboard - notes are hilighted if in scale
 ///Practice -> user can use acoustic piano. keyboard display same as .none
@@ -101,13 +102,6 @@ public class ScalesModel : ObservableObject {
         }
     }
 
-//    @Published private(set) var userFeedback:String? = nil
-//    func setUserFeedback(_ msg:String?) {
-//        DispatchQueue.main.async {
-//            self.userFeedback = msg
-//        }
-//    }
-    
     @Published private(set) var processInstructions:String? = nil
     func setProcessInstructions(_ msg:String?) {
         DispatchQueue.main.async {
@@ -128,50 +122,69 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             self.showFingers = newValue
         }
+    }    
+    
+    @Published private(set) var userMessage:String? = nil
+    func setUserMessage(_ newValue: String) {
+        DispatchQueue.main.async {
+            self.userMessage = newValue
+        }
+    }
+    
+    @Published private(set) var showKeyboard:Bool = true
+    func setShowKeyboard(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.showKeyboard = newValue
+        }
     }
     
     @Published private(set) var runningProcess:RunningProcess = .none
     
     func setRunningProcess(_ setProcess: RunningProcess) {
-        Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
+        //PianoKeyboardModel.shared.debug("Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
         }
         self.audioManager.stopRecording()
+        self.setShowKeyboard(true)
         self.setDirection(0)
         self.setProcessInstructions(nil)
         Logger.shared.clearLog()
         
         DispatchQueue.main.async {
             if let score = self.score {
-                score.resetTapToValueRatios()
-                self.score = self.createScore(scale: self.scale, showTempoVariation: false)
+                score.processAllTimeSlices(processFunction: {ts in
+                    ts.tapTempoRatio = nil
+                })
+                //self.score = self.createScore(scale: self.scale, showTempoVariation: false)..
             }
         }
         
         let keyboard = PianoKeyboardModel.shared
-        keyboard.clearAllKeyHilights(except: nil)
+        keyboard.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.shared.redraw()
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
-            let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : Settings.shared.amplitudeFilter)
+            let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : Settings.shared.amplitudeFilter, hilightPlayingNotes: true)
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
         }
         if [RunningProcess.recordingScale].contains(setProcess)  {
-            keyboard.resetKeysWereClickedState()
+            keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
+            self.setShowKeyboard(false)
             self.result = nil
             keyboard.redraw()
-            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter)
+            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
         }
         
         if [RunningProcess.recordingScaleWithData].contains(setProcess)  {
-            keyboard.resetKeysWereClickedState()
+            keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
+            self.setShowKeyboard(false)
             self.setResult(nil)
             keyboard.redraw()
-            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter)
+            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
             self.audioManager.readTestData(tapHandler: tapHandler)
         }
         
@@ -197,7 +210,7 @@ public class ScalesModel : ObservableObject {
                 self.setProcessInstructions("Start recording your scale")
             }
         }
-        
+        //PianoKeyboardModel.shared.debug("END Setting process ---> \(setProcess.description)")
     }
 
     init() {
@@ -215,14 +228,37 @@ public class ScalesModel : ObservableObject {
         self.callibrationTapHandler = nil
     }
     
-    ///Allow user to follow notes hilighted on the keyboard
-    ///Wait till user hits correct key before moving to and highlighting the next note
-//    func followScaleProcess1(onDone:((_ cancelled:Bool)->Void)?) {
-//        let result = Result(userMessage: "😊 Test 😊")
-//        self.setResult(result)
-//        //setUserFeedback()
-//        return
-//    }
+    ///Return the color a keyboard note should display its status as. Clear -> dont show anything
+    func getKeyStatusColor(_ keyModel:PianoKeyModel) -> Color {
+        guard let result = self.result else {
+            return Color.clear
+        }
+        guard result.runningProcess != .followingScale else {
+            return Color.clear
+        }
+        var color:Color
+        let fullOpacity = 0.4
+        let halfOpacity = 0.4
+        if keyModel.scaleNoteState != nil {
+            ///Key is in the scale
+            if selectedDirection == 0 {
+                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
+            }
+            else {
+                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
+            }
+        }
+        else {
+            ///Key was not in the scale
+            if selectedDirection == 0 {
+                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+            }
+            else {
+                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+            }
+        }
+        return color
+    }
     
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note
@@ -251,16 +287,16 @@ public class ScalesModel : ObservableObject {
                     continue
                 }
                 let pianoKey = keyboard.pianoKeyModel[keyIndex]
-                keyboard.clearAllKeyHilights(except: keyIndex)
-                pianoKey.hilightKey = true
+                keyboard.clearAllFollowingKeyHilights(except: keyIndex)
+                pianoKey.hilightFollowingKey = true
                 keyboard.redraw()
 
                 ///Listen for piano key pressed
                 
-                pianoKey.callback = {
+                pianoKey.wasPlayedCallback = {
                     semaphore.signal()
                     keyboard.redraw()
-                    pianoKey.callback = nil
+                    pianoKey.wasPlayedCallback = nil
                 }
 
                 ///Listen for cancel activity
@@ -288,15 +324,17 @@ public class ScalesModel : ObservableObject {
                 if scaleIndex > self.scale.scaleNoteState.count - 1 {
                     break
                 }
-
                 scaleIndex += 1
             }
             self.audioManager.stopRecording()
-            //if !cancelled {
-            let result = Result(runningProcess: .followingScale, userMessage: cancelled ? "Cancelled" : "😊 Good job 😊")
-                self.setResult(result) //
-                //scale.debug1("FOLLOW")
-            //}
+            if !cancelled {
+//                let result = Result(runningProcess: .followingScale, userMessage: cancelled ? "Cancelled" : "😊 Good job 😊")
+//                ///Follow mode should not make a right/wrong result. It has
+//                //result.buildResult()
+//                self.setResult(result)
+                ScalesModel.shared.setUserMessage("😊 Good job following the scale 😊")
+            }
+
             if let onDone = onDone {
                 onDone(cancelled)
             }
@@ -313,7 +351,7 @@ public class ScalesModel : ObservableObject {
         let staffKeyType:StaffKey.StaffKeyType = [ScaleType.major, ScaleType.arpeggioMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
-        let score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5, showTempoVariation: showTempoVariation)
+        let score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
 
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
@@ -449,7 +487,7 @@ public class ScalesModel : ObservableObject {
     func setDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.shared.mapScaleFingersToKeyboard(direction: index)
+            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(direction: index)
         }
     }
     
