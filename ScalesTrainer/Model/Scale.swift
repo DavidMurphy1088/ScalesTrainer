@@ -234,7 +234,7 @@ public class Scale {
         }
     }
     
-    ///Set note durations normalize to the tempo and return an average tempo
+    ///Set note durations normalized to the tempo and return an average tempo
     public func setNoteNormalizedValues() -> Int? {
         for note in self.scaleNoteState {
             note.valueNormalized = nil
@@ -247,7 +247,7 @@ public class Scale {
         }
         var timeIntervals:[Double] = []
         
-        ///Calculate the average of the note durations
+        ///Calculate the the note durations
         var lastMatch:Date? = self.scaleNoteState[0].matchedTime
         var sum:Double = 0
         var timedNotesCount = 0
@@ -274,7 +274,7 @@ public class Scale {
             for n in 0..<self.scaleNoteState.count - 1 {
                 if n+1 < timeIntervals.count {
                     if timeIntervals[n+1] > 0 {
-                        var note = scaleNoteState[n]
+                        let note = scaleNoteState[n]
                         let normalized = timeIntervals[n+1] / average
                         note.valueNormalized = normalized
                     }

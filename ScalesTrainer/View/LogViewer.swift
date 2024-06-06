@@ -42,7 +42,7 @@ struct LogView: View {
                             .frame(maxWidth: .infinity)
                             //.border(Color.green, width: 2)
                         }
-                        .onChange(of: logger.loggedMsgs.count) { _ in
+                        .onChange(of: logger.loggedMsgs.count) { 
                             // Scroll to the last row whenever the number of logged messages changes
                             withAnimation {
                                 proxy.scrollTo(logger.loggedMsgs.count - 1, anchor: .bottom)

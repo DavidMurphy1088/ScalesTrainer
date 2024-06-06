@@ -20,6 +20,7 @@ enum RunningProcess {
     case followingScale
     case practicing
     case recordingScale
+    //case recordingLeadIn
     case recordingScaleWithData
     case identifyingScale
     
@@ -33,6 +34,8 @@ enum RunningProcess {
             return "Following Scale"
         case .practicing:
             return "Practicing"
+//        case .recordingLeadIn:
+//            return "Recording Lead-In"
         case .recordingScale:
             return "Recording Scale"
         case .recordingScaleWithData:
@@ -46,8 +49,6 @@ enum RunningProcess {
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     var scale:Scale
-    
-    //@Published var requiredStartAmplitude:Double? = nil
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
@@ -85,7 +86,7 @@ public class ScalesModel : ObservableObject {
     let callibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
-    
+    var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     
     ///Speech
@@ -113,7 +114,6 @@ public class ScalesModel : ObservableObject {
     func setShowStaff(_ newValue: Bool) {
         DispatchQueue.main.async {
             self.showStaff = newValue
-            print("========= show staff set:\(self.showStaff)")
         }
     }
     
@@ -125,7 +125,7 @@ public class ScalesModel : ObservableObject {
     }    
     
     @Published private(set) var userMessage:String? = nil
-    func setUserMessage(_ newValue: String) {
+    func setUserMessage(_ newValue: String?) {
         DispatchQueue.main.async {
             self.userMessage = newValue
         }
@@ -138,10 +138,18 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    @Published var leadInBar:String? = nil
+    func setLeadInBar(_ newValue: String?) {
+        DispatchQueue.main.async {
+            self.leadInBar = newValue
+        }
+    }
+
     @Published private(set) var runningProcess:RunningProcess = .none
     
     func setRunningProcess(_ setProcess: RunningProcess) {
         //PianoKeyboardModel.shared.debug("Setting process ---> \(setProcess.description)")
+        print("=============> Set process ---> from \(self.runningProcess) TO \(setProcess)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
         }
@@ -149,16 +157,10 @@ public class ScalesModel : ObservableObject {
         self.setShowKeyboard(true)
         self.setDirection(0)
         self.setProcessInstructions(nil)
-        Logger.shared.clearLog()
-        
-        DispatchQueue.main.async {
-            if let score = self.score {
-                score.processAllTimeSlices(processFunction: {ts in
-                    ts.tapTempoRatio = nil
-                })
-                //self.score = self.createScore(scale: self.scale, showTempoVariation: false)..
-            }
+        if result != nil {
+            self.setShowStaff(true)
         }
+        Logger.shared.clearLog()
         
         let keyboard = PianoKeyboardModel.shared
         keyboard.clearAllFollowingKeyHilights(except: nil)
@@ -168,11 +170,14 @@ public class ScalesModel : ObservableObject {
             let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : Settings.shared.amplitudeFilter, hilightPlayingNotes: true)
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
         }
+        
         if [RunningProcess.recordingScale].contains(setProcess)  {
             keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
             self.result = nil
+            self.setUserMessage(nil)
+            //self.setShowFingers(false)
             keyboard.redraw()
             let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
@@ -197,10 +202,13 @@ public class ScalesModel : ObservableObject {
         if setProcess == .recordingScale {
             let scaleLeadIn = ScaleLeadIn()
             if Settings.shared.scaleLeadInBarCount > 0 {
-                ///Dont let the metronome ticks fire erroneous frequencies
+                ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
                 audioManager.blockTaps = true
                 self.setProcessInstructions(scaleLeadIn.getInstructions())
+                
                 MetronomeModel.shared.startTimer(notified: scaleLeadIn, tempoMultiplier: 1.0, onDone: {
+                    //self.setRunningProcess(.recordingScale)
+                    self.setLeadInBar(nil)
                     self.setProcessInstructions("Record your scale")
                     self.audioManager.blockTaps = false
                     Logger.shared.log(self, "End lead in")
@@ -346,7 +354,7 @@ public class ScalesModel : ObservableObject {
         return Int(selected) ?? 60
     }
     
-    func createScore(scale:Scale, showTempoVariation:Bool) -> Score {
+    func createScore(scale:Scale) -> Score {
         let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
         let staffKeyType:StaffKey.StaffKeyType = [ScaleType.major, ScaleType.arpeggioMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
@@ -366,12 +374,12 @@ public class ScalesModel : ObservableObject {
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
             let note = StaffNote(timeSlice: ts, num: noteState.midi, value: StaffNote.VALUE_QUARTER, staffNum: 0)
-            if showTempoVariation {
-                note.valueNormalized = noteState.valueNormalized
-            }
-            else {
-                note.valueNormalized = nil
-            }
+//            if showTempoVariation {
+//                note.valueNormalized = noteState.valueNormalized
+//            }
+//            else {
+//                note.valueNormalized = nil
+//            }
             note.setValue(value: 0.5)
             ts.addNote(n: note)
             inBarCount += 1
@@ -405,7 +413,7 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
-                self.score = self.createScore(scale: self.scale, showTempoVariation: false)
+                self.score = self.createScore(scale: self.scale)
             }
         }
     }

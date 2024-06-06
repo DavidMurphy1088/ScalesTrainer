@@ -30,20 +30,19 @@ struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
+    @State var famouseQuotes = Settings.shared.famousQuotes
     @State var leadInBarCount = 0
+    let width = UIScreen.main.bounds.width * 0.25
     
     var body: some View {
         VStack {
             VStack {
-                //Spacer()
-                //MicrophoneView()
-                //SpeechView()
                 
                 Spacer()
                 HStack() {
                     Toggle("Record Data Mode", isOn: $recordDataMode)
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.25)
+                .frame(width: width)
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
                     settings.save()
@@ -66,14 +65,29 @@ struct SettingsView: View {
                 }
                 
                 Spacer()
-                Button("Save") {
+                HStack() {
+                    Toggle("Famous Quotes", isOn: $famouseQuotes)
+                }
+                .frame(width: width)
+                .onChange(of: famouseQuotes, {
+                    settings.famousQuotes = famouseQuotes
                     settings.save()
-                }
-                Spacer()
-                Button("Load") {
-                    settings.load()
-                }
+                })
                 .padding()
+                
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button("Save") {
+                        settings.save()
+                    }
+                    Spacer()
+                    Button("Load") {
+                        settings.load()
+                    }
+                    .padding()
+                    Spacer()
+                }
                 Spacer()
             }
             //let req = settings.requiredScaleRecordStartAmplitude

@@ -21,10 +21,13 @@ class Result : Equatable {
         self.runningProcess = runningProcess
     }
     
+    func noErrors() -> Bool {
+        return missedCountAsc == 0 && missedCountDesc == 0 && wrongCountAsc == 0 && wrongCountDesc == 0
+    }
+    
     ///Build the result for the the keyboard and the score
     func buildResult() {
         let keyboardModel = PianoKeyboardModel.shared
-        //PianoKeyboardModel.shared.debug("build result")
         guard let score = ScalesModel.shared.score else {
             return
         }
@@ -70,24 +73,31 @@ class Result : Equatable {
                         if key.keyWasPlayedState.tappedTimeAscending != nil {
                             wrongCountAsc += 1
                         }
-                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
-                            ///Not in scale => The note is not in the score
-                            //timeSlice.setStatusTag(.pitchError)
-                        }
+//                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+//                            ///Not in scale => The note is not in the score
+//                            //timeSlice.setStatusTag(.pitchError)
+//                        }
                     }
                     if direction == 1 {
                         if key.keyWasPlayedState.tappedTimeDescending != nil {
                             wrongCountDesc += 1
                         }
-                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
-                            ///Not in scale => The note is not in the score
-                            //timeSlice.setStatusTag(.pitchError)
-                        }
+//                        if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
+//                            ///Not in scale => The note is not in the score
+//                            //timeSlice.setStatusTag(.pitchError)
+//                        }
                     }
                 }
             }
         }
-        //score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
+        if noErrors() {
+            let scale = ScalesModel.shared.scale
+            let _ = scale.setNoteNormalizedValues()
+            scale.debug11("==here")
+            //score.calculateTapToValueRatios()
+            score.setNormalizedValues(scale: scale)
+        }
+        //score.debugScore("=== Result", withBeam: false, toleranceLevel: 0)
     }
 }
 

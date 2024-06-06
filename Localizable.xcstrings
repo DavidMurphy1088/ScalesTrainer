@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     " " : {
 
     },
@@ -10,7 +13,13 @@
     "  %@  " : {
 
     },
+    "  %@   " : {
+
+    },
     "  👉 %@  " : {
+
+    },
+    "  Recording Lead-In...  " : {
 
     },
     " %lld" : {
@@ -23,6 +32,9 @@
 
     },
     "." : {
+
+    },
+    "\"%@\"" : {
 
     },
     "%@" : {
@@ -62,6 +74,9 @@
 
     },
     "Correctly Played" : {
+
+    },
+    "Famous Quotes" : {
 
     },
     "Finger" : {
@@ -142,6 +157,9 @@
     "Played But Not in Scale" : {
 
     },
+    "Practice" : {
+
+    },
     "Practice Days" : {
 
     },
@@ -204,9 +222,6 @@
 
     },
     "Start" : {
-
-    },
-    "Start Practicing" : {
 
     },
     "Stats: %@" : {

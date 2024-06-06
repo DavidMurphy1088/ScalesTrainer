@@ -367,38 +367,34 @@ public struct TimeSliceView: View {
                         
                     }
                 }
-                if timeSlice.statusTag != .noTag {
+                
+                ///Error status or tempo indication if no error
+                
+                if let result = scalesModel.result {
                     VStack {
                         Spacer()
-                        if timeSlice.statusTag == .missingError {
-                            Circle()
-                                .fill(Color.yellow.opacity(0.4))
-                                .frame(width: statusWidth())
+                        if result.noErrors() {
+                            if let duration = timeSlice.tapDuration {
+                                Rectangle()
+                                    .fill(getTempoGradient(valueNormalized: duration))
+                                //.opacity(1)
+                                    .frame(width: noteFrameWidth, height: 12)
+                            }
                         }
-                        if timeSlice.statusTag == .correct {
-                            Circle()
-                                .fill(Color.green.opacity(0.4))
-                                .frame(width: statusWidth())
+                        else {
+                            if timeSlice.statusTag == .missingError {
+                                Circle()
+                                    .fill(Color.yellow.opacity(0.4))
+                                    .frame(width: statusWidth())
+                            }
+                            if timeSlice.statusTag == .correct {
+                                Circle()
+                                    .fill(Color.green.opacity(0.4))
+                                    .frame(width: statusWidth())
+                            }
                         }
                     }
                 }
-//                if scalesModel.result != nil {
-//                    VStack {
-//                        Spacer()
-//                        let colorx = tempoColor()
-//                        let o = 0.5
-//                        Rectangle()
-//                            .fill(LinearGradient(
-//                                gradient: Gradient(colors: [colorx, Color.green.opacity(o)]),
-//                                startPoint: .leading,
-//                                endPoint: .trailing
-//                            ))
-//                        //.opacity(1)
-//                            .frame(width: noteFrameWidth, height: 12)
-//                        let t = String(timeSlice.tapTempoRatio ?? 0)
-//                        Text("\(t)")
-//                    }
-//                }
             }
             .onAppear() {
                 //ScalesModel.shared.score?.debugScore111("__CUCK", withBeam: false, toleranceLevel: 0)
@@ -406,3 +402,4 @@ public struct TimeSliceView: View {
         }
     }
 }
+

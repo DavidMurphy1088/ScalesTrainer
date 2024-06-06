@@ -7,8 +7,8 @@ struct ResultView: View {
     
     func getaAllCorrect() -> Bool {
         return result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0
-
     }
+    
     func recordStatus() -> (Bool, String) {
         var status = ""
         if getaAllCorrect() {

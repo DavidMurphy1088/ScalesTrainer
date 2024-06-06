@@ -12,7 +12,7 @@ class ScaleLeadIn : MetronomeTimerNotificationProtocol{
     var metronomeAudioPlayerLow:AVAudioPlayer?
     var metronomeAudioPlayerHigh:AVAudioPlayer?
     var beatCount = 0
-    let barCount = Settings.shared.scaleLeadInBarCount
+    let barCount = Settings.shared.scaleLeadInBarCount * 1
     
     func useMajor(_ scale:Scale) -> Bool {
         return [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh].contains(scale.scaleType)
@@ -32,6 +32,7 @@ class ScaleLeadIn : MetronomeTimerNotificationProtocol{
             metronomeAudioPlayerLow!.play()
         }
         beatCount += 1
+        ScalesModel.shared.setLeadInBar("Beat \(beatCount)")
         return beatCount >= barCount * 4
     }
     

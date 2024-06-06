@@ -152,7 +152,7 @@ public class PianoKeyboardModel: ObservableObject, MetronomeTimerNotificationPro
         }
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]

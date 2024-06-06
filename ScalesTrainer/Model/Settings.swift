@@ -3,7 +3,7 @@ import Foundation
 public class Settings : Codable  {    
     static var shared = Settings()
     var recordDataMode = false
-    //var requiredScaleRecordStartAmplitude:Double = 0.0
+    var famousQuotes = true
     var amplitudeFilter:Double = 0.0
     var scaleLeadInBarCount:Int = 0
     
@@ -29,6 +29,7 @@ public class Settings : Codable  {
         //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
+        str += " FamouseQuotes:\(self.famousQuotes)"
         return str
     }
     
@@ -51,9 +52,10 @@ public class Settings : Codable  {
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
                     self.amplitudeFilter = loaded.amplitudeFilter
+                    self.famousQuotes = loaded.famousQuotes
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     //self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
-                    let str:String = String(data: data, encoding: .utf8) ?? "none"
+                    //let str:String = String(data: data, encoding: .utf8) ?? "none"
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                 } catch {
                     Logger.shared.reportError(self, "load:" + error.localizedDescription)

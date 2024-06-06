@@ -19,7 +19,7 @@ public class TimeSlice : ScoreEntry {
     var footnote:String?
     var barLine:Int = 0
     var beatNumber:Double = 0.0 //the beat in the bar that the timeslice is at
-    //var pitchReplacedEntry:Note?
+
     @Published private(set) var statusTag:TimeSliceStatusTag = .noTag
     public func setStatusTag(_ tag: TimeSliceStatusTag) {
         DispatchQueue.main.async {
@@ -27,10 +27,10 @@ public class TimeSlice : ScoreEntry {
         }
     }
 
-    //Used when recording a tap sequence into a score
-    public var tapSecondsNormalizedToTempo:Double?
+    ///The duration in seconds of the note played for this timeslice
+    public var tapDuration:Double?
     //Used to display tempo slow/fast variation per note based on actual tapped milliseconds
-    @Published var tapTempoRatio:Double?
+    //@Published var tapTempoRatio:Double?
     
     public init(score:Score) {
         self.score = score

@@ -195,7 +195,7 @@ struct ScoreEntriesView: View {
             HStack(spacing: 0) { //HStack - score entries display along the staff
                 ForEach(score.scoreEntries) { entry in
                     ZStack { //VStack - required in forEach closure
-                        if let timeSlice = entry as? TimeSlice {
+                        if entry is TimeSlice {
                             let entries = entry as! TimeSlice
                             ZStack { // Each note frame in the timeslice shares the same same vertical space
                                 TimeSliceView(staff: staff,
@@ -213,7 +213,7 @@ struct ScoreEntriesView: View {
                                                 }
                                             //}
                                         }
-                                        .onChange(of: score.lineSpacing) { newValue in
+                                        .onChange(of: score.lineSpacing) { oldValue, newValue in
                                             if staff.staffNum == 0 {
                                                 noteLayoutPositions.storePosition(onAppear: false, notes: entries.getTimeSliceNotes(),rect: geometry.frame(in: .named("HStack")))
                                             }
@@ -252,7 +252,7 @@ struct ScoreEntriesView: View {
                                             barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
                                         }
                                     }
-                                    .onChange(of: score.lineSpacing) { newValue in
+                                    .onChange(of: score.lineSpacing) { oldValue, newValue in
                                         if staff.staffNum == 0 {
                                             let barLine = entry as! BarLine
                                             barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")

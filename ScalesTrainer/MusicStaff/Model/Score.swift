@@ -276,7 +276,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore1(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -295,7 +295,8 @@ public class Score : ObservableObject {
                               "type:", type(of: t.entries[0]),
                               "midi:", note.midiNumber,
                               "beat:", t.beatNumber,
-                              "Value:", t.getValue() ,
+                              "value:", t.getValue() ,
+                              "duration:", t.tapDuration ?? "_",
                               "stemDirection", note.stemDirection,
                               "stemLength", note.stemLength,
                               "writtenAccidental", note.writtenAccidental ?? 0,
@@ -307,7 +308,7 @@ public class Score : ObservableObject {
                         print("  Seq", t.sequence,
                               "[type:", type(of: t.entries[0]), "]",
                               "[midi:",note.midiNumber, "]",
-                              "[TapDuration Seconds:",String(format: "%.4f", t.tapSecondsNormalizedToTempo ?? 0),"]",
+                              "[TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]",
                               "[Note Value:", note.getValue(),"]",
                               "[status]",t.statusTag,
                               "[beat]",t.beatNumber,
@@ -321,7 +322,7 @@ public class Score : ObservableObject {
                 print("  Seq", t.sequence,
                       "[type:", type(of: t.entries[0]), "]",
                       "[rest:","R ", "]",
-                      "[TapDuration Seconds:",String(format: "%.4f", t.tapSecondsNormalizedToTempo ?? 0),"]",
+                      "[TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]",
                       "[Note Value:", t.getValue(),"]",
                       "[status]",t.statusTag,
                       "[beat]",t.beatNumber,
@@ -704,77 +705,84 @@ public class Score : ObservableObject {
         }
     }
     
-    public func calculateTapToValueRatios() {
-        ///Calculate tapped time to note value with any trailing rests
-        ///The tapped value for a note must be compared against the note's value plus and traling rests
-        var lastValue:Double = 0
-        var lastNoteIndex:Int?
-        
-        func set(index:Int, lastValue:Double) {
-            if let ts:TimeSlice = self.scoreEntries[index] as? TimeSlice {
-                if let tapped = ts.tapSecondsNormalizedToTempo {
-                    if lastValue > 0 {
-                        let ratio = tapped / lastValue
-                        ts.tapTempoRatio = ratio
-                    }
-                }
-            }
-        }
-        
-        for i in 0..<self.scoreEntries.count {
-            if let ts = self.scoreEntries[i] as? TimeSlice {
-                if ts.entries.count > 0 {
-                    if let note = ts.entries[0] as? StaffNote {
-                        if let index = lastNoteIndex {
-                            set(index: index, lastValue: lastValue)
-                            lastValue = 0
-                        }
-                        lastValue += ts.getValue()
-                        lastNoteIndex = i
-                    }
-                    if let note = ts.entries[0] as? Rest {
-                        lastValue += ts.getValue()
-                    }
-                }
-            }
-        }
-        if let index = lastNoteIndex {
-            set(index: index, lastValue: lastValue)
-        }
-        
-        ///calculate the min, max ratios
-        var minRatio:Double?
-        var maxRatio:Double?
-        ///exclude the last tap which is often long and then skews the result
-        for i in 0..<self.scoreEntries.count-1 {
-            if let ts = self.scoreEntries[i] as? TimeSlice {
-                if let ratio = ts.tapTempoRatio {
-                    if minRatio == nil || ratio < minRatio! {
-                        minRatio = ratio
-                    }
-                    if maxRatio == nil || ratio > maxRatio! {
-                        maxRatio = ratio
-                    }
-                }
-            }
-        }
-        guard let maxRatio = maxRatio else {
-            return
-        }
-        guard let minRatio = minRatio else {
-            return
-        }
-
-        ///Scale all the ratios according to the min, max. Fill the space 0..1 so that the slowest ratio is 0 an dthe highest ratio is 1
-        for i in 0..<self.scoreEntries.count {
-            if let ts = self.self.scoreEntries[i] as? TimeSlice {
-                if let ratio = ts.tapTempoRatio {
-                    let scaled = (ratio - minRatio) / (maxRatio - minRatio)
-                    ts.tapTempoRatio = scaled
-                }
-            }
+    public func setNormalizedValues(scale:Scale) {
+        for i in 0..<self.getAllTimeSlices().count {
+            let ts = self.getAllTimeSlices()[i]
+            ts.tapDuration = scale.scaleNoteState[i].valueNormalized
         }
     }
+
+//    public func calculateTapToValueRatios() {
+//        ///Calculate tapped time to note value with any trailing rests
+//        ///The tapped value for a note must be compared against the note's value plus and traling rests
+//        var lastValue:Double = 0
+//        var lastNoteIndex:Int?
+//        
+//        func set(index:Int, lastValue:Double) {
+//            if let ts:TimeSlice = self.scoreEntries[index] as? TimeSlice {
+//                if let tapped = ts.tapSecondsNormalizedToTempo {
+//                    if lastValue > 0 {
+//                        let ratio = tapped / lastValue
+//                        ts.tapTempoRatio = ratio
+//                    }
+//                }
+//            }
+//        }
+//        
+//        for i in 0..<self.scoreEntries.count {
+//            if let ts = self.scoreEntries[i] as? TimeSlice {
+//                if ts.entries.count > 0 {
+//                    if ts.entries[0] is StaffNote {
+//                        if let index = lastNoteIndex {
+//                            set(index: index, lastValue: lastValue)
+//                            lastValue = 0
+//                        }
+//                        lastValue += ts.getValue()
+//                        lastNoteIndex = i
+//                    }
+//                    if ts.entries[0] is Rest {
+//                        lastValue += ts.getValue()
+//                    }
+//                }
+//            }
+//        }
+//        if let index = lastNoteIndex {
+//            set(index: index, lastValue: lastValue)
+//        }
+//        
+//        ///calculate the min, max ratios
+//        var minRatio:Double?
+//        var maxRatio:Double?
+//        ///exclude the last tap which is often long and then skews the result
+//        for i in 0..<self.scoreEntries.count-1 {
+//            if let ts = self.scoreEntries[i] as? TimeSlice {
+//                if let ratio = ts.tapTempoRatio {
+//                    if minRatio == nil || ratio < minRatio! {
+//                        minRatio = ratio
+//                    }
+//                    if maxRatio == nil || ratio > maxRatio! {
+//                        maxRatio = ratio
+//                    }
+//                }
+//            }
+//        }
+//        guard let maxRatio = maxRatio else {
+//            return
+//        }
+//        guard let minRatio = minRatio else {
+//            return
+//        }
+//
+//        ///Scale all the ratios according to the min, max. Fill the space 0..1 so that the slowest ratio is 0 and the highest ratio is 1
+//        for i in 0..<self.scoreEntries.count {
+//            if let ts = self.self.scoreEntries[i] as? TimeSlice {
+//                if let ratio = ts.tapTempoRatio {
+//                    let scaled = (ratio - minRatio) / (maxRatio - minRatio)
+//                    ts.tapTempoRatio = scaled
+//                }
+//            }
+//        }
+//    }
     
     public func isOnlyRhythm() -> Bool {
         if let last = self.getLastNoteTimeSlice() {

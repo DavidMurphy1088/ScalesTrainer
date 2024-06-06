@@ -166,9 +166,9 @@ struct ActivityModeView: View {
         ActivityMode(name: "Your Practice Journal", implemented: true, imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Learning Mode", implemented: true, imageName: "", showStaff: false, showFingers: true),
         ActivityMode(name: "Record Scales", implemented: true, imageName: "", showStaff: false, showFingers: true),
+        ActivityMode(name: "Record A Scale Chosen Randomly", implemented: true, imageName: "", showStaff: true, showFingers: true),
         //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
-        ActivityMode(name: "Play A Scale Chosen Randomly", implemented: false, imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Scales Exam", implemented: false, imageName: "", showStaff: false, showFingers: false),
         ActivityMode(name: "Practice Hanon Exercises", implemented: false, imageName: "", showStaff: true, showFingers: true),
         ActivityMode(name: "Scales Theory", implemented: false, imageName: "", showStaff: true, showFingers: true)
@@ -282,8 +282,21 @@ struct HomeView: View {
                             .opacity(0.5)
                         VStack {
                             Spacer()
-                            Text("Scales Trainer").font(.title).padding().commonFrameStyle(backgroundColor: .white)
-                                .frame(width: UIScreen.main.bounds.width * 0.7)
+                            VStack {
+                                Text("Scales Trainer").font(.title).padding()
+                                    
+                                if Settings.shared.famousQuotes {
+                                    VStack {
+                                        let quote = FamousQuotes.shared.getQuote()
+                                        Text("\"\(quote.0)\"").italic()
+                                        Text(quote.1)
+                                    }
+                                    .padding()
+                                }
+                            }
+                            .commonFrameStyle(backgroundColor: .white)
+                            .frame(width: UIScreen.main.bounds.width * 0.7)
+                            .padding()
 
                             ActivityModeView()
                                 //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)

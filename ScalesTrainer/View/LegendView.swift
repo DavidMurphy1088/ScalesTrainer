@@ -6,7 +6,6 @@ struct LegendView: View {
     @State private var scrollToEnd = false
     @State private var proxy: ScrollViewProxy? = nil
     @State private var legendIndex = 0
-    let items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
     
     func getColor(_ val:Double) -> Color {
         if val > logger.hiliteLogValue {
