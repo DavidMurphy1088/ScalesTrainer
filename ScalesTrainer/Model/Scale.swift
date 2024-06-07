@@ -21,6 +21,38 @@ public enum ScaleType {
     case arpeggioDiminishedSeventh
     case arpeggioHalfDiminished
     //case chromatic
+    
+    var description: String {
+        switch self {
+        case .major:
+            return "Major"
+        case .naturalMinor:
+            return "Minor"
+        case .harmonicMinor:
+            return "Harmonic Minor"
+        case .melodicMinor:
+            return "Melodic Minor"
+        case .arpeggioMajor:
+            return "Major Arpeggio"
+        case .arpeggioMinor:
+            return "Minor Arpeggio"
+        case .arpeggioDiminished:
+            return "Diminished Arpeggio"
+        case .arpeggioMajorSeventh:
+            return "Major Seventh Arpeggio"
+        case .arpeggioDominantSeventh:
+            return "Dominant Seventh Arpeggio"
+        case .arpeggioDiminishedSeventh:
+            return "Diminished Seventh Arpeggio"
+        case .arpeggioMinorSeventh:
+            return "Minor Seventh Arpeggio"
+        case .arpeggioHalfDiminished:
+            return "Half Diminished Arpeggio"
+//        case .chromatic:
+//            name = "Chromatic"
+        }
+        //return name
+    }
 }
 ///In terms of arpeggios: major, minor, dominant 7ths and diminished 7ths.
 
@@ -689,44 +721,46 @@ public class Scale {
         scaleNoteState[scaleNoteState.count-1].finger = fingerPattern[fingerPattern.count-1] + 1
     }
 
-    func getScaleName() -> String {
-        var name = scaleRoot.name + " " + Scale.getTypeName(type: self.scaleType)
-        name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
-        return name
-    }
-    
-    static func getTypeName(type:ScaleType) -> String {
-        var name = ""
-        switch type {
-        case ScaleType.major:
-            name = "Major"
-        case ScaleType.naturalMinor:
-            name = "Minor"
-        case ScaleType.harmonicMinor:
-            name = "Harmonic Minor"
-        case .melodicMinor:
-            name = "Melodic Minor"
-        case .arpeggioMajor:
-            name = "Major Arpeggio"
-        case .arpeggioMinor:
-            name = "Minor Arpeggio"
-        case .arpeggioDiminished:
-            name = "Diminished Arpeggio"
-        case .arpeggioMajorSeventh:
-            name = "Major Seventh Arpeggio"
-        case .arpeggioDominantSeventh:
-            name = "Dominant Seventh Arpeggio"
-        case .arpeggioDiminishedSeventh:
-            name = "Diminished Seventh Arpeggio"
-        case .arpeggioMinorSeventh:
-            name = "Minor Seventh Arpeggio"
-        case .arpeggioHalfDiminished:
-            name = "Half Diminished Arpeggio"
-//        case .chromatic:
-//            name = "Chromatic"
+    func getScaleName(includeHandName:Bool = true) -> String {
+        var name = scaleRoot.name + " " + scaleType.description
+        if includeHandName {
+            name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
         }
         return name
     }
+    
+//    static func getTypeName(type:ScaleType) -> String {
+//        var name = ""
+//        switch type {
+//        case ScaleType.major:
+//            name = "Major"
+//        case ScaleType.naturalMinor:
+//            name = "Minor"
+//        case ScaleType.harmonicMinor:
+//            name = "Harmonic Minor"
+//        case .melodicMinor:
+//            name = "Melodic Minor"
+//        case .arpeggioMajor:
+//            name = "Major Arpeggio"
+//        case .arpeggioMinor:
+//            name = "Minor Arpeggio"
+//        case .arpeggioDiminished:
+//            name = "Diminished Arpeggio"
+//        case .arpeggioMajorSeventh:
+//            name = "Major Seventh Arpeggio"
+//        case .arpeggioDominantSeventh:
+//            name = "Dominant Seventh Arpeggio"
+//        case .arpeggioDiminishedSeventh:
+//            name = "Diminished Seventh Arpeggio"
+//        case .arpeggioMinorSeventh:
+//            name = "Minor Seventh Arpeggio"
+//        case .arpeggioHalfDiminished:
+//            name = "Half Diminished Arpeggio"
+////        case .chromatic:
+////            name = "Chromatic"
+//        }
+//        return name
+//    }
     
     static func getScaleType(name:String) -> ScaleType {
         switch name {

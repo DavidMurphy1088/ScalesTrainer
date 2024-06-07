@@ -60,11 +60,11 @@ public class ScalesModel : ObservableObject {
     
     var recordedTapsFileURL:URL? //File where recorded taps were written
     
-    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
-    var selectedScaleRootIndex = 0
+//    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
+//    var selectedScaleRootIndex = 0
 
-    var scaleTypeNames:[String] //= ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio""Chromatic"]
-    var selectedScaleTypeNameIndex = 0
+//    var scaleTypeNames:[String] //= ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio""Chromatic"]
+//    var selectedScaleTypeNameIndex = 0
     
     var scaleLeadInCounts:[String] = ["None", "One Bar", "Two Bars", "Four Bars"]
     
@@ -88,6 +88,7 @@ public class ScalesModel : ObservableObject {
     let logger = Logger.shared
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
+    var selectedScaleGroup:ScaleGroup = ScaleGroup.options[2]
     
     ///Speech
     @Published var speechListenMode = false
@@ -222,10 +223,10 @@ public class ScalesModel : ObservableObject {
     }
 
     init() {
-        scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor"]
+        //scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor"]
         //scaleTypeNames.append(["Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio", "Chromatic"])
-        scaleTypeNames.append(contentsOf: ["Major Arpeggio", "Minor Arpeggio", "Diminished Arpeggio"])
-        scaleTypeNames.append(contentsOf: ["Dominant Seventh Arpeggio", "Major Seventh Arpeggio", "Minor Seventh Arpeggio", "Diminished Seventh Arpeggio", "Half Diminished Arpeggio"])
+        //scaleTypeNames.append(contentsOf: ["Major Arpeggio", "Minor Arpeggio", "Diminished Arpeggio"])
+        //scaleTypeNames.append(contentsOf: ["Dominant Seventh Arpeggio", "Major Seventh Arpeggio", "Minor Seventh Arpeggio", "Diminished Seventh Arpeggio", "Half Diminished Arpeggio"])
         //scaleTypeNames.append(contentsOf: ["Chromatic"])
 
         scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
@@ -396,9 +397,9 @@ public class ScalesModel : ObservableObject {
         return score
     }
     
-    func setKeyAndScale() {
-        let name = self.scaleRootValues[self.selectedScaleRootIndex]
-        let scaleTypeName = self.scaleTypeNames[self.selectedScaleTypeNameIndex]
+    func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType) {
+        let name = scaleRoot.name //self.scaleRootValues[self.selectedScaleRootIndex]
+        let scaleTypeName = scaleType.description //self.scaleTypeNames[self.selectedScaleTypeNameIndex]
         //let keyType:Staff.StaffKeyType = KeyType.major //scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
         self.scale = Scale(scaleRoot: ScaleRoot(name: name),
                            scaleType: Scale.getScaleType(name: scaleTypeName),

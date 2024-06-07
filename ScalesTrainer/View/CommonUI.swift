@@ -1,5 +1,11 @@
 import SwiftUI
 
+class UIGlobals {
+    static let shared = UIGlobals()
+    let screenImageBackground = "app_background_0_8"
+    let screenImageBackgroundOpacity = 0.5
+}
+
 struct CommonFrameStyle: ViewModifier {
     var backgroundColor: Color
     var cornerRadius: CGFloat

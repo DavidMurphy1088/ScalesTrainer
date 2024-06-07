@@ -7,9 +7,6 @@
     " " : {
 
     },
-    "                                                                             " : {
-
-    },
     "  %@  " : {
 
     },
@@ -34,13 +31,10 @@
     "." : {
 
     },
-    "\"%@\"" : {
-
-    },
     "%@" : {
 
     },
-    "%@ is under construction" : {
+    "%@ ♩=90" : {
 
     },
     "%lld" : {
@@ -148,9 +142,6 @@
     "Octaves:" : {
 
     },
-    "Other Scale Groups" : {
-
-    },
     "Piano Calibration" : {
 
     },
@@ -160,7 +151,7 @@
     "Practice" : {
 
     },
-    "Practice Days" : {
+    "Practice Scale" : {
 
     },
     "Progress" : {
@@ -178,13 +169,11 @@
     "Recording Scale Lead in Count" : {
 
     },
-    "Root" : {
-
-    },
     "Save" : {
 
     },
     "Scale" : {
+      "extractionState" : "stale",
       "localizations" : {
         "hi" : {
           "stringUnit" : {
@@ -199,6 +188,9 @@
           }
         }
       }
+    },
+    "Scale Sets" : {
+
     },
     "Scales Trainer" : {
 
@@ -254,7 +246,7 @@
     "Tempo" : {
 
     },
-    "TEST" : {
+    "Under Construction" : {
 
     },
     "Viewing\nDirection" : {
@@ -276,7 +268,7 @@
     "Yes" : {
 
     },
-    "Your Journal Scales" : {
+    "Your Practice Scales for %@" : {
 
     }
   },

@@ -53,8 +53,8 @@ public struct CallibrationView: View {
             .hilighted(backgroundColor: .blue)
         }
         .onAppear() {
-            scalesModel.selectedScaleRootIndex = 0
-            scalesModel.setKeyAndScale()
+            //scalesModel.selectedScaleRootIndex = 0
+            scalesModel.setKeyAndScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major)
             self.amplitudeFilterAdjust = Settings.shared.amplitudeFilter
         }
         .onDisappear() {
