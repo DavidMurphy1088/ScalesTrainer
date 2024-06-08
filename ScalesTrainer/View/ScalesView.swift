@@ -18,7 +18,7 @@ struct ScalesView: View {
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
-    @State private var tempoIndex = 5
+    @State private var tempoIndex = 2 ///60 BPM
 
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
@@ -50,8 +50,10 @@ struct ScalesView: View {
     }
     
     ///Set state of the model and the view
-    func setState(_ ctx:String) {
+    func setState(scaleRoot:ScaleRoot, scaleType: ScaleType, octaves:Int, hand:Int) {
         scalesModel.setRunningProcess(.none)
+        ///There maybe a change in octaves or LH vs. RH
+        scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
         //scalesModel.setKeyAndScale()
         //audioManager.stopRecording()
         scalesModel.setResult(nil)
@@ -61,32 +63,7 @@ struct ScalesView: View {
     
     func SelectScaleParamtersView() -> some View {
         HStack {
-//            Spacer()
-//            Text(LocalizedStringResource("Root"))
-//            Picker("Select Value", selection: $rootNameIndex) {
-//                ForEach(scalesModel.scaleRootValues.indices, id: \.self) { index in
-//                    Text("\(scalesModel.scaleRootValues[index])")
-//                }
-//            }
-//            .pickerStyle(.menu)
-//            .onChange(of: rootNameIndex, {
-//                scalesModel.selectedScaleRootIndex = rootNameIndex
-//                setState("KeyChange")
-//            })
-//            
-//            Spacer()
-//            Text(LocalizedStringResource("Scale")).padding(0)
-//            Picker("Select Value", selection: $scaleTypeNameIndex) {
-//                ForEach(scalesModel.scaleTypeNames.indices, id: \.self) { index in
-//                    Text("\(scalesModel.scaleTypeNames[index])")
-//                }
-//            }
-//            .pickerStyle(.menu)
-//            .onChange(of: scaleTypeNameIndex, {
-//                scalesModel.selectedScaleTypeNameIndex = scaleTypeNameIndex
-//                setState("ScaleTypeChange")
-//            })
-            
+
             Spacer()
             Text("Hand:")
             Picker("Select Value", selection: $handIndex) {
@@ -97,7 +74,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: handIndex, {
                 scalesModel.selectedHandIndex = handIndex
-                setState("HandChange")
+                setState(scaleRoot: scalesModel.scale.scaleRoot, scaleType: scalesModel.scale.scaleType, octaves: scalesModel.selectedOctavesIndex, hand: scalesModel.selectedHandIndex)
             })
             Spacer()
             
@@ -110,7 +87,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
-                setState("OctavesChange")
+                setState(scaleRoot: scalesModel.scale.scaleRoot, scaleType: scalesModel.scale.scaleType, octaves: scalesModel.selectedOctavesIndex, hand: scalesModel.selectedHandIndex)
             })
             
             Spacer()
@@ -191,6 +168,7 @@ struct ScalesView: View {
             if [.recordingScale].contains(scalesModel.runningProcess) {
                 Spacer()
                 VStack {
+                    Text("Recording \(scalesModel.scale.getScaleName())").padding()
                     if scalesModel.leadInBar == nil {
                         ProcessUnderwayView()
                         Button("Stop Recording Scale") {
@@ -203,9 +181,11 @@ struct ScalesView: View {
                         .hilighted(backgroundColor: .blue)
                     }
                     else {
-                        Text("  Recording Lead-In...  ").padding().hilighted()
+                        Text("  Metronome Lead-In...  ").padding().hilighted()
                     }
                 }
+                .commonFrameStyle()
+                .frame(width: UIScreen.main.bounds.width * 0.6)
                 Spacer()
             }
         }
@@ -217,7 +197,8 @@ struct ScalesView: View {
                 Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear The Scale") {
                     hearingGivenScale.toggle()
                     if hearingGivenScale {
-                        metronome.startTimer(notified: PianoKeyboardModel.shared, tempoMultiplier: 1.0, onDone: {
+                        //metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {
+                        metronome.startTimer(notified: HearScalePlayer(), countAtQuaverRate: true, onDone: {
                             self.hearingGivenScale = false
                         })
                     }
@@ -316,7 +297,7 @@ struct ScalesView: View {
                 Button(hearingBacking ? "Backing Off" : "Backing On") {
                     hearingBacking.toggle()
                     if hearingBacking {
-                        metronome.startTimer(notified: Backer(), tempoMultiplier: 1.0, onDone: {
+                        metronome.startTimer(notified: Backer(), countAtQuaverRate: true, onDone: {
                             //self.hearingGivenScale = false
                             //scalesModel.startPracticeHandler()
                         })
@@ -380,24 +361,26 @@ struct ScalesView: View {
                 if scalesModel.showKeyboard {
                     VStack {
                         if scalesModel.runningProcess == .none {
-                            SelectScaleParamtersView()//.commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                            SelectScaleParamtersView()
                         }
                         Text(scalesModel.scale.getScaleName()).font(.title).padding()
                         PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                             .frame(height: getKeyboardHeight())
-                            //.commonFrameStyle(backgroundColor: .white).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                            .border(Color.gray)
                             .padding()
                         
                         if scalesModel.showStaff {
                             VStack {
                                 if let score = scalesModel.score {
                                     ScoreView(score: score, widthPadding: false)
+                                        .border(Color.gray)
+                                        .padding()
                                 }
-                            }//.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                            }
                         }
                         LegendView()
                     }
-                    .commonFrameStyle(backgroundColor: .white)
+                    .commonFrameStyle()
                 }
 
                 if scalesModel.runningProcess != .none {
@@ -405,23 +388,17 @@ struct ScalesView: View {
                 }
                 else {
                     if let userMessage = scalesModel.userMessage {
-                        Text(userMessage)
+                        Text(userMessage).commonFrameStyle()
                     }
 
                     if let result = scalesModel.result {
-                        VStack {
-//                            if let score = scalesModel.score {
-//                                let scoreWithDurations = scalesModel.createScore(scale: scalesModel.scale, showTempoVariation: true)
-//                                //scalesModel.setShowStaff(true)
-//                                ScoreView(score: scoreWithDurations, widthPadding: false)
-//                            }
-                        }
-                        //.commonFrameStyle(backgroundColor: .clear).padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
-                        ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
+                        ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle()
                     }
-                    ActionView().commonFrameStyle(backgroundColor: .white)//.padding(.vertical, orientationObserver.orientation.isPortrait ? nil : 0)
+                    
+                    ActionView().commonFrameStyle()
+                    
                     if settings.recordDataMode {
-                        DeveloperView().commonFrameStyle(backgroundColor: .white)
+                        DeveloperView().commonFrameStyle()
                     }
                 }
                 Spacer()
@@ -440,12 +417,6 @@ struct ScalesView: View {
                 HelpView(topic: topic)
             }
         }
-
-        .onChange(of: scalesModel.result, {
-//            if scalesModel.result != nil {
-//                scalesModel.setShowStaff(true)
-//            }
-        })
     
         .alert(isPresented: $askKeepTapsFile) {
             Alert(
@@ -473,39 +444,26 @@ struct ScalesView: View {
         
         ///Every time the view appears, not just the first.
         .onAppear {
-            scalesModel.setKeyAndScale(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType)
+//            scalesModel.setKeyAndScale(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType, 
+//                                       octaves: self.practiceJournalScale.octaves ?? 1,
+//                                       hand: self.practiceJournalScale.hand ?? 0)
+            setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType, 
+                     octaves: self.practiceJournalScale.octaves ?? 1, hand: self.practiceJournalScale.hand ?? 0)
+            
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            scalesModel.setRunningProcess(.none)
-
-            ///Dont carry over result from one screen to next
-            ScalesModel.shared.setResult(nil)
             
             //self.rootNameIndex = scalesModel.selectedScaleRootIndex
             //self.scaleTypeNameIndex = scalesModel.selectedScaleTypeNameIndex
             self.handIndex = scalesModel.selectedHandIndex
             self.octaveNumberIndex = scalesModel.selectedOctavesIndex
             self.directionIndex = scalesModel.selectedDirection
+            //scalesModel.setRunningProcess(.recordingScale)
 
-//            if ["Hear and Identify A Scale"].contains(activityMode.name) {
-//                let scaleRoot = Int.random(in: 0...scalesModel.scaleRootValues.count - 1)
-//                let scaleType = Int.random(in: 0...scalesModel.scaleTypeNames.count - 1)
-//                let hand = Int.random(in: 0...1)
-//                scalesModel.selectedHandIndex = hand
-//                scalesModel.selectedScaleRootIndex = scaleRoot
-//                scalesModel.selectedScaleTypeNameIndex = scaleType
-//                setState("ScaleTypeChange")
-//                scalesModel.setRunningProcess(.identifyingScale)
-//                metronome.startTimer(notified: IdentifyScalePlayer(), tempoMultiplier: 0.35, onDone: {
-//                    //self.hearingGivenScale = false
-//                    //scalesModel.startPracticeHandler()
-//                })
-//            }
         }
         .onDisappear {
             metronome.stop()
         }
         //.navigationBarTitle("\(activityMode.name)", displayMode: .inline)
-        //.navigationBar
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }

@@ -151,12 +151,12 @@ public class Score : ObservableObject {
 //        }
 //    }
     
-    public func setScoreNotePlayed(midi: Int, direction: Int) -> StaffNote? {
+    public func setScoreNotePlayed(midi: Int, direction: Int) -> TimeSlice? {
         let timeSlices = getAllTimeSlices()
         var nearestDist = Int(Int64.max)
         let startIndex = direction == 0 ? 0 : timeSlices.count-1
         let endIndex = direction == 0 ? timeSlices.count-1 :0
-        var noteFound:StaffNote?
+        var noteFound:TimeSlice?
         //var nearestIndex = Int(Int64.max)
         //var nearestNote:StaffNote?
 
@@ -165,8 +165,8 @@ public class Score : ObservableObject {
             let entry = ts.entries[0]
             let staffNote = entry as! StaffNote
             if staffNote.midiNumber == midi {
-                staffNote.setShowIsPlaying(true) //setStatus(status: .playedCorrectly)
-                noteFound = staffNote
+                ts.setShowIsPlaying(true) //setStatus(status: .playedCorrectly)
+                noteFound = ts
                 break
             }
             else {

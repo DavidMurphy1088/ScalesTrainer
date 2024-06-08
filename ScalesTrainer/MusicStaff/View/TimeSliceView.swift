@@ -34,9 +34,13 @@ public struct NoteHiliteView: View {
     var y:CGFloat
     var width:CGFloat
     
+//    func log(entry:TimeSliceEntry) -> Bool {
+//        return true
+//    }
+//    
     public var body: some View {
         VStack {
-            //if entry.showIsPlaying { //}== .playedCorrectly {
+            //if log(entry: entry) {
                 Ellipse()
                     .stroke(Color.green, lineWidth: 3)
                     .frame(width: width, height: width)
@@ -128,9 +132,7 @@ public struct TimeSliceView: View {
     func getTimeSliceEntries() -> [TimeSliceEntry] {
         var result:[TimeSliceEntry] = []
         for n in self.timeSlice.entries {
-            //if n is Note {
             result.append(n)
-            //}
         }
         return result
     }
@@ -234,7 +236,7 @@ public struct TimeSliceView: View {
 //            }
 //            else {
                 if note.staffNum == staff.staffNum  {
-                    if note.showIsPlaying {
+                    if timeSlice.showIsPlaying {
                         NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
                     }
                 }

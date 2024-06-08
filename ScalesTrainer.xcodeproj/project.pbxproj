@@ -37,6 +37,7 @@
 		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
+		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
 		797013842BEE36E2009F85D6 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137C2BEE36E1009F85D6 /* Score.swift */; };
 		797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137E2BEE36E1009F85D6 /* StaffNote.swift */; };
 		797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137F2BEE36E1009F85D6 /* KeySignature.swift */; };
@@ -154,6 +155,7 @@
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
 		7970137C2BEE36E1009F85D6 /* Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		7970137E2BEE36E1009F85D6 /* StaffNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffNote.swift; sourceTree = "<group>"; };
 		7970137F2BEE36E1009F85D6 /* KeySignature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeySignature.swift; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				799BE2A52BFDDBC5004B19F6 /* Backer.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
+				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 				794D49472BCD15AE0005A173 /* Logger.swift */,
@@ -683,6 +686,7 @@
 				799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */,
 				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
 				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
+				796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,

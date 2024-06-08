@@ -16,7 +16,7 @@
     "  👉 %@  " : {
 
     },
-    "  Recording Lead-In...  " : {
+    "  Metronome Lead-In...  " : {
 
     },
     " %lld" : {
@@ -130,6 +130,9 @@
         }
       }
     },
+    "LH\nProgress" : {
+
+    },
     "Load" : {
 
     },
@@ -151,10 +154,10 @@
     "Practice" : {
 
     },
-    "Practice Scale" : {
+    "Practice Journal for %@" : {
 
     },
-    "Progress" : {
+    "Practice Scale" : {
 
     },
     "READ_TEST_DATA" : {
@@ -166,7 +169,13 @@
     "Record The Scale" : {
 
     },
+    "Recording %@" : {
+
+    },
     "Recording Scale Lead in Count" : {
+
+    },
+    "RH\nProgress" : {
 
     },
     "Save" : {
@@ -266,9 +275,6 @@
       }
     },
     "Yes" : {
-
-    },
-    "Your Practice Scales for %@" : {
 
     }
   },

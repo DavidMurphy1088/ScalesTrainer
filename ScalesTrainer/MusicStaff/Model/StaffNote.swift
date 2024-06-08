@@ -101,12 +101,6 @@ public class StaffNote : TimeSliceEntry, Comparable {
         self.beamType = note.beamType
     }
     
-    func setShowIsPlaying(_ way:Bool) { //status: TimeSliceEntryStatusType) {
-        DispatchQueue.main.async {
-            self.showIsPlaying = way
-        }
-    }
-        
     public func setIsOnlyRhythm(way: Bool) {
         self.isOnlyRhythmNote = way
         if self.isOnlyRhythmNote {

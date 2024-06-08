@@ -54,7 +54,7 @@ public struct CallibrationView: View {
         }
         .onAppear() {
             //scalesModel.selectedScaleRootIndex = 0
-            scalesModel.setKeyAndScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major)
+            scalesModel.setKeyAndScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 2, hand: 0)
             self.amplitudeFilterAdjust = Settings.shared.amplitudeFilter
         }
         .onDisappear() {

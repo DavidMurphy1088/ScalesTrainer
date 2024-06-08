@@ -4,7 +4,7 @@ import SwiftUI
 
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
     //@Published public var showPlaying:TimeSliceEntryStatusType = .none
-    @Published public var showIsPlaying:Bool = false
+    //@Published public var showIsPlaying:Bool = false
 
     public let id = UUID()
     public var staffNum:Int //Narrow the display of the note to just one staff

@@ -73,8 +73,8 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
-    var selectedTempoIndex = 5
+    var tempoSettings = ["♩=40", "♩=50", "♩=60", "♩=70", "♩=80", "♩=90", "♩=100", "♩=110", "♩=120", "♩=130", "♩=140", "♩=150", "♩=160"]
+    var selectedTempoIndex = 2
         
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
     let octaveNumberValues = [1,2,3,4]
@@ -207,7 +207,7 @@ public class ScalesModel : ObservableObject {
                 audioManager.blockTaps = true
                 self.setProcessInstructions(scaleLeadIn.getInstructions())
                 
-                MetronomeModel.shared.startTimer(notified: scaleLeadIn, tempoMultiplier: 1.0, onDone: {
+                MetronomeModel.shared.startTimer(notified: scaleLeadIn, countAtQuaverRate: false, onDone: {
                     //self.setRunningProcess(.recordingScale)
                     self.setLeadInBar(nil)
                     self.setProcessInstructions("Record your scale")
@@ -350,8 +350,10 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    ///Get tempo for 1/4 note
     func getTempo() -> Int {
-        let selected = self.tempoSettings[self.selectedTempoIndex]
+        var selected = self.tempoSettings[self.selectedTempoIndex]
+        selected = String(selected.dropFirst(2))
         return Int(selected) ?? 60
     }
     
@@ -397,14 +399,13 @@ public class ScalesModel : ObservableObject {
         return score
     }
     
-    func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType) {
+    func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
         let name = scaleRoot.name //self.scaleRootValues[self.selectedScaleRootIndex]
         let scaleTypeName = scaleType.description //self.scaleTypeNames[self.selectedScaleTypeNameIndex]
-        //let keyType:Staff.StaffKeyType = KeyType.major //scaleTypeName.range(of: "minor", options: .caseInsensitive) == nil ? .major : .minor
         self.scale = Scale(scaleRoot: ScaleRoot(name: name),
                            scaleType: Scale.getScaleType(name: scaleTypeName),
-                           octaves: self.octaveNumberValues[self.selectedOctavesIndex],
-                           hand: self.selectedHandIndex)
+                           octaves: octaves, //self.octaveNumberValues[self.selectedOctavesIndex],
+                           hand: hand) //self.selectedHandIndex)
         //self.scale.debug("")
         
         PianoKeyboardModel.shared.configureKeyboardSize()

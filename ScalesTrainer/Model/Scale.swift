@@ -556,7 +556,6 @@ public class Scale {
             ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
             for i in stride(from: halfway, through: 0, by: -1) {
             //for i in stride(from: halfway, to: 0, by: -1) {
-                print("==== f", i, stringIndexToInt(index: f, fingers: fingers))
                 scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
                 scaleNoteState[i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
                 f += 1
@@ -721,11 +720,14 @@ public class Scale {
         scaleNoteState[scaleNoteState.count-1].finger = fingerPattern[fingerPattern.count-1] + 1
     }
 
-    func getScaleName(includeHandName:Bool = true) -> String {
+    func getScaleName() -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        if includeHandName {
-            name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
-        }
+        name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
+        name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+
+        //if includeHandName {
+        //name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
+        //}
         return name
     }
     

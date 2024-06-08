@@ -14,7 +14,8 @@ public enum TimeSliceStatusTag {
 
 public class TimeSlice : ScoreEntry {
     @Published public var entries:[TimeSliceEntry]
-
+    @Published public var showIsPlaying:Bool = false
+    
     var score:Score
     var footnote:String?
     var barLine:Int = 0
@@ -26,7 +27,14 @@ public class TimeSlice : ScoreEntry {
             self.statusTag = tag
         }
     }
-
+    
+    func setShowIsPlaying(_ way:Bool) { //status: TimeSliceEntryStatusType) {
+        DispatchQueue.main.async {
+            if way != self.showIsPlaying {
+                self.showIsPlaying = way
+            }
+        }
+    }
     ///The duration in seconds of the note played for this timeslice
     public var tapDuration:Double?
     //Used to display tempo slow/fast variation per note based on actual tapped milliseconds

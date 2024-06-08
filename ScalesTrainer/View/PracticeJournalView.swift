@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct PracticeJournalView: View {
-    let scaleGroup:ScaleGroup = ScalesModel.shared.selectedScaleGroup
-    let scaleGroupTitle:String = ScalesModel.shared.selectedScaleGroup.name
+    let practiceJournal:PracticeJournal
+//    let scaleGroup:ScaleGroup = ScalesModel.shared.selectedScaleGroup
+//    let scaleGroupTitle:String = ScalesModel.shared.selectedScaleGroup.name
 
     let days = ["Mon","Tue","Wed ","Thu","Fri","Sat", "Sun"]
     let color = Color(red: 0.1, green: 0.7, blue: 0.2)
@@ -14,6 +15,10 @@ struct PracticeJournalView: View {
 //        }
 //        return Color.blue
 //    }
+    
+    init(practiceJournal:PracticeJournal) {
+        self.practiceJournal = practiceJournal
+    }
     
     func WeekDaysView() -> some View {
         HStack {
@@ -33,34 +38,31 @@ struct PracticeJournalView: View {
             let width = UIScreen.main.bounds.width * 0.9
             let height = UIScreen.main.bounds.height * 0.8
             let barHeight = height * 0.010
-            let barWidth = width * 0.8
+            let barWidth = width * 0.6 * 0.5
             Image(UIGlobals.shared.screenImageBackground)
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text("Your Practice Scales for \(scaleGroupTitle)").bold().padding().commonFrameStyle(backgroundColor: .white)
+                Text("Practice Journal for \(practiceJournal.title)").bold().padding().commonFrameStyle(backgroundColor: .white)
                     .frame(width: width)
                 List {
-                    ForEach(Array(self.scaleGroup.scales.enumerated()), id: \.element.id) { index, practiceJournalScale in
-                        VStack {
+                    ForEach(Array(self.practiceJournal.scaleGroup.scales.enumerated()), id: \.element.id) { index, practiceJournalScale in
+                        VStack(spacing: 0) {
                             HStack {
                                 Text("\(practiceJournalScale.getName()) ♩=90").padding()
                                 ///Text("Practice Days")
                                 WeekDaysView().padding()
-//                                Button("Practice Scale") {
-//                                    ScalesView()
-//                                }.padding()
                                 Spacer()
                                 NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
                                     Text("Practice Scale").foregroundColor(.blue)
                                 }
                                 .frame(width: width * 0.2)
                             }
-                            VStack {
+                            VStack(spacing: 0) {
                                 HStack {
-                                    Text("Progress")
+                                    Text("LH\nProgress")
                                     ZStack {
                                         Rectangle()
                                             .stroke(Color.gray, lineWidth: 1)
@@ -68,10 +70,23 @@ struct PracticeJournalView: View {
                                         HStack {
                                             Rectangle()
                                                 .fill(Color.green)
-                                                .frame(width: barWidth * 0.33 * practiceJournalScale.completePercentage, height: barHeight)
+                                                .frame(width: barWidth * practiceJournalScale.completePercentage(), height: barHeight)
                                             Spacer()
                                         }
                                     }
+                                    Text("RH\nProgress")
+                                    ZStack {
+                                        Rectangle()
+                                            .stroke(Color.gray, lineWidth: 1)
+                                            .frame(width: barWidth, height: barHeight)
+                                        HStack {
+                                            Rectangle()
+                                                .fill(Color.green)
+                                                .frame(width: barWidth * practiceJournalScale.completePercentage(), height: barHeight)
+                                            Spacer()
+                                        }
+                                    }
+
                                 }
                                 //.frame(width: barWidth, height: barHeight)
                             }

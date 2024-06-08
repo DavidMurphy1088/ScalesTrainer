@@ -24,15 +24,15 @@ struct CustomBackButton: View {
 class ActivityMode : Identifiable {
     let name:String
     let imageName:String
-    let showStaff:Bool
-    let showFingers:Bool
+    //let showStaff:Bool
+    //let showFingers:Bool
     let view:AnyView
     
-    init(name:String, view:AnyView, imageName:String, showStaff:Bool, showFingers:Bool) {
+    init(name:String, view:AnyView, imageName:String) {
         self.name = name
         self.imageName = imageName
-        self.showStaff = showStaff
-        self.showFingers = showFingers
+        //self.showStaff = showStaff
+        //self.showFingers = showFingers
         self.view = view
     }
 }
@@ -72,7 +72,7 @@ struct SelectScaleGroupView: View {
                 }
                 .padding()
             }
-            .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.8)
+            .frame(width: UIScreen.main.bounds.width * 0.8, height: UIScreen.main.bounds.height * 0.8)
         }
         .navigationBarTitle("Scale Sets")
     }
@@ -115,19 +115,7 @@ struct FamousQuotesView: View {
 }
 
 struct ActivityModeView: View {
-    let options = [
-        ActivityMode(name: "Select Scales", view: AnyView(SelectScaleGroupView()), imageName: "", showStaff: true, showFingers: true),
-        ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView()), imageName: "", showStaff: true, showFingers: true),
-
-        //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
-//        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
-        //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-        ActivityMode(name: "Scale Technique Instruction Videos", view: AnyView(UnderConstructionView()), imageName: "", showStaff: true, showFingers: true),
-        
-        ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView()), imageName: "", showStaff: true, showFingers: true),
-        ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView()), imageName: "", showStaff: true, showFingers: true)
-        ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "", showStaff: true, showFingers: true),
-    ]
+    @State var menuOptions:[ActivityMode] = []
 
     func getView(activityMode: ActivityMode) -> some View {
         return activityMode.view
@@ -135,7 +123,7 @@ struct ActivityModeView: View {
     
     var body: some View {
         VStack {
-            List(options) { activityMode in
+            List(menuOptions) { activityMode in
                 NavigationLink(destination: getView(activityMode: activityMode)) {
                     HStack {
                         Text(activityMode.name).background(Color.clear)
@@ -155,6 +143,25 @@ struct ActivityModeView: View {
             //.navigationBarTitle("\(selectedSyllabus.name) Activities", displayMode: .inline)
             .navigationViewStyle(StackNavigationViewStyle())
             Spacer()
+        }
+        .onAppear() {
+            menuOptions.append(ActivityMode(name: "Select Scales", view: AnyView(SelectScaleGroupView()), imageName: ""))
+            if let practiceJournal = PracticeJournal.shared {
+                menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(practiceJournal: practiceJournal)), imageName: ""))
+                menuOptions.append(ActivityMode(name: "Practice a Random Journal Scale", view: AnyView(ScalesView(practiceJournalScale: practiceJournal.getRandomScale())), imageName: ""))
+            }
+//            menuOptions.append(ActivityMode(name: "Practice Scales", view: AnyView(ScalesView(practiceJournalScale: PracticeJournal.shared)), imageName: "", showStaff: true, showFingers: true))
+
+            //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
+    //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
+            //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
+            
+            menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView()), imageName: ""))
+            
+            menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView()), imageName: ""))
+            menuOptions.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: ""))
+            menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView()), imageName: ""))
+
         }
     }
 }
@@ -197,6 +204,9 @@ struct HomeView: View {
         //This causes all views navigated to to have the same dimensions
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
+        .onAppear() {
+            PracticeJournal.shared = PracticeJournal(scaleGroup: ScaleGroup.options[2])
+        }
     }
 }
 
