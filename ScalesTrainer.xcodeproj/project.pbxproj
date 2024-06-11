@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
+		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */; };
 		79312DAF2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 79312DAE2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt */; };
@@ -127,6 +128,7 @@
 
 /* Begin PBXFileReference section */
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLeadIn.swift; sourceTree = "<group>"; };
 		79312DAE2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt"; path = "../../../../Downloads/06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt"; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 		794D495D2BCD34080005A173 /* AudioFiles */ = {
 			isa = PBXGroup;
 			children = (
+				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
 				79312DAE2C0B13A4005FDE8B /* 06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0.txt */,
 				799FC10A2BE6F9CB00BB0969 /* 05_02_A♭_MelodicMinor_2_56_iPad.txt */,
@@ -639,6 +642,7 @@
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
 				799FC1522BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_Asc.txt in Resources */,
+				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
 				799FC14E2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Desc.txt in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				799FC13B2BE6FFC700BB0969 /* 05_05_C_Major_3_48_iPad_Good.txt in Resources */,

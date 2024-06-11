@@ -10,9 +10,7 @@ public class KeySignature {
     var accidentalType:AccidentalType
 
     public init(keyName:String, keyType:StaffKey.StaffKeyType) {
-        //self.accidentalCount
         self.keyType = keyType
-        //var flats = false
         self.accidentalType = .sharp
         
         var count:Int = 0
@@ -45,6 +43,9 @@ public class KeySignature {
             case "D♭":
                 self.accidentalType = .flat
                 count = 5
+            case "G♭":
+                self.accidentalType = .flat
+                count = 6
             default:
                 count = 0
             }
@@ -60,6 +61,9 @@ public class KeySignature {
                 self.accidentalType = .flat
             case "B":
                 count = 2
+            case "G#":
+                count = 5
+                self.accidentalType = .sharp
             case "G":
                 count = 2
                 self.accidentalType = .flat

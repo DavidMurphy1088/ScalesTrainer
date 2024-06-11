@@ -53,7 +53,6 @@ import CoreData
 //
 
 struct ScoreEntriesView: View {
-    //@ObservedObject 
     var noteLayoutPositions:NoteLayoutPositions
     @ObservedObject var barLayoutPositions:BarLayoutPositions
 
@@ -61,7 +60,7 @@ struct ScoreEntriesView: View {
     @ObservedObject var staff:Staff
     
     static var viewNum:Int = 0
-    let noteOffsetsInStaffByKey = NoteOffsetsInStaffByKey()
+    let noteOffsetsInStaffByKey:NoteOffsetsInStaffByKey
     let viewNum:Int
     
     init(score:Score, staff:Staff) {
@@ -71,6 +70,7 @@ struct ScoreEntriesView: View {
         self.barLayoutPositions = score.barLayoutPositions
         ScoreEntriesView.viewNum += 1
         self.viewNum = ScoreEntriesView.viewNum
+        self.noteOffsetsInStaffByKey = NoteOffsetsInStaffByKey(keyType: score.key.type == .major ? .major : .minor)
     }
         
     func getNote(entry:ScoreEntry) -> StaffNote? {

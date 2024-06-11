@@ -7,20 +7,31 @@ enum ScaleShape {
     case arpgeggio4Note
 }
 
-public enum ScaleType {
+//public class ScaleTYpe {
+//
+//}
+
+public enum ScaleType: CaseIterable {
     case major
     case naturalMinor
     case harmonicMinor
     case melodicMinor
     case arpeggioMajor
     case arpeggioMinor
+    case arpeggioDiminished
+    
     case arpeggioDominantSeventh
     case arpeggioMajorSeventh
     case arpeggioMinorSeventh
-    case arpeggioDiminished
     case arpeggioDiminishedSeventh
     case arpeggioHalfDiminished
-    //case chromatic
+    
+    case chromatic
+    
+    func isMajor() -> Bool {
+        return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh 
+        || self == .chromatic
+    }
     
     var description: String {
         switch self {
@@ -38,18 +49,18 @@ public enum ScaleType {
             return "Minor Arpeggio"
         case .arpeggioDiminished:
             return "Diminished Arpeggio"
-        case .arpeggioMajorSeventh:
-            return "Major Seventh Arpeggio"
         case .arpeggioDominantSeventh:
             return "Dominant Seventh Arpeggio"
-        case .arpeggioDiminishedSeventh:
-            return "Diminished Seventh Arpeggio"
+        case .arpeggioMajorSeventh:
+            return "Major Seventh Arpeggio"
         case .arpeggioMinorSeventh:
             return "Minor Seventh Arpeggio"
+        case .arpeggioDiminishedSeventh:
+            return "Diminished Seventh Arpeggio"
         case .arpeggioHalfDiminished:
             return "Half Diminished Arpeggio"
-//        case .chromatic:
-//            name = "Chromatic"
+        case .chromatic:
+            return "Chromatic"
         }
         //return name
     }
@@ -100,22 +111,34 @@ public class Scale {
         switch scaleRoot.name {
         case "C":
             nextMidi = 60
+        case "C#":
+            nextMidi = 61
         case "D♭":
             nextMidi = 61
         case "D":
             nextMidi = 62
+        case "D#":
+            nextMidi = 63
         case "E♭":
             nextMidi = 63
         case "E":
             nextMidi = 64
         case "F":
             nextMidi = 65
+        case "F#":
+            nextMidi = 66
+        case "G♭":
+            nextMidi = 66
         case "G":
             nextMidi = 67 - 12
+        case "G#":
+            nextMidi = 68 - 12
         case "A♭":
             nextMidi = 68 - 12
         case "A":
             nextMidi = 69 - 12
+        case "A#":
+            nextMidi = 70 - 12
         case "B♭":
             nextMidi = 70 - 12
         case "B":
@@ -190,20 +213,22 @@ public class Scale {
         
         ///Add notes with midis for the downwards direction
         let up = Array(scaleNoteState)
+        var ctr = 0
         for i in stride(from: up.count - 2, through: 0, by: -1) {
             var downMidi = up[i].midi
             if scaleType == .melodicMinor {
                 if i > 0 {
-                    if i % 6 == 0 {
+                    if ctr % 7 == 0 {
                         downMidi = downMidi - 1
                     }
-                    if i % 5 == 0 {
+                    if ctr % 7 == 1 {
                         downMidi = downMidi - 1
                     }
                 }
             }
             let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi)
             scaleNoteState.append(descendingNote )
+            ctr += 1
             sequence += 1
         }
 
@@ -241,9 +266,9 @@ public class Scale {
             scaleOffsets = [3,3,4,2]
         case .arpeggioDiminishedSeventh:
             scaleOffsets = [3,3,3,3]
+        case .chromatic:
+            scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
 
-//        case .chromatic:
-//            scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
         }
 
         return scaleOffsets
@@ -418,11 +443,19 @@ public class Scale {
         ///Regular scale
         
         if scaleShape == .scale {
+            ///Note theat for LH finer pattern goes from high to low notes (reversed)
             switch self.scaleRoot.name {
             case "B":
                 fingers = hand == 0 ? "1231234" : "1234123"
             case "F":
                 fingers = hand == 0 ? "1234123" : "1231234"
+            case "F#":
+                if scaleType == .major {
+                    fingers = hand == 0 ? "2341231" : "4123123"
+                }
+                else {
+                    fingers = hand == 0 ? "2312341" : "4123123"
+                }
             case "B♭":
                 if scaleType == .major {
                     fingers = hand == 0 ? "4123123" : "3123412"
@@ -439,18 +472,19 @@ public class Scale {
                 }
             case "A♭":
                 fingers = hand == 0 ? "3412312" : "3123412" ///probably need different for minor vs. harmonic minor
-            case "D♭":
+
+            case "C#","D♭":
                 if scaleType == .major {
                     fingers = hand == 0 ? "2312341" : "3123412"
                 }
                 else {
-                    fingers = hand == 0 ? "3412312" : "3213412"
+                    fingers = hand == 0 ? "2312341" : "3123412"
                 }
             default:
                 fingers = "1231234"
             }
         }
-        
+                
         ///Three note arpeggio
         
         if scaleShape == .arpgeggio {
@@ -573,7 +607,7 @@ public class Scale {
             }
             //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
-        //debug111("End New")
+        debug11("================ INIT")
     }
     
     func setFingersRightHandOld() {
@@ -774,8 +808,8 @@ public class Scale {
             return ScaleType.harmonicMinor
         case "Melodic Minor":
             return ScaleType.melodicMinor
-//        case "Chromatic":
-//            return ScaleType.chromatic
+        case "Chromatic":
+            return ScaleType.chromatic
         case "Major Arpeggio":
             return ScaleType.arpeggioMajor
         case "Minor Arpeggio":

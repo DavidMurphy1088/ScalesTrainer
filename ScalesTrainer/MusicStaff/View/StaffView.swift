@@ -150,13 +150,12 @@ struct KeySignatureView: View {
             ForEach(staffOffsets, id: \.self) { offset in
                 //let yAdjust = score.key.keySig.flats.count > 0 ? score.lineSpacing / 1.1 : 0
                 VStack {
-                    Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "music_flat")
+                    Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "flat")
                         .resizable()
                         .foregroundColor(.black)
                         .scaledToFit()
-                    ///no idea why flat image wont scale
-                        .frame(width: score.lineSpacing * getWidthMultiplier() * (score.key.keySig.sharps.count > 0 ? 1 : 4))
-                        .offset(y: 0 - Double(offset) * score.lineSpacing / 2.0)
+                        .frame(width: score.lineSpacing * getWidthMultiplier() * (score.key.keySig.sharps.count > 0 ? 1 : 1.4))
+                        .offset(y: 0 - Double(offset) * score.lineSpacing / 2.0 - (score.key.keySig.sharps.count > 0 ? 0 : score.lineSpacing * 0.50))
 //                        .border(Color.red)
                 }
                 .padding(0)

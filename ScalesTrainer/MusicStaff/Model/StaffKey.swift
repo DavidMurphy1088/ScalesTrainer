@@ -4,19 +4,19 @@ import AVFoundation
 import AVKit
 import UIKit
 
+
 public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
     public let id = UUID()
     public var keySig: KeySignature
     public var type: StaffKeyType
-    
-    ///The midi closest to middle C
-    public var centralMidi = 0
-    
     public enum StaffKeyType {
         case major
         case minor
     }
         
+    ///The midi closest to middle C
+    public var centralMidi = 0
+    
     public static func == (lhs: StaffKey, rhs: StaffKey) -> Bool {
         return (lhs.type == rhs.type) && (lhs.keySig.accidentalCount == rhs.keySig.accidentalCount) &&
         (lhs.keySig.accidentalType == rhs.keySig.accidentalType)
@@ -76,37 +76,24 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
             }
         }
     }
-    
-//    static public func getAllKeys(type:AccidentalType) -> [StaffKey] {
-//        var result:[StaffKey] = []
-//        if type == .sharp {
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 0)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 1)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 2)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 3)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .sharp, count: 4)))
-//        }
-//        if type == .flat {
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 0)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 1)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 2)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 3)))
-//            result.append(StaffKey(type: StaffKey.KeyType.major, keySig: KeySignature(type: .flat, count: 4)))
-//            //result.append(Key(type: Key.KeyType.major, keySig: KeySignature(type: .flat, count: 7)))
-//            //result.append(Key(type: Key.KeyType.minor, keySig: KeySignature(type: .flat, count: 7)))
-//        }
-//        return result
-//    }
-    
+        
     public func hasKeySignatureNote(note:Int) -> Bool {
         var result:Bool = false
         for n in keySig.sharps {
             let octaves = StaffNote.getAllOctaves(note: n)
             if octaves.contains(note) {
                 result = true
-                break
+                return result
             }
         }
+        for n in keySig.flats {
+            let octaves = StaffNote.getAllOctaves(note: n)
+            if octaves.contains(note) {
+                result = true
+                return result
+            }
+        }
+
         return result
     }
     

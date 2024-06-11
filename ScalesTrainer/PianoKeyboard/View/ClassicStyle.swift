@@ -97,8 +97,20 @@ public struct ClassicStyle {
                 /// ----------- Note name ----------
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {
+                        ///Hilite Middle C
+                        if keyModel.midi == 60 { //}|| keyModel.midi == 64 {
+                            let w = playingMidiRadius + 7.0
+                            let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
+                            let circleRadius = 15
+                            let circle = CGRect(x: Int(rect.midX) - circleRadius,
+                                                y: 6,
+                                                width: circleRadius * 2,
+                                                height: circleRadius * 2)
+                            context.fill(Path(ellipseIn: circle), with: .color(.white))
+                            context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
+                        }
                         context.draw(
-                            Text(key.name).font(labelFont).foregroundColor(.black),
+                            Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                         )
                     }
@@ -162,7 +174,7 @@ public struct ClassicStyle {
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
             }
 
-            // ==================================== Sharps/Flat keys ====================================
+            // -------------------------- Sharps/Flat keys ---------------------------
             
             let sfKeyWidth = naturalWidth * sfKeyWidthMultiplier
             let sfKeyHeight = height * sfKeyHeightMultiplier

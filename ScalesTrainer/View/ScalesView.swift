@@ -41,7 +41,6 @@ struct ScalesView: View {
     init(practiceJournalScale:PracticeJournalScale) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
         self.practiceJournalScale = practiceJournalScale
-        //self.activityMode = activityMode
     }
     
     func showHelp(_ topic:String) {
@@ -74,7 +73,10 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: handIndex, {
                 scalesModel.selectedHandIndex = handIndex
-                setState(scaleRoot: scalesModel.scale.scaleRoot, scaleType: scalesModel.scale.scaleType, octaves: scalesModel.selectedOctavesIndex, hand: scalesModel.selectedHandIndex)
+                setState(scaleRoot: scalesModel.scale.scaleRoot, 
+                         scaleType: scalesModel.scale.scaleType,
+                         octaves: scalesModel.octaveNumberValues[octaveNumberIndex],
+                         hand: scalesModel.selectedHandIndex)
             })
             Spacer()
             
@@ -87,7 +89,10 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
                 scalesModel.selectedOctavesIndex = octaveNumberIndex
-                setState(scaleRoot: scalesModel.scale.scaleRoot, scaleType: scalesModel.scale.scaleType, octaves: scalesModel.selectedOctavesIndex, hand: scalesModel.selectedHandIndex)
+                setState(scaleRoot: scalesModel.scale.scaleRoot, 
+                         scaleType: scalesModel.scale.scaleType,
+                         octaves: scalesModel.octaveNumberValues[octaveNumberIndex],
+                         hand: scalesModel.selectedHandIndex)
             })
             
             Spacer()

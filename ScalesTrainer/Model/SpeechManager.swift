@@ -134,7 +134,6 @@ class SpeechManager : NSObject, MetronomeTimerNotificationProtocol, SFSpeechReco
         //}
     }
     
-    // ==== delegate
     func speechRecognitionDidDetectSpeech(_ task: SFSpeechRecognitionTask) {
         print("Detected speech")
     }

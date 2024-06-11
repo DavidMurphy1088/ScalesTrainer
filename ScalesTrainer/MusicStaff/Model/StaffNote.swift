@@ -42,12 +42,13 @@ public enum StemDirection {
 public class NoteStaffPlacement {
     public var offsetFromStaffMidline:Int
     public var accidental: Int?
-    public var showOctaveOverlay:Bool
+    //public var showOctaveOverlay:Bool
     
-    init(offsetFroMidLine:Int, accidental:Int?=nil, octaveOverlay:Bool) {
+    init(noteValue:Int, offsetFroMidLine:Int, accidental:Int?=nil) {
+
         self.offsetFromStaffMidline = offsetFroMidLine
         self.accidental = accidental
-        self.showOctaveOverlay = octaveOverlay
+        //self.showOctaveOverlay = octaveOverlay
     }
 }
 
@@ -244,6 +245,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
+
         let barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
@@ -251,6 +253,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }
+
         if let writtenAccidental = self.writtenAccidental {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental
@@ -264,9 +267,10 @@ public class StaffNote : TimeSliceEntry, Comparable {
         }
         else {
             //Determine if the note's accidental is implied by the key signature
-            //Or a note has to have a natural accidental to offset the key signture
+            //Or a note has to have a natural accidental to offset the key signature
 
             let keySignatureHasNote = staff.score.key.hasKeySignatureNote(note: self.midiNumber)
+
             if let defaultAccidental = defaultNotePlacement.accidental {
                 if !keySignatureHasNote {
                     if !barAlreadyHasNote {
@@ -275,7 +279,14 @@ public class StaffNote : TimeSliceEntry, Comparable {
                 }
             }
             else {
-                let keySignatureHasNote = staff.score.key.hasKeySignatureNote(note: self.midiNumber + 1)
+                ///Check if the key signature causes show should be a nautural accidental to be required
+                let keySignatureHasNote:Bool
+                if staff.score.key.keySig.flats.count > 0 {
+                    keySignatureHasNote = self.midiNumber > 0 && staff.score.key.hasKeySignatureNote(note: self.midiNumber - 1)
+                }
+                else {
+                    keySignatureHasNote = staff.score.key.hasKeySignatureNote(note: self.midiNumber + 1)
+                }
                 if keySignatureHasNote {
                     if !barAlreadyHasNote {
                         offsetAccidental = 0
@@ -312,7 +323,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
                 }
             }
         }
-        let placement = NoteStaffPlacement(offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental, octaveOverlay: defaultNotePlacement.showOctaveOverlay)
+        let placement = NoteStaffPlacement(noteValue: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental)
         self.noteStaffPlacements[staff.staffNum] = placement
         //self.debug("setNoteDisplayCharacteristics")
     }

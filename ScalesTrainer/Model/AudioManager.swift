@@ -192,8 +192,18 @@ class AudioManager {
     
     private func setupSampler() {
         do {
-            let samplerFileName = "akai_steinway"
+            //let samplerFileName = "akai_steinway"
+            let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
+            //let samplerFileName = "Abbey-Steinway-D-bs16i-v1.9"
             try midiSampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
+//            let filter = LowPassFilter(midiSampler)
+//            Cut reverb
+//            filter.cutoffFrequency = 800.0 // Adjust this value to reduce reverb effect
+//
+//            let gate = DynamicsProcessor(filter)
+//            gate.threshold = -20.0 // Adjust this value
+//            gate.headRoom = 0.1 // Adjust this value
+
             Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
         }
         catch {

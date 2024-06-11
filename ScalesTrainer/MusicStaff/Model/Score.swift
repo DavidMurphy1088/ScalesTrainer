@@ -276,7 +276,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore1(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -305,16 +305,19 @@ public class Score : ObservableObject {
                               "]")
                     }
                     else {
-                        print("  Seq", t.sequence,
-                              "[type:", type(of: t.entries[0]), "]",
-                              "[midi:",note.midiNumber, "]",
-                              "[TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]",
-                              "[Note Value:", note.getValue(),"]",
-                              "[status]",t.statusTag,
-                              "[beat]",t.beatNumber,
-                              "[writtenAccidental:",note.writtenAccidental ?? "","]",
-                              "[Staff:",note.staffNum,"]"
-                        )
+                        print(" Seq", t.sequence, terminator: "")
+                        print(" [type:", type(of: t.entries[0]), "]", terminator: "")
+                        print(" [midi:",note.midiNumber, "]", terminator: "")
+                        print(" [TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]", t.sequence, terminator: "")
+                        print(" [Note Value:", note.getValue(),"]", t.sequence, terminator: "")
+                        print(" [status]",t.statusTag, terminator: "")
+                        print(" [beat]",t.beatNumber, t.sequence, terminator: "")
+                        //print(" [writtenAccidental:",note.writtenAccidental ?? "","]", t.sequence, terminator: "")
+                        let note = t.getTimeSliceNotes()[0]
+                        print(" offset:", note.noteStaffPlacements[0]?.offsetFromStaffMidline ?? " ", terminator: "")
+                        print(" accidental:", note.noteStaffPlacements[0]?.accidental ?? " ", terminator: "")
+                        //print("[Staff:",note.staffNum,"]" t.sequence, terminator: "")
+                        print()
                     }
             }
             else {

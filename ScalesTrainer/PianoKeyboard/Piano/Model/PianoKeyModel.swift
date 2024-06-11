@@ -76,20 +76,17 @@ public class PianoKeyModel: Identifiable, Hashable {
             callback()
         }
     }
-    
-//    public func setPlayingKey() {
-//        self.keyboardModel.clearAllPlayingKey(besidesID: self.id)
-//        self.keyMatchedState.matchedTimeAscending = Date()
-//        self.keyMatchedState.matchedTimeDescending = Date()
-//        self.keyboardModel.redraw()
-//    }
-    
+
     public var noteMidiNumber: Int {
         keyOffsetFromLowestKey + self.keyboardModel.firstKeyMidi
     }
 
     public var name: String {
-        NoteName.name(for: noteMidiNumber, preferSharps: !(scalesModel.scale.scaleRoot.flats > 0))
+        //NoteName.name(for: noteMidiNumber, showSharps: !(scalesModel.scale.scaleRoot.flats > 0))
+        let major = scale.scaleType == .major
+        let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor) //KeySignature(scalesModel.scale.scaleType.)
+        let showSharps = ks.accidentalType == .sharp
+        return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
     }
     
     public var finger: String {
@@ -108,6 +105,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     public static func == (lhs: PianoKeyModel, rhs: PianoKeyModel) -> Bool {
         return lhs.id == rhs.id
     }
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.id)
     }

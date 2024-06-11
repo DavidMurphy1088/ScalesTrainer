@@ -85,19 +85,20 @@ public struct TimeSliceView: View {
 //            }
 //        }
 //        else {
-            if accidental < 0 {
+            if accidental == 0 {
                 return "\u{266E}" //natural
             }
             else {
                 if accidental > 0 {
-                    return "\u{266E}"
+                    return "\u{266F}"
                 }
                 else {
-                    return "\u{266E}"
+                    return "\u{266D}"
                 }
             }
 //        }
     }
+    
     struct LedgerLine:Hashable, Identifiable {
         var id = UUID()
         var offsetVertical:Double

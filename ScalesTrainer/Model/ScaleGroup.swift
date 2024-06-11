@@ -35,8 +35,10 @@ class ScaleGroup : Identifiable {
     init(name:String, imageName:String) {
         self.name = name
         self.imageName = imageName
-                      
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major)) //, octaves: 2, hand: 0))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .naturalMinor))
+        
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .melodicMinor)) 
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .major))
         //scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "A"), scaleType: .major))

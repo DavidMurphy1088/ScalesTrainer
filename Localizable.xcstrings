@@ -34,7 +34,7 @@
     "%@" : {
 
     },
-    "%@ ♩=90" : {
+    "%@\n♩=90" : {
 
     },
     "%lld" : {
@@ -139,6 +139,12 @@
     "Log" : {
 
     },
+    "Major Scales" : {
+
+    },
+    "Minor Scales" : {
+
+    },
     "No" : {
 
     },
@@ -146,6 +152,9 @@
 
     },
     "Piano Calibration" : {
+
+    },
+    "Pick A Scale" : {
 
     },
     "Played But Not in Scale" : {
@@ -158,6 +167,9 @@
 
     },
     "Practice Scale" : {
+
+    },
+    "Practice Scale %@" : {
 
     },
     "READ_TEST_DATA" : {
@@ -198,7 +210,13 @@
         }
       }
     },
+    "Scale Root:" : {
+
+    },
     "Scale Sets" : {
+
+    },
+    "Scale Type:" : {
 
     },
     "Scales Trainer" : {
@@ -211,6 +229,12 @@
 
     },
     "Show Fingers" : {
+
+    },
+    "Show Highest Progress" : {
+
+    },
+    "Show Lowest Progress" : {
 
     },
     "Show Staff" : {

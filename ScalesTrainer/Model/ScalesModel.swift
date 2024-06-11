@@ -396,6 +396,7 @@ public class ScalesModel : ObservableObject {
                 lastNote.setValue(value: 4)
             }
         }
+        //score.debugScore11("END CREATE SCORE", withBeam: false, toleranceLevel: 0)
         return score
     }
     
@@ -406,7 +407,7 @@ public class ScalesModel : ObservableObject {
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: octaves, //self.octaveNumberValues[self.selectedOctavesIndex],
                            hand: hand) //self.selectedHandIndex)
-        //self.scale.debug("")
+        //self.scale.debug111("========== ScalesModel")
         
         PianoKeyboardModel.shared.configureKeyboardSize()
         setDirection(0)
@@ -416,6 +417,7 @@ public class ScalesModel : ObservableObject {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
                 self.score = self.createScore(scale: self.scale)
+                self.score?.debugScore111("======END ScalesModel.setKeyAndScale type:\(scaleType) HAND:\(hand)", withBeam: false, toleranceLevel: 0)
             }
         }
     }

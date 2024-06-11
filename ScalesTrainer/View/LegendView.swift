@@ -26,10 +26,10 @@ struct LegendView: View {
         }
         else {
             if scalesModel.selectedDirection == 0 {
-                name = "Finger Over Note"
+                name = "Finger Over" // Note"
             }
             else {
-                name = "Thumb Under Note"
+                name = "Thumb Under" // Note"
             }
         }
         return name

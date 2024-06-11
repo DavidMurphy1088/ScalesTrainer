@@ -7,6 +7,12 @@ struct PracticeJournalView: View {
 
     let days = ["Mon","Tue","Wed ","Thu","Fri","Sat", "Sun"]
     let color = Color(red: 0.1, green: 0.7, blue: 0.2)
+    enum ScaleOrder {
+        case none
+        case best
+        case worst
+    }
+    @State var ordering:ScaleOrder = .none
     
 //    func getColor(day:String) -> Color {
 //        PracticeScale.dayNum += 1
@@ -32,11 +38,22 @@ struct PracticeJournalView: View {
             }
         }
     }
-
+    
+    func getColor(progress:Double) -> Color {
+        if progress < 0.2 {
+            return Color.orange
+        }
+        if progress < 0.4 {
+            return Color.yellow
+            
+        }
+        return Color.green
+    }
+    
     var body: some View {
         ZStack {
-            let width = UIScreen.main.bounds.width * 0.9
-            let height = UIScreen.main.bounds.height * 0.8
+            let width = UIScreen.main.bounds.width * 0.95
+            let height = UIScreen.main.bounds.height * 0.9
             let barHeight = height * 0.010
             let barWidth = width * 0.6 * 0.5
             Image(UIGlobals.shared.screenImageBackground)
@@ -45,13 +62,34 @@ struct PracticeJournalView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text("Practice Journal for \(practiceJournal.title)").bold().padding().commonFrameStyle(backgroundColor: .white)
-                    .frame(width: width)
+                Text("Practice Journal for \(practiceJournal.title)").bold().padding()////.commonFrameStyle(backgroundColor: .white).frame(width: width)
+                HStack {
+                    Spacer()
+                    Button("Show Highest Progress") {
+                        self.ordering = .best
+                    }
+                    Spacer()
+                    Button("Show Lowest Progress") {
+                        self.ordering = .worst
+                    }
+                    Spacer()
+                }
                 List {
-                    ForEach(Array(self.practiceJournal.scaleGroup.scales.enumerated()), id: \.element.id) { index, practiceJournalScale in
+                    //ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted().enumerated()), id: \.element.id) { index, practiceJournalScale in
+                    ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted(by: { lhs, rhs in
+                        switch self.ordering {
+                        case .best:
+                            lhs.progressLH + lhs.progressRH > rhs.progressLH + lhs.progressRH
+                        case .worst:
+                            lhs.progressLH + lhs.progressRH < rhs.progressLH + lhs.progressRH
+                        default:
+                            lhs.orderIndex < rhs.orderIndex
+                        }
+                            
+                        }).enumerated()), id: \.element.id) { index, practiceJournalScale in
                         VStack(spacing: 0) {
                             HStack {
-                                Text("\(practiceJournalScale.getName()) ♩=90").padding()
+                                Text("\(practiceJournalScale.getName())\n♩=90").padding()
                                 ///Text("Practice Days")
                                 WeekDaysView().padding()
                                 Spacer()
@@ -69,8 +107,8 @@ struct PracticeJournalView: View {
                                             .frame(width: barWidth, height: barHeight)
                                         HStack {
                                             Rectangle()
-                                                .fill(Color.green)
-                                                .frame(width: barWidth * practiceJournalScale.completePercentage(), height: barHeight)
+                                                .fill(getColor(progress: practiceJournalScale.progressLH))
+                                                .frame(width: barWidth * practiceJournalScale.progressLH, height: barHeight)
                                             Spacer()
                                         }
                                     }
@@ -81,8 +119,8 @@ struct PracticeJournalView: View {
                                             .frame(width: barWidth, height: barHeight)
                                         HStack {
                                             Rectangle()
-                                                .fill(Color.green)
-                                                .frame(width: barWidth * practiceJournalScale.completePercentage(), height: barHeight)
+                                                .fill(getColor(progress: practiceJournalScale.progressRH))
+                                                .frame(width: barWidth * practiceJournalScale.progressRH, height: barHeight)
                                             Spacer()
                                         }
                                     }
@@ -95,9 +133,10 @@ struct PracticeJournalView: View {
                     }
                 }
                 .padding()
-                .commonFrameStyle(backgroundColor: .white)
-                .frame(width: width, height: height)
+                
             }
+            .commonFrameStyle(backgroundColor: .white)
+            .frame(width: width, height: height)
         }
     }
 }

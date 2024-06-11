@@ -101,6 +101,8 @@ public class PianoKeyboardModel: ObservableObject {
         
         ///Decide first key to show on the keyboard - either the F key or the C key
         switch self.scalesModel.scale.scaleRoot.name {
+        case "C#":
+            self.firstKeyMidi -= 1
         case "D♭":
             self.firstKeyMidi -= 1
         case "D":
@@ -110,6 +112,10 @@ public class PianoKeyboardModel: ObservableObject {
         case "E":
             self.firstKeyMidi -= 4
             
+        case "G♭":
+            self.firstKeyMidi -= 1
+        case "F#":
+            self.firstKeyMidi -= 1
         case "G":
             self.firstKeyMidi -= 2
         case "A♭":

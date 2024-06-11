@@ -6,7 +6,7 @@ class HelpMessages {
         var m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are hilighted. \n\nEach note of the scale will be highlighted in turn. When the scale note is highlighted play the note on your piano. Then the next note will be hilighted. The keyboard shows the correct finger to use for every note of the scale. \n\nWhen you follow the all notes both ascending and descending you will have completed the whole scale."
         messages["Follow The Scale"] = m
         
-        m = "Practice lets you practice playing the scale by listening to the notes you play. \n\nWatch the displayed keyboard to make sure all the notes you play are correct. When you have learnt the scale trying practicing without the finger numbers displayed to see how well you know the scale. \n\nTry practicing with backing on so you can hear how your correctly played scale sounds good over the backing harmony."
+        m = "Practice lets you practice playing the scale by listening to the notes you play. \n\nRead the displayed keyboard to make sure you are using the right finger for each note. \n\nWhen you have learnt the scale trying practicing without the finger numbers displayed to see how well you know the scale. \n\nTry practicing with backing on so you can hear how your scale sounds good over the backing harmony when you play the scale correctly."
         messages["Practice"] = m
         
         messages["Hear The Scale"] = "Hear the scale played ascending and descending. Watch the keyboard and staff to see which notes are played."
