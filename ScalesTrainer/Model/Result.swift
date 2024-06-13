@@ -93,7 +93,6 @@ class Result : Equatable {
         if noErrors() {
             let scale = ScalesModel.shared.scale
             let _ = scale.setNoteNormalizedValues()
-            scale.debug11("==here")
             //score.calculateTapToValueRatios()
             score.setNormalizedValues(scale: scale)
         }

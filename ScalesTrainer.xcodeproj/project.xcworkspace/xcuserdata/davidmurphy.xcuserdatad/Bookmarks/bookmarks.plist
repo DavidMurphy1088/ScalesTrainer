@@ -29,15 +29,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>8</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>37</string>
+					<string>42</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>37</string>
+					<string>41</string>
 					<key>Timestamp</key>
-					<string>739619418.393887</string>
+					<string>739864746.0062931</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -53,15 +53,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        </string>
+				<string>        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .naturalMinor))
+</string>
 				<key>leading</key>
 				<string>        self.name = name
         self.imageName = imageName
 </string>
 				<key>trailing</key>
-				<string>scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .naturalMinor))
-        
+				<string>        
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .melodicMinor)) 
 </string>
 			</dict>
 			<key>type</key>

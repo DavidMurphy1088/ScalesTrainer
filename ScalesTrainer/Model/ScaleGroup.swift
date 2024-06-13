@@ -10,6 +10,10 @@ class ScaleGroup : Identifiable {
         ScaleGroup(name: "ABRSM Grade 2", imageName: "abrsm"),
         ScaleGroup(name: "ABRSM Grade 3", imageName: "abrsm"),
         
+        ScaleGroup(name: "AMEB, Grade 1", imageName: "AMEB"),
+        ScaleGroup(name: "AMEB, Grade 2", imageName: "AMEB"),
+        ScaleGroup(name: "AMEB, Grade 3", imageName: "AMEB"),
+
         ScaleGroup(name: "Central Conservatory of Music, Grade 1", imageName: "Central_Conservatory_of_Music_logo"),
         ScaleGroup(name: "Central Conservatory of Music, Grade 2", imageName: "Central_Conservatory_of_Music_logo"),
         ScaleGroup(name: "Central Conservatory of Music, Grade 3", imageName: "Central_Conservatory_of_Music_logo"),

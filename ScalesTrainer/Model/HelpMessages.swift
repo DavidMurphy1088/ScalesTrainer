@@ -16,5 +16,8 @@ class HelpMessages {
         m = "Record your playing to see how well you know the scale. \n\nYou will hear the metronome lead in and then you should start to play the scale. Make sure to play your scale accurately and evenly. When your recording is complete, you will see the results of your recording."
         messages["Record The Scale"] = m
 
+        m = "Listen to the last scale recording you made."
+        messages["Hear Recording"] = m
+
     }
 }

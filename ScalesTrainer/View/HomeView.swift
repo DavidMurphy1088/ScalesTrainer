@@ -38,7 +38,7 @@ class ActivityMode : Identifiable {
 }
 
 struct SelectScaleGroupView: View {
-    @State var isOn:[Bool] = [false, false, true, false, false, false, false, false, false, false, false, false, false, true]
+    @State var isOn:[Bool] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, true]
     @State var index = 0
 
     var body: some View {
@@ -224,7 +224,7 @@ struct AnyScaleView: View {
                 VStack {
                     Text("Major Scales").padding()
                      HStack {
-                        Text("Scale Root:").padding()
+                        Text("Scale Root:")//.padding()
                         Picker("Select Value", selection: $rootIndexMajor) {
                             ForEach(rootsMajor.indices, id: \.self) { index in
                                 Text("\(rootsMajor[index])")
@@ -245,17 +245,20 @@ struct AnyScaleView: View {
                     let scale = getScale(major: true)
                     NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
                         HStack {
-                            Text("Practice Scale \(scale.getName())").padding()
+                            Text(" Practice Scale \(scale.getName()) ")
                         }
-                        .padding()
+                        //.padding()
+                        .hilighted(backgroundColor: .blue)
                     }
                 }
-                .border(Color.gray)
+                //.border(Color.gray)
+                .commonFrameStyle()
+                .padding()
                 
                 VStack {
                     Text("Minor Scales").padding()
                      HStack {
-                        Text("Scale Root:").padding()
+                        Text("Scale Root:")//.padding()
                         Picker("Select Value", selection: $rootIndexMinor) {
                             ForEach(rootsMinor.indices, id: \.self) { index in
                                 Text("\(rootsMinor[index])")
@@ -276,15 +279,13 @@ struct AnyScaleView: View {
                     let scale = getScale(major: false)
                     NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
                         HStack {
-                            Text("Practice Scale \(scale.getName())").padding()
+                            Text(" Practice Scale \(scale.getName()) ")
                         }
-                        .padding()
+                        .hilighted(backgroundColor: .blue)
                     }
                 }
-                .border(Color.gray)
+                .commonFrameStyle()
                 .padding()
-
-
             }
             .commonFrameStyle(backgroundColor: .white)
             .frame(width: UIScreen.main.bounds.width * 0.8, height: UIScreen.main.bounds.height * 0.8)
@@ -335,10 +336,12 @@ struct ActivityModeView: View {
             Spacer()
         }
         .onAppear() {
-            menuOptions.append(ActivityMode(name: "Select Scales", view: AnyView(SelectScaleGroupView()), imageName: ""))
+            menuOptions.append(ActivityMode(name: "Select Exam Scales", view: AnyView(SelectScaleGroupView()), imageName: ""))
             if let practiceJournal = PracticeJournal.shared {
-                menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(practiceJournal: practiceJournal)), imageName: ""))
-                menuOptions.append(ActivityMode(name: "Random Selected Scale form Your Practice Journal", view: AnyView(RandomView(practiceJournal: practiceJournal)), imageName: ""))
+                let name = "Practice Journal" // for " + practiceJournal.title
+                //let menuName = "Practice Journal " + (name.count > 0 ? "for \(name)" : "")
+                menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal)), imageName: ""))
+                menuOptions.append(ActivityMode(name: "Randomly Selected Practice Journal Scale", view: AnyView(RandomView(practiceJournal: practiceJournal)), imageName: ""))
             }
             menuOptions.append(ActivityMode(name: "Pick Any Scale", view: AnyView(AnyScaleView()), imageName: ""))
 
@@ -360,6 +363,15 @@ struct ActivityModeView: View {
 struct HomeView: View {
     @State var scaleGroupsSheet = false
     
+    func getTitle() -> String {
+        let name = Settings.shared.firstName
+        var title = "Scales Trainer"
+        if name.count > 0 {
+            title = name+"'s " + title
+        }
+        return title
+    }
+    
     var body: some View {
             VStack {
                 NavigationView {
@@ -372,7 +384,7 @@ struct HomeView: View {
                         VStack {
                             Spacer()
                             VStack {
-                                Text("Scales Trainer").font(.title).padding()
+                                Text(getTitle()).font(.title).padding()
                             }
                             .commonFrameStyle(backgroundColor: .white)
                             .frame(width: UIScreen.main.bounds.width * 0.7)

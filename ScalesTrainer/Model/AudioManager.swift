@@ -8,7 +8,7 @@ import Speech
 
 class AudioManager {
     static let shared = AudioManager()
-    public var engine = AudioEngine()
+    public var engine: AudioEngine?
     var installedTap: BaseTap?
     var tapHandler: TapHandlerProtocol?
     let midiSampler = MIDISampler()
@@ -23,17 +23,25 @@ class AudioManager {
     var metronomeCount = 0
     var simulator = false
     var blockTaps = false
+    var audioPlayer = AudioPlayer()
     
     init() {
+        if true {
+            configureAudio()
+        }
+    }
+    
+    func configureAudio() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
-        //Record on mic will never work on simulator - dont even try 😡
+        //Record on mic will never work on simulator - dont even try 😡😡😡😡
+        engine = AudioEngine()
         guard let input = engine.input else {
             Logger.shared.log(self, "Engine has no input")
             return
         }
         mic = input
         do {
-            microphoneRecorder = try NodeRecorder(node: mic!)
+            microphoneRecorder = try NodeRecorder(node: input)
         } catch let err {
             Logger.shared.reportError(self, "\(err)")
             return
@@ -44,44 +52,61 @@ class AudioManager {
                 Logger.shared.reportError(self, "No microphone permission")
             }
         })
-        
-        ///In AudioKit, the engine.output = mixer line of code sets the final node in the audio processing chain to be the mixer node. This means that the mixer node's output is what will be sent to the speakers or the output device.
-        ///When you set engine.output = mixer, you are specifying that the mixer's output should be the final audio output of the entire audio engine. This is crucial because:
-        
-        ///Signal Routing: It determines where the processed audio should go. Without setting the engine.output, the audio engine doesn't know which node's output should be routed to the speakers or headphones.
-        ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
-        ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
-        
-        if true {
-            simulator = false
+    
+    ///In AudioKit, the engine.output = mixer line of code sets the final node in the audio processing chain to be the mixer node. This means that the mixer node's output is what will be sent to the speakers or the output device.
+    ///When you set engine.output = mixer, you are specifying that the mixer's output should be the final audio output of the entire audio engine. This is crucial because:
+    
+    ///Signal Routing: It determines where the processed audio should go. Without setting the engine.output, the audio engine doesn't know which node's output should be routed to the speakers or headphones.
+    ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
+    ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
+    
+    
+        simulator = false
 #if targetEnvironment(simulator)
-            simulator = true
+        simulator = true
 #endif
-            if simulator {
-                setupSampler()
-                engine.output = midiSampler
-            }
-            else {
-                ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
-                let silencer = Fader(input, gain: 0)
-                self.silencer = silencer
-                mixer.addInput(silencer)
+        if simulator {
+            setupSampler()
+            engine.output = midiSampler
+        }
+        else {
+            ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
+            let silencer = Fader(input, gain: 0)
+            self.silencer = silencer
+            mixer.addInput(silencer)
+        
+            //mixer.addInput(audioPlayer)
+            setupSampler()
+            mixer.addInput(midiSampler)
             
-                //mixer.addInput(audioPlayer)
-                setupSampler()
-                mixer.addInput(midiSampler)
-                
-                self.speechManager = SpeechManager.shared
-                
-                engine.output = mixer
-                setSession()
-            }
-            do {
-                try engine.start()
-            }
-            catch {
-                Logger.shared.reportError(self, "Could not start engind", error)
-            }
+            //mixer.addInput(audioPlayer)
+
+            self.speechManager = SpeechManager.shared
+            
+            engine.output = mixer
+            setSession()
+        }
+        do {
+            try engine.start()
+        }
+        catch {
+            Logger.shared.reportError(self, "Could not start engind", error)
+        }
+
+    }
+    func playRecordedFile(audioFile:AVAudioFile) {
+        //startEngine()
+        do {
+            //try audioPlayer.load(file: audioFile)
+            Logger.shared.log(self, "Playing file len:\(audioFile.length) duration:\(audioFile.duration)")
+            audioPlayer = AudioPlayer(file: audioFile)!
+            //audioPlayer.volume = 1.0
+            engine.output = audioPlayer
+            try engine.start()
+            audioPlayer.play()
+        }
+        catch {
+            Logger.shared.reportError(self, "Cannot load file len:\(audioFile.length) duration:\(audioFile.duration)")
         }
     }
     
@@ -109,34 +134,6 @@ class AudioManager {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playAndRecord, mode: .default)
             try session.setActive(true)
-            
-//            if false || AudioManager.shared.simulator {
-//                ///prolong and wasted attempts to make simulator not crash 😡
-//                //try engine.start()
-//                engine.stop()
-//                self.tapHandler = tapHandler
-//                self.installedTap = PitchTap(mic!, bufferSize:UInt32(4096)) { pitch, amplitude in
-//                    //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter || tapHandler is CallibrationTapHandler  {
-////                        if true {
-//                            DispatchQueue.main.async {
-//                                tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-//                            }
-////                        }
-////                        else {
-////                            tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-////                        }
-//                    //}
-//                }
-//                if let tap = self.installedTap {
-//                    try engine.start()
-//                    tap.start()
-//                    
-//                }
-//                else {
-//                    Logger.shared.reportError(self, "No tap handler")
-//                }
-//            }
-//            else {
             try engine.start()
             installTapHandler(node: mic!,
                               bufferSize: 4096,
@@ -144,9 +141,18 @@ class AudioManager {
                               asynch: true)
             //WARNING 😣 - .record must come before tap.start
             if recordAudio {
-                try microphoneRecorder?.record() ///😡Causes exception if tap handler is Callibration
-                if microphoneRecorder != nil && microphoneRecorder!.isRecording {
-                    Logger.shared.log(self, "Recording started...")
+                self.microphoneRecorder = try NodeRecorder(node: mic!)
+                if let recorder = self.microphoneRecorder {
+                    do {
+                        try self.microphoneRecorder!.reset()
+                        try recorder.record() ///😡Causes exception if tap handler is Callibration
+                        if recorder.isRecording {
+                            Logger.shared.log(self, "Recording started... file:\(String(describing: recorder.audioFile))")
+                        }
+                    }
+                    catch {
+                        Logger.shared.reportError(self, "Error starting recording: \(error)")
+                    }
                 }
             }
             
@@ -161,8 +167,18 @@ class AudioManager {
         }
     }
     
-    func stopRecording() {
-        microphoneRecorder?.stop()
+    func stopRecording() {        
+        if let recorder = microphoneRecorder {
+            recorder.stop()
+            if let audioFile = recorder.audioFile {
+
+                if audioFile.duration > 0 || audioFile.length > 0 {
+                    ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
+                    let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
+                    Logger.shared.log(self, log)
+                }
+            }
+        }
         self.installedTap?.stop()
         self.tapHandler?.stopTapping()
         self.tapHandler = nil
@@ -431,16 +447,7 @@ extension AudioManager: PianoKeyboardDelegate {
 //        //audioPlayer.play()
 //    }
     
-//    func playRecordedFile() {
-//        if let file = recorder?.audioFile {
-//            startEngine()
-//            try? audioPlayer.load(file: file)
-//            audioPlayer.volume = 1.0
-//            //AudioManager.shared.engine.output = audioPlayer
-//            //AudioManager.shared.mixer.addInput(audioPlayer)
-//            audioPlayer.play()
-//        }
-//    }
+
 
 //    func stopPlaySampleFile() {
 //        audioPlayer.stop()

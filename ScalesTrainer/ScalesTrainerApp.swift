@@ -26,6 +26,13 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(0)
 
+                TestView()
+                //HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(1)
+                
 //                ScalesView(activityMode: ActivityMode(name: "All", implemented: true, imageName: "", showStaff: false, showFingers: true))
 //                    .tabItem {
 //                        Label("TEST", systemImage: "music.note.list")

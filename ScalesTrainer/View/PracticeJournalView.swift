@@ -25,6 +25,11 @@ struct PracticeJournalView: View {
     init(practiceJournal:PracticeJournal) {
         self.practiceJournal = practiceJournal
     }
+    func getName() -> String {
+        let name = Settings.shared.firstName
+        let journalName = "Practice Journal " + (name.count > 0 ? "for \(name)" : "")
+        return journalName
+    }
     
     func WeekDaysView() -> some View {
         HStack {
@@ -50,6 +55,15 @@ struct PracticeJournalView: View {
         return Color.green
     }
     
+    func getTitle() -> String {
+        var title = "Practice Journal for \(practiceJournal.title)"
+        let name = Settings.shared.firstName
+        if name.count > 0 {
+            title = name + "'s \(title)"
+        }
+        return title
+    }
+    
     var body: some View {
         ZStack {
             let width = UIScreen.main.bounds.width * 0.95
@@ -62,15 +76,20 @@ struct PracticeJournalView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text("Practice Journal for \(practiceJournal.title)").bold().padding()////.commonFrameStyle(backgroundColor: .white).frame(width: width)
+                Text(getTitle()).font(.title).padding()////.commonFrameStyle(backgroundColor: .white).frame(width: width)
                 HStack {
                     Spacer()
-                    Button("Show Highest Progress") {
+
+                    Button(action: {
                         self.ordering = .best
+                    }) {
+                        Text(" Show Highest Progress ").hilighted(backgroundColor: .blue)
                     }
                     Spacer()
-                    Button("Show Lowest Progress") {
+                    Button(action: {
                         self.ordering = .worst
+                    }) {
+                        Text(" Show Lowest Progress ").hilighted(backgroundColor: .blue)
                     }
                     Spacer()
                 }
@@ -94,7 +113,7 @@ struct PracticeJournalView: View {
                                 WeekDaysView().padding()
                                 Spacer()
                                 NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
-                                    Text("Practice Scale").foregroundColor(.blue)
+                                    Text(" Practice \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                 }
                                 .frame(width: width * 0.2)
                             }

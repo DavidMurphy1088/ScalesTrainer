@@ -148,6 +148,13 @@ public class ScalesModel : ObservableObject {
 
     @Published private(set) var runningProcess:RunningProcess = .none
     
+    @Published private(set) var recordedAudioFile:AVAudioFile?
+    func setRecordedAudioFile(_ file: AVAudioFile?) {
+        DispatchQueue.main.async {
+            self.recordedAudioFile = file
+        }
+    }
+
     func setRunningProcess(_ setProcess: RunningProcess) {
         //PianoKeyboardModel.shared.debug("Setting process ---> \(setProcess.description)")
         print("=============> Set process ---> from \(self.runningProcess) TO \(setProcess)")
@@ -181,7 +188,7 @@ public class ScalesModel : ObservableObject {
             //self.setShowFingers(false)
             keyboard.redraw()
             let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-            self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
+            self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
         }
         
         if [RunningProcess.recordingScaleWithData].contains(setProcess)  {
@@ -417,7 +424,7 @@ public class ScalesModel : ObservableObject {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
                 self.score = self.createScore(scale: self.scale)
-                self.score?.debugScore111("======END ScalesModel.setKeyAndScale type:\(scaleType) HAND:\(hand)", withBeam: false, toleranceLevel: 0)
+                //self.score?.debugScore111("======END ScalesModel.setKeyAndScale type:\(scaleType) HAND:\(hand)", withBeam: false, toleranceLevel: 0)
             }
         }
     }

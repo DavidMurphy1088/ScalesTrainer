@@ -27,6 +27,7 @@ struct ScalesView: View {
 
     @State var hearingGivenScale = false
     @State var hearingBacking = false
+    @State var hearingRecording = false
     @State var showingTapData = false
     @State var recordingScale = false
 
@@ -60,7 +61,7 @@ struct ScalesView: View {
         self.directionIndex = 0
     }
     
-    func SelectScaleParamtersView() -> some View {
+    func SelectScaleParametersView() -> some View {
         HStack {
 
             Spacer()
@@ -126,6 +127,7 @@ struct ScalesView: View {
     }
     
     func StopProcessView() -> some View {
+        
         VStack {
             if scalesModel.runningProcess == .followingScale {
                 VStack {
@@ -297,6 +299,31 @@ struct ScalesView: View {
             }
             .padding()
             
+            if let recordedAudioFile = scalesModel.recordedAudioFile {
+                HStack {
+                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear Your Recording") {
+                        hearingRecording.toggle()
+                        if hearingRecording {
+                            AudioManager.shared.playRecordedFile(audioFile: recordedAudioFile)
+                        }
+                        else {
+                            metronome.stop()
+                        }
+                    }
+                    Button(action: {
+                        showHelp("Hear Recording")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)
+                                .foregroundColor(.green)
+                        }
+                    }
+                }
+                .padding()
+            }
+            
             Spacer()
             HStack {
                 Button(hearingBacking ? "Backing Off" : "Backing On") {
@@ -366,7 +393,7 @@ struct ScalesView: View {
                 if scalesModel.showKeyboard {
                     VStack {
                         if scalesModel.runningProcess == .none {
-                            SelectScaleParamtersView()
+                            SelectScaleParametersView()
                         }
                         Text(scalesModel.scale.getScaleName()).font(.title).padding()
                         PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
@@ -383,17 +410,19 @@ struct ScalesView: View {
                                 }
                             }
                         }
-                        LegendView()
+                        LegendView()//.padding()
                     }
                     .commonFrameStyle()
                 }
 
                 if scalesModel.runningProcess != .none {
+                    //Spacer()
                     StopProcessView()
+                    //Spacer()
                 }
                 else {
                     if let userMessage = scalesModel.userMessage {
-                        Text(userMessage).commonFrameStyle()
+                        Text(userMessage).commonFrameStyle().padding()
                     }
 
                     if let result = scalesModel.result {
@@ -409,7 +438,7 @@ struct ScalesView: View {
                 Spacer()
             }
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
-            .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.90)
+            .frame(width: UIScreen.main.bounds.width * 0.95) //, height: UIScreen.main.bounds.height * 0.90)
             //.border(.red)
         }
         

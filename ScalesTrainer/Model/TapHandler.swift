@@ -340,7 +340,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         Logger.shared.log(self, "ScaleTapHandler stop")
         Logger.shared.calcValueLimits()     
         //PianoKeyboardModel.shared.debug1("-->End Tap")
-        ScalesModel.shared.scale.debug11("End Tap")
+        //ScalesModel.shared.scale.debug11("End Tap")
         let result = Result(runningProcess: .recordingScale, userMessage: "")
         result.buildResult()
         ScalesModel.shared.setResult(result)

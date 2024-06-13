@@ -119,7 +119,8 @@ struct LegendView: View {
             }
         }
         if let instructions = scalesModel.processInstructions {
-            Text("  👉 \(instructions)  ").hilighted()
+            Text("  👉 \(instructions)  ").hilighted().padding()
+            Text("").padding()
         }
     }
 }

@@ -30,13 +30,33 @@ struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
-    @State var famouseQuotes = Settings.shared.famousQuotes
+    @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     let width = UIScreen.main.bounds.width * 0.25
     
     var body: some View {
         VStack {
             VStack {
+                Spacer()
+                HStack() {
+                    Text("Please enter your first name")
+                    TextField("First name", text: $firstName)
+                        .padding()
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .border(Color.gray)
+                        
+                        .frame(width: width)
+                        .padding()
+//
+//                    Text("You entered: \(inputText)")
+//                        .padding()
+                }
+                
+                .onChange(of: firstName, {
+                    settings.firstName = firstName
+                    settings.save()
+                })
+                .padding()
                 
                 Spacer()
                 HStack() {
@@ -63,17 +83,6 @@ struct SettingsView: View {
                         settings.save()
                     })
                 }
-                
-                Spacer()
-                HStack() {
-                    Toggle("Famous Quotes", isOn: $famouseQuotes)
-                }
-                .frame(width: width)
-                .onChange(of: famouseQuotes, {
-                    settings.famousQuotes = famouseQuotes
-                    settings.save()
-                })
-                .padding()
                 
                 Spacer()
                 HStack {

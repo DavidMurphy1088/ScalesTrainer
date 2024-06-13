@@ -274,7 +274,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug11(_ msg:String)  {
+    func debug1(_ msg:String)  {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         
         func getValue(_ value:Double?) -> String {
@@ -607,7 +607,7 @@ public class Scale {
             }
             //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
-        debug11("================ INIT")
+        //debug11("================ INIT")
     }
     
     func setFingersRightHandOld() {

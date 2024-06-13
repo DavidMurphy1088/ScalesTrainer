@@ -56,7 +56,6 @@ class PracticeJournal {
         randomScale.hand = r 
         r = Int.random(in: 1...2)
         randomScale.octaves = r
-        print("=========== RS", randomScale.getName())
         self.randomScale = randomScale
     }
 }

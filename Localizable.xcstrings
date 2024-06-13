@@ -25,6 +25,18 @@
     " C" : {
 
     },
+    " Practice \n Scale " : {
+
+    },
+    " Practice Scale %@ " : {
+
+    },
+    " Show Highest Progress " : {
+
+    },
+    " Show Lowest Progress " : {
+
+    },
     "?" : {
 
     },
@@ -76,6 +88,9 @@
     "Finger" : {
 
     },
+    "First name" : {
+
+    },
     "Follow The Scale" : {
 
     },
@@ -83,6 +98,9 @@
 
     },
     "Hear The Scale" : {
+
+    },
+    "Hear Your Recording" : {
 
     },
     "Hide Fingers" : {
@@ -157,19 +175,16 @@
     "Pick A Scale" : {
 
     },
+    "Play Recording" : {
+
+    },
     "Played But Not in Scale" : {
 
     },
+    "Please enter your first name" : {
+
+    },
     "Practice" : {
-
-    },
-    "Practice Journal for %@" : {
-
-    },
-    "Practice Scale" : {
-
-    },
-    "Practice Scale %@" : {
 
     },
     "READ_TEST_DATA" : {
@@ -219,9 +234,6 @@
     "Scale Type:" : {
 
     },
-    "Scales Trainer" : {
-
-    },
     "Select Value" : {
 
     },
@@ -229,12 +241,6 @@
 
     },
     "Show Fingers" : {
-
-    },
-    "Show Highest Progress" : {
-
-    },
-    "Show Lowest Progress" : {
 
     },
     "Show Staff" : {
@@ -247,6 +253,9 @@
 
     },
     "Start" : {
+
+    },
+    "Start Recording" : {
 
     },
     "Stats: %@" : {
@@ -262,6 +271,12 @@
 
     },
     "Stop Hearing Scale" : {
+
+    },
+    "Stop Hearing Your Recording" : {
+
+    },
+    "Stop Playback" : {
 
     },
     "Stop Practicing" : {
