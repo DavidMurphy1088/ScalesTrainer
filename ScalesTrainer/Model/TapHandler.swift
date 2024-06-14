@@ -93,7 +93,7 @@ class PracticeTapHandler : TapHandlerProtocol {
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
         msg += " amp:\(String(format: "%.4f", amplitude))"
-        msg += "  fr:\(String(format: "%.0f", frequency))"
+        msg += "  freq:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
         msg += "  >amplFilter:\(aboveFilter)"
         msg += "  >filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))"
@@ -112,7 +112,7 @@ class PracticeTapHandler : TapHandlerProtocol {
                                                                   ascending: true,
                                                                   key: nil))
 
-        if tapNum % 20 == 0 {
+        if tapNum % 20 == 0 || !aboveFilter {
             Logger.shared.log(self, msg)
         }
         tapNum += 1

@@ -1,16 +1,25 @@
 import SwiftUI
+import AudioKit
+import AVFoundation
+import SwiftUI
 
 @main
 
-//class AppDelegate: UIResponder, UIApplicationDelegate {
-//    var window: UIWindow?
-////    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-////        return .portrait
-////    }
-//}
-
 struct ScalesTrainerApp: App {
     @State private var selectedTab = Settings.shared.amplitudeFilter == 0 ? 2 : 0
+    init() {
+        #if os(iOS)
+            do {
+//                Settings.bufferLength = .short
+//                try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(Settings.bufferLength.duration)
+                try AVAudioSession.sharedInstance().setCategory(.playAndRecord,
+                                                                options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch let err {
+                print(err)
+            }
+        #endif
+    }
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {

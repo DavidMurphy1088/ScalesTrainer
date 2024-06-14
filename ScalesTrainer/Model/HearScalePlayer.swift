@@ -5,6 +5,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var direction = 0
     
     func metronomeStart() {
+        let audioManager = AudioManager.shared
+        audioManager.initSampler()
     }
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
@@ -20,7 +22,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 let key=keyboard.pianoKeyModel[keyIndex]
                 key.setKeyPlaying(ascending: direction, hilight: true)
             }
-            sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
+            sampler?.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
             
             ///Scale turnaround
             if timerTickerNumber == ScalesModel.shared.scale.scaleNoteState.count / 2 {

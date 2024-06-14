@@ -85,7 +85,9 @@ class Backer :MetronomeTimerNotificationProtocol{
         var midi = 0
         let bar = callNum / 4
         midi = getMidi(bar: bar, beat: beat)
-        audioManager.midiSampler.play(noteNumber: MIDINoteNumber(midi), velocity: 60, channel: 0)
+        if let sampler = audioManager.midiSampler {
+            sampler.play(noteNumber: MIDINoteNumber(midi), velocity: 60, channel: 0)
+        }
         callNum += 1
         return false
     }

@@ -58,7 +58,7 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
             
-            if scalesModel.showStaff {
+            //if scalesModel.showStaff {
                 if let score  = scalesModel.score {
                     if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
                         //score.clearAllPlayingNotes(besidesMidi: self.midi)
@@ -70,7 +70,7 @@ public class PianoKeyModel: Identifiable, Hashable {
                         }
                     }
                 }
-            }
+            //}
         }
         if let callback = self.wasPlayedCallback {
             callback()

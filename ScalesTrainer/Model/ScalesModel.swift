@@ -188,7 +188,9 @@ public class ScalesModel : ObservableObject {
             //self.setShowFingers(false)
             keyboard.redraw()
             let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-            self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+            //😡 cannot record and tap concurrenlty
+            //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+            self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
         }
         
         if [RunningProcess.recordingScaleWithData].contains(setProcess)  {
@@ -283,9 +285,11 @@ public class ScalesModel : ObservableObject {
             ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.scaleNoteState.count > 0 {
-                self.audioManager.midiSampler.play(noteNumber: UInt8(self.scale.scaleNoteState[0].midi), velocity: 64, channel: 0)
-                ///Without delay here the fist note wont hilight - no idea why
-                sleep(3)
+                if let sampler = self.audioManager.midiSampler {
+                    sampler.play(noteNumber: UInt8(self.scale.scaleNoteState[0].midi), velocity: 64, channel: 0)
+                    ///Without delay here the fist note wont hilight - no idea why
+                    sleep(3)
+                }
             }
             
             let semaphore = DispatchSemaphore(value: 0)

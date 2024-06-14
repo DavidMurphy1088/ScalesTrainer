@@ -131,34 +131,34 @@ struct ScalesView: View {
         VStack {
             if scalesModel.runningProcess == .followingScale {
                 VStack {
-                    Spacer()
-                    Button(scalesModel.runningProcess == .followingScale ? "Stop Following" : "Follow The Scale") {
-                        if scalesModel.runningProcess == .followingScale {
-                            scalesModel.setRunningProcess(.none)
-                        }
-                        else {
-                            scalesModel.setRunningProcess(.followingScale)
-                            ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                        }
-                    }
+                    //Spacer()
+//                    Button(scalesModel.runningProcess == .followingScale ? "Stop Following" : "Follow The Scale") {
+//                        if scalesModel.runningProcess == .followingScale {
+//                            scalesModel.setRunningProcess(.none)
+//                        }
+//                        else {
+//                            scalesModel.setRunningProcess(.followingScale)
+//                            ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+//                        }
+//                    }
                     Button("Stop Following Scale") {
                         scalesModel.setRunningProcess(.none)
                     }
                     .padding()
                     .hilighted(backgroundColor: .blue)
-                    Spacer()
+                    //Spacer()
                 }
             }
             if scalesModel.runningProcess == .practicing {
                 VStack {
-                    Spacer()
+                    //Spacer()
                     ProcessUnderwayView()
                     Button("Stop Practicing") {
                         scalesModel.setRunningProcess(.none)
                     }
                     .padding()
                     .hilighted(backgroundColor: .blue)
-                    Spacer()
+                    //Spacer()
                 }
             }
             if scalesModel.runningProcess == .identifyingScale {
@@ -228,14 +228,14 @@ struct ScalesView: View {
             
             Spacer()
             HStack(spacing: 4) {
-                Button(scalesModel.runningProcess == .followingScale ? "Stop Following" : "Follow The Scale") {
-                    if scalesModel.runningProcess == .followingScale {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
+                Button("Follow The Scale") {
+//                    //if scalesModel.runningProcess == .followingScale {
+//                        scalesModel.setRunningProcess(.none)
+//                    }
+//                    else {
                         scalesModel.setRunningProcess(.followingScale)
                         ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                    }
+                    //}
                 }
                 
                 Button(action: {
@@ -280,9 +280,12 @@ struct ScalesView: View {
                 Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record The Scale") {
                     if scalesModel.runningProcess == .recordingScale {
                         scalesModel.setRunningProcess(.none)
+                        //AudioManager.shared.stopRecording()
+
                     }
                     else {
                         scalesModel.setRunningProcess(.recordingScale)
+                        //AudioManager.shared.startRecordingMicWithTapHandler(tapHandler: PracticeTapHandler(amplitudeFilter:0.0, hilightPlayingNotes:false), recordAudio: true)
                     }
                 }.padding()
 
@@ -422,7 +425,7 @@ struct ScalesView: View {
                 }
                 else {
                     if let userMessage = scalesModel.userMessage {
-                        Text(userMessage).commonFrameStyle().padding()
+                        Text(userMessage).padding().commonFrameStyle()
                     }
 
                     if let result = scalesModel.result {

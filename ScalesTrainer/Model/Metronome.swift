@@ -53,15 +53,15 @@ class MetronomeModel {
         DispatchQueue.main.async { [self] in
             self.isTiming = false
         }
-        for player in self.audioPlayers {
-            audioManager.mixer.removeInput(player)
-        }
+//        for player in self.audioPlayers {
+//            audioManager.mixer?.removeInput(player)
+//        }
     }
     
     public func startTimer(notified: MetronomeTimerNotificationProtocol, countAtQuaverRate:Bool, onDone:(() -> Void)?) {
         self.isTiming = true
         for player in self.audioPlayers {
-            audioManager.mixer.addInput(player)
+            audioManager.mixer?.addInput(player)
         }
         timerTickerNumber = 0
         var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000

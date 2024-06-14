@@ -10,11 +10,10 @@ class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
     var installedTap: BaseTap?
-    var tapHandler: TapHandlerProtocol?
-    let midiSampler = MIDISampler()
-    var microphoneRecorder: NodeRecorder?
+    var midiSampler:MIDISampler?
+    var recorder: NodeRecorder?
     var silencer: Fader?
-    var mixer = Mixer()
+    var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
     var speechManager:SpeechManager?
@@ -23,25 +22,59 @@ class AudioManager {
     var metronomeCount = 0
     var simulator = false
     var blockTaps = false
-    var audioPlayer = AudioPlayer()
+    var audioPlayer:AudioPlayer?
     
+    ///AudioKit Cookbook example
+    var initialDevice: Device?
+    var pitchTap: PitchTap?
+    var tappableNodeA: Fader?
+    var tappableNodeB: Fader?
+    var tappableNodeC: Fader?
+    var silence: Fader?
+    var tapHandler: TapHandlerProtocol?
+
     init() {
-        if true {
-            configureAudio()
-        }
+//        if false {
+//            configureAudio(start: true)
+//        }
     }
+//    func configureAudio(start:Bool) {
+//        engine = AudioEngine()
+//        mic = engine?.input
+//        if let mic = mic {
+//            do {
+//                // Initialize the recorder with the microphone as the input
+//                recorder = try NodeRecorder(node: mic)
+//                let silentMixer = Mixer(mic)
+//                silentMixer.volume = 0.0 // Mute the microphone input
+//                engine?.output = silentMixer
+//                if start {
+//                    try engine?.start()
+//                    Logger.shared.log(self, "configureAudio =================================> Audio engine started")
+//                }
+//                
+//            } catch {
+//                print("AudioKit Error during setup: \(error.localizedDescription)")
+//            }
+//        }
+//    }
     
-    func configureAudio() {
+    func configureAudioOld() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
         //Record on mic will never work on simulator - dont even try 😡😡😡😡
-        engine = AudioEngine()
+        self.engine = AudioEngine() 
+        guard let engine = self.engine else {
+            Logger.shared.log(self, "Engine is nil")
+            return
+        }
+
         guard let input = engine.input else {
             Logger.shared.log(self, "Engine has no input")
             return
         }
         mic = input
         do {
-            microphoneRecorder = try NodeRecorder(node: input)
+            recorder = try NodeRecorder(node: input)
         } catch let err {
             Logger.shared.reportError(self, "\(err)")
             return
@@ -60,7 +93,6 @@ class AudioManager {
     ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
     ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
     
-    
         simulator = false
 #if targetEnvironment(simulator)
         simulator = true
@@ -70,19 +102,18 @@ class AudioManager {
             engine.output = midiSampler
         }
         else {
+            self.mixer = Mixer(input)
             ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
             let silencer = Fader(input, gain: 0)
             self.silencer = silencer
-            mixer.addInput(silencer)
-        
-            //mixer.addInput(audioPlayer)
+            mixer?.addInput(silencer)
+            
+            self.audioPlayer = AudioPlayer()
+            mixer?.addInput(self.audioPlayer!)
             setupSampler()
-            mixer.addInput(midiSampler)
+            //mixer?.addInput(midiSampler ?? <#default value#>)
             
-            //mixer.addInput(audioPlayer)
-
-            self.speechManager = SpeechManager.shared
-            
+            //self.speechManager = SpeechManager.shared
             engine.output = mixer
             setSession()
         }
@@ -90,20 +121,19 @@ class AudioManager {
             try engine.start()
         }
         catch {
-            Logger.shared.reportError(self, "Could not start engind", error)
+            Logger.shared.reportError(self, "Could not start engine", error)
         }
 
     }
     func playRecordedFile(audioFile:AVAudioFile) {
-        //startEngine()
         do {
             //try audioPlayer.load(file: audioFile)
             Logger.shared.log(self, "Playing file len:\(audioFile.length) duration:\(audioFile.duration)")
-            audioPlayer = AudioPlayer(file: audioFile)!
+            //audioPlayer = AudioPlayer(file: audioFile)!
             //audioPlayer.volume = 1.0
-            engine.output = audioPlayer
-            try engine.start()
-            audioPlayer.play()
+            //engine?.output = audioPlayer
+            try engine?.start()
+            audioPlayer?.play()
         }
         catch {
             Logger.shared.reportError(self, "Cannot load file len:\(audioFile.length) duration:\(audioFile.duration)")
@@ -128,90 +158,134 @@ class AudioManager {
         return nil
     }
     
-    func startRecordingMicWithTapHandler(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
-        Logger.shared.log(self, "startRecordingMicrophone")
+    func initSampler() {
+        setSession()
+        self.engine = AudioEngine()
+        guard let engine = self.engine else {
+            Logger.shared.reportError(self, "No engine")
+            return
+        }
+        self.midiSampler = setupSampler()
+        engine.output = self.midiSampler
         do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playAndRecord, mode: .default)
-            try session.setActive(true)
             try engine.start()
-            installTapHandler(node: mic!,
-                              bufferSize: 4096,
-                              tapHandler: tapHandler,
-                              asynch: true)
-            //WARNING 😣 - .record must come before tap.start
-            if recordAudio {
-                self.microphoneRecorder = try NodeRecorder(node: mic!)
-                if let recorder = self.microphoneRecorder {
-                    do {
-                        try self.microphoneRecorder!.reset()
-                        try recorder.record() ///😡Causes exception if tap handler is Callibration
-                        if recorder.isRecording {
-                            Logger.shared.log(self, "Recording started... file:\(String(describing: recorder.audioFile))")
-                        }
-                    }
-                    catch {
-                        Logger.shared.reportError(self, "Error starting recording: \(error)")
-                    }
-                }
-            }
-            
-            if let tap = self.installedTap {
-                tap.start()
-            }
-            else {
-                Logger.shared.reportError(self, "No tap handler")
-            }
-        } catch let err {
-            Logger.shared.reportError(self, err.localizedDescription)
-        }
-    }
-    
-    func stopRecording() {        
-        if let recorder = microphoneRecorder {
-            recorder.stop()
-            if let audioFile = recorder.audioFile {
-
-                if audioFile.duration > 0 || audioFile.length > 0 {
-                    ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
-                    let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
-                    Logger.shared.log(self, log)
-                }
-            }
-        }
-        self.installedTap?.stop()
-        self.tapHandler?.stopTapping()
-        self.tapHandler = nil
-    }
-    
-//    func startEngine() {
-//        do {
-//            try engine.start()
-//            //Logger.shared.log(self, "Engine started \n\(engine.connectionTreeDescription)")
-//            Logger.shared.log(self, "Engine started")
-//        } catch {
-//            Logger.shared.reportError(self, "Error starting engine: \(error)")
-//        }
-//    }
-    
-    func setSession() {
-        ///nightmare
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
-            try audioSession.setActive(true) //EXTREME WARnING - without this death
         }
         catch {
             Logger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
     
-    private func setupSampler() {
+    func startRecordingMicWithTapHandler(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
+        ///It appears that we cannot both record the mic and install a tap on it at the same time
+        ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
+        checkMicPermission(completion: {granted in
+            if !granted {
+                Logger.shared.reportError(self, "No microphone permission")
+            }
+        })
+        setSession()
+        
+        ///Based on CookBook Tuner
+        self.engine = AudioEngine()
+        guard let engine = self.engine else {
+            Logger.shared.reportError(self, "No engine")
+            return
+        }
+        guard let input = engine.input else {
+            Logger.shared.reportError(self, "No input")
+            return
+        }
+        if recordAudio {
+            do {
+                self.recorder = try NodeRecorder(node: input)
+            } catch let err {
+                Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
+            }
+        }
+        else {
+            self.recorder = nil
+        }
+        guard let device = engine.inputDevice else {
+            Logger.shared.reportError(self, "No input device")
+            return
+        }
+
+        self.initialDevice = device
+        self.mic = input
+        self.tappableNodeA = Fader(mic!)
+        self.tappableNodeB = Fader(tappableNodeA!)
+        self.tappableNodeC = Fader(tappableNodeB!)
+        self.silence = Fader(tappableNodeC!, gain: 0)
+        engine.output = silence
+
+//        self.pitchTap = PitchTap(mic!) { pitch, amp in
+//            DispatchQueue.main.async {
+//                print("============>>", pitch, amp)
+//            }
+//        }
+        self.pitchTap = installTapHandler(node: mic!,
+                          bufferSize: 4096,
+                          tapHandler: tapHandler,
+                          asynch: true)
+        self.tapHandler = tapHandler
+        if let pitchTap = self.pitchTap {
+            pitchTap.start()
+        }
+        
+        do {
+            ///As per the order in Cookbook Recorder example
+            try engine.start()
+            if recordAudio {
+                try recorder?.record()
+            }
+        }
+        catch {
+            Logger.shared.reportError(self, "Error starting engine: \(error)")
+        }
+    }
+
+    func stopRecording() {
+        if let tap = self.installedTap {
+            tap.stop()
+        }
+        self.tapHandler?.stopTapping()
+        if let recorder = recorder {
+            recorder.stop()
+            print("Recording stopped")
+            if let audioFile = recorder.audioFile {
+                ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
+                let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
+                Logger.shared.log(self, log)
+                self.audioPlayer = AudioPlayer(file: audioFile)
+                self.audioPlayer?.volume = 1.0  // Set volume to maximum
+                engine?.output = self.audioPlayer
+                //print("Player setup with file: \(file?.url)")
+            } else {
+                print("No audio file found after stopping recording")
+            }
+        }
+        engine?.stop()
+    }
+    
+    func setSession() {
+        ///nightmare
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setActive(true) //EXTREME WARNING - without this death 😡
+        }
+        catch {
+            Logger.shared.reportError(self, "Error starting engine: \(error)")
+        }
+    }
+    
+    private func setupSampler() -> MIDISampler? {
         do {
             //let samplerFileName = "akai_steinway"
             let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
             //let samplerFileName = "Abbey-Steinway-D-bs16i-v1.9"
-            try midiSampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
+            let sampler = MIDISampler()
+            try sampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
 //            let filter = LowPassFilter(midiSampler)
 //            Cut reverb
 //            filter.cutoffFrequency = 800.0 // Adjust this value to reduce reverb effect
@@ -221,9 +295,11 @@ class AudioManager {
 //            gate.headRoom = 0.1 // Adjust this value
 
             Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+            return sampler
         }
         catch {
             Logger.shared.reportError(self, error.localizedDescription)
+            return nil
         }
     }
     
@@ -329,9 +405,11 @@ class AudioManager {
         }
     }
 
-    func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) {
-        self.tapHandler = tapHandler
-        self.installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
+    func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
+        //self.tapHandler = tapHandler
+        let s = String(describing: type(of: tapHandler))
+        Logger.shared.log(self, "Installed tap handler type:\(s)")
+        let installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
             //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
             if !self.blockTaps {
                 if asynch {
@@ -345,6 +423,7 @@ class AudioManager {
             }
             //}
         }
+        return installedTap
     }
     
     func checkMicPermission(completion: @escaping (Bool) -> Void) {
@@ -370,13 +449,17 @@ class AudioManager {
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
         //sampler.startNote(UInt8(keyNumber), withVelocity: 64, onChannel: 0)
-        midiSampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
+        if let sampler = midiSampler {
+            sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
+        }
         
     }
 
     func pianoKeyUp(_ keyNumber: Int) {
         //sampler.stopNote(UInt8(keyNumber), onChannel: 0)
-        midiSampler.stop()
+        if let sampler = midiSampler {
+            sampler.stop()
+        }
     }
 }
 
@@ -455,3 +538,121 @@ extension AudioManager: PianoKeyboardDelegate {
 //        currentTapHandler?.stopTapping()
 //    }
     
+//    func startRecordingMicWithTapHandlerOld1(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
+//        self.engine = AudioEngine()
+//        guard let engine = self.engine else {
+//            return
+//        }
+//        mic = engine.input
+//        guard let mic = mic else {
+//            return
+//        }
+//        checkMicPermission(completion: {granted in
+//            if !granted {
+//                Logger.shared.reportError(self, "No microphone permission")
+//            }
+//        })
+//        setSession()
+//        do {
+//            if recordAudio {
+//                recorder = try NodeRecorder(node: mic)
+//            }
+//
+//            if true {
+//                self.mixer = Mixer(mic)
+//            //            //if tap handler attached to mixer the pitches it gets are wrong
+//            //            //if tap handler attached to mic the pitches it gets are rigth
+//            //
+//            //            //if volume is zero and tap handler attached to mixer tap handler gets zero amplitudes
+//            //            //silentMixer.volume = 0.0
+//                engine.output = self.mixer
+//            }
+//
+//            if false {
+//                let silencer = Fader(mic, gain: 0)
+//                self.silencer = silencer
+//                self.mixer = Mixer()
+//                mixer!.addInput(silencer)
+//
+//                //mixer.addInput(audioPlayer)
+//                setupSampler()
+//                mixer!.addInput(midiSampler)
+//
+//                //mixer.addInput(audioPlayer)
+//
+//                self.speechManager = SpeechManager.shared
+//
+//                engine.output = mixer
+//            }
+//            // Setup the pitch tap with the same mixer
+//            //installTapHandler(node: silentMixer,
+//            installTapHandler(node: mic,
+//                              bufferSize: 4096,
+//                              tapHandler: tapHandler,
+//                              asynch: true)
+//
+//            // Start the audio engine
+//            try engine.start()
+//            print("Audio engine started")
+//
+//            // Start recording
+//            if recordAudio {
+//                try recorder?.record()
+//                print("Recording started")
+//            }
+//
+//            // Start the tap
+//            if let tap = installedTap {
+//                tap.start()
+//                print("Tap started")
+//            }
+//        } catch {
+//            print("Error: \(error.localizedDescription)")
+//        }
+//    }
+
+//    func startRecordingMicWithTapHandlerOld(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
+//        Logger.shared.log(self, "startRecordingMicrophone")
+//        do {
+//            let session = AVAudioSession.sharedInstance()
+//            try session.setCategory(.playAndRecord, mode: .default)
+//            try session.setActive(true)
+//           // AudioManager.shared.configureAudio(start: false)
+//
+//            //WARNING 😣 - .record must come before tap.start
+//            if recordAudio {
+//                //self.microphoneRecorder = try NodeRecorder(node: mic!)
+//                if let recorder = self.recorder {
+//                    do {
+//                        //try self.microphoneRecorder!.reset()
+//                        try recorder.record() ///😡Causes exception if tap handler is Callibration
+//                        if false {
+//                            if recorder.isRecording {
+//                                ///Never, never, never access the URL of the audio file here or before stopping recording. This is BRAIN DEAD after hours of research 😡
+//                                ///Any attempt to read the URL causes the file to be zero length at recording end 😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡
+//                                Logger.shared.log(self, "Recording started... file:\(String(describing: recorder.audioFile?.url))")
+//                            }
+//                        }
+//                    }
+//                    catch {
+//                        Logger.shared.reportError(self, "Error starting recording: \(error)")
+//                    }
+//                }
+//            }
+//            try engine?.start()
+//            ///Moved install tap handler after record otherwise the record always records zero len file
+//            installTapHandler(node: mic!,
+//                              bufferSize: 4096,
+//                              tapHandler: tapHandler,
+//                              asynch: true)
+//            try engine?.start()
+//            if let tap = self.installedTap {
+//                tap.start()
+//            }
+//            else {
+//                Logger.shared.reportError(self, "No tap handler")
+//            }
+//        } catch let err {
+//            Logger.shared.reportError(self, err.localizedDescription)
+//        }
+//    }
