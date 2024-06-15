@@ -259,7 +259,7 @@ struct ScalesView: View {
                     }
                     else {
                         scalesModel.setRunningProcess(.practicing)
-                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. But watch for any wrong notes.")
+                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                     }
                 }
                 Button(action: {
@@ -332,13 +332,10 @@ struct ScalesView: View {
                 Button(hearingBacking ? "Backing Off" : "Backing On") {
                     hearingBacking.toggle()
                     if hearingBacking {
-                        metronome.startTimer(notified: Backer(), countAtQuaverRate: true, onDone: {
-                            //self.hearingGivenScale = false
-                            //scalesModel.startPracticeHandler()
-                        })
+                        scalesModel.setBacking(true)
                     }
                     else {
-                        metronome.stop()
+                        scalesModel.setBacking(false)
                     }
                 }
                 Button(action: {

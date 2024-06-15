@@ -7,7 +7,7 @@ struct ProcessUnderwayView: View {
     var body: some View {
         VStack {
             ZStack {
-                let width = CGFloat(UIScreen.main.bounds.size.width / 10)
+                let width = CGFloat(UIScreen.main.bounds.size.width / 12)
                 Circle()
                     .trim(from: 0.0, to: 0.8)
                     .stroke(Color.blue, lineWidth: 4)
@@ -34,6 +34,8 @@ struct ProcessUnderwayView: View {
 //                    }
 //                }
             }
+            .padding()
+            .hilighted(backgroundColor: .white)
             .onAppear {
                 self.animate.toggle()
             }

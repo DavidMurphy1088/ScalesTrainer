@@ -220,7 +220,7 @@ struct AnyScaleView: View {
             
             VStack {
                 //Spacer()
-                Text("Pick A Scale").font(.title).padding()
+                Text("Pick Any Scale").font(.title).padding()
                 VStack {
                     Text("Major Scales").padding()
                      HStack {

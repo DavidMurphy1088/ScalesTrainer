@@ -154,7 +154,22 @@ public class ScalesModel : ObservableObject {
             self.recordedAudioFile = file
         }
     }
-
+    
+    @Published private(set) var backingOn:Bool = false
+    func setBacking(_ way:Bool) {
+        let metronome = MetronomeModel.shared
+        if way {
+            metronome.startTimer(notified: Backer(), countAtQuaverRate: true, onDone: {
+            })
+        }
+        else {
+            metronome.stop()
+        }
+        DispatchQueue.main.async {
+            self.backingOn = way
+        }
+    }
+    
     func setRunningProcess(_ setProcess: RunningProcess) {
         //PianoKeyboardModel.shared.debug("Setting process ---> \(setProcess.description)")
         print("=============> Set process ---> from \(self.runningProcess) TO \(setProcess)")
@@ -162,6 +177,8 @@ public class ScalesModel : ObservableObject {
             self.runningProcess = setProcess
         }
         self.audioManager.stopRecording()
+        self.audioManager.resetAudioKit()
+        
         self.setShowKeyboard(true)
         self.setDirection(0)
         self.setProcessInstructions(nil)

@@ -41,6 +41,7 @@ struct LegendView: View {
     
     func SettingsView() -> some View {
         HStack {
+           
             Spacer()
             Button(action: {
                 scalesModel.setShowStaff(!scalesModel.showStaff)
@@ -62,11 +63,13 @@ struct LegendView: View {
 
     func title() -> String? {
         var title:String = "Fingers"
-//        if scalesModel.userFeedback != nil {
-//            title = "Feedback"
-//        }
-        if scalesModel.result != nil {
-            title = "Notes"
+        if scalesModel.runningProcess == .practicing  {
+            title = "Practice"
+        }
+        else {
+            if scalesModel.result != nil {
+                title = "Notes"
+            }
         }
         return title
     }
@@ -88,6 +91,19 @@ struct LegendView: View {
                         Text(fingerChangeName())
                         Spacer()
                     }
+                }
+                if scalesModel.runningProcess == .practicing {
+                    Spacer()
+                    Circle()
+                        .stroke(Color.green.opacity(1.0), lineWidth: 3)
+                        .frame(width: width())
+                    Text("Correctly Played")
+                    Spacer()
+                    Circle()
+                        .stroke(Color.red.opacity(1.0), lineWidth: 3)
+                        .frame(width: width())
+                    Text("Played But Not in Scale")
+                    Spacer()
                 }
 //                else {
 //                    if let feedback = scalesModel.userFeedback {
@@ -113,8 +129,10 @@ struct LegendView: View {
                     Text("In Scale But Not Played")
                     Spacer()
                 }
-                Spacer()
-                SettingsView()//.padding()
+                if scalesModel.runningProcess == .none {
+                    Spacer()
+                    SettingsView()//.padding()
+                }
                 Spacer()
             }
         }

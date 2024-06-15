@@ -92,11 +92,12 @@ class PracticeTapHandler : TapHandlerProtocol {
         let secs = Double(ms) / 1000.0
         var msg = ""
         msg += "secs:\(String(format: "%.2f", secs))"
+        msg += " ampFilter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))"
         msg += " amp:\(String(format: "%.4f", amplitude))"
-        msg += "  freq:\(String(format: "%.0f", frequency))"
+        msg += " >amplFilter:\(aboveFilter)"
+        
+        msg += "  \t\tfreq:\(String(format: "%.0f", frequency))"
         msg += "  MIDI \(String(describing: midi))"
-        msg += "  >amplFilter:\(aboveFilter)"
-        msg += "  >filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))"
 
         if aboveFilter {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {

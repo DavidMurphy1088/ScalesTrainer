@@ -44,8 +44,6 @@ class MetronomeModel {
     
     func stop() {
         isTiming = false
-        //timer?.cancel()
-        //timer = nil
     }
     
     private func stopTicking(notified: MetronomeTimerNotificationProtocol) {

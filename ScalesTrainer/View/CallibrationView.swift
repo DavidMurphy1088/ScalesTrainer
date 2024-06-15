@@ -11,8 +11,8 @@ public struct CallibrationView: View {
         var msg = "Calibration is required so Scales Trainer can accurately hear your piano."
         msg += "\n\n- Hit Start and then play one or two notes slowly and very softly then hit Stop."
         msg += "\n- Adjust callibration if the app is not accurately hearing your scale."
-        msg += "\n- You will need to do callibration again if you change the location of where the app is positioned when it listens."
-        msg += "\n\n👉 For best results your device should be placed near or against your piano"
+        msg += "\n- You will need to perform callibration again if you change the location of where the app is positioned when it listens."
+        msg += "\n\n👉 For best recording results your device should be placed near or against your piano"
         return msg
     }
     
@@ -27,17 +27,7 @@ public struct CallibrationView: View {
             if let score = scalesModel.score {
                 ScoreView(score: score, widthPadding: false).padding()
             }
-            Text("Amplitude filter set at:\(String(format: "%.4f", amplitudeFilterAdjust))").font(.title3).padding()
-            Slider(
-                value: $amplitudeFilterAdjust,
-                in: 0...0.5,
-                step: 0.001
-            )
-            .padding()
-            .onChange(of: amplitudeFilterAdjust, {
-                Settings.shared.amplitudeFilter = amplitudeFilterAdjust
-                Settings.shared.save(false)
-            })
+
             Button(callibrating ? "Stop" : "Start") {
                 callibrating.toggle()
                 if callibrating {
@@ -51,6 +41,24 @@ public struct CallibrationView: View {
             }
             .padding()
             .hilighted(backgroundColor: .blue)
+            
+            if !callibrating {
+                Text("Amplitude filter set at:\(String(format: "%.4f", amplitudeFilterAdjust))").font(.title3).padding()
+
+                HStack {
+                    Text("Manual adjust:").padding()
+                    Slider(
+                        value: $amplitudeFilterAdjust,
+                        in: 0...0.5,
+                        step: 0.001
+                    )
+                    .padding()
+                    .onChange(of: amplitudeFilterAdjust, {
+                        Settings.shared.amplitudeFilter = amplitudeFilterAdjust
+                        Settings.shared.save(false)
+                    })
+                }
+            }
         }
         .onAppear() {
             //scalesModel.selectedScaleRootIndex = 0

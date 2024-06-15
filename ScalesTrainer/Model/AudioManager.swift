@@ -12,7 +12,6 @@ class AudioManager {
     var installedTap: BaseTap?
     var midiSampler:MIDISampler?
     var recorder: NodeRecorder?
-    var silencer: Fader?
     var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
@@ -30,7 +29,7 @@ class AudioManager {
     var tappableNodeA: Fader?
     var tappableNodeB: Fader?
     var tappableNodeC: Fader?
-    var silence: Fader?
+    var silencer: Fader?
     var tapHandler: TapHandlerProtocol?
 
     init() {
@@ -158,7 +157,24 @@ class AudioManager {
         return nil
     }
     
-    func initSampler() {
+//    func initSampler() {
+//        setSession()
+//        self.engine = AudioEngine()
+//        guard let engine = self.engine else {
+//            Logger.shared.reportError(self, "No engine")
+//            return
+//        }
+//        self.midiSampler = setupSampler()
+//        engine.output = self.midiSampler
+//        do {
+//            try engine.start()
+//        }
+//        catch {
+//            Logger.shared.reportError(self, "Error starting engine: \(error)")
+//        }
+//    }
+    
+    func resetAudioKit() {
         setSession()
         self.engine = AudioEngine()
         guard let engine = self.engine else {
@@ -174,7 +190,7 @@ class AudioManager {
             Logger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
-    
+
     func startRecordingMicWithTapHandler(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
@@ -212,11 +228,31 @@ class AudioManager {
 
         self.initialDevice = device
         self.mic = input
-        self.tappableNodeA = Fader(mic!)
-        self.tappableNodeB = Fader(tappableNodeA!)
-        self.tappableNodeC = Fader(tappableNodeB!)
-        self.silence = Fader(tappableNodeC!, gain: 0)
-        engine.output = silence
+        
+        if true { 
+            self.tappableNodeA = Fader(mic!)
+            self.tappableNodeB = Fader(tappableNodeA!)
+            self.tappableNodeC = Fader(tappableNodeB!)
+            self.silencer = Fader(tappableNodeC!, gain: 0)
+            ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
+            engine.output = self.silencer
+        }
+        else {
+            ///Cant inlcude sampler for backer
+            ///This setup wont work since the ampl and freq passed to the PitchTap is garbage.
+            ///Maybe its not required anyway - anytime another node is generating output and a pitch tap is connected it will pick up output from that node in addition to the microphone.
+            ///Whereas the pitch tap should only ever include input from the user's instrument.
+            self.silencer = Fader(input, gain: 0)
+            self.mixer = Mixer(input)
+            mixer?.addInput(self.silencer!)
+            self.audioPlayer = AudioPlayer()
+            mixer?.addInput(self.audioPlayer!)
+            if let midiSampler = setupSampler() {
+                self.midiSampler = midiSampler
+                mixer?.addInput(midiSampler)
+            }
+            engine.output = self.mixer
+        }
 
 //        self.pitchTap = PitchTap(mic!) { pitch, amp in
 //            DispatchQueue.main.async {
