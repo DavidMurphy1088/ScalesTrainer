@@ -4,7 +4,7 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
-import Speech
+//import Speech
 
 class AudioManager {
     static let shared = AudioManager()
@@ -15,8 +15,7 @@ class AudioManager {
     var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
-    var speechManager:SpeechManager?
-    let speech = SpeechManager.shared
+
     var recordedFileSequenceNum = 0
     var metronomeCount = 0
     var simulator = false

@@ -14,14 +14,6 @@ struct PracticeJournalView: View {
     }
     @State var ordering:ScaleOrder = .none
     
-//    func getColor(day:String) -> Color {
-//        PracticeScale.dayNum += 1
-//        if PracticeScale.dayNum % 3 == 0 {
-//            return Color.gray
-//        }
-//        return Color.blue
-//    }
-    
     init(practiceJournal:PracticeJournal) {
         self.practiceJournal = practiceJournal
     }
@@ -67,94 +59,96 @@ struct PracticeJournalView: View {
     var body: some View {
         ZStack {
             let width = UIScreen.main.bounds.width * 0.95
-            let height = UIScreen.main.bounds.height * 0.9
+            let height = UIScreen.main.bounds.height * 0.8
             let barHeight = height * 0.010
             let barWidth = width * 0.6 * 0.5
-            Image(UIGlobals.shared.screenImageBackground)
+            Image(UIGlobals.shared.getBackground())
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text(getTitle()).font(.title).padding()////.commonFrameStyle(backgroundColor: .white).frame(width: width)
-                HStack {
-                    Spacer()
-
-                    Button(action: {
-                        self.ordering = .best
-                    }) {
-                        Text(" Show Highest Progress ").hilighted(backgroundColor: .blue)
-                    }
-                    Spacer()
-                    Button(action: {
-                        self.ordering = .worst
-                    }) {
-                        Text(" Show Lowest Progress ").hilighted(backgroundColor: .blue)
-                    }
-                    Spacer()
-                }
-                List {
-                    //ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted().enumerated()), id: \.element.id) { index, practiceJournalScale in
-                    ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted(by: { lhs, rhs in
-                        switch self.ordering {
-                        case .best:
-                            lhs.progressLH + lhs.progressRH > rhs.progressLH + lhs.progressRH
-                        case .worst:
-                            lhs.progressLH + lhs.progressRH < rhs.progressLH + lhs.progressRH
-                        default:
-                            lhs.orderIndex < rhs.orderIndex
+                Text(getTitle()).font(.title)
+                    .commonTitleStyle()
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            self.ordering = .best
+                        }) {
+                            Text(" Show Highest Progress Scales ").hilighted(backgroundColor: .blue)
                         }
+                        Spacer()
+                        Button(action: {
+                            self.ordering = .worst
+                        }) {
+                            Text(" Show Lowest Progress Scales ").hilighted(backgroundColor: .blue)
+                        }
+                        Spacer()
+                    }
+                    List {
+                        //ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted().enumerated()), id: \.element.id) { index, practiceJournalScale in
+                        ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted(by: { lhs, rhs in
+                            switch self.ordering {
+                            case .best:
+                                lhs.progressLH + lhs.progressRH > rhs.progressLH + lhs.progressRH
+                            case .worst:
+                                lhs.progressLH + lhs.progressRH < rhs.progressLH + lhs.progressRH
+                            default:
+                                lhs.orderIndex < rhs.orderIndex
+                            }
                             
                         }).enumerated()), id: \.element.id) { index, practiceJournalScale in
-                        VStack(spacing: 0) {
-                            HStack {
-                                Text("\(practiceJournalScale.getName())\n♩=90").padding()
-                                ///Text("Practice Days")
-                                WeekDaysView().padding()
-                                Spacer()
-                                NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
-                                    Text(" Practice \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
-                                }
-                                .frame(width: width * 0.2)
-                            }
                             VStack(spacing: 0) {
                                 HStack {
-                                    Text("LH\nProgress")
-                                    ZStack {
-                                        Rectangle()
-                                            .stroke(Color.gray, lineWidth: 1)
-                                            .frame(width: barWidth, height: barHeight)
-                                        HStack {
-                                            Rectangle()
-                                                .fill(getColor(progress: practiceJournalScale.progressLH))
-                                                .frame(width: barWidth * practiceJournalScale.progressLH, height: barHeight)
-                                            Spacer()
-                                        }
+                                    Text("\(practiceJournalScale.getName())\n♩=90").padding()
+                                    ///Text("Practice Days")
+                                    WeekDaysView().padding()
+                                    Spacer()
+                                    NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
+                                        Text(" Practice \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     }
-                                    Text("RH\nProgress")
-                                    ZStack {
-                                        Rectangle()
-                                            .stroke(Color.gray, lineWidth: 1)
-                                            .frame(width: barWidth, height: barHeight)
-                                        HStack {
-                                            Rectangle()
-                                                .fill(getColor(progress: practiceJournalScale.progressRH))
-                                                .frame(width: barWidth * practiceJournalScale.progressRH, height: barHeight)
-                                            Spacer()
-                                        }
-                                    }
-
+                                    .frame(width: width * 0.2)
                                 }
-                                //.frame(width: barWidth, height: barHeight)
+                                VStack(spacing: 0) {
+                                    HStack {
+                                        Text("LH\nProgress")
+                                        ZStack {
+                                            Rectangle()
+                                                .stroke(Color.gray, lineWidth: 1)
+                                                .frame(width: barWidth, height: barHeight)
+                                            HStack {
+                                                Rectangle()
+                                                    .fill(getColor(progress: practiceJournalScale.progressLH))
+                                                    .frame(width: barWidth * practiceJournalScale.progressLH, height: barHeight)
+                                                Spacer()
+                                            }
+                                        }
+                                        Text("RH\nProgress")
+                                        ZStack {
+                                            Rectangle()
+                                                .stroke(Color.gray, lineWidth: 1)
+                                                .frame(width: barWidth, height: barHeight)
+                                            HStack {
+                                                Rectangle()
+                                                    .fill(getColor(progress: practiceJournalScale.progressRH))
+                                                    .frame(width: barWidth * practiceJournalScale.progressRH, height: barHeight)
+                                                Spacer()
+                                            }
+                                        }
+                                        
+                                    }
+                                    //.frame(width: barWidth, height: barHeight)
+                                }
+                                .padding()
                             }
-                            .padding()
                         }
                     }
+                    .commonFrameStyle(backgroundColor: .white)
+                    //.padding()
                 }
-                .padding()
-                
             }
-            .commonFrameStyle(backgroundColor: .white)
+            
             .frame(width: width, height: height)
         }
     }

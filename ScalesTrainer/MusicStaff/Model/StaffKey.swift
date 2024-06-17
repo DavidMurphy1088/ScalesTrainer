@@ -4,7 +4,6 @@ import AVFoundation
 import AVKit
 import UIKit
 
-
 public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
     public let id = UUID()
     public var keySig: KeySignature

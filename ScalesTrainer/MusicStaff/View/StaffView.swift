@@ -260,7 +260,6 @@ public struct StaffView: View {
                         KeySignatureView(score: score,
                                          staffOffsets: keySigOffsets(staff: staff, keySignture: score.key.keySig))
                             .frame(height: score.getStaffHeight())
-                            
                     }
                 }
 

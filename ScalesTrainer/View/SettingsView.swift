@@ -5,26 +5,26 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-struct SpeechView : View {
-    @ObservedObject private var scalesModel = ScalesModel.shared
-    @State var setSpeechListenMode = false
-    var body: some View {
-        HStack {
-            HStack() {
-                Toggle("Speech Listen", isOn: $setSpeechListenMode)
-            }
-            .frame(width: UIScreen.main.bounds.width * 0.15)
-            .padding()
-            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-            .onChange(of: setSpeechListenMode, {scalesModel.setSpeechListenMode(setSpeechListenMode)})
-            .padding()
-            if scalesModel.speechListenMode {
-                let c = String(scalesModel.speechCommandsReceived)
-                Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
-            }
-        }
-    }
-}
+//struct SpeechView : View {
+//    @ObservedObject private var scalesModel = ScalesModel.shared
+//    @State var setSpeechListenMode = false
+////    var body: some View {
+////        HStack {
+////            HStack() {
+////                Toggle("Speech Listen", isOn: $setSpeechListenMode)
+////            }
+////            .frame(width: UIScreen.main.bounds.width * 0.15)
+////            .padding()
+////            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
+////            //.onChange(of: setSpeechListenMode, {scalesModel.setSpeechListenMode(setSpeechListenMode)})
+////            .padding()
+////            if scalesModel.speechListenMode {
+////                let c = String(scalesModel.speechCommandsReceived)
+////                Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
+////            }
+////        }
+////    }
+//}
 
 struct SettingsView: View {
     let scalesModel = ScalesModel.shared

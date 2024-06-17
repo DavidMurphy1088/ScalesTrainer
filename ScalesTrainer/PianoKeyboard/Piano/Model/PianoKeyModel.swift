@@ -83,7 +83,7 @@ public class PianoKeyModel: Identifiable, Hashable {
 
     public var name: String {
         //NoteName.name(for: noteMidiNumber, showSharps: !(scalesModel.scale.scaleRoot.flats > 0))
-        let major = scale.scaleType == .major
+        let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh].contains(scale.scaleType)
         let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor) //KeySignature(scalesModel.scale.scaleType.)
         let showSharps = ks.accidentalType == .sharp
         return NoteName.name(for: noteMidiNumber, showSharps: showSharps)

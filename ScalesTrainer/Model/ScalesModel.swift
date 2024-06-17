@@ -1,5 +1,5 @@
 import Foundation
-import Speech
+import AVFoundation
 import Combine
 import SwiftUI
 
@@ -93,9 +93,9 @@ public class ScalesModel : ObservableObject {
     ///Speech
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
-    let speechManager = SpeechManager.shared
-    var speechWords:[String] = []
-    var speechCommandsReceived = 0
+//    let speechManager = SpeechManager.shared
+//    var speechWords:[String] = []
+//    var speechCommandsReceived = 0
     
     @Published private(set) var result:Result?
     func setResult(_ result:Result?) {
@@ -387,7 +387,7 @@ public class ScalesModel : ObservableObject {
     
     func createScore(scale:Scale) -> Score {
         let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
-        let staffKeyType:StaffKey.StaffKeyType = [ScaleType.major, ScaleType.arpeggioMajor].contains(scale.scaleType) ? .major : .minor
+        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
         let score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
@@ -538,41 +538,41 @@ public class ScalesModel : ObservableObject {
         //}
     }
     
-    func setSpeechListenMode(_ way:Bool) {
-        DispatchQueue.main.async {
-            self.speechListenMode = way
-            if way {
-                self.speechManager.speak("Hello")
-                sleep(2)
-                if !self.speechManager.isRunning {
-                    self.speechManager.startAudioEngine()
-                    self.speechManager.startSpeechRecognition()
-                }
-            }
-            else {
-                self.speechManager.stopAudioEngine()
-            }
-        }
-    }
+//    func setSpeechListenMode(_ way:Bool) {
+//        DispatchQueue.main.async {
+//            self.speechListenMode = way
+//            if way {
+//                self.speechManager.speak("Hello")
+//                sleep(2)
+//                if !self.speechManager.isRunning {
+//                    self.speechManager.startAudioEngine()
+//                    self.speechManager.startSpeechRecognition()
+//                }
+//            }
+//            else {
+//                self.speechManager.stopAudioEngine()
+//            }
+//        }
+//    }
     
-    func processSpeech(speech: String) {
-        let words = speech.split(separator: " ")
-        guard words.count > 0 else {
-            return
-        }
-        speechCommandsReceived += 1
-        let m = "Process speech. commandCtr:\(speechCommandsReceived) Words:\(words)"
-        logger.log(self, m)
-        if words[0].uppercased() == "START" {
-            speechManager.stopAudioEngine()
-        }
-        DispatchQueue.main.async {
-            self.speechLastWord = String(words[0])
-            self.speechManager.stopAudioEngine()
-            self.speechManager.startAudioEngine()
-            self.speechManager.startSpeechRecognition()
-        }
-    }
+//    func processSpeech(speech: String) {
+//        let words = speech.split(separator: " ")
+//        guard words.count > 0 else {
+//            return
+//        }
+//        speechCommandsReceived += 1
+//        let m = "Process speech. commandCtr:\(speechCommandsReceived) Words:\(words)"
+//        logger.log(self, m)
+//        if words[0].uppercased() == "START" {
+//            speechManager.stopAudioEngine()
+//        }
+//        DispatchQueue.main.async {
+//            self.speechLastWord = String(words[0])
+//            self.speechManager.stopAudioEngine()
+//            self.speechManager.startAudioEngine()
+//            self.speechManager.startSpeechRecognition()
+//        }
+//    }
     
     func calculateCallibration() {
         guard let events = self.recordedTapEvents else {

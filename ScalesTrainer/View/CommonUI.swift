@@ -2,8 +2,14 @@ import SwiftUI
 
 class UIGlobals {
     static let shared = UIGlobals()
-    let screenImageBackground = "app_background_0_8"
-    let screenImageBackgroundOpacity = 0.5
+
+    func getBackground() -> String {
+        let r = Int.random(in: 0...10)
+        return "app_background_\(r)"
+    }
+    
+    //let screenImageBackgroundOpacity = 0.5
+    let screenImageBackgroundOpacity = 0.8
 }
 
 struct CommonFrameStyle: ViewModifier {
@@ -50,6 +56,16 @@ extension View {
                                   borderWidth: borderWidth))
     }
     
+    func commonTitleStyle(backgroundColor: Color = .white, //Color = Color(red: 0.9, green: 0.95, blue: 1.0),
+                          cornerRadius: CGFloat = 10,
+                          borderColor: Color = .blue,
+                          borderWidth: CGFloat = 1) -> some View {
+        modifier(CommonFrameStyle(backgroundColor: backgroundColor,
+                                  cornerRadius: cornerRadius,
+                                  borderColor: borderColor,
+                                  borderWidth: borderWidth))
+    }
+
     func hilighted(backgroundColor: Color = .green) -> some View {
         modifier(Hilighted(backgroundColor: backgroundColor))
     }

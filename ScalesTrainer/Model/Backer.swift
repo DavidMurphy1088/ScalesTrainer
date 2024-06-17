@@ -6,7 +6,7 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
-import Speech
+//import Speech
 
 class Backer :MetronomeTimerNotificationProtocol{
     let audioManager = AudioManager.shared

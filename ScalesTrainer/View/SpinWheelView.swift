@@ -1,7 +1,13 @@
 import SwiftUI
 
+enum WheelMode {
+    case pickRandomScale
+    case identifyTheScale
+}
+
 struct SpinWheelView: View {
     let practiceJournal:PracticeJournal
+    let mode: WheelMode
     enum SpinState {
         case notStarted
         case spinning
@@ -13,73 +19,83 @@ struct SpinWheelView: View {
     @State private var maxRotations: Double = 2 // Max rotations per second
     @State private var wheelSize: CGFloat = 0.8 // Size as a percentage of screen width
     @State private var selectedIndex = 0
+    let width = 0.8
+    @State var background = UIGlobals.shared.getBackground()
     
-    func getScaleNames() -> [String] {
-        var elements:[String] = []
+    func getScaleNames(mode:WheelMode) -> [String] {
+        var allScales:[String] = []
+        var roots:Set<String> = []
         for scale in practiceJournal.scaleGroup.scales {
-            elements.append(scale.getName())
+            //roots.insert(scale.scaleType.description)
+            roots.insert(scale.scaleRoot.name)
+            allScales.append(scale.getName())
+            //print(scale.getName(), scale.scaleType.description)
         }
-        return elements
+        return mode == .pickRandomScale ? allScales : Array(roots) 
     }
     
     var body: some View {
         ZStack {
-            Image(UIGlobals.shared.getBackground())
+            Image(background)
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Spacer()
-                GeometryReader { geometry in
-                    ZStack {
-                        SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
-                            .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
-                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                        
-                        // Fixed arrow
-                        Arrow()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.purple)
-                            .position(x: geometry.size.width * 0.92, y: geometry.size.height / 2)
-                    }
+                VStack {
+                    Text("Spin The Scale Wheel").font(.title)//.foregroundColor(.blue)
                 }
-                .edgesIgnoringSafeArea(.all)
-                Spacer()
-                if spinState == .notStarted {
-//                    Button(action: startSpinning) {
-//                    Text("Spin The Scale Wheel")
-//                        .padding()
-//                        .font(.title2)
-//                        .hilighted(backgroundColor: .blue)
-//                    }
-                    Button(action: {
-                        startSpinning(elements: getScaleNames())
-                    }) {
-                        HStack {
-                            Text("Spin The Scale Wheel")
-                                .padding()
+                .commonTitleStyle()
+                .frame(width: UIScreen.main.bounds.width * width)
+                .padding()
+                
+                VStack {
+                    GeometryReader { geometry in
+                        ZStack {
+                            SegmentedCircleView(elements: getScaleNames(mode:mode), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
+                                .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
+                                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                            
+                            // Fixed arrow
+                            Arrow()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.purple)
+                                .position(x: geometry.size.width * 0.92, y: geometry.size.height / 2)
+                        }
+                    }
+                    .edgesIgnoringSafeArea(.all)
+
+                    Spacer()
+                    if spinState == .notStarted {
+                        Button(action: {
+                            startSpinning(elements: getScaleNames(mode:mode))
+                        }) {
+                            HStack {
+                                Text("Spin")
+                                    .padding()
+                                    .font(.title2)
+                                    .hilighted(backgroundColor: .blue)
+                            }
+                        }
+                    }
+                    if spinState == .stopped {
+                        NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex])) {
+                            Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName())").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                 .font(.title2)
                                 .hilighted(backgroundColor: .blue)
                         }
+                        
                     }
-                //.disabled(isSpinning)
+                    Spacer()
                 }
-                if spinState == .stopped {
-                    NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex])) {
-                        Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName())").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
-                            .font(.title2)
-                            .hilighted(backgroundColor: .blue)
-                    }
-
-                }
+                .commonFrameStyle(backgroundColor: .white)
+                .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.7)
                 Spacer()
             }
-            .commonFrameStyle(backgroundColor: .white)
-            .frame(width: UIScreen.main.bounds.width * 0.8, height: UIScreen.main.bounds.height * 0.8)
         }
         .onAppear() {
             spinState = .notStarted
+            background = UIGlobals.shared.getBackground()
         }
     }
 

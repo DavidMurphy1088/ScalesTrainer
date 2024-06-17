@@ -9,7 +9,7 @@ struct ScalesView: View {
     
     //private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
-    @ObservedObject private var speech = SpeechManager.shared
+    //@ObservedObject private var speech = SpeechManager.shared
     private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
@@ -38,7 +38,8 @@ struct ScalesView: View {
     @State var scaleFollowWithSound = false
 
     @State var helpShowing:Bool = false
-
+    let backgroundImage = UIGlobals.shared.getBackground()
+    
     init(practiceJournalScale:PracticeJournalScale) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
         self.practiceJournalScale = practiceJournalScale
@@ -383,7 +384,7 @@ struct ScalesView: View {
     var body: some View {
         ZStack {
             VStack {
-                Image(UIGlobals.shared.screenImageBackground)
+                Image(backgroundImage)
                     .resizable()
                     .scaledToFill()
                     .edgesIgnoringSafeArea(.top)

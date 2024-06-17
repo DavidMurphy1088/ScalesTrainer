@@ -7,6 +7,9 @@
     " " : {
 
     },
+    "    " : {
+
+    },
     "  %@  " : {
 
     },
@@ -22,7 +25,13 @@
     " %lld" : {
 
     },
+    " === " : {
+
+    },
     " C" : {
+
+    },
+    " Go To Scale %@" : {
 
     },
     " Practice \n Scale " : {
@@ -31,10 +40,10 @@
     " Practice Scale %@ " : {
 
     },
-    " Show Highest Progress " : {
+    " Show Highest Progress Scales " : {
 
     },
-    " Show Lowest Progress " : {
+    " Show Lowest Progress Scales " : {
 
     },
     "?" : {
@@ -138,16 +147,6 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
-    "Last Word Number:%@ Word:%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Last Word Number:%1$@ Word:%2$@"
-          }
-        }
-      }
-    },
     "LH\nProgress" : {
 
     },
@@ -231,10 +230,10 @@
     "Scale Root:" : {
 
     },
-    "Scale Sets" : {
+    "Scale Type:" : {
 
     },
-    "Scale Type:" : {
+    "Select Exam Scales" : {
 
     },
     "Select Value" : {
@@ -252,7 +251,10 @@
     "Show Tap Data" : {
 
     },
-    "Speech Listen" : {
+    "Spin" : {
+
+    },
+    "Spin The Scale Wheel" : {
 
     },
     "Start" : {

@@ -48,6 +48,14 @@ class PracticeJournal {
         self.title = scaleGroup.name
     }
     
+    func getScaleList() -> [String] {
+        var name:[String] = []
+        for scale in self.scaleGroup.scales {
+            name.append(scale.getName())
+        }
+        return name
+    }
+    
     func makeRandomScale()  {
         var r = Int.random(in: 0...scaleGroup.scales.count-1)
         let scale = scaleGroup.scales[r]

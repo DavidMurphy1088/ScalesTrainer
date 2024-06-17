@@ -18,6 +18,17 @@ class HelpMessages {
 
         m = "Listen to the last scale recording you made."
         messages["Hear Recording"] = m
-
+        
+        ///Activities
+        ///
+        messages["Selected Exam Scales"] = "Select the grade for you exam scales to determine which scales will appear in your practice journal."
+        
+        messages["Practice Journal"] = "Practice journal lists all the scales in your selected grade. The journal describes which scales should be practised each day. The journal also shows your progress on each scale."
+        
+        messages["Spin The Scale Wheel"] = "Pick a scale randomly from your journal to practise and record."
+        
+        messages["Identify The Scale"] = "Listen to a random scale and identify the type of the scale."
+        
+        messages["Pick Any Scale"] = "Select any combination of scale root and type of scale to practice."
     }
 }

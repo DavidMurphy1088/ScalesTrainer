@@ -18,7 +18,17 @@ class FamousQuotes {
         quotes.append(("Scales are the skeleton of piano playing. They provide the framework upon which all great music is built.","Yuja Wang"))
         quotes.append(("Scales teach discipline, control, and a deep understanding of the instrument's geography. They are the key to unlocking the piano's full potential.","Hélène Grimaud"))
         quotes.append(("The discipline of scales is the foundation upon which we build our artistry. Without them, our technique would be like a house without a solid base.","Olga Kern"))
-//        quotes.append(("",""))
+        
+        quotes.append(("I do not think I could have played anything if I had not studied scales.","Clara Schumann"))
+        quotes.append(("The longer I work on the piano, the more I realize the importance of the elementary studies, such as scales.","Artur Schnabel"))
+        quotes.append(("Scales are the grammar of music. Without them, you cannot speak the language.","Martha Argerich"))
+        quotes.append(("Scales are the skeleton of music. They help you understand the structure and form.","Yuja Wang"))
+        quotes.append(("Daily practice of scales is essential for the development of a complete technique.","Carl Czerny"))
+        quotes.append(("Practicing scales is like sharpening the blade of a knife; it makes everything else easier and more precise.","Leon Fleisher"))
+        quotes.append(("Scales and arpeggios are the cornerstone of a solid piano technique. They build strength and dexterity.","Rosina Lhévinne"))
+        quotes.append(("Practicing scales is like daily exercise for an athlete. It keeps the pianist's muscles flexible and strong.","Daniel Barenboim"))
+
+       //quotes.append(("",""))
 
     }
     
