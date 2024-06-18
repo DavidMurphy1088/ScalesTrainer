@@ -173,7 +173,7 @@ class AudioManager {
 //        }
 //    }
     
-    func resetAudioKit() {
+    func resetAudioKitToMIDISampler() {
         setSession()
         self.engine = AudioEngine()
         guard let engine = self.engine else {

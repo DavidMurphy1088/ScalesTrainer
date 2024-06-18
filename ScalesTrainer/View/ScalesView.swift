@@ -132,16 +132,7 @@ struct ScalesView: View {
         VStack {
             if scalesModel.runningProcess == .followingScale {
                 VStack {
-                    //Spacer()
-//                    Button(scalesModel.runningProcess == .followingScale ? "Stop Following" : "Follow The Scale") {
-//                        if scalesModel.runningProcess == .followingScale {
-//                            scalesModel.setRunningProcess(.none)
-//                        }
-//                        else {
-//                            scalesModel.setRunningProcess(.followingScale)
-//                            ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-//                        }
-//                    }
+
                     Button("Stop Following Scale") {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -230,13 +221,8 @@ struct ScalesView: View {
             Spacer()
             HStack(spacing: 4) {
                 Button("Follow The Scale") {
-//                    //if scalesModel.runningProcess == .followingScale {
-//                        scalesModel.setRunningProcess(.none)
-//                    }
-//                    else {
-                        scalesModel.setRunningProcess(.followingScale)
-                        ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                    //}
+                    scalesModel.setRunningProcess(.followingScale)
+                    ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
                 
                 Button(action: {
@@ -303,16 +289,10 @@ struct ScalesView: View {
             }
             .padding()
             
-            if let recordedAudioFile = scalesModel.recordedAudioFile {
+            if let result = scalesModel.result {
                 HStack {
                     Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear Your Recording") {
-                        hearingRecording.toggle()
-                        if hearingRecording {
-                            AudioManager.shared.playRecordedFile(audioFile: recordedAudioFile)
-                        }
-                        else {
-                            metronome.stop()
-                        }
+                        scalesModel.setRunningProcess(.hearingRecording)
                     }
                     Button(action: {
                         showHelp("Hear Recording")

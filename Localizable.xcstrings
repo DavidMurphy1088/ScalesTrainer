@@ -25,9 +25,6 @@
     " %lld" : {
 
     },
-    " === " : {
-
-    },
     " C" : {
 
     },
@@ -121,9 +118,6 @@
     "Home" : {
 
     },
-    "In Scale But Not Played" : {
-
-    },
     "Keep Taps File?" : {
 
     },
@@ -165,7 +159,13 @@
     "Minor Scales" : {
 
     },
+    "Missing" : {
+
+    },
     "No" : {
+
+    },
+    "Not in Scale" : {
 
     },
     "Octaves:" : {
@@ -178,9 +178,6 @@
 
     },
     "Play Recording" : {
-
-    },
-    "Played But Not in Scale" : {
 
     },
     "Please enter your first name" : {
@@ -294,6 +291,9 @@
 
     },
     "Tempo" : {
+
+    },
+    "TEST" : {
 
     },
     "Under Construction" : {

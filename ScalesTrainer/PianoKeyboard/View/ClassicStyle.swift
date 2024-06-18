@@ -37,7 +37,9 @@ public struct ClassicStyle {
     }
     
     public func hiliteKeyColor(_ down: Bool) -> Color {
-        return down ? Color(red: 0.4, green: 0.6, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
+       // return down ? Color(red: 0.4, green: 0.6, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
+        //return down ? Color(red: 0.4, green: 0.8, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
+        return down ? Color(.red) : Color(.blue)
     }
     
     public func sharpFlatColor(_ down: Bool) -> Color {
@@ -85,6 +87,7 @@ public struct ClassicStyle {
                 ///Hilight the key if in following keys mode
                 let gradient = Gradient(colors: [
                     keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    Color(red: 1, green: 1, blue: 1),
                     Color(red: 1, green: 1, blue: 1),
                 ])
                 
@@ -205,9 +208,9 @@ public struct ClassicStyle {
                     .path(in: insetRect)
 
                 let gradientInset = Gradient(colors: [
-                    sharpFlatColor(key.touchDown),
                     keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
-                    
+                    sharpFlatColor(key.touchDown),
+                    sharpFlatColor(key.touchDown),
                 ])
                 
                 context.fill(pathInset, with: .linearGradient(

@@ -29,18 +29,18 @@ struct ScalesTrainerApp: App {
 //                    }
 //                    .tag(0)
 
+                TestView()
+                    .tabItem {
+                        Label("TEST", systemImage: "scribble")
+                    }
+                    .tag(0)
+                
                 HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
-                    .tag(0)
-
-                TestView()
-                //HomeView()
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
                     .tag(1)
+
                 
 //                ScalesView(activityMode: ActivityMode(name: "All", implemented: true, imageName: "", showStaff: false, showFingers: true))
 //                    .tabItem {

@@ -23,6 +23,7 @@ enum RunningProcess {
     //case recordingLeadIn
     case recordingScaleWithData
     case identifyingScale
+    case hearingRecording
     
     var description: String {
         switch self {
@@ -34,14 +35,14 @@ enum RunningProcess {
             return "Following Scale"
         case .practicing:
             return "Practicing"
-//        case .recordingLeadIn:
-//            return "Recording Lead-In"
         case .recordingScale:
             return "Recording Scale"
         case .recordingScaleWithData:
             return "Recording Scale With Data"
         case .identifyingScale:
             return "Identifying Scale"
+        case .hearingRecording:
+            return "Hearing Recording"
         }
     }
 }
@@ -177,7 +178,7 @@ public class ScalesModel : ObservableObject {
             self.runningProcess = setProcess
         }
         self.audioManager.stopRecording()
-        self.audioManager.resetAudioKit()
+        self.audioManager.resetAudioKitToMIDISampler()
         
         self.setShowKeyboard(true)
         self.setDirection(0)
@@ -192,62 +193,122 @@ public class ScalesModel : ObservableObject {
         PianoKeyboardModel.shared.redraw()
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
+            self.setResult(nil)
             let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : Settings.shared.amplitudeFilter, hilightPlayingNotes: true)
+            if setProcess == .followingScale {
+                ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
+                ///Wait for note to die down otherwise it triggers the first note detection
+                if self.scale.scaleNoteState.count > 0 {
+                    if let sampler = self.audioManager.midiSampler {
+                        let midi = UInt8(self.scale.scaleNoteState[0].midi)
+                        sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                        ///Without delay here the fist note wont hilight - no idea why
+                        sleep(2)
+                    }
+                }
+            }
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
+            if setProcess == .followingScale {
+                self.followScaleProcess(onDone: {cancelled in
+                    self.setRunningProcess(.none)
+                })
+            }
         }
         
-        if [RunningProcess.recordingScale].contains(setProcess)  {
-            keyboard.resetKeysWerePlayedState()
-            self.scale.resetMatchedData()
-            self.setShowKeyboard(false)
-            self.result = nil
-            self.setUserMessage(nil)
-            //self.setShowFingers(false)
-            keyboard.redraw()
-            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-            //😡 cannot record and tap concurrenlty
-            //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
-            self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
-        }
+//        if [RunningProcess.recordingScaleWithData].contains(setProcess)  {
+//            keyboard.resetKeysWerePlayedState()
+//            self.scale.resetMatchedData()
+//            self.setShowKeyboard(false)
+//            self.setResult(nil)
+//            keyboard.redraw()
+//            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
+//            self.audioManager.readTestData(tapHandler: tapHandler)
+//        }
         
-        if [RunningProcess.recordingScaleWithData].contains(setProcess)  {
+        if [RunningProcess.recordingScale, RunningProcess.recordingScaleWithData].contains(setProcess)  {
             keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
             self.setResult(nil)
+            self.setUserMessage(nil)
+            //self.setShowFingers(false)
             keyboard.redraw()
             let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-            self.audioManager.readTestData(tapHandler: tapHandler)
-        }
-        
-        if setProcess == .followingScale {
-            self.followScaleProcess(onDone: {cancelled in
-                self.setRunningProcess(.none)
-            })
-        }        
-        
-        if setProcess == .recordingScale {
-            let scaleLeadIn = ScaleLeadIn()
-            if Settings.shared.scaleLeadInBarCount > 0 {
-                ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
-                audioManager.blockTaps = true
-                self.setProcessInstructions(scaleLeadIn.getInstructions())
-                
-                MetronomeModel.shared.startTimer(notified: scaleLeadIn, countAtQuaverRate: false, onDone: {
-                    //self.setRunningProcess(.recordingScale)
-                    self.setLeadInBar(nil)
-                    self.setProcessInstructions("Record your scale")
-                    self.audioManager.blockTaps = false
-                    Logger.shared.log(self, "End lead in")
-                })
+            if setProcess == .recordingScaleWithData {
+                self.audioManager.readTestData(tapHandler: tapHandler)
             }
             else {
-                self.setProcessInstructions("Start recording your scale")
+                //😡 cannot record and tap concurrenlty
+                //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+                self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
+                let scaleLeadIn = ScaleLeadIn()
+                if Settings.shared.scaleLeadInBarCount > 0 {
+                    ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
+                    audioManager.blockTaps = true
+                    self.setProcessInstructions(scaleLeadIn.getInstructions())
+                    
+                    MetronomeModel.shared.startTimer(notified: scaleLeadIn, countAtQuaverRate: false, onDone: {
+                        //self.setRunningProcess(.recordingScale)
+                        self.setLeadInBar(nil)
+                        self.setProcessInstructions("Record your scale")
+                        self.audioManager.blockTaps = false
+                        Logger.shared.log(self, "End lead in")
+                    })
+                }
+                else {
+                    self.setProcessInstructions("Start recording your scale")
+                }
             }
+        }
+        
+        if [RunningProcess.hearingRecording].contains(setProcess) {
+            self.hearScale(onDone: nil)
         }
         //PianoKeyboardModel.shared.debug("END Setting process ---> \(setProcess.description)")
     }
+    
+    func hearScale(onDone:((_ cancelled:Bool)->Void)?) {
+        class Tick : MetronomeTimerNotificationProtocol {
+            var clickNum = 0
+            let keyboardModel =  PianoKeyboardModel.shared
+            
+            func metronomeStart() {
+                keyboardModel.linkScaleFingersToKeyboardKeys(direction: 0)
+            }
+            
+            func metronomeTicked(timerTickerNumber: Int) -> Bool {
+                var tappedKey:PianoKeyModel?
+                while clickNum < keyboardModel.pianoKeyModel.count {
+                    let key = keyboardModel.pianoKeyModel[clickNum]
+                    let state = key.keyWasPlayedState
+                    if state.tappedTimeAscending != nil {
+                        tappedKey = key
+                        break
+                    }
+                    clickNum += 1
+                }
+                guard let tappedKey = tappedKey else {
+                    return true
+                }
+                guard let sampler = AudioManager.shared.midiSampler else {
+                    return true
+                }
+                let midi = UInt8(tappedKey.midi)
+                sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                clickNum += 1
+                return false
 
+            }
+            func metronomeStop() {
+                //return false
+            }
+        }
+        let tick = Tick()
+        MetronomeModel.shared.startTimer(notified: tick, countAtQuaverRate: true, onDone: {
+            self.setRunningProcess(.none)
+        })
+    }
+    
     init() {
         //scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor"]
         //scaleTypeNames.append(["Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio", "Chromatic"])
@@ -299,16 +360,6 @@ public class ScalesModel : ObservableObject {
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async { [self] in
-            ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
-            ///Wait for note to die down otherwise it triggers the first note detection
-            if self.scale.scaleNoteState.count > 0 {
-                if let sampler = self.audioManager.midiSampler {
-                    sampler.play(noteNumber: UInt8(self.scale.scaleNoteState[0].midi), velocity: 64, channel: 0)
-                    ///Without delay here the fist note wont hilight - no idea why
-                    sleep(3)
-                }
-            }
-            
             let semaphore = DispatchSemaphore(value: 0)
             let keyboard = PianoKeyboardModel.shared
             var scaleIndex = 0

@@ -121,7 +121,6 @@ struct FamousQuotesView: View {
 struct ActivityModeView: View {
     @State var menuOptions:[ActivityMode] = []
     @State var helpShowing = false
-    //@State var helpTopic:String?
     
     func getView(activityMode: ActivityMode) -> some View {
         return activityMode.view
@@ -133,7 +132,10 @@ struct ActivityModeView: View {
                 HStack {
                     NavigationLink(destination: getView(activityMode: activityMode)) {
                         HStack {
-                            Text(activityMode.name).background(Color.clear)
+                            VStack {
+                                ///The usual amount of padding in SwiftUI is 16 points, so half of that would be 8 points.
+                                Text(activityMode.name).background(Color.clear).padding(.vertical, 8)
+                            }
                             Spacer()
                         }
                         .contentShape(Rectangle()) // Ensure the link only covers the text and spacer
@@ -188,36 +190,6 @@ struct ActivityModeView: View {
             menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
         }
     }
-
-    var body1: some View {
-        VStack {
-            List(menuOptions) { activityMode in
-                HStack {
-                    NavigationLink(destination: getView(activityMode: activityMode)) {
-                        HStack {
-                            Text(activityMode.name).background(Color.clear)
-                            Spacer()
-                        }
-                    }
-                    Text(" === ")
-                    Button(action: {
-                        //showHelp(activityMode.name)
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)
-                                .foregroundColor(.green)
-                        }
-                    }
-
-                }
-            }
-            //.navigationBarTitle("\(selectedSyllabus.name) Activities", displayMode: .inline)
-            .navigationViewStyle(StackNavigationViewStyle())
-            Spacer()
-        }
-    }
 }
 
 struct HomeView: View {
@@ -252,9 +224,8 @@ struct HomeView: View {
                             .padding()
 
                             ActivityModeView()
-                                //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
                                 .commonFrameStyle(backgroundColor: .white)
-                                .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.5)
+                                .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.6)
 
                             Spacer()
                         }

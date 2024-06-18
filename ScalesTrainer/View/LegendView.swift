@@ -36,12 +36,11 @@ struct LegendView: View {
     }
     
     func width() -> CGFloat {
-        return CGFloat(UIScreen.main.bounds.size.width / 30)
+        return CGFloat(UIScreen.main.bounds.size.width / 50)
     }
     
     func SettingsView() -> some View {
         HStack {
-           
             Spacer()
             Button(action: {
                 scalesModel.setShowStaff(!scalesModel.showStaff)
@@ -54,7 +53,7 @@ struct LegendView: View {
             Button(action: {
                 scalesModel.setShowFingers(!scalesModel.showFingers)
             }) {
-                Text(scalesModel.showStaff ? "Hide Fingers" : "Show Fingers")
+                Text(scalesModel.showFingers ? "Hide Fingers" : "Show Fingers")
             }
             .padding()
             Spacer()
@@ -102,7 +101,8 @@ struct LegendView: View {
                     Circle()
                         .stroke(Color.red.opacity(1.0), lineWidth: 3)
                         .frame(width: width())
-                    Text("Played But Not in Scale")
+                    //Text("Played But Not in Scale")
+                    Text("Not in Scale")
                     Spacer()
                 }
 //                else {
@@ -121,12 +121,14 @@ struct LegendView: View {
                     Circle()
                         .fill(Color.red.opacity(0.4))
                         .frame(width: width())
-                    Text("Played But Not in Scale")
+                    //Text("Played But Not in Scale")
+                    Text("Not in Scale")
                     Spacer()
                     Circle()
                         .fill(Color.yellow.opacity(0.4))
                         .frame(width: width())
-                    Text("In Scale But Not Played")
+                    //Text("In Scale But Not Played")
+                    Text("Missing")
                     Spacer()
                 }
                 if scalesModel.runningProcess == .none {
