@@ -477,6 +477,7 @@
 				799BE2A92BFF4EED004B19F6 /* LegendView.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
 				793D6E552BD65E4F0012F701 /* MetronomeView.swift */,
+				79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */,
 				79C8AD012C128F0200770C10 /* PracticeJournalView.swift */,
 				79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */,
 				79312DB02C0B2B7E005FDE8B /* ResultView.swift */,
@@ -484,7 +485,6 @@
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
-				79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

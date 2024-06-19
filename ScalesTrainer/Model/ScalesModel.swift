@@ -269,23 +269,52 @@ public class ScalesModel : ObservableObject {
     
     func hearScale(onDone:((_ cancelled:Bool)->Void)?) {
         class Tick : MetronomeTimerNotificationProtocol {
-            var clickNum = 0
+            var nextKeyToCheck = 0
             let keyboardModel =  PianoKeyboardModel.shared
+            let score = ScalesModel.shared.score
+            var direction = 0
+            var maxMidi:Int?
             
             func metronomeStart() {
                 keyboardModel.linkScaleFingersToKeyboardKeys(direction: 0)
+                keyboardModel.debug11("HERE")
+                for key in keyboardModel.pianoKeyModel {
+                    if key.keyWasPlayedState.tappedTimeAscending != nil {
+                        if maxMidi == nil || key.midi > maxMidi! {
+                            maxMidi = key.midi
+                        }
+                    }
+                }
             }
             
             func metronomeTicked(timerTickerNumber: Int) -> Bool {
-                var tappedKey:PianoKeyModel?
-                while clickNum < keyboardModel.pianoKeyModel.count {
-                    let key = keyboardModel.pianoKeyModel[clickNum]
+                var tappedKey:PianoKeyModel? = nil
+                while tappedKey == nil && (nextKeyToCheck >= 0 && nextKeyToCheck < keyboardModel.pianoKeyModel.count) {
+                    let key = keyboardModel.pianoKeyModel[nextKeyToCheck]
                     let state = key.keyWasPlayedState
-                    if state.tappedTimeAscending != nil {
-                        tappedKey = key
-                        break
+                    if direction == 0 {
+                        if state.tappedTimeAscending != nil {
+                            tappedKey = key
+                            if key.midi == maxMidi {
+                                direction = 1
+                                nextKeyToCheck -= 1
+                            }
+                            else {
+                                nextKeyToCheck += 1
+                            }
+                            break
+                        }
+                        else {
+                            nextKeyToCheck += 1
+                        }
                     }
-                    clickNum += 1
+                    else {
+                        nextKeyToCheck -= 1
+                        if state.tappedTimeDescending != nil {
+                            tappedKey = key
+                            break
+                        }
+                    }
                 }
                 guard let tappedKey = tappedKey else {
                     return true
@@ -293,14 +322,16 @@ public class ScalesModel : ObservableObject {
                 guard let sampler = AudioManager.shared.midiSampler else {
                     return true
                 }
-                let midi = UInt8(tappedKey.midi)
-                sampler.play(noteNumber: midi, velocity: 64, channel: 0)
-                clickNum += 1
+                let midi = tappedKey.midi
+                sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                tappedKey.setKeyPlaying(ascending: 0, hilight: true)
+                if let score = score {
+                    score.setScoreNotePlayed(midi: midi, direction: direction)
+                }
+                print("======>>", maxMidi, midi, direction)
                 return false
-
             }
             func metronomeStop() {
-                //return false
             }
         }
         let tick = Tick()

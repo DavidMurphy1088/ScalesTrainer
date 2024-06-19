@@ -15,11 +15,12 @@ struct SpinWheelView: View {
     }
     @State private var spinState:SpinState = .notStarted
     @State private var rotation: Double = 0
-    @State private var totalDuration: Double = 5 // Duration in seconds
-    @State private var maxRotations: Double = 2 // Max rotations per second
+    @State private var totalDuration: Double = 3 // Duration in seconds
+    @State private var maxRotations: Double = 1 // Max rotations per second
     @State private var wheelSize: CGFloat = 0.8 // Size as a percentage of screen width
     @State private var selectedIndex = 0
-    let width = 0.8
+    @State private var width = 0.0 //DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
+
     @State var background = UIGlobals.shared.getBackground()
     
     func getScaleNames(mode:WheelMode) -> [String] {
@@ -90,12 +91,13 @@ struct SpinWheelView: View {
                 }
                 .commonFrameStyle(backgroundColor: .white)
                 .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.7)
-                Spacer()
+                //Spacer()
             }
         }
         .onAppear() {
             spinState = .notStarted
             background = UIGlobals.shared.getBackground()
+            width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
         }
     }
 
@@ -116,7 +118,7 @@ struct SpinWheelView: View {
             let segmentAngle = 360.0 / Double(elements.count)
             let index = Int((360 - rotation) / segmentAngle) % elements.count
             self.selectedIndex = index
-            print("Top segment: \(elements[index])")
+            //print("Top segment: \(elements[index])")
         }
     }
 }

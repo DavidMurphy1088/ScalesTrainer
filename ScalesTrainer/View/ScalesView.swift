@@ -189,11 +189,12 @@ struct ScalesView: View {
             }
         }
     }
-    func ActionView() -> some View {
+    
+    func SelectActionView() -> some View {
         HStack {
             Spacer()
-            HStack {
-                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear The Scale") {
+            VStack {
+                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear\nThe\nScale") {
                     hearingGivenScale.toggle()
                     if hearingGivenScale {
                         //metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {
@@ -219,8 +220,8 @@ struct ScalesView: View {
             .padding()
             
             Spacer()
-            HStack(spacing: 4) {
-                Button("Follow The Scale") {
+            VStack(spacing: 4) {
+                Button("Follow\nThe\nScale") {
                     scalesModel.setRunningProcess(.followingScale)
                     ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
@@ -239,7 +240,7 @@ struct ScalesView: View {
             .padding()
             
             Spacer()
-            HStack(spacing: 4) {
+            VStack(spacing: 4) {
                 Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
                     if scalesModel.runningProcess == .practicing {
                         scalesModel.setRunningProcess(.none)
@@ -263,8 +264,8 @@ struct ScalesView: View {
             .padding()
             
             Spacer()
-            HStack {
-                Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record The Scale") {
+            VStack {
+                Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
                     if scalesModel.runningProcess == .recordingScale {
                         scalesModel.setRunningProcess(.none)
                         //AudioManager.shared.stopRecording()
@@ -274,7 +275,7 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.recordingScale)
                         //AudioManager.shared.startRecordingMicWithTapHandler(tapHandler: PracticeTapHandler(amplitudeFilter:0.0, hilightPlayingNotes:false), recordAudio: true)
                     }
-                }.padding()
+                }
 
                 Button(action: {
                     showHelp("Record The Scale")
@@ -290,8 +291,8 @@ struct ScalesView: View {
             .padding()
             
             if let result = scalesModel.result {
-                HStack {
-                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear Your Recording") {
+                VStack {
+                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
                         scalesModel.setRunningProcess(.hearingRecording)
                     }
                     Button(action: {
@@ -309,8 +310,8 @@ struct ScalesView: View {
             }
             
             Spacer()
-            HStack {
-                Button(hearingBacking ? "Backing Off" : "Backing On") {
+            VStack {
+                Button(hearingBacking ? "Backing Off" : "Backing\nOn") {
                     hearingBacking.toggle()
                     if hearingBacking {
                         scalesModel.setBacking(true)
@@ -410,7 +411,7 @@ struct ScalesView: View {
                         ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle()
                     }
                     
-                    ActionView().commonFrameStyle()
+                    SelectActionView().commonFrameStyle()
                     
                     if settings.recordDataMode {
                         DeveloperView().commonFrameStyle()
@@ -419,7 +420,8 @@ struct ScalesView: View {
                 Spacer()
             }
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
-            .frame(width: UIScreen.main.bounds.width * 0.95) //, height: UIScreen.main.bounds.height * 0.90)
+            ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
+            .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
             //.border(.red)
         }
         
@@ -459,10 +461,7 @@ struct ScalesView: View {
         
         ///Every time the view appears, not just the first.
         .onAppear {
-//            scalesModel.setKeyAndScale(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType, 
-//                                       octaves: self.practiceJournalScale.octaves ?? 1,
-//                                       hand: self.practiceJournalScale.hand ?? 0)
-            setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType, 
+            setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType,
                      octaves: self.practiceJournalScale.octaves ?? 1, hand: self.practiceJournalScale.hand ?? 0)
             
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
@@ -472,8 +471,6 @@ struct ScalesView: View {
             self.handIndex = scalesModel.selectedHandIndex
             self.octaveNumberIndex = scalesModel.selectedOctavesIndex
             self.directionIndex = scalesModel.selectedDirection
-            //scalesModel.setRunningProcess(.recordingScale)
-
         }
         .onDisappear {
             metronome.stop()

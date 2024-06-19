@@ -8,9 +8,9 @@ extension UIDeviceOrientation {
         return self == .landscapeLeft || self == .landscapeRight
     }
     
-    var isPortrait: Bool {
-        return self == .portrait || self == .portraitUpsideDown
-    }
+//    var isPortrait: Bool {
+//        return self == .portrait || self == .portraitUpsideDown
+//    }
 }
 
 // ObservableObject to monitor device orientation changes

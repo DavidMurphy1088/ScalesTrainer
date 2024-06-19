@@ -48,7 +48,6 @@ struct SelectScaleGroupView: View {
                     Text("Select Exam Scales").font(.title)//.foregroundColor(.blue)
                 }
                 .commonTitleStyle()
-                //.frame(width: UIScreen.main.bounds.width * width)
                 .padding()
                 Spacer()
                 List {
@@ -206,33 +205,32 @@ struct HomeView: View {
     }
     
     var body: some View {
-            VStack {
-                NavigationView {
-                    ZStack {
-                        Image(UIGlobals.shared.getBackground())
-                            .resizable()
-                            .scaledToFill()
-                            .edgesIgnoringSafeArea(.top)
-                            .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+        VStack {
+            NavigationView {
+                ZStack {
+                    Image(UIGlobals.shared.getBackground())
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.top)
+                        .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+                    VStack {
+                        Spacer()
                         VStack {
-                            Spacer()
-                            VStack {
-                                Text(getTitle()).font(.title)//.padding()
-                            }
-                            .commonTitleStyle()
-                            .frame(width: UIScreen.main.bounds.width * width)
-                            .padding()
-
-                            ActivityModeView()
-                                .commonFrameStyle(backgroundColor: .white)
-                                .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.6)
-
-                            Spacer()
+                            Text(getTitle()).font(.title)//.padding()
                         }
-                   }
-                }
+                        .commonTitleStyle()
+                        .frame(width: UIScreen.main.bounds.width * width)
+                        .padding()
 
-            //.frame(width: UIScreen.main.bounds.width * 0.80)
+                        ActivityModeView()
+                            .commonFrameStyle(backgroundColor: .white)
+                            .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.6)
+
+                        Spacer()
+                    }
+               }
+            }
+
             .navigationViewStyle(StackNavigationViewStyle())
         }
         //This causes all views navigated to to have the same dimensions
