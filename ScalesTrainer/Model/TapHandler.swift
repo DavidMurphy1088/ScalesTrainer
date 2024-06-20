@@ -333,17 +333,19 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 }
             }
         }
-
         lastAmplitude = amplitude
     }
     
     func stopTapping() {
         Logger.shared.log(self, "ScaleTapHandler stop")
         Logger.shared.calcValueLimits()     
-        //PianoKeyboardModel.shared.debug1("-->End Tap")
-        //ScalesModel.shared.scale.debug11("End Tap")
+
         let result = Result(runningProcess: .recordingScale, userMessage: "")
         result.buildResult()
+        if result.correctNotes == 0 {
+            ///Discard a quick throwaway attempt
+            return
+        }
         ScalesModel.shared.setResult(result)
         
         if Settings.shared.recordDataMode && self.tapRecords.count > 0 {

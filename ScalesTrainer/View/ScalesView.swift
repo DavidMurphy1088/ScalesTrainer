@@ -25,7 +25,7 @@ struct ScalesView: View {
     
     @State var amplitudeFilter: Double = 0.00
 
-    @State var hearingGivenScale = false
+   // @State var playingAlongWithScale = false
     @State var hearingBacking = false
     @State var hearingRecording = false
     @State var showingTapData = false
@@ -58,7 +58,7 @@ struct ScalesView: View {
         //scalesModel.setKeyAndScale()
         //audioManager.stopRecording()
         scalesModel.setResult(nil)
-        self.hearingGivenScale = false
+        //self.playingAlongWithScale = false
         self.directionIndex = 0
     }
     
@@ -128,11 +128,11 @@ struct ScalesView: View {
     }
     
     func StopProcessView() -> some View {
-        
         VStack {
+            
             if scalesModel.runningProcess == .followingScale {
+                ProcessUnderwayView()
                 VStack {
-
                     Button("Stop Following Scale") {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -142,9 +142,9 @@ struct ScalesView: View {
                 }
             }
             if scalesModel.runningProcess == .practicing {
+                ProcessUnderwayView()
                 VStack {
                     //Spacer()
-                    ProcessUnderwayView()
                     Button("Stop Practicing") {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -153,23 +153,22 @@ struct ScalesView: View {
                     //Spacer()
                 }
             }
-            if scalesModel.runningProcess == .identifyingScale {
+            if scalesModel.runningProcess == .playingAlongWithScale {
                 HStack {
-                    Spacer()
-                    Button("Stop Hearing Scale") {
+                    Button("Stop Playing Along") {
                         scalesModel.setRunningProcess(.none)
                     }
                     .padding()
                     .hilighted(backgroundColor: .blue)
-                    Spacer()
                 }
             }
             if [.recordingScale].contains(scalesModel.runningProcess) {
+                ProcessUnderwayView()
                 Spacer()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").padding()
-                    if scalesModel.leadInBar == nil {
-                        ProcessUnderwayView()
+                    //if scalesModel.leadInBar == nil {
+                        //ProcessUnderwayView()
                         Button("Stop Recording Scale") {
                             scalesModel.setRunningProcess(.none)
                             if Settings.shared.recordDataMode {
@@ -178,10 +177,10 @@ struct ScalesView: View {
                         }
                         .padding()
                         .hilighted(backgroundColor: .blue)
-                    }
-                    else {
-                        Text("  Metronome Lead-In...  ").padding().hilighted()
-                    }
+//                    }
+//                    else {
+//                        Text("  Metronome Lead-In...  ").padding().hilighted()
+//                    }
                 }
                 .commonFrameStyle()
                 .frame(width: UIScreen.main.bounds.width * 0.6)
@@ -192,33 +191,6 @@ struct ScalesView: View {
     
     func SelectActionView() -> some View {
         HStack {
-            Spacer()
-            VStack {
-                Button(hearingGivenScale ? "Stop Hearing Scale" : "Hear\nThe\nScale") {
-                    hearingGivenScale.toggle()
-                    if hearingGivenScale {
-                        //metronome.startTimer(notified: PianoKeyboardModel.shared, onDone: {
-                        metronome.startTimer(notified: HearScalePlayer(), countAtQuaverRate: true, onDone: {
-                            self.hearingGivenScale = false
-                        })
-                    }
-                    else {
-                        metronome.stop()
-                    }
-                }
-                Button(action: {
-                    showHelp("Hear The Scale")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)//.bold()
-                            .foregroundColor(.green)
-                    }
-                }
-            }
-            .padding()
-            
             Spacer()
             VStack(spacing: 4) {
                 Button("Follow\nThe\nScale") {
@@ -265,15 +237,31 @@ struct ScalesView: View {
             
             Spacer()
             VStack {
+                Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
+                    scalesModel.setRunningProcess(.playingAlongWithScale)
+                    ScalesModel.shared.setProcessInstructions("Play along with the scale as its played")
+                }
+                Button(action: {
+                    showHelp("PlayAlong")
+                }) {
+                    VStack {
+                        Image(systemName: "questionmark.circle")
+                            .imageScale(.large)
+                            .font(.title2)//.bold()
+                            .foregroundColor(.green)
+                    }
+                }
+            }
+            .padding()
+                        
+            Spacer()
+            VStack {
                 Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
                     if scalesModel.runningProcess == .recordingScale {
                         scalesModel.setRunningProcess(.none)
-                        //AudioManager.shared.stopRecording()
-
                     }
                     else {
                         scalesModel.setRunningProcess(.recordingScale)
-                        //AudioManager.shared.startRecordingMicWithTapHandler(tapHandler: PracticeTapHandler(amplitudeFilter:0.0, hilightPlayingNotes:false), recordAudio: true)
                     }
                 }
 
@@ -372,31 +360,39 @@ struct ScalesView: View {
                     .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             }
             VStack {
+                VStack {
+                    Text(scalesModel.scale.getScaleName()).font(.title)//.padding()
+                    if scalesModel.runningProcess == .none {
+                        SelectScaleParametersView()
+                    }
+                    ViewSettingsView()
+                }
+                .commonFrameStyle()
+                
                 if scalesModel.showKeyboard {
                     VStack {
-                        if scalesModel.runningProcess == .none {
-                            SelectScaleParametersView()
-                        }
-                        Text(scalesModel.scale.getScaleName()).font(.title).padding()
                         PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                             .frame(height: getKeyboardHeight())
                             .border(Color.gray)
                             .padding()
                         
-                        if scalesModel.showStaff {
-                            VStack {
-                                if let score = scalesModel.score {
-                                    ScoreView(score: score, widthPadding: false)
-                                        .border(Color.gray)
-                                        .padding()
-                                }
-                            }
-                        }
-                        LegendView()//.padding()
+
                     }
                     .commonFrameStyle()
                 }
-
+                
+                if scalesModel.showStaff {
+                    VStack {
+                        if let score = scalesModel.score {
+                            ScoreView(score: score, widthPadding: false)
+                                .border(Color.gray)
+                                .padding()
+                        }
+                    }.commonFrameStyle()
+                }
+                
+                LegendView().commonFrameStyle()
+                
                 if scalesModel.runningProcess != .none {
                     //Spacer()
                     StopProcessView()
@@ -406,17 +402,17 @@ struct ScalesView: View {
                     if let userMessage = scalesModel.userMessage {
                         Text(userMessage).padding().commonFrameStyle()
                     }
-
+                    
                     if let result = scalesModel.result {
                         ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle()
                     }
-                    
                     SelectActionView().commonFrameStyle()
-                    
-                    if settings.recordDataMode {
-                        DeveloperView().commonFrameStyle()
-                    }
+                }                
+                
+                if settings.recordDataMode {
+                    DeveloperView().commonFrameStyle()
                 }
+            
                 Spacer()
             }
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡

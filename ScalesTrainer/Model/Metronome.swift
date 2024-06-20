@@ -57,7 +57,6 @@ class MetronomeModel {
     }
     
     public func startTimer(notified: MetronomeTimerNotificationProtocol, countAtQuaverRate:Bool, onDone:(() -> Void)?) {
-        self.isTiming = true
         for player in self.audioPlayers {
             audioManager.mixer?.addInput(player)
         }
@@ -67,6 +66,7 @@ class MetronomeModel {
             delay = delay * 0.5 ///Scales are written as 1/8 notes
         }
         notified.metronomeStart()
+        
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
 //        if false {
 //            DispatchQueue.global(qos: .background).async { [self] in
@@ -90,29 +90,32 @@ class MetronomeModel {
 //            }
 //        }
 //        else {
-            DispatchQueue.global(qos: .background).async { [self] in
-                while self.isTiming {
-                    let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
-                    if stop {
-                        DispatchQueue.main.async { [self] in
-                            self.isTiming = false
-                        }
-                        break
-                    }
-                    else {
-                        self.timerTickerNumber += 1
-                        usleep(useconds_t(delay))
-                    }
+        
+        DispatchQueue.global(qos: .background).async { [self] in
+            self.isTiming = true
+            while self.isTiming {
+                let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                if stop {
+                    //DispatchQueue.main.async { [self] in
+                    self.isTiming = false
+                    usleep(useconds_t(delay / 1.0))
+                    //}
+                    break
                 }
-                ///Let the last 'played' key show for a short time
-                let delay = (1.2) * 1000000
-                usleep(useconds_t(delay))
-                self.stopTicking(notified: notified)
-                if let onDone = onDone {
-                    onDone()
+                else {
+                    self.timerTickerNumber += 1
+                    usleep(useconds_t(delay))
                 }
             }
-//        }
+            ///Let the last 'played' key show for a short time
+            ///Following ruins lead in for play along
+//            let endDelay = (1.2) * 1000000
+//            usleep(useconds_t(endDelay))
+//            self.stopTicking(notified: notified)
+            if let onDone = onDone {
+                onDone()
+            }
+        }
     }
     
 }

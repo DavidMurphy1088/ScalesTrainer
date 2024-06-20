@@ -167,26 +167,28 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            menuOptions.append(ActivityMode(name: "Select Exam Scales", view: AnyView(SelectScaleGroupView())))
-            if let practiceJournal = PracticeJournal.shared {
-                let name = "Practice Journal" // for " + practiceJournal.title
-                menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
-                menuOptions.append(ActivityMode(name: "Spin the Scale Wheel", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .pickRandomScale))))
-                menuOptions.append(ActivityMode(name: "Identify The Scale", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .identifyTheScale))))
+            if menuOptions.count == 0 {
+                menuOptions.append(ActivityMode(name: "Select Exam Scales", view: AnyView(SelectScaleGroupView())))
+                if let practiceJournal = PracticeJournal.shared {
+                    let name = "Practice Journal" // for " + practiceJournal.title
+                    menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
+                    menuOptions.append(ActivityMode(name: "Spin the Scale Wheel", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .pickRandomScale))))
+                    //menuOptions.append(ActivityMode(name: "Identify The Scale", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .identifyTheScale))))
+                }
+                menuOptions.append(ActivityMode(name: "Pick Any Scale", view: AnyView(PickAnyScaleView())))
+                
+                //            menuOptions.append(ActivityMode(name: "Practice Scales", view: AnyView(ScalesView(practiceJournalScale: PracticeJournal.shared)), showStaff: true, showFingers: true))
+                
+                //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
+                //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
+                //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
+                
+                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
+                
+                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
+                menuOptions.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView())))
+                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
             }
-            menuOptions.append(ActivityMode(name: "Pick Any Scale", view: AnyView(PickAnyScaleView())))
-
-//            menuOptions.append(ActivityMode(name: "Practice Scales", view: AnyView(ScalesView(practiceJournalScale: PracticeJournal.shared)), showStaff: true, showFingers: true))
-
-            //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
-    //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
-            //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-            
-            menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
-            
-            menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
-            menuOptions.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView())))
-            menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
         }
     }
 }

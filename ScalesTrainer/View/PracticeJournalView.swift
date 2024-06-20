@@ -144,11 +144,9 @@ struct PracticeJournalView: View {
                             }
                         }
                     }
-                    .commonFrameStyle(backgroundColor: .white)
-                    //.padding()
                 }
+                .commonFrameStyle(backgroundColor: .white)
             }
-            
             .frame(width: width, height: height)
         }
     }

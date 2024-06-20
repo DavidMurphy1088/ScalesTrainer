@@ -9,7 +9,7 @@ class HelpMessages {
         m = "Practice lets you practice playing the scale by watching the notes you play on the keyboard and staff to check that they are correct. \n\nCheck the displayed keyboard to make sure you are using the right finger for each note. \n\nWhen you have learnt the scale trying practicing without the finger numbers displayed to see how well you remember the scale."
         messages["Practice"] = m
         
-        messages["Hear The Scale"] = "Hear the scale played ascending and descending. Watch the keyboard and staff to see which notes are played."
+        messages["PlayAlong"] = "Play along as the scale is played ascending and descending. Listen for any notes you play that are not in the scale. Make sure you use the correct fingers which are shown on the keyboard.\n\nWhen you can play along without mistakes, try playing along with the fingers and keyboard turned off."
         
         messages["Backing"] = "Backing provides a backing harmony that you can use when practicing the scale. \n\nThe backing adjusts to the key of your scale so you can hear how the scale sounds alongside the harmony. \n\nWhen you play the scale with backing on, correctly played notes will sound good with the backing harmony. Notice that notes not in the scale sound unpleasant against the backing harmony."
         

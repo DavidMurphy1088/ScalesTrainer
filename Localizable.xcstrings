@@ -19,9 +19,6 @@
     "  👉 %@  " : {
 
     },
-    "  Metronome Lead-In...  " : {
-
-    },
     " %lld" : {
 
     },
@@ -103,13 +100,13 @@
     "Hand:" : {
 
     },
-    "Hear\nThe\nScale" : {
-
-    },
     "Hear\nYour\nRecording" : {
 
     },
     "Hide Fingers" : {
+
+    },
+    "Hide Keyboard" : {
 
     },
     "Hide Staff" : {
@@ -177,6 +174,9 @@
     "Pick Any Scale" : {
 
     },
+    "Play Along\nWith Scale" : {
+
+    },
     "Play Recording" : {
 
     },
@@ -242,6 +242,9 @@
     "Show Fingers" : {
 
     },
+    "Show Keyboard" : {
+
+    },
     "Show Staff" : {
 
     },
@@ -249,9 +252,6 @@
 
     },
     "Spin" : {
-
-    },
-    "Spin The Scale Wheel" : {
 
     },
     "Start" : {
@@ -269,13 +269,13 @@
     "Stop Following Scale" : {
 
     },
-    "Stop Hearing Scale" : {
-
-    },
     "Stop Hearing Your Recording" : {
 
     },
     "Stop Playback" : {
+
+    },
+    "Stop Playing Along" : {
 
     },
     "Stop Practicing" : {

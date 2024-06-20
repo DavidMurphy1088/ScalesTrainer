@@ -35,6 +35,15 @@ struct SpinWheelView: View {
         return mode == .pickRandomScale ? allScales : Array(roots) 
     }
     
+    func getTitle() -> String {
+        var title = "Scales for \(practiceJournal.title)"
+        let name = Settings.shared.firstName
+        if name.count > 0 {
+            title = name + "'s \(title)"
+        }
+        return title
+    }
+    
     var body: some View {
         ZStack {
             Image(background)
@@ -44,13 +53,7 @@ struct SpinWheelView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
                 VStack {
-                    Text("Spin The Scale Wheel").font(.title)//.foregroundColor(.blue)
-                }
-                .commonTitleStyle()
-                .frame(width: UIScreen.main.bounds.width * width)
-                .padding()
-                
-                VStack {
+                    Text(getTitle()).font(.title).padding()
                     GeometryReader { geometry in
                         ZStack {
                             SegmentedCircleView(elements: getScaleNames(mode:mode), rotation: rotation, wheelSize: wheelSize * geometry.size.width)

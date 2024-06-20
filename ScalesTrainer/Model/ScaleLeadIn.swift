@@ -5,7 +5,7 @@ import AVFoundation
 import Foundation
 import AudioKitEX
 
-class ScaleLeadIn : MetronomeTimerNotificationProtocol{
+class ScaleLeadIn : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var callNum = 0
     var chordRoots:[Int] = []
@@ -13,10 +13,6 @@ class ScaleLeadIn : MetronomeTimerNotificationProtocol{
     var metronomeAudioPlayerHigh:AVAudioPlayer?
     var beatCount = 0
     let barCount = Settings.shared.scaleLeadInBarCount * 1
-    
-    func useMajor(_ scale:Scale) -> Bool {
-        return [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh].contains(scale.scaleType)
-    }
     
     func metronomeStart() {
         metronomeAudioPlayerLow = audioManager.loadAudioPlayer(name: "metronome_mechanical_low")
@@ -32,7 +28,7 @@ class ScaleLeadIn : MetronomeTimerNotificationProtocol{
             metronomeAudioPlayerLow!.play()
         }
         beatCount += 1
-        ScalesModel.shared.setLeadInBar("Beat \(beatCount)")
+        //ScalesModel.shared.setLeadInBar("Beat \(beatCount)")
         return beatCount >= barCount * 4
     }
     

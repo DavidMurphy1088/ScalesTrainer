@@ -1,5 +1,41 @@
 import SwiftUI
 
+struct ViewSettingsView: View {
+    @ObservedObject var logger = Logger.shared
+    @ObservedObject var scalesModel = ScalesModel.shared
+    var body: some View {
+        HStack {
+            Spacer()
+            Button(action: {
+                scalesModel.setShowKeyboard(!scalesModel.showKeyboard)
+            }) {
+                Text(scalesModel.showKeyboard ? "Hide Keyboard" : "Show Keyboard")
+            }
+            .padding()
+            
+            if scalesModel.showKeyboard {
+                Spacer()
+                Button(action: {
+                    scalesModel.setShowFingers(!scalesModel.showFingers)
+                }) {
+                    Text(scalesModel.showFingers ? "Hide Fingers" : "Show Fingers")
+                }
+                .padding()
+            }
+            
+            Spacer()
+            Button(action: {
+                scalesModel.setShowStaff(!scalesModel.showStaff)
+            }) {
+                Text(scalesModel.showStaff ? "Hide Staff" : "Show Staff")
+            }
+            .padding()
+            
+            Spacer()
+        }
+    }
+}
+
 struct LegendView: View {
     @ObservedObject var logger = Logger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
@@ -39,29 +75,8 @@ struct LegendView: View {
         return CGFloat(UIScreen.main.bounds.size.width / 50)
     }
     
-    func SettingsView() -> some View {
-        HStack {
-            Spacer()
-            Button(action: {
-                scalesModel.setShowStaff(!scalesModel.showStaff)
-            }) {
-                Text(scalesModel.showStaff ? "Hide Staff" : "Show Staff")
-            }
-            .padding()
-            
-            Spacer()
-            Button(action: {
-                scalesModel.setShowFingers(!scalesModel.showFingers)
-            }) {
-                Text(scalesModel.showFingers ? "Hide Fingers" : "Show Fingers")
-            }
-            .padding()
-            Spacer()
-        }
-    }
-
     func title() -> String? {
-        var title:String = "Fingers"
+        var title:String = scalesModel.showKeyboard ? "Fingers" : ""
         if scalesModel.runningProcess == .practicing  {
             title = "Practice"
         }
@@ -79,16 +94,18 @@ struct LegendView: View {
                 if let title = title() {
                     Text("  \(title)  ").hilighted()
                 }
-                if scalesModel.result == nil { //}&& scalesModel.userFeedback == nil {
-                    if scalesModel.showFingers {
-                        Spacer()
-                        Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                        Text("Finger")
-                        
-                        Spacer()
-                        Text("1").foregroundColor(.orange).font(.title2).bold()
-                        Text(fingerChangeName())
-                        Spacer()
+                if scalesModel.result == nil {
+                    if scalesModel.showKeyboard {
+                        if scalesModel.showFingers {
+                            Spacer()
+                            Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
+                            Text("Finger")
+                            
+                            Spacer()
+                            Text("1").foregroundColor(.orange).font(.title2).bold()
+                            Text(fingerChangeName())
+                            Spacer()
+                        }
                     }
                 }
                 if scalesModel.runningProcess == .practicing {
@@ -105,11 +122,6 @@ struct LegendView: View {
                     Text("Not in Scale")
                     Spacer()
                 }
-//                else {
-//                    if let feedback = scalesModel.userFeedback {
-//                        Text(feedback)
-//                    }
-//                }
                 
                 if scalesModel.result != nil {
                     Spacer()
@@ -131,16 +143,16 @@ struct LegendView: View {
                     Text("Missing")
                     Spacer()
                 }
-                if scalesModel.runningProcess == .none {
-                    Spacer()
-                    SettingsView()//.padding()
-                }
+//                if scalesModel.runningProcess == .none {
+//                    Spacer().
+//                    SettingsView()//.padding()
+//                }
                 Spacer()
             }
+            if let instructions = scalesModel.processInstructions {
+                Text("  👉 \(instructions)  ").padding()
+            }
         }
-        if let instructions = scalesModel.processInstructions {
-            Text("  👉 \(instructions)  ").hilighted().padding()
-            Text("").padding()
-        }
+
     }
 }

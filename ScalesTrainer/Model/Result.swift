@@ -15,6 +15,7 @@ class Result : Equatable {
     var wrongCountAsc = 0
     var wrongCountDesc = 0
     var recordedTempo:Int = 0
+    var correctNotes = 0
     
     init(runningProcess:RunningProcess, userMessage:String) {
         self.userMessage = userMessage
@@ -50,6 +51,7 @@ class Result : Equatable {
                         else {
                             if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                                 timeSlice.setStatusTag(.correct)
+                                self.correctNotes += 1
                             }
                         }
                     }
@@ -63,6 +65,7 @@ class Result : Equatable {
                         else {
                             if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, count: direction) {
                                 timeSlice.setStatusTag(.correct)
+                                self.correctNotes += 1
                             }
                         }
                     }
