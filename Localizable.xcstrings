@@ -138,6 +138,9 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
+    "Leading In" : {
+
+    },
     "LH\nProgress" : {
 
     },
@@ -267,6 +270,9 @@
 
     },
     "Stop Following Scale" : {
+
+    },
+    "Stop Hearing" : {
 
     },
     "Stop Hearing Your Recording" : {

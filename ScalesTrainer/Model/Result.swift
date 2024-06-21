@@ -98,8 +98,9 @@ class Result : Equatable {
             let _ = scale.setNoteNormalizedValues()
             //score.calculateTapToValueRatios()
             score.setNormalizedValues(scale: scale)
+            score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
         }
-        //score.debugScore("=== Result", withBeam: false, toleranceLevel: 0)
+        
     }
 }
 

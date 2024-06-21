@@ -45,7 +45,6 @@ public class PianoKeyModel: Identifiable, Hashable {
     }
     
     public func setKeyPlaying(ascending:Int, hilight:Bool) {
-        //self.keyboardModel.clearAllPlayingMidi(besidesID: self.id)
         if hilight {
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
@@ -58,19 +57,16 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
             
-            //if scalesModel.showStaff {
-                if let score  = scalesModel.score {
-                    if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
-                        //score.clearAllPlayingNotes(besidesMidi: self.midi)
-                        DispatchQueue.global(qos: .background).async {
-                            usleep(1000000 * UInt32(self.keySoundingSeconds))
-                            DispatchQueue.main.async {
-                                staffNote.setShowIsPlaying(false)
-                            }
+            if let score  = scalesModel.score {
+                if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
+                    DispatchQueue.global(qos: .background).async {
+                        usleep(1000000 * UInt32(self.keySoundingSeconds))
+                        DispatchQueue.main.async {
+                            staffNote.setShowIsPlaying(false)
                         }
                     }
                 }
-            //}
+            }
         }
         if let callback = self.wasPlayedCallback {
             callback()

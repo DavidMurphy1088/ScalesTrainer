@@ -20,12 +20,12 @@ enum RunningProcess {
     case followingScale
     case practicing
     case recordingScale
-    //case recordingLeadIn
+    case leadingIn
     case recordingScaleWithData
     //case identifyingScale
     case hearingRecording
     case playingAlongWithScale
-    
+
     var description: String {
         switch self {
         case .none:
@@ -46,6 +46,8 @@ enum RunningProcess {
             return "Hearing Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
+        case .leadingIn:
+            return "Leading In"
         }
     }
 }
@@ -92,7 +94,6 @@ public class ScalesModel : ObservableObject {
     let logger = Logger.shared
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
-    //var selectedScaleGroup:ScaleGroup = ScaleGroup.options[2]
     
     ///Speech
     @Published var speechListenMode = false
@@ -140,13 +141,20 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-//    @Published var leadInBar:String? = nil
-//    func setLeadInBar(_ newValue: String?) {
-//        DispatchQueue.main.async {
-//            self.leadInBar = newValue
-//        }
-//    }
-
+    @Published private(set) var showParameters:Bool = true
+    func setShowParameters(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.showParameters = newValue
+        }
+    }
+    
+    @Published private(set) var showLegend:Bool = true
+    func setShowLegend(_ newValue: Bool) {
+        DispatchQueue.main.async {
+            self.showLegend = newValue
+        }
+    }
+    
     @Published private(set) var runningProcess:RunningProcess = .none
     
     @Published private(set) var recordedAudioFile:AVAudioFile?
@@ -160,7 +168,7 @@ public class ScalesModel : ObservableObject {
     func setBacking(_ way:Bool) {
         let metronome = MetronomeModel.shared
         if way {
-            metronome.startTimer(notified: Backer(), countAtQuaverRate: true, onDone: {
+            metronome.startTimer(notified: Backer(), countAtQuaverRate: false, onDone: {
             })
         }
         else {
@@ -172,8 +180,7 @@ public class ScalesModel : ObservableObject {
     }
     
     func setRunningProcess(_ setProcess: RunningProcess) {
-        //PianoKeyboardModel.shared.debug("Setting process ---> \(setProcess.description)")
-        print("=============> Set process ---> from \(self.runningProcess) TO \(setProcess)")
+        Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
         }
@@ -181,6 +188,8 @@ public class ScalesModel : ObservableObject {
         self.audioManager.resetAudioKitToMIDISampler()
         
         self.setShowKeyboard(true)
+        self.setShowParameters(true)
+        self.setShowLegend(true)
         self.setDirection(0)
         self.setProcessInstructions(nil)
         if result != nil {
@@ -223,9 +232,22 @@ public class ScalesModel : ObservableObject {
         if [RunningProcess.playingAlongWithScale].contains(setProcess)  {
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
+            DispatchQueue.main.async {
+                self.runningProcess = .leadingIn
+            }
             doLeadIn(instruction: "Play along with the scale", leadInDone: {
+                DispatchQueue.main.async {
+                    self.runningProcess = .playingAlongWithScale
+                }
                 metronome.startTimer(notified: HearScalePlayer(), countAtQuaverRate: false, onDone: {
                 })
+            })
+        }
+        
+        if [RunningProcess.hearingRecording].contains(setProcess)  {
+            let metronome = MetronomeModel.shared
+            metronome.startTimer(notified: HearUserScale(), countAtQuaverRate: false, onDone: {
+                self.setRunningProcess(.none)
             })
         }
 
@@ -233,6 +255,9 @@ public class ScalesModel : ObservableObject {
             keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
+            self.setShowStaff(false)
+            self.setShowParameters(false)
+            self.setShowLegend(false)
             self.setResult(nil)
             self.setUserMessage(nil)
             //self.setShowFingers(false)
@@ -242,9 +267,15 @@ public class ScalesModel : ObservableObject {
                 self.audioManager.readTestData(tapHandler: tapHandler)
             }
             else {
+                DispatchQueue.main.async {
+                    self.runningProcess = .leadingIn
+                }
                 doLeadIn(instruction: "Record your scale", leadInDone: {
                     //😡😡😡😡😡😡 cannot record and tap concurrenlty
                     //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+                    DispatchQueue.main.async {
+                        self.runningProcess = RunningProcess.recordingScale
+                    }
                     self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
                 })
             }
@@ -416,7 +447,7 @@ public class ScalesModel : ObservableObject {
         var lastNote:StaffNote?
         
         for i in 0..<scale.scaleNoteState.count {
-            if i % 8 == 0 && i > 0 {
+            if i % 4 == 0 && i > 0 {
                 score.addBarLine()
                 inBarCount = 0
             }
@@ -429,7 +460,8 @@ public class ScalesModel : ObservableObject {
 //            else {
 //                note.valueNormalized = nil
 //            }
-            note.setValue(value: 0.5)
+            //note.setValue(value: 0.5)
+            note.setValue(value: 1.0)
             ts.addNote(n: note)
             inBarCount += 1
             lastNote = note

@@ -7,9 +7,6 @@ enum ScaleShape {
     case arpgeggio4Note
 }
 
-//public class ScaleTYpe {
-//
-//}
 
 public enum ScaleType: CaseIterable {
     case major

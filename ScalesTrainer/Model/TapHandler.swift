@@ -59,7 +59,9 @@ class PracticeTapHandler : TapHandlerProtocol {
     let maxMidi:Int
     var tapNum = 0
     var hilightPlayingNotes:Bool
-    
+    var lastMidi:Int? = nil
+    var lastMidiHiliteTime:Double? = nil
+
     required init(amplitudeFilter:Double, hilightPlayingNotes:Bool) {
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
@@ -102,7 +104,30 @@ class PracticeTapHandler : TapHandlerProtocol {
         if aboveFilter {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
                 let keyboardKey = keyboardModel.pianoKeyModel[index]
-                keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: self.hilightPlayingNotes)
+                var hilightKey = false
+                if let lastMidi = lastMidi {
+                    if keyboardKey.midi != lastMidi {
+                        hilightKey = true
+                    }
+                    else {
+                        if let lastMidiHiliteTime = lastMidiHiliteTime {
+                            let diff = secs - lastMidiHiliteTime
+                            print("=============== DIFF", diff, "AMP:", String(format: "%.4f", amplitude))
+                            if diff > 1.2 {
+                                hilightKey = true
+                            }
+                        }
+                    }
+                }
+                else {
+                    hilightKey = true
+                }
+                if hilightKey {
+                    print("================= TAP", tapNum, secs, keyboardKey.midi, "AMP:", String(format: "%.4f", amplitude))
+                    keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: self.hilightPlayingNotes)
+                    lastMidiHiliteTime = secs
+                }
+                lastMidi = keyboardKey.midi
             }
         }
         ScalesModel.shared.recordedTapEvents?.events.append(TapEvent(tapNum: tapNum,
@@ -347,6 +372,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             return
         }
         ScalesModel.shared.setResult(result)
+        
         
         if Settings.shared.recordDataMode && self.tapRecords.count > 0 {
             let calendar = Calendar.current

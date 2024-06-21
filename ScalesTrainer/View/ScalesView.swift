@@ -18,7 +18,7 @@ struct ScalesView: View {
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
-    @State private var tempoIndex = 2 ///60 BPM
+    @State private var tempoIndex = 5 ///60 BPM
 
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
@@ -129,7 +129,11 @@ struct ScalesView: View {
     
     func StopProcessView() -> some View {
         VStack {
-            
+            if scalesModel.runningProcess == .leadingIn {
+                Spacer()
+                Text("Leading In").padding().commonFrameStyle()
+                Spacer()
+            }
             if scalesModel.runningProcess == .followingScale {
                 ProcessUnderwayView()
                 VStack {
@@ -144,13 +148,11 @@ struct ScalesView: View {
             if scalesModel.runningProcess == .practicing {
                 ProcessUnderwayView()
                 VStack {
-                    //Spacer()
                     Button("Stop Practicing") {
                         scalesModel.setRunningProcess(.none)
                     }
                     .padding()
                     .hilighted(backgroundColor: .blue)
-                    //Spacer()
                 }
             }
             if scalesModel.runningProcess == .playingAlongWithScale {
@@ -163,28 +165,32 @@ struct ScalesView: View {
                 }
             }
             if [.recordingScale].contains(scalesModel.runningProcess) {
-                ProcessUnderwayView()
                 Spacer()
+                ProcessUnderwayView()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").padding()
-                    //if scalesModel.leadInBar == nil {
-                        //ProcessUnderwayView()
-                        Button("Stop Recording Scale") {
-                            scalesModel.setRunningProcess(.none)
-                            if Settings.shared.recordDataMode {
-                                self.askKeepTapsFile = true
-                            }
+                    Button("Stop Recording Scale") {
+                        scalesModel.setRunningProcess(.none)
+                        if Settings.shared.recordDataMode {
+                            self.askKeepTapsFile = true
                         }
-                        .padding()
-                        .hilighted(backgroundColor: .blue)
-//                    }
-//                    else {
-//                        Text("  Metronome Lead-In...  ").padding().hilighted()
-//                    }
+                    }
+                    .padding()
+                    .hilighted(backgroundColor: .blue)
                 }
                 .commonFrameStyle()
-                .frame(width: UIScreen.main.bounds.width * 0.6)
+                //.frame(width: UIScreen.main.bounds.width * 0.6)
                 Spacer()
+            }
+            
+            if scalesModel.runningProcess == .hearingRecording {
+                HStack {
+                    Button("Stop Hearing") {
+                        scalesModel.setRunningProcess(.none)
+                    }
+                    .padding()
+                    .hilighted(backgroundColor: .blue)
+                }
             }
         }
     }
@@ -264,7 +270,6 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.recordingScale)
                     }
                 }
-
                 Button(action: {
                     showHelp("Record The Scale")
                 }) {
@@ -278,11 +283,12 @@ struct ScalesView: View {
             }
             .padding()
             
-            if let result = scalesModel.result {
+            if scalesModel.result != nil {
                 VStack {
                     Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
                         scalesModel.setRunningProcess(.hearingRecording)
                     }
+                    
                     Button(action: {
                         showHelp("Hear Recording")
                     }) {
@@ -360,14 +366,16 @@ struct ScalesView: View {
                     .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             }
             VStack {
-                VStack {
-                    Text(scalesModel.scale.getScaleName()).font(.title)//.padding()
-                    if scalesModel.runningProcess == .none {
-                        SelectScaleParametersView()
+                if scalesModel.showParameters {
+                    VStack {
+                        Text(scalesModel.scale.getScaleName()).font(.title)//.padding()
+                        if scalesModel.runningProcess == .none {
+                            SelectScaleParametersView()
+                        }
+                        ViewSettingsView()
                     }
-                    ViewSettingsView()
+                    .commonFrameStyle()
                 }
-                .commonFrameStyle()
                 
                 if scalesModel.showKeyboard {
                     VStack {
@@ -391,7 +399,9 @@ struct ScalesView: View {
                     }.commonFrameStyle()
                 }
                 
-                LegendView().commonFrameStyle()
+                if scalesModel.showLegend {
+                    LegendView().commonFrameStyle()
+                }
                 
                 if scalesModel.runningProcess != .none {
                     //Spacer()
