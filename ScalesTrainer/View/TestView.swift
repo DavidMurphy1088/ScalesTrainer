@@ -101,9 +101,9 @@ class AudioRecorder: ObservableObject {
             }
             else {
                 let audioManager = AudioManager.shared
-                let tapHandler = PracticeTapHandler(amplitudeFilter: 0, hilightPlayingNotes: true)
+                let tapHandler = PracticeTapHandler(amplitudeFilter: 0, hilightPlayingNotes: true, logTaps: true)
                 audioManager.installTapHandler(node: silentMixer,
-                                  bufferSize: 4096,
+                                               tapBufferSize: AudioManager.shared.tapBufferSize,
                                   tapHandler: tapHandler,
                                   asynch: true)
                 installedTap = audioManager.installedTap
@@ -131,8 +131,8 @@ class AudioRecorder: ObservableObject {
         if let tap = installedTap {
             tap.stop()
         }
-        do {
-            try recorder?.stop()
+        //do {
+            recorder?.stop()
             print("Recording stopped")
             if let file = recorder?.audioFile {
                 self.file = file
@@ -142,9 +142,9 @@ class AudioRecorder: ObservableObject {
             } else {
                 print("No audio file found after stopping recording")
             }
-        } catch {
-            print("Error stopping recording: \(error.localizedDescription)")
-        }
+        //} catch {
+            //print("Error stopping recording: \(error.localizedDescription)")
+        //}
         engine?.stop()
     }
 

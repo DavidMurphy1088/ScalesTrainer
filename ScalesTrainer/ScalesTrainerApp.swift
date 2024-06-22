@@ -6,7 +6,8 @@ import SwiftUI
 @main
 
 struct ScalesTrainerApp: App {
-    @State private var selectedTab = Settings.shared.amplitudeFilter == 0 ? 2 : 0
+    @State private var selectedTab = Settings.shared.wasLoaded ? 0 : 2
+    
     init() {
         #if os(iOS)
             do {
@@ -18,8 +19,10 @@ struct ScalesTrainerApp: App {
             } catch let err {
                 print(err)
             }
+        
         #endif
     }
+    
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {

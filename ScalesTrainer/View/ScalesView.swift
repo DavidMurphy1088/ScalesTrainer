@@ -334,10 +334,10 @@ struct ScalesView: View {
         HStack {
             Spacer()
             Button("READ_TEST_DATA") {
-                scalesModel.setRunningProcess(.recordingScaleWithData)
+                scalesModel.setRunningProcess(.recordScaleWithFileData)
             }.padding()
             Spacer()
-            if scalesModel.recordedTapEvents != nil {
+            if scalesModel.tapHandlerEventSet != nil {
                 Spacer()
                 Button("Show Tap Data") {
                     showingTapData = true

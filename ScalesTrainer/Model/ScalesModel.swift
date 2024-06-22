@@ -21,7 +21,8 @@ enum RunningProcess {
     case practicing
     case recordingScale
     case leadingIn
-    case recordingScaleWithData
+    case recordScaleWithFileData
+    case recordScaleWithTapData
     //case identifyingScale
     case hearingRecording
     case playingAlongWithScale
@@ -38,8 +39,10 @@ enum RunningProcess {
             return "Practicing"
         case .recordingScale:
             return "Recording Scale"
-        case .recordingScaleWithData:
-            return "Recording Scale With Data"
+        case .recordScaleWithFileData:
+            return "Recording Scale With File Data"
+        case .recordScaleWithTapData:
+            return "Recording Scale With Tap Data"
 //        case .identifyingScale:
 //            return "Identifying Scale"
         case .hearingRecording:
@@ -63,8 +66,9 @@ public class ScalesModel : ObservableObject {
     @Published var score:Score?
     
     var scoreHidden = false
-    var recordedTapEvents:TapEvents? = nil
+    var tapHandlerEventSet:TapEventSet? = nil
     var recordedTapsFileURL:URL? //File where recorded taps were written
+    let callibrationResults = CallibrationResults()
     
 //    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
 //    var selectedScaleRootIndex = 0
@@ -99,10 +103,20 @@ public class ScalesModel : ObservableObject {
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
 
-    @Published private(set) var result:Result?
+    //@Published
+    private(set) var result:Result?
     func setResult(_ result:Result?) {
-        DispatchQueue.main.async {
+        //DispatchQueue.main.async {
             self.result = result
+        //}
+    }
+    
+    @Published private(set) var amplitudeFilterDisplay:Double = 0.0
+    private(set) var amplitudeFilter:Double = 0.0
+    func setAmplitudeFilter(_ value:Double) {
+        self.amplitudeFilter = value
+        DispatchQueue.main.async {
+            self.amplitudeFilterDisplay = value
         }
     }
 
@@ -179,6 +193,17 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    init() {
+        scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
+        DispatchQueue.main.async {
+            PianoKeyboardModel.shared.configureKeyboardSize()
+        }
+        
+        self.callibrationTapHandler = nil
+        setAmplitudeFilter(Settings.shared.aFilter)
+
+    }
+    
     func setRunningProcess(_ setProcess: RunningProcess) {
         Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
@@ -205,7 +230,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
             self.setResult(nil)
-            let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : Settings.shared.amplitudeFilter, hilightPlayingNotes: true)
+            let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : self.amplitudeFilter, hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -251,7 +276,7 @@ public class ScalesModel : ObservableObject {
             })
         }
 
-        if [RunningProcess.recordingScale, RunningProcess.recordingScaleWithData].contains(setProcess)  {
+        if [RunningProcess.recordingScale, RunningProcess.recordScaleWithFileData, RunningProcess.recordScaleWithTapData].contains(setProcess)  {
             keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
@@ -262,16 +287,22 @@ public class ScalesModel : ObservableObject {
             self.setUserMessage(nil)
             //self.setShowFingers(false)
             keyboard.redraw()
-            let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-            if setProcess == .recordingScaleWithData {
-                self.audioManager.readTestData(tapHandler: tapHandler)
+            let tapHandler = ScaleTapHandler(amplitudeFilter: self.amplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
+            if setProcess == .recordScaleWithFileData {
+                let tapEvents = self.audioManager.readTestDataFile()
+                self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)
             }
-            else {
+            if setProcess == .recordScaleWithTapData {
+                if let callibrationEvents = self.callibrationResults.callibrationEvents {
+                    self.audioManager.playbackTapEvents(tapEvents: callibrationEvents, tapHandler: tapHandler)
+                }
+            }
+            if setProcess == .recordingScale {
                 DispatchQueue.main.async {
                     self.runningProcess = .leadingIn
                 }
                 doLeadIn(instruction: "Record your scale", leadInDone: {
-                    //😡😡😡😡😡😡 cannot record and tap concurrenlty
+                    //😡😡 cannot record and tap concurrenlty
                     //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
                     DispatchQueue.main.async {
                         self.runningProcess = RunningProcess.recordingScale
@@ -300,21 +331,6 @@ public class ScalesModel : ObservableObject {
             self.setProcessInstructions("Start recording your scale")
         }
         
-    }
-    
-    init() {
-        //scaleTypeNames = ["Major", "Minor", "Harmonic Minor", "Melodic Minor"]
-        //scaleTypeNames.append(["Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio", "Chromatic"])
-        //scaleTypeNames.append(contentsOf: ["Major Arpeggio", "Minor Arpeggio", "Diminished Arpeggio"])
-        //scaleTypeNames.append(contentsOf: ["Dominant Seventh Arpeggio", "Major Seventh Arpeggio", "Minor Seventh Arpeggio", "Diminished Seventh Arpeggio", "Half Diminished Arpeggio"])
-        //scaleTypeNames.append(contentsOf: ["Chromatic"])
-
-        scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
-        DispatchQueue.main.async {
-            PianoKeyboardModel.shared.configureKeyboardSize()
-        }
-
-        self.callibrationTapHandler = nil
     }
     
     ///Return the color a keyboard note should display its status as. Clear -> dont show anything
@@ -485,7 +501,6 @@ public class ScalesModel : ObservableObject {
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: octaves, //self.octaveNumberValues[self.selectedOctavesIndex],
                            hand: hand) //self.selectedHandIndex)
-        //self.scale.debug111("========== ScalesModel")
         
         PianoKeyboardModel.shared.configureKeyboardSize()
         setDirection(0)
@@ -495,7 +510,6 @@ public class ScalesModel : ObservableObject {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
                 self.score = self.createScore(scale: self.scale)
-                //self.score?.debugScore111("======END ScalesModel.setKeyAndScale type:\(scaleType) HAND:\(hand)", withBeam: false, toleranceLevel: 0)
             }
         }
     }
@@ -624,27 +638,8 @@ public class ScalesModel : ObservableObject {
 //        }
 //    }
     
-    func calculateCallibration() {
-        guard let events = self.recordedTapEvents else {
-            Logger.shared.reportError(self, "No events")
-            return
-        }
-        var amplitudes:[Float] = []
-        for event in events.events {
-            let amplitude = Float(event.amplitude)
-            amplitudes.append(amplitude)
-        }
-        let n = 8
-        guard amplitudes.count >= n else {
-            Logger.shared.reportError(self, "Callibration amplitudes must contain at least \(n) elements.")
-            return
-        }
-        
-        let highest = amplitudes.sorted(by: >).prefix(n)
-        let total = highest.reduce(0, +)
-        let avgAmplitude = Double(total / Float(highest.count))
-        Settings.shared.amplitudeFilter = avgAmplitude
-        Settings.shared.save()
-    }
 
 }
+
+
+

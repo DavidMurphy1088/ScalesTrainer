@@ -54,7 +54,7 @@ struct SettingsView: View {
                 
                 .onChange(of: firstName, {
                     settings.firstName = firstName
-                    settings.save()
+                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
                 
@@ -65,7 +65,7 @@ struct SettingsView: View {
                 .frame(width: width)
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
-                    settings.save()
+                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
                 
@@ -80,7 +80,7 @@ struct SettingsView: View {
                     .pickerStyle(.menu)
                     .onChange(of: leadInBarCount, {
                         settings.scaleLeadInBarCount = leadInBarCount
-                        settings.save()
+                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     })
                 }
                 
@@ -88,7 +88,7 @@ struct SettingsView: View {
                 HStack {
                     Spacer()
                     Button("Save") {
-                        settings.save()
+                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     }
                     Spacer()
                     Button("Load") {

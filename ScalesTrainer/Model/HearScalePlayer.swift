@@ -6,7 +6,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var noteToPlay = 0
     
     func metronomeStart() {
-        let audioManager = AudioManager.shared
+        //let audioManager = AudioManager.shared
     }
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {

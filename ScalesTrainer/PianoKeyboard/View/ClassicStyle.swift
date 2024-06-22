@@ -103,7 +103,7 @@ public struct ClassicStyle {
                         ///Hilite Middle C
                         if keyModel.midi == 60 { //}|| keyModel.midi == 64 {
                             let w = playingMidiRadius + 7.0
-                            let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
+                            //let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
                             let circleRadius = 15
                             let circle = CGRect(x: Int(rect.midX) - circleRadius,
                                                 y: 6,

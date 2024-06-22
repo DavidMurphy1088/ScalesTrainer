@@ -64,10 +64,19 @@
     "1" : {
 
     },
+    "Adjust:" : {
+
+    },
+    "AmplFilter:" : {
+
+    },
     "AmplFilter: %@" : {
 
     },
-    "Amplitude filter set at:%@" : {
+    "Amplitude filter:%@" : {
+
+    },
+    "Analyse Best Settings" : {
 
     },
     "Back %@" : {
@@ -79,10 +88,16 @@
     "Backing Off" : {
 
     },
+    "Best:" : {
+
+    },
     "Calibration" : {
 
     },
     "Correctly Played" : {
+
+    },
+    "Errors:" : {
 
     },
     "Famous Quotes" : {
@@ -95,6 +110,9 @@
 
     },
     "Follow\nThe\nScale" : {
+
+    },
+    "Hand" : {
 
     },
     "Hand:" : {
@@ -153,10 +171,10 @@
     "Major Scales" : {
 
     },
-    "Manual adjust:" : {
+    "Minor Scales" : {
 
     },
-    "Minor Scales" : {
+    "MissedKeys[%lld]" : {
 
     },
     "Missing" : {
@@ -166,6 +184,9 @@
 
     },
     "Not in Scale" : {
+
+    },
+    "Octaves" : {
 
     },
     "Octaves:" : {
@@ -257,16 +278,13 @@
     "Spin" : {
 
     },
-    "Start" : {
+    "Start Playing Scale" : {
 
     },
     "Start Recording" : {
 
     },
     "Stats: %@" : {
-
-    },
-    "Stop" : {
 
     },
     "Stop Following Scale" : {
@@ -282,6 +300,9 @@
 
     },
     "Stop Playing Along" : {
+
+    },
+    "Stop Playing Scale" : {
 
     },
     "Stop Practicing" : {
@@ -302,7 +323,16 @@
     "TEST" : {
 
     },
+    "Test runs" : {
+
+    },
     "Under Construction" : {
+
+    },
+    "View At\nThis Setting" : {
+
+    },
+    "View This Result" : {
 
     },
     "Viewing\nDirection" : {
@@ -320,6 +350,9 @@
           }
         }
       }
+    },
+    "WrongKeys[%lld]" : {
+
     },
     "Yes" : {
 

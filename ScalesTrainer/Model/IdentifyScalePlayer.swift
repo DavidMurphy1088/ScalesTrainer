@@ -7,11 +7,11 @@ class IdentifyScalePlayer : MetronomeTimerNotificationProtocol {
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
         let audioManager = AudioManager.shared
-        let sampler = audioManager.midiSampler
+        //let sampler = audioManager.midiSampler
 
         ///Playing the app's scale
         if timerTickerNumber < ScalesModel.shared.scale.scaleNoteState.count {
-            let scaleNote = ScalesModel.shared.scale.scaleNoteState[timerTickerNumber]
+            //let scaleNote = ScalesModel.shared.scale.scaleNoteState[timerTickerNumber]
 
             //sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
             //scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)

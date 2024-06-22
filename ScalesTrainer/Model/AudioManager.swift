@@ -9,6 +9,7 @@ import AudioKitEX
 class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
+    let tapBufferSize = 4096 * 1
     var installedTap: BaseTap?
     var midiSampler:MIDISampler?
     var recorder: NodeRecorder?
@@ -36,26 +37,7 @@ class AudioManager {
 //            configureAudio(start: true)
 //        }
     }
-//    func configureAudio(start:Bool) {
-//        engine = AudioEngine()
-//        mic = engine?.input
-//        if let mic = mic {
-//            do {
-//                // Initialize the recorder with the microphone as the input
-//                recorder = try NodeRecorder(node: mic)
-//                let silentMixer = Mixer(mic)
-//                silentMixer.volume = 0.0 // Mute the microphone input
-//                engine?.output = silentMixer
-//                if start {
-//                    try engine?.start()
-//                    Logger.shared.log(self, "configureAudio =================================> Audio engine started")
-//                }
-//                
-//            } catch {
-//                print("AudioKit Error during setup: \(error.localizedDescription)")
-//            }
-//        }
-//    }
+
     
     func configureAudioOld() {
         //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
@@ -96,7 +78,7 @@ class AudioManager {
         simulator = true
 #endif
         if simulator {
-            setupSampler()
+            //setupSampler()
             engine.output = midiSampler
         }
         else {
@@ -108,7 +90,7 @@ class AudioManager {
             
             self.audioPlayer = AudioPlayer()
             mixer?.addInput(self.audioPlayer!)
-            setupSampler()
+            //setupSampler()
             //mixer?.addInput(midiSampler ?? <#default value#>)
             
             //self.speechManager = SpeechManager.shared
@@ -259,7 +241,7 @@ class AudioManager {
 //            }
 //        }
         self.pitchTap = installTapHandler(node: mic!,
-                          bufferSize: 4096,
+                          tapBufferSize: tapBufferSize,
                           tapHandler: tapHandler,
                           asynch: true)
         self.tapHandler = tapHandler
@@ -338,7 +320,8 @@ class AudioManager {
         }
     }
     
-    func readTestData(tapHandler:ScaleTapHandler) {
+    ///Return a list of tap events recorded previously in a file
+    func readTestDataFile() -> [TapEvent] {
         var fileName:String
         let scalesModel = ScalesModel.shared
         if scalesModel.selectedHandIndex == 0 {
@@ -369,82 +352,104 @@ class AudioManager {
             }
         }
         fileName += ".txt"
-
+        
+        var tapEvents:[TapEvent] = []
+        var tapNum = 0
+        
         if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
+            let contents:String
             do {
-                let contents = try String(contentsOfFile: filePath, encoding: .utf8)
-                let lines = contents.split(separator: "\n")
-                
-                var ctr = 0
-                var freqs:[Float] = []
-                var amps:[Float] = []
-                for line in lines {
-                    if ctr == 0 {
-                        ctr += 1
-                        let fields = line.split(separator: "\t")
-                        let ampFilter = Double(fields[1])
-                        //let reqStartAmpl = Double(fields[2])
-                        if let ampFilter = ampFilter {
-                            //if reqStartAmpl != nil  {
-                                DispatchQueue.main.async {
-                                    Settings.shared.amplitudeFilter = ampFilter
-                                    //Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
-                                }
-                            //}
-                        }
-                        continue
-                    }
-                    let fields = line.split(separator: "\t")
-                    //let time = fields[0].split(separator: ":")[1]
-                    let freq = fields[1].split(separator: ":")[1]
-                    let ampl = fields[2].split(separator: ":")[1]
-                    let f = Float(freq)
-                    let a = Float(ampl)
-                    if let f = f {
-                        if let a = a {
-                            freqs.append(f)
-                            amps.append(a)
-                        }
-                    }
-                    ctr += 1
-                }
-                
-                let backgroundQueue = DispatchQueue.global(qos: .background)
-                    
-                backgroundQueue.async {
-                    for tIndex in 0..<freqs.count {
-                        let semaphore = DispatchSemaphore(value: 0)
-                        let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
-                        let timer = DispatchSource.makeTimerSource(queue: queue)
-                        timer.schedule(deadline: .now() + 0.04, repeating: .never)
-                        timer.setEventHandler {
-                            semaphore.signal()
-                            timer.cancel() // Cancel the timer after it fires once
-                        }
-                        timer.resume()
-                        semaphore.wait()
-                        let f:AUValue = AUValue(freqs[tIndex])
-                        let a:AUValue = amps[tIndex]
-                        tapHandler.tapUpdate([f, f], [a, a])
-                    }
-                    
-                    tapHandler.stopTapping()
-                    scalesModel.forceRepaint()
-                    Logger.shared.log(self, "Read test data \(lines.count-1) lines")
-                }
-            } catch {
-                Logger.shared.reportError(self, "Error reading file: \(fileName) \(error)")
+                contents = try String(contentsOfFile: filePath, encoding: .utf8)
             }
-        } else {
-            Logger.shared.reportError(self, "File not found \(fileName)")
+            catch {
+                Logger.shared.log(self, "cannot read file \(error.localizedDescription)")
+                return tapEvents
+            }
+            let lines = contents.split(separator: "\n")
+            
+            var ctr = 0
+            //var freqs:[Float] = []
+            //var amps:[Float] = []
+            for line in lines {
+                if ctr == 0 {
+                    ctr += 1
+                    let fields = line.split(separator: "\t")
+                    let ampFilter = Double(fields[1])
+                    //let reqStartAmpl = Double(fields[2])
+                    if let ampFilter = ampFilter {
+                        //if reqStartAmpl != nil  {
+                        DispatchQueue.main.async {
+                            scalesModel.setAmplitudeFilter(ampFilter)
+                            //Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
+                        }
+                        //}
+                    }
+                    continue
+                }
+                let fields = line.split(separator: "\t")
+                //let time = fields[0].split(separator: ":")[1]
+                let freq = fields[1].split(separator: ":")[1]
+                let ampl = fields[2].split(separator: ":")[1]
+                let f = Float(freq)
+                let a = Float(ampl)
+                if let f = f {
+                    if let a = a {
+                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteState: nil, midi: 0, tapMidi: 0, amplDiff: 0, key: .none))
+                        tapNum += 1
+                        //                        freqs.append(f)
+                        //                        amps.append(a)
+                    }
+                }
+                ctr += 1
+            }
+        }
+        return tapEvents
+    }
+    
+    func playbackTapEventsOld(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
+        let backgroundQueue = DispatchQueue.global(qos: .background)
+        let scalesModel = ScalesModel.shared
+        backgroundQueue.async {
+            for tIndex in 0..<tapEvents.count {
+                let tapEvent = tapEvents[tIndex]
+                let semaphore = DispatchSemaphore(value: 0)
+                let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
+                let timer = DispatchSource.makeTimerSource(queue: queue)
+                timer.schedule(deadline: .now() + 0.04, repeating: .never)
+                timer.setEventHandler {
+                    semaphore.signal()
+                    timer.cancel() // Cancel the timer after it fires once
+                }
+                timer.resume()
+                semaphore.wait()
+                let f:AUValue = tapEvent.frequency
+                let a:AUValue = tapEvent.amplitude
+                tapHandler.tapUpdate([f, f], [a, a])
+            }
+            tapHandler.stopTapping()
+            scalesModel.forceRepaint()
+            Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
         }
     }
-
-    func installTapHandler(node:Node, bufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
+    
+    func playbackTapEvents(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
+        let scalesModel = ScalesModel.shared
+        for tIndex in 0..<tapEvents.count {
+            let tapEvent = tapEvents[tIndex]
+            let f:AUValue = tapEvent.frequency
+            let a:AUValue = tapEvent.amplitude
+            tapHandler.tapUpdate([f, f], [a, a])
+        }
+        tapHandler.stopTapping()
+        scalesModel.forceRepaint()
+        Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
+    }
+    
+    func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
         //self.tapHandler = tapHandler
         let s = String(describing: type(of: tapHandler))
         Logger.shared.log(self, "Installed tap handler type:\(s)")
-        let installedTap = PitchTap(node, bufferSize:UInt32(bufferSize)) { pitch, amplitude in
+        let installedTap = PitchTap(node, bufferSize:UInt32(tapBufferSize)) { pitch, amplitude in
             //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
             if !self.blockTaps {
                 if asynch {

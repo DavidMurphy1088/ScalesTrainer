@@ -96,7 +96,6 @@
 //                    if let lastMidi = lastGoodMidi {
 //                        if midiOctave < lastMidi || inputMidi == topMidi {
 //                            ascending = false
-//                            print("========== Descending")
 //                        }
 //                    }
 //                    //72 matches on index 7 then the next 72 (right after) matches index 14 since mode is now descending so the last note iat index 0 is never matched

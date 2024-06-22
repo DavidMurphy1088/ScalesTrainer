@@ -21,7 +21,6 @@ struct HelpView: View {
 
         }
         .onAppear() {
-            print("======== APP", topic)
         }
     }
 }

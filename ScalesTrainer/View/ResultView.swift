@@ -112,17 +112,17 @@ struct TapDataView: View {
         VStack {
             Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
 
-            if let tapEvents = scalesModel.recordedTapEvents {
+            if let tapEventSet = scalesModel.tapHandlerEventSet {
                 ScrollView {
-                    ForEach(tapEvents.events, id: \.self) { event in
+                    ForEach(tapEventSet.events, id: \.self) { event in
                         Text(event.tapData()).foregroundColor(getColor(event))
                     }
                 }
             }
-            if let events = scalesModel.recordedTapEvents {
-                Text("Stats: \(events.minMax())").foregroundColor(Color .blue).font(.title3)
+            if let eventSet = scalesModel.tapHandlerEventSet {
+                Text("Stats: \(eventSet.minMax())").foregroundColor(Color .blue).font(.title3)
             }
-            Text("AmplFilter: \(String(format: "%.4f", Settings.shared.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
+            Text("AmplFilter: \(String(format: "%.4f", ScalesModel.shared.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
         }
     }
 }

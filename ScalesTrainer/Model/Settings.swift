@@ -4,8 +4,9 @@ public class Settings : Codable  {
     static var shared = Settings()
     var recordDataMode = false
     var firstName = ""
-    var amplitudeFilter:Double = 0.0
     var scaleLeadInBarCount:Int = 0
+    var aFilter:Double = 0
+    var wasLoaded = false
     
     init() {
         load()
@@ -25,7 +26,7 @@ public class Settings : Codable  {
     }
     
     func toString() -> String {
-        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
+        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.aFilter)) "
         //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
@@ -33,7 +34,8 @@ public class Settings : Codable  {
         return str
     }
     
-    func save(_ log:Bool = true) {
+    func save(amplitudeFilter:Double, _ log:Bool = true) {
+        self.aFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
         }
@@ -41,6 +43,7 @@ public class Settings : Codable  {
             Logger.shared.log(self, "Setting saved, \(toString())")
         }
         UserDefaults.standard.set(str, forKey: "settings")
+        self.wasLoaded = true
     }
     
     func load() {
@@ -51,14 +54,15 @@ public class Settings : Codable  {
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
-                    self.amplitudeFilter = loaded.amplitudeFilter
+                    self.aFilter = loaded.aFilter
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     //self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
-                    //let str:String = String(data: data, encoding: .utf8) ?? "none"
                     Logger.shared.log(self, "Settings loaded, \(toString())")
+                    self.wasLoaded = true
                 } catch {
-                    Logger.shared.reportError(self, "load:" + error.localizedDescription)
+                    Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
+                    //Logger.shared.reportError(self, "load:" + error.localizedDescription)
                 }
             }
         }

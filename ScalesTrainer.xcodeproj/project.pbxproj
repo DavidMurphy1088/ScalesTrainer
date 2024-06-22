@@ -87,6 +87,7 @@
 		799FC1562BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */; };
 		799FC1572BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt in Resources */ = {isa = PBXBuildFile; fileRef = 799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */; };
 		79BCF7EF2C257A5D004E26ED /* HearUserScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */; };
+		79BCF7F12C265CA6004E26ED /* CallibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CallibrationResults.swift */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
 		79C3904C2C1ECEAA00F0A658 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */; };
 		79C3904E2C202B4100F0A658 /* app_back_0.webp in Resources */ = {isa = PBXBuildFile; fileRef = 79C3904D2C202B4100F0A658 /* app_back_0.webp */; };
@@ -211,6 +212,7 @@
 		799FC1492BE702A800BB0969 /* 05_05_C_MelodicMinor_2_60_iPad_14.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_MelodicMinor_2_60_iPad_14.txt; sourceTree = "<group>"; };
 		799FC14A2BE702A800BB0969 /* 05_05_C_Major_2_60_iPad_Good.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 05_05_C_Major_2_60_iPad_Good.txt; sourceTree = "<group>"; };
 		79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearUserScale.swift; sourceTree = "<group>"; };
+		79BCF7F02C265CA6004E26ED /* CallibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallibrationResults.swift; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
@@ -496,6 +498,7 @@
 			children = (
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				799BE2A52BFDDBC5004B19F6 /* Backer.swift */,
+				79BCF7F02C265CA6004E26ED /* CallibrationResults.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */,
@@ -684,6 +687,7 @@
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
 				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
+				79BCF7F12C265CA6004E26ED /* CallibrationResults.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,

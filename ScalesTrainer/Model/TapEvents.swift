@@ -15,26 +15,28 @@ public enum TapEventStatus {
 public class TapEvent:Hashable {
     let id = UUID()
     let timestamp = Date()
+    let tapNum:Int
+    let amplitude:Float
+    let frequency:Float
+    
     let midi:Int ///The octave adjusted midi used for matching
     let status:TapEventStatus
     let tapMidi:Int ///The origianl taop midi
     let expectedScaleNoteState:ScaleNoteState? ///The scale sequence index
-    let amplitude:Float
     let key:PianoKeyModel?
-    let tapNum:Int
     let ascending:Bool
     let amplDiff:Double
 
-    public init(tapNum:Int, status:TapEventStatus, expectedScaleNoteState:ScaleNoteState?, midi:Int, tapMidi:Int, amplitude:Float,
-                amplDiff:Double, ascending: Bool, key:PianoKeyModel?) {
+    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending: Bool, status:TapEventStatus, expectedScaleNoteState:ScaleNoteState?, midi:Int, tapMidi:Int,
+                amplDiff:Double, key:PianoKeyModel?) {
         self.tapNum = tapNum
+        self.amplitude = amplitude
+        self.ascending = ascending
+        self.frequency = frequency
         self.status = status
         self.midi = midi
         self.expectedScaleNoteState = expectedScaleNoteState
-        self.amplitude = amplitude
         self.key = key
-        self.ascending = ascending
-        
         self.amplDiff = amplDiff
         self.tapMidi = tapMidi
     }
@@ -63,7 +65,7 @@ public class TapEvent:Hashable {
     }
 }
 
-public class TapEvents {
+public class TapEventSet {
     var events:[TapEvent] = []
     
     func debug112() {

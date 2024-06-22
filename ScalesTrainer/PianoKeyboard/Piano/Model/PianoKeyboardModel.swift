@@ -96,6 +96,7 @@ public class PianoKeyboardModel: ObservableObject {
     }
     
     func configureKeyboardSize() {
+        //print("========???", self.scalesModel.selectedOctavesIndex, scalesModel.scale.scaleType)
         let scale = self.scalesModel.scale
         self.firstKeyMidi = scale.scaleNoteState[0].midi
         

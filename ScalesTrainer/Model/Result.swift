@@ -26,16 +26,20 @@ class Result : Equatable {
         return missedCountAsc == 0 && missedCountDesc == 0 && wrongCountAsc == 0 && wrongCountDesc == 0
     }
     
-    ///Build the result for the the keyboard and the score
+    func totalErrors() -> Int {
+        return missedCountAsc + missedCountDesc + wrongCountAsc + wrongCountDesc
+    }
+
+    ///Build the result from the the keyboard taps.
+    ///Apply to the score.
     func buildResult() {
         let keyboardModel = PianoKeyboardModel.shared
         guard let score = ScalesModel.shared.score else {
             return
         }
         
-        ///Set result  status for keyboard keys, score notes
-        ///the mapping of keys to scale notes can be different ascending vs. descending. e.g. melodic minor
-
+        ///Set result  status for keyboard keys, score notes.
+        ///The mapping of keys to scale notes can be different ascending vs. descending. e.g. melodic minor
         for direction in [0,1] {
             keyboardModel.linkScaleFingersToKeyboardKeys(direction: direction)
             for i in 0..<keyboardModel.pianoKeyModel.count {
@@ -96,11 +100,9 @@ class Result : Equatable {
         if noErrors() {
             let scale = ScalesModel.shared.scale
             let _ = scale.setNoteNormalizedValues()
-            //score.calculateTapToValueRatios()
             score.setNormalizedValues(scale: scale)
-            score.debugScore111("=== Result", withBeam: false, toleranceLevel: 0)
         }
-        
+        Logger.shared.log(self, "Built result. Total errors:\(self.totalErrors()) Ampl Filter:\(ScalesModel.shared.amplitudeFilter)")
     }
 }
 
