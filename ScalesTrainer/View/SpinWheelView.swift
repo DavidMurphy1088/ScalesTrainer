@@ -100,7 +100,7 @@ struct SpinWheelView: View {
         .onAppear() {
             spinState = .notStarted
             background = UIGlobals.shared.getBackground()
-            width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
+            width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.45 : 0.8
         }
     }
 
@@ -133,7 +133,7 @@ struct SegmentedCircleView: View {
 
     var body: some View {
         ZStack {
-            ForEach(0..<elements.count) { index in
+            ForEach(Array(elements.enumerated()), id: \.offset) { index, element in
                 SegmentView(index: index, total: elements.count, text: elements[index], wheelSize: wheelSize)
             }
         }
@@ -176,7 +176,6 @@ struct SegmentView: View {
                 .rotationEffect(.degrees((startAngle + endAngle) / 2))
                 .position(x: radius + CGFloat(radius / 2 * cos((startAngle + angle / 2) * .pi / 180)), y: radius + CGFloat(radius / 2 * sin((startAngle + angle / 2) * .pi / 180)))
         }
-        
     }
 }
 

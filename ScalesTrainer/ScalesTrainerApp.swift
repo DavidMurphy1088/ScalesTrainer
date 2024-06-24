@@ -2,7 +2,7 @@ import SwiftUI
 import AudioKit
 import AVFoundation
 import SwiftUI
-
+import Foundation
 @main
 
 struct ScalesTrainerApp: App {
@@ -21,22 +21,30 @@ struct ScalesTrainerApp: App {
             }
         
         #endif
+        
+    }
+    
+    func runninginXcode() -> Bool {
+        print("=============", ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"])
+        return ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
     }
     
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {
-//                PracticeJournal()
-//                    .tabItem {
-//                        Label("TEST", systemImage: "music.note.list")
-//                    }
-//                    .tag(0)
-
-                TestView()
-                    .tabItem {
-                        Label("TEST", systemImage: "scribble")
-                    }
-                    .tag(0)
+                if runninginXcode() {
+                    //                PracticeJournal()
+                    //                    .tabItem {
+                    //                        Label("TEST", systemImage: "music.note.list")
+                    //                    }
+                    //                    .tag(0)
+                    
+                    TestView()
+                        .tabItem {
+                            Label("TEST", systemImage: "scribble")
+                        }
+                        .tag(0)
+                }
                 
                 HomeView()
                     .tabItem {
@@ -51,7 +59,7 @@ struct ScalesTrainerApp: App {
 //                    }
 //                    .tag(1)
                 
-                CallibrationView()
+                CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }

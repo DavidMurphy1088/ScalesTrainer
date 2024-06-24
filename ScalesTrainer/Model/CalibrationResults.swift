@@ -2,11 +2,11 @@
 import AVFoundation
 import Foundation
 
-class CallibrationResult : Identifiable {
+class CalibrationResult : Identifiable {
     let id = UUID()
     let num:Int
     let amplFilter: Double
-    var best = false
+    var lowestErrors = false
     let result:Result
     
     init(num:Int, result:Result, amplFilter: Double) {
@@ -16,43 +16,59 @@ class CallibrationResult : Identifiable {
     }
 }
 
-class CallibrationResults : ObservableObject {
-    @Published var callibrationEvents:[TapEvent]? = nil
-    @Published var results:[CallibrationResult]?
+class CalibrationResults : ObservableObject {
+    @Published var calibrationEvents:[TapEvent]? = nil
+    @Published var calibrationResults:[CalibrationResult]?
+    @Published var status:String? = nil
+    
+    func setStatus(_ msg:String) {
+        DispatchQueue.main.async {
+            self.status = msg
+        }
+    }
+    
+    func appendResult(num: Int, result: Result, amplFilter:Double) {
+        DispatchQueue.main.async {
+            let calibrationResult = CalibrationResult(num: num, result: result, amplFilter: amplFilter)
+            self.calibrationResults?.append(calibrationResult)
+        }
+    }
     
     func setEvents(tapEvents:[TapEvent]) {
         DispatchQueue.main.async {
-            self.callibrationEvents = []
+            self.calibrationEvents = []
             var tapNum = 0
             for event in tapEvents {
-                self.callibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteState: .none, midi: event.midi, tapMidi: event.tapMidi, amplDiff: 0, key: .none))
+                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteState: .none, midi: event.midi, tapMidi: event.tapMidi, amplDiff: 0, key: .none))
                 tapNum += 1
             }
-            self.results = nil
+            self.calibrationResults = nil
         }
     }
     
     func reset() {
         DispatchQueue.main.async {
-            self.callibrationEvents = nil
-            self.results = nil
+            self.calibrationEvents = nil
+            self.calibrationResults = nil
+            self.status = nil
         }
     }
     
-    func analyseBestSettings() {
-        DispatchQueue.main.async {
-            self.results = []
+    func analyseBestSettings(onDone:()->Void) {
+        DispatchQueue.global(qos: .background).async {
+            self.calibrationResults = []
             var higherThanMinCount = 0
             let scalesModel = ScalesModel.shared
             var minError:Int?
-
-            for i in 0..<40 {
-                let ampFilter = Double(i) * 0.005
+            var index = 0
+            
+            while true {
+                let ampFilter = Double(index) * 0.005
                 scalesModel.setAmplitudeFilter(ampFilter)
                 scalesModel.setRunningProcess(.recordScaleWithTapData)
                 if let result = scalesModel.result {
                     let totalErrors = result.totalErrors()
-                    self.results?.append(CallibrationResult(num: i, result: result, amplFilter: ampFilter))
+                    self.appendResult(num: index, result: result, amplFilter: ampFilter)
                     if minError == nil || totalErrors <= minError! {
                         minError = totalErrors
                         higherThanMinCount = 0
@@ -63,16 +79,30 @@ class CallibrationResults : ObservableObject {
                             break
                         }
                     }
-                    //lastCount = result.totalErrors()
+                    self.setStatus("Filter:\(ampFilter) Errors:\(totalErrors)")
                 }
+                index += 1
             }
 
-            for e in self.results! {
-                if e.result.totalErrors() == minError {
-                    e.best = true
-                    scalesModel.setAmplitudeFilter(e.amplFilter)
-                    //Settings.shared.amplitudeFilter = e.amplFilter
-                    Settings.shared.save(amplitudeFilter: e.amplFilter)
+            ///Find the best results. Use the result in the middle of the lowest error results.
+            var first:Int?
+            var last:Int?
+            for i in 0..<self.calibrationResults!.count {
+                let result = self.calibrationResults![i]
+                if result.result.totalErrors() == minError {
+                    if first == nil {
+                        first = i
+                    }
+                    last = i
+                    result.lowestErrors = true
+                }
+            }
+            if let first = first {
+                if let last = last {
+                    let bestIndex = (first + last) / 2
+                    let result = self.calibrationResults![bestIndex]
+                    Settings.shared.save(amplitudeFilter: result.amplFilter)
+                    scalesModel.setAmplitudeFilter(result.amplFilter)
                     ///Show the best result visually
                     scalesModel.setRunningProcess(.recordScaleWithTapData)
                 }

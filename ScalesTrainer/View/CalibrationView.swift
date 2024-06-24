@@ -1,25 +1,18 @@
 import SwiftUI
 
-public struct CallibrationView: View {
+public struct CalibrationView: View {
     let scalesModel = ScalesModel.shared
     @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared
-    @ObservedObject var callibrationResults = ScalesModel.shared.callibrationResults
+    @ObservedObject var calibrationResults = ScalesModel.shared.calibrationResults
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilterAdjust:Double = 0
-    @State var callibrating = false
+    @State var playingScale = false
+    @State var analysingResults = false
     @State private var selectedOctaves = 1
     @State private var selectedHand = 0
-
-    func getInstructions() -> String {
-        var msg = "Calibration is required so Scales Trainer can accurately hear your piano."
-        msg += "\n\n- Hit Start and then play one or two notes slowly and very softly then hit Stop."
-        msg += "\n- Adjust callibration if the app is not accurately hearing your scale."
-        msg += "\n- You will need to perform callibration again if you change the location of where the app is positioned when it listens."
-        msg += "\n\n👉 For best recording results your device should be placed near or against your piano"
-        return msg
-    }
-    
+    @State private var helpShowing = false
+        
     func setScale(octaves:Int, hand:Int) {
         let scaleRoot = ScaleRoot(name: "C")
         self.scalesModel.selectedOctavesIndex = octaves-1
@@ -32,12 +25,22 @@ public struct CallibrationView: View {
     
     public var body: some View {
         VStack() {
-            Text("Piano Calibration").font(.title)
+            HStack {
+                Text("Piano Calibration").font(.title)
+                Button(action: {
+                    self.helpShowing = true
+                }) {
+                    Image(systemName: "questionmark.circle")
+                        .imageScale(.large)
+                        .font(.title2)//.bold()
+                        .foregroundColor(.green)
+                }
+            }
             //Text(getInstructions()).padding()
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / 6)
                 .commonFrameStyle(backgroundColor: .clear).padding()
-            
+
             if let score = scalesModel.score {
                 ScoreView(score: score, widthPadding: false).padding()
             }
@@ -65,29 +68,43 @@ public struct CallibrationView: View {
                 }
 
                 Spacer()
-                Button(callibrating ? "Stop Playing Scale" : "Start Playing Scale") {
-                    callibrating.toggle()
-                    if callibrating {
-                        scalesModel.callibrationResults.reset()
+                Button(playingScale ? "Stop Playing Scale" : "Start Playing Scale") {
+                    playingScale.toggle()
+                    analysingResults = false
+                    if playingScale {
+                        scalesModel.calibrationResults.reset()
                         scalesModel.setRunningProcess(.callibrating)
                     }
                     else {
-                        scalesModel.callibrationResults.calculateCallibration()
+                        scalesModel.calibrationResults.calculateCallibration()
                         scalesModel.setRunningProcess(.none)
                         amplitudeFilterAdjust = scalesModel.amplitudeFilter
                     }
                 }
                 
-                if callibrationResults.callibrationEvents != nil {
+                if calibrationResults.calibrationEvents != nil {
                     Spacer()
-                    Button("Analyse Best Settings") {
-                        ScalesModel.shared.callibrationResults.analyseBestSettings()
+                    let results = ScalesModel.shared.calibrationResults
+                    if !analysingResults {
+                        Button("Analyse Best Settings") {
+                            analysingResults = true
+                            results.analyseBestSettings(onDone: {
+                                self.analysingResults = false
+                            })
+                        }
+                    }
+                }
+                if self.analysingResults {
+                    let results = ScalesModel.shared.calibrationResults
+                    if let status = results.status {
+                        Spacer()
+                        Text("Status: \(status)")
                     }
                 }
                 Spacer()
             }
             
-            if let results = callibrationResults.results {
+            if let results = calibrationResults.calibrationResults {
                 List(results) { result in
                     VStack(alignment: .leading) {
                         HStack {
@@ -101,10 +118,10 @@ public struct CallibrationView: View {
 
                             Text("Errors:").bold()
                             Text(String(result.result.totalErrors()))
-                            Text("Best:").foregroundColor(result.best ? Color.green : Color.black)
-                            Text(String(result.best))
+                            Text("Best:").foregroundColor(result.lowestErrors ? Color.green : Color.black)
+                            Text(String(result.lowestErrors))
                             Button(action: {
-                                callibrationResults.run(amplitudeFilter: result.amplFilter)
+                                calibrationResults.run(amplitudeFilter: result.amplFilter)
                             }) {
                                 Text("View This Result")
                             }
@@ -114,7 +131,7 @@ public struct CallibrationView: View {
                 .navigationTitle("Test runs")
             }
             
-            if !callibrating {
+            if !playingScale {
                 HStack {
                     //Text("Amplitude1:\(String(format: "%.4f", scalesModel.amplitudeFilterDisplay))").font(.title3).padding()
                     Text("Amplitude filter:\(String(format: "%.4f", amplitudeFilterAdjust))").font(.title3).padding()
@@ -133,9 +150,9 @@ public struct CallibrationView: View {
                         scalesModel.setAmplitudeFilter(amplitudeFilterAdjust)
                         Settings.shared.save(amplitudeFilter: amplitudeFilterAdjust, false)
                     })
-                    if callibrationResults.callibrationEvents != nil {
+                    if calibrationResults.calibrationEvents != nil {
                         Button(action: {
-                            callibrationResults.run(amplitudeFilter: amplitudeFilterAdjust)
+                            calibrationResults.run(amplitudeFilter: amplitudeFilterAdjust)
                         }) {
                             Text("View At\nThis Setting")
                         }
@@ -143,9 +160,15 @@ public struct CallibrationView: View {
                 }
             }
         }
+        .sheet(isPresented: $helpShowing) {
+            HelpView(topic: "Calibration")
+        }
         .onAppear() {
             //scalesModel.selectedScaleRootIndex = 0
             setScale(octaves: 1, hand: 0)
+            PianoKeyboardModel.shared.resetKeysWerePlayedState()
+            ScalesModel.shared.selectedOctavesIndex = 0
+            ScalesModel.shared.selectedHandIndex = 0
         }
         .onDisappear() {
             //Settings.shared.save()

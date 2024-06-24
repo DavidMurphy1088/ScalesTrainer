@@ -100,13 +100,13 @@ class AudioRecorder: ObservableObject {
                 }
             }
             else {
-                let audioManager = AudioManager.shared
-                let tapHandler = PracticeTapHandler(amplitudeFilter: 0, hilightPlayingNotes: true, logTaps: true)
-                audioManager.installTapHandler(node: silentMixer,
-                                               tapBufferSize: AudioManager.shared.tapBufferSize,
-                                  tapHandler: tapHandler,
-                                  asynch: true)
-                installedTap = audioManager.installedTap
+//                let audioManager = AudioManager.shared
+//                let tapHandler = PracticeTapHandler(amplitudeFilter: 0, hilightPlayingNotes: true, logTaps: true)
+//                audioManager.installTapHandler(node: silentMixer,
+//                                               tapBufferSize: AudioManager.shared.tapBufferSize,
+//                                  tapHandler: tapHandler,
+//                                  asynch: true)
+//                installedTap = audioManager.installedTap
             }
             
             // Start the audio engine
@@ -173,7 +173,6 @@ class AudioRecorder: ObservableObject {
             player = AudioPlayer(file: audioFile)
             player?.volume = 1.0  // Set volume to maximum
             engine?.output = player
-            print("Player setup with file: \(file?.url)")
         } catch {
             print("Player Setup Error: \(error.localizedDescription)")
         }
@@ -191,12 +190,10 @@ class AudioRecorder: ObservableObject {
 
     func stopPlayback() {
         player?.stop()
-        do {
-            try engine?.stop()
-            print("Playback stopped")
-        } catch {
-            print("Stop Playback Error: \(error.localizedDescription)")
-        }
+
+        engine?.stop()
+        print("Playback stopped")
+
     }
 }
 struct TestView: View {
@@ -205,7 +202,7 @@ struct TestView: View {
     init() {
         let model = ScalesModel.shared
         let root = ScaleRoot(name: "C")
-        let scaleType = ScaleType.naturalMinor
+        let scaleType = ScaleType.major
         scale = PracticeJournalScale(scaleRoot: root, scaleType: scaleType)
         model.setKeyAndScale(scaleRoot: root, scaleType: scaleType, octaves: 1, hand: 0)
         model.setRunningProcess(.none)

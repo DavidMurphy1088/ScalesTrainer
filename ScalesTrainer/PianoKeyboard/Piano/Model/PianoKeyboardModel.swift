@@ -27,41 +27,6 @@ public class PianoKeyboardModel: ObservableObject {
     public init() {
     }
     
-//    ///MetronomeTimerNotificationProtocol
-//    func metronomeStart() {
-//        resetKeyDownKeyUpState()
-//        scalesModel.setDirection(0)
-//        ascending = true
-//        nextKeyToPlayIndex = nil
-//        //self.debug2("start")
-//    }
-//    
-//    func metronomeTicked(timerTickerNumber: Int) -> Bool {
-//        let audioManager = AudioManager.shared
-//        let sampler = audioManager.midiSampler
-//
-//        ///Playing the app's scale
-//        if timerTickerNumber < ScalesModel.shared.scale.scaleNoteState.count {
-//            let scaleNote = ScalesModel.shared.scale.scaleNoteState[timerTickerNumber]
-//            if let keyIndex = getKeyIndexForMidi(midi:scaleNote.midi, direction:0) {
-//                self.pianoKeyModel[keyIndex].setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
-//            }
-//            sampler.play(noteNumber: UInt8(scaleNote.midi), velocity: 64, channel: 0)
-//            //scalesModel.setPianoKeyPlayed(midi: scaleNote.midi)
-//            ///Scale turnaround
-//            if timerTickerNumber == ScalesModel.shared.scale.scaleNoteState.count / 2 {
-//                scalesModel.setDirection(1)
-//                //scalesModel.forceRepaint()
-//                //setFingers(direction: 1)
-//            }
-//        }
-//        return timerTickerNumber >= ScalesModel.shared.scale.scaleNoteState.count - 1
-//    }
-//    
-//    func metronomeStop() {
-//        scalesModel.setDirection(0)
-//    }
-        
     func clearAllKeyWasPlayedState(besidesID:UUID? = nil) {
         if let last = self.pianoKeyModel.first(where: { $0.keyWasPlayedState.tappedTimeAscending != nil || $0.keyWasPlayedState.tappedTimeDescending != nil}) {
             if besidesID == nil || last.id != besidesID! {

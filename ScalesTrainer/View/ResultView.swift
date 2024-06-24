@@ -36,7 +36,8 @@ struct ResultView: View {
         }
         if getaAllCorrect() {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
-                status += " Your tempo was \(tempo)."
+                let appTempo = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
+                status += "\nYour tempo was \(MetronomeModel.shared.getTempoString(tempo)) and the setting was \(appTempo)."
             }
         }
         //ScalesModel.shared.scale.debug1("====Post Build, get tempo")

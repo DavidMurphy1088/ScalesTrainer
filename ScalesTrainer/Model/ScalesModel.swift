@@ -68,7 +68,7 @@ public class ScalesModel : ObservableObject {
     var scoreHidden = false
     var tapHandlerEventSet:TapEventSet? = nil
     var recordedTapsFileURL:URL? //File where recorded taps were written
-    let callibrationResults = CallibrationResults()
+    let calibrationResults = CalibrationResults()
     
 //    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
 //    var selectedScaleRootIndex = 0
@@ -130,6 +130,9 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var showStaff = false
     func setShowStaff(_ newValue: Bool) {
         DispatchQueue.main.async {
+//            PianoKeyboardModel.shared.configureKeyboardSize()
+//            self.setDirection(0)
+//            PianoKeyboardModel.shared.redraw()
             self.showStaff = newValue
         }
     }
@@ -226,7 +229,9 @@ public class ScalesModel : ObservableObject {
         
         let keyboard = PianoKeyboardModel.shared
         keyboard.clearAllFollowingKeyHilights(except: nil)
-        PianoKeyboardModel.shared.redraw()
+        keyboard.redraw()
+        
+
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
             self.setResult(nil)
@@ -293,7 +298,7 @@ public class ScalesModel : ObservableObject {
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)
             }
             if setProcess == .recordScaleWithTapData {
-                if let callibrationEvents = self.callibrationResults.callibrationEvents {
+                if let callibrationEvents = self.calibrationResults.calibrationEvents {
                     self.audioManager.playbackTapEvents(tapEvents: callibrationEvents, tapHandler: tapHandler)
                 }
             }
@@ -495,17 +500,17 @@ public class ScalesModel : ObservableObject {
     }
     
     func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
-        let name = scaleRoot.name //self.scaleRootValues[self.selectedScaleRootIndex]
-        let scaleTypeName = scaleType.description //self.scaleTypeNames[self.selectedScaleTypeNameIndex]
+        let name = scaleRoot.name
+        let scaleTypeName = scaleType.description
         self.scale = Scale(scaleRoot: ScaleRoot(name: name),
                            scaleType: Scale.getScaleType(name: scaleTypeName),
-                           octaves: octaves, //self.octaveNumberValues[self.selectedOctavesIndex],
-                           hand: hand) //self.selectedHandIndex)
+                           octaves: octaves,
+                           hand: hand)
         
         PianoKeyboardModel.shared.configureKeyboardSize()
         setDirection(0)
-
         PianoKeyboardModel.shared.redraw()
+        
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {

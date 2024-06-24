@@ -36,6 +36,7 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
+            Text("Settings").font(.title)
             VStack {
                 Spacer()
                 HStack() {
@@ -51,20 +52,8 @@ struct SettingsView: View {
 //                    Text("You entered: \(inputText)")
 //                        .padding()
                 }
-                
                 .onChange(of: firstName, {
                     settings.firstName = firstName
-                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
-                })
-                .padding()
-                
-                Spacer()
-                HStack() {
-                    Toggle("Record Data Mode", isOn: $recordDataMode)
-                }
-                .frame(width: width)
-                .onChange(of: recordDataMode, {
-                    settings.recordDataMode = recordDataMode
                     settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
@@ -83,6 +72,17 @@ struct SettingsView: View {
                         settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     })
                 }
+                
+                Spacer()
+                HStack() {
+                    Toggle("Record Data Mode", isOn: $recordDataMode)
+                }
+                .frame(width: width)
+                .onChange(of: recordDataMode, {
+                    settings.recordDataMode = recordDataMode
+                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                })
+                .padding()
                 
                 Spacer()
                 HStack {

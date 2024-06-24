@@ -42,6 +42,15 @@ class MetronomeModel {
         }
     }
     
+    func getTempoString(_ tempo:Int) -> String {
+        if tempo > 120 {
+            return "\u{266A}=\(tempo / 2)"
+        }
+        else {
+            return "♩=\(tempo)"
+        }
+    }
+    
     func stop() {
         isTiming = false
     }

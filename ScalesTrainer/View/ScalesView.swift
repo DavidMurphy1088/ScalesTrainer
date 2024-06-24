@@ -326,6 +326,14 @@ struct ScalesView: View {
                 }
             }
             .padding()
+            
+            Spacer()
+            if scalesModel.tapHandlerEventSet != nil {
+                Spacer()
+                Button("Show Tap Data") {
+                    showingTapData = true
+                }.padding()
+            }
             Spacer()
         }
     }
@@ -336,13 +344,6 @@ struct ScalesView: View {
             Button("READ_TEST_DATA") {
                 scalesModel.setRunningProcess(.recordScaleWithFileData)
             }.padding()
-            Spacer()
-            if scalesModel.tapHandlerEventSet != nil {
-                Spacer()
-                Button("Show Tap Data") {
-                    showingTapData = true
-                }.padding()
-            }
             Spacer()
         }
     }
@@ -375,6 +376,7 @@ struct ScalesView: View {
                         ViewSettingsView()
                     }
                     .commonFrameStyle()
+                    //.border(Color .red, width: 3)
                 }
                 
                 if scalesModel.showKeyboard {
@@ -383,20 +385,20 @@ struct ScalesView: View {
                             .frame(height: getKeyboardHeight())
                             .border(Color.gray)
                             .padding()
-                        
-
                     }
                     .commonFrameStyle()
+                    //.border(Color .red, width: 3)
                 }
                 
                 if scalesModel.showStaff {
-                    VStack {
-                        if let score = scalesModel.score {
+                    if let score = scalesModel.score {
+                        VStack {
                             ScoreView(score: score, widthPadding: false)
                                 .border(Color.gray)
                                 .padding()
                         }
-                    }.commonFrameStyle()
+                        .commonFrameStyle()
+                    }
                 }
                 
                 if scalesModel.showLegend {
