@@ -20,7 +20,7 @@ class HelpMessages {
         m += "\n\n➤ For best recording results your device should be placed near or against your piano."
         m += "\n\n➤ You will need to perform callibration again if you change the location of where the app is positioned when it listens."
         m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales."
-        m += "\n\n➤ Press Start Playing Scale and play the scale shown moderately soft (mezzo-piano) and at a moderate tempo. Press Stop when the scale is finished."
+        m += "\n\n➤ Press Start Playing Scale and play the scale shown softly (piano) and at a moderate tempo. Press Stop when the scale is finished."
         m += " Then press Analyse Best Settings to save the callibration."
         messages["Calibration"] = m
         

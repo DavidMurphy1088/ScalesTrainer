@@ -99,7 +99,15 @@ class CalibrationResults : ObservableObject {
             }
             if let first = first {
                 if let last = last {
-                    let bestIndex = (first + last) / 2
+                    //let bestIndex = (first + last) / 2
+                    ///Seems overall better with lower value
+                    var bestIndex:Int
+                    if last == first {
+                        bestIndex = first
+                    }
+                    else {
+                        bestIndex = first + 1
+                    }
                     let result = self.calibrationResults![bestIndex]
                     Settings.shared.save(amplitudeFilter: result.amplFilter)
                     scalesModel.setAmplitudeFilter(result.amplFilter)

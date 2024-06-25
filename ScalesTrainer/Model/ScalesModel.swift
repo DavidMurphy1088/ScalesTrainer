@@ -231,8 +231,6 @@ public class ScalesModel : ObservableObject {
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
-
-        
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
             self.setResult(nil)
             let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : self.amplitudeFilter, hilightPlayingNotes: true, logTaps: true)
@@ -369,11 +367,6 @@ public class ScalesModel : ObservableObject {
         }
         return color
     }
-    
-//    ///Allow the user to play along with the scale
-//    func playAlongWithScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
-//        HearScalePlayer()
-//    }
     
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note

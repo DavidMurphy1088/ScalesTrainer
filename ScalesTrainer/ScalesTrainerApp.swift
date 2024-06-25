@@ -24,7 +24,7 @@ struct ScalesTrainerApp: App {
         
     }
     
-    func runninginXcode() -> Bool {
+    func runningInXcode() -> Bool {
         print("=============", ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"])
         return ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
     }
@@ -32,7 +32,7 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedTab) {
-                if runninginXcode() {
+                if runningInXcode() {
                     //                PracticeJournal()
                     //                    .tabItem {
                     //                        Label("TEST", systemImage: "music.note.list")

@@ -34,7 +34,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         //}
         if noteToPlay >= ScalesModel.shared.scale.scaleNoteState.count - 1 {
             scalesModel.setDirection(0)
-            noteToPlay = 0
+            ///Dont repeat the scale root on replays
+            noteToPlay = 1
         }
         else {
             noteToPlay += 1

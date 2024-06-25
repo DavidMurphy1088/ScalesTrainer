@@ -196,14 +196,10 @@ struct ScalesView: View {
     }
     
     func SelectActionView() -> some View {
-        HStack {
+        HStack(alignment: .top) {
             Spacer()
-            VStack(spacing: 4) {
-                Button("Follow\nThe\nScale") {
-                    scalesModel.setRunningProcess(.followingScale)
-                    ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                }
-                
+            
+            VStack()  {
                 Button(action: {
                     showHelp("Follow The Scale")
                 }) {
@@ -214,20 +210,18 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
+                Text("")
+                Button("Follow\nThe\nScale") {
+                    scalesModel.setRunningProcess(.followingScale)
+                    ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                }
+                
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
-            VStack(spacing: 4) {
-                Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
-                    if scalesModel.runningProcess == .practicing {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.practicing)
-                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
-                    }
-                }
+            VStack() {
                 Button(action: {
                     showHelp("Practice")
                 }) {
@@ -238,15 +232,24 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
+                Text("")
+                Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
+                    if scalesModel.runningProcess == .practicing {
+                        scalesModel.setRunningProcess(.none)
+                    }
+                    else {
+                        scalesModel.setRunningProcess(.practicing)
+                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                    }
+                }
+                
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
             VStack {
-                Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
-                    scalesModel.setRunningProcess(.playingAlongWithScale)
-                    ScalesModel.shared.setProcessInstructions("Play along with the scale as its played")
-                }
                 Button(action: {
                     showHelp("PlayAlong")
                 }) {
@@ -257,19 +260,17 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
+                Text("")
+                Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
+                    scalesModel.setRunningProcess(.playingAlongWithScale)
+                    ScalesModel.shared.setProcessInstructions("Play along with the scale as its played")
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
-                        
+            
             Spacer()
             VStack {
-                Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
-                    if scalesModel.runningProcess == .recordingScale {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.recordingScale)
-                    }
-                }
                 Button(action: {
                     showHelp("Record The Scale")
                 }) {
@@ -280,15 +281,21 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
+                Text("")
+                Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
+                    if scalesModel.runningProcess == .recordingScale {
+                        scalesModel.setRunningProcess(.none)
+                    }
+                    else {
+                        scalesModel.setRunningProcess(.recordingScale)
+                    }
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             if scalesModel.result != nil {
                 VStack {
-                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
-                        scalesModel.setRunningProcess(.hearingRecording)
-                    }
-                    
                     Button(action: {
                         showHelp("Hear Recording")
                     }) {
@@ -299,21 +306,18 @@ struct ScalesView: View {
                                 .foregroundColor(.green)
                         }
                     }
+                    Text("")
+                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
+                        scalesModel.setRunningProcess(.hearingRecording)
+                    }
+                    
                 }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
                 .padding()
             }
             
             Spacer()
             VStack {
-                Button(hearingBacking ? "Backing Off" : "Backing\nOn") {
-                    hearingBacking.toggle()
-                    if hearingBacking {
-                        scalesModel.setBacking(true)
-                    }
-                    else {
-                        scalesModel.setBacking(false)
-                    }
-                }
                 Button(action: {
                     showHelp("Backing")
                 }) {
@@ -324,7 +328,19 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
+                Text("")
+                Button(hearingBacking ? "Backing Off" : "Backing\nOn") {
+                    hearingBacking.toggle()
+                    if hearingBacking {
+                        scalesModel.setBacking(true)
+                    }
+                    else {
+                        scalesModel.setBacking(false)
+                    }
+                }
+                
             }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
@@ -336,7 +352,9 @@ struct ScalesView: View {
             }
             Spacer()
         }
+
     }
+    
     
     func DeveloperView() -> some View {
         HStack {
@@ -376,7 +394,6 @@ struct ScalesView: View {
                         ViewSettingsView()
                     }
                     .commonFrameStyle()
-                    //.border(Color .red, width: 3)
                 }
                 
                 if scalesModel.showKeyboard {
@@ -387,7 +404,6 @@ struct ScalesView: View {
                             .padding()
                     }
                     .commonFrameStyle()
-                    //.border(Color .red, width: 3)
                 }
                 
                 if scalesModel.showStaff {
@@ -419,7 +435,7 @@ struct ScalesView: View {
                         ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle()
                     }
                     SelectActionView().commonFrameStyle()
-                }                
+                }
                 
                 if settings.recordDataMode {
                     DeveloperView().commonFrameStyle()
@@ -430,7 +446,6 @@ struct ScalesView: View {
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
             ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
             .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-            //.border(.red)
         }
         
         .sheet(isPresented: $showingTapData) {

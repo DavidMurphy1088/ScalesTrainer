@@ -23,6 +23,11 @@ public struct CalibrationView: View {
         self.amplitudeFilterAdjust = scalesModel.amplitudeFilter
     }
     
+    func getScaleName() -> String {
+        let name = scalesModel.scale.getScaleName()
+        return name
+    }
+    
     public var body: some View {
         VStack() {
             HStack {
@@ -36,7 +41,7 @@ public struct CalibrationView: View {
                         .foregroundColor(.green)
                 }
             }
-            //Text(getInstructions()).padding()
+            Text(getScaleName()).padding()
             PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
                 .frame(height: UIScreen.main.bounds.size.height / 6)
                 .commonFrameStyle(backgroundColor: .clear).padding()
@@ -64,7 +69,7 @@ public struct CalibrationView: View {
                     }
                 }
                 .onChange(of: selectedHand) { oldValue, newValue in
-                    setScale(octaves: newValue, hand: selectedHand)
+                    setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
                 }
 
                 Spacer()
@@ -164,10 +169,10 @@ public struct CalibrationView: View {
             HelpView(topic: "Calibration")
         }
         .onAppear() {
-            //scalesModel.selectedScaleRootIndex = 0
-            setScale(octaves: 1, hand: 0)
+            let octaves = ScalesTrainerApp().runningInXcode() ? 1 : 2
+            setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            ScalesModel.shared.selectedOctavesIndex = 0
+            ScalesModel.shared.selectedOctavesIndex = octaves == 1 ? 0 : 1
             ScalesModel.shared.selectedHandIndex = 0
         }
         .onDisappear() {
