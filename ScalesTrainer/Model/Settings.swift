@@ -5,13 +5,21 @@ public class Settings : Codable  {
     var recordDataMode = false
     var firstName = ""
     var scaleLeadInBarCount:Int = 0
-    var aFilter:Double = 0
-    var wasLoaded = false
+    var tapMinimunAmplificationFilter:Double = 0
+    private var wasLoaded = false
     
     init() {
         load()
     }
     
+    public func settingsExists() -> Bool {
+       return wasLoaded
+    }
+    
+    public func CalibrationExists() -> Bool {
+       return wasLoaded && tapMinimunAmplificationFilter > 0
+    }
+
     private func toJSON() -> String? {
         do {
             let jsonEncoder = JSONEncoder()
@@ -26,7 +34,7 @@ public class Settings : Codable  {
     }
     
     func toString() -> String {
-        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.aFilter)) "
+        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.tapMinimunAmplificationFilter)) "
         //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
@@ -35,7 +43,7 @@ public class Settings : Codable  {
     }
     
     func save(amplitudeFilter:Double, _ log:Bool = true) {
-        self.aFilter = amplitudeFilter
+        self.tapMinimunAmplificationFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
         }
@@ -54,7 +62,7 @@ public class Settings : Codable  {
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
-                    self.aFilter = loaded.aFilter
+                    self.tapMinimunAmplificationFilter = loaded.tapMinimunAmplificationFilter
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     //self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude

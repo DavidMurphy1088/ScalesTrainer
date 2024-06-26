@@ -53,16 +53,15 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        //scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .naturalMinor))
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>        self.name = name
-        self.imageName = imageName
+				<string>        self.imageName = imageName
+
 </string>
 				<key>trailing</key>
-				<string>        if false {
-            scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
-            scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major))
+				<string>        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major))
 </string>
 			</dict>
 			<key>type</key>

@@ -16,6 +16,8 @@ class HelpMessages {
         
         messages["Pick Any Scale"] = "Select any combination of scale root and type of scale to practice."
         
+        messages["Your Coin Bank"] = "Shows all the gold coins in your scales bank. You can win coins as you record scales but if you make mistakes you loose coins."
+        
         m = "Calibration is required so Scales Trainer can accurately hear your piano."
         m += "\n\n➤ For best recording results your device should be placed near or against your piano."
         m += "\n\n➤ You will need to perform callibration again if you change the location of where the app is positioned when it listens."

@@ -7,31 +7,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "13208235-555E-4849-B33D-14AC55A2C963"
+            uuid = "055DF006-8827-4E84-808A-A66FA61B0976"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/ScalesTrainerApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "metronomeTicked(timerTickerNumber:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D4256726-85D3-4F59-9EEB-4DE946CF2303"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/View/CalibrationView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -39,47 +23,63 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "726AC2C7-3901-430F-9F5E-B3C2F357B4A9"
-            shouldBeEnabled = "Yes"
+            uuid = "6CB3448A-7A59-431C-873A-EEE6074EDD29"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/View/CalibrationView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5FD17FB5-E008-4F07-A28E-D5F8A000B7EF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/View/CalibrationView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "body"
             landmarkType = "24">
             <Locations>
                <Location
-                  uuid = "726AC2C7-3901-430F-9F5E-B3C2F357B4A9 - b04a66c64d85b678"
+                  uuid = "5FD17FB5-E008-4F07-A28E-D5F8A000B7EF - ec102695ae03c135"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #4 (Swift.Int, Swift.Int) -&gt; () in closure #2 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Button&lt;SwiftUI.Text&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;, Swift.Optional&lt;Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;&gt;, SwiftUI.Spacer)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Button&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Button&lt;SwiftUI.Text&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;, Swift.Optional&lt;Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;&gt;, SwiftUI.Spacer)&gt;&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.navigationTitle(SwiftUI.LocalizedStringKey) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: () -&gt; ()) -&gt; some&gt;&gt;.0, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;&gt;)&gt; in ScalesTrainer.CalibrationView.body.getter : some"
+                  symbolName = "ScalesTrainer.CalibrationView.body.getter : some"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/CalibrationView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "60">
+                  startingLineNumber = "32"
+                  endingLineNumber = "32"
+                  offsetFromSymbolStart = "660">
                </Location>
                <Location
-                  uuid = "726AC2C7-3901-430F-9F5E-B3C2F357B4A9 - b04a66c64d85b678"
+                  uuid = "5FD17FB5-E008-4F07-A28E-D5F8A000B7EF - badb02af1f5860b4"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #4 (Swift.Int, Swift.Int) -&gt; () in closure #2 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Button&lt;SwiftUI.Text&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;, Swift.Optional&lt;Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;&gt;, SwiftUI.Spacer)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Button&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Button&lt;SwiftUI.Text&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;, Swift.Optional&lt;Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;&gt;, SwiftUI.Spacer)&gt;&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.navigationTitle(SwiftUI.LocalizedStringKey) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: () -&gt; ()) -&gt; some&gt;&gt;.0, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;&gt;)&gt; in ScalesTrainer.CalibrationView.body.getter : some"
+                  symbolName = "closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Text, SwiftUI.Button&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0&gt;)&gt;&gt;, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Text, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: (&#x3c4;_1_0, &#x3c4;_1_0) -&gt; ()) -&gt; some&gt;&gt;.0, SwiftUI.Spacer, SwiftUI.Button&lt;SwiftUI.Text&gt;, Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;, Swift.Optional&lt;Swift.Optional&lt;SwiftUI.TupleView&lt;(SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;&gt;, SwiftUI.Spacer)&gt;&gt;, Swift.Optional&lt;&lt;&lt;opaque return type of SwiftUI.View.navigationTitle(SwiftUI.LocalizedStringKey) -&gt; some&gt;&gt;.0&gt;, Swift.Optional&lt;SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.padding(SwiftUI.Edge.Set, Swift.Optional&lt;CoreGraphics.CGFloat&gt;) -&gt; some&gt;&gt;.0, &lt;&lt;opaque return type of SwiftUI.View.onChange&lt;&#x3c4;_0_0 where &#x3c4;_1_0: Swift.Equatable&gt;(of: &#x3c4;_1_0, initial: Swift.Bool, _: () -&gt; ()) -&gt; some&gt;&gt;.0, Swift.Optional&lt;SwiftUI.Button&lt;SwiftUI.Text&gt;&gt;)&gt;&gt;&gt;)&gt; in ScalesTrainer.CalibrationView.body.getter : some"
                   moduleName = "ScalesTrainer"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/CalibrationView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "72"
-                  endingLineNumber = "72"
-                  offsetFromSymbolStart = "56">
+                  startingLineNumber = "33"
+                  endingLineNumber = "33"
+                  offsetFromSymbolStart = "1540">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -87,80 +87,161 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E6014F2A-3C6F-4B50-A08E-FB0AA97CBE77"
+            uuid = "A5BAF6F8-7CC7-49BA-A35C-5355E2C2D781"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/Model/Settings.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "metronomeTicked(timerTickerNumber:)"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "load()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A5BAF6F8-7CC7-49BA-A35C-5355E2C2D781 - fef7b6326aca5e19"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.Settings.load() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "55"
+                  endingLineNumber = "55"
+                  offsetFromSymbolStart = "1008">
+               </Location>
+               <Location
+                  uuid = "A5BAF6F8-7CC7-49BA-A35C-5355E2C2D781 - fef7b6326aca5e9d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.Settings.load() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "59"
+                  endingLineNumber = "59"
+                  offsetFromSymbolStart = "628">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D5B01CB4-295C-489C-82E2-023A9D63F684"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Settings.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "load()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D5B01CB4-295C-489C-82E2-023A9D63F684 - fef7b6326aca5e38"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.Settings.load() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "54"
+                  endingLineNumber = "54"
+                  offsetFromSymbolStart = "908">
+               </Location>
+               <Location
+                  uuid = "D5B01CB4-295C-489C-82E2-023A9D63F684 - fef7b6326aca5ebc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesTrainer.Settings.load() -&gt; ()"
+                  moduleName = "ScalesTrainer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58"
+                  offsetFromSymbolStart = "164">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D6ABD669-EC7C-463A-B93F-61AC479021DF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/Settings.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
+            landmarkName = "save(amplitudeFilter:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2FE00D0B-6B43-434B-8089-9E8CBDD09737"
-            shouldBeEnabled = "Yes"
+            uuid = "18FE4ED8-025B-436D-95C5-4AE331D7EC4E"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/CoinBank.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "237"
-            endingLineNumber = "237"
-            landmarkName = "setRunningProcess(_:)"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
+            landmarkName = "init()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2FE00D0B-6B43-434B-8089-9E8CBDD09737 - 456314f81e9a5bc6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.ScalesModel.setRunningProcess(ScalesTrainer.RunningProcess) -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "237"
-                  endingLineNumber = "237"
-                  offsetFromSymbolStart = "1668">
-               </Location>
-               <Location
-                  uuid = "2FE00D0B-6B43-434B-8089-9E8CBDD09737 - 456314f81e9a5bc6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.ScalesModel.setRunningProcess(ScalesTrainer.RunningProcess) -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "237"
-                  endingLineNumber = "237"
-                  offsetFromSymbolStart = "1708">
-               </Location>
-               <Location
-                  uuid = "2FE00D0B-6B43-434B-8089-9E8CBDD09737 - 456314f81e9a5bc6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesTrainer.ScalesModel.setRunningProcess(ScalesTrainer.RunningProcess) -&gt; ()"
-                  moduleName = "ScalesTrainer"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "237"
-                  endingLineNumber = "237"
-                  offsetFromSymbolStart = "1804">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "14F3A2A2-DABE-463E-A09A-E5124417795A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/CoinBank.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "didLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B36141AC-BFB3-4665-B1AC-D25113A7C2B0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/View/SpinWheelView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

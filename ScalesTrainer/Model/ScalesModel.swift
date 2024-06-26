@@ -203,11 +203,17 @@ public class ScalesModel : ObservableObject {
         }
         
         self.callibrationTapHandler = nil
-        setAmplitudeFilter(Settings.shared.aFilter)
+        setAmplitudeFilter(Settings.shared.tapMinimunAmplificationFilter)
 
     }
     
     func setRunningProcess(_ setProcess: RunningProcess) {
+        let coinBank = CoinBank.shared
+        if self.runningProcess == .recordingScale {
+            coinBank.total += coinBank.lastBet
+            coinBank.lastBet = 0
+            coinBank.save()
+        }
         Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess

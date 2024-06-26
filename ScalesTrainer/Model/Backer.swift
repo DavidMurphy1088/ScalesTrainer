@@ -8,7 +8,7 @@ import Foundation
 import AudioKitEX
 //import Speech
 
-class Backer :MetronomeTimerNotificationProtocol{
+class Backer :MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var callNum = 0
     var chordRoots:[Int] = []

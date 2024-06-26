@@ -68,8 +68,7 @@ struct PracticeJournalView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text(getTitle()).font(.title)
-                    .commonTitleStyle()
+                Text(getTitle()).font(.title).commonTitleStyle()
                 VStack {
                     HStack {
                         Spacer()

@@ -40,9 +40,15 @@ struct ScalesView: View {
     @State var helpShowing:Bool = false
     let backgroundImage = UIGlobals.shared.getBackground()
     
-    init(practiceJournalScale:PracticeJournalScale) {
+    init(practiceJournalScale:PracticeJournalScale, runProcess:RunningProcess? = nil) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
         self.practiceJournalScale = practiceJournalScale
+        if let process = runProcess {
+            scalesModel.setRunningProcess(process)
+        }
+        else {
+            scalesModel.setRunningProcess(.none)
+        }
     }
     
     func showHelp(_ topic:String) {
@@ -52,7 +58,7 @@ struct ScalesView: View {
     
     ///Set state of the model and the view
     func setState(scaleRoot:ScaleRoot, scaleType: ScaleType, octaves:Int, hand:Int) {
-        scalesModel.setRunningProcess(.none)
+        //scalesModel.setRunningProcess(.none)
         ///There maybe a change in octaves or LH vs. RH
         scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
         //scalesModel.setKeyAndScale()
@@ -64,7 +70,6 @@ struct ScalesView: View {
     
     func SelectScaleParametersView() -> some View {
         HStack {
-
             Spacer()
             Text("Hand:")
             Picker("Select Value", selection: $handIndex) {
@@ -137,59 +142,60 @@ struct ScalesView: View {
             if scalesModel.runningProcess == .followingScale {
                 ProcessUnderwayView()
                 VStack {
-                    Button("Stop Following Scale") {
+                    Button(action: {
                         scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-                    .padding()
-                    .hilighted(backgroundColor: .blue)
-                    //Spacer()
                 }
             }
             if scalesModel.runningProcess == .practicing {
                 ProcessUnderwayView()
                 VStack {
-                    Button("Stop Practicing") {
+                    Button(action: {
                         scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("Stop Practicing").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-                    .padding()
-                    .hilighted(backgroundColor: .blue)
                 }
             }
             if scalesModel.runningProcess == .playingAlongWithScale {
                 HStack {
-                    Button("Stop Playing Along") {
+                    Button(action: {
                         scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("Stop Playing Along").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-                    .padding()
-                    .hilighted(backgroundColor: .blue)
                 }
             }
             if [.recordingScale].contains(scalesModel.runningProcess) {
                 Spacer()
-                ProcessUnderwayView()
                 VStack {
-                    Text("Recording \(scalesModel.scale.getScaleName())").padding()
-                    Button("Stop Recording Scale") {
+                    Text("Recording \(scalesModel.scale.getScaleName())").font(.title2).padding()
+                    ProcessUnderwayView()
+                    Button(action: {
                         scalesModel.setRunningProcess(.none)
                         if Settings.shared.recordDataMode {
                             self.askKeepTapsFile = true
                         }
+                    }) {
+                        Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-                    .padding()
-                    .hilighted(backgroundColor: .blue)
+                    if CoinBank.shared.lastBet > 0 {
+                        CoinStackView(showBet: true, showMsg: true, scalingSize: 50)
+                            .padding()
+                            .hilighted(backgroundColor: .blue)
+                    }
                 }
                 .commonFrameStyle()
-                //.frame(width: UIScreen.main.bounds.width * 0.6)
                 Spacer()
             }
             
             if scalesModel.runningProcess == .hearingRecording {
-                HStack {
-                    Button("Stop Hearing") {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    .padding()
-                    .hilighted(backgroundColor: .blue)
+                Button(action: {
+                    scalesModel.setRunningProcess(.none)
+                }) {
+                    Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
             }
         }

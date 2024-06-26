@@ -54,7 +54,7 @@ struct SettingsView: View {
                 }
                 .onChange(of: firstName, {
                     settings.firstName = firstName
-                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
                 
@@ -69,32 +69,40 @@ struct SettingsView: View {
                     .pickerStyle(.menu)
                     .onChange(of: leadInBarCount, {
                         settings.scaleLeadInBarCount = leadInBarCount
-                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                        //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     })
                 }
                 
                 Spacer()
                 HStack() {
-                    Toggle("Record Data Mode", isOn: $recordDataMode)
+                    Toggle("TEST ONLY Record Data Mode", isOn: $recordDataMode)
                 }
                 .frame(width: width)
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
-                    settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
                 
                 Spacer()
                 HStack {
                     Spacer()
-                    Button("Save") {
+
+                    Button(action: {
                         settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                    }) {
+                        HStack {
+                            Text("Save").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
                     }
                     Spacer()
-                    Button("Load") {
+                    Button(action: {
                         settings.load()
+                    }) {
+                        HStack {
+                            Text("Load").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
                     }
-                    .padding()
                     Spacer()
                 }
                 Spacer()
@@ -107,30 +115,6 @@ struct SettingsView: View {
         }
     }
 }
-
-
-//
-//struct TestDataModeView : View {
-//    @ObservedObject private var scalesModel = ScalesModel.shared
-//    var settings = Settings.shared
-//
-//    @State var dataMode = Settings.shared.recordDataMode
-//    var body: some View {
-//        HStack {
-//            HStack() {
-//                Toggle("Record Data Mode", isOn: $dataMode)
-//            }
-//            .frame(width: UIScreen.main.bounds.width * 0.15)
-//            .padding()
-//            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-//            .onChange(of: dataMode, {
-//                settings.recordDataMode = dataMode
-//                settings.save()
-//            })
-//            .padding()
-//        }
-//    }
-//}
 
 func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
     var availableMicrophones: [AVAudioSessionPortDescription] = []

@@ -162,7 +162,7 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
-        self.midiSampler = setupSampler()
+        //self.midiSampler = setupSampler()
         engine.output = self.midiSampler
         do {
             try engine.start()
@@ -228,10 +228,11 @@ class AudioManager {
             mixer?.addInput(self.silencer!)
             self.audioPlayer = AudioPlayer()
             mixer?.addInput(self.audioPlayer!)
-            if let midiSampler = setupSampler() {
-                self.midiSampler = midiSampler
+            //if let midiSampler = setupSampler() {
+            if let midiSampler = self.midiSampler {
                 mixer?.addInput(midiSampler)
             }
+            //}
             engine.output = self.mixer
         }
 
@@ -296,21 +297,12 @@ class AudioManager {
         }
     }
     
-    private func setupSampler() -> MIDISampler? {
+    private func loadSampler() -> MIDISampler? {
         do {
-            //let samplerFileName = "akai_steinway"
             let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
             //let samplerFileName = "Abbey-Steinway-D-bs16i-v1.9"
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
-//            let filter = LowPassFilter(midiSampler)
-//            Cut reverb
-//            filter.cutoffFrequency = 800.0 // Adjust this value to reduce reverb effect
-//
-//            let gate = DynamicsProcessor(filter)
-//            gate.threshold = -20.0 // Adjust this value
-//            gate.headRoom = 0.1 // Adjust this value
-
             Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
             return sampler
         }

@@ -172,6 +172,7 @@ struct ActivityModeView: View {
                 if let practiceJournal = PracticeJournal.shared {
                     let name = "Practice Journal" // for " + practiceJournal.title
                     menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
+                    menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView(practiceJournal: practiceJournal, scalingSize: 100))))
                     menuOptions.append(ActivityMode(name: "Spin The Scale Wheel", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .pickRandomScale))))
                     //menuOptions.append(ActivityMode(name: "Identify The Scale", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .identifyTheScale))))
                 }
