@@ -140,7 +140,7 @@ struct SpinWheelView: View {
                     .edgesIgnoringSafeArea(.all)
 
                     Spacer()
-                    CoinStackView(showBet: false, showMsg: true, scalingSize: 50)
+                    CoinStackView(screenHeightRatio: 0.2, screenWidthRatio: 0.2, totalCoins: CoinBank.shared.total, showBet: false, showMsg: true)
                         .padding()
                         .hilighted(backgroundColor: .blue)
 

@@ -60,6 +60,7 @@ class CoinBank: ObservableObject, Codable {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(CoinBank.self, from: data)
                     self.total = decoded.total
+                    self.total = 119
                     self.existsInStorage = decoded.existsInStorage
                     Logger.shared.log(self, "CoinBank loaded")
                     return true
