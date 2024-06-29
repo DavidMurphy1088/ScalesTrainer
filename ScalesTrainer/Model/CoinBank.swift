@@ -6,7 +6,12 @@ class CoinBank: ObservableObject, Codable {
     static let shared = CoinBank()
     
     @Published var total: Int = 0
-    var lastBet: Int = 0
+    @Published private(set) var lastBet: Int = 0
+    func setLastBet(_ value:Int) {
+        DispatchQueue.main.async {
+            self.lastBet = value
+        }
+    }
     var existsInStorage = false
     
     enum CodingKeys: String, CodingKey {
@@ -44,7 +49,6 @@ class CoinBank: ObservableObject, Codable {
         }
         return nil
     }
-    
     func save() {
         guard let str = toJSON() else {
             return
@@ -60,7 +64,7 @@ class CoinBank: ObservableObject, Codable {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(CoinBank.self, from: data)
                     self.total = decoded.total
-                    self.total = 119
+                    self.total = 12
                     self.existsInStorage = decoded.existsInStorage
                     Logger.shared.log(self, "CoinBank loaded")
                     return true

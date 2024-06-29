@@ -17,7 +17,8 @@ struct CoinView: View {
             .background(Ellipse().fill(Color.yellow)) // Base color of the coin
             .frame(width: coinWidth, height: coinHeight)
             .rotation3DEffect(.degrees(angleOffset * 5), axis: (x: 1, y: 0, z: 0)) // Rotate each coin around the x-axis
-            .shadow(radius: coinWidth * 0.1) // Enhanced shadow for added depth
+            //.shadow(radius: coinWidth * 0.1) // Enhanced shadow for added depth
+            .shadow(radius: 4) // Enhanced shadow for added depth
     }
 }
 

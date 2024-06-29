@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ScalesView: View {
     let practiceJournalScale:PracticeJournalScale
+    let initialRunProcess:RunningProcess?
 
     @ObservedObject private var scalesModel = ScalesModel.shared
     @StateObject private var orientationObserver = DeviceOrientationObserver()
@@ -40,15 +41,10 @@ struct ScalesView: View {
     @State var helpShowing:Bool = false
     let backgroundImage = UIGlobals.shared.getBackground()
     
-    init(practiceJournalScale:PracticeJournalScale, runProcess:RunningProcess? = nil) {
+    init(practiceJournalScale:PracticeJournalScale, initialRunProcess:RunningProcess? = nil) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
         self.practiceJournalScale = practiceJournalScale
-        if let process = runProcess {
-            scalesModel.setRunningProcess(process)
-        }
-        else {
-            scalesModel.setRunningProcess(.none)
-        }
+        self.initialRunProcess = initialRunProcess
     }
     
     func showHelp(_ topic:String) {
@@ -361,7 +357,6 @@ struct ScalesView: View {
 
     }
     
-    
     func DeveloperView() -> some View {
         HStack {
             Spacer()
@@ -492,7 +487,6 @@ struct ScalesView: View {
         .onAppear {
             setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType,
                      octaves: self.practiceJournalScale.octaves ?? 1, hand: self.practiceJournalScale.hand ?? 0)
-            
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
             
             //self.rootNameIndex = scalesModel.selectedScaleRootIndex
@@ -500,6 +494,14 @@ struct ScalesView: View {
             self.handIndex = scalesModel.selectedHandIndex
             self.octaveNumberIndex = scalesModel.selectedOctavesIndex
             self.directionIndex = scalesModel.selectedDirection
+            if let process = initialRunProcess {
+                scalesModel.setRunningProcess(process)
+                //ScalesModel.shared.setSpinState(.notStarted)
+            }
+//            else {
+//                scalesModel.setRunningProcess(.none)
+//            }
+
         }
         .onDisappear {
             metronome.stop()

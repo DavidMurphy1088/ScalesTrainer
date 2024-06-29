@@ -73,16 +73,11 @@ struct Arrow: View {
 
 
 struct SpinWheelView: View {
+    @ObservedObject var coinBase = CoinBank.shared
+    @ObservedObject var scalesModel = ScalesModel.shared
     let practiceJournal:PracticeJournal
     let mode: WheelMode
-    enum SpinState {
-        //case notStarted
-        case betting
-        case betted
-        case spun
-        case stopped
-    }
-    @State private var spinState:SpinState = .betting
+
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
     @State private var maxRotations: Double = 1 // Max rotations per second
@@ -115,6 +110,24 @@ struct SpinWheelView: View {
         return title
     }
     
+    func getCoinState() -> String {
+        let coins = CoinBank.shared.total
+        var msg = "\(coins) Coin"
+        if coins > 1 {
+            msg += "s"
+        }
+        msg += " remaining. "
+        let lastBet = CoinBank.shared.lastBet
+        if lastBet > 0 {
+            msg += "\(lastBet) Coin"
+            if lastBet > 1 {
+                msg += "s"
+            }
+            msg += " to spin."
+        }
+        return msg
+    }
+    
     var body: some View {
         ZStack {
             Image(background)
@@ -125,29 +138,34 @@ struct SpinWheelView: View {
             VStack {
                 Text(getTitle()).font(.title).commonTitleStyle()
                 VStack {
-                    GeometryReader { geometry in
-                        ZStack {
-                            SegmentedCircleView(elements: getScaleNames(mode:mode), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
-                                .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
-                                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                            // Fixed arrow
-                            Arrow()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.purple)
-                                .position(x: geometry.size.width * 0.92, y: geometry.size.height / 2)
+                    ZStack {
+                        GeometryReader { geometry in
+                            ZStack {
+                                SegmentedCircleView(elements: getScaleNames(mode:mode), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
+                                    .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
+                                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                                // Fixed arrow
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: geometry.size.width * 0.92, y: geometry.size.height / 2)
+                            }
                         }
+                        .edgesIgnoringSafeArea(.all)
+                        VStack {
+                            Spacer()
+                            CoinStackView(screenHeightRatio: 0.3, screenWidthRatio: 0.3, totalCoins: CoinBank.shared.total, showBet: false, showMsg: true)
+                                .border(Color.cyan, width: 3)
+                            //.padding()
+                            //.hilighted(backgroundColor: .blue)
+                        }
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .border(Color.red)
                     }
-                    .edgesIgnoringSafeArea(.all)
 
-                    Spacer()
-                    CoinStackView(screenHeightRatio: 0.2, screenWidthRatio: 0.2, totalCoins: CoinBank.shared.total, showBet: false, showMsg: true)
-                        .padding()
-                        .hilighted(backgroundColor: .blue)
-
-                    if [.betting, .betted].contains(spinState) {
-                        if let practiceJournal = PracticeJournal.shared {
-                            VStack {
-                                //CoinStackView(practiceJournal: practiceJournal, scalingSize: 30)
+                    if [SpinState.notStarted1, SpinState.selectedBet1].contains(scalesModel.spinState1) {
+                        //if let practiceJournal = PracticeJournal.shared {
+                            HStack {
                                 Picker("Select a number", selection: $selectedBet) {
                                     ForEach(betSizes, id: \.self) { num in
                                         Text(num == 0 ? "None" : "\(num)").bold().foregroundColor(Color.blue)
@@ -160,21 +178,21 @@ struct SpinWheelView: View {
                                     .stroke(Color.gray, lineWidth: 2)  // Gray border with a width of 2
                                 )
                                 .onChange(of: selectedBet) { oldValue, newValue in
-                                    spinState = newValue > 0 ? .betted : .betting
+                                    scalesModel.setSpinState1(newValue > 0 ? SpinState.selectedBet1 : .notStarted1)
+                                    CoinBank.shared.setLastBet(newValue)
                                 }
                                 .padding()
-                                HStack {
-                                    Spacer()
-                                    HStack {
-                                        Text("Spin For How Many Coins?")
-                                            .padding()
-                                            .font(.title2)
+                                VStack {
+                                    VStack {
+                                        Text("\(getCoinState())")
+                                        if CoinBank.shared.lastBet == 0 {
+                                            Text("Spin For How Many Coins?")
+                                        }
                                     }
+                                    .padding().font(.title2)
                                     
-                                    if spinState == .betted {
-                                        Spacer()
+                                    if scalesModel.spinState1 == SpinState.selectedBet1 {
                                         Button(action: {
-                                            CoinBank.shared.lastBet = selectedBet
                                             startSpinning(elements: getScaleNames(mode:mode))
                                         }) {
                                             HStack {
@@ -185,19 +203,17 @@ struct SpinWheelView: View {
                                             }
                                         }
                                     }
-                                    Spacer()
                                 }
                             }
-                        }
+                        //}
                     }
 
-                    if spinState == .stopped {
-                        NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], runProcess: .recordingScale)) {
+                    if scalesModel.spinState1 == SpinState.spunAndStopped1 {
+                        NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], initialRunProcess: .recordingScale)) {
                             Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName())").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                 .font(.title2)
                                 .hilighted(backgroundColor: .blue)
                         }
-                        
                     }
                     Spacer()
                 }
@@ -206,24 +222,22 @@ struct SpinWheelView: View {
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.9)
         }
         .onAppear() {
-            betSizes = Array(0...CoinBank.shared.total / 2)
-            spinState = .betting
+            CoinBank.shared.setLastBet(0)
+            betSizes = Array(0...coinBase.total / 2)
+            scalesModel.setSpinState1(.notStarted1)
             background = UIGlobals.shared.getBackground()
             width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.45 : 0.9
         }
     }
-
+    
     func startSpinning(elements:[String]) {
-        spinState = .spun
         let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
         let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
-
         withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
             rotation += totalRotations + randomAngle
         }
-
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            spinState = .stopped
+            scalesModel.setSpinState1(.spunAndStopped1)
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             // Determine which segment is at the top

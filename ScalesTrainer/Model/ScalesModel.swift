@@ -55,6 +55,14 @@ enum RunningProcess {
     }
 }
 
+enum SpinState {
+    case notStarted1
+    case selectedBet1
+    case spinning1
+    case spunAndStopped1    
+   //case runningWithBet
+}
+
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
     var scale:Scale
@@ -99,6 +107,13 @@ public class ScalesModel : ObservableObject {
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     
+    @Published private(set) var spinState1:SpinState = .notStarted1
+    func setSpinState1(_ value:SpinState) {
+        DispatchQueue.main.async {
+            self.spinState1 = value
+        }
+    }
+
     ///Speech
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
@@ -211,7 +226,7 @@ public class ScalesModel : ObservableObject {
         let coinBank = CoinBank.shared
         if self.runningProcess == .recordingScale {
             coinBank.total += coinBank.lastBet
-            coinBank.lastBet = 0
+            coinBank.setLastBet(0)
             coinBank.save()
         }
         Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
