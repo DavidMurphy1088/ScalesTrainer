@@ -178,9 +178,9 @@ struct ScalesView: View {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
                     if CoinBank.shared.lastBet > 0 {
-                        CoinStackView(screenHeightRatio: 0.1, screenWidthRatio: 0.1, totalCoins: CoinBank.shared.lastBet, showBet: true, showMsg: true)
+                        CoinStackView(totalCoins: CoinBank.shared.lastBet, showBet: true, showMsg: true, animate: false)
                             .padding()
-                            .hilighted(backgroundColor: .blue)
+                            //.hilighted(backgroundColor: .blue)
                     }
                 }
                 .commonFrameStyle()

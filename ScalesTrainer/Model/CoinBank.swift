@@ -4,9 +4,17 @@ import Combine
 class CoinBank: ObservableObject, Codable {
     static let storageName = "coinbank"
     static let shared = CoinBank()
+    static let initialCoins = 12
     
     @Published var total: Int = 0
     @Published private(set) var lastBet: Int = 0
+    var pileCoinCounts:[Int] = []
+    var pileDrawingHeights:[Double] = []
+    
+    var coinHeight:Double = 0
+    var coinWidth:Double = 0
+    var drawingOrder:[Int] = []
+    
     func setLastBet(_ value:Int) {
         DispatchQueue.main.async {
             self.lastBet = value
@@ -33,7 +41,7 @@ class CoinBank: ObservableObject, Codable {
     
     init() {
         if !didLoad() {
-            total = 12
+            total = CoinBank.initialCoins
         }
     }
     
@@ -64,7 +72,7 @@ class CoinBank: ObservableObject, Codable {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(CoinBank.self, from: data)
                     self.total = decoded.total
-                    self.total = 12
+                    //self.total = 12
                     self.existsInStorage = decoded.existsInStorage
                     Logger.shared.log(self, "CoinBank loaded")
                     return true

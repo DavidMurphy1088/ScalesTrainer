@@ -1,44 +1,74 @@
 import SwiftUI
+import SwiftUI
+
+import SwiftUI
 
 struct CoinView: View {
-    let coinCount:Int
-    let coinWidth:Double
-    let coinHeight:Double
+    let coinWidth: CGFloat
+    let coinHeight: CGFloat
     let angleOffset: Double  // Angle to tilt the coin ellipse
+    let animate:Bool
+    
+    @State private var offset: CGFloat = 0
+    @State private var isShaking = false
 
-    var body1: some View {
-        Ellipse()
-            .stroke(Color.blue, lineWidth: 1)
-            .frame(width: coinWidth, height: coinHeight)
-    }
     var body: some View {
+        let darkYellow = Color(red: 192 / 255.0, green: 128 / 255.0, blue: 0 / 255.0)
+        
         Ellipse()
-            .strokeBorder(LinearGradient(gradient: Gradient(colors: [.yellow, .orange]), startPoint: .leading, endPoint: .trailing), lineWidth: coinWidth * 0.05)
+            .strokeBorder(LinearGradient(gradient: Gradient(colors: [darkYellow, .orange]), startPoint: .leading, endPoint: .trailing), lineWidth: coinWidth * 0.05)
             .background(Ellipse().fill(Color.yellow)) // Base color of the coin
             .frame(width: coinWidth, height: coinHeight)
-            .rotation3DEffect(.degrees(angleOffset * 5), axis: (x: 1, y: 0, z: 0)) // Rotate each coin around the x-axis
-            //.shadow(radius: coinWidth * 0.1) // Enhanced shadow for added depth
-            .shadow(radius: 4) // Enhanced shadow for added depth
+            .offset(x: offset)
+            .onAppear {
+                if animate {
+                    withAnimation(Animation.easeInOut(duration: 0.1).repeatForever()) {
+                        offset = 2
+                        isShaking.toggle()
+                    }
+                }
+            }
     }
 }
 
+//struct CoinViewOld: View {
+//    let coinWidth:Double
+//    let coinHeight:Double
+//    let angleOffset: Double  // Angle to tilt the coin ellipse
+//
+//    var body: some View {
+//        let darkYellow = Color(red: 192 / 255.0, green: 128 / 255.0, blue: 0 / 255.0)
+//        Ellipse()
+//            .strokeBorder(LinearGradient(gradient: Gradient(colors: [darkYellow, .orange]), startPoint: .leading, endPoint: .trailing), lineWidth: coinWidth * 0.05)
+//            .background(Ellipse().fill(Color.yellow)) // Base color of the coin
+//            //.background(Ellipse().fill(Color.white)) // Base color of the coin
+//            .frame(width: coinWidth, height: coinHeight)
+//            //.rotation3DEffect(.degrees(angleOffset * 5), axis: (x: 1, y: 0, z: 0)) // Rotate each coin around the x-axis
+//            //.shadow(radius: 2) // Enhanced shadow for added depth
+//    }
+//}
+
 struct CoinStackView: View {
-    let screenHeightRatio:Double //how much height to take
-    let screenWidthRatio:Double //how much width to take
     let totalCoins:Int //how many to show
     let showBet:Bool
     let showMsg:Bool
+    let animate:Bool
     
-    @State var pileHeights:[Int] = []
-    @State var pileHorzLocations:[Double] = []
-    @State var pileVertLocations:[Double] = []
-    @State var drawingOrder:[Int] = []
+    let coinBank = CoinBank.shared
+    
+    //@State var pileVertLocations:[Double] = []
+    
+    let coinOverlapHeightWise = 0.7 //How much of coin n+1 height overlaps coin n
+    let pileOverlapWidthWise = 0.3 //How much of pile n+1 width overlaps pile n
+    @State var frameHeight:Double = 0
+    @State var frameWidth:Double = 0
 
-    let coinOverlapHeightWise = 0.6 //0.8 ///0.5
-    @State var coinHeight = 0.0
-    @State var coinWidth = 0.0
-    
+    ///How many piles of coins?
     func getPileCount() -> Int {
+        coinBank.coinHeight = coinBank.coinWidth * 0.4
+//        if true {
+//            return 3
+//        }
         ///Make it always odd so it can be centered in the view
         if totalCoins == 0 {
             return 1
@@ -55,100 +85,163 @@ struct CoinStackView: View {
         return 15
     }
     
-    func calculatePileHeights() {
-        pileHeights = Array(repeating: 0, count: getPileCount())
-        pileVertLocations = Array(repeating: 0.0, count: getPileCount())
-        drawingOrder = Array(repeating: 0, count: getPileCount())
-        let perPile = totalCoins / getPileCount()
-        var sum = 0
+    ///Calc random placement of coins in the coin piles
+    func calculatePileCoinCounts() {
+        coinBank.coinWidth = UIScreen.main.bounds.width * 0.1
+        let pileCount = getPileCount()
+        coinBank.pileCoinCounts = Array(repeating: 0, count: pileCount)
+        coinBank.pileDrawingHeights = Array(repeating: 0.0, count: pileCount)
+        
+        let x = Array(repeating: 0, count: pileCount)
+        //pileVertLocations = Array(repeating: 0.0, count: pileCount)
+        coinBank.drawingOrder = Array(repeating: 0, count: pileCount)
+
         for i in 0..<totalCoins {
-            pileHeights[i % pileHeights.count] += 1
+            coinBank.pileCoinCounts[i % coinBank.pileCoinCounts.count] += 1
         }
-        for cnt in 0..<pileHeights.count {
+        for _ in 0..<coinBank.pileCoinCounts.count {
+            var r = Int.random(in: 0..<coinBank.pileCoinCounts.count)
             let delta = Int.random(in: 1..<4)
-            var r = Int.random(in: 0..<pileHeights.count)
-            if pileHeights[r] > delta {
-                pileHeights[r] -= delta
-                r = Int.random(in: 0..<pileHeights.count)
-                if pileHeights[r] > 0 {
-                    pileHeights[r] += delta
-                }
+            if coinBank.pileCoinCounts[r] > delta {
+                coinBank.pileCoinCounts[r] -= delta
+                r = Int.random(in: 0..<coinBank.pileCoinCounts.count)
+                //if coinBank.pileCoinCounts[r] > 0 {
+                    coinBank.pileCoinCounts[r] += delta
+                //}
             }
         }
+        
+        ///Pile display height is a full coin height + the overlap height for each additional coin
+        for i in 0..<pileCount {
+            let pileSize = coinBank.pileCoinCounts[i]
+            let overlapSize = Double((pileSize - 1)) * (1.0 - coinOverlapHeightWise) * coinBank.coinHeight
+            coinBank.pileDrawingHeights[i] = coinBank.coinHeight + overlapSize
+        }
+        debug("after calculatePileHeights2")
     }
     
-    func getFrameHeight() -> Double {
-        return (Double(pileHeights.max() ?? 1) * coinHeight) * (1.0 - coinOverlapHeightWise) * 1.0
+    func getPileFrameHeight() -> Double {
+        calculatePileCoinCounts()
+//        pileHorzLocations = Array(repeating: 0.0, count: getPileCount())
+//        ///Make the piles overlap widthwise to some amount
+//        for i in 0..<pileHorzLocations.count {
+//            pileHorzLocations[i] = (Double(i - pileHorzLocations.count/2) ) * coinBank.coinWidth * 0.80
+//        }
+        ///Draw the shorter piles last to make sure they appear in front of higher piles
+        coinBank.drawingOrder = coinBank.pileCoinCounts.enumerated().sorted { $0.element > $1.element }.map { $0.offset }
+//        for i in 0..<pileHorzLocations.count {
+//            pileVertLocations[coinBank.drawingOrder[i]] = Double(i) * coinBank.coinHeight * 0.1
+//        }
+        ///Add height so each shorter pile can be displayed in front of the highest pile one coin overlap lower - i.e. in foreground
+        var height = coinBank.pileDrawingHeights.max() ?? 0
+        var coinSizeDiff = (coinBank.pileCoinCounts.max() ?? 0) - (coinBank.pileCoinCounts.min() ?? 0)
+        //height += Double(getPileCount() - 1) * (1.0 - coinOverlapHeightWise) * coinBank.coinHeight
+        height += Double(coinSizeDiff) * (1.0 - coinOverlapHeightWise) * coinBank.coinHeight
+        return height
     }
     
-    func debug() {
-        print("=======LOW H:", "coins", totalCoins, "heightEach", coinHeight, "overlap", coinOverlapHeightWise, "heightRatio", screenHeightRatio)
-        print(" == UIScreen height", UIScreen.main.bounds.height, UIScreen.main.bounds.width)
-        print(" heights", pileHeights, "HorzLocs", pileHorzLocations)
+    func getPileFrameWidth() -> Double {
+        return coinBank.coinWidth + Double((getPileCount() - 1)) * (coinBank.coinWidth * pileOverlapWidthWise)
     }
     
-    func lowestPilePos(_ index:Int) -> Double {
-        let totHeight = Double(pileHeights.max()!) * (coinHeight * (1.0 - coinOverlapHeightWise))
-        let offset = totHeight * 0.5 - Double(index) * (coinHeight * (1.0 - coinOverlapHeightWise))
-        return offset
+    func debug(_ ctx: String) {
+        print("\n====DEBUG", ctx)
+        print(" LOW H:", "coins", totalCoins, "heightEach", coinBank.coinHeight, "overlap", coinOverlapHeightWise)
+        print(" UIScreen height", UIScreen.main.bounds.height, UIScreen.main.bounds.width)
+        print(" heights", coinBank.pileCoinCounts, "drawwingHeights:", coinBank.pileDrawingHeights)
+        print(" Draw order", coinBank.drawingOrder)
     }
-
+    
+    func coinYPos(_ pileIndex:Int, _ indexInPile:Int) -> Double {
+        ///Offset the coin veritically based on its position in the pile
+        let midIndex = coinBank.pileCoinCounts[pileIndex] / 2
+        let overlapHeight = coinBank.coinHeight * (1.0 - coinOverlapHeightWise)
+        var y = Double(indexInPile - midIndex) * overlapHeight
+        if coinBank.pileCoinCounts[pileIndex] % 2 == 0 {
+            y += overlapHeight / 2.0
+        }
+        ///Offset the postion to level the pile with the largest pile
+        var foregroundOffset = 0.0
+        if coinBank.pileCoinCounts[pileIndex] < coinBank.pileCoinCounts.max() ?? 0 {
+            let displayDiff = (coinBank.pileDrawingHeights.max() ?? 0) - coinBank.pileDrawingHeights[pileIndex]
+            let coinCountDiff = (coinBank.pileCoinCounts.max() ?? 0) - coinBank.pileCoinCounts[pileIndex]
+            foregroundOffset = displayDiff / 2.0  + (Double(coinCountDiff) * overlapHeight) / 2.0
+        }
+        return y + foregroundOffset
+    }
+    
+    func pileXPos(_ idx:Int) -> Double {
+        let mid = getPileCount() / 2
+        let width = coinBank.coinWidth * pileOverlapWidthWise
+        var xPos = Double(idx - mid) * width
+        ///Center if number of piles is even
+        if getPileCount() % 2 == 0 {
+            xPos += width / 2.0
+        }
+        return xPos
+    }
+    
+    func log(_ pileIdx:Int, _ pileXidx:Int, _ index:Int) -> Int {
+        print("===== pile", pileIdx, "PileXPos:", pileXidx, "\tindex", index)
+      return 0
+    }
+    
+    func getCountMsg() -> String {
+        if coinBank.total == 0 {
+            return "No coins left"
+        }
+        if coinBank.total == 1 {
+            return "There is one coin left"
+        }
+        else {
+            return "There are \(coinBank.total) coins left"
+        }
+    }
+    
+    func getCountFace() -> String {
+        if coinBank.total == 0 {
+            return "🥵"
+        }
+        if coinBank.total < CoinBank.initialCoins / 2 {
+            return "🙁"
+        }
+        return "😊"
+    }
+    
     var body: some View {
         VStack {
             ZStack {
-                ForEach(drawingOrder, id: \.self) { index in
-                    ZStack {
-                        ForEach(0..<pileHeights[index], id: \.self) { pileIndex in
-                            CoinView(coinCount: self.totalCoins, coinWidth:coinWidth, coinHeight:coinHeight, angleOffset: Double(pileIndex))
-                                //.offset(y: CGFloat(pileIndex) * coinHeight)// * coinOverlapHeightWise) // Vertical spacing in pile
-                                .offset(y: CGFloat(lowestPilePos(pileIndex)))// * coinOverlapHeightWise) // Vertical spacing in pile
+                GeometryReader { geometry in
+                    ForEach(coinBank.drawingOrder, id: \.self) { pileIndex in
+                        ForEach(0..<coinBank.pileCoinCounts[pileIndex], id: \.self) { indexInPile in
+                            let indexInPile = coinBank.pileCoinCounts[pileIndex] - indexInPile - 1
+                            //let x = log(pileIndex, Int(xPos(pileIndex)), indexInPile)
+                            CoinView(coinWidth:coinBank.coinWidth, coinHeight:coinBank.coinHeight, angleOffset: Double(indexInPile), animate: animate)
+                            ///Position one coin in the pile
+                            ///Position center required first since its  a GeometryReader the apply offset
+                                .position(x: geometry.size.width / 2, y: geometry.size.height / 2) // Center the ellipse within GeometryReader
+                                .offset(y: coinYPos(pileIndex, indexInPile))
                         }
+                        //.position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                        .offset(x: pileXPos(pileIndex))
                     }
-                    ///Horizontal pile postion
-                    .offset(x: pileHorzLocations[index], y: pileVertLocations[index])
-                    //.frame(width: coinHeight * 2.0 * Double(pileHorzLocations.count), height: getFrameHeight())
                 }
-//                if showMsg {
-//                    if showBet {
-//                        Text("You bet \(coinBank.lastBet) coins")
-//                    }
-//                    else {
-//                        Text("You have \(coinBank.total) coins")
-//                    }
-//                }
+            }
+            .frame(width: frameWidth, height: frameHeight)
+            //        .border(.green, width: 1)
+            .onAppear() {
+                self.frameHeight = getPileFrameHeight()
+                self.frameWidth = getPileFrameWidth()
+                if self.totalCoins > 0 {
+                    debug(" after .InAppear ")
+                }
             }
         }
-        .frame(height: UIScreen.main.bounds.height * screenHeightRatio)
-//        .border(.green, width: 1)
-        .onAppear() {
-            if self.totalCoins > 0 {
-                calculatePileHeights()
-                let totalHeight = UIScreen.main.bounds.height * self.screenHeightRatio
-                let totalWidth = UIScreen.main.bounds.width * self.screenWidthRatio
-                ///Coin height drives all the other layout measurements
-                ///Leave some of the allocated height blank spaced
-                coinHeight = totalHeight / Double(pileHeights.max()!) * 0.4
-                if coinHeight > UIScreen.main.bounds.height * 0.05 {
-                    coinHeight = UIScreen.main.bounds.height * 0.05
-                }
-                ///Make sure they all fit widthwise
-                coinWidth = coinHeight * 20.0
-                if coinWidth * Double(pileHeights.count) > totalWidth {
-                    coinWidth = totalWidth / Double(pileHeights.count)
-                    //coinHeight = coinWidth / 20.0
-                }
-                pileHorzLocations = Array(repeating: 0.0, count: getPileCount())
-                ///Make the piles overlap widthwise to some amount
-                for i in 0..<pileHorzLocations.count {
-                    pileHorzLocations[i] = (Double(i - pileHorzLocations.count/2) ) * coinWidth * 0.80
-                }
-                ///Draw the shorter piles last to make sure they appear in front of higher piles
-                drawingOrder = pileHeights.enumerated().sorted { $0.element > $1.element }.map { $0.offset }
-                for i in 0..<pileHorzLocations.count {
-                    pileVertLocations[drawingOrder[i]] = Double(i) * coinHeight * 0.1
-                }
-                //debug()
-            }
+        HStack {
+            Spacer()
+            Text(getCountMsg()).font(.title2)
+            Text(getCountFace()).font(.title)
+            Spacer()
         }
     }
 }
@@ -167,7 +260,14 @@ struct CoinBankView: View {
         }
         return title
     }
-    
+    var body1: some View {
+        ZStack {
+            CoinStackView(totalCoins: CoinBank.shared.total, showBet: false, showMsg: false, animate: false)
+                .border(.cyan, width: 2)
+            Rectangle().frame(height: 1).foregroundColor(.black).padding(.horizontal)
+            Rectangle().frame(width: 1).foregroundColor(.black).padding(.horizontal)
+        }
+    }
     var body: some View {
         ZStack {
             Image(background)
@@ -184,12 +284,11 @@ struct CoinBankView: View {
                     Text("").padding(/*@START_MENU_TOKEN@*/EdgeInsets()/*@END_MENU_TOKEN@*/)
                     
                     if coinBank.total > 0 {
-                        CoinStackView(screenHeightRatio: 0.4, screenWidthRatio: 0.8, totalCoins: CoinBank.shared.total, showBet: false, showMsg: false)
+                        CoinStackView(totalCoins: CoinBank.shared.total, showBet: false, showMsg: false, animate: false)
                         //.border(.cyan, width: 2)
                     }
-                    Text("You have \(coinBank.total) coins").font(.title2)
                     if coinBank.total > 1 {
-                        Text("Spend them wisely 😊").font(.title2)
+                        //Text("Spend them wisely 😊").font(.title2)
                     }
                     Text("")
                 }

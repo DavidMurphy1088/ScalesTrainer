@@ -154,13 +154,13 @@ struct SpinWheelView: View {
                         .edgesIgnoringSafeArea(.all)
                         VStack {
                             Spacer()
-                            CoinStackView(screenHeightRatio: 0.3, screenWidthRatio: 0.3, totalCoins: CoinBank.shared.total, showBet: false, showMsg: true)
-                                .border(Color.cyan, width: 3)
+                            CoinStackView(totalCoins: CoinBank.shared.total, showBet: false, showMsg: true, animate: scalesModel.spinState1 == SpinState.selectedBet1)
+                                //.border(Color.cyan, width: 3)
                             //.padding()
                             //.hilighted(backgroundColor: .blue)
                         }
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .border(Color.red)
+                        //.frame(maxHeight: .infinity, alignment: .top)
+                        //.border(Color.red)
                     }
 
                     if [SpinState.notStarted1, SpinState.selectedBet1].contains(scalesModel.spinState1) {

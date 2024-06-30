@@ -118,12 +118,11 @@ public class ScalesModel : ObservableObject {
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
 
-    //@Published
-    private(set) var result:Result?
+    @Published private(set) var result:Result?
     func setResult(_ result:Result?) {
-        //DispatchQueue.main.async {
+        DispatchQueue.main.async {
             self.result = result
-        //}
+        }
     }
     
     @Published private(set) var amplitudeFilterDisplay:Double = 0.0
