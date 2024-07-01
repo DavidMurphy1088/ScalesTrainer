@@ -108,9 +108,9 @@ class CalibrationResults : ObservableObject {
                     else {
                         bestIndex = first + 1
                     }
-                    let result = self.calibrationResults![bestIndex]
-                    Settings.shared.save(amplitudeFilter: result.amplFilter)
+                    let result = self.calibrationResults![bestIndex]                    
                     scalesModel.setAmplitudeFilter(result.amplFilter)
+                    Settings.shared.save(amplitudeFilter: result.amplFilter)
                     ///Show the best result visually
                     scalesModel.setRunningProcess(.recordScaleWithTapData)
                 }

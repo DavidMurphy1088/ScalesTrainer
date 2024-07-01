@@ -99,7 +99,7 @@ struct PickAnyScaleView: View {
                         let scale = getScale(major: true)
                         NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
                             HStack {
-                                Text(" Practice Scale \(scale.getName()) ")
+                                Text(" Practice Scale \(scale.getName()) ").font(.title2)
                             }
                             //.padding()
                             .hilighted(backgroundColor: .blue)
@@ -133,7 +133,7 @@ struct PickAnyScaleView: View {
                         let scale = getScale(major: false)
                         NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
                             HStack {
-                                Text(" Practice Scale \(scale.getName()) ")
+                                Text(" Practice Scale \(scale.getName()) ").font(.title2)
                             }
                             .hilighted(backgroundColor: .blue)
                         }

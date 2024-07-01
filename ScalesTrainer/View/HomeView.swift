@@ -172,7 +172,7 @@ struct ActivityModeView: View {
                 if let practiceJournal = PracticeJournal.shared {
                     let name = "Practice Journal" // for " + practiceJournal.title
                     menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
-                    menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView(practiceJournal: practiceJournal))))
+                    menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
                     menuOptions.append(ActivityMode(name: "Spin The Scale Wheel", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .pickRandomScale))))
                     //menuOptions.append(ActivityMode(name: "Identify The Scale", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .identifyTheScale))))
                 }
@@ -183,11 +183,9 @@ struct ActivityModeView: View {
                 //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
                 //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
                 //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-                
-                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
-                
-                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
                 menuOptions.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView())))
+                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
+                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
                 menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
             }
         }

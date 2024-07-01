@@ -40,13 +40,14 @@ struct ScalesTrainerApp: App {
 //                        }
 //                        .tag(0)
 //                }
-                
+               
                 HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(1)
                 
+                //ScreenA()
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")

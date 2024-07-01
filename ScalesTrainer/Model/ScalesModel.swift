@@ -56,11 +56,10 @@ enum RunningProcess {
 }
 
 enum SpinState {
-    case notStarted1
-    case selectedBet1
-    case spinning1
-    case spunAndStopped1    
-   //case runningWithBet
+    case notStarted
+    case selectedBet
+    case spinning
+    case spunAndStopped    
 }
 
 public class ScalesModel : ObservableObject {
@@ -107,11 +106,12 @@ public class ScalesModel : ObservableObject {
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     
-    @Published private(set) var spinState1:SpinState = .notStarted1
+    //@Published
+    private(set) var spinState:SpinState = .notStarted
     func setSpinState1(_ value:SpinState) {
-        DispatchQueue.main.async {
-            self.spinState1 = value
-        }
+        //DispatchQueue.main.async {
+            self.spinState = value
+        //}
     }
 
     ///Speech
@@ -119,9 +119,14 @@ public class ScalesModel : ObservableObject {
     @Published var speechLastWord = ""
 
     @Published private(set) var result:Result?
-    func setResult(_ result:Result?) {
+    func setResult(_ result:Result?, _ ctx:String) {
         DispatchQueue.main.async {
             self.result = result
+            let coinBank = CoinBank.shared
+            if let result = self.result {
+                print("================ ScalesModel.setResult ctx:", ctx, "errorFree:", result.noErrors(), "errorCount:", result.totalErrors())
+                coinBank.adjustAfterResult(errorFree: result.noErrors())
+            }
         }
     }
     
@@ -223,11 +228,9 @@ public class ScalesModel : ObservableObject {
     
     func setRunningProcess(_ setProcess: RunningProcess) {
         let coinBank = CoinBank.shared
-        if self.runningProcess == .recordingScale {
-            coinBank.total += coinBank.lastBet
-            coinBank.setLastBet(0)
-            coinBank.save()
-        }
+//        if self.runningProcess == .recordingScale {
+//
+//        }
         Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
@@ -252,7 +255,7 @@ public class ScalesModel : ObservableObject {
         keyboard.redraw()
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
-            self.setResult(nil)
+            self.setResult(nil, "setRunningProcess::nil for follow/practice")
             let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : self.amplitudeFilter, hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
@@ -306,7 +309,7 @@ public class ScalesModel : ObservableObject {
             self.setShowStaff(false)
             self.setShowParameters(false)
             self.setShowLegend(false)
-            self.setResult(nil)
+            self.setResult(nil, "setRunningProcess::start record")
             self.setUserMessage(nil)
             //self.setShowFingers(false)
             keyboard.redraw()

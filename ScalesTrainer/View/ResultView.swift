@@ -15,22 +15,22 @@ struct ResultView: View {
             status = "Good job, your scale was correct."
         }
         else {
-            status = "😔 Your scale was not correct. "
+            status = "Your scale was not correct. "
             if result.wrongCountAsc > 0 {
-                status += "\nYou played \(result.wrongCountAsc) wrong \(result.wrongCountAsc > 1 ? "notes" : "note") ascending. "
+                status += "\n⏺ You played \(result.wrongCountAsc) wrong \(result.wrongCountAsc > 1 ? "notes" : "note") ascending. "
             }
             else {
                 ///Only show this if there were no wrong notes
                 if result.missedCountAsc > 0 {
-                    status += "\nYou missed \(result.missedCountAsc) \(result.missedCountAsc > 1 ? "notes" : "note") ascending. "
+                    status += "\n⏺ You missed \(result.missedCountAsc) \(result.missedCountAsc > 1 ? "notes" : "note") ascending. "
                 }
             }
             if result.wrongCountDesc > 0 {
-                status += "\nYou played \(result.wrongCountDesc) wrong \(result.wrongCountDesc > 1 ? "notes" : "note") descending. "
+                status += "\n⏺ You played \(result.wrongCountDesc) wrong \(result.wrongCountDesc > 1 ? "notes" : "note") descending. "
             }
             else {
                 if result.missedCountDesc > 0 {
-                    status += "\nYou missed \(result.missedCountDesc) \(result.missedCountDesc > 1 ? "notes" : "note") descending. "
+                    status += "\n⏺ You missed \(result.missedCountDesc) \(result.missedCountDesc > 1 ? "notes" : "note") descending. "
                 }
             }
         }
@@ -47,7 +47,7 @@ struct ResultView: View {
         return (getaAllCorrect(), status)
     }
 
-    func status() -> (Bool, String)? {
+    func getResultStatus() -> (Bool, String)? {
         if self.result.runningProcess == .recordingScale {
             return recordStatus()
         }
@@ -60,16 +60,16 @@ struct ResultView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
-                if let status = status() {
-//                    if status.0 {
-//                        Image(systemName: "face.smiling")
-//                            .renderingMode(.template)
-//                            .foregroundColor(.green)
-//                            .font(.largeTitle)
-//                            .padding()
-//                    }
+                //Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
+                if let status = getResultStatus() {
+                    if status.0 {
+                        Text("😊").font(.system(size: 45))
+                    }
+                    else {
+                        Text("😔").font(.system(size: 45))
+                    }
                     Text(status.1).padding()
+                    
                 }
             }
         }

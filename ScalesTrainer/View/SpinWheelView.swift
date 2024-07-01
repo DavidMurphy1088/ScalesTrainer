@@ -88,6 +88,10 @@ struct SpinWheelView: View {
     @State var background = UIGlobals.shared.getBackground()
     @State private var selectedBet:Int = 0
     @State private var betSizes:[Int] = []
+    
+    ///Warn on early exit
+    @Environment(\.presentationMode) var presentationMode
+    @State private var promptForEarlyExit = false
 
     func getScaleNames(mode:WheelMode) -> [String] {
         var allScales:[String] = []
@@ -111,7 +115,7 @@ struct SpinWheelView: View {
     }
     
     func getCoinState() -> String {
-        let coins = CoinBank.shared.total
+        let coins = CoinBank.shared.totalCoinsInBank
         var msg = "\(coins) Coin"
         if coins > 1 {
             msg += "s"
@@ -154,18 +158,22 @@ struct SpinWheelView: View {
                         .edgesIgnoringSafeArea(.all)
                         VStack {
                             Spacer()
-                            CoinStackView(totalCoins: CoinBank.shared.total, showBet: false, showMsg: true, animate: scalesModel.spinState1 == SpinState.selectedBet1)
+                            VStack {
+                                CoinStackView(totalCoins: CoinBank.shared.totalCoinsInBank, compactView: false)
                                 //.border(Color.cyan, width: 3)
-                            //.padding()
-                            //.hilighted(backgroundColor: .blue)
+                                //.padding()
+                                //.hilighted(backgroundColor: .blue)
+                                Text(CoinBank.shared.getCoinsStatusMsg()).font(.title2)
+                            }
                         }
                         //.frame(maxHeight: .infinity, alignment: .top)
                         //.border(Color.red)
                     }
 
-                    if [SpinState.notStarted1, SpinState.selectedBet1].contains(scalesModel.spinState1) {
-                        //if let practiceJournal = PracticeJournal.shared {
-                            HStack {
+                    if [SpinState.notStarted, SpinState.selectedBet].contains(scalesModel.spinState) {
+                        HStack {
+                            if coinBase.totalCoinsInBank > 1 {
+                                Spacer()
                                 Picker("Select a number", selection: $selectedBet) {
                                     ForEach(betSizes, id: \.self) { num in
                                         Text(num == 0 ? "None" : "\(num)").bold().foregroundColor(Color.blue)
@@ -175,44 +183,49 @@ struct SpinWheelView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))  // Clip the background to rounded corners
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)  // Shape to use as the border
-                                    .stroke(Color.gray, lineWidth: 2)  // Gray border with a width of 2
+                                        .stroke(Color.gray, lineWidth: 2)  // Gray border with a width of 2
                                 )
                                 .onChange(of: selectedBet) { oldValue, newValue in
-                                    scalesModel.setSpinState1(newValue > 0 ? SpinState.selectedBet1 : .notStarted1)
+                                    scalesModel.setSpinState1(newValue > 0 ? SpinState.selectedBet : .notStarted)
                                     CoinBank.shared.setLastBet(newValue)
                                 }
                                 .padding()
-                                VStack {
-                                    VStack {
-                                        Text("\(getCoinState())")
-                                        if CoinBank.shared.lastBet == 0 {
-                                            Text("Spin For How Many Coins?")
-                                        }
+                            }
+                            Spacer()
+                            VStack {
+                                if coinBase.totalCoinsInBank > 1 {
+                                    if CoinBank.shared.lastBet == 0 {
+                                        Text("Spin for how many coins?").padding().font(.title2)
                                     }
-                                    .padding().font(.title2)
-                                    
-                                    if scalesModel.spinState1 == SpinState.selectedBet1 {
-                                        Button(action: {
-                                            startSpinning(elements: getScaleNames(mode:mode))
-                                        }) {
-                                            HStack {
-                                                Text("Spin")
-                                                    .padding()
-                                                    .font(.title2)
-                                                    .hilighted(backgroundColor: .blue)
-                                            }
+                                }
+                                ///Let them spin but dont go to record scale if coinBase.totalCoinsInBank == 1
+                                if scalesModel.spinState == SpinState.selectedBet || coinBase.totalCoinsInBank == 1 {
+                                    Button(action: {
+                                        startSpinning(elements: getScaleNames(mode:mode))
+                                    }) {
+                                        HStack {
+                                            Text(" Spin The Wheel ")
+                                                .padding()
+                                                .font(.title2)
+                                                .hilighted(backgroundColor: .blue)
                                         }
                                     }
                                 }
                             }
-                        //}
+                            Spacer()
+                        }
                     }
 
-                    if scalesModel.spinState1 == SpinState.spunAndStopped1 {
-                        NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], initialRunProcess: .recordingScale)) {
-                            Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName())").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
-                                .font(.title2)
-                                .hilighted(backgroundColor: .blue)
+                    if scalesModel.spinState == SpinState.spunAndStopped {
+                        if coinBase.totalCoinsInBank <= 1 {
+                            Text("Sorry, you dont have enough coins 😌").font(.title2)
+                        }
+                        else {
+                            NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], initialRunProcess: .recordingScale)) {
+                                Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) and Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                    .font(.title2)
+                                    .hilighted(backgroundColor: .blue)
+                            }
                         }
                     }
                     Spacer()
@@ -223,10 +236,32 @@ struct SpinWheelView: View {
         }
         .onAppear() {
             CoinBank.shared.setLastBet(0)
-            betSizes = Array(0...coinBase.total / 2)
-            scalesModel.setSpinState1(.notStarted1)
+            betSizes = Array(0...coinBase.totalCoinsInBank / 2)
+            scalesModel.setSpinState1(.notStarted)
             background = UIGlobals.shared.getBackground()
             width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.45 : 0.9
+        }
+//        .alert(isPresented: $promptForEarlyExit) {
+//            Alert(title: Text("Warning"), message: Text("Are you sure you want to go back?"), primaryButton: .default(Text("No")) {
+//                self.presentationMode.wrappedValue.dismiss()
+//            }, secondaryButton: .cancel(Text("No")))
+//        }
+        .navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped && coinBase.totalCoinsInBank > 1)
+        // Hide default back button to avoid user cancelling coin bet
+//        .navigationBarItems(leading: Button(action: {
+//            if scalesModel.spinState == .spunAndStopped {
+//                self.promptForEarlyExit = true // Show alert when custom back button is tapped
+//            }
+//            else {
+//                self.promptForEarlyExit = false
+//            }
+//        }) {
+//            Image(systemName: "chevron.left")
+//            Text("Back")
+//        })
+        //.navigationBarTitle("Screen B", displayMode: .inline)
+        .onDisappear {
+            //self.promptForEarlyExit = promptForEarlyExit
         }
     }
     
@@ -237,7 +272,7 @@ struct SpinWheelView: View {
             rotation += totalRotations + randomAngle
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState1(.spunAndStopped1)
+            scalesModel.setSpinState1(.spunAndStopped)
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             // Determine which segment is at the top

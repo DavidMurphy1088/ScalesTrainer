@@ -8,7 +8,7 @@ class FamousQuotes {
         quotes.append(("Do you ask me how good a player you will become? Then tell me how much you practice the scales.","Carl Czerny"))
         quotes.append(("Scales should never be dry. If you are not interested in them, work with them until you do become interested in them.","Artur Rubinstein"))
         quotes.append(("I don't like to practice slowly, never have. But when I do get started at the piano, for the first 10 minutes I play scales, slowly. I've done this all my life. Listen to the sounds you make. The sound of each tone will generate a response in you. It will give you energy.","Van Clipburn"))
-        quotes.append(("I consider the practice of scales important not only for the fingers, but also for the discipline of the ear with regard to the feeling of tonality )key), understanding of intervals, and the comprehension of the total compass of the piano.","Josef Hofman"))
+        quotes.append(("I consider the practice of scales important not only for the fingers, but also for the discipline of the ear with regard to the feeling of tonality (key), understanding of intervals, and the comprehension of the total compass of the piano.","Josef Hofman"))
         quotes.append(("Give special study to passing the thumb under the hand and passing the hand over the thumb. This makes the practice of scales and arpeggios indispensible.","Jan Paderewski"))
         quotes.append(("You must diligently practice all scales.","Robert Schuman"))
         quotes.append(("I believe this matter of insisting upon a thorough technical knowledge, particularly scale playing, is a very vital one. the mere ability to play a few pieces does not constitue musical proficiency.","Sergei Rachmaninoff"))

@@ -361,8 +361,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
             lastKeyPressedMidi = keyboardKey.midi
             if atTop {
                 DispatchQueue.main.async {
-                    ScalesModel.shared.setDirection(1)
-                    keyboardModel.redraw()
+                    //ScalesModel.shared.setDirection(1)
+                    //keyboardModel.redraw()
                 }
             }
         }
@@ -393,14 +393,14 @@ class ScaleTapHandler : TapHandlerProtocol  {
         
         let result = Result(runningProcess: .recordingScale, userMessage: "")
         result.buildResult()
-        if ScalesModel.shared.runningProcess == .recordingScale {
-            if result.correctNotes == 0 {
-                ///Discard a quick throwaway attempt
-                return
-            }
-        }
-        
-        ScalesModel.shared.setResult(result)
+//        if ScalesModel.shared.runningProcess == .recordingScale {
+//            if result.correctNotes == 0 {
+//                ///Discard a quick throwaway attempt
+//                return
+//            }
+//        }
+    
+        ScalesModel.shared.setResult(result, "TapHandlerAtEnd")
         
         if ScalesModel.shared.runningProcess == .recordingScale && Settings.shared.recordDataMode && self.tapRecords.count > 0 {
             let calendar = Calendar.current

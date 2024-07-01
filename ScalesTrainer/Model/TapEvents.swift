@@ -55,7 +55,7 @@ public class TapEvent:Hashable {
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
         let expected:Int = expectedScaleNoteState?.midi ?? 0
 
-        var row = "M:\(self.midi),\(self.tapMidi) Exp:\(expected)"
+        var row = "Used:\(self.midi), Tapped:\(self.tapMidi) Expect:\(expected)"
         var status = "\(self.status)"
         status = String(status.prefix(12))
         row += "\tA:\(self.ascending ? 1:0) \(status)"

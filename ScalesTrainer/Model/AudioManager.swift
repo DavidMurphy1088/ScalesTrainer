@@ -37,74 +37,74 @@ class AudioManager {
 //            configureAudio(start: true)
 //        }
     }
-
     
-    func configureAudioOld() {
-        //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
-        //Record on mic will never work on simulator - dont even try 😡😡😡😡
-        self.engine = AudioEngine() 
-        guard let engine = self.engine else {
-            Logger.shared.log(self, "Engine is nil")
-            return
-        }
-
-        guard let input = engine.input else {
-            Logger.shared.log(self, "Engine has no input")
-            return
-        }
-        mic = input
-        do {
-            recorder = try NodeRecorder(node: input)
-        } catch let err {
-            Logger.shared.reportError(self, "\(err)")
-            return
-        }
-        //mic.gain = 1.0
-        checkMicPermission(completion: {granted in
-            if !granted {
-                Logger.shared.reportError(self, "No microphone permission")
-            }
-        })
+//    func configureAudioOld() {
+//        //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
+//        //Record on mic will never work on simulator - dont even try 😡😡😡😡
+//        self.engine = AudioEngine() 
+//        guard let engine = self.engine else {
+//            Logger.shared.log(self, "Engine is nil")
+//            return
+//        }
+//
+//        guard let input = engine.input else {
+//            Logger.shared.log(self, "Engine has no input")
+//            return
+//        }
+//        mic = input
+//        do {
+//            recorder = try NodeRecorder(node: input)
+//        } catch let err {
+//            Logger.shared.reportError(self, "\(err)")
+//            return
+//        }
+//        //mic.gain = 1.0
+//        checkMicPermission(completion: {granted in
+//            if !granted {
+//                Logger.shared.reportError(self, "No microphone permission")
+//            }
+//        })
+//    
+//    ///In AudioKit, the engine.output = mixer line of code sets the final node in the audio processing chain to be the mixer node. This means that the mixer node's output is what will be sent to the speakers or the output device.
+//    ///When you set engine.output = mixer, you are specifying that the mixer's output should be the final audio output of the entire audio engine. This is crucial because:
+//    
+//    ///Signal Routing: It determines where the processed audio should go. Without setting the engine.output, the audio engine doesn't know which node's output should be routed to the speakers or headphones.
+//    ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
+//    ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
+//    
+//        simulator = false
+//#if targetEnvironment(simulator)
+//        simulator = true
+//#endif
+//        if simulator {
+//            //setupSampler()
+//            engine.output = midiSampler
+//        }
+//        else {
+//            self.mixer = Mixer(input)
+//            ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
+//            let silencer = Fader(input, gain: 0)
+//            self.silencer = silencer
+//            mixer?.addInput(silencer)
+//            
+//            self.audioPlayer = AudioPlayer()
+//            mixer?.addInput(self.audioPlayer!)
+//            //setupSampler()
+//            //mixer?.addInput(midiSampler ?? <#default value#>)
+//            
+//            //self.speechManager = SpeechManager.shared
+//            engine.output = mixer
+//            setSession()
+//        }
+//        do {
+//            try engine.start()
+//        }
+//        catch {
+//            Logger.shared.reportError(self, "Could not start engine", error)
+//        }
+//
+//    }
     
-    ///In AudioKit, the engine.output = mixer line of code sets the final node in the audio processing chain to be the mixer node. This means that the mixer node's output is what will be sent to the speakers or the output device.
-    ///When you set engine.output = mixer, you are specifying that the mixer's output should be the final audio output of the entire audio engine. This is crucial because:
-    
-    ///Signal Routing: It determines where the processed audio should go. Without setting the engine.output, the audio engine doesn't know which node's output should be routed to the speakers or headphones.
-    ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
-    ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
-    
-        simulator = false
-#if targetEnvironment(simulator)
-        simulator = true
-#endif
-        if simulator {
-            //setupSampler()
-            engine.output = midiSampler
-        }
-        else {
-            self.mixer = Mixer(input)
-            ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
-            let silencer = Fader(input, gain: 0)
-            self.silencer = silencer
-            mixer?.addInput(silencer)
-            
-            self.audioPlayer = AudioPlayer()
-            mixer?.addInput(self.audioPlayer!)
-            //setupSampler()
-            //mixer?.addInput(midiSampler ?? <#default value#>)
-            
-            //self.speechManager = SpeechManager.shared
-            engine.output = mixer
-            setSession()
-        }
-        do {
-            try engine.start()
-        }
-        catch {
-            Logger.shared.reportError(self, "Could not start engine", error)
-        }
-
-    }
     func playRecordedFile(audioFile:AVAudioFile) {
         do {
             //try audioPlayer.load(file: audioFile)
@@ -162,6 +162,9 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
+        //if self.midiSampler == nil {
+            self.midiSampler = loadSampler()
+        //}
         //self.midiSampler = setupSampler()
         engine.output = self.midiSampler
         do {
@@ -483,8 +486,7 @@ extension AudioManager: PianoKeyboardDelegate {
         //sampler.startNote(UInt8(keyNumber), withVelocity: 64, onChannel: 0)
         if let sampler = midiSampler {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
-        }
-        
+        }        
     }
 
     func pianoKeyUp(_ keyNumber: Int) {

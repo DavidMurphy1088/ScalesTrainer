@@ -93,7 +93,6 @@
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
 		79C3904C2C1ECEAA00F0A658 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */; };
-		79C3904E2C202B4100F0A658 /* app_back_0.webp in Resources */ = {isa = PBXBuildFile; fileRef = 79C3904D2C202B4100F0A658 /* app_back_0.webp */; };
 		79C390502C20346300F0A658 /* PickAnyScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */; };
 		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
 		79C8AD002C127D8400770C10 /* ScaleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* ScaleGroup.swift */; };
@@ -222,7 +221,6 @@
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
-		79C3904D2C202B4100F0A658 /* app_back_0.webp */ = {isa = PBXFileReference; lastKnownFileType = file; name = app_back_0.webp; path = Assets.xcassets/app_back_0.webp; sourceTree = "<group>"; };
 		79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickAnyScaleView.swift; sourceTree = "<group>"; };
 		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
 		79C8ACFF2C127D8400770C10 /* ScaleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleGroup.swift; sourceTree = "<group>"; };
@@ -452,7 +450,6 @@
 			isa = PBXGroup;
 			children = (
 				79DA82192BCCE960008AC492 /* Assets.xcassets */,
-				79C3904D2C202B4100F0A658 /* app_back_0.webp */,
 				794D495D2BCD34080005A173 /* AudioFiles */,
 				79C0D2532BE30E7B0036CC91 /* Data */,
 				7943AE602BD6539500E94AC7 /* Games */,
@@ -677,7 +674,6 @@
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
 				799FC1352BE6FFC700BB0969 /* 05_05_C_Major_1_60_iPad_4.txt in Resources */,
 				7970DD122BF8201F004AD524 /* 05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33.txt in Resources */,
-				79C3904E2C202B4100F0A658 /* app_back_0.webp in Resources */,
 				79E8AF2F2BEC9BF200C2D5B3 /* 05_09_C_Major_2_60_iPad_Arpeggio.txt in Resources */,
 				799FC10D2BE6F9CB00BB0969 /* 05_02_C_Major_1_60_iPad.txt in Resources */,
 				79E8AF2A2BEC9BF200C2D5B3 /* 05_09_D_Major_3_50_iPad_Desc.txt in Resources */,

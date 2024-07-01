@@ -25,7 +25,7 @@
     " C" : {
 
     },
-    " Go To Scale %@" : {
+    " Go To Scale %@ and Good Luck" : {
 
     },
     " Practice \n Scale " : {
@@ -38,6 +38,9 @@
 
     },
     " Show Lowest Progress Scales " : {
+
+    },
+    " Spin The Wheel " : {
 
     },
     "?" : {
@@ -61,6 +64,12 @@
     "𝄢" : {
 
     },
+    "😊" : {
+
+    },
+    "😔" : {
+
+    },
     "1" : {
 
     },
@@ -77,6 +86,12 @@
 
     },
     "Analyse Best Settings" : {
+
+    },
+    "Are you sure you want to go back?" : {
+
+    },
+    "Back" : {
 
     },
     "Back %@" : {
@@ -110,6 +125,9 @@
 
     },
     "Follow\nThe\nScale" : {
+
+    },
+    "Go to Screen B" : {
 
     },
     "Hand" : {
@@ -254,6 +272,12 @@
     "Scale Type:" : {
 
     },
+    "Screen A" : {
+
+    },
+    "Screen B" : {
+
+    },
     "Select a number" : {
 
     },
@@ -264,6 +288,9 @@
 
     },
     "Settings" : {
+
+    },
+    "Show Alert" : {
 
     },
     "Show Fingers" : {
@@ -278,10 +305,10 @@
     "Show Tap Data" : {
 
     },
-    "Spin" : {
+    "Sorry, you dont have enough coins 😌" : {
 
     },
-    "Spin For How Many Coins?" : {
+    "Spin for how many coins?" : {
 
     },
     "Start Playing Scale" : {
@@ -360,10 +387,16 @@
         }
       }
     },
+    "Warning" : {
+
+    },
     "WrongKeys[%lld]" : {
 
     },
     "Yes" : {
+
+    },
+    "You can earn more coins by recording scales 😊" : {
 
     }
   },

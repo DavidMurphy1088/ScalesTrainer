@@ -5,12 +5,13 @@ struct ScalesView: View {
     let initialRunProcess:RunningProcess?
 
     @ObservedObject private var scalesModel = ScalesModel.shared
+    @ObservedObject private var coinBank = CoinBank.shared
+    
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
     
     //private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
-    //@ObservedObject private var speech = SpeechManager.shared
     private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
@@ -59,7 +60,7 @@ struct ScalesView: View {
         scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
         //scalesModel.setKeyAndScale()
         //audioManager.stopRecording()
-        scalesModel.setResult(nil)
+        scalesModel.setResult(nil, "scalesView::setState")
         //self.playingAlongWithScale = false
         self.directionIndex = 0
     }
@@ -167,7 +168,7 @@ struct ScalesView: View {
             if [.recordingScale].contains(scalesModel.runningProcess) {
                 Spacer()
                 VStack {
-                    Text("Recording \(scalesModel.scale.getScaleName())").font(.title2).padding()
+                    Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
                     ProcessUnderwayView()
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -177,10 +178,8 @@ struct ScalesView: View {
                     }) {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-                    if CoinBank.shared.lastBet > 0 {
-                        CoinStackView(totalCoins: CoinBank.shared.lastBet, showBet: true, showMsg: true, animate: false)
-                            .padding()
-                            //.hilighted(backgroundColor: .blue)
+                    if coinBank.lastBet > 0 {
+                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
                     }
                 }
                 .commonFrameStyle()
@@ -433,7 +432,14 @@ struct ScalesView: View {
                     }
                     
                     if let result = scalesModel.result {
-                        ResultView(keyboardModel: PianoKeyboardModel.shared, result: result).commonFrameStyle()
+                        HStack {
+                            ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
+                            VStack {
+                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
+                                Text(coinBank.getCoinsStatusMsg())
+                            }
+                        }
+                        .commonFrameStyle()
                     }
                     SelectActionView().commonFrameStyle()
                 }
@@ -501,7 +507,6 @@ struct ScalesView: View {
 //            else {
 //                scalesModel.setRunningProcess(.none)
 //            }
-
         }
         .onDisappear {
             metronome.stop()

@@ -9,6 +9,65 @@ import AVFoundation
 import Foundation
 import AudioKitEX
 import Speech
+import SwiftUI
+    //.navigationViewStyle(StackNavigationViewStyle())
+
+import SwiftUI
+
+struct ScreenA: View {
+    var body: some View {
+        NavigationView {
+            VStack {
+                Text("Screen A")
+                    .font(.largeTitle)
+                
+                NavigationLink(destination: ScreenB()) {
+                    Text("Go to Screen B")
+                }
+            }
+            .navigationBarTitle("Screen A", displayMode: .inline)
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+}
+
+struct ScreenB: View {
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var showAlert = false
+
+    var body: some View {
+        VStack {
+            Text("Screen B")
+                .font(.largeTitle)
+            
+            Button(action: {
+                self.showAlert = true
+            }) {
+                Text("Show Alert")
+            }
+            .padding()
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Warning"), message: Text("Are you sure you want to go back?"), primaryButton: .default(Text("Yes")) {
+                    // Handle action when user taps Yes
+                    self.presentationMode.wrappedValue.dismiss()
+                }, secondaryButton: .cancel(Text("No")))
+            }
+        }
+        .navigationBarBackButtonHidden(true) // Hide default back button
+        .navigationBarItems(leading: Button(action: {
+            self.showAlert = true // Show alert when custom back button is tapped
+        }) {
+            Image(systemName: "chevron.left")
+            Text("Back")
+        })
+        .navigationBarTitle("Screen B", displayMode: .inline)
+        .onDisappear {
+            self.showAlert = false // Reset alert state when leaving Screen B
+        }
+    }
+}
+
 
 class AudioRecorder: ObservableObject {
     var engine: AudioEngine?
