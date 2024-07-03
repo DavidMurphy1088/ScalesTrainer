@@ -4,7 +4,6 @@
 <dict>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>Audio</string>
 		<string>audio</string>
 	</array>
 	<key>UIFileSharingEnabled</key>

@@ -159,7 +159,8 @@ public class Scale {
 
         ///All are low and some drop off 88-key keyboard
         if hand == 1 {
-            nextMidi -= 12
+            //nextMidi -= 12
+            nextMidi -= 24
         }
         
         ///Set midi values in scale
@@ -270,7 +271,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug11(_ msg:String)  {
+    func debug1111(_ msg:String)  {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

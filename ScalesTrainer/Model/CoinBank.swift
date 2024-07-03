@@ -34,18 +34,16 @@ class CoinBank: ObservableObject, Codable {
         case existsInStorage
     }
     
-    func adjustAfterResult(errorFree:Bool) {
+    func adjustAfterResult(noErrors:Bool) {
         if lastBet > 0 {
             DispatchQueue.main.async {
-                self.debug("before adjust")
-                if errorFree {
+                if noErrors {
                     self.totalCoinsInBank += self.lastBet
                 }
                 else {
                     self.totalCoinsInBank -= self.lastBet
                 }
                 self.lastBet = 0
-                self.debug("after adjust")
                 self.save()
             }
         }
@@ -69,9 +67,9 @@ class CoinBank: ObservableObject, Codable {
         }
     }
     
-    func debug(_ ctx:String) {
-        print("============= CoinBank total:\(self.totalCoinsInBank) lastBest:\(self.lastBet), \(ctx)")
-    }
+//    func debug(_ ctx:String) {
+//        print("============= CoinBank total:\(self.totalCoinsInBank) lastBest:\(self.lastBet), \(ctx)")
+//    }
     
     func getCountMsg() -> String {
         if totalCoinsInBank == 0 {
@@ -129,6 +127,7 @@ class CoinBank: ObservableObject, Codable {
         }
         return nil
     }
+    
     func save() {
         guard let str = toJSON() else {
             return
@@ -145,7 +144,7 @@ class CoinBank: ObservableObject, Codable {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(CoinBank.self, from: data)
                     self.totalCoinsInBank = decoded.totalCoinsInBank
-                    //self.totalCoinsInBank = 12
+                    //self.totalCoinsInBank = 500
                     self.existsInStorage = decoded.existsInStorage
                     Logger.shared.log(self, "CoinBank loaded")
                     return true

@@ -3,10 +3,31 @@ import AudioKit
 import AVFoundation
 import SwiftUI
 import Foundation
-@main
 
+class TabSelectionManager: ObservableObject {
+    @Published var selectedTab: Int = 0
+    init() {
+        nextNavigationTab()
+    }
+    
+    func nextNavigationTab() {
+        if Settings.shared.settingsExists() {
+            if Settings.shared.CalibrationExists() {
+                selectedTab = 1
+            }
+            else{
+                selectedTab = 3
+            }
+        }
+        else {
+            selectedTab = 2
+        }
+    }
+}
+
+@main
 struct ScalesTrainerApp: App {
-    @State private var selectedTab = Settings.shared.CalibrationExists() ? 0 : (Settings.shared.settingsExists() ? 3 : 2)
+    @StateObject private var tabSelectionManager = TabSelectionManager()
     
     init() {
         #if os(iOS)
@@ -27,14 +48,9 @@ struct ScalesTrainerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TabView(selection: $selectedTab) {
-//                if runningInXcode() {
-////                    CoinBankView(scale: 20)
-////                        .tabItem {
-////                            Label("TEST", systemImage: "scribble")
-////                        }
-////                        .tag(0)
-//                    ScalesIntervalsView()
+            TabView(selection: $tabSelectionManager.selectedTab) {
+
+//                ScalesIntervalsView()
 //                        .tabItem {
 //                            Label("TEST", systemImage: "scribble")
 //                        }
@@ -47,7 +63,6 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(1)
                 
-                //ScreenA()
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
@@ -65,18 +80,11 @@ struct ScalesTrainerApp: App {
                         Label("Log", systemImage: "book.pages")
                     }
                     .tag(4)
-                    
-                //                SpriteKitAudioView()
-                //                    .tabItem {
-                //                        Label("Game", systemImage: "house")
-                //                    }
                 }
                 //.border(Color.red)
                 .onAppear() {
-//                    if ScalesModel.shared.requiredStartAmplitude == nil {
-//                        self.selectedTab = 2
-//                    }
                 }
+                .environmentObject(tabSelectionManager)
         }
     }
 }

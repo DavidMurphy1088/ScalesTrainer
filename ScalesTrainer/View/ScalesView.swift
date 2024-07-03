@@ -60,7 +60,7 @@ struct ScalesView: View {
         scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
         //scalesModel.setKeyAndScale()
         //audioManager.stopRecording()
-        scalesModel.setResult(nil, "scalesView::setState")
+        //scalesModel.setResult(nil, "scalesView::setState")
         //self.playingAlongWithScale = false
         self.directionIndex = 0
     }
@@ -79,7 +79,7 @@ struct ScalesView: View {
                 scalesModel.selectedHandIndex = handIndex
                 setState(scaleRoot: scalesModel.scale.scaleRoot, 
                          scaleType: scalesModel.scale.scaleType,
-                         octaves: scalesModel.octaveNumberValues[octaveNumberIndex],
+                         octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1],
                          hand: scalesModel.selectedHandIndex)
             })
             Spacer()
@@ -92,10 +92,10 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: octaveNumberIndex, {
-                scalesModel.selectedOctavesIndex = octaveNumberIndex
-                setState(scaleRoot: scalesModel.scale.scaleRoot, 
+                scalesModel.selectedOctavesIndex1 = octaveNumberIndex
+                setState(scaleRoot: scalesModel.scale.scaleRoot,
                          scaleType: scalesModel.scale.scaleType,
-                         octaves: scalesModel.octaveNumberValues[octaveNumberIndex],
+                         octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1],
                          hand: scalesModel.selectedHandIndex)
             })
             
@@ -133,7 +133,7 @@ struct ScalesView: View {
         VStack {
             if scalesModel.runningProcess == .leadingIn {
                 Spacer()
-                Text("Leading In").padding().commonFrameStyle()
+                Text("👉 Leading In \(scalesModel.scale.getScaleName())").padding().font(.title2).commonFrameStyle()
                 Spacer()
             }
             if scalesModel.runningProcess == .followingScale {
@@ -295,7 +295,7 @@ struct ScalesView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
-            if scalesModel.result != nil {
+            if scalesModel.resultDisplay != nil {
                 VStack {
                     Button(action: {
                         showHelp("Hear Recording")
@@ -431,12 +431,16 @@ struct ScalesView: View {
                         Text(userMessage).padding().commonFrameStyle()
                     }
                     
-                    if let result = scalesModel.result {
+                    if let result = scalesModel.resultDisplay {
                         HStack {
                             ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
-                            VStack {
+                            ZStack {
+                                VStack {
+                                    Text("")
+                                    Text(coinBank.getCoinsStatusMsg()).padding()
+                                    Spacer()
+                                }
                                 CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
-                                Text(coinBank.getCoinsStatusMsg())
                             }
                         }
                         .commonFrameStyle()
@@ -491,14 +495,16 @@ struct ScalesView: View {
         
         ///Every time the view appears, not just the first.
         .onAppear {
+            scalesModel.setResultInternal(nil, "ScalesView.onAppear")
+            PianoKeyboardModel.shared.resetKeysWerePlayedState()
             setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType,
-                     octaves: self.practiceJournalScale.octaves ?? 1, hand: self.practiceJournalScale.hand ?? 0)
+                     octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1], hand: scalesModel.selectedHandIndex)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
             
             //self.rootNameIndex = scalesModel.selectedScaleRootIndex
             //self.scaleTypeNameIndex = scalesModel.selectedScaleTypeNameIndex
             self.handIndex = scalesModel.selectedHandIndex
-            self.octaveNumberIndex = scalesModel.selectedOctavesIndex
+            self.octaveNumberIndex = scalesModel.selectedOctavesIndex1
             self.directionIndex = scalesModel.selectedDirection
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)

@@ -10,8 +10,8 @@ class PracticeJournalScale : Identifiable { //} : Identifiable, Comparable {
     var orderIndex:Int
 
     ///For any random selection
-    var hand:Int? = nil
-    var octaves:Int? = nil
+    //var hand:Int? = nil
+    //var octaves:Int? = nil
     
     init(scaleRoot:ScaleRoot, scaleType:ScaleType) {
         self.orderIndex = PracticeJournalScale.orderIndex
@@ -56,16 +56,16 @@ class PracticeJournal {
         return name
     }
     
-    func makeRandomScale()  {
-        var r = Int.random(in: 0...scaleGroup.scales.count-1)
-        let scale = scaleGroup.scales[r]
-        let randomScale = PracticeJournalScale(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType)
-        r = Int.random(in: 0...1)
-        randomScale.hand = r 
-        r = Int.random(in: 1...2)
-        randomScale.octaves = r
-        self.randomScale = randomScale
-    }
+//    func makeRandomScale()  {
+//        var r = Int.random(in: 0...scaleGroup.scales.count-1)
+//        let scale = scaleGroup.scales[r]
+//        let randomScale = PracticeJournalScale(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType)
+//        r = Int.random(in: 0...1)
+//        randomScale.hand = r 
+//        r = Int.random(in: 1...2)
+//        randomScale.octaves = r
+//        self.randomScale = randomScale
+//    }
 }
 
 

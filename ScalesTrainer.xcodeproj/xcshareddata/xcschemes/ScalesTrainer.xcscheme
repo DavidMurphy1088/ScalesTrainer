@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "79DA82112BCCE95F008AC492"
-               BuildableName = "ScalesTrainer.app"
-               BlueprintName = "ScalesTrainer"
+               BuildableName = "ScalesStar.app"
+               BlueprintName = "ScalesStar"
                ReferencedContainer = "container:ScalesTrainer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,8 +44,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "79DA82112BCCE95F008AC492"
-            BuildableName = "ScalesTrainer.app"
-            BlueprintName = "ScalesTrainer"
+            BuildableName = "ScalesStar.app"
+            BlueprintName = "ScalesStar"
             ReferencedContainer = "container:ScalesTrainer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -68,8 +68,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "79DA82112BCCE95F008AC492"
-            BuildableName = "ScalesTrainer.app"
-            BlueprintName = "ScalesTrainer"
+            BuildableName = "ScalesStar.app"
+            BlueprintName = "ScalesStar"
             ReferencedContainer = "container:ScalesTrainer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

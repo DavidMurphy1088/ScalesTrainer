@@ -27,6 +27,8 @@ import AudioKit
 //}
 
 struct SettingsView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
@@ -74,8 +76,18 @@ struct SettingsView: View {
                 }
                 
                 Spacer()
+                Button(action: {
+                    CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
+                    CoinBank.shared.save()
+                }) {
+                    HStack {
+                        Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
+                    }
+                }
+
+                Spacer()
                 HStack() {
-                    Toggle("TEST ONLY Record Data Mode", isOn: $recordDataMode)
+                    Toggle("(TEST ONLY Record Data Mode)", isOn: $recordDataMode)
                 }
                 .frame(width: width)
                 .onChange(of: recordDataMode, {
@@ -92,15 +104,23 @@ struct SettingsView: View {
                         settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     }) {
                         HStack {
-                            Text("Save").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
+//                    Spacer()
+//                    Button(action: {
+//                        settings.load()
+//                    }) {
+//                        HStack {
+//                            Text("Load").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                        }
+//                    }
                     Spacer()
                     Button(action: {
-                        settings.load()
+                        tabSelectionManager.nextNavigationTab()
                     }) {
                         HStack {
-                            Text("Load").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
                     Spacer()
@@ -135,90 +155,3 @@ func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
     }
 }
 
-//class MicAudioManager: ObservableObject {
-//    private var engine = AudioEngine()
-//    private var mic: AudioEngine.InputNode!
-//    private var mixer: Mixer!
-//
-//    @Published var availableMicrophones: [AVAudioSessionPortDescription] = []
-//    @Published var selectedMicrophone: AVAudioSessionPortDescription? = nil
-//
-//    init() {
-//        setupAudioSession()
-//        setupAudioKit()
-//        fetchAvailableMicrophones()
-//    }
-//
-//    private func setupAudioSession() {
-//        let audioSession = AVAudioSession.sharedInstance()
-//        do {
-//            try audioSession.setCategory(.playAndRecord, mode: .default, options: [])
-//            try audioSession.setActive(true)
-//        } catch {
-//            print("Failed to set up audio session: \(error)")
-//        }
-//    }
-//
-//    private func setupAudioKit() {
-//        mic = engine.input
-//        mixer = Mixer(mic)
-//        engine.output = mixer
-//        do {
-//            try engine.start()
-//        } catch {
-//            print("AudioKit did not start: \(error)")
-//        }
-//    }
-//
-//    func fetchAvailableMicrophones() {
-//        let audioSession = AVAudioSession.sharedInstance()
-//        do {
-//            try audioSession.setCategory(.playAndRecord, mode: .default, options: [])
-//        }
-//        catch {
-//            print(error.localizedDescription)
-//        }
-//        availableMicrophones = audioSession.availableInputs ?? []
-//        for m in availableMicrophones {
-//            let mic:AVAudioSessionPortDescription = m
-//            print("====MIC", mic.portName, mic.portType, mic.selectedDataSource)
-//        }
-//    }
-//
-//    func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
-//        let audioSession = AVAudioSession.sharedInstance()
-//        do {
-//            try audioSession.setPreferredInput(microphone)
-//            selectedMicrophone = microphone
-//            print("Selected Microphone: \(microphone.portName)")
-//        } catch {
-//            print("Failed to set preferred input: \(error)")
-//        }
-//    }
-//}
-//
-//struct MicrophoneView: View {
-//    @StateObject var audioManager = MicAudioManager()
-//
-//    var body: some View {
-//        VStack {
-//            List(audioManager.availableMicrophones, id: \.uid) { mic in
-//                HStack {
-//                    Text(mic.portName)
-//                    Spacer()
-//                    if mic == audioManager.selectedMicrophone {
-//                        Image(systemName: "checkmark")
-//                    }
-//                }
-//                .contentShape(Rectangle())
-//                .onTapGesture {
-//                    audioManager.selectMicrophone(mic)
-//                }
-//            }
-//            .navigationTitle("Select Microphone")
-//        }
-//        .onAppear {
-//            audioManager.fetchAvailableMicrophones()
-//        }
-//    }
-//}

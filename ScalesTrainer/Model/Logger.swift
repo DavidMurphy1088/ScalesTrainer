@@ -13,12 +13,7 @@ public class LogMessage : Identifiable {
     }
     
     public func getLogEvent() -> String {
-        //var out = String(number)+" "
         var out = ""
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "HH:mm:ss"
-//        let logTime = formatter.string(from: self.logTime)
-//        out += logTime + "  " + message
         out = message
         return out
     }
@@ -30,7 +25,6 @@ public class Logger : ObservableObject {
     @Published var errorNo:Int = 0
     @Published public var errorMsg:String? = nil
     @Published public var loggedMsgs:[LogMessage] = []
-    //var logLevel:LogLevel = .all
     @Published var maxLogValue = 0.0
     @Published var minLogValue = 10.0
     @Published var hiliteLogValue = 0.0
@@ -62,7 +56,6 @@ public class Logger : ObservableObject {
                 max = m.value
             }
         }
-        Logger.shared.log(self, "MinMax, min:\(min) max:\(max)")
         DispatchQueue.main.async {
             self.maxLogValue = max
             self.minLogValue = min

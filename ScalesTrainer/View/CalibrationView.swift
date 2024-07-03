@@ -1,6 +1,7 @@
 import SwiftUI
 
 public struct CalibrationView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared
     @ObservedObject var calibrationResults = ScalesModel.shared.calibrationResults
@@ -15,7 +16,7 @@ public struct CalibrationView: View {
         
     func setScale(octaves:Int, hand:Int) {
         let scaleRoot = ScaleRoot(name: "C")
-        self.scalesModel.selectedOctavesIndex = octaves-1
+        self.scalesModel.selectedOctavesIndex1 = octaves-1
         self.scalesModel.selectedHandIndex = hand
         scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand)
         scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand))
@@ -69,7 +70,7 @@ public struct CalibrationView: View {
                     }
                 }
                 .onChange(of: selectedHand) { oldValue, newValue in
-                    setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
+                    setScale(octaves: scalesModel.selectedOctavesIndex1+1, hand: selectedHand)
                 }
 
                 Spacer()
@@ -164,6 +165,14 @@ public struct CalibrationView: View {
                     }
                 }
             }
+            Spacer()
+            Button(action: {
+                tabSelectionManager.nextNavigationTab()
+            }) {
+                HStack {
+                    Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
+                }
+            }
         }
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Calibration")
@@ -172,7 +181,7 @@ public struct CalibrationView: View {
             let octaves = ScalesTrainerApp().runningInXcode() ? 1 : 2
             setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            ScalesModel.shared.selectedOctavesIndex = octaves == 1 ? 0 : 1
+            ScalesModel.shared.selectedOctavesIndex1 = octaves == 1 ? 0 : 1
             ScalesModel.shared.selectedHandIndex = 0
         }
         .onDisappear() {

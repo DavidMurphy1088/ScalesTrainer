@@ -249,7 +249,7 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                if scalesModel.result != nil {
+                if scalesModel.resultDisplay != nil {
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)

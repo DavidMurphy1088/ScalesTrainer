@@ -33,9 +33,8 @@ class AudioManager {
     var tapHandler: TapHandlerProtocol?
 
     init() {
-//        if false {
-//            configureAudio(start: true)
-//        }
+        ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
+        resetAudioKitToMIDISampler()
     }
     
 //    func configureAudioOld() {
@@ -239,11 +238,6 @@ class AudioManager {
             engine.output = self.mixer
         }
 
-//        self.pitchTap = PitchTap(mic!) { pitch, amp in
-//            DispatchQueue.main.async {
-//                print("============>>", pitch, amp)
-//            }
-//        }
         self.pitchTap = installTapHandler(node: mic!,
                           tapBufferSize: tapBufferSize,
                           tapHandler: tapHandler,
@@ -269,7 +263,7 @@ class AudioManager {
         if let tap = self.installedTap {
             tap.stop()
         }
-        self.tapHandler?.stopTapping()
+        self.tapHandler?.stopTapping("AudioMgr.stopRecording")
         if let recorder = recorder {
             recorder.stop()
             print("Recording stopped")
@@ -320,7 +314,7 @@ class AudioManager {
         var fileName:String
         let scalesModel = ScalesModel.shared
         if scalesModel.selectedHandIndex == 0 {
-            switch scalesModel.selectedOctavesIndex {
+            switch scalesModel.selectedOctavesIndex1 {
             case 0:
                 //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
                 fileName = "05_02_C_Major_1_60_iPad"
@@ -337,7 +331,7 @@ class AudioManager {
             }
         }
         else {
-            switch scalesModel.selectedOctavesIndex {
+            switch scalesModel.selectedOctavesIndex1 {
             case 0:
                 fileName = "05_18_17_35_C_Major_1_48_iPad_0,0,1,1_5"
             case 1:
@@ -389,7 +383,7 @@ class AudioManager {
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteState: nil, midi: 0, tapMidi: 0, amplDiff: 0, key: .none))
+                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0, amplDiff: 0, key: .none))
                         tapNum += 1
                         //                        freqs.append(f)
                         //                        amps.append(a)
@@ -401,31 +395,31 @@ class AudioManager {
         return tapEvents
     }
     
-    func playbackTapEventsOld(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
-        let backgroundQueue = DispatchQueue.global(qos: .background)
-        let scalesModel = ScalesModel.shared
-        backgroundQueue.async {
-            for tIndex in 0..<tapEvents.count {
-                let tapEvent = tapEvents[tIndex]
-                let semaphore = DispatchSemaphore(value: 0)
-                let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
-                let timer = DispatchSource.makeTimerSource(queue: queue)
-                timer.schedule(deadline: .now() + 0.04, repeating: .never)
-                timer.setEventHandler {
-                    semaphore.signal()
-                    timer.cancel() // Cancel the timer after it fires once
-                }
-                timer.resume()
-                semaphore.wait()
-                let f:AUValue = tapEvent.frequency
-                let a:AUValue = tapEvent.amplitude
-                tapHandler.tapUpdate([f, f], [a, a])
-            }
-            tapHandler.stopTapping()
-            scalesModel.forceRepaint()
-            Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
-        }
-    }
+//    func playbackTapEventsOld(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
+//        let backgroundQueue = DispatchQueue.global(qos: .background)
+//        let scalesModel = ScalesModel.shared
+//        backgroundQueue.async {
+//            for tIndex in 0..<tapEvents.count {
+//                let tapEvent = tapEvents[tIndex]
+//                let semaphore = DispatchSemaphore(value: 0)
+//                let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
+//                let timer = DispatchSource.makeTimerSource(queue: queue)
+//                timer.schedule(deadline: .now() + 0.04, repeating: .never)
+//                timer.setEventHandler {
+//                    semaphore.signal()
+//                    timer.cancel() // Cancel the timer after it fires once
+//                }
+//                timer.resume()
+//                semaphore.wait()
+//                let f:AUValue = tapEvent.frequency
+//                let a:AUValue = tapEvent.amplitude
+//                tapHandler.tapUpdate([f, f], [a, a])
+//            }
+//            tapHandler.stopTapping()
+//            scalesModel.forceRepaint()
+//            Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
+//        }
+//    }
     
     func playbackTapEvents(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
         let scalesModel = ScalesModel.shared
@@ -435,7 +429,7 @@ class AudioManager {
             let a:AUValue = tapEvent.amplitude
             tapHandler.tapUpdate([f, f], [a, a])
         }
-        tapHandler.stopTapping()
+        tapHandler.stopTapping("AudioMgr.playbackEvents")
         scalesModel.forceRepaint()
         Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
     }

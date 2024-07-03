@@ -198,7 +198,7 @@ struct HomeView: View {
     
     func getTitle() -> String {
         let name = Settings.shared.firstName
-        var title = "Scales Trainer"
+        var title = "Scales Star"
         if name.count > 0 {
             title = name+"'s " + title
         }

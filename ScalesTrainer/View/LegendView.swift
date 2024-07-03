@@ -81,7 +81,7 @@ struct LegendView: View {
             title = "Practice"
         }
         else {
-            if scalesModel.result != nil {
+            if scalesModel.resultDisplay != nil {
                 title = "Notes"
             }
         }
@@ -94,7 +94,7 @@ struct LegendView: View {
                 if let title = title() {
                     Text("  \(title)  ").hilighted()
                 }
-                if scalesModel.result == nil {
+                if scalesModel.resultDisplay == nil {
                     if scalesModel.showKeyboard {
                         if scalesModel.showFingers {
                             Spacer()
@@ -123,7 +123,7 @@ struct LegendView: View {
                     Spacer()
                 }
                 
-                if scalesModel.result != nil {
+                if scalesModel.resultDisplay != nil {
                     Spacer()
                     Circle()
                         .fill(Color.green.opacity(0.4))
@@ -143,10 +143,7 @@ struct LegendView: View {
                     Text("Missing")
                     Spacer()
                 }
-//                if scalesModel.runningProcess == .none {
-//                    Spacer().
-//                    SettingsView()//.padding()
-//                }
+
                 Spacer()
             }
             if let instructions = scalesModel.processInstructions {

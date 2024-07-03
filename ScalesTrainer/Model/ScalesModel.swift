@@ -95,7 +95,7 @@ public class ScalesModel : ObservableObject {
         
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
     let octaveNumberValues = [1,2,3,4]
-    var selectedOctavesIndex = 0
+    var selectedOctavesIndex1 = 1
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -118,18 +118,22 @@ public class ScalesModel : ObservableObject {
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
 
-    @Published private(set) var result:Result?
-    func setResult(_ result:Result?, _ ctx:String) {
+    ///Result cannot be published since it needs to be updated on the main thread. e.g. for rapid callibration analyses
+    ///ResultDisplay is the published version
+    private(set) var resultInternal:Result?
+    func setResultInternal(_ result:Result?, _ ctx:String) {
+        let noErrors = result == nil ? true : result!.noErrors()
+        self.resultInternal = result
         DispatchQueue.main.async {
-            self.result = result
-            let coinBank = CoinBank.shared
-            if let result = self.result {
-                print("================ ScalesModel.setResult ctx:", ctx, "errorFree:", result.noErrors(), "errorCount:", result.totalErrors())
-                coinBank.adjustAfterResult(errorFree: result.noErrors())
-            }
+            self.resultDisplay = result
+        }
+        let coinBank = CoinBank.shared
+        if let result = result {
+            coinBank.adjustAfterResult(noErrors: noErrors)
         }
     }
-    
+    @Published private(set) var resultDisplay:Result?
+
     @Published private(set) var amplitudeFilterDisplay:Double = 0.0
     private(set) var amplitudeFilter:Double = 0.0
     func setAmplitudeFilter(_ value:Double) {
@@ -243,19 +247,19 @@ public class ScalesModel : ObservableObject {
         self.setShowLegend(true)
         self.setDirection(0)
         self.setProcessInstructions(nil)
-        if result != nil {
+        if resultInternal != nil {
             self.setShowStaff(true)
         }
         MetronomeModel.shared.isTiming = false
         
-        Logger.shared.clearLog()
+        //Logger.shared.clearLog()
         
         let keyboard = PianoKeyboardModel.shared
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
-            self.setResult(nil, "setRunningProcess::nil for follow/practice")
+            self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : self.amplitudeFilter, hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
@@ -309,7 +313,7 @@ public class ScalesModel : ObservableObject {
             self.setShowStaff(false)
             self.setShowParameters(false)
             self.setShowLegend(false)
-            self.setResult(nil, "setRunningProcess::start record")
+            self.setResultInternal(nil, "setRunningProcess::start record")
             self.setUserMessage(nil)
             //self.setShowFingers(false)
             keyboard.redraw()
@@ -361,7 +365,7 @@ public class ScalesModel : ObservableObject {
     
     ///Return the color a keyboard note should display its status as. Clear -> dont show anything
     func getKeyStatusColor(_ keyModel:PianoKeyModel) -> Color {
-        guard let result = self.result else {
+        guard let result = self.resultDisplay else {
             return Color.clear
         }
         guard result.runningProcess != .followingScale else {

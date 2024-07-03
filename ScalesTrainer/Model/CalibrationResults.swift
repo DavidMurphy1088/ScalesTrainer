@@ -39,7 +39,7 @@ class CalibrationResults : ObservableObject {
             self.calibrationEvents = []
             var tapNum = 0
             for event in tapEvents {
-                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteState: .none, midi: event.midi, tapMidi: event.tapMidi, amplDiff: 0, key: .none))
+                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteStates: [], midi: event.midi, tapMidi: event.tapMidi, amplDiff: 0, key: .none))
                 tapNum += 1
             }
             self.calibrationResults = nil
@@ -66,7 +66,7 @@ class CalibrationResults : ObservableObject {
                 let ampFilter = Double(index) * 0.005
                 scalesModel.setAmplitudeFilter(ampFilter)
                 scalesModel.setRunningProcess(.recordScaleWithTapData)
-                if let result = scalesModel.result {
+                if let result = scalesModel.resultInternal {
                     let totalErrors = result.totalErrors()
                     self.appendResult(num: index, result: result, amplFilter: ampFilter)
                     if minError == nil || totalErrors <= minError! {
@@ -84,7 +84,7 @@ class CalibrationResults : ObservableObject {
                 index += 1
             }
 
-            ///Find the best results. Use the result in the middle of the lowest error results.
+            ///Find the best results. Use the result in the middle of the lowest error results and save that callibration.
             var first:Int?
             var last:Int?
             for i in 0..<self.calibrationResults!.count {

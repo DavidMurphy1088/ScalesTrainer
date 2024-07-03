@@ -18,12 +18,14 @@ class HelpMessages {
         
         messages["Your Coin Bank"] = "Shows all the gold coins in your scales bank. You can win coins as you record scales but if you make mistakes you loose coins."
         
-        m = "Calibration is required so Scales Trainer can accurately hear your piano."
+        m = "Calibration is required so Scales Star can accurately hear your piano."
         m += "\n\n➤ For best recording results your device should be placed near or against your piano."
         m += "\n\n➤ You will need to perform callibration again if you change the location of where the app is positioned when it listens."
-        m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales."
         m += "\n\n➤ Press Start Playing Scale and play the scale shown softly (piano) and at a moderate tempo. Press Stop when the scale is finished."
         m += " Then press Analyse Best Settings to save the callibration."
+        m += "\n\n➤ After Analyse Best Settings is finished some callibration value rows should show zero errors. If not, its best to redo the callibration."
+        m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales. In particular, if notes you are play are not detected you may need to decrease the amplitude filter slightly. If notes appear that you did not play you may need to increase the amplitude filter slightly."
+
         messages["Calibration"] = m
         
         m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are hilighted."
@@ -40,7 +42,7 @@ class HelpMessages {
         m = "Play along on your piano as the scale is played. "
         m += "\n\n➤ The scale will be played ascending and descending. "
         m += "\n\n➤ Listen for any notes you play that are not in the scale. Make sure you use the correct fingers for each note."
-        m += "\n\n➤ When you can play along without mistakes, try playing along with the fingers and keyboard turned off."
+        m += "\n\n➤ When you can play along without mistakes, try playing along with the finger numbers and keyboard turned off."
         messages["PlayAlong"] = m
         
         m = "Backing provides a backing harmony that you can use when practicing the scale."

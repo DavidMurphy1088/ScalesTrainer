@@ -43,6 +43,7 @@ public class Settings : Codable  {
     }
     
     func save(amplitudeFilter:Double, _ log:Bool = true) {
+        
         self.tapMinimunAmplificationFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
@@ -65,7 +66,6 @@ public class Settings : Codable  {
                     self.tapMinimunAmplificationFilter = loaded.tapMinimunAmplificationFilter
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
-                    //self.requiredScaleRecordStartAmplitude = loaded.requiredScaleRecordStartAmplitude
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {

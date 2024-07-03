@@ -5,13 +5,13 @@ struct ResultView: View {
     let result:Result
     let scalesModel = ScalesModel.shared
     
-    func getaAllCorrect() -> Bool {
+    func getAllCorrect() -> Bool {
         return result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0
     }
     
     func recordStatus() -> (Bool, String) {
         var status = ""
-        if getaAllCorrect() {
+        if getAllCorrect() {
             status = "Good job, your scale was correct."
         }
         else {
@@ -34,17 +34,23 @@ struct ResultView: View {
                 }
             }
         }
-        if getaAllCorrect() {
+        if getAllCorrect() {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
-                let appTempo = Int(ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex])
-                if let appTempo = appTempo {
-                    let metronome = MetronomeModel.shared
-                    status += "\nYour tempo was \(metronome.getTempoString(tempo)) and the setting was \(metronome.getTempoString(appTempo))."
+                let metronome = MetronomeModel.shared
+                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
+                var appTempoString = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
+                if appTempoString.count >= 2 {
+                    ///Remove to noteType = prefix in tempo setting
+                    let index = appTempoString.index(appTempoString.startIndex, offsetBy: 2)
+                    appTempoString = String(appTempoString[index...])
+                    let appTempo = Int(appTempoString)
+                    if let appTempo = appTempo {
+                        status += "and the metronome setting was \(metronome.getTempoString(appTempo))."
+                    }
                 }
             }
         }
-        //ScalesModel.shared.scale.debug1("====Post Build, get tempo")
-        return (getaAllCorrect(), status)
+        return (getAllCorrect(), status)
     }
 
     func getResultStatus() -> (Bool, String)? {
@@ -69,7 +75,6 @@ struct ResultView: View {
                         Text("😔").font(.system(size: 45))
                     }
                     Text(status.1).padding()
-                    
                 }
             }
         }

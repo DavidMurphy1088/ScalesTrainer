@@ -3,6 +3,8 @@ import SwiftUI
 
 class Result : Equatable {
     let id = UUID()
+    var eventsID:UUID? = nil ///The events set the result was  built from
+    
     let runningProcess:RunningProcess
     
     let userMessage:String
@@ -14,7 +16,7 @@ class Result : Equatable {
     var missedCountDesc = 0
     var wrongCountAsc = 0
     var wrongCountDesc = 0
-    var recordedTempo:Int = 0
+    //var recordedTempo:Int = 0
     var correctNotes = 0
     
     init(runningProcess:RunningProcess, userMessage:String) {

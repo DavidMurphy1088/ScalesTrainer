@@ -25,10 +25,10 @@
     " C" : {
 
     },
-    " Go To Scale %@ and Good Luck" : {
+    " Go to \n Scale " : {
 
     },
-    " Practice \n Scale " : {
+    " Go To Scale %@ - Good Luck" : {
 
     },
     " Practice Scale %@ " : {
@@ -49,6 +49,9 @@
     "." : {
 
     },
+    "(TEST ONLY Record Data Mode)" : {
+
+    },
     "%@" : {
 
     },
@@ -62,6 +65,9 @@
 
     },
     "𝄢" : {
+
+    },
+    "👉 Leading In %@" : {
 
     },
     "😊" : {
@@ -113,6 +119,9 @@
 
     },
     "Errors:" : {
+
+    },
+    "Exit" : {
 
     },
     "Famous Quotes" : {
@@ -174,13 +183,7 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
-    "Leading In" : {
-
-    },
     "LH\nProgress" : {
-
-    },
-    "Load" : {
 
     },
     "Log" : {
@@ -243,10 +246,13 @@
     "Recording Scale Lead in Count" : {
 
     },
+    "Reset Coin Count" : {
+
+    },
     "RH\nProgress" : {
 
     },
-    "Save" : {
+    "Save Settings" : {
 
     },
     "Scale" : {
@@ -354,9 +360,6 @@
 
     },
     "Tempo" : {
-
-    },
-    "TEST ONLY Record Data Mode" : {
 
     },
     "Test runs" : {

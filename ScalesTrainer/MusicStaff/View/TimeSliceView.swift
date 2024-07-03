@@ -373,7 +373,7 @@ public struct TimeSliceView: View {
                 
                 ///Error status or tempo indication if no error
                 
-                if let result = scalesModel.result {
+                if let result = scalesModel.resultInternal {
                     VStack {
                         Spacer()
                         if result.noErrors() {

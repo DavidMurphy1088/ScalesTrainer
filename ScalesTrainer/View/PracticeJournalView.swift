@@ -105,7 +105,7 @@ struct PracticeJournalView: View {
                                     WeekDaysView().padding()
                                     Spacer()
                                     NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
-                                        Text(" Practice \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                        Text(" Go to \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     }
                                     .frame(width: width * 0.2)
                                 }

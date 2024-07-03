@@ -22,12 +22,12 @@ public class TapEvent:Hashable {
     let midi:Int ///The octave adjusted midi used for matching
     let status:TapEventStatus
     let tapMidi:Int ///The origianl taop midi
-    let expectedScaleNoteState:ScaleNoteState? ///The scale sequence index
+    let expectedScaleNoteStates:[ScaleNoteState]?
     let key:PianoKeyModel?
     let ascending:Bool
     let amplDiff:Double
 
-    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending: Bool, status:TapEventStatus, expectedScaleNoteState:ScaleNoteState?, midi:Int, tapMidi:Int,
+    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending: Bool, status:TapEventStatus, expectedScaleNoteStates:[ScaleNoteState]?, midi:Int, tapMidi:Int,
                 amplDiff:Double, key:PianoKeyModel?) {
         self.tapNum = tapNum
         self.amplitude = amplitude
@@ -35,7 +35,7 @@ public class TapEvent:Hashable {
         self.frequency = frequency
         self.status = status
         self.midi = midi
-        self.expectedScaleNoteState = expectedScaleNoteState
+        self.expectedScaleNoteStates = expectedScaleNoteStates
         self.key = key
         self.amplDiff = amplDiff
         self.tapMidi = tapMidi
@@ -53,14 +53,17 @@ public class TapEvent:Hashable {
         let amps = String(format: "%.2f", self.amplitude)
         //let ampDiff = String(format: "%.2f", self.amplDiff)
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
-        let expected:Int = expectedScaleNoteState?.midi ?? 0
-
-        var row = "Used:\(self.midi), Tapped:\(self.tapMidi) Expect:\(expected)"
+        var row = "Use:\(self.midi), Tap:\(self.tapMidi) "
+        if let expectedScaleNoteStates = expectedScaleNoteStates {
+            if expectedScaleNoteStates.count > 0 {
+                row += "Expect:\(expectedScaleNoteStates[0].midi)"
+            }
+        }
         var status = "\(self.status)"
         status = String(status.prefix(12))
         row += "\tA:\(self.ascending ? 1:0) \(status)"
         //row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
-        row += "  Am:\(amps)"
+        row += "  Amp:\(amps)"
         return row
     }
 }

@@ -222,7 +222,7 @@ struct SpinWheelView: View {
                         }
                         else {
                             NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], initialRunProcess: .recordingScale)) {
-                                Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) and Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }
