@@ -12,48 +12,12 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
-    init(amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool)
+    init(hilightPlayingNotes:Bool, logTaps:Bool)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping(_ ctx:String)
 }
 
-//public enum CallibrationType {
-//    case startAmplitude
-//    case amplitudeFilter
-//    case none
-//}
-
-//class CallibrationTapHandler : TapHandlerProtocol {
-//    let type:CallibrationType
-//    private var amplitudes:[Float] = []
-//    let startTime:Date = Date()
-//    
-//    init(type:CallibrationType) {
-//        self.type = type
-//    }
-//    
-//    func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudesIn: [AudioKit.AUValue]) {
-//        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
-//        let secs = Double(ms) / 1000.0
-//        var msg = ""
-//        msg += "secs:\(String(format: "%.2f", secs))"
-//        msg += " \tAmpl:"+String(format: "%.4f", amplitudesIn[0])
-//        amplitudes.append(amplitudesIn[0])
-//        let frequency:Float = frequencies[0]
-//        let midi = Util.frequencyToMIDI(frequency: frequency)
-//        msg += " \tMidi:"+String(midi)
-//        Logger.shared.log(self, msg)
-//    }
-//    
-//    func stopTapping() {
-//        ScalesModel.shared.doCallibration(type: type, amplitudes: amplitudes)
-//        Logger.shared.log(self, "ended callibration")
-//        Logger.shared.calcValueLimits()
-//    }
-//}
-
 class PracticeTapHandler : TapHandlerProtocol {
-    let amplitudeFilter:Double
     let startTime:Date = Date()
     let minMidi:Int
     let maxMidi:Int
@@ -63,15 +27,14 @@ class PracticeTapHandler : TapHandlerProtocol {
     var lastMidiHiliteTime:Double? = nil
     let logTaps:Bool
     
-    required init(amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool) {
-        self.amplitudeFilter = amplitudeFilter
+    required init(hilightPlayingNotes:Bool, logTaps:Bool) {
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
         tapNum = 0
         ScalesModel.shared.tapHandlerEventSet = TapEventSet()
         self.hilightPlayingNotes = hilightPlayingNotes
         self.logTaps = logTaps
-        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
+        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(ScalesModel.shared.amplitudeFilter)")
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -89,7 +52,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
+        let aboveFilter =  amplitude > AUValue(ScalesModel.shared.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -135,7 +98,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             if tapNum % 20 == 0 || !aboveFilter {
                 var msg = ""
                 msg += "secs:\(String(format: "%.2f", secs))"
-                msg += " ampFilter:\(String(format: "%.4f", self.amplitudeFilter))"
+                msg += " ampFilter:\(String(format: "%.4f", ScalesModel.shared.amplitudeFilter))"
                 msg += " amp:\(String(format: "%.4f", amplitude))"
                 msg += " >amplFilter:\(aboveFilter)"
                 msg += "  \t\tfreq:\(String(format: "%.0f", frequency))"
@@ -154,10 +117,11 @@ class PracticeTapHandler : TapHandlerProtocol {
 class ScaleTapHandler : TapHandlerProtocol  {
     var startTime:Date = Date()
     let scale:Scale
-    let amplitudeFilter:Double
+    //let amplitudeFilter:Double
     var wrongNoteFound = false
     var tapNumber = 0
     var savedTapsFileURL:URL?
+    var savedTapsFileName:String?
     var lastAmplitude:Float?
     var lastKeyPressedMidi:Int?
     var tapRecords:[String] = []
@@ -169,15 +133,15 @@ class ScaleTapHandler : TapHandlerProtocol  {
     let logTaps:Bool
     var result:Result?
     
-    required init(amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool) {
-        self.amplitudeFilter = amplitudeFilter
+    required init(hilightPlayingNotes:Bool, logTaps:Bool) {
         self.scale = ScalesModel.shared.scale
         ScalesModel.shared.tapHandlerEventSet = TapEventSet()
         (minScaleMidi, maxScaleMidi) = scale.getMinMax()
         ScalesModel.shared.recordedTapsFileURL = nil
+        ScalesModel.shared.recordedTapsFileName = nil
         self.hilightPlayingNotes = hilightPlayingNotes
         self.logTaps = logTaps
-        Logger.shared.log(self, "ScaleTapHandler starting. AmplFilter:\(self.amplitudeFilter) logging?:\(self.logTaps)")
+        Logger.shared.log(self, "ScaleTapHandler starting. AmplFilter:\(ScalesModel.shared.amplitudeFilter) logging?:\(self.logTaps)")
         self.result = nil
     }
     
@@ -221,7 +185,17 @@ class ScaleTapHandler : TapHandlerProtocol  {
             }
         }
         tapNumber += 1
-        guard amplitude > AUValue(amplitudeFilter) else { return }
+        guard amplitude > AUValue(ScalesModel.shared.amplitudeFilter) else {
+            ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber,
+                                                                         frequency: frequency,
+                                                                         amplitude: amplitude,
+                                                                         ascending: false,
+                                                                          status: .belowAmplitudeFilter,
+                                                                         expectedScaleNoteStates: nil,
+                                                                         midi: tapMidi, tapMidi: tapMidi,
+                                                                         amplDiff: Double(0), key: nil))
+            return
+        }
         
         var amplDiff:Float = 0.0
         if let lastAmplitude:Float = lastAmplitude {
@@ -427,6 +401,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             fileName += "_"+keyName + "_"+String(self.scale.octaves) + "_" + String(self.scale.scaleNoteState[0].midi) + "_" + modelName
             fileName += "_"+String(result.wrongCountAsc)+","+String(result.wrongCountDesc)+","+String(result.missedCountAsc)+","+String(result.missedCountDesc)
             fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
+            ScalesModel.shared.recordedTapsFileName = fileName
             
             fileName += ".txt"
             AudioManager.shared.recordedFileSequenceNum += 1
@@ -462,24 +437,19 @@ class ScaleTapHandler : TapHandlerProtocol  {
 }
 
 ///Handle a raw FFT
-//class FFTTapHandler :: TapHanderProtocol  {
+//class FFTTapHandler : TapHandlerProtocol  {
 //    //let scaleMatcher:ScaleMatcher?
 //    var wrongNoteFound = false
 //    var canStartAnalysis = false
 //    var requiredStartAmplitude:Double
 //    var firstTap = true
 //    
-//    init(requiredStartAmplitude:Double) {
-//        //self.scaleMatcher = scaleMatcher
-//        self.requiredStartAmplitude = requiredStartAmplitude
-//        super.init()
-//        startTime = Date()
+//    required init(hilightPlayingNotes: Bool, logTaps: Bool) {
+//        self.requiredStartAmplitude = ScalesModel.shared.amplitudeFilter
 //    }
-//
-//    override func showConfig() {
-//        let s = String(format: "%.2f", requiredStartAmplitude)
-//        let m = "FFTTapHandler required_start_amplitude:\(s)"
-//        log(m)
+//    
+//    func stopTapping(_ ctx: String) {
+//        
 //    }
 //    
 //    func frequencyForBin(forBinIndex binIndex: Int, sampleRate: Double = 44100.0, fftSize: Int = 1024) -> Double {
@@ -491,13 +461,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
 //        return Int(round(midiNote))
 //    }
 //    
-//    override func tapUpdate(_ frequencyAmplitudes: [Float]) {
-////        if wrongNoteFound {
-////            return
-////        }
-//        
+//    func tapUpdate(_ frequency: [AudioKit.AUValue], _ amplitude: [AudioKit.AUValue]) {
 //        let n = 3
-//        let fftSize = frequencyAmplitudes.count //1024
+//        let fftSize = 1024 //frequencyAmplitudes.count //1024
 //        let sampleRate: Double = 44100  // 44.1 kHz
 //        
 //        let maxAmplitudes = frequencyAmplitudes.enumerated()
@@ -522,7 +488,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
 //        firstTap = false
 //        
 //        var logMsg = ""
-//        let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+//        let ms = 0 //Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
 //        let secs = Double(ms) / 1000.0
 //        logMsg += "secs:\(String(format: "%.2f", secs))"
 //        logMsg += "  ind:  "
@@ -553,8 +519,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
 //        }
 //
 //        if maxAmplitudes[0].element > 4.0 / 1000.0 {
-//            //print("", String(format: "%.2f", secs), "\t", amps, "\t", ind)
-//            log(logMsg, Double(maxAmplitudes[0].element))
+//            print("", String(format: "%.2f", secs), "\t", amps, "\t", ind)
+//            //log(logMsg, Double(maxAmplitudes[0].element))
 //        }
 //        
 //        logMsg += " midis:\(midisToTest) "
@@ -577,6 +543,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
 //        //Logger.shared.log(self, log, Double(maxAmplitudes[0].element))
 //    }
 //    
-
+//
 //}
-    
+//    

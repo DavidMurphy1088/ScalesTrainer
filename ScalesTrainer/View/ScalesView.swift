@@ -1,4 +1,15 @@
 import SwiftUI
+import SwiftUI
+import CoreData
+import MessageUI
+import WebKit
+
+enum ActiveSheet: Identifiable {
+    case emailRecording
+    var id: Int {
+        hashValue
+    }
+}
 
 struct ScalesView: View {
     let practiceJournalScale:PracticeJournalScale
@@ -35,11 +46,15 @@ struct ScalesView: View {
 
     @State var showResultPopup = false
     @State var notesHidden = false
-    @State var askKeepTapsFile = false
+    //@State var askKeepTapsFile = false
 
     @State var scaleFollowWithSound = false
 
     @State var helpShowing:Bool = false
+    @State private var emailShowing = false
+    @State var emailResult: MFMailComposeResult? = nil
+    @State var activeSheet: ActiveSheet?
+    
     let backgroundImage = UIGlobals.shared.getBackground()
     
     init(practiceJournalScale:PracticeJournalScale, initialRunProcess:RunningProcess? = nil) {
@@ -172,9 +187,9 @@ struct ScalesView: View {
                     ProcessUnderwayView()
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
-                        if Settings.shared.recordDataMode {
-                            self.askKeepTapsFile = true
-                        }
+//                        if Settings.shared.recordDataMode {
+//                            self.askKeepTapsFile = true
+//                        }
                     }) {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -346,10 +361,19 @@ struct ScalesView: View {
             
             Spacer()
             if scalesModel.tapHandlerEventSet != nil {
-                Spacer()
-                Button("Show Tap Data") {
-                    showingTapData = true
-                }.padding()
+                HStack {
+                    Spacer()
+                    Button("Show Tap Data") {
+                        showingTapData = true
+                    }
+                    if Settings.shared.recordDataMode {
+                        if MFMailComposeViewController.canSendMail() {
+                            Button("Send Tap Data") {
+                                activeSheet = .emailRecording
+                            }
+                        }
+                    }
+                }
             }
             Spacer()
         }
@@ -373,6 +397,15 @@ struct ScalesView: View {
             height = height * 0.7
         }
         return height
+    }
+    
+    func getMailInfo() -> String {
+        let mailInfo:String = ScalesModel.shared.recordedTapsFileName ?? "No file name"
+//        let currentDate = Date()
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "MMMM-dd-HH:mm"
+//        let dateString = dateFormatter.string(from: currentDate)
+        return mailInfo
     }
     
     var body: some View {
@@ -435,12 +468,12 @@ struct ScalesView: View {
                         HStack {
                             ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
                             ZStack {
+                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
                                 VStack {
                                     Text("")
                                     Text(coinBank.getCoinsStatusMsg()).padding()
                                     Spacer()
                                 }
-                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
                             }
                         }
                         .commonFrameStyle()
@@ -469,29 +502,29 @@ struct ScalesView: View {
             }
         }
     
-        .alert(isPresented: $askKeepTapsFile) {
-            Alert(
-                title: Text("Keep Taps File?"),
-                message: Text("Keep Taps File?"),
-                primaryButton: .default(Text("Yes")) {
-                },
-                secondaryButton: .cancel(Text("No")) {
-                    let fileManager = FileManager.default
-                    if let url = scalesModel.recordedTapsFileURL {
-                        do {
-                            try fileManager.removeItem(at: url)
-                            Logger.shared.log(scalesModel, "Taps file deleted successfully \(url)")
-                        }
-                        catch {
-                            Logger.shared.reportError(scalesModel, "Failed to delete file: \(error) \(url)")
-                        }
-                    }
-                    else {
-                        Logger.shared.reportError(scalesModel, "No taps file to delete")
-                    }
-                }
-            )
-        }
+//        .alert(isPresented: $askKeepTapsFile) {
+//            Alert(
+//                title: Text("Keep Recording File?"),
+//                message: Text("Keep Recording File?"),
+//                primaryButton: .default(Text("Yes")) {
+//                },
+//                secondaryButton: .cancel(Text("No")) {
+//                    let fileManager = FileManager.default
+//                    if let url = scalesModel.recordedTapsFileURL {
+//                        do {
+//                            try fileManager.removeItem(at: url)
+//                            Logger.shared.log(scalesModel, "Taps file deleted successfully \(url)")
+//                        }
+//                        catch {
+//                            Logger.shared.reportError(scalesModel, "Failed to delete file: \(error) \(url)")
+//                        }
+//                    }
+//                    else {
+//                        Logger.shared.reportError(scalesModel, "No taps file to delete")
+//                    }
+//                }
+//            )
+//        }
         
         ///Every time the view appears, not just the first.
         .onAppear {
@@ -516,10 +549,43 @@ struct ScalesView: View {
         }
         .onDisappear {
             metronome.stop()
+            ///Clean up any recorded files
+            if Settings.shared.recordDataMode {
+                let fileManager = FileManager.default
+                if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                    do {
+                        let fileURLs = try fileManager.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+                        for fileURL in fileURLs {
+                            do {
+                                try fileManager.removeItem(at: fileURL)
+                            } catch {
+                                Logger.shared.reportError(fileManager, error.localizedDescription)
+                            }
+                        }
+                    } catch {
+                        Logger.shared.reportError(fileManager, error.localizedDescription)
+                    }
+                }
+            }
         }
         //.navigationBarTitle("\(activityMode.name)", displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
+
+        .sheet(item: $activeSheet) { item in
+            switch item {
+            case .emailRecording:
+                if MFMailComposeViewController.canSendMail() {
+                    if let url = scalesModel.recordedTapsFileURL {
+                        SendMailView(isShowing: $emailShowing, result: $emailResult,
+                                     messageRecipient:"davidmurphy1088@gmail.com",
+                                     messageSubject: "Scales Trainer \(getMailInfo())",
+                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly...\n",
+                                     attachmentFilePath: url)
+                    }
+                }
+            }
+        }
+
     }
 }
-
 

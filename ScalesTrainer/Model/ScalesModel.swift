@@ -74,7 +74,10 @@ public class ScalesModel : ObservableObject {
     
     var scoreHidden = false
     var tapHandlerEventSet:TapEventSet? = nil
+    
     var recordedTapsFileURL:URL? //File where recorded taps were written
+    var recordedTapsFileName:String?
+    
     let calibrationResults = CalibrationResults()
     
 //    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
@@ -260,7 +263,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            let tapHandler = PracticeTapHandler(amplitudeFilter: setProcess == .callibrating ? 0 : self.amplitudeFilter, hilightPlayingNotes: true, logTaps: true)
+            let tapHandler = PracticeTapHandler(hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -317,7 +320,7 @@ public class ScalesModel : ObservableObject {
             self.setUserMessage(nil)
             //self.setShowFingers(false)
             keyboard.redraw()
-            let tapHandler = ScaleTapHandler(amplitudeFilter: self.amplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
+            let tapHandler = ScaleTapHandler(hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
             if setProcess == .recordScaleWithFileData {
                 let tapEvents = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)

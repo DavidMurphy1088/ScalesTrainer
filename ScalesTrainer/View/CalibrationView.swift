@@ -94,6 +94,7 @@ public struct CalibrationView: View {
                     if !analysingResults {
                         Button("Analyse Best Settings") {
                             analysingResults = true
+                            scalesModel.setAmplitudeFilter(0)
                             results.analyseBestSettings(onDone: {
                                 self.analysingResults = false
                             })

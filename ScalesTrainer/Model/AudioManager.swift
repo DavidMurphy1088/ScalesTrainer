@@ -311,41 +311,40 @@ class AudioManager {
     
     ///Return a list of tap events recorded previously in a file
     func readTestDataFile() -> [TapEvent] {
-        var fileName:String
+//        var fileName:String
+//
+//        if scalesModel.selectedHandIndex == 0 {
+//            switch scalesModel.selectedOctavesIndex1 {
+//            case 0:
+//                //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
+//                fileName = "05_02_C_Major_1_60_iPad"
+//                //fileName = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0"
+//            case 1:
+//                fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
+//            case 2:
+//                fileName = "05_09_C_Minor_3_48_iPad_8"
+//                fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
+//                fileName = "05_09_C_Major_3_48_iPad_0"
+//                fileName = "05_22_14_32_A_Major_2_33_iPad_0,0,0,0_1"
+//            default:
+//                fileName = ""
+//            }
+//        }
+//        else {
+//            switch scalesModel.selectedOctavesIndex1 {
+//            case 0:
+//                fileName = "05_18_17_35_C_Major_1_48_iPad_0,0,1,1_5"
+//            case 1:
+//                fileName = "05_18_17_37_C_Major_2_36_iPad_0,0,1,1_9"
+//            default:
+//                fileName = ""
+//            }
+//        }
         let scalesModel = ScalesModel.shared
-        if scalesModel.selectedHandIndex == 0 {
-            switch scalesModel.selectedOctavesIndex1 {
-            case 0:
-                //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
-                fileName = "05_02_C_Major_1_60_iPad"
-                //fileName = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0"
-            case 1:
-                fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
-            case 2:
-                fileName = "05_09_C_Minor_3_48_iPad_8"
-                fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
-                fileName = "05_09_C_Major_3_48_iPad_0"
-                fileName = "05_22_14_32_A_Major_2_33_iPad_0,0,0,0_1"
-            default:
-                fileName = ""
-            }
-        }
-        else {
-            switch scalesModel.selectedOctavesIndex1 {
-            case 0:
-                fileName = "05_18_17_35_C_Major_1_48_iPad_0,0,1,1_5"
-            case 1:
-                fileName = "05_18_17_37_C_Major_2_36_iPad_0,0,1,1_9"
-            default:
-                fileName = ""
-            }
-        }
-        fileName += ".txt"
-        
         var tapEvents:[TapEvent] = []
         var tapNum = 0
         
-        if let filePath = Bundle.main.path(forResource: fileName, ofType: nil) {
+        if let filePath = Bundle.main.path(forResource: "RecordedTapData", ofType: "txt") {
             let contents:String
             do {
                 contents = try String(contentsOfFile: filePath, encoding: .utf8)
@@ -354,28 +353,21 @@ class AudioManager {
                 Logger.shared.log(self, "cannot read file \(error.localizedDescription)")
                 return tapEvents
             }
-            let lines = contents.split(separator: "\n")
+            let lines = contents.split(separator: "\r\n")
             
             var ctr = 0
-            //var freqs:[Float] = []
-            //var amps:[Float] = []
             for line in lines {
                 if ctr == 0 {
                     ctr += 1
-                    let fields = line.split(separator: "\t")
+                    let fields = line.split(separator: " ")
                     let ampFilter = Double(fields[1])
                     //let reqStartAmpl = Double(fields[2])
                     if let ampFilter = ampFilter {
-                        //if reqStartAmpl != nil  {
-                        DispatchQueue.main.async {
-                            scalesModel.setAmplitudeFilter(ampFilter)
-                            //Settings.shared.requiredScaleRecordStartAmplitude = reqStartAmpl ?? 0
-                        }
-                        //}
+                        scalesModel.setAmplitudeFilter(ampFilter)
                     }
                     continue
                 }
-                let fields = line.split(separator: "\t")
+                let fields = line.split(separator: " ")
                 //let time = fields[0].split(separator: ":")[1]
                 let freq = fields[1].split(separator: ":")[1]
                 let ampl = fields[2].split(separator: ":")[1]
@@ -385,13 +377,12 @@ class AudioManager {
                     if let a = a {
                         tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0, amplDiff: 0, key: .none))
                         tapNum += 1
-                        //                        freqs.append(f)
-                        //                        amps.append(a)
                     }
                 }
                 ctr += 1
             }
         }
+        Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter)")
         return tapEvents
     }
     
@@ -422,7 +413,10 @@ class AudioManager {
 //    }
     
     func playbackTapEvents(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
+        ///Set amp filter here to override value the taps were recorded with
+        //ScalesModel.shared.setAmplitudeFilter(1.9)
         let scalesModel = ScalesModel.shared
+        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(scalesModel.amplitudeFilter)")
         for tIndex in 0..<tapEvents.count {
             let tapEvent = tapEvents[tIndex]
             let f:AUValue = tapEvent.frequency
@@ -431,7 +425,8 @@ class AudioManager {
         }
         tapHandler.stopTapping("AudioMgr.playbackEvents")
         scalesModel.forceRepaint()
-        Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
+        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(scalesModel.amplitudeFilter)")
+        scalesModel.setRunningProcess(.none)
     }
     
     func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {

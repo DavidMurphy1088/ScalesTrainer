@@ -91,6 +91,9 @@
     "Amplitude filter:%@" : {
 
     },
+    "Amplitude: %.4f" : {
+
+    },
     "Analyse Best Settings" : {
 
     },
@@ -118,6 +121,9 @@
     "Correctly Played" : {
 
     },
+    "Detected Pitch: %.4f Hz" : {
+
+    },
     "Errors:" : {
 
     },
@@ -125,6 +131,9 @@
 
     },
     "Famous Quotes" : {
+
+    },
+    "FFT Analyzer" : {
 
     },
     "Finger" : {
@@ -160,9 +169,6 @@
     "Home" : {
 
     },
-    "Keep Taps File?" : {
-
-    },
     "Key" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -188,6 +194,16 @@
     },
     "Log" : {
 
+    },
+    "Magnitude[%lld]: %.2f" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Magnitude[%1$lld]: %2$.2f"
+          }
+        }
+      }
     },
     "Major Scales" : {
 
@@ -293,6 +309,9 @@
     "Select Value" : {
 
     },
+    "Send Tap Data" : {
+
+    },
     "Settings" : {
 
     },
@@ -317,6 +336,9 @@
     "Spin for how many coins?" : {
 
     },
+    "Start Analysis" : {
+
+    },
     "Start Playing Scale" : {
 
     },
@@ -327,6 +349,9 @@
 
     },
     "Status: %@" : {
+
+    },
+    "Stop Analysis" : {
 
     },
     "Stop Following Scale" : {

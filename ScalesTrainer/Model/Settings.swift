@@ -43,7 +43,6 @@ public class Settings : Codable  {
     }
     
     func save(amplitudeFilter:Double, _ log:Bool = true) {
-        
         self.tapMinimunAmplificationFilter = amplitudeFilter
         guard let str = toJSON() else {
             return

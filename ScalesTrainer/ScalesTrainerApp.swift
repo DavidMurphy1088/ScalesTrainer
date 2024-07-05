@@ -56,12 +56,17 @@ struct ScalesTrainerApp: App {
 //                        }
 //                        .tag(0)
 //                }
-               
-                HomeView()
+               FFTContentView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(1)
+
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(0)
                 
                 SettingsView()
                     .tabItem {

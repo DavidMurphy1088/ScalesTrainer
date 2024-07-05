@@ -8,6 +8,7 @@ public enum TapEventStatus {
     case continued
     case farFromExpected
     case pastEndOfScale
+    case belowAmplitudeFilter
     case keyNotOnKeyboard
     case outsideScale
 }
