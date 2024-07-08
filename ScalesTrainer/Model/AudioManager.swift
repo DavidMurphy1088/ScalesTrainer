@@ -363,7 +363,7 @@ class AudioManager {
                     let ampFilter = Double(fields[1])
                     //let reqStartAmpl = Double(fields[2])
                     if let ampFilter = ampFilter {
-                        scalesModel.setAmplitudeFilter(ampFilter)
+                        scalesModel.setAmplitudeFilter1(ampFilter)
                     }
                     continue
                 }
@@ -381,8 +381,12 @@ class AudioManager {
                 }
                 ctr += 1
             }
+            Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter1)")
         }
-        Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter)")
+        else {
+            Logger.shared.reportError(self, "Cant open file bundle")
+        }
+        
         return tapEvents
     }
     
@@ -416,7 +420,7 @@ class AudioManager {
         ///Set amp filter here to override value the taps were recorded with
         //ScalesModel.shared.setAmplitudeFilter(1.9)
         let scalesModel = ScalesModel.shared
-        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(scalesModel.amplitudeFilter)")
+        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
         for tIndex in 0..<tapEvents.count {
             let tapEvent = tapEvents[tIndex]
             let f:AUValue = tapEvent.frequency
@@ -425,7 +429,7 @@ class AudioManager {
         }
         tapHandler.stopTapping("AudioMgr.playbackEvents")
         scalesModel.forceRepaint()
-        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(scalesModel.amplitudeFilter)")
+        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
         scalesModel.setRunningProcess(.none)
     }
     

@@ -51,26 +51,33 @@ public class TapEvent:Hashable {
     }
     
     func tapData() -> String {
-        let amps = String(format: "%.2f", self.amplitude)
         //let ampDiff = String(format: "%.2f", self.amplDiff)
         //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
-        var row = "Use:\(self.midi), Tap:\(self.tapMidi) "
+        var row = "Use:\(self.midi)"
         if let expectedScaleNoteStates = expectedScaleNoteStates {
             if expectedScaleNoteStates.count > 0 {
-                row += "Expect:\(expectedScaleNoteStates[0].midi)"
+                row += " Expect:\(expectedScaleNoteStates[0].midi)"
             }
         }
+        row += " Tap:\(self.tapMidi)"
+        
         var status = "\(self.status)"
         status = String(status.prefix(12))
         row += "\tA:\(self.ascending ? 1:0) \(status)"
         //row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
+        let amps = String(format: "%.4f", self.amplitude)
         row += "  Amp:\(amps)"
         return row
     }
 }
 
 public class TapEventSet {
+    let amplitudeFilter:Double
     var events:[TapEvent] = []
+    
+    init(amplitudeFilter:Double) {
+        self.amplitudeFilter = amplitudeFilter
+    }
     
     func debug112() {
         for event in events {

@@ -3,6 +3,7 @@ import SwiftUI
 
 class Result : Equatable {
     let id = UUID()
+    let amplitudeFilter:Double
     var eventsID:UUID? = nil ///The events set the result was  built from
     
     let runningProcess:RunningProcess
@@ -19,9 +20,10 @@ class Result : Equatable {
     //var recordedTempo:Int = 0
     var correctNotes = 0
     
-    init(runningProcess:RunningProcess, userMessage:String) {
+    init(amplitudeFilter:Double, runningProcess:RunningProcess, userMessage:String) {
         self.userMessage = userMessage
         self.runningProcess = runningProcess
+        self.amplitudeFilter = amplitudeFilter
     }
     
     func noErrors() -> Bool {
@@ -104,7 +106,7 @@ class Result : Equatable {
             let _ = scale.setNoteNormalizedValues()
             score.setNormalizedValues(scale: scale)
         }
-        Logger.shared.log(self, "Built result. Total errors:\(self.totalErrors()) Ampl Filter:\(ScalesModel.shared.amplitudeFilter)")
+        Logger.shared.log(self, "Built result. Total errors:\(self.totalErrors()) Ampl Filter:\(self.amplitudeFilter)")
     }
 }
 

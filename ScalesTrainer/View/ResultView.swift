@@ -104,15 +104,22 @@ struct TapDataView: View {
     }
     
     func getColor(_ event:TapEvent) -> Color {
-        var color = event.ascending ? Color.gray : Color.green
+        //var color = event.ascending ? Color.gray : Color.green
+        var color = Color.gray
         if event.status == .keyPressWithNextScaleMatch {
-            color = .blue
+            color = event.ascending ? .blue : .green
         }
         if event.status == .keyPressWithFollowingScaleMatch {
             color = .purple
         }
         if event.status == .keyPressWithoutScaleMatch {
             color = .red
+        }
+        if event.status == .belowAmplitudeFilter {
+            color = .brown
+        }
+        if event.status == .farFromExpected {
+            color = .orange
         }
         return color
     }
@@ -122,6 +129,8 @@ struct TapDataView: View {
             Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
 
             if let tapEventSet = scalesModel.tapHandlerEventSet {
+                Text("AmplFilter: \(String(format: "%.4f", tapEventSet.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
+
                 ScrollView {
                     ForEach(tapEventSet.events, id: \.self) { event in
                         Text(event.tapData()).foregroundColor(getColor(event))
@@ -131,7 +140,6 @@ struct TapDataView: View {
             if let eventSet = scalesModel.tapHandlerEventSet {
                 Text("Stats: \(eventSet.minMax())").foregroundColor(Color .blue).font(.title3)
             }
-            Text("AmplFilter: \(String(format: "%.4f", ScalesModel.shared.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
         }
     }
 }

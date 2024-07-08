@@ -92,7 +92,6 @@ struct SettingsView: View {
                 .frame(width: width)
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
-                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
                 .padding()
                 
@@ -101,7 +100,7 @@ struct SettingsView: View {
                     Spacer()
 
                     Button(action: {
-                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter1)
                     }) {
                         HStack {
                             Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)

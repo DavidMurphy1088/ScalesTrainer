@@ -5,16 +5,25 @@ import AudioKitEX
 import SwiftUI
 import AudioKit
 import AudioKitEX
+import SoundpipeAudioKit
 
 class FFTAnalyzer: ObservableObject {
     var engine: AudioEngine!
     var mic: AudioEngine.InputNode!
     var fftTap: FFTTap!
+    var pitchTap: PitchTap!
+    var ampTap: AmplitudeTap!
     var silence: Fader!
+    var mixerA:Mixer!
+    var mixerB:Mixer!
+    var mixerC:Mixer!
+    var showFFT = 0
     
     @Published var magnitudes: [Float] = Array(repeating: 0, count: 50)
     @Published var detectedPitch: Float = 0.0
     @Published var amplitude: Float = 0.0
+    var cnt = 0
+    var startTime = Date()
     
     let sampleRate: Float = 44100.0 // Standard sample rate, adjust if different
     
@@ -23,7 +32,7 @@ class FFTAnalyzer: ObservableObject {
         setupTap()
     }
     
-    func setupAudioEngine() {
+    func setupAudioEngineOld() {
         engine = AudioEngine()
         guard let input = engine.input else {
             fatalError("Microphone not available")
@@ -32,15 +41,125 @@ class FFTAnalyzer: ObservableObject {
         silence = Fader(mic, gain: 0)
         engine.output = silence
     }
+
+    func setupAudioEngine() {
+        engine = AudioEngine()
+        guard let input = engine.input else {
+            fatalError("Microphone not available")
+        }
+        mic = engine.input
+        // Create two separate mixers
+        mixerA = Mixer(mic)
+        mixerB = Mixer(mic)
+        mixerC = Mixer(mic)
+        // Create a final mixer to combine both
+        let finalMixer = Mixer(mixerA, mixerB, mixerC)
+        finalMixer.volume = 0
+        engine.output = finalMixer
+    }
+
+    func getTime() -> String {
+        let currentDate = Date()
+        let timeDifference = currentDate.timeIntervalSince(self.startTime)
+        let secondsDifference = Int(timeDifference)
+        var millisecondsDifference = (timeDifference.truncatingRemainder(dividingBy: 1)) * 1000
+        let multiplier = 100.0
+        millisecondsDifference = (millisecondsDifference * multiplier).rounded() / multiplier
+        let s = "\(secondsDifference).\(String(format: "%.0f", millisecondsDifference))"
+        return s
+    }
     
+    func mostFreqInArray(inArr:[Int]) -> (key: Int, value: Int)? {
+        var frequencyDict: [Int: Int] = [:]
+        for value in inArr {
+            frequencyDict[value, default: 0] += 1
+        }
+        let m = frequencyDict.max(by: { a, b in a.value < b.value })
+        return m
+    }
+        
     func setupTap() {
-        fftTap = FFTTap(mic) { fftData in
-            DispatchQueue.main.async {
-                self.magnitudes = Array(fftData.prefix(50))
-                self.detectedPitch = self.calculatePitch(fftData: fftData)
-                self.amplitude = self.calculateAmplitude(fftData: fftData)
+        //let fftValidBinCount:FFTValidBinCount = .twoThousandAndFortyEight
+        let bufferSize:UInt32 = 4096 * 1//* 4 * 4
+        
+        self.ampTap = AmplitudeTap(mixerC, bufferSize: bufferSize) {amp in
+            if amp > 0.005 {
+                let timeStamp = self.getTime()
+                print("AT     ===========  ", timeStamp, "amp:", String(format: "%.4f", amp))
+                self.showFFT = 12
             }
         }
+        
+        self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
+            ///PitchTap: BaseTap {
+            if a[0] > 0.03 {
+                let timeStamp = self.getTime()
+                let midi = self.frequencyToMIDI(frequencyHz: [f[0]])
+                //print("PT     ===========  ", timeStamp, "freq:", Int(f[0]), "\t", "midi:", midi, "amp:", String(format: "%.2f", a[0]))
+            }
+        }
+        
+        fftTap = FFTTap(mixerA, bufferSize: bufferSize) { fftData in
+            ///FFTTap uses Hann smoothing internally
+            ///FFTTap: BaseTap
+            self.cnt += 1
+            let topFreqs = self.calculateTopFrequencies(fftData: fftData)
+            let midis = self.frequencyToMIDI(frequencyHz: topFreqs)
+            if self.showFFT > 0 {
+                if midis[0] >= 60 {
+                    if Set(midis).count <= 2 {
+                        let timeStamp = self.getTime()
+                        let topFreqInt = topFreqs.map { Int($0) }
+                        //let mf = self.mostFreqInArray(inArr: midis)
+                        print("FFTTap ============ ", timeStamp, "cnt:(\(self.showFFT))", "freq:", topFreqInt, "\t", midis, "Best", midis[0])
+                        self.showFFT -= 1
+                        DispatchQueue.main.async {
+                            self.magnitudes = Array(fftData.prefix(50))
+                            self.detectedPitch = self.calculatePitch(fftData: fftData)
+                            //self.amplitude = self.calculateAmplitude(fftData: fftData)
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    
+    func calculateTopFrequencies(fftData: [Float]) -> [Float] {
+        let fftSize = fftData.count
+        let sampleRate = self.sampleRate
+        
+        // Calculate magnitudes
+        let magnitudes = fftData.enumerated().map { (index, value) -> (Int, Float) in
+            let magnitude = sqrt(value * value)
+            return (index, magnitude)
+        }
+        
+        // Sort magnitudes in descending order and get top 3
+        let topMagnitudes = magnitudes.sorted { $0.1 > $1.1 }.prefix(3)
+        
+        // Convert indices to frequencies and round to 3 decimal places
+        let topFrequencies = topMagnitudes.map { index, _ -> Float in
+            let frequency = Float(index) * sampleRate / (2.0 * Float(fftSize))
+//            let rounded = (frequency * 1000).rounded() / 1000
+//            //make ints??
+//            return (frequency * 100000).rounded() / 100000 // Round to 3 decimal places
+            return frequency
+        }
+        return topFrequencies
+    }
+
+    func frequencyToMIDI(frequencyHz: [Float]) -> [Int] {
+        let midiReference:Float = 69.0
+        let standardA440:Float = 440.0
+        var midis:[Int] = []
+        for f in frequencyHz {
+            let midi = midiReference + 12.0 * log2(f / standardA440)
+            if !(midi.isNaN || midi.isInfinite) {
+                midis.append( Int(midi))
+            }
+        }
+        return midis
     }
     
     func calculatePitch(fftData: [Float]) -> Float {
@@ -60,34 +179,23 @@ class FFTAnalyzer: ObservableObject {
         // Calculate the frequency of the peak
         let frequencyResolution = nyquistFrequency / Float(binCount)
         let peakFrequency = Float(peakIndex) * frequencyResolution
-        
         return peakFrequency
     }
-    func calculateAmplitude(fftData: [Float]) -> Float {
-        // Calculate the power spectrum (square of magnitudes)
-        let powerSpectrum = fftData.map { $0 * $0 }
-        
-        // Sum the power spectrum
-        let totalPower = powerSpectrum.reduce(0, +)
-        
-        // Calculate RMS amplitude
-        let rms = sqrt(totalPower / Float(fftData.count))
-        
-        // Normalize RMS value based on FFT normalization
-        // Assuming fftData is normalized by N/2 (N = number of samples)
-        let normalizationFactor = 2.0 / Float(fftData.count)
-        let amplitude = rms / normalizationFactor
-        print("==============", rms)
-        return amplitude
-    }
-
     
     func startAnalysis() {
         do {
             print("Starting audio engine")
             try engine.start()
             print("Starting FFT tap")
-            fftTap.start()
+            if let tap = fftTap {
+                tap.start()
+            }
+            if let tap = pitchTap {
+                tap.start()
+            }
+            if let tap = ampTap {
+                tap.start()
+            }
         } catch {
             print("Error starting audio engine: \(error.localizedDescription)")
         }
@@ -127,7 +235,7 @@ struct FFTContentView: View {
             .padding()
             
             if isAnalyzing {
-                Text("Detected Pitch: \(fftAnalyzer.detectedPitch, specifier: "%.4f") Hz")
+                Text("Detected Pitch: \(fftAnalyzer.detectedPitch, specifier: "%.0f") Hz")
                     .font(.headline)
                     .padding()
                 
@@ -147,4 +255,59 @@ struct FFTContentView: View {
     }
 }
 
+import AudioKit
+import AudioKitEX
+import SoundpipeAudioKit
 
+class AudioAnalyzer {
+    let engine = AudioEngine()
+    var mic: AudioEngine.InputNode!
+    var mixerA, mixerB: Mixer!
+    var pitchTap: PitchTap!
+    var fftTap: FFTTap!
+    let bufferSize: Int = 4096
+    
+    init() {
+        do {
+            mic = engine.input
+            
+            // Create two separate mixers
+            mixerA = Mixer(mic)
+            mixerB = Mixer(mic)
+            
+            // Create a final mixer to combine both
+            let finalMixer = Mixer(mixerA, mixerB)
+            engine.output = finalMixer
+            
+            // Create PitchTap on mixerA
+            pitchTap = PitchTap(mixerA) { pitch, amplitude in
+                self.processPitch(pitch: pitch[0], amplitude: amplitude[0])
+            }
+            
+            // Create FFTTap on mixerB
+            fftTap = FFTTap(mixerB, bufferSize: UInt32(bufferSize)) { fftData in
+                self.processFFT(fftData: fftData)
+            }
+            
+            // Start the taps
+            pitchTap.start()
+            fftTap.start()
+            
+            try engine.start()
+        } catch {
+            print("AudioKit failed to start: \(error)")
+        }
+    }
+    
+    func processPitch(pitch: Float, amplitude: Float) {
+        print("Pitch: \(pitch) Hz, Amplitude: \(amplitude)")
+    }
+    
+    func processFFT(fftData: [Float]) {
+        // Here you would apply the Hann window and perform FFT if needed
+        print("Processing FFT data of size: \(fftData.count)")
+    }
+}
+
+// Usage
+let analyzer = AudioAnalyzer()

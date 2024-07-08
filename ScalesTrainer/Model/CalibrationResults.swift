@@ -5,14 +5,14 @@ import Foundation
 class CalibrationResult : Identifiable {
     let id = UUID()
     let num:Int
-    let amplFilter: Double
+    let amplitudeFilter:Double
     var lowestErrors = false
     let result:Result
     
     init(num:Int, result:Result, amplFilter: Double) {
         self.num = num
         self.result = result
-        self.amplFilter = amplFilter
+        self.amplitudeFilter = amplFilter
     }
 }
 
@@ -54,7 +54,7 @@ class CalibrationResults : ObservableObject {
         }
     }
     
-    func analyseBestSettings(onDone:()->Void) {
+    func analyseBestSettings(onNext:@escaping(_:Double)->Void, onDone:@escaping(_:Double?)->Void) {
         DispatchQueue.global(qos: .background).async {
             self.calibrationResults = []
             var higherThanMinCount = 0
@@ -64,8 +64,8 @@ class CalibrationResults : ObservableObject {
             
             while true {
                 let ampFilter = Double(index) * 0.005
-                scalesModel.setAmplitudeFilter(ampFilter)
-                scalesModel.setRunningProcess(.recordScaleWithTapData)
+                onNext(ampFilter)
+                scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: ampFilter)
                 if let result = scalesModel.resultInternal {
                     let totalErrors = result.totalErrors()
                     self.appendResult(num: index, result: result, amplFilter: ampFilter)
@@ -83,10 +83,12 @@ class CalibrationResults : ObservableObject {
                 }
                 index += 1
             }
-
+            
             ///Find the best results. Use the result in the middle of the lowest error results and save that callibration.
             var first:Int?
             var last:Int?
+            var bestResult:CalibrationResult?
+
             for i in 0..<self.calibrationResults!.count {
                 let result = self.calibrationResults![i]
                 if result.result.totalErrors() == minError {
@@ -108,29 +110,31 @@ class CalibrationResults : ObservableObject {
                     else {
                         bestIndex = first + 1
                     }
-                    let result = self.calibrationResults![bestIndex]                    
-                    scalesModel.setAmplitudeFilter(result.amplFilter)
-                    Settings.shared.save(amplitudeFilter: result.amplFilter)
-                    ///Show the best result visually
-                    scalesModel.setRunningProcess(.recordScaleWithTapData)
+                    bestResult = self.calibrationResults![bestIndex]
+                    
                 }
             }
+            if let best = bestResult {
+                onDone(best.amplitudeFilter)
+            }
+            else {
+                onDone(nil)
+            }
+        
         }
     }
     
     func run(amplitudeFilter: Double) {
         let scalesModel = ScalesModel.shared
-        scalesModel.setAmplitudeFilter(amplitudeFilter)
-        //Settings.shared.save()
         ///Show the result visually
-        scalesModel.setRunningProcess(.recordScaleWithTapData)
+        scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: amplitudeFilter)
     }
     
-    func calculateCallibration() {
+    func calculateAverageAmplitude() -> Double? {
         let scalesModel = ScalesModel.shared
         guard let eventSet = scalesModel.tapHandlerEventSet else {
             Logger.shared.reportError(self, "No events")
-            return
+            return nil
         }
         var amplitudes:[Float] = []
         for event in eventSet.events {
@@ -139,18 +143,19 @@ class CalibrationResults : ObservableObject {
         }
         let n = 8
         guard amplitudes.count >= n else {
-            Logger.shared.reportError(self, "Callibration amplitudes must contain at least \(n) elements.")
-            return
+            Logger.shared.reportError(self, "Calibration amplitudes must contain at least \(n) elements.")
+            return nil
         }
         
         let highest = amplitudes.sorted(by: >).prefix(n)
         let total = highest.reduce(0, +)
         let avgAmplitude = Double(total / Float(highest.count))
-        scalesModel.setAmplitudeFilter(avgAmplitude)
-        Settings.shared.save(amplitudeFilter: avgAmplitude)
-        Logger.shared.log(self, "Callibration amplitude set at: \(avgAmplitude) from \(n) averages")
+        //scalesModel.setAmplitudeFilter(avgAmplitude)
+        //Settings.shared.save(amplitudeFilter: avgAmplitude)
+        Logger.shared.log(self, "Calibration amplitude set at: \(avgAmplitude) from \(n) averages")
         
         ///Save events as callibration events
         self.setEvents(tapEvents: eventSet.events)
+        return avgAmplitude
     }
 }

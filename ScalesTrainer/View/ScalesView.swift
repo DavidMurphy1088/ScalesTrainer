@@ -360,22 +360,6 @@ struct ScalesView: View {
             .padding()
             
             Spacer()
-            if scalesModel.tapHandlerEventSet != nil {
-                HStack {
-                    Spacer()
-                    Button("Show Tap Data") {
-                        showingTapData = true
-                    }
-                    if Settings.shared.recordDataMode {
-                        if MFMailComposeViewController.canSendMail() {
-                            Button("Send Tap Data") {
-                                activeSheet = .emailRecording
-                            }
-                        }
-                    }
-                }
-            }
-            Spacer()
         }
 
     }
@@ -386,6 +370,24 @@ struct ScalesView: View {
             Button("READ_TEST_DATA") {
                 scalesModel.setRunningProcess(.recordScaleWithFileData)
             }.padding()
+            
+            if scalesModel.tapHandlerEventSet != nil {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button("Show Tap Data") {
+                        showingTapData = true
+                    }
+                    if Settings.shared.recordDataMode {
+                        Spacer()
+                        if MFMailComposeViewController.canSendMail() {
+                            Button("Send Tap Data") {
+                                activeSheet = .emailRecording
+                            }
+                        }
+                    }
+                }
+            }
             Spacer()
         }
     }
@@ -579,7 +581,7 @@ struct ScalesView: View {
                         SendMailView(isShowing: $emailShowing, result: $emailResult,
                                      messageRecipient:"davidmurphy1088@gmail.com",
                                      messageSubject: "Scales Trainer \(getMailInfo())",
-                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly...\n",
+                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly. Also include tempo and articulation info\n",
                                      attachmentFilePath: url)
                     }
                 }

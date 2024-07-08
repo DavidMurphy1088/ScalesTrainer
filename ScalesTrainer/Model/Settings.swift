@@ -2,7 +2,7 @@ import Foundation
 
 public class Settings : Codable  {    
     static var shared = Settings()
-    var recordDataMode = false
+    var recordDataMode = true
     var firstName = ""
     var scaleLeadInBarCount:Int = 0
     var tapMinimunAmplificationFilter:Double = 0

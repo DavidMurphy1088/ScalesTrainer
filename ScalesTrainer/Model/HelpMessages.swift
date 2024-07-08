@@ -20,10 +20,10 @@ class HelpMessages {
         
         m = "Calibration is required so Scales Star can accurately hear your piano."
         m += "\n\n➤ For best recording results your device should be placed near or against your piano."
-        m += "\n\n➤ You will need to perform callibration again if you change the location of where the app is positioned when it listens."
+        m += "\n\n➤ You will need to perform calibration again if you change the location of where the app is positioned when it listens."
         m += "\n\n➤ Press Start Playing Scale and play the scale shown softly (piano) and at a moderate tempo. Press Stop when the scale is finished."
-        m += " Then press Analyse Best Settings to save the callibration."
-        m += "\n\n➤ After Analyse Best Settings is finished some callibration value rows should show zero errors. If not, its best to redo the callibration."
+        m += " Then press Analyse Best Settings to save the calibration."
+        m += "\n\n➤ After Analyse Best Settings is finished some calibration value rows should show zero errors. If not, its best to redo the calibration."
         m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales. In particular, if notes you are play are not detected you may need to decrease the amplitude filter slightly. If notes appear that you did not play you may need to increase the amplitude filter slightly."
 
         messages["Calibration"] = m

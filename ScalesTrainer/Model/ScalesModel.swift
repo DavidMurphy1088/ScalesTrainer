@@ -9,14 +9,14 @@ import SwiftUI
 
 enum MicTappingMode {
     case off
-    case onWithCallibration
+    case onWithCalibration
     case onWithPractice
     case onWithRecordingScale
 }
 
 enum RunningProcess {
     case none
-    case callibrating
+    case calibrating
     case followingScale
     case practicing
     case recordingScale
@@ -31,7 +31,7 @@ enum RunningProcess {
         switch self {
         case .none:
             return "None"
-        case .callibrating:
+        case .calibrating:
             return "Calibrating"
         case .followingScale:
             return "Following Scale"
@@ -103,7 +103,7 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let callibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
+    let calibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
     var helpTopic:String? = nil
@@ -137,12 +137,13 @@ public class ScalesModel : ObservableObject {
     }
     @Published private(set) var resultDisplay:Result?
 
-    @Published private(set) var amplitudeFilterDisplay:Double = 0.0
-    private(set) var amplitudeFilter:Double = 0.0
-    func setAmplitudeFilter(_ value:Double) {
-        self.amplitudeFilter = value
+    @Published private(set) var amplitudeFilterDisplay1:Double = 0.0
+    private(set) var amplitudeFilter1:Double = 0.0
+    func setAmplitudeFilter1(_ value:Double) {
+        self.amplitudeFilter1 = value
         DispatchQueue.main.async {
-            self.amplitudeFilterDisplay = value
+            self.amplitudeFilterDisplay1 = value
+            Settings.shared.save(amplitudeFilter: self.amplitudeFilterDisplay1)
         }
     }
 
@@ -227,17 +228,13 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize()
         }
-        
-        self.callibrationTapHandler = nil
-        setAmplitudeFilter(Settings.shared.tapMinimunAmplificationFilter)
+        self.calibrationTapHandler = nil
+        setAmplitudeFilter1(Settings.shared.tapMinimunAmplificationFilter)
 
     }
     
-    func setRunningProcess(_ setProcess: RunningProcess) {
+    func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
         let coinBank = CoinBank.shared
-//        if self.runningProcess == .recordingScale {
-//
-//        }
         Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
@@ -261,9 +258,10 @@ public class ScalesModel : ObservableObject {
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
-        if [.followingScale, .practicing, .callibrating].contains(setProcess)  {
+        if [.followingScale, .practicing, .calibrating].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            let tapHandler = PracticeTapHandler(hilightPlayingNotes: true, logTaps: true)
+            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter1 : amplitudeFilter!
+            let tapHandler = PracticeTapHandler(amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -320,14 +318,15 @@ public class ScalesModel : ObservableObject {
             self.setUserMessage(nil)
             //self.setShowFingers(false)
             keyboard.redraw()
-            let tapHandler = ScaleTapHandler(hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
+            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter1 : amplitudeFilter!
+            let tapHandler = ScaleTapHandler(amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
             if setProcess == .recordScaleWithFileData {
                 let tapEvents = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)
             }
             if setProcess == .recordScaleWithTapData {
-                if let callibrationEvents = self.calibrationResults.calibrationEvents {
-                    self.audioManager.playbackTapEvents(tapEvents: callibrationEvents, tapHandler: tapHandler)
+                if let calibrationEvents = self.calibrationResults.calibrationEvents {
+                    self.audioManager.playbackTapEvents(tapEvents: calibrationEvents, tapHandler: tapHandler)
                 }
             }
             if setProcess == .recordingScale {

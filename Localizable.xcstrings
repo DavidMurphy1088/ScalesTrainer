@@ -88,9 +88,6 @@
     "AmplFilter: %@" : {
 
     },
-    "Amplitude filter:%@" : {
-
-    },
     "Amplitude: %.4f" : {
 
     },
@@ -121,7 +118,10 @@
     "Correctly Played" : {
 
     },
-    "Detected Pitch: %.4f Hz" : {
+    "Current Amplitude Filter:%@" : {
+
+    },
+    "Detected Pitch: %.0f Hz" : {
 
     },
     "Errors:" : {
@@ -266,6 +266,9 @@
 
     },
     "RH\nProgress" : {
+
+    },
+    "Save" : {
 
     },
     "Save Settings" : {
