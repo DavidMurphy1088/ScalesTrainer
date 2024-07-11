@@ -375,7 +375,7 @@ class AudioManager {
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0, amplDiff: 0, key: .none))
+                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0, key: .none))
                         tapNum += 1
                     }
                 }

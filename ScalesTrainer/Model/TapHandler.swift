@@ -94,7 +94,6 @@ class PracticeTapHandler : TapHandlerProtocol {
                                                                      status: TapEventStatus.none,
                                                                      expectedScaleNoteStates: nil,
                                                                      midi: 0, tapMidi: midi,
-                                                                     amplDiff: 0,
                                                                      key: nil))
 //        if false {
 //            if tapNum % 20 == 0 || !aboveFilter {
@@ -120,22 +119,25 @@ class ScaleTapHandler : TapHandlerProtocol  {
     let amplitudeFilter:Double
     var startTime:Date = Date()
     let scale:Scale
-    //let amplitudeFilter:Double
     var wrongNoteFound = false
     var tapNumber = 0
     var savedTapsFileURL:URL?
     var savedTapsFileName:String?
-    var lastAmplitude:Float?
+    //var lastAmplitude:Float?
     var lastKeyPressedMidi:Int?
     var tapRecords:[String] = []
-    var unmatchedCount = 0
+    var unmatchedCount:Int? = nil
     var maxScaleMidi = 0
     var minScaleMidi = 0
     var matchCount = 0
     var hilightPlayingNotes:Bool
     let logTaps:Bool
     var result:Result?
-    
+    var octaveOffsets:[Int] = []
+    var scaleStartAmplitudes:[Float] = []
+    var scalePotentialStartAmplitudes:[Float] = []
+    var scaleWasAdjusted = false
+
     required init(amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool) {
         self.scale = ScalesModel.shared.scale
         self.amplitudeFilter = amplitudeFilter
@@ -145,8 +147,15 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ScalesModel.shared.recordedTapsFileName = nil
         self.hilightPlayingNotes = hilightPlayingNotes
         self.logTaps = logTaps
-        Logger.shared.log(self, "ScaleTapHandler starting. AmplFilter:\(String(format:"%.4f", self.amplitudeFilter)) logging?:\(self.logTaps)")
         self.result = nil
+        ///Keep offsets relativly contrained until the first match to avoid premature matches at the recording start
+        ///self.octaveOffsets = [0, 12, -12, 24, -24, 36, -36]
+        self.octaveOffsets = [0, 12, -12]
+        let info = "Starting, amplFilter:\(String(format: "%.4f", amplitudeFilter))"
+        if let eventSet = ScalesModel.shared.tapHandlerEventSet {
+            eventSet.events.append(TapEvent(infoMsg: info))
+        }
+        Logger.shared.log(self, "ScaleTapHandler starting. AmplFilter:\(String(format:"%.4f", self.amplitudeFilter)) logging?:\(self.logTaps)")
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
@@ -161,6 +170,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
     }
     
     func processTapData(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+    }
+    
+    func processTapDataOld(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         var frequency:Float
         var amplitude:Float
         if amplitudes[0] > amplitudes[1] {
@@ -189,6 +201,52 @@ class ScaleTapHandler : TapHandlerProtocol  {
             }
         }
         tapNumber += 1
+        
+        ///Require a large change in amplitude to start the scale
+        ///Compare averages of amplitudes to detect the major change over averaged tap events
+        if matchCount == 0 {
+            scaleStartAmplitudes.append(amplitude)
+            scalePotentialStartAmplitudes.append(amplitude)
+            if scalePotentialStartAmplitudes.count > 4 {
+                scalePotentialStartAmplitudes.removeFirst()
+            }
+            var sum = scaleStartAmplitudes.reduce(0, +)
+            let startAverage = sum / Float(scaleStartAmplitudes.count)
+            sum = scalePotentialStartAmplitudes.reduce(0, +)
+            let potentialAverage = sum / Float(scalePotentialStartAmplitudes.count)
+            let diff = (potentialAverage - startAverage) / startAverage
+            let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
+            let secs = Double(ms) / 1000.0
+
+            if diff < 2.0 {
+                ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber,
+                                                                             frequency: frequency,
+                                                                             amplitude: amplitude,
+                                                                             ascending: false,
+                                                                             status: .beforeScaleStart,
+                                                                             expectedScaleNoteStates: nil,
+                                                                             midi: tapMidi, tapMidi: tapMidi,
+                                                                             key: nil))
+                return
+            }
+            ///The student can play the scale at whichever octave they choose. Adjust the scale accordinlgy.
+//            if scale.scaleNoteState.count > 0 {
+//                let scaleStartMidi = scale.scaleNoteState[0].midi
+//                let startDiff = tapMidi - scaleStartMidi
+//                print("========= >>>", tapMidi, startDiff, scaleWasAdjusted)
+//
+//                ///Only adjust the scale for a potential correct scale start
+//                if scaleWasAdjusted == false {
+//                    if startDiff % 12 == 0 {
+//                        if startDiff != 0 {
+//                            scale.incrementNotes(offset: startDiff)
+//                            scaleWasAdjusted = true
+//                        }
+//                    }
+//                }
+//            }
+        }
+        
         guard amplitude > AUValue(self.amplitudeFilter) else {
             ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber,
                                                                          frequency: frequency,
@@ -197,19 +255,13 @@ class ScaleTapHandler : TapHandlerProtocol  {
                                                                           status: .belowAmplitudeFilter,
                                                                          expectedScaleNoteStates: nil,
                                                                          midi: tapMidi, tapMidi: tapMidi,
-                                                                         amplDiff: Double(0), key: nil))
+                                                                         key: nil))
             return
         }
         
-        var amplDiff:Float = 0.0
-        if let lastAmplitude:Float = lastAmplitude {
-            if lastAmplitude > 0 {
-                amplDiff = 100 * (amplitude - lastAmplitude) / lastAmplitude
-            }
-        }
-        
         let keyboardModel = PianoKeyboardModel.shared
-        let nextExpectedNotes = scale.getNextExpectedNotes(count: 2)
+        //let nextExpectedNotes = scale.getNextExpectedNotes(count: 2)
+        let nextExpectedNotes = scale.getNextExpectedNotes(count: 1)
         guard nextExpectedNotes.count > 0 else {
             ///All scales notes are already matched
             ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber, 
@@ -219,29 +271,28 @@ class ScaleTapHandler : TapHandlerProtocol  {
                                                                          status: .pastEndOfScale,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
                                                                          midi: tapMidi, tapMidi: tapMidi,
-                                                                         amplDiff: Double(amplDiff), key: nil))
+                                                                         key: nil))
             return
         }
         
         var midi = tapMidi
         
-        ///Adjust to the pitch in the expected octave. e.g. A middle C = 60 might arrive as 72. 72 matches the scale and causes a note played at key 72
+        ///Adjust to the pitch in the expected octave. e.g. A middle C = 60 might arrive as 72 or 48. 72 matches the scale and causes a note played at key 72
         ///So treat the 72 as middle C = 60 so its not treated as the top of the scale (and then that everything that follows is descending)
-        //let offsets = [0, 12, -12, 24, -24]
-        //let offsets = [0, 12, -12]
-        let offsets = [0, 12, -12, 24, -24, 36, -36]
+        ///octaveOffsets = [0, 12, -12, 24, -24, 36, -36]
         var minDist = 1000000
         var minIndex = 0
-//reduce spread size before scale starts, or at higher pitches?
-        for i in 0..<offsets.count {
-            let dist = abs((tapMidi  + offsets[i]) - nextExpectedNotes[0].midi)
+        //reduce spread size before scale starts, or at lower pitches? its missing the last note at 0.02, play with filters more on this 3 octave C
+        for i in 0..<self.octaveOffsets.count {
+            let dist = abs((tapMidi  + self.octaveOffsets[i]) - nextExpectedNotes[0].midi)
             if dist < minDist {
                 minDist = dist
                 minIndex = i
             }
         }
-        midi = tapMidi + offsets[minIndex]
+        midi = tapMidi + self.octaveOffsets[minIndex]
         let ascending = nextExpectedNotes[0].sequence <= scale.scaleNoteState.count / 2
+        
         let atTop = nextExpectedNotes[0].sequence == scale.scaleNoteState.count / 2 && midi == nextExpectedNotes[0].midi
         
         ///Does the notification represents a key that could be pressed on the keyboard?
@@ -253,22 +304,24 @@ class ScaleTapHandler : TapHandlerProtocol  {
                                                                          status: .keyNotOnKeyboard,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
                                                                          midi: midi, tapMidi: tapMidi,
-                                                                         amplDiff: Double(amplDiff), key: nil))
+                                                                         key: nil))
             return
         }
         
         ///Same as last note?
         if let lastKeyPressedMidi = lastKeyPressedMidi {
-            guard midi != lastKeyPressedMidi else {
-                ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber,
-                                                                             frequency: frequency,
-                                                                             amplitude: amplitude,
-                                                                             ascending: ascending,
-                                                                             status: .continued,
-                                                                             expectedScaleNoteStates: nextExpectedNotes,
-                                                                             midi: midi, tapMidi: tapMidi,
-                                                                             amplDiff: Double(amplDiff), key: nil))
-                return
+            if unmatchedCount == nil {
+                guard midi != lastKeyPressedMidi else {
+                    ScalesModel.shared.tapHandlerEventSet?.events.append(TapEvent(tapNum: tapNumber,
+                                                                                  frequency: frequency,
+                                                                                  amplitude: amplitude,
+                                                                                  ascending: ascending,
+                                                                                  status: .continued,
+                                                                                  expectedScaleNoteStates: nextExpectedNotes,
+                                                                                  midi: midi, tapMidi: tapMidi,
+                                                                                  key: nil))
+                    return
+                }
             }
         }
         
@@ -281,7 +334,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                                                                          status: .outsideScale,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
                                                                          midi: midi, tapMidi: tapMidi,
-                                                                         amplDiff: Double(amplDiff), key: nil))
+                                                                         key: nil))
             return
         }
 
@@ -300,19 +353,26 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         else {
             var match = false
+            if nextExpectedNotes[0].midi == 83 {
+                match = false
+            }
             for i in [0,1] {
                 if i < nextExpectedNotes.count {
                     if nextExpectedNotes[i].midi == midi {
                         nextExpectedNotes[i].matchedTime = Date()
                         nextExpectedNotes[i].matchedAmplitude = Double(amplitude)
-                        tapEventStatus = i == 0 ? .keyPressWithNextScaleMatch : .keyPressWithFollowingScaleMatch
-                        unmatchedCount = 0
+                        tapEventStatus = i == 0 ? .pressNextScaleMatch : .pressFollowingScaleMatch
+                        unmatchedCount = nil
                         match = true
                         if i > 0 {
                             ///Set any previously expected note unmatched
                             nextExpectedNotes[0].unmatchedTime = Date()
                         }
                         matchCount += 1
+                        if tapEventStatus == .pressNextScaleMatch {
+                            ///Open up octave overtones/harmonics match after first good reliable scales match
+                            self.octaveOffsets = [0, 12, -12, 24, -24, 36, -36]
+                        }
                         break
                     }
                 }
@@ -321,23 +381,31 @@ class ScaleTapHandler : TapHandlerProtocol  {
             if !match {
                 ///Only advance the expected next note when one note was missed.
                 ///e.g. they play E instead of E♭ advance the expected next to F but dont advance it further
-                if unmatchedCount == 0 {
-                    nextExpectedNotes[0].unmatchedTime = Date()
+                if unmatchedCount == nil {
+                    unmatchedCount = 1
+                    tapEventStatus = .wrongButWaitForNext
                 }
-                unmatchedCount += 1
-                tapEventStatus = .keyPressWithoutScaleMatch
+                else {
+                    tapEventStatus = .pressWithoutScaleMatch
+                    unmatchedCount = nil
+                    //if unmatchedCount == 0 {
+                        nextExpectedNotes[0].unmatchedTime = Date()
+                    //}
+                }
             }
             
             ///Update key tapped state
-            if ascending || atTop {
-                keyboardKey.keyWasPlayedState.tappedTimeAscending = Date()
-                keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(amplitude)
+            if unmatchedCount == nil {
+                if ascending || atTop {
+                    keyboardKey.keyWasPlayedState.tappedTimeAscending = Date()
+                    keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(amplitude)
+                }
+                if !ascending || atTop  {
+                    keyboardKey.keyWasPlayedState.tappedTimeDescending = Date()
+                    keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(amplitude)
+                }
+                keyboardKey.setKeyPlaying(ascending: ascending ? 0 : 1, hilight: self.hilightPlayingNotes)
             }
-            if !ascending || atTop  {
-                keyboardKey.keyWasPlayedState.tappedTimeDescending = Date()
-                keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(amplitude)
-            }
-            keyboardKey.setKeyPlaying(ascending: ascending ? 0 : 1, hilight: self.hilightPlayingNotes)
             
             lastKeyPressedMidi = keyboardKey.midi
             if atTop {
@@ -354,18 +422,16 @@ class ScaleTapHandler : TapHandlerProtocol  {
                                                                      status: tapEventStatus,
                                                                  expectedScaleNoteStates: nextExpectedNotes,
                                                                  midi: midi, tapMidi: tapMidi,
-                                                                 amplDiff: Double(amplDiff),
                                                                  key: keyboardKey))
 
         ///Stop the recording if at end of scale.
-        if tapEventStatus == .keyPressWithNextScaleMatch {
+        if tapEventStatus == .pressNextScaleMatch {
             if matchCount > scale.scaleNoteState.count / 2 {
                 if midi == scale.scaleNoteState[0].midi {
                     ScalesModel.shared.setRunningProcess(.none)
                 }
             }
         }
-        lastAmplitude = amplitude
     }
     
     func stopTapping(_ ctx:String) {
@@ -374,7 +440,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             return
         }
         Logger.shared.calcValueLimits()
-        guard let eventSet = ScalesModel.shared.tapHandlerEventSet else {
+        guard ScalesModel.shared.tapHandlerEventSet != nil else {
             return
         }
 
@@ -387,7 +453,11 @@ class ScaleTapHandler : TapHandlerProtocol  {
 //                return
 //            }
 //        }
-    
+        if scaleWasAdjusted {
+            ///Scale played in non default octave
+            ScalesModel.shared.setScale(scale: scale)
+        }
+
         ScalesModel.shared.setResultInternal(result, "TapHandlerAtEnd")
         guard let result = self.result else {
             return

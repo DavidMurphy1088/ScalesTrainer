@@ -36,7 +36,7 @@ public class TimeSlice : ScoreEntry {
         }
     }
     ///The duration in seconds of the note played for this timeslice
-    public var tapDuration:Double?
+    public var tapDurationNormalised:Double?
     //Used to display tempo slow/fast variation per note based on actual tapped milliseconds
     //@Published var tapTempoRatio:Double?
     

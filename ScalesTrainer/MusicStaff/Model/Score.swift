@@ -296,7 +296,7 @@ public class Score : ObservableObject {
                               "midi:", note.midiNumber,
                               "beat:", t.beatNumber,
                               "value:", t.getValue() ,
-                              "duration:", t.tapDuration ?? "_",
+                              "duration:", t.tapDurationNormalised ?? "_",
                               "stemDirection", note.stemDirection,
                               "stemLength", note.stemLength,
                               "writtenAccidental", note.writtenAccidental ?? 0,
@@ -308,7 +308,7 @@ public class Score : ObservableObject {
                         print(" Seq", t.sequence, terminator: "")
                         print(" [type:", type(of: t.entries[0]), "]", terminator: "")
                         print(" [midi:",note.midiNumber, "]", terminator: "")
-                        print(" [TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]", t.sequence, terminator: "")
+                        print(" [TapDuration Seconds:",String(format: "%.4f", t.tapDurationNormalised ?? 0),"]", t.sequence, terminator: "")
                         print(" [Note Value:", note.getValue(),"]", t.sequence, terminator: "")
                         print(" [status]",t.statusTag, terminator: "")
                         print(" [beat]",t.beatNumber, t.sequence, terminator: "")
@@ -325,7 +325,7 @@ public class Score : ObservableObject {
                 print("  Seq", t.sequence,
                       "[type:", type(of: t.entries[0]), "]",
                       "[rest:","R ", "]",
-                      "[TapDuration Seconds:",String(format: "%.4f", t.tapDuration ?? 0),"]",
+                      "[TapDuration Seconds:",String(format: "%.4f", t.tapDurationNormalised ?? 0),"]",
                       "[Note Value:", t.getValue(),"]",
                       "[status]",t.statusTag,
                       "[beat]",t.beatNumber,
@@ -711,7 +711,7 @@ public class Score : ObservableObject {
     public func setNormalizedValues(scale:Scale) {
         for i in 0..<self.getAllTimeSlices().count {
             let ts = self.getAllTimeSlices()[i]
-            ts.tapDuration = scale.scaleNoteState[i].valueNormalized
+            ts.tapDurationNormalised = scale.scaleNoteState[i].valueNormalized
         }
     }
 

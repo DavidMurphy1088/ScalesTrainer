@@ -106,13 +106,16 @@ struct TapDataView: View {
     func getColor(_ event:TapEvent) -> Color {
         //var color = event.ascending ? Color.gray : Color.green
         var color = Color.gray
-        if event.status == .keyPressWithNextScaleMatch {
+        if event.status == .pressNextScaleMatch {
             color = event.ascending ? .blue : .green
         }
-        if event.status == .keyPressWithFollowingScaleMatch {
+        if event.status == .pressFollowingScaleMatch {
             color = .purple
         }
-        if event.status == .keyPressWithoutScaleMatch {
+        if event.status  == .wrongButWaitForNext {
+            color = .purple
+        }
+        if event.status == .pressWithoutScaleMatch {
             color = .red
         }
         if event.status == .belowAmplitudeFilter {

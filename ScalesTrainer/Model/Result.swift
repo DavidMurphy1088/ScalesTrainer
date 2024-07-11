@@ -17,7 +17,6 @@ class Result : Equatable {
     var missedCountDesc = 0
     var wrongCountAsc = 0
     var wrongCountDesc = 0
-    //var recordedTempo:Int = 0
     var correctNotes = 0
     
     init(amplitudeFilter:Double, runningProcess:RunningProcess, userMessage:String) {

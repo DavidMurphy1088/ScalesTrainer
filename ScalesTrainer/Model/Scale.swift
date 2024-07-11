@@ -160,7 +160,7 @@ public class Scale {
         ///All are low and some drop off 88-key keyboard
         if hand == 1 {
             //nextMidi -= 12
-            nextMidi -= 24
+            nextMidi -= 12 * octaves
         }
         
         ///Set midi values in scale
@@ -234,6 +234,12 @@ public class Scale {
         //debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
+    func incrementNotes(offset:Int) {
+        for note in self.scaleNoteState {
+            note.midi += offset
+        }
+    }
+    
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
         var scaleOffsets:[Int] = []
         switch scaleType {
@@ -304,7 +310,7 @@ public class Scale {
         var lastMatch:Date? = self.scaleNoteState[0].matchedTime
         var sum:Double = 0
         var timedNotesCount = 0
-
+        
         for note in self.scaleNoteState {
             if let matched = note.matchedTime {
                 if lastMatch == nil {
@@ -313,7 +319,7 @@ public class Scale {
                     continue
                 }
                 let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970 //{
-                    timeIntervals.append(delta)
+                timeIntervals.append(delta)
                 sum += delta
                 timedNotesCount += 1
                 lastMatch = matched
@@ -323,7 +329,6 @@ public class Scale {
         ///Calculate the average and apply the deltas to each note
         if sum > 0 {
             let average = Double(sum) / Double(timedNotesCount)
-            let tempo = 60.0 * 1.0 / average
             for n in 0..<self.scaleNoteState.count - 1 {
                 if n+1 < timeIntervals.count {
                     if timeIntervals[n+1] > 0 {
@@ -333,6 +338,12 @@ public class Scale {
                     }
                 }
             }
+        }
+        guard timedNotesCount > 0 else {
+            return 0
+        }
+        let tempo = 60.0 / (sum / Double(timedNotesCount))
+        if tempo.isFinite && !tempo.isNaN {
             return Int(tempo)
         }
         else {

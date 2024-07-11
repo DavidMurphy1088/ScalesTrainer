@@ -32,12 +32,12 @@ public class Logger : ObservableObject {
     public init() {
     }
     
-    public func clearLog() {
-        DispatchQueue.main.async {
-            self.loggedMsgs = []
-            self.hiliteLogValue = 10000.0
-        }
-    }
+//    public func clearLog() {
+//        DispatchQueue.main.async {
+//            self.loggedMsgs = []
+//            self.hiliteLogValue = 10000.0
+//        }
+//    }
     
     func hilite(val:Double) {
         DispatchQueue.main.async {

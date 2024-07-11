@@ -13,7 +13,12 @@ class TabSelectionManager: ObservableObject {
     func nextNavigationTab() {
         if Settings.shared.settingsExists() {
             if Settings.shared.CalibrationExists() {
-                selectedTab = 1
+                if ScalesTrainerApp.runningInXcode() {
+                    selectedTab = 0
+                }
+                else {
+                    selectedTab = 1
+                }
             }
             else{
                 selectedTab = 3
@@ -42,7 +47,7 @@ struct ScalesTrainerApp: App {
         #endif
     }
     
-    func runningInXcode() -> Bool {
+    static func runningInXcode() -> Bool {
         return ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
     }
     
@@ -56,18 +61,20 @@ struct ScalesTrainerApp: App {
 //                        }
 //                        .tag(0)
 //                }
-               FFTContentView()
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
-                    .tag(1)
 
-                HomeView()
+
+                ScalesView(practiceJournalScale: PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(0)
                 
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+                    .tag(1)
+
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
@@ -85,6 +92,12 @@ struct ScalesTrainerApp: App {
                         Label("Log", systemImage: "book.pages")
                     }
                     .tag(4)
+                
+                FFTContentView()
+                     .tabItem {
+                         Label("Home", systemImage: "house")
+                     }
+                     .tag(5)
                 }
                 //.border(Color.red)
                 .onAppear() {

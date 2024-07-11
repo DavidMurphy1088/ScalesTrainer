@@ -203,7 +203,7 @@ public struct CalibrationView: View {
             )
         }
         .onAppear() {
-            let octaves = ScalesTrainerApp().runningInXcode() ? 1 : 2
+            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
             setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
             ScalesModel.shared.selectedOctavesIndex1 = octaves == 1 ? 0 : 1

@@ -209,8 +209,10 @@ public class PianoKeyboardModel: ObservableObject {
     
     public func resetKeysWerePlayedState() {
         for i in 0..<numberOfKeys {
-            pianoKeyModel[i].keyWasPlayedState.tappedTimeAscending = nil
-            pianoKeyModel[i].keyWasPlayedState.tappedTimeDescending = nil
+            if i < pianoKeyModel.count {
+                pianoKeyModel[i].keyWasPlayedState.tappedTimeAscending = nil
+                pianoKeyModel[i].keyWasPlayedState.tappedTimeDescending = nil
+            }
         }
     }
     

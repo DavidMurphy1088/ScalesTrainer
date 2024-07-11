@@ -311,7 +311,7 @@ public struct TimeSliceView: View {
     }
     
     func getTempoGradient(valueNormalized:Double) -> LinearGradient {
-        if valueNormalized < 1.0 {
+        if valueNormalized < 0.7 {
             return LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: Color.white, location: 0.0),
@@ -324,7 +324,7 @@ public struct TimeSliceView: View {
             )
         }
         
-        if valueNormalized >= 1.0 {
+        if valueNormalized >= 2.0 {
             return LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: Color.white, location: 0.0),
@@ -377,7 +377,7 @@ public struct TimeSliceView: View {
                     VStack {
                         Spacer()
                         if result.noErrors() {
-                            if let duration = timeSlice.tapDuration {
+                            if let duration = timeSlice.tapDurationNormalised {
                                 Rectangle()
                                     .fill(getTempoGradient(valueNormalized: duration))
                                 //.opacity(1)

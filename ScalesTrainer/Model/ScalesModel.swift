@@ -98,7 +98,7 @@ public class ScalesModel : ObservableObject {
         
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
     let octaveNumberValues = [1,2,3,4]
-    var selectedOctavesIndex1 = 1
+    var selectedOctavesIndex1 = ScalesTrainerApp.runningInXcode() ? 0 : 1
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -478,7 +478,14 @@ public class ScalesModel : ObservableObject {
     }
     
     func createScore(scale:Scale) -> Score {
-        let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
+        //let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
+        let staffType:StaffType
+        if scale.scaleNoteState.count > 0 {
+            staffType = scale.scaleNoteState[0].midi >= 60 ? .treble : .bass
+        }
+        else {
+            staffType = .treble
+        }
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
@@ -524,11 +531,15 @@ public class ScalesModel : ObservableObject {
     func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
         let name = scaleRoot.name
         let scaleTypeName = scaleType.description
-        self.scale = Scale(scaleRoot: ScaleRoot(name: name),
+        let scale = Scale(scaleRoot: ScaleRoot(name: name),
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: octaves,
                            hand: hand)
-        
+        self.setScale(scale: scale)
+    }
+    
+    func setScale(scale:Scale) {
+        self.scale = scale
         PianoKeyboardModel.shared.configureKeyboardSize()
         setDirection(0)
         PianoKeyboardModel.shared.redraw()

@@ -385,6 +385,9 @@ struct ScalesView: View {
                                 activeSheet = .emailRecording
                             }
                         }
+                        else {
+                            Text("No mail")
+                        }
                     }
                 }
             }

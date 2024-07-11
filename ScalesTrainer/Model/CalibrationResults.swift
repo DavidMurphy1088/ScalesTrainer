@@ -28,8 +28,8 @@ class CalibrationResults : ObservableObject {
     }
     
     func appendResult(num: Int, result: Result, amplFilter:Double) {
+        let calibrationResult = CalibrationResult(num: num, result: result, amplFilter: amplFilter)
         DispatchQueue.main.async {
-            let calibrationResult = CalibrationResult(num: num, result: result, amplFilter: amplFilter)
             self.calibrationResults?.append(calibrationResult)
         }
     }
@@ -39,7 +39,7 @@ class CalibrationResults : ObservableObject {
             self.calibrationEvents = []
             var tapNum = 0
             for event in tapEvents {
-                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteStates: [], midi: event.midi, tapMidi: event.tapMidi, amplDiff: 0, key: .none))
+                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteStates: [], midi: event.midi, tapMidi: event.tapMidi, key: .none))
                 tapNum += 1
             }
             self.calibrationResults = nil

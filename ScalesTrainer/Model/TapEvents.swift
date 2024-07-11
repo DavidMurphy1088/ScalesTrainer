@@ -2,13 +2,24 @@ import Foundation
 
 public enum TapEventStatus {
     case none
-    case keyPressWithoutScaleMatch
-    case keyPressWithNextScaleMatch
-    case keyPressWithFollowingScaleMatch
+    case info
+    
+    case pressWithoutScaleMatch
+    
+    ///Pressed the expected next note
+    case pressNextScaleMatch
+    
+    ///Pressed note 1 further on than the one expected
+    case pressFollowingScaleMatch
+    
+    ///Pressed wrong note but wait for one more wrong before reporting it. The singleton supposed error maybe only a harmonic
+    case wrongButWaitForNext
+    
     case continued
     case farFromExpected
     case pastEndOfScale
     case belowAmplitudeFilter
+    case beforeScaleStart
     case keyNotOnKeyboard
     case outsideScale
 }
@@ -26,10 +37,10 @@ public class TapEvent:Hashable {
     let expectedScaleNoteStates:[ScaleNoteState]?
     let key:PianoKeyModel?
     let ascending:Bool
-    let amplDiff:Double
-
+    let infoMsg:String?
+    
     public init(tapNum:Int, frequency:Float, amplitude:Float, ascending: Bool, status:TapEventStatus, expectedScaleNoteStates:[ScaleNoteState]?, midi:Int, tapMidi:Int,
-                amplDiff:Double, key:PianoKeyModel?) {
+                key:PianoKeyModel?) {
         self.tapNum = tapNum
         self.amplitude = amplitude
         self.ascending = ascending
@@ -38,8 +49,21 @@ public class TapEvent:Hashable {
         self.midi = midi
         self.expectedScaleNoteStates = expectedScaleNoteStates
         self.key = key
-        self.amplDiff = amplDiff
         self.tapMidi = tapMidi
+        self.infoMsg = nil
+    }
+    
+    public init(infoMsg:String) {
+        self.tapNum = 0
+        self.amplitude = 0
+        self.ascending = true
+        self.frequency = 0
+        self.midi = 0
+        self.status = TapEventStatus.info
+        self.expectedScaleNoteStates = nil
+        self.key = nil
+        self.tapMidi = 0
+        self.infoMsg = infoMsg
     }
     
     public static func == (lhs: TapEvent, rhs: TapEvent) -> Bool {
@@ -51,14 +75,16 @@ public class TapEvent:Hashable {
     }
     
     func tapData() -> String {
-        //let ampDiff = String(format: "%.2f", self.amplDiff)
-        //let row = "\(self.tapNum) P:\(self.onKeyboard) \tM:\(self.midi) \tAsc:\(self.ascending) \tKey:\(self.pressedKey) \t\tAmpl:\(amps)"
-        var row = "Use:\(self.midi)"
+        if self.status == .info {
+            return self.infoMsg ?? "No info"
+        }
+        var row = "" //[\(self.tapNum)] "
         if let expectedScaleNoteStates = expectedScaleNoteStates {
             if expectedScaleNoteStates.count > 0 {
-                row += " Expect:\(expectedScaleNoteStates[0].midi)"
+                row += "Expect:\(expectedScaleNoteStates[0].midi)"
             }
         }
+        row += " Use:\(self.midi)"
         row += " Tap:\(self.tapMidi)"
         
         var status = "\(self.status)"
@@ -78,13 +104,7 @@ public class TapEventSet {
     init(amplitudeFilter:Double) {
         self.amplitudeFilter = amplitudeFilter
     }
-    
-    func debug112() {
-        for event in events {
-            print(event.tapData())
-        }
-    }
-    
+        
     func minMax() -> String {
         var min = Double.infinity
         var minMidi = 0
@@ -92,17 +112,19 @@ public class TapEventSet {
         var maxMidi = 0
         
         for event in events {
-            if Double(event.amplitude) > max {
-                max = Double(event.amplitude)
-                maxMidi = event.midi
-            }
-            if event.amplitude > 0 {
-                if Double(event.amplitude) < min {
-                    min = Double(event.amplitude)
-                    minMidi = event.midi
+            if event.status == .pressNextScaleMatch {
+                if Double(event.amplitude) > max {
+                    max = Double(event.amplitude)
+                    maxMidi = event.midi
+                }
+                if event.amplitude > 0 {
+                    if Double(event.amplitude) < min {
+                        min = Double(event.amplitude)
+                        minMidi = event.midi
+                    }
                 }
             }
         }
-        return "[MAX Ampl:\(String(format: "%.4f", max)) maxMidi:\(maxMidi)] [MIN Amp:\(String(format: "%.4f", min)) minMidi:\(minMidi)]    "
+        return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
 }
