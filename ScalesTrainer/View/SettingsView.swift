@@ -34,6 +34,7 @@ struct SettingsView: View {
     @State var recordDataMode = Settings.shared.recordDataMode
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
+    @State private var defaultOctaves = 2
     let width = UIScreen.main.bounds.width * 0.25
     
     var body: some View {
@@ -60,6 +61,22 @@ struct SettingsView: View {
                 })
                 .padding()
                 
+                ///default octaves
+                HStack {
+                    Text("Default Octaves").padding(0)
+                    Picker("Select", selection: $defaultOctaves) {
+                        ForEach(1..<5) { number in
+                            Text("\(number)").tag(number)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding()
+                    .onChange(of: defaultOctaves) { oldValue, newValue in
+                        settings.defaultOctaves = newValue
+                    }
+                }
+                
+                ///Lead in
                 Spacer()
                 HStack {
                     Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
@@ -100,7 +117,7 @@ struct SettingsView: View {
                     Spacer()
 
                     Button(action: {
-                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter1)
+                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     }) {
                         HStack {
                             Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -131,6 +148,7 @@ struct SettingsView: View {
         }
         .onAppear() {
             leadInBarCount = settings.scaleLeadInBarCount
+            self.defaultOctaves = settings.defaultOctaves
         }
     }
 }

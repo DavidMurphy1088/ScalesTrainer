@@ -13,6 +13,7 @@ enum ActiveSheet: Identifiable {
 
 struct ScalesView: View {
     let practiceJournalScale:PracticeJournalScale
+    //let octaves:Int
     let initialRunProcess:RunningProcess?
 
     @ObservedObject private var scalesModel = ScalesModel.shared
@@ -21,35 +22,26 @@ struct ScalesView: View {
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
     
-    //private var keyboardModel = PianoKeyboardModel.shared
     @ObservedObject private var pianoKeyboardViewModel: PianoKeyboardModel
     private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
-    @State private var octaveNumberIndex = 0
+    @State private var numberOfOctaves = 0
     @State private var handIndex = 0
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
     @State private var tempoIndex = 5 ///60 BPM
-
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
-    
     @State var amplitudeFilter: Double = 0.00
-
-   // @State var playingAlongWithScale = false
     @State var hearingBacking = false
     @State var hearingRecording = false
     @State var showingTapData = false
     @State var recordingScale = false
-
     @State var showResultPopup = false
     @State var notesHidden = false
-    //@State var askKeepTapsFile = false
-
     @State var scaleFollowWithSound = false
-
     @State var helpShowing:Bool = false
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
@@ -57,10 +49,11 @@ struct ScalesView: View {
     
     let backgroundImage = UIGlobals.shared.getBackground()
     
-    init(practiceJournalScale:PracticeJournalScale, initialRunProcess:RunningProcess? = nil) {
+    init(practiceJournalScale:PracticeJournalScale, initialRunProcess:RunningProcess? = nil) {//}, octaves:Int) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
         self.practiceJournalScale = practiceJournalScale
         self.initialRunProcess = initialRunProcess
+        //self.numberOfOctaves = octaves
     }
     
     func showHelp(_ topic:String) {
@@ -94,23 +87,28 @@ struct ScalesView: View {
                 scalesModel.selectedHandIndex = handIndex
                 setState(scaleRoot: scalesModel.scale.scaleRoot, 
                          scaleType: scalesModel.scale.scaleType,
-                         octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1],
+                         octaves: self.numberOfOctaves,
                          hand: scalesModel.selectedHandIndex)
             })
             Spacer()
             
             Text("Octaves:").padding(0)
-            Picker("Select Value", selection: $octaveNumberIndex) {
-                ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
-                    Text("\(scalesModel.octaveNumberValues[index])")
+//            Picker("Select Value", selection: $octaveNumberIndex) {
+//                ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
+//                    Text("\(scalesModel.octaveNumberValues[index])")
+//                }
+//            }
+            Picker("Select", selection: $numberOfOctaves) {
+                ForEach(1..<5) { number in
+                    Text("\(number)").tag(number)
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: octaveNumberIndex, {
-                scalesModel.selectedOctavesIndex1 = octaveNumberIndex
+            .onChange(of: numberOfOctaves, {
+                //scalesModel.selectedOctavesIndex = octaveNumberIndex
                 setState(scaleRoot: scalesModel.scale.scaleRoot,
                          scaleType: scalesModel.scale.scaleType,
-                         octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1],
+                         octaves: numberOfOctaves,
                          hand: scalesModel.selectedHandIndex)
             })
             
@@ -370,8 +368,7 @@ struct ScalesView: View {
             Button("READ_TEST_DATA") {
                 scalesModel.setRunningProcess(.recordScaleWithFileData)
             }.padding()
-            
-            if scalesModel.tapHandlerEventSet != nil {
+            if scalesModel.tapHandlerEventSetPublished  {
                 Spacer()
                 HStack {
                     Spacer()
@@ -472,14 +469,14 @@ struct ScalesView: View {
                     if let result = scalesModel.resultDisplay {
                         HStack {
                             ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
-                            ZStack {
-                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
-                                VStack {
-                                    Text("")
-                                    Text(coinBank.getCoinsStatusMsg()).padding()
-                                    Spacer()
-                                }
-                            }
+//                            ZStack {
+//                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
+//                                VStack {
+//                                    Text("")
+//                                    Text(coinBank.getCoinsStatusMsg()).padding()
+//                                    Spacer()
+//                                }
+//                            }
                         }
                         .commonFrameStyle()
                     }
@@ -535,22 +532,22 @@ struct ScalesView: View {
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            setState(scaleRoot: self.practiceJournalScale.scaleRoot, scaleType: self.practiceJournalScale.scaleType,
-                     octaves: scalesModel.octaveNumberValues[scalesModel.selectedOctavesIndex1], hand: scalesModel.selectedHandIndex)
-            pianoKeyboardViewModel.keyboardAudioManager = audioManager
+            let hand = 0
+            self.handIndex = hand
+            self.numberOfOctaves = Settings.shared.defaultOctaves
             
-            //self.rootNameIndex = scalesModel.selectedScaleRootIndex
-            //self.scaleTypeNameIndex = scalesModel.selectedScaleTypeNameIndex
-            self.handIndex = scalesModel.selectedHandIndex
-            self.octaveNumberIndex = scalesModel.selectedOctavesIndex1
-            self.directionIndex = scalesModel.selectedDirection
+            setState(scaleRoot: self.practiceJournalScale.scaleRoot,
+                     scaleType: self.practiceJournalScale.scaleType,
+                     octaves: Settings.shared.defaultOctaves, 
+                     hand: hand)
+            pianoKeyboardViewModel.keyboardAudioManager = audioManager
+
+            self.handIndex = 0
+            
+            self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
-                //ScalesModel.shared.setSpinState(.notStarted)
             }
-//            else {
-//                scalesModel.setRunningProcess(.none)
-//            }
         }
         .onDisappear {
             metronome.stop()

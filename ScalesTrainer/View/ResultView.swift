@@ -54,10 +54,10 @@ struct ResultView: View {
     }
 
     func getResultStatus() -> (Bool, String)? {
-        if self.result.runningProcess == .recordingScale {
+        if [.recordingScale, .recordScaleWithFileData].contains(self.result.fromProcess) {
             return recordStatus()
         }
-        if self.result.runningProcess == .followingScale {
+        if self.result.fromProcess == .followingScale {
             return (true, self.result.userMessage)
         }
         return nil
@@ -132,7 +132,7 @@ struct TapDataView: View {
             Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
 
             if let tapEventSet = scalesModel.tapHandlerEventSet {
-                Text("AmplFilter: \(String(format: "%.4f", tapEventSet.amplitudeFilter))").foregroundColor(Color .blue).font(.title3)
+                Text("AmplFilter: \(String(format: "%.4f", tapEventSet.amplitudeFilter)) \(tapEventSet.description)").foregroundColor(Color .blue).font(.title3)
 
                 ScrollView {
                     ForEach(tapEventSet.events, id: \.self) { event in

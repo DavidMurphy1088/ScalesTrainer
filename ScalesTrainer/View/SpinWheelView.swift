@@ -221,7 +221,8 @@ struct SpinWheelView: View {
                             Text("Sorry, you dont have enough coins 😌").font(.title2)
                         }
                         else {
-                            NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex], initialRunProcess: .recordingScale)) {
+                            NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex],
+                                                                   initialRunProcess: .recordingScale)) {
                                 Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)

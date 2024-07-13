@@ -60,8 +60,7 @@ public class PianoKeyboardModel: ObservableObject {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
     
-    func configureKeyboardSize() {
-        let scale = self.scalesModel.scale
+    func configureKeyboardSize(scale:Scale) {
         self.firstKeyMidi = scale.scaleNoteState[0].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
@@ -96,7 +95,9 @@ public class PianoKeyboardModel: ObservableObject {
             self.firstKeyMidi -= 0
         }
                 
-        var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex1] * 12) + 1
+        //var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
+        //let octaves = scale.octaves
+        var numKeys = (scale.octaves * 12) + 1
         numKeys += 2
         if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 4
@@ -111,15 +112,15 @@ public class PianoKeyboardModel: ObservableObject {
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
         }
-        self.linkScaleFingersToKeyboardKeys(direction: ScalesModel.shared.selectedDirection)
+        self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection)
     }
     
     ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
-    public func linkScaleFingersToKeyboardKeys(direction:Int) {
+    public func linkScaleFingersToKeyboardKeys(scale:Scale, direction:Int) {
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
-            key.scaleNoteState = scalesModel.scale.getStateForMidi(midi: key.midi, direction: direction)
+            key.scaleNoteState = scale.getStateForMidi(midi: key.midi, direction: direction)
         }
     }
     

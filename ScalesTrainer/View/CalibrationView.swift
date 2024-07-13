@@ -18,12 +18,12 @@ public struct CalibrationView: View {
     
     func setScale(octaves:Int, hand:Int) {
         let scaleRoot = ScaleRoot(name: "C")
-        self.scalesModel.selectedOctavesIndex1 = octaves-1
+        //self.scalesModel.selectedOctavesIndex = octaves-1
         self.scalesModel.selectedHandIndex = hand
         scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand)
         scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand))
         PianoKeyboardModel.shared.redraw()
-        self.amplitudeCalibrationValue = scalesModel.amplitudeFilter1
+        self.amplitudeCalibrationValue = scalesModel.amplitudeFilter
     }
     
     func getScaleName() -> String {
@@ -72,7 +72,7 @@ public struct CalibrationView: View {
                     }
                 }
                 .onChange(of: selectedHand) { oldValue, newValue in
-                    setScale(octaves: scalesModel.selectedOctavesIndex1+1, hand: selectedHand)
+                    //setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
                 }
 
                 Spacer()
@@ -99,7 +99,7 @@ public struct CalibrationView: View {
                     if !analysingResults {
                         Button("Analyse Best Settings") {
                             analysingResults = true
-                            let bestCalibration = results.analyseBestSettings(onNext: {amp in
+                            results.analyseBestSettings(onNext: {amp in
                                self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
                             }, onDone: {best in
                                 var msg = "Finished analysing."
@@ -206,11 +206,11 @@ public struct CalibrationView: View {
             let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
             setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            ScalesModel.shared.selectedOctavesIndex1 = octaves == 1 ? 0 : 1
+            //ScalesModel.shared.selectedOctavesIndex = octaves == 1 ? 0 : 1
             ScalesModel.shared.selectedHandIndex = 0
         }
         .onDisappear() {
-            if scalesModel.amplitudeFilter1 != self.amplitudeCalibrationValue {
+            if scalesModel.amplitudeFilter != self.amplitudeCalibrationValue {
                 showSaveQuestion = true
             }
             self.audioManager.stopRecording()

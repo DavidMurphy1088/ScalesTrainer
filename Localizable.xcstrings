@@ -85,8 +85,15 @@
     "AmplFilter:" : {
 
     },
-    "AmplFilter: %@" : {
-
+    "AmplFilter: %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "AmplFilter: %1$@ %2$@"
+          }
+        }
+      }
     },
     "Amplitude: %.4f" : {
 
@@ -119,6 +126,9 @@
 
     },
     "Current Amplitude Filter:%@" : {
+
+    },
+    "Default Octaves" : {
 
     },
     "Detected Pitch: %.0f Hz" : {
@@ -304,6 +314,9 @@
 
     },
     "Screen B" : {
+
+    },
+    "Select" : {
 
     },
     "Select a number" : {

@@ -263,7 +263,10 @@ class AudioManager {
         if let tap = self.installedTap {
             tap.stop()
         }
-        self.tapHandler?.stopTapping("AudioMgr.stopRecording")
+        //ScalesModel.shared.tapHandlerEventSet =
+        if let eventSet = self.tapHandler?.stopTapping("AudioMgr.stopRecording") {
+            ScalesModel.shared.setTapHandlerEventSet(eventSet)
+        }
         if let recorder = recorder {
             recorder.stop()
             print("Recording stopped")
@@ -381,7 +384,7 @@ class AudioManager {
                 }
                 ctr += 1
             }
-            Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter1)")
+            Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter)")
         }
         else {
             Logger.shared.reportError(self, "Cant open file bundle")
@@ -427,8 +430,7 @@ class AudioManager {
             let a:AUValue = tapEvent.amplitude
             tapHandler.tapUpdate([f, f], [a, a])
         }
-        tapHandler.stopTapping("AudioMgr.playbackEvents")
-        scalesModel.forceRepaint()
+        ScalesModel.shared.setTapHandlerEventSet(tapHandler.stopTapping("AudioMgr.playbackEvents"))
         Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
         scalesModel.setRunningProcess(.none)
     }

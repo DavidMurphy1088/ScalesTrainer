@@ -61,6 +61,7 @@
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
 		799BE2AE2C002EF5004B19F6 /* DeviceOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */; };
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
+		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
 		79BCF7EF2C257A5D004E26ED /* HearUserScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
@@ -147,6 +148,7 @@
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
 		799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientation.swift; sourceTree = "<group>"; };
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
 		79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearUserScale.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
@@ -375,12 +377,13 @@
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
+				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
 				7985635C2C0349BF008BAC79 /* Settings.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
 				794D49552BCD29090005A173 /* TapHandler.swift */,
-				794D495B2BCD29DF0005A173 /* Util.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
+				794D495B2BCD29DF0005A173 /* Util.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -525,6 +528,7 @@
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
+				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
 				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
 				79C8AD002C127D8400770C10 /* ScaleGroup.swift in Sources */,

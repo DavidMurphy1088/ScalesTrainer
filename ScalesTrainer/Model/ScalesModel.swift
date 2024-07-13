@@ -73,7 +73,6 @@ public class ScalesModel : ObservableObject {
     @Published var score:Score?
     
     var scoreHidden = false
-    var tapHandlerEventSet:TapEventSet? = nil
     
     var recordedTapsFileURL:URL? //File where recorded taps were written
     var recordedTapsFileName:String?
@@ -97,8 +96,8 @@ public class ScalesModel : ObservableObject {
     var selectedTempoIndex = 5 //60=2
         
     ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
-    let octaveNumberValues = [1,2,3,4]
-    var selectedOctavesIndex1 = ScalesTrainerApp.runningInXcode() ? 0 : 1
+    //let octaveNumberValues = [1,2,3,4]
+    //var selectedOctavesIndex = ScalesTrainerApp.runningInXcode() ? 1 : 1
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -109,6 +108,15 @@ public class ScalesModel : ObservableObject {
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     
+    private(set) var tapHandlerEventSet:TapEventSet? = nil
+    @Published var tapHandlerEventSetPublished = false
+    func setTapHandlerEventSet(_ value:TapEventSet?) {
+        self.tapHandlerEventSet = value
+        DispatchQueue.main.async {
+            self.tapHandlerEventSetPublished = value != nil
+        }
+    }
+
     //@Published
     private(set) var spinState:SpinState = .notStarted
     func setSpinState1(_ value:SpinState) {
@@ -138,9 +146,9 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var resultDisplay:Result?
 
     @Published private(set) var amplitudeFilterDisplay1:Double = 0.0
-    private(set) var amplitudeFilter1:Double = 0.0
+    private(set) var amplitudeFilter:Double = 0.0
     func setAmplitudeFilter1(_ value:Double) {
-        self.amplitudeFilter1 = value
+        self.amplitudeFilter = value
         DispatchQueue.main.async {
             self.amplitudeFilterDisplay1 = value
             Settings.shared.save(amplitudeFilter: self.amplitudeFilterDisplay1)
@@ -225,12 +233,11 @@ public class ScalesModel : ObservableObject {
     
     init() {
         scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
-        DispatchQueue.main.async {
-            PianoKeyboardModel.shared.configureKeyboardSize()
-        }
         self.calibrationTapHandler = nil
         setAmplitudeFilter1(Settings.shared.tapMinimunAmplificationFilter)
-
+        DispatchQueue.main.async {
+            PianoKeyboardModel.shared.configureKeyboardSize(scale: self.scale)
+        }
     }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
@@ -260,8 +267,8 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .practicing, .calibrating].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter1 : amplitudeFilter!
-            let tapHandler = PracticeTapHandler(amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: true, logTaps: true)
+            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
+            let tapHandler = PracticeTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: true, logTaps: true)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -316,10 +323,10 @@ public class ScalesModel : ObservableObject {
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
             self.setUserMessage(nil)
-            //self.setShowFingers(false)
+            self.setTapHandlerEventSet(nil)
             keyboard.redraw()
-            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter1 : amplitudeFilter!
-            let tapHandler = ScaleTapHandler(amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
+            let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
+            let tapHandler = ScaleTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
             if setProcess == .recordScaleWithFileData {
                 let tapEvents = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)
@@ -370,7 +377,7 @@ public class ScalesModel : ObservableObject {
         guard let result = self.resultDisplay else {
             return Color.clear
         }
-        guard result.runningProcess != .followingScale else {
+        guard result.fromProcess != .followingScale else {
             return Color.clear
         }
         var color:Color
@@ -481,7 +488,9 @@ public class ScalesModel : ObservableObject {
         //let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
         let staffType:StaffType
         if scale.scaleNoteState.count > 0 {
-            staffType = scale.scaleNoteState[0].midi >= 60 ? .treble : .bass
+            //staffType = scale.scaleNoteState[0].midi >= 60 ? .treble : .bass
+            ///52 = Max is E below middle C which requires 3 ledger in treble clef
+            staffType = scale.scaleNoteState[0].midi >= 52 ? .treble : .bass
         }
         else {
             staffType = .treble
@@ -504,12 +513,6 @@ public class ScalesModel : ObservableObject {
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
             let note = StaffNote(timeSlice: ts, num: noteState.midi, value: StaffNote.VALUE_QUARTER, staffNum: 0)
-//            if showTempoVariation {
-//                note.valueNormalized = noteState.valueNormalized
-//            }
-//            else {
-//                note.valueNormalized = nil
-//            }
             //note.setValue(value: 0.5)
             note.setValue(value: 1.0)
             ts.addNote(n: note)
@@ -525,6 +528,7 @@ public class ScalesModel : ObservableObject {
             }
         }
         //score.debugScore11("END CREATE SCORE", withBeam: false, toleranceLevel: 0)
+        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState.count/12) range:\(scale.getMinMax())")
         return score
     }
     
@@ -535,19 +539,21 @@ public class ScalesModel : ObservableObject {
                            scaleType: Scale.getScaleType(name: scaleTypeName),
                            octaves: octaves,
                            hand: hand)
-        self.setScale(scale: scale)
+        let score = self.createScore(scale: scale)
+        Logger.shared.log(self, "setKeyAndScale octaves:\(octaves) scale:\(scale.getMinMax()) hand:\(hand)")
+        self.setScale(scale: scale, score: score)
     }
     
-    func setScale(scale:Scale) {
+    func setScale(scale:Scale, score:Score) {
         self.scale = scale
-        PianoKeyboardModel.shared.configureKeyboardSize()
+        PianoKeyboardModel.shared.configureKeyboardSize(scale: scale)
         setDirection(0)
         PianoKeyboardModel.shared.redraw()
         
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
-                self.score = self.createScore(scale: self.scale)
+                self.score = score
             }
         }
     }
@@ -629,7 +635,7 @@ public class ScalesModel : ObservableObject {
     func setDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(direction: index)
+            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
         }
     }
     

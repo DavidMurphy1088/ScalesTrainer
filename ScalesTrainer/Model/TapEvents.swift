@@ -99,10 +99,12 @@ public class TapEvent:Hashable {
 
 public class TapEventSet {
     let amplitudeFilter:Double
+    let description:String
     var events:[TapEvent] = []
     
-    init(amplitudeFilter:Double) {
+    init(amplitudeFilter:Double, description:String) {
         self.amplitudeFilter = amplitudeFilter
+        self.description = description
     }
         
     func minMax() -> String {
@@ -127,4 +129,11 @@ public class TapEventSet {
         }
         return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
+    
+//    func debug(_ ctx:String) {
+//        print("============ TapEventSet", ctx)
+//        for event in self.events {
+//            print(event.tapData())
+//        }
+//    }
 }

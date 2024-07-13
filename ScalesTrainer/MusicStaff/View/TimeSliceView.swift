@@ -383,6 +383,14 @@ public struct TimeSliceView: View {
                                 //.opacity(1)
                                     .frame(width: noteFrameWidth, height: 12)
                             }
+                            else {
+                                if timeSlice.statusTag == .correct {
+                                    Circle()
+                                        .fill(Color.green.opacity(0.4))
+                                        .frame(width: statusWidth())
+                                }
+
+                            }
                         }
                         else {
                             if timeSlice.statusTag == .missingError {

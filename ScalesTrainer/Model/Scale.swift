@@ -143,18 +143,8 @@ public class Scale {
             nextMidi = 60
         }
         
-        ///For a 3 octave scale start one octave lower
-        let dropForThreeOcataves = false
-        
-        if octaves > 2 {
-            if dropForThreeOcataves {
-                nextMidi -= 12
-            }
-            else {
-                if octaves > 3 {
-                    nextMidi -= 12
-                }
-            }
+        if octaves > 3 {
+            nextMidi -= 12
         }
 
         ///All are low and some drop off 88-key keyboard
@@ -234,10 +224,29 @@ public class Scale {
         //debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
-    func incrementNotes(offset:Int) {
-        for note in self.scaleNoteState {
+//    func getMatchCount(matched:Bool) -> Int {
+//        var cnt = 0
+//        for note in self.scaleNoteState {
+//            if matched {
+//                if note.matchedTime != nil {
+//                    cnt += 1
+//                }
+//            }
+//            else {
+//                if note.matchedTime == nil {
+//                    cnt += 1
+//                }
+//            }
+//        }
+//        return cnt
+//    }
+    
+    func makeNewScale(offset:Int) -> Scale {
+        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand)
+        for note in scale.scaleNoteState {
             note.midi += offset
         }
+        return scale
     }
     
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {

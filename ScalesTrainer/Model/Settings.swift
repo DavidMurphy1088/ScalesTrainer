@@ -4,6 +4,7 @@ public class Settings : Codable  {
     static var shared = Settings()
     var recordDataMode = true
     var firstName = ""
+    var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var tapMinimunAmplificationFilter:Double = 0
     private var wasLoaded = false
@@ -39,6 +40,7 @@ public class Settings : Codable  {
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
+        str += " Octaves:\(self.defaultOctaves)"
         return str
     }
     
@@ -65,6 +67,7 @@ public class Settings : Codable  {
                     self.tapMinimunAmplificationFilter = loaded.tapMinimunAmplificationFilter
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
+                    self.defaultOctaves = loaded.defaultOctaves
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {

@@ -19,7 +19,10 @@ public struct NoteName {
     }
 
     public static func name(for midiNumber: Int, showSharps: Bool) -> String {
-        let offset = midiNumber % 12
+        var offset = midiNumber % 12
+        if offset < 0 || offset > 11 {
+            offset = 0
+        }
         let note = showSharps ? sharps[offset] : flats[offset]
         return note
     }
