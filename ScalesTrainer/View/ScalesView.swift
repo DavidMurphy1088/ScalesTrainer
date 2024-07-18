@@ -12,8 +12,6 @@ enum ActiveSheet: Identifiable {
 }
 
 struct ScalesView: View {
-    let practiceJournalScale:PracticeJournalScale
-    //let octaves:Int
     let initialRunProcess:RunningProcess?
 
     @ObservedObject private var scalesModel = ScalesModel.shared
@@ -26,7 +24,7 @@ struct ScalesView: View {
     private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
-    @State private var numberOfOctaves = 0
+    @State private var numberOfOctaves = Settings.shared.defaultOctaves
     @State private var handIndex = 0
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
@@ -49,11 +47,9 @@ struct ScalesView: View {
     
     let backgroundImage = UIGlobals.shared.getBackground()
     
-    init(practiceJournalScale:PracticeJournalScale, initialRunProcess:RunningProcess? = nil) {//}, octaves:Int) {
+    init(initialRunProcess:RunningProcess? = nil) {
         self.pianoKeyboardViewModel = PianoKeyboardModel.shared
-        self.practiceJournalScale = practiceJournalScale
         self.initialRunProcess = initialRunProcess
-        //self.numberOfOctaves = octaves
     }
     
     func showHelp(_ topic:String) {
@@ -62,14 +58,11 @@ struct ScalesView: View {
     }
     
     ///Set state of the model and the view
-    func setState(scaleRoot:ScaleRoot, scaleType: ScaleType, octaves:Int, hand:Int) {
-        //scalesModel.setRunningProcess(.none)
+    func setState(octaves:Int, hand:Int) {
         ///There maybe a change in octaves or LH vs. RH
-        scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
-        //scalesModel.setKeyAndScale()
-        //audioManager.stopRecording()
-        //scalesModel.setResult(nil, "scalesView::setState")
-        //self.playingAlongWithScale = false
+        let root = scalesModel.scale.scaleRoot
+        let scaleType = scalesModel.scale.scaleType
+        scalesModel.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: octaves, hand: hand, ctx: "ScalesView setState")
         self.directionIndex = 0
     }
     
@@ -84,20 +77,11 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: handIndex, {
-                scalesModel.selectedHandIndex = handIndex
-                setState(scaleRoot: scalesModel.scale.scaleRoot, 
-                         scaleType: scalesModel.scale.scaleType,
-                         octaves: self.numberOfOctaves,
-                         hand: scalesModel.selectedHandIndex)
+                setState(octaves: self.numberOfOctaves, hand: handIndex)
             })
             Spacer()
             
             Text("Octaves:").padding(0)
-//            Picker("Select Value", selection: $octaveNumberIndex) {
-//                ForEach(scalesModel.octaveNumberValues.indices, id: \.self) { index in
-//                    Text("\(scalesModel.octaveNumberValues[index])")
-//                }
-//            }
             Picker("Select", selection: $numberOfOctaves) {
                 ForEach(1..<5) { number in
                     Text("\(number)").tag(number)
@@ -105,11 +89,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: numberOfOctaves, {
-                //scalesModel.selectedOctavesIndex = octaveNumberIndex
-                setState(scaleRoot: scalesModel.scale.scaleRoot,
-                         scaleType: scalesModel.scale.scaleType,
-                         octaves: numberOfOctaves,
-                         hand: scalesModel.selectedHandIndex)
+                setState(octaves: numberOfOctaves, hand: handIndex)
             })
             
             Spacer()
@@ -142,11 +122,33 @@ struct ScalesView: View {
         }
     }
     
+    func log124() -> Int {
+        //print("============= VIEW ABOUT TO RECORD", scalesModel.scale.getScaleName(), "Octaves:", scalesModel.scale.octaves)
+        return 0
+    }
+    
+    func leadInMsg() -> String {
+        let leadIn = Settings.shared.scaleLeadInBarCount
+        var msg = "Leading In For "
+        if leadIn == 1 {
+             msg += "One Bar"
+        }
+        else {
+            msg += "\(leadIn) Bars"
+        }
+        return msg
+    }
+    
     func StopProcessView() -> some View {
         VStack {
             if scalesModel.runningProcess == .leadingIn {
                 Spacer()
-                Text("👉 Leading In \(scalesModel.scale.getScaleName())").padding().font(.title2).commonFrameStyle()
+                VStack {
+                    Text("👉 \(leadInMsg())")
+                    Text("\(scalesModel.scale.getScaleName())")
+                }
+                .padding().font(.title2).commonFrameStyle()
+
                 Spacer()
             }
             if scalesModel.runningProcess == .followingScale {
@@ -185,9 +187,6 @@ struct ScalesView: View {
                     ProcessUnderwayView()
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
-//                        if Settings.shared.recordDataMode {
-//                            self.askKeepTapsFile = true
-//                        }
                     }) {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -227,7 +226,7 @@ struct ScalesView: View {
                 Text("")
                 Button("Follow\nThe\nScale") {
                     scalesModel.setRunningProcess(.followingScale)
-                    ScalesModel.shared.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                    scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
                 
             }
@@ -253,7 +252,7 @@ struct ScalesView: View {
                     }
                     else {
                         scalesModel.setRunningProcess(.practicing)
-                        ScalesModel.shared.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                        scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                     }
                 }
                 
@@ -277,7 +276,7 @@ struct ScalesView: View {
                 Text("")
                 Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
                     scalesModel.setRunningProcess(.playingAlongWithScale)
-                    ScalesModel.shared.setProcessInstructions("Play along with the scale as its played")
+                    scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -402,7 +401,7 @@ struct ScalesView: View {
     }
     
     func getMailInfo() -> String {
-        let mailInfo:String = ScalesModel.shared.recordedTapsFileName ?? "No file name"
+        let mailInfo:String = scalesModel.recordedTapsFileName ?? "No file name"
 //        let currentDate = Date()
 //        let dateFormatter = DateFormatter()
 //        dateFormatter.dateFormat = "MMMM-dd-HH:mm"
@@ -529,26 +528,26 @@ struct ScalesView: View {
 //        }
         
         ///Every time the view appears, not just the first.
+        ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            let hand = 0
-            self.handIndex = hand
-            self.numberOfOctaves = Settings.shared.defaultOctaves
-            
-            setState(scaleRoot: self.practiceJournalScale.scaleRoot,
-                     scaleType: self.practiceJournalScale.scaleType,
-                     octaves: Settings.shared.defaultOctaves, 
-                     hand: hand)
+            //print("=================== VIEW1", self.scaleToView.getScaleName())
+//            setState(scaleRoot: self.scaleToView.scaleRoot,
+//                     scaleType: self.scaleToView.scaleType,
+//                     octaves: Settings.shared.defaultOctaves, 
+//                     hand: 0)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-
             self.handIndex = 0
-            
+            ///Causes setState()
+            //self.numberOfOctaves = Settings.shared.defaultOctaves
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
             }
+            print("=================== VIEW onAppear", scalesModel.scale.getScaleName())
         }
+        
         .onDisappear {
             metronome.stop()
             ///Clean up any recorded files

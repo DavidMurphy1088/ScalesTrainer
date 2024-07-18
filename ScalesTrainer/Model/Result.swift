@@ -92,6 +92,13 @@ class Result : Equatable {
                 }
             }
         }
+        if noErrors() {
+            //let scale = ScalesModel.shared.scale
+            let tempo = scale.setNoteNormalizedValues()
+            if let score = score {
+                score.setNormalizedValues(scale: scale)
+            }
+        }
     }
     
     ///Build the result from the the keyboard taps.

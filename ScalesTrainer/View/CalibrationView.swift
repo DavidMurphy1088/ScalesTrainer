@@ -20,7 +20,7 @@ public struct CalibrationView: View {
         let scaleRoot = ScaleRoot(name: "C")
         //self.scalesModel.selectedOctavesIndex = octaves-1
         self.scalesModel.selectedHandIndex = hand
-        scalesModel.setKeyAndScale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand)
+        scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
         scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand))
         PianoKeyboardModel.shared.redraw()
         self.amplitudeCalibrationValue = scalesModel.amplitudeFilter
@@ -64,16 +64,16 @@ public struct CalibrationView: View {
                     setScale(octaves: newValue, hand: selectedHand)
                 }
                 
-                Spacer()
-                Text("Hand")
-                Picker("", selection: $selectedHand) {
-                    ForEach(0..<2) { value in
-                        Text("\(value)").tag(value)
-                    }
-                }
-                .onChange(of: selectedHand) { oldValue, newValue in
-                    //setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
-                }
+//                Spacer()
+//                Text("Hand")
+//                Picker("", selection: $selectedHand) {
+//                    ForEach(0..<2) { value in
+//                        Text("\(value)").tag(value)
+//                    }
+//                }
+//                .onChange(of: selectedHand) { oldValue, newValue in
+//                    //setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
+//                }
 
                 Spacer()
                 Button(playingScale ? "Stop Playing Scale" : "Start Playing Scale") {
@@ -84,43 +84,45 @@ public struct CalibrationView: View {
                         scalesModel.setRunningProcess(.calibrating)
                     }
                     else {
+                        scalesModel.setRunningProcess(.none)
                         if let result = scalesModel.calibrationResults.calculateAverageAmplitude() {
-                            userMessage = "Set calibration as scale average " + String(format:"%.4f", result)
+                            userMessage = "Calibration as scale average " + String(format:"%.4f", result)
                             self.amplitudeCalibrationValue = result
                         }
-                        scalesModel.setRunningProcess(.none)
-                        //amplitudeFilterAdjust = scalesModel.amplitudeFilter
                     }
                 }
-                
-                if calibrationResults.calibrationEvents != nil {
-                    Spacer()
-                    let results = ScalesModel.shared.calibrationResults
-                    if !analysingResults {
-                        Button("Analyse Best Settings") {
-                            analysingResults = true
-                            results.analyseBestSettings(onNext: {amp in
-                               self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
-                            }, onDone: {best in
-                                var msg = "Finished analysing."
-                                self.analysingResults = false
-                                if let best = best {
-                                    msg += " Result:"+String(format:"%.4f", best)
-                                    self.amplitudeCalibrationValue = best
-                                }
-                                self.userMessage = msg
-                            })
+                if true {
+                    ///This section tries different amplitude Filters to find the best.
+                    ///For the moment just go with the average calculated after the scale was recorded
+                    if calibrationResults.calibrationEvents != nil {
+                        Spacer()
+                        let results = ScalesModel.shared.calibrationResults
+                        if !analysingResults {
+                            Button("Analyse Best Settings") {
+                                analysingResults = true
+                                results.analyseBestSettings(onNext: {amp in
+                                    self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
+                                }, onDone: {best in
+                                    var msg = "Finished analysing."
+                                    self.analysingResults = false
+                                    if let best = best {
+                                        msg += " Result:"+String(format:"%.4f", best)
+                                        self.amplitudeCalibrationValue = best
+                                    }
+                                    self.userMessage = msg
+                                })
+                            }
                         }
                     }
-                }
-                if self.analysingResults {
-                    let results = ScalesModel.shared.calibrationResults
-                    if let status = results.status {
-                        Spacer()
-                        Text("Status: \(status)")
+                    if self.analysingResults {
+                        let results = ScalesModel.shared.calibrationResults
+                        if let status = results.status {
+                            Spacer()
+                            Text("Status: \(status)")
+                        }
                     }
+                    Spacer()
                 }
-                Spacer()
             }
             
             if let results = calibrationResults.calibrationResults {
@@ -179,13 +181,21 @@ public struct CalibrationView: View {
                 }
             }
             Spacer()
+//            Button(action: {
+//                tabSelectionManager.nextNavigationTab()
+//            }) {
+//                HStack {
+//                    Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                }
+//            }
             Button(action: {
-                tabSelectionManager.nextNavigationTab()
+                Settings.shared.save(amplitudeFilter: amplitudeCalibrationValue)
             }) {
                 HStack {
-                    Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
+                    Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
             }
+
         }
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Calibration")
@@ -196,7 +206,7 @@ public struct CalibrationView: View {
                 title: Text("Save"),
                 message: Text("Save calibration " + String(format:"%.4f", self.amplitudeCalibrationValue) + " as the App's setting?"),
                 primaryButton: .default(Text("Yes")) {
-                    scalesModel.setAmplitudeFilter1(self.amplitudeCalibrationValue)
+                    scalesModel.setAmplitudeFilter(self.amplitudeCalibrationValue)
                 },
                 secondaryButton: .default(Text("No")) {
                 }
@@ -208,13 +218,14 @@ public struct CalibrationView: View {
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
             //ScalesModel.shared.selectedOctavesIndex = octaves == 1 ? 0 : 1
             ScalesModel.shared.selectedHandIndex = 0
+            self.amplitudeCalibrationValue = Settings.shared.tapMinimunAmplificationFilter
         }
         .onDisappear() {
-            if scalesModel.amplitudeFilter != self.amplitudeCalibrationValue {
-                showSaveQuestion = true
-            }
+//            if scalesModel.amplitudeFilter != self.amplitudeCalibrationValue {
+//                showSaveQuestion = true
+//            }
             self.audioManager.stopRecording()
-            self.scalesModel.setAmplitudeFilter1(self.amplitudeCalibrationValue)
+            self.scalesModel.setAmplitudeFilter(self.amplitudeCalibrationValue)
         }
     }
 }

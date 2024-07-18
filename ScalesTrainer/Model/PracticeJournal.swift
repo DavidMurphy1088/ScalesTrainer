@@ -8,10 +8,6 @@ class PracticeJournalScale : Identifiable { //} : Identifiable, Comparable {
     var progressLH = 0.0
     var progressRH = 0.0
     var orderIndex:Int
-
-    ///For any random selection
-    //var hand:Int? = nil
-    //var octaves:Int? = nil
     
     init(scaleRoot:ScaleRoot, scaleType:ScaleType) {
         self.orderIndex = PracticeJournalScale.orderIndex
@@ -31,10 +27,13 @@ class PracticeJournalScale : Identifiable { //} : Identifiable, Comparable {
         }
     }
     
+    func getScale(octaves:Int, hand:Int) -> Scale {
+        return Scale(scaleRoot: scaleRoot, scaleType: scaleType, octaves: octaves, hand: hand)
+    }
+    
     func getName() -> String {
         return scaleRoot.name + " " + scaleType.description
     }
-
 }
 
 class PracticeJournal {

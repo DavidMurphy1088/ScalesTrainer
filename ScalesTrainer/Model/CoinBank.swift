@@ -67,10 +67,6 @@ class CoinBank: ObservableObject, Codable {
         }
     }
     
-//    func debug(_ ctx:String) {
-//        print("============= CoinBank total:\(self.totalCoinsInBank) lastBest:\(self.lastBet), \(ctx)")
-//    }
-    
     func getCountMsg() -> String {
         if totalCoinsInBank == 0 {
             return "No coins"

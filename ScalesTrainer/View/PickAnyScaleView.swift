@@ -14,8 +14,8 @@ struct PickAnyScaleView: View {
     init() {
     }
     
-    func getScale(major:Bool) -> PracticeJournalScale {
-        let scale:PracticeJournalScale
+    func setModelScale(major:Bool) -> Scale {
+        let scale:Scale
         let scaleType:ScaleType
         if major {
             switch typeIndexMajor {
@@ -32,7 +32,7 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .major
             }
-            scale = PracticeJournalScale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0)
         }
         else {
             switch typeIndexMinor {
@@ -54,10 +54,11 @@ struct PickAnyScaleView: View {
                 scaleType = .arpeggioHalfDiminished
                 
             default:
-                scaleType = .major
+                scaleType = .harmonicMinor
             }
-            scale = PracticeJournalScale(scaleRoot: ScaleRoot(name: rootsMinor[rootIndexMinor]), scaleType: scaleType)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0)
         }
+        ScalesModel.shared.setScale(scale: scale)
         return scale
     }
     
@@ -96,14 +97,16 @@ struct PickAnyScaleView: View {
                             }
                             .pickerStyle(.menu)
                         }
-                        let scale = getScale(major: true)
-                        NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
+                        let scale = setModelScale(major: true)
+                        NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice Scale \(scale.getName()) ").font(.title2)
+                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2)
                             }
-                            //.padding()
                             .hilighted(backgroundColor: .blue)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            let _ = setModelScale(major: true)
+                        })
                     }
                     //.border(Color.gray)
                     .commonFrameStyle()
@@ -130,13 +133,16 @@ struct PickAnyScaleView: View {
                             }
                             .pickerStyle(.menu)
                         }
-                        let scale = getScale(major: false)
-                        NavigationLink(destination: ScalesView(practiceJournalScale: scale)) {
+                        let scale = setModelScale(major: false)
+                        NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice Scale \(scale.getName()) ").font(.title2)
+                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2)
                             }
                             .hilighted(backgroundColor: .blue)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            let _ = setModelScale(major: false)
+                        })
                     }
                     .commonFrameStyle()
                     .padding()

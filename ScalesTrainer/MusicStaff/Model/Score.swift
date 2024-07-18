@@ -106,7 +106,6 @@ public class Score : ObservableObject {
     public var timeSignature:TimeSignature
     public var key:StaffKey
     @Published public var barLayoutPositions:BarLayoutPositions
-
     @Published public var scoreEntries:[ScoreEntry] = []
 
     let ledgerLineCount =  2 //3//4 is required to represent low E
@@ -119,7 +118,7 @@ public class Score : ObservableObject {
     //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 10.0 : 15.0
     public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 6.0 : 10.0
     //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 10.0
-
+    
     private var totalStaffLineCount:Int = 0
     static var accSharp = "\u{266f}"
     static var accNatural = "\u{266e}"
@@ -276,7 +275,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore1111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,

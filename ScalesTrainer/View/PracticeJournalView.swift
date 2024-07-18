@@ -2,9 +2,8 @@ import SwiftUI
 
 struct PracticeJournalView: View {
     let practiceJournal:PracticeJournal
-//    let scaleGroup:ScaleGroup = ScalesModel.shared.selectedScaleGroup
-//    let scaleGroupTitle:String = ScalesModel.shared.selectedScaleGroup.name
-
+    @State private var navigateToScales = false
+    
     let days = ["Mon","Tue","Wed ","Thu","Fri","Sat", "Sun"]
     let color = Color(red: 0.1, green: 0.7, blue: 0.2)
     enum ScaleOrder {
@@ -86,7 +85,6 @@ struct PracticeJournalView: View {
                         Spacer()
                     }
                     List {
-                        //ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted().enumerated()), id: \.element.id) { index, practiceJournalScale in
                         ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted(by: { lhs, rhs in
                             switch self.ordering {
                             case .best:
@@ -97,17 +95,27 @@ struct PracticeJournalView: View {
                                 lhs.orderIndex < rhs.orderIndex
                             }
                             
-                        }).enumerated()), id: \.element.id) { index, practiceJournalScale in
+                        }).enumerated()), id: \.element.id) { index, journalScale in
                             VStack(spacing: 0) {
                                 HStack {
-                                    Text("\(practiceJournalScale.getName())\n♩=90").padding()
+                                    Text("\(journalScale.getName())\n♩=90").padding()
                                     ///Text("Practice Days")
                                     WeekDaysView().padding()
                                     Spacer()
-                                    NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournalScale)) {
-                                        Text(" Go to \n Scale ").foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                    Button(action: {
+                                        let _ = ScalesModel.shared.setScaleByRootAndType(scaleRoot: journalScale.scaleRoot,
+                                                                                         scaleType: journalScale.scaleType,
+                                                                                         octaves: Settings.shared.defaultOctaves,
+                                                                                         hand: 0, ctx: "Journal")
+                                        navigateToScales = true
+                                    }) {
+                                        Text("Go to \n Scale")
+                                            .foregroundColor(.blue)
+                                            .frame(width: width * 0.2)
                                     }
-                                    .frame(width: width * 0.2)
+                                    
+                                    NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
+                                    }.frame(width: width * 0.0)
                                 }
                                 VStack(spacing: 0) {
                                     HStack {
@@ -118,8 +126,8 @@ struct PracticeJournalView: View {
                                                 .frame(width: barWidth, height: barHeight)
                                             HStack {
                                                 Rectangle()
-                                                    .fill(getColor(progress: practiceJournalScale.progressLH))
-                                                    .frame(width: barWidth * practiceJournalScale.progressLH, height: barHeight)
+                                                    .fill(getColor(progress: journalScale.progressLH))
+                                                    .frame(width: barWidth * journalScale.progressLH, height: barHeight)
                                                 Spacer()
                                             }
                                         }
@@ -130,8 +138,8 @@ struct PracticeJournalView: View {
                                                 .frame(width: barWidth, height: barHeight)
                                             HStack {
                                                 Rectangle()
-                                                    .fill(getColor(progress: practiceJournalScale.progressRH))
-                                                    .frame(width: barWidth * practiceJournalScale.progressRH, height: barHeight)
+                                                    .fill(getColor(progress: journalScale.progressRH))
+                                                    .frame(width: barWidth * journalScale.progressRH, height: barHeight)
                                                 Spacer()
                                             }
                                         }

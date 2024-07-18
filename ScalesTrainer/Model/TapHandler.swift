@@ -12,7 +12,7 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
-    init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool)
+    init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping(_ ctx:String) -> TapEventSet
 }
@@ -30,7 +30,7 @@ class PracticeTapHandler : TapHandlerProtocol {
     let logTaps:Bool
     var tapHandlerEventSet:TapEventSet
     
-    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool) {
+    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool) {
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
@@ -96,8 +96,7 @@ class PracticeTapHandler : TapHandlerProtocol {
                                                  ascending: true,
                                                  status: TapEventStatus.none,
                                                  expectedScaleNoteStates: nil,
-                                                 midi: 0, tapMidi: midi,
-                                                 key: nil))
+                                                 midi: 0, tapMidi: midi))
 //        if false {
 //            if tapNum % 20 == 0 || !aboveFilter {
 //                var msg = ""
@@ -142,7 +141,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
     var scalePotentialStartAmplitudes:[Float] = []
     var tapHandlerEventSet:TapEventSet
     
-    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool) {
+    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool) {
         self.scale = ScalesModel.shared.scale
         self.amplitudeFilter = amplitudeFilter
         tapHandlerEventSet = TapEventSet(amplitudeFilter: amplitudeFilter, description: "")
@@ -225,8 +224,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                              ascending: false,
                                                                              status: .beforeScaleStart,
                                                                              expectedScaleNoteStates: nil,
-                                                                             midi: tapMidi, tapMidi: tapMidi,
-                                                                             key: nil))
+                                                                             midi: tapMidi, tapMidi: tapMidi))
                 return
             }
             ///The student can play the scale at whichever octave they choose. Adjust the scale accordinlgy.
@@ -254,8 +252,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                          ascending: false,
                                                                           status: .belowAmplitudeFilter,
                                                                          expectedScaleNoteStates: nil,
-                                                                         midi: tapMidi, tapMidi: tapMidi,
-                                                                         key: nil))
+                                                                         midi: tapMidi, tapMidi: tapMidi))
             return
         }
         
@@ -270,8 +267,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                          ascending: false,
                                                                          status: .pastEndOfScale,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
-                                                                         midi: tapMidi, tapMidi: tapMidi,
-                                                                         key: nil))
+                                                                         midi: tapMidi, tapMidi: tapMidi))
             return
         }
         
@@ -303,8 +299,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                          ascending: ascending,
                                                                          status: .keyNotOnKeyboard,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
-                                                                         midi: midi, tapMidi: tapMidi,
-                                                                         key: nil))
+                                                                         midi: midi, tapMidi: tapMidi))
             return
         }
         
@@ -318,8 +313,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                                   ascending: ascending,
                                                                                   status: .continued,
                                                                                   expectedScaleNoteStates: nextExpectedNotes,
-                                                                                  midi: midi, tapMidi: tapMidi,
-                                                                                  key: nil))
+                                                                                  midi: midi, tapMidi: tapMidi))
                     return
                 }
             }
@@ -333,8 +327,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                          ascending: ascending,
                                                                          status: .outsideScale,
                                                                          expectedScaleNoteStates: nextExpectedNotes,
-                                                                         midi: midi, tapMidi: tapMidi,
-                                                                         key: nil))
+                                                                         midi: midi, tapMidi: tapMidi))
             return
         }
 
@@ -422,8 +415,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
                                                                      ascending: ascending,
                                                                      status: tapEventStatus,
                                                                  expectedScaleNoteStates: nextExpectedNotes,
-                                                                 midi: midi, tapMidi: tapMidi,
-                                                                 key: keyboardKey))
+                                                                 midi: midi, tapMidi: tapMidi))
 
         ///Stop the recording if at end of scale.
         if tapEventStatus == .pressNextScaleMatch {

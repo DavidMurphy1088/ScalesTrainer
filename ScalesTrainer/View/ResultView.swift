@@ -37,7 +37,8 @@ struct ResultView: View {
         if getAllCorrect() {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
                 let metronome = MetronomeModel.shared
-                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
+                let useQuaverTempo = tempo >= 120
+                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo, useQuavers: useQuaverTempo)) "
                 var appTempoString = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
                 if appTempoString.count >= 2 {
                     ///Remove to noteType = prefix in tempo setting
@@ -45,7 +46,7 @@ struct ResultView: View {
                     appTempoString = String(appTempoString[index...])
                     let appTempo = Int(appTempoString)
                     if let appTempo = appTempo {
-                        status += "and the metronome setting was \(metronome.getTempoString(appTempo))."
+                        status += "and the metronome setting was \(metronome.getTempoString(appTempo, useQuavers: useQuaverTempo))."
                     }
                 }
             }

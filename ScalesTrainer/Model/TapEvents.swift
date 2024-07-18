@@ -26,7 +26,7 @@ public enum TapEventStatus {
 
 public class TapEvent:Hashable {
     let id = UUID()
-    let timestamp = Date()
+    var timestamp = Date()
     let tapNum:Int
     let amplitude:Float
     let frequency:Float
@@ -35,22 +35,22 @@ public class TapEvent:Hashable {
     let status:TapEventStatus
     let tapMidi:Int ///The origianl taop midi
     let expectedScaleNoteStates:[ScaleNoteState]?
-    let key:PianoKeyModel?
     let ascending:Bool
     let infoMsg:String?
     
-    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending: Bool, status:TapEventStatus, expectedScaleNoteStates:[ScaleNoteState]?, midi:Int, tapMidi:Int,
-                key:PianoKeyModel?) {
+    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending:Bool, status:TapEventStatus,
+                expectedScaleNoteStates:[ScaleNoteState]?, midi:Int, tapMidi:Int) {
         self.tapNum = tapNum
         self.amplitude = amplitude
-        self.ascending = ascending
+        //self.ascending = ascending
         self.frequency = frequency
         self.status = status
         self.midi = midi
         self.expectedScaleNoteStates = expectedScaleNoteStates
-        self.key = key
+        //self.key = key
         self.tapMidi = tapMidi
         self.infoMsg = nil
+        self.ascending = ascending
     }
     
     public init(infoMsg:String) {
@@ -61,7 +61,7 @@ public class TapEvent:Hashable {
         self.midi = 0
         self.status = TapEventStatus.info
         self.expectedScaleNoteStates = nil
-        self.key = nil
+        //self.key = nil
         self.tapMidi = 0
         self.infoMsg = infoMsg
     }
@@ -131,7 +131,7 @@ public class TapEventSet {
     }
     
 //    func debug(_ ctx:String) {
-//        print("============ TapEventSet", ctx)
+//        print(" TapEventSet", ctx)
 //        for event in self.events {
 //            print(event.tapData())
 //        }

@@ -32,13 +32,21 @@ class ActivityMode : Identifiable {
 }
 
 struct SelectScaleGroupView: View {
-    @State var isOn:[Bool] = [false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, true]
+    @State var isOn = [Bool](repeating: false, count: 18)
     @State var index = 0
     let width = 0.7
+    let background = UIGlobals.shared.getBackground()
+    
+    func setOn(index:Int)  {
+        isOn = [Bool](repeating: false, count: 18)
+        for i in 0..<isOn.count {
+            isOn[i] = i == index
+        }
+    }
     
     var body: some View {
         ZStack {
-            Image(UIGlobals.shared.getBackground())
+            Image(background)
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
@@ -65,16 +73,25 @@ struct SelectScaleGroupView: View {
                             }
                             .padding()
                             Spacer()
-                            Toggle(isOn: $isOn[index]) {
-                                
-                            }
-                        }
+                            Toggle(isOn: Binding<Bool>(
+                                get: { self.isOn[index] },
+                                set: { newValue in
+                                    if newValue {
+                                        self.setOn(index: index)
+                                    }
+                                }
+                            )) {
+                                EmptyView()
+                            }                        }
                     }
                 }
                 .commonFrameStyle(backgroundColor: .white)
                 .padding()
             }
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
+            .onAppear() {
+                self.setOn(index: 11)
+            }
         }
     }
 }
@@ -169,6 +186,8 @@ struct ActivityModeView: View {
         .onAppear() {
             if menuOptions.count == 0 {
                 menuOptions.append(ActivityMode(name: "Select Exam Scales", view: AnyView(SelectScaleGroupView())))
+                menuOptions.append(ActivityMode(name: "Practice Chart", view: AnyView(PracticeChartView(rows: 10, columns: 3))))
+                
                 if let practiceJournal = PracticeJournal.shared {
                     let name = "Practice Journal" // for " + practiceJournal.title
                     menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
@@ -238,7 +257,7 @@ struct HomeView: View {
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
         .onAppear() {
-            PracticeJournal.shared = PracticeJournal(scaleGroup: ScaleGroup.options[2])
+            PracticeJournal.shared = PracticeJournal(scaleGroup: ScaleGroup.options[11])
         }
     }
 }

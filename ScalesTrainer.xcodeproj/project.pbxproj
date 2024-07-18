@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
 		790974C32C37B0E900B9AFFC /* RecordedTapData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 790974C22C37B0E900B9AFFC /* RecordedTapData.txt */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
@@ -95,6 +96,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		790974C22C37B0E900B9AFFC /* RecordedTapData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordedTapData.txt; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
@@ -351,6 +353,7 @@
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				790624092C374F5D005A6A3E /* EmailView.swift */,
+				790537042C47319600AC794D /* PracticeChartView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -538,6 +541,7 @@
 				79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */,
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
 				79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */,
+				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
 				799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */,
 				79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,

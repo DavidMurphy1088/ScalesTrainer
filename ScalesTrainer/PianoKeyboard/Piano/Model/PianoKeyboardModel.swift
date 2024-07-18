@@ -60,39 +60,39 @@ public class PianoKeyboardModel: ObservableObject {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
     
-    func configureKeyboardSize(scale:Scale) {
-        self.firstKeyMidi = scale.scaleNoteState[0].midi
+    func getKeyBoardSize(scale:Scale) -> (first:Int, numberKeys:Int) {
+        var firstKeyMidi = scale.scaleNoteState[0].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
         switch self.scalesModel.scale.scaleRoot.name {
         case "C#":
-            self.firstKeyMidi -= 1
+            firstKeyMidi -= 1
         case "D♭":
-            self.firstKeyMidi -= 1
+            firstKeyMidi -= 1
         case "D":
-            self.firstKeyMidi -= 2
+            firstKeyMidi -= 2
         case "E♭":
-            self.firstKeyMidi -= 3
+            firstKeyMidi -= 3
         case "E":
-            self.firstKeyMidi -= 4
+            firstKeyMidi -= 4
             
         case "G♭":
-            self.firstKeyMidi -= 1
+            firstKeyMidi -= 1
         case "F#":
-            self.firstKeyMidi -= 1
+            firstKeyMidi -= 1
         case "G":
-            self.firstKeyMidi -= 2
+            firstKeyMidi -= 2
         case "A♭":
-            self.firstKeyMidi -= 3
+            firstKeyMidi -= 3
         case "A":
-            self.firstKeyMidi -= 4
+            firstKeyMidi -= 4
         case "B♭":
-            self.firstKeyMidi -= 5
+            firstKeyMidi -= 5
         case "B":
-            self.firstKeyMidi -= 6
+            firstKeyMidi -= 6
 
         default:
-            self.firstKeyMidi -= 0
+            firstKeyMidi -= 0
         }
                 
         //var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
@@ -105,7 +105,56 @@ public class PianoKeyboardModel: ObservableObject {
         if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 6
         }
-        self.numberOfKeys = numKeys
+        return (firstKeyMidi, numKeys)
+    }
+    
+    func configureKeyboardSize(scale:Scale) {
+//        self.firstKeyMidi = scale.scaleNoteState[0].midi
+//        
+//        ///Decide first key to show on the keyboard - either the F key or the C key
+//        switch self.scalesModel.scale.scaleRoot.name {
+//        case "C#":
+//            self.firstKeyMidi -= 1
+//        case "D♭":
+//            self.firstKeyMidi -= 1
+//        case "D":
+//            self.firstKeyMidi -= 2
+//        case "E♭":
+//            self.firstKeyMidi -= 3
+//        case "E":
+//            self.firstKeyMidi -= 4
+//            
+//        case "G♭":
+//            self.firstKeyMidi -= 1
+//        case "F#":
+//            self.firstKeyMidi -= 1
+//        case "G":
+//            self.firstKeyMidi -= 2
+//        case "A♭":
+//            self.firstKeyMidi -= 3
+//        case "A":
+//            self.firstKeyMidi -= 4
+//        case "B♭":
+//            self.firstKeyMidi -= 5
+//        case "B":
+//            self.firstKeyMidi -= 6
+//
+//        default:
+//            self.firstKeyMidi -= 0
+//        }
+//                
+//        //var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
+//        //let octaves = scale.octaves
+//        var numKeys = (scale.octaves * 12) + 1
+//        numKeys += 2
+//        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
+//            numKeys += 4
+//        }
+//        if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
+//            numKeys += 6
+//        }
+//        self.numberOfKeys = numKeys
+        (self.firstKeyMidi, self.numberOfKeys) = getKeyBoardSize(scale: scale)
         self.pianoKeyModel = []
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         for i in 0..<numberOfKeys {

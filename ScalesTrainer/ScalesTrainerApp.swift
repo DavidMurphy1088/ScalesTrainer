@@ -12,7 +12,7 @@ class TabSelectionManager: ObservableObject {
     
     func nextNavigationTab() {
         if Settings.shared.settingsExists() {
-            if Settings.shared.CalibrationExists() {
+            if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
                     selectedTab = 0
                 }
@@ -63,7 +63,7 @@ struct ScalesTrainerApp: App {
 //                }
 
 
-                ScalesView(practiceJournalScale: PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
+                ScalesView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }

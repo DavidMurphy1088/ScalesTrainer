@@ -25,13 +25,10 @@
     " C" : {
 
     },
-    " Go to \n Scale " : {
-
-    },
     " Go To Scale %@ - Good Luck" : {
 
     },
-    " Practice Scale %@ " : {
+    " Practice - %@ " : {
 
     },
     " Show Highest Progress Scales " : {
@@ -43,13 +40,13 @@
     " Spin The Wheel " : {
 
     },
+    "---------- TEST ONLY ----------" : {
+
+    },
     "?" : {
 
     },
     "." : {
-
-    },
-    "(TEST ONLY Record Data Mode)" : {
 
     },
     "%@" : {
@@ -67,7 +64,7 @@
     "𝄢" : {
 
     },
-    "👉 Leading In %@" : {
+    "👉 %@" : {
 
     },
     "😊" : {
@@ -122,10 +119,16 @@
     "Calibration" : {
 
     },
+    "Completed" : {
+
+    },
     "Correctly Played" : {
 
     },
     "Current Amplitude Filter:%@" : {
+
+    },
+    "Day %lld" : {
 
     },
     "Default Octaves" : {
@@ -135,9 +138,6 @@
 
     },
     "Errors:" : {
-
-    },
-    "Exit" : {
 
     },
     "Famous Quotes" : {
@@ -155,10 +155,10 @@
     "Follow\nThe\nScale" : {
 
     },
-    "Go to Screen B" : {
+    "Go to \n Scale" : {
 
     },
-    "Hand" : {
+    "Go to Screen B" : {
 
     },
     "Hand:" : {
@@ -269,6 +269,9 @@
     "Record\nThe\nScale" : {
 
     },
+    "Record Data Mode" : {
+
+    },
     "Recording %@" : {
 
     },
@@ -282,6 +285,9 @@
 
     },
     "Save" : {
+
+    },
+    "Save Configuration" : {
 
     },
     "Save Settings" : {
@@ -349,6 +355,9 @@
     "Show Tap Data" : {
 
     },
+    "Some very long text ..." : {
+
+    },
     "Sorry, you dont have enough coins 😌" : {
 
     },
@@ -400,6 +409,9 @@
     "Stop Recording Scale" : {
 
     },
+    "TapBufferSize" : {
+
+    },
     "Taps" : {
 
     },
@@ -407,6 +419,9 @@
 
     },
     "Test runs" : {
+
+    },
+    "Title" : {
 
     },
     "Under Construction" : {

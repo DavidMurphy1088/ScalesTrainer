@@ -9,7 +9,7 @@ import AudioKitEX
 class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
-    let tapBufferSize = 4096 * 1
+    //let tapBufferSize = Setti
     var installedTap: BaseTap?
     var midiSampler:MIDISampler?
     var recorder: NodeRecorder?
@@ -34,7 +34,7 @@ class AudioManager {
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
-        resetAudioKitToMIDISampler()
+        resetAudioKit()
     }
     
 //    func configureAudioOld() {
@@ -154,7 +154,7 @@ class AudioManager {
 //        }
 //    }
     
-    func resetAudioKitToMIDISampler() {
+    func resetAudioKit() {
         setSession()
         self.engine = AudioEngine()
         guard let engine = self.engine else {
@@ -237,11 +237,11 @@ class AudioManager {
             //}
             engine.output = self.mixer
         }
-
+        Logger.shared.log(self, "Installed pitch tap:\( Settings.shared.tapBufferSize)")
         self.pitchTap = installTapHandler(node: mic!,
-                          tapBufferSize: tapBufferSize,
-                          tapHandler: tapHandler,
-                          asynch: true)
+                                          tapBufferSize: Settings.shared.tapBufferSize,
+                                          tapHandler: tapHandler,
+                                          asynch: true)
         self.tapHandler = tapHandler
         if let pitchTap = self.pitchTap {
             pitchTap.start()
@@ -263,7 +263,6 @@ class AudioManager {
         if let tap = self.installedTap {
             tap.stop()
         }
-        //ScalesModel.shared.tapHandlerEventSet =
         if let eventSet = self.tapHandler?.stopTapping("AudioMgr.stopRecording") {
             ScalesModel.shared.setTapHandlerEventSet(eventSet)
         }
@@ -314,35 +313,6 @@ class AudioManager {
     
     ///Return a list of tap events recorded previously in a file
     func readTestDataFile() -> [TapEvent] {
-//        var fileName:String
-//
-//        if scalesModel.selectedHandIndex == 0 {
-//            switch scalesModel.selectedOctavesIndex1 {
-//            case 0:
-//                //fileName = "05_16_17_37_C_MelodicMinor_1_60_iPad_2,3,2,4_7"
-//                fileName = "05_02_C_Major_1_60_iPad"
-//                //fileName = "06_01_20_28_CMajor,RightHand_1_60_iPad_1,0,0,0_0"
-//            case 1:
-//                fileName = "05_18_11_22_B♭_Major_2_58_iPad_0,0,0,7_33"
-//            case 2:
-//                fileName = "05_09_C_Minor_3_48_iPad_8"
-//                fileName = "05_09_C_Major_3_48_iPad_MISREAD_63"
-//                fileName = "05_09_C_Major_3_48_iPad_0"
-//                fileName = "05_22_14_32_A_Major_2_33_iPad_0,0,0,0_1"
-//            default:
-//                fileName = ""
-//            }
-//        }
-//        else {
-//            switch scalesModel.selectedOctavesIndex1 {
-//            case 0:
-//                fileName = "05_18_17_35_C_Major_1_48_iPad_0,0,1,1_5"
-//            case 1:
-//                fileName = "05_18_17_37_C_Major_2_36_iPad_0,0,1,1_9"
-//            default:
-//                fileName = ""
-//            }
-//        }
         let scalesModel = ScalesModel.shared
         var tapEvents:[TapEvent] = []
         var tapNum = 0
@@ -366,7 +336,7 @@ class AudioManager {
                     let ampFilter = Double(fields[1])
                     //let reqStartAmpl = Double(fields[2])
                     if let ampFilter = ampFilter {
-                        scalesModel.setAmplitudeFilter1(ampFilter)
+                        scalesModel.setAmplitudeFilter(ampFilter)
                     }
                     continue
                 }
@@ -378,7 +348,7 @@ class AudioManager {
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0, key: .none))
+                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0))
                         tapNum += 1
                     }
                 }

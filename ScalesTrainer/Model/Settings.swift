@@ -7,6 +7,9 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var tapMinimunAmplificationFilter:Double = 0
+    var tapBufferSize = 4096
+    //var tempoOnQuaver = true
+    
     private var wasLoaded = false
     
     init() {
@@ -17,8 +20,8 @@ public class Settings : Codable  {
        return wasLoaded
     }
     
-    public func CalibrationExists() -> Bool {
-       return wasLoaded && tapMinimunAmplificationFilter > 0
+    public func calibrationIsSet() -> Bool {
+       return tapMinimunAmplificationFilter > 0
     }
 
     private func toJSON() -> String? {
@@ -41,17 +44,19 @@ public class Settings : Codable  {
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
         str += " Octaves:\(self.defaultOctaves)"
+        str += " TapBuffer:\(self.tapBufferSize)"
+        
         return str
     }
     
-    func save(amplitudeFilter:Double, _ log:Bool = true) {
+    func save(amplitudeFilter:Double) {
         self.tapMinimunAmplificationFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
         }
-        if log {
+        //if log {
             Logger.shared.log(self, "Setting saved, \(toString())")
-        }
+        //}
         UserDefaults.standard.set(str, forKey: "settings")
         self.wasLoaded = true
     }
@@ -68,6 +73,7 @@ public class Settings : Codable  {
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
+                    self.tapBufferSize = loaded.tapBufferSize
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {

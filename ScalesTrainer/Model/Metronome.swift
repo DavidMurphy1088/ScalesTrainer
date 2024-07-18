@@ -42,8 +42,11 @@ class MetronomeModel {
         }
     }
     
-    func getTempoString(_ tempo:Int) -> String {
-        if tempo > 120 {
+    func getTempoString(_ tempo:Int, useQuavers:Bool) -> String {
+//        if tempo > 120 {
+//            return "\u{266A}=\(tempo / 2)"
+//        }
+        if useQuavers {
             return "\u{266A}=\(tempo / 2)"
         }
         else {

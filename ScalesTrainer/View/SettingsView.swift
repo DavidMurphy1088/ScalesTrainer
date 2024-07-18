@@ -5,27 +5,6 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-//struct SpeechView : View {
-//    @ObservedObject private var scalesModel = ScalesModel.shared
-//    @State var setSpeechListenMode = false
-////    var body: some View {
-////        HStack {
-////            HStack() {
-////                Toggle("Speech Listen", isOn: $setSpeechListenMode)
-////            }
-////            .frame(width: UIScreen.main.bounds.width * 0.15)
-////            .padding()
-////            .background(Color.gray.opacity(0.3)) // Just to see the size of the HStack
-////            //.onChange(of: setSpeechListenMode, {scalesModel.setSpeechListenMode(setSpeechListenMode)})
-////            .padding()
-////            if scalesModel.speechListenMode {
-////                let c = String(scalesModel.speechCommandsReceived)
-////                Text("Last Word Number:\(c) Word:\(scalesModel.speechLastWord)")
-////            }
-////        }
-////    }
-//}
-
 struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
 
@@ -35,6 +14,8 @@ struct SettingsView: View {
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State private var defaultOctaves = 2
+    @State private var tapBufferSize = 4
+    
     let width = UIScreen.main.bounds.width * 0.25
     
     var body: some View {
@@ -103,40 +84,37 @@ struct SettingsView: View {
                 }
 
                 Spacer()
+                Text("---------- TEST ONLY ----------")
                 HStack() {
-                    Toggle("(TEST ONLY Record Data Mode)", isOn: $recordDataMode)
+                    Toggle("Record Data Mode", isOn: $recordDataMode)
                 }
                 .frame(width: width)
                 .onChange(of: recordDataMode, {
                     settings.recordDataMode = recordDataMode
                 })
                 .padding()
-                
+                HStack {
+                    Text("TapBufferSize").padding(0)
+                    Picker("Select", selection: $tapBufferSize) {
+                        ForEach(1..<16+1) { number in
+                            Text("\(number * 1024)").tag(number)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    .padding()
+                    .onChange(of: tapBufferSize) { oldValue, newValue in
+                        settings.tapBufferSize = tapBufferSize * 1024
+                    }
+                }
+
                 Spacer()
                 HStack {
                     Spacer()
-
                     Button(action: {
                         settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                     }) {
                         HStack {
                             Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-                        }
-                    }
-//                    Spacer()
-//                    Button(action: {
-//                        settings.load()
-//                    }) {
-//                        HStack {
-//                            Text("Load").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                        }
-//                    }
-                    Spacer()
-                    Button(action: {
-                        tabSelectionManager.nextNavigationTab()
-                    }) {
-                        HStack {
-                            Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
                     Spacer()
@@ -149,6 +127,7 @@ struct SettingsView: View {
         .onAppear() {
             leadInBarCount = settings.scaleLeadInBarCount
             self.defaultOctaves = settings.defaultOctaves
+            self.tapBufferSize = settings.tapBufferSize / 1024
         }
     }
 }

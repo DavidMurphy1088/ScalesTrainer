@@ -132,6 +132,10 @@ struct SpinWheelView: View {
         return msg
     }
     
+    func log4(index:Int, group: ScaleGroup, scale: PracticeJournalScale) -> Int {
+        return 0
+    }
+    
     var body: some View {
         ZStack {
             Image(background)
@@ -221,12 +225,17 @@ struct SpinWheelView: View {
                             Text("Sorry, you dont have enough coins 😌").font(.title2)
                         }
                         else {
-                            NavigationLink(destination: ScalesView(practiceJournalScale: practiceJournal.scaleGroup.scales[self.selectedIndex],
-                                                                   initialRunProcess: .recordingScale)) {
+                            
+                            NavigationLink(destination: ScalesView(initialRunProcess: .recordingScale)) {
                                 Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }
+                            .simultaneousGesture(TapGesture().onEnded {
+                                let scale = practiceJournal.scaleGroup.scales[self.selectedIndex].getScale(octaves: Settings.shared.defaultOctaves, hand: 0)
+                                let _ = ScalesModel.shared.setScale(scale: scale)
+                            })
+
                         }
                     }
                     Spacer()
@@ -280,7 +289,7 @@ struct SpinWheelView: View {
             let segmentAngle = 360.0 / Double(elements.count)
             let index = Int((360 - rotation) / segmentAngle) % elements.count
             self.selectedIndex = index
-            //print("Top segment: \(elements[index])")
+            print("=============selected segment: \(elements[index])", index)
         }
     }
 }

@@ -64,7 +64,7 @@ enum SpinState {
 
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel()
-    var scale:Scale
+    private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
@@ -139,20 +139,15 @@ public class ScalesModel : ObservableObject {
             self.resultDisplay = result
         }
         let coinBank = CoinBank.shared
-        if let result = result {
+        if result != nil {
             coinBank.adjustAfterResult(noErrors: noErrors)
         }
     }
     @Published private(set) var resultDisplay:Result?
 
-    @Published private(set) var amplitudeFilterDisplay1:Double = 0.0
     private(set) var amplitudeFilter:Double = 0.0
-    func setAmplitudeFilter1(_ value:Double) {
+    func setAmplitudeFilter(_ value:Double) {
         self.amplitudeFilter = value
-        DispatchQueue.main.async {
-            self.amplitudeFilterDisplay1 = value
-            Settings.shared.save(amplitudeFilter: self.amplitudeFilterDisplay1)
-        }
     }
 
     @Published private(set) var processInstructions:String? = nil
@@ -232,9 +227,9 @@ public class ScalesModel : ObservableObject {
     }
     
     init() {
-        scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0)
+        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0)
         self.calibrationTapHandler = nil
-        setAmplitudeFilter1(Settings.shared.tapMinimunAmplificationFilter)
+        setAmplitudeFilter(Settings.shared.tapMinimunAmplificationFilter)
         DispatchQueue.main.async {
             PianoKeyboardModel.shared.configureKeyboardSize(scale: self.scale)
         }
@@ -242,12 +237,15 @@ public class ScalesModel : ObservableObject {
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
         let coinBank = CoinBank.shared
-        Logger.shared.log(self, "Setting process ---> \(setProcess.description)")
+        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         DispatchQueue.main.async {
             self.runningProcess = setProcess
         }
-        self.audioManager.stopRecording()
-        self.audioManager.resetAudioKitToMIDISampler()
+        if setProcess == .none {
+            self.audioManager.stopRecording()
+        }
+
+        self.audioManager.resetAudioKit()
         
         self.setShowKeyboard(true)
         self.setShowParameters(true)
@@ -268,7 +266,8 @@ public class ScalesModel : ObservableObject {
         if [.followingScale, .practicing, .calibrating].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
-            let tapHandler = PracticeTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: true, logTaps: true)
+            let tapHandler = PracticeTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, 
+                                                hilightPlayingNotes: true, logTaps: true, filterStartOfTapping: false)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -326,7 +325,7 @@ public class ScalesModel : ObservableObject {
             self.setTapHandlerEventSet(nil)
             keyboard.redraw()
             let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
-            let tapHandler = ScaleTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData)
+            let tapHandler = ScaleTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData, filterStartOfTapping: Settings.shared.scaleLeadInBarCount == 0)
             if setProcess == .recordScaleWithFileData {
                 let tapEvents = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)
@@ -532,24 +531,32 @@ public class ScalesModel : ObservableObject {
         return score
     }
     
-    func setKeyAndScale(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
-        let name = scaleRoot.name
-        let scaleTypeName = scaleType.description
-        let scale = Scale(scaleRoot: ScaleRoot(name: name),
-                           scaleType: Scale.getScaleType(name: scaleTypeName),
+    func setScale(scale:Scale) {
+        Logger.shared.log(self, "setScale to:\(scale.getScaleName()) from:\(self.scale.getScaleName())")
+        let score = self.createScore(scale: scale)
+        self.setScaleAndScore(scale: scale, score: score, ctx: "setScale")
+    }
+
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int, ctx:String) {
+        Logger.shared.log(self, "setScaleByRootAndType to:root:\(scaleRoot.name) type:\(scaleType.description)  ctx:\(ctx) from:\(self.scale.getScaleName())")
+        let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
+                           scaleType: Scale.getScaleType(name: scaleType.description),
                            octaves: octaves,
                            hand: hand)
         let score = self.createScore(scale: scale)
-        Logger.shared.log(self, "setKeyAndScale octaves:\(octaves) scale:\(scale.getMinMax()) hand:\(hand)")
-        self.setScale(scale: scale, score: score)
+        self.setScaleAndScore(scale: scale, score: score, ctx: "setKeyAndScale")
     }
     
-    func setScale(scale:Scale, score:Score) {
+    func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
+        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName()) ctx:\(ctx)")
+        if scale.scaleType == .major {
+            print("========")
+        }
         self.scale = scale
         PianoKeyboardModel.shared.configureKeyboardSize(scale: scale)
         setDirection(0)
         PianoKeyboardModel.shared.redraw()
-        
+
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {

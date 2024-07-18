@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>275</string>
+					<string>331</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>274</string>
+					<string>330</string>
 					<key>Timestamp</key>
-					<string>742559077.218627</string>
+					<string>742992790.157148</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        guard let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
+				<string>//        guard let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) else {
 </string>
 				<key>leading</key>
 				<string>        
         ///Does the notification represents a key that could be pressed on the keyboard?
 </string>
 				<key>trailing</key>
-				<string>            let event = TapEvent(tapNum: eventNumber,
-                                 frequency: frequency,
-                                 amplitude: amplitude,
+				<string>        ///Lets avoid havinfg to update the keyboard. This is now keyboard statless
+        let (firstKey, keys) = keyboard.getKeyBoardSize(scale: scale)
+        if midi &lt; firstKey || midi &gt; (firstKey + keys) {
 </string>
 			</dict>
 			<key>type</key>

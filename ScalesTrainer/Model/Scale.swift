@@ -34,7 +34,7 @@ public enum ScaleType: CaseIterable {
         case .major:
             return "Major"
         case .naturalMinor:
-            return "Minor"
+            return "Natural Minor"
         case .harmonicMinor:
             return "Harmonic Minor"
         case .melodicMinor:
@@ -286,7 +286,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug1111(_ msg:String)  {
+    func debug1(_ msg:String)  {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
@@ -297,7 +297,8 @@ public class Scale {
             }
         }
         for state in self.scaleNoteState {
-            print("Midi:", state.midi,  "finger:", state.finger, "break:", state.fingerSequenceBreak, "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
+            print("Midi:", state.midi,  "finger:", state.finger, "break:", state.fingerSequenceBreak, 
+                  "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
                   "valueNormalized:", getValue(state.valueNormalized))
         }
     }
@@ -315,43 +316,45 @@ public class Scale {
         }
         var timeIntervals:[Double] = []
         
-        ///Calculate the the note durations
-        var lastMatch:Date? = self.scaleNoteState[0].matchedTime
-        var sum:Double = 0
+        ///Calculate the the note durations for all notes except the first (from the previous note time)
+        var lastMatch:Date? = nil //self.scaleNoteState[0].matchedTime
+        var sumOfDurations:Double = 0
         var timedNotesCount = 0
         
         for note in self.scaleNoteState {
             if let matched = note.matchedTime {
                 if lastMatch == nil {
                     lastMatch = matched
-                    timeIntervals.append(0)
+                    //timeIntervals.append(0)
                     continue
                 }
-                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970 //{
+                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
                 timeIntervals.append(delta)
-                sum += delta
+                sumOfDurations += delta
                 timedNotesCount += 1
                 lastMatch = matched
             }
         }
         
         ///Calculate the average and apply the deltas to each note
-        if sum > 0 {
-            let average = Double(sum) / Double(timedNotesCount)
-            for n in 0..<self.scaleNoteState.count - 1 {
-                if n+1 < timeIntervals.count {
-                    if timeIntervals[n+1] > 0 {
-                        let note = scaleNoteState[n]
-                        let normalized = timeIntervals[n+1] / average
-                        note.valueNormalized = normalized
-                    }
+        if sumOfDurations > 0 {
+            let averageDuration = Double(sumOfDurations) / Double(timedNotesCount)
+            for n in 0..<self.scaleNoteState.count {
+                let note = scaleNoteState[n]
+                if n == self.scaleNoteState.count - 1 {
+                    ///Cant know duration for last note
+                    note.valueNormalized = 1.0
+                }
+                else {
+                    let normalized = timeIntervals[n] / averageDuration
+                    note.valueNormalized = normalized
                 }
             }
         }
         guard timedNotesCount > 0 else {
             return 0
         }
-        let tempo = 60.0 / (sum / Double(timedNotesCount))
+        let tempo = 60.0 / (sumOfDurations / Double(timedNotesCount))
         if tempo.isFinite && !tempo.isNaN {
             return Int(tempo)
         }
@@ -634,10 +637,12 @@ public class Scale {
         }
     }
 
-    func getScaleName() -> String {
+    func getScaleName(short:Bool = false) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
-        name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+        if !short {
+            name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
+            name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+        }
 
         //if includeHandName {
         //name += self.hand == 0 ? ", Right Hand" : ", Left Hand"
@@ -680,7 +685,7 @@ public class Scale {
     
     static func getScaleType(name:String) -> ScaleType {
         switch name {
-        case "Minor":
+        case "Natural Minor":
             return ScaleType.naturalMinor
         case "Major":
             return ScaleType.major
