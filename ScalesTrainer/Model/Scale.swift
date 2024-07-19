@@ -7,7 +7,7 @@ enum ScaleShape {
     case arpgeggio4Note
 }
 
-public enum ScaleType: CaseIterable {
+public enum ScaleType: CaseIterable, Comparable {
     case major
     case naturalMinor
     case harmonicMinor
@@ -286,7 +286,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug1(_ msg:String)  {
+    func debug11(_ msg:String)  {
         print("==========scale \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

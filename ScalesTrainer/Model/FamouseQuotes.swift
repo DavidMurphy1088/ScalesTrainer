@@ -28,8 +28,16 @@ class FamousQuotes {
         quotes.append(("Scales and arpeggios are the cornerstone of a solid piano technique. They build strength and dexterity.","Rosina Lhévinne"))
         quotes.append(("Practicing scales is like daily exercise for an athlete. It keeps the pianist's muscles flexible and strong.","Daniel Barenboim"))
 
-       //quotes.append(("",""))
-
+        quotes.append(("Practicing scales and arpeggios provides the pianist with an unshakable foundation. These exercises develop strength and dexterity in the fingers, ensuring technical proficiency.","Carl Czerny"))
+        quotes.append(("Do not neglect your scales and arpeggios. They are the basis of all technique.","Josef Hofmann"))
+        quotes.append(("Without thorough practice of scales and arpeggios, no true mastery of the instrument can be achieved.","Leopold Auer"))
+        quotes.append(("Practicing scales and arpeggios provides the pianist with an unshakable foundation. These exercises develop strength and dexterity in the fingers, ensuring technical proficiency.","Carl Czerny"))
+        quotes.append(("For a young student, scales and etudes are crucial for building a solid technical foundation.","Clara Schumann"))
+        quotes.append(("I practice scales in every key daily. They are the simplest and most direct way to maintain technical proficiency.","Igor Stravinsky"))
+        quotes.append(("Without technique, there is no art. Practicing scales and exercises is crucial for developing the technical skills needed to express oneself musically.","Johannes Brahms"))
+        quotes.append(("Practicing scales is like sharpening a pencil. It may seem tedious, but it is necessary for achieving precision and clarity in one's playing.","Claude Debussy"))
+        quotes.append(("Scales and arpeggios are the backbone of a pianist's technique. They must be practiced diligently and with attention to detail.","Heinrich Neuhaus"))
+//        quotes.append(("",""))
     }
     
     func getQuote() -> (String, String) {

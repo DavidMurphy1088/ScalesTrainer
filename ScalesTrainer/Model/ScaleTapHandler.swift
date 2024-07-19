@@ -100,7 +100,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 startTappingAmplitudes.append(amplitude)
             }
             else {
-                var sum = startTappingAmplitudes.reduce(0, +)
+                let sum = startTappingAmplitudes.reduce(0, +)
                 self.startTappingAvgAmplitude = sum / Float(startTappingAmplitudes.count)
             }
         }
@@ -138,7 +138,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
             return empty
         }
         
-        let scaleRootOffsets = [0, 12, -12, 24, -24]
+        ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
+        let scaleRootOffsets = [0, 12, -12, 24, -24].reversed()
         var minErrorResult:Result? = nil
         var bestOffset:Int? = nil
         
@@ -160,17 +161,25 @@ class ScaleTapHandler : TapHandlerProtocol  {
         for rootOffsetMidi in scaleRootOffsets {
             ///Set the trial scale for the scale offset
             let trialScale = self.inputScale.makeNewScale(offset: rootOffsetMidi)
-            Logger.shared.log(self, "Assessing recording for scale at offset \(rootOffsetMidi)")
+            Logger.shared.log(self, "Assessing recording for scale at offset:\(rootOffsetMidi)")
             let result = applyEvents(scale: trialScale, octaveLenient: false, score: nil, updateKeyboard: false, eventSet: self.recordedTapEvents).0
             if minErrorResult == nil || minErrorResult!.isBetter(compare: result) {
                 minErrorResult = result
                 bestOffset = rootOffsetMidi
             }
+            Logger.shared.log(self, "Assessed at offset:\(rootOffsetMidi) errors:\(result.totalErrors())")
         }
         
         ///Replay the best fit scale to set the app's display state
         if let bestOffset = bestOffset {
-            let bestScale = inputScale.makeNewScale(offset: bestOffset)
+            ///If there are too many errors just display the scale at the octaves it was shown as
+            let bestScale:Scale
+            if minErrorResult == nil || minErrorResult!.totalErrors() > 3 {
+                bestScale = inputScale.makeNewScale(offset: 0)
+            }
+            else {
+                bestScale = inputScale.makeNewScale(offset: bestOffset)
+            }
             
             ///Score note status is updated during result build, keyboard key status is updated by tap processing
             let score = scalesModel.createScore(scale: bestScale)
@@ -182,7 +191,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
             let (result, eventSet) = applyEvents(scale: bestScale, octaveLenient: true, score: score, updateKeyboard: true, eventSet: self.recordedTapEvents)
             scalesModel.setResultInternal(result, "stop Tapping")
             if result.noErrors() {
-                bestScale.debug1("TAP2")
                 score.setNormalizedValues(scale: bestScale)
             }
             PianoKeyboardModel.shared.redraw()

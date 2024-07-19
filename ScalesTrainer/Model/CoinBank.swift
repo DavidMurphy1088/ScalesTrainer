@@ -8,8 +8,9 @@ class CoinBank: ObservableObject, Codable {
     
     @Published private(set) var totalCoinsInBank: Int = 0
     func setTotalCoinsInBank(_ value:Int) {
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { 
             self.totalCoinsInBank = value
+            self.save()
         }
     }
 
@@ -142,7 +143,7 @@ class CoinBank: ObservableObject, Codable {
                     self.totalCoinsInBank = decoded.totalCoinsInBank
                     //self.totalCoinsInBank = 500
                     self.existsInStorage = decoded.existsInStorage
-                    Logger.shared.log(self, "CoinBank loaded")
+                    Logger.shared.log(self, "CoinBank loaded coins:\(self.totalCoinsInBank)")
                     return true
                 } catch {
                     Logger.shared.reportError(self, "CoinBank found but not loaded, data format has changed:" + error.localizedDescription)

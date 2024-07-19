@@ -1,10 +1,5 @@
 import SwiftUI
 
-enum WheelMode {
-    case pickRandomScale
-    case identifyTheScale
-}
-
 struct SegmentedCircleView: View {
     let elements: [String]
     let rotation: Double
@@ -59,7 +54,7 @@ struct SegmentView: View {
 }
 
 struct Arrow: View {
-    let size = 40
+    let size:Int = 40
     var body: some View {
         Path { path in
             path.move(to: CGPoint(x: size, y: 0))
@@ -76,14 +71,16 @@ struct SpinWheelView: View {
     @ObservedObject var coinBase = CoinBank.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     let practiceJournal:PracticeJournal
-    let mode: WheelMode
 
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
     @State private var maxRotations: Double = 1 // Max rotations per second
     @State private var wheelSize: CGFloat = 0.8 // Size as a percentage of screen width
-    @State private var selectedIndex = 0
     @State private var width = 0.0 //DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
+
+    @State private var selectedScaleType = 0
+    @State private var selectedScaleRoot = 0
+    @State private var selectedHand = 0
 
     @State var background = UIGlobals.shared.getBackground()
     @State private var selectedBet:Int = 0
@@ -93,16 +90,29 @@ struct SpinWheelView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var promptForEarlyExit = false
 
-    func getScaleNames(mode:WheelMode) -> [String] {
-        var allScales:[String] = []
-        var roots:Set<String> = []
+    func getRootNames() -> [String] {
+        var scaleRoots:Set<String> = []
         for scale in practiceJournal.scaleGroup.scales {
-            //roots.insert(scale.scaleType.description)
-            roots.insert(scale.scaleRoot.name)
-            allScales.append(scale.getName())
-            //print(scale.getName(), scale.scaleType.description)
+            scaleRoots.insert(scale.scaleRoot.name)
         }
-        return mode == .pickRandomScale ? allScales : Array(roots) 
+        return Array(scaleRoots).sorted()
+    }
+    
+    func getTypes() -> [ScaleType] {
+        var scaleTypes:Set<ScaleType> = []
+        for scale in practiceJournal.scaleGroup.scales {
+            scaleTypes.insert(scale.scaleType)
+        }
+
+        return Array(scaleTypes).sorted()
+    }
+    
+    func getTypeNames() -> [String] {
+        var res:[String] = []
+        for t in getTypes() {
+            res.append(t.description)
+        }
+        return res
     }
     
     func getTitle() -> String {
@@ -148,15 +158,39 @@ struct SpinWheelView: View {
                 VStack {
                     ZStack {
                         GeometryReader { geometry in
+                            let handSizeFactor = 0.25
+                            let rootSizeFactor = 0.40
+                            let arrowPos = geometry.size.width * 0.92
                             ZStack {
-                                SegmentedCircleView(elements: getScaleNames(mode:mode), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
+                                ///Scale Types
+                                SegmentedCircleView(elements: getTypeNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
                                     .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
                                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                                // Fixed arrow
+                                /// Fixed arrow
                                 Arrow()
                                     .frame(width: 30, height: 30)
                                     .foregroundColor(.purple)
-                                    .position(x: geometry.size.width * 0.92, y: geometry.size.height / 2)
+                                    .position(x: arrowPos, y: geometry.size.height / 2)
+                                
+                                ///Scale Roots
+
+                                SegmentedCircleView(elements: getRootNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width * rootSizeFactor)
+                                    .frame(width: wheelSize * geometry.size.width * rootSizeFactor, height: wheelSize * geometry.size.width * rootSizeFactor)
+                                    .position(x: geometry.size.width * 0.74, y: geometry.size.height * 0.25)
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height * 0.25)
+
+                                ///Randomise which hand
+                                SegmentedCircleView(elements: ["Left", "Right"], rotation: rotation, wheelSize: wheelSize * geometry.size.width * handSizeFactor)
+                                    .frame(width: wheelSize * geometry.size.width * handSizeFactor, height: wheelSize * geometry.size.width * handSizeFactor)
+                                    .position(x: geometry.size.width * 0.80, y: geometry.size.height * 0.75)
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height * 0.75)
+
                             }
                         }
                         .edgesIgnoringSafeArea(.all)
@@ -205,7 +239,9 @@ struct SpinWheelView: View {
                                 ///Let them spin but dont go to record scale if coinBase.totalCoinsInBank == 1
                                 if scalesModel.spinState == SpinState.selectedBet || coinBase.totalCoinsInBank == 1 {
                                     Button(action: {
-                                        startSpinning(elements: getScaleNames(mode:mode))
+                                        startSpinning(scaleTypes: self.getTypeNames(),
+                                                      scaleRoots: self.getRootNames(),
+                                                      hands: [1,0])
                                     }) {
                                         HStack {
                                             Text(" Spin The Wheel ")
@@ -225,17 +261,12 @@ struct SpinWheelView: View {
                             Text("Sorry, you dont have enough coins 😌").font(.title2)
                         }
                         else {
-                            
+                            let scale = scalesModel.scale
                             NavigationLink(destination: ScalesView(initialRunProcess: .recordingScale)) {
-                                Text(" Go To Scale \(practiceJournal.scaleGroup.scales[self.selectedIndex].getName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                Text(" Go To Scale \(scale.getScaleName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }
-                            .simultaneousGesture(TapGesture().onEnded {
-                                let scale = practiceJournal.scaleGroup.scales[self.selectedIndex].getScale(octaves: Settings.shared.defaultOctaves, hand: 0)
-                                let _ = ScalesModel.shared.setScale(scale: scale)
-                            })
-
                         }
                     }
                     Spacer()
@@ -275,7 +306,7 @@ struct SpinWheelView: View {
         }
     }
     
-    func startSpinning(elements:[String]) {
+    func startSpinning(scaleTypes:[String], scaleRoots:[String], hands:[Int]) {
         let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
         let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
         withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
@@ -286,10 +317,22 @@ struct SpinWheelView: View {
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             // Determine which segment is at the top
-            let segmentAngle = 360.0 / Double(elements.count)
-            let index = Int((360 - rotation) / segmentAngle) % elements.count
-            self.selectedIndex = index
-            print("=============selected segment: \(elements[index])", index)
+            var segments = 360.0 / Double(scaleTypes.count)
+            var index = Int((360 - rotation) / segments) % scaleTypes.count
+            self.selectedScaleType = index
+            
+            segments = 360.0 / Double(scaleRoots.count)
+            index = Int((360 - rotation) / segments) % scaleRoots.count
+            self.selectedScaleRoot = index
+
+            segments = 360.0 / Double(hands.count)
+            index = Int((360 - rotation) / segments) % hands.count
+            self.selectedHand = index
+
+            let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]), 
+                              scaleType: getTypes()[self.selectedScaleType],
+                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand ])
+            let _ = ScalesModel.shared.setScale(scale: scale)
         }
     }
 }

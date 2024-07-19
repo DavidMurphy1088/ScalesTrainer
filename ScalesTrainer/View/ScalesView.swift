@@ -532,20 +532,14 @@ struct ScalesView: View {
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
-            //print("=================== VIEW1", self.scaleToView.getScaleName())
-//            setState(scaleRoot: self.scaleToView.scaleRoot,
-//                     scaleType: self.scaleToView.scaleType,
-//                     octaves: Settings.shared.defaultOctaves, 
-//                     hand: 0)
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            self.handIndex = 0
+            self.handIndex = scalesModel.scale.hand
             ///Causes setState()
             //self.numberOfOctaves = Settings.shared.defaultOctaves
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
             }
-            print("=================== VIEW onAppear", scalesModel.scale.getScaleName())
         }
         
         .onDisappear {

@@ -215,7 +215,7 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
             let potentialAverage = sum / Float(scalePotentialStartAmplitudes.count)
             let diff = (potentialAverage - startAverage) / startAverage
             let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
-            let secs = Double(ms) / 1000.0
+            //let secs = Double(ms) / 1000.0
 
             if diff < 2.0 {
                 tapHandlerEventSet.events.append(TapEvent(tapNum: tapNumber,
@@ -445,9 +445,9 @@ class ScaleTapHandlerOld : TapHandlerProtocol  {
 //        }
 
         ScalesModel.shared.setResultInternal(result, "TapHandlerAtEnd")
-        guard let result = self.result else {
-            return self.tapHandlerEventSet
-        }
+//        guard let result = self.result else {
+//            return self.tapHandlerEventSet
+//        }
 
         return self.tapHandlerEventSet
     }

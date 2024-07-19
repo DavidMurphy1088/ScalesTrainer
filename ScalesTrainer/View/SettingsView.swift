@@ -76,7 +76,7 @@ struct SettingsView: View {
                 Spacer()
                 Button(action: {
                     CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
-                    CoinBank.shared.save()
+                    
                 }) {
                     HStack {
                         Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)

@@ -55,6 +55,9 @@
     "%@\n♩=90" : {
 
     },
+    "%@ Notes" : {
+
+    },
     "%lld" : {
 
     },
@@ -65,6 +68,9 @@
 
     },
     "👉 %@" : {
+
+    },
+    "📈 📉 📊" : {
 
     },
     "😊" : {
@@ -263,6 +269,9 @@
     "Practice" : {
 
     },
+    "Progress" : {
+
+    },
     "READ_TEST_DATA" : {
 
     },
@@ -355,9 +364,6 @@
     "Show Tap Data" : {
 
     },
-    "Some very long text ..." : {
-
-    },
     "Sorry, you dont have enough coins 😌" : {
 
     },
@@ -421,10 +427,10 @@
     "Test runs" : {
 
     },
-    "Title" : {
+    "Under Construction" : {
 
     },
-    "Under Construction" : {
+    "Various progress assessments and notes for this scale..." : {
 
     },
     "View At\nThis Setting" : {

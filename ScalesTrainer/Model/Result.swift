@@ -94,7 +94,7 @@ class Result : Equatable {
         }
         if noErrors() {
             //let scale = ScalesModel.shared.scale
-            let tempo = scale.setNoteNormalizedValues()
+            let _ = scale.setNoteNormalizedValues()
             if let score = score {
                 score.setNormalizedValues(scale: scale)
             }

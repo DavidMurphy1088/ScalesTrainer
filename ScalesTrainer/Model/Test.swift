@@ -44,9 +44,9 @@ class FFTAnalyzer: ObservableObject {
 
     func setupAudioEngine() {
         engine = AudioEngine()
-        guard let input = engine.input else {
-            fatalError("Microphone not available")
-        }
+//        guard let input = engine.input else {
+//            fatalError("Microphone not available")
+//        }
         mic = engine.input
         // Create two separate mixers
         mixerA = Mixer(mic)
@@ -93,8 +93,8 @@ class FFTAnalyzer: ObservableObject {
         self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
             ///PitchTap: BaseTap {
             if a[0] > 0.03 {
-                let timeStamp = self.getTime()
-                let midi = self.frequencyToMIDI(frequencyHz: [f[0]])
+                //let timeStamp = self.getTime()
+                //let midi = self.frequencyToMIDI(frequencyHz: [f[0]])
                 //print("PT     ===========  ", timeStamp, "freq:", Int(f[0]), "\t", "midi:", midi, "amp:", String(format: "%.2f", a[0]))
             }
         }
