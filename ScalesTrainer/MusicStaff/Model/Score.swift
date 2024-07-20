@@ -238,7 +238,7 @@ public class Score : ObservableObject {
         return result
     }
     
-    public func getTimeSliceForMidi(midi:Int, count:Int) -> TimeSlice? {
+    public func getTimeSliceForMidi(midi:Int, occurence:Int) -> TimeSlice? {
         let ts = getAllTimeSlices()
         var cnt = 0
         var result:TimeSlice?
@@ -247,7 +247,7 @@ public class Score : ObservableObject {
             if ns.count > 0 {
                 let note = ns[0]
                 if note.midiNumber == midi {
-                    if cnt == count {
+                    if cnt == occurence {
                         result = t
                         break
                     }

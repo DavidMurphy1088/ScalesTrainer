@@ -263,7 +263,7 @@ struct SpinWheelView: View {
                         else {
                             let scale = scalesModel.scale
                             NavigationLink(destination: ScalesView(initialRunProcess: .recordingScale)) {
-                                Text(" Go To Scale \(scale.getScaleName()) - Good Luck").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                Text(" Go To Scale \(scale.getScaleName()) - Good Luck 😊").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }

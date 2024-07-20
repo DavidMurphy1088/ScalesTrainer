@@ -108,7 +108,7 @@ public class PianoKeyboardModel: ObservableObject {
         return (firstKeyMidi, numKeys)
     }
     
-    func configureKeyboardSize(scale:Scale) {
+    func configureKeyboardForScale(scale:Scale) {
 //        self.firstKeyMidi = scale.scaleNoteState[0].midi
 //        
 //        ///Decide first key to show on the keyboard - either the F key or the C key

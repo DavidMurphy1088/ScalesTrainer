@@ -6,7 +6,7 @@ struct ResultView: View {
     let scalesModel = ScalesModel.shared
     
     func getAllCorrect() -> Bool {
-        return result.missedCountAsc == 0 && result.missedCountDesc == 0 && result.wrongCountAsc == 0 && result.wrongCountDesc == 0
+        return result.missedFromScaleCountAsc == 0 && result.missedFromScaleCountDesc == 0 && result.playedAndWrongCountAsc == 0 && result.playedAndWrongCountDesc == 0
     }
     
     func recordStatus() -> (Bool, String) {
@@ -16,21 +16,21 @@ struct ResultView: View {
         }
         else {
             status = "Your scale was not correct. "
-            if result.wrongCountAsc > 0 {
-                status += "\n⏺ You played \(result.wrongCountAsc) wrong \(result.wrongCountAsc > 1 ? "notes" : "note") ascending. "
+            if result.playedAndWrongCountAsc > 0 {
+                status += "\n⏺ You played \(result.playedAndWrongCountAsc) wrong \(result.playedAndWrongCountAsc > 1 ? "notes" : "note") ascending. "
             }
             else {
                 ///Only show this if there were no wrong notes
-                if result.missedCountAsc > 0 {
-                    status += "\n⏺ You missed \(result.missedCountAsc) \(result.missedCountAsc > 1 ? "notes" : "note") ascending. "
+                if result.missedFromScaleCountAsc > 0 {
+                    status += "\n⏺ You missed \(result.missedFromScaleCountAsc) \(result.missedFromScaleCountAsc > 1 ? "notes" : "note") ascending. "
                 }
             }
-            if result.wrongCountDesc > 0 {
-                status += "\n⏺ You played \(result.wrongCountDesc) wrong \(result.wrongCountDesc > 1 ? "notes" : "note") descending. "
+            if result.playedAndWrongCountDesc > 0 {
+                status += "\n⏺ You played \(result.playedAndWrongCountDesc) wrong \(result.playedAndWrongCountDesc > 1 ? "notes" : "note") descending. "
             }
             else {
-                if result.missedCountDesc > 0 {
-                    status += "\n⏺ You missed \(result.missedCountDesc) \(result.missedCountDesc > 1 ? "notes" : "note") descending. "
+                if result.missedFromScaleCountDesc > 0 {
+                    status += "\n⏺ You missed \(result.missedFromScaleCountDesc) \(result.missedFromScaleCountDesc > 1 ? "notes" : "note") descending. "
                 }
             }
         }
@@ -107,23 +107,29 @@ struct TapDataView: View {
     func getColor(_ event:TapEvent) -> Color {
         //var color = event.ascending ? Color.gray : Color.green
         var color = Color.gray
-        if event.status == .pressNextScaleMatch {
-            color = event.ascending ? .blue : .green
-        }
-        if event.status == .pressFollowingScaleMatch {
-            color = .purple
-        }
-        if event.status  == .wrongButWaitForNext {
-            color = .purple
-        }
-        if event.status == .pressWithoutScaleMatch {
-            color = .red
-        }
+//        if event.status == .pressNextScaleMatch {
+//            color = event.ascending ? .blue : .green
+//        }
+//        if event.status == .pressFollowingScaleMatch {
+//            color = .purple
+//        }
+//        if event.status  == .wrongButWaitForNext {
+//            color = .purple
+//        }
+//        if event.status == .pressWithoutScaleMatch {
+//            color = .red
+//        }
+//        if event.status == .farFromExpected {
+//            color = .orange
+//        }
         if event.status == .belowAmplitudeFilter {
             color = .brown
         }
-        if event.status == .farFromExpected {
-            color = .orange
+        if event.status == .keyPressed {
+            color = event.ascending ? .purple : .green
+        }
+        if event.status == .discardedSingleton {
+            color = .cyan
         }
         return color
     }
@@ -137,7 +143,12 @@ struct TapDataView: View {
 
                 ScrollView {
                     ForEach(tapEventSet.events, id: \.self) { event in
-                        Text(event.tapData()).foregroundColor(getColor(event))
+                        if getColor(event) == .black {
+                            Text(event.tapData()).foregroundColor(getColor(event))
+                        }
+                        else {
+                            Text(event.tapData()).foregroundColor(getColor(event)).bold()
+                        }
                     }
                 }
             }

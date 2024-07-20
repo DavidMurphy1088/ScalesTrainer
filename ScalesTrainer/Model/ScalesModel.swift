@@ -231,7 +231,7 @@ public class ScalesModel : ObservableObject {
         self.calibrationTapHandler = nil
         setAmplitudeFilter(Settings.shared.tapMinimunAmplificationFilter)
         DispatchQueue.main.async {
-            PianoKeyboardModel.shared.configureKeyboardSize(scale: self.scale)
+            PianoKeyboardModel.shared.configureKeyboardForScale(scale: self.scale)
         }
     }
     
@@ -549,11 +549,9 @@ public class ScalesModel : ObservableObject {
     
     func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
         Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName()) ctx:\(ctx)")
-        if scale.scaleType == .major {
-            print("========")
-        }
+
         self.scale = scale
-        PianoKeyboardModel.shared.configureKeyboardSize(scale: scale)
+        PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
         setDirection(0)
         PianoKeyboardModel.shared.redraw()
 

@@ -67,7 +67,7 @@ class CalibrationResults : ObservableObject {
                 onNext(ampFilter)
                 scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: ampFilter)
                 if let result = scalesModel.resultInternal {
-                    let totalErrors = result.totalErrors()
+                    let totalErrors = result.getTotalErrors()
                     self.appendResult(num: index, result: result, amplFilter: ampFilter)
                     if minError == nil || totalErrors <= minError! {
                         minError = totalErrors
@@ -91,7 +91,7 @@ class CalibrationResults : ObservableObject {
 
             for i in 0..<self.calibrationResults!.count {
                 let result = self.calibrationResults![i]
-                if result.result.totalErrors() == minError {
+                if result.result.getTotalErrors() == minError {
                     if first == nil {
                         first = i
                     }

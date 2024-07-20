@@ -1,27 +1,45 @@
 import Foundation
 
+//public enum TapEventStatus1 {
+//    case none
+//    case info
+//    
+//    case pressWithoutScaleMatch
+//    
+//    ///Pressed the expected next note
+//    case pressNextScaleMatch
+//    
+//    ///Pressed note 1 further on than the one expected
+//    case pressFollowingScaleMatch
+//    
+//    ///Pressed wrong note but wait for one more wrong before reporting it. The singleton supposed error maybe only a harmonic
+//    case wrongButWaitForNext
+//    
+//    case continued
+//    case farFromExpected
+//    case pastEndOfScale
+//    case belowAmplitudeFilter
+//    case beforeScaleStart
+//    case keyNotOnKeyboard
+//    case outsideScale
+//    case singleton
+//
+//}
 public enum TapEventStatus {
     case none
     case info
-    
-    case pressWithoutScaleMatch
-    
-    ///Pressed the expected next note
-    case pressNextScaleMatch
-    
-    ///Pressed note 1 further on than the one expected
-    case pressFollowingScaleMatch
-    
-    ///Pressed wrong note but wait for one more wrong before reporting it. The singleton supposed error maybe only a harmonic
-    case wrongButWaitForNext
-    
-    case continued
-    case farFromExpected
-    case pastEndOfScale
+    case keyPressed
+    case sameMidiContinued
     case belowAmplitudeFilter
     case beforeScaleStart
-    case keyNotOnKeyboard
-    case outsideScale
+    case afterScaleEnd
+    //case keyNotOnKeyboard
+    //case outsideScale
+    case discardedSingleton
+    
+    ///Practice TapHandlet
+    //case farFromExpected
+    //case pastEndOfScale
 }
 
 public class TapEvent:Hashable {
@@ -114,7 +132,7 @@ public class TapEventSet {
         var maxMidi = 0
         
         for event in events {
-            if event.status == .pressNextScaleMatch {
+            if event.status == .keyPressed {
                 if Double(event.amplitude) > max {
                     max = Double(event.amplitude)
                     maxMidi = event.midi

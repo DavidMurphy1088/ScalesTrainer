@@ -122,10 +122,10 @@ struct ScalesView: View {
         }
     }
     
-    func log124() -> Int {
-        //print("============= VIEW ABOUT TO RECORD", scalesModel.scale.getScaleName(), "Octaves:", scalesModel.scale.octaves)
-        return 0
-    }
+//    func log124() -> Int {
+//        //print("============= VIEW ABOUT TO RECORD", scalesModel.scale.getScaleName(), "Octaves:", scalesModel.scale.octaves)
+//        return 0
+//    }
     
     func leadInMsg() -> String {
         let leadIn = Settings.shared.scaleLeadInBarCount
@@ -574,7 +574,7 @@ struct ScalesView: View {
                         SendMailView(isShowing: $emailShowing, result: $emailResult,
                                      messageRecipient:"davidmurphy1088@gmail.com",
                                      messageSubject: "Scales Trainer \(getMailInfo())",
-                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly. Also include tempo and articulation info\n",
+                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly. Please include tempo. Possibly articulation info if relevant, device position if relevant etc. \n",
                                      attachmentFilePath: url)
                     }
                 }

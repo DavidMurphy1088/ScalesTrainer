@@ -132,13 +132,13 @@ public struct CalibrationView: View {
                             Text(String(result.num))
                             Text("AmplFilter:")
                             Text(String(format: "%.4f", result.amplitudeFilter))
-                            Text("MissedKeys[\(result.result.missedCountAsc + result.result.missedCountDesc)]")
+                            Text("MissedKeys[\(result.result.missedFromScaleCountAsc + result.result.missedFromScaleCountDesc)]")
                             //Text(String(result.result.missedCountAsc + result.result.missedCountDesc))
-                            Text("WrongKeys[\(result.result.wrongCountAsc + result.result.wrongCountDesc)]")
+                            Text("WrongKeys[\(result.result.playedAndWrongCountAsc + result.result.playedAndWrongCountDesc)]")
                             //Text(String(result.result.wrongCountAsc + result.result.wrongCountDesc))
 
                             Text("Errors:").bold()
-                            Text(String(result.result.totalErrors()))
+                            Text(String(result.result.getTotalErrors()))
                             Text("Best:").foregroundColor(result.lowestErrors ? Color.green : Color.black)
                             Text(String(result.lowestErrors))
                             Button(action: {

@@ -63,8 +63,8 @@ struct ScalesTrainerApp: App {
 //                }
 
 
-                //ScalesView()
-                PracticeChartView(rows: 10, columns: 3)
+                ScalesView()
+                //PracticeChartView(rows: 10, columns: 3)
                 //SpinWheelView(practiceJournal: PracticeJournal.shared!)
                     .tabItem {
                         Label("Home", systemImage: "house")
