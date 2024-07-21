@@ -8,7 +8,7 @@ public class Settings : Codable  {
     var scaleLeadInBarCount:Int = 0
     var tapMinimunAmplificationFilter:Double = 0
     var tapBufferSize = 4096
-    //var tempoOnQuaver = true
+    var scaleNoteValue = 4 // What note values the score is wrtiewn with  1/4, 1/87 or 1/16
     
     private var wasLoaded = false
     
@@ -44,8 +44,8 @@ public class Settings : Codable  {
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
         str += " Octaves:\(self.defaultOctaves)"
+        str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " TapBuffer:\(self.tapBufferSize)"
-        
         return str
     }
     
@@ -61,6 +61,10 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
+    func getScaleNoteValue() -> Double {
+        return self.scaleNoteValue == 0 ? 1.0 : 0.5
+    }
+    
     func load() {
         if let jsonData = UserDefaults.standard.string(forKey: "settings") {
             if let data = jsonData.data(using: .utf8) {
@@ -73,6 +77,7 @@ public class Settings : Codable  {
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
+                    self.scaleNoteValue = loaded.scaleNoteValue
                     self.tapBufferSize = loaded.tapBufferSize
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true

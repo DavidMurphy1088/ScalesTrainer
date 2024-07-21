@@ -62,6 +62,8 @@ class Result : Equatable {
         return str
     }
     
+    ///Build the result from the timestamps on the keyboard. These track ascending and descending times when each key was played.
+    ///Set the assocated notes in the scale with their played time
     func buildResult(score:Score?, offset:Int) {
         self.missedFromScaleCountAsc = 0
         self.missedFromScaleCountDesc = 0
@@ -70,13 +72,12 @@ class Result : Equatable {
         self.correctNotes = 0
         let topIndex = scale.scaleNoteState.count/2
         
-        
 //        if true {
 //            print("======== ResultCalc...")
-//            for key in keyboardModel.pianoKeyModel {
+//            for key in self.keyboard.pianoKeyModel {
 //                print("   ---->", key.midi,
-//                      "playedAsc:", key.keyWasPlayedState.tappedTimeAscending == nil ? "No " : "Yes",
-//                      "playedDesc:", key.keyWasPlayedState.tappedTimeDescending == nil ? "No " : "Yes",
+//                      "playedAsc:", key.keyWasPlayedState.tappedTimeAscending ?? "_" ,
+//                      "playedDesc:", key.keyWasPlayedState.tappedTimeDescending ?? "_" ,
 //                      "\tscaleNote", key.scaleNoteState?.midi ?? "  ", key.scaleNoteState?.matchedTime ?? "None")
 //            }
 //        }
@@ -133,6 +134,7 @@ class Result : Equatable {
                 direction = 1
             }
         }
+        
         if noErrors() {
             let _ = scale.setNoteNormalizedValues()
             if let score = score {

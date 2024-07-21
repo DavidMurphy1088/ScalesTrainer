@@ -7,33 +7,97 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "06B7E996-CCED-42AA-8111-06DA5549B496"
+            uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Result.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "init(scale:keyboard:fromProcess:amplitudeFilter:userMessage:score:)"
+            startingLineNumber = "506"
+            endingLineNumber = "506"
+            landmarkName = "createScore(scale:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0 - 3e6e6c0d7d3e6709"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "506"
+                  endingLineNumber = "506"
+                  offsetFromSymbolStart = "1036">
+               </Location>
+               <Location
+                  uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0 - 3e6e6c0d7d3e6728"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "507"
+                  endingLineNumber = "507"
+                  offsetFromSymbolStart = "1008">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "40CEDE7B-71EB-4E42-801C-5A93FD502604"
+            uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "158"
-            endingLineNumber = "158"
-            landmarkName = "applyEvents(offset:scale:keyboard:octaveLenient:score:updateKeyboard:eventSet:)"
-            landmarkType = "9">
+            startingLineNumber = "522"
+            endingLineNumber = "522"
+            landmarkName = "createScore(scale:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA - 3e6e6c0d7d3e5958"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "523"
+                  endingLineNumber = "523"
+                  offsetFromSymbolStart = "2208">
+               </Location>
+               <Location
+                  uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA - 3e6e6c0d7d3e5939"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "522"
+                  endingLineNumber = "522"
+                  offsetFromSymbolStart = "2028">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

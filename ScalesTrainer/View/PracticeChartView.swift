@@ -180,57 +180,55 @@ struct PracticeChartView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                Image(background)
-                    .resizable()
-                    .scaledToFill()
-                    .edgesIgnoringSafeArea(.top)
-                    .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-                
-                let screenWidth = UIScreen.main.bounds.width //geometry.size.width
-                let screenHeight = UIScreen.main.bounds.height
-                let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
-                let cellHeight: CGFloat = screenHeight / 9.0
-                let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
+        ZStack {
+            Image(background)
+                .resizable()
+                .scaledToFill()
+                .edgesIgnoringSafeArea(.top)
+                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             
-                ScrollView(.vertical) {
-                    VStack(spacing: 0) {
-                        // Column Headers
-                        HStack(spacing: 0) {
-                            ForEach(0..<practiceChart.columns, id: \.self) { index in
-                                VStack {
-                                    Text("Day \(index + 1)")
-                                    Text(self.daysOfWeek[index])
-                                }
-                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                //.background(Color.gray.opacity(0.2))
-                                .background(Color.gray)
-                                .foregroundColor(.white).bold()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 3)
-                                )
-                                .padding(cellPadding)
+            let screenWidth = UIScreen.main.bounds.width //geometry.size.width
+            let screenHeight = UIScreen.main.bounds.height
+            let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
+            let cellHeight: CGFloat = screenHeight / 9.0
+            let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
+        
+            ScrollView(.vertical) {
+                VStack(spacing: 0) {
+                    // Column Headers
+                    HStack(spacing: 0) {
+                        ForEach(0..<practiceChart.columns, id: \.self) { index in
+                            VStack {
+                                Text("Day \(index + 1)")
+                                Text(self.daysOfWeek[index])
                             }
+                            .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
+                            //.background(Color.gray.opacity(0.2))
+                            .background(Color.gray)
+                            .foregroundColor(.white).bold()
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.white, lineWidth: 3)
+                            )
+                            .padding(cellPadding)
                         }
-                        
-                        ///Rows
-                        ForEach(0..<practiceChart.rows, id: \.self) { row in
-                            HStack(spacing: 0) {
-                                ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(cell: $practiceChart.cells[row][column], cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
-                                        .padding(cellPadding)
-                                }
+                    }
+                    
+                    ///Rows
+                    ForEach(0..<practiceChart.rows, id: \.self) { row in
+                        HStack(spacing: 0) {
+                            ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                CellView(cell: $practiceChart.cells[row][column], cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
+                                    .padding(cellPadding)
                             }
                         }
                     }
                 }
-                .padding(cellPadding)
             }
+            .padding(cellPadding)
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+
     }
 }
 

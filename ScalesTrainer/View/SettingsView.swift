@@ -13,6 +13,8 @@ struct SettingsView: View {
     @State var recordDataMode = Settings.shared.recordDataMode
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
+    @State var scaleNoteValue = 0
+    
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4
     
@@ -55,6 +57,22 @@ struct SettingsView: View {
                     .onChange(of: defaultOctaves) { oldValue, newValue in
                         settings.defaultOctaves = newValue
                     }
+                }
+                
+                ///Score values
+                Spacer()
+                HStack {
+                    Text(LocalizedStringResource("Scale Note Value")).padding(0)
+                    Picker("Select Value", selection: $scaleNoteValue) {
+                        ForEach(0..<2) { number in
+                            let valueStr = number == 0 ? "Crotchet" : "Quaver"
+                            Text("\(valueStr)")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: scaleNoteValue, {
+                        settings.scaleNoteValue = scaleNoteValue
+                    })
                 }
                 
                 ///Lead in
@@ -128,6 +146,7 @@ struct SettingsView: View {
             leadInBarCount = settings.scaleLeadInBarCount
             self.defaultOctaves = settings.defaultOctaves
             self.tapBufferSize = settings.tapBufferSize / 1024
+            self.scaleNoteValue = settings.scaleNoteValue
         }
     }
 }

@@ -87,7 +87,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, num:Int, value:Double = StaffNote.VALUE_QUARTER, staffNum:Int, writtenAccidental:Int?=nil) {
+    public init(timeSlice:TimeSlice, num:Int, value:Double, staffNum:Int, writtenAccidental:Int?=nil) {
         self.midiNumber = num
         super.init(timeSlice:timeSlice, value: value, staffNum: staffNum)
         self.writtenAccidental = writtenAccidental

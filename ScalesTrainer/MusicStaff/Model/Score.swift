@@ -136,28 +136,12 @@ public class Score : ObservableObject {
         self.heightPaddingEnabled = heightPaddingEnabled
     }
     
-//    func clearAllPlayingNotes(besidesMidi:Int) {
-//        for timeslice in getAllTimeSlices() {
-//            let note = timeslice.entries[0] as! Note
-//            if note.midiNumber != besidesMidi {
-//                if note.status == .playedCorrectly {
-//                    DispatchQueue.global(qos: .background).async { //in
-//                        usleep(1000000 * UInt32(0.5))
-//                        note.setStatus(status: .none)
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     public func setScoreNotePlayed(midi: Int, direction: Int) -> TimeSlice? {
         let timeSlices = getAllTimeSlices()
         var nearestDist = Int(Int64.max)
         let startIndex = direction == 0 ? 0 : timeSlices.count-1
         let endIndex = direction == 0 ? timeSlices.count-1 :0
         var noteFound:TimeSlice?
-        //var nearestIndex = Int(Int64.max)
-        //var nearestNote:StaffNote?
 
         for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
             let ts = timeSlices[i]
@@ -182,12 +166,6 @@ public class Score : ObservableObject {
         }
         ///beyond here when reading notifcaions from test data causes a zero count in a timeslice
         return nil
-        ///Show a wrong pitch
-//        let ts = timeSlices[nearestIndex]
-//        guard ts.entries.count > 0 else {
-//            return nil
-//        }
-//        return nil
     }
     
     public func createTimeSlice() -> TimeSlice {

@@ -137,6 +137,10 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
     }
     
+    ///On stop tapping test which scale offset best fits the user's scale recording. This is required so that if a scale is say starting on middle C (60) the user may elect to record it at another octave.
+    ///The set of tap frequences, amplitudes and times is processed against each scale offset. For each event set process the keyboard must be configured to the scale octave range being tested.
+    ///This analysis is 'fuzzy' becuase a piano key tap produces a range of pitches (e.g. octaves) and so its not straightforward to know which scale offset best fits.
+    ///Pick the scale offset with the lowest errors and assume that is the scale the user played. Run the tap events past that scale and keyboard configuration one more time to have the UI updated with the correct result.
     func stopTapping(_ ctx: String) -> TapEventSet {
         ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
         ///Analyse the tapping aginst different scale starts to determine which has the least errors.
@@ -147,17 +151,17 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         
         ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
-        let scaleRootOffsets = [0, 12, -12, 24, -24].reversed()
+        let scaleRootOffsets = [0] // [0, 12, -12, 24, -24].reversed()
         var minErrorResult:Result? = nil
         var bestOffset:Int? = nil
         
-        func applyEvents(offset:Int, scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool, score:Score?, updateKeyboard:Bool, eventSet:[TapEvent]) -> (Result, TapEventSet) {
+        func applyEvents(offset:Int, scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool, score:Score?, updateKeyboard:Bool, recordedTapEvents:[TapEvent]) -> (Result, TapEventSet) {
             ///Apply the tapped events to a given scale start
             self.resetState(scale: scale, octaveLenient: octaveLenient)
             
             let tapEventSet = TapEventSet(amplitudeFilter: scalesModel.amplitudeFilter, description: "scaleStart:\(scale.getMinMax().0) lenient:\(octaveLenient)")
-            for recordedTapEvent in eventSet {
-                let processedtapEvent = processTap(scale: scale, keyboard: keyboard, octaveLenient: octaveLenient, updateKeyboardDisplay: updateKeyboard, amplitude: recordedTapEvent.amplitude, frequency: recordedTapEvent.frequency, timestamp: recordedTapEvent.timestamp)
+            for recordedTapEvent in recordedTapEvents {
+                let processedtapEvent = processTap(scale: scale, keyboard: keyboard, octaveLenient: octaveLenient, updateKeyboardDisplay: updateKeyboard, amplitude: recordedTapEvent.amplitude, frequency: recordedTapEvent.frequency, recordedTimestamp: recordedTapEvent.timestamp)
                 tapEventSet.events.append(processedtapEvent)
             }
             let result = Result(scale: scale, keyboard: keyboard, fromProcess: self.fromProcess,
@@ -174,7 +178,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             let keyboard = PianoKeyboardModel()
             keyboard.configureKeyboardForScale(scale: trialScale)
             let result = applyEvents(offset: rootOffsetMidi, scale: trialScale, keyboard: keyboard, octaveLenient: false, 
-                                     score: nil, updateKeyboard: false, eventSet: self.recordedTapEvents).0
+                                     score: nil, updateKeyboard: false, recordedTapEvents: self.recordedTapEvents).0
             if minErrorResult == nil || minErrorResult!.isBetter(compare: result) {
                 minErrorResult = result
                 bestOffset = rootOffsetMidi
@@ -202,7 +206,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             let keyboard = PianoKeyboardModel.shared
             keyboard.configureKeyboardForScale(scale: bestScale)
             let (result, eventSet) = applyEvents(offset: bestOffset, scale: bestScale, keyboard: keyboard, octaveLenient: true,
-                                                 score: score, updateKeyboard: true, eventSet: self.recordedTapEvents)
+                                                 score: score, updateKeyboard: true, recordedTapEvents: self.recordedTapEvents)
             scalesModel.setResultInternal(result, "stop Tapping")
             if result.noErrors() {
                 score.setNormalizedValues(scale: bestScale)
@@ -218,11 +222,14 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
     }
     
-    ///Set the a keyboard key to the played state based on the frequency input.
+    ///Build an event record that describes how this tap was handled. The record has various states to describe the handling.
+    ///The events show how the decision to mark each keyboard key as played was made.
+    ///For a tap that is considered an actual note played update the keyboard key with the current datetime.
+    ///The keyboard keys timestamp is the state that determines the final result of the scale recording as it is applied to the scale.
+    ///The events become part of the viewable log of the scale recording.
     ///Filter out spurios tap event frequencies.
-    ///Return a tap event that describes how this tap notification was handled. The tap event is used for logging and describes if and how a keyboard key was played.
-    func processTap(scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool,
-                    updateKeyboardDisplay:Bool, amplitude:Float, frequency:Float, timestamp:Date) -> TapEvent {
+    func processTap(scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool, updateKeyboardDisplay:Bool,
+                    amplitude:Float, frequency:Float, recordedTimestamp:Date) -> TapEvent {
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
         self.eventNumber += 1
         //print ("============>>>", self.eventNumber, "Midi", tapMidi, amplitude)
@@ -352,11 +359,11 @@ class ScaleTapHandler : TapHandlerProtocol  {
             let keyboardKey = keyboard.pianoKeyModel[keyboardIndex]
             if unmatchedCount == nil {
                 if self.ascending || atTop {
-                    keyboardKey.keyWasPlayedState.tappedTimeAscending = Date()
+                    keyboardKey.keyWasPlayedState.tappedTimeAscending = recordedTimestamp //Date()
                     keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(amplitude)
                 }
                 if !self.ascending || atTop  {
-                    keyboardKey.keyWasPlayedState.tappedTimeDescending = Date()
+                    keyboardKey.keyWasPlayedState.tappedTimeDescending = recordedTimestamp
                     keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(amplitude)
                 }
                 if updateKeyboardDisplay {
@@ -374,7 +381,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                              midi: midi, tapMidi: tapMidi)
         
         ///Only require timestamp on scale matched taps becuase they are used to calculate tempo (but only on correct notes)
-        event.timestamp = timestamp
+        event.timestamp = recordedTimestamp
         return event
     }
     

@@ -215,7 +215,7 @@ public class ScalesModel : ObservableObject {
     func setBacking(_ way:Bool) {
         let metronome = MetronomeModel.shared
         if way {
-            metronome.startTimer(notified: Backer(), countAtQuaverRate: false, onDone: {
+            metronome.startTimer(notified: Backer(), onDone: {
             })
         }
         else {
@@ -301,14 +301,14 @@ public class ScalesModel : ObservableObject {
                 DispatchQueue.main.async {
                     self.runningProcess = .playingAlongWithScale
                 }
-                metronome.startTimer(notified: HearScalePlayer(), countAtQuaverRate: false, onDone: {
+                metronome.startTimer(notified: HearScalePlayer(), onDone: {
                 })
             })
         }
         
         if [RunningProcess.hearingRecording].contains(setProcess)  {
             let metronome = MetronomeModel.shared
-            metronome.startTimer(notified: HearUserScale(), countAtQuaverRate: false, onDone: {
+            metronome.startTimer(notified: HearUserScale(), onDone: {
                 self.setRunningProcess(.none)
             })
         }
@@ -359,7 +359,7 @@ public class ScalesModel : ObservableObject {
             ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
             audioManager.blockTaps = true
             self.setProcessInstructions(scaleLeadIn.getInstructions())
-            MetronomeModel.shared.startTimer(notified: scaleLeadIn, countAtQuaverRate: false, onDone: {                self.setProcessInstructions(instruction)
+            MetronomeModel.shared.startTimer(notified: scaleLeadIn, onDone: {                self.setProcessInstructions(instruction)
                 self.audioManager.blockTaps = false
                 leadInDone()
             })
@@ -501,33 +501,29 @@ public class ScalesModel : ObservableObject {
 
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
-        var inBarCount = 0
+        var inBarTotalValue = 0.0
         var lastNote:StaffNote?
+        let noteValue = Settings.shared.getScaleNoteValue()
         
         for i in 0..<scale.scaleNoteState.count {
-            if i % 4 == 0 && i > 0 {
+            if Int(inBarTotalValue) >= 4 {
                 score.addBarLine()
-                inBarCount = 0
+                inBarTotalValue = 0.0
             }
+
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
-            let note = StaffNote(timeSlice: ts, num: noteState.midi, value: StaffNote.VALUE_QUARTER, staffNum: 0)
-            //note.setValue(value: 0.5)
-            note.setValue(value: 1.0)
+            
+            let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteValue, staffNum: 0)
             ts.addNote(n: note)
-            inBarCount += 1
+            inBarTotalValue += noteValue
             lastNote = note
         }
         if let lastNote = lastNote {
-            if inBarCount == 3 {
-                lastNote.setValue(value: 2)
-            }
-            if inBarCount == 1 {
-                lastNote.setValue(value: 4)
-            }
+            let valueInLastBar = inBarTotalValue - lastNote.getValue()
+            lastNote.setValue(value: 4 - valueInLastBar)
         }
-        //score.debugScore11("END CREATE SCORE", withBeam: false, toleranceLevel: 0)
-        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState.count/12) range:\(scale.getMinMax())")
+        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState.count/12) range:\(scale.getMinMax()) noteValue:\(noteValue)")
         return score
     }
     
