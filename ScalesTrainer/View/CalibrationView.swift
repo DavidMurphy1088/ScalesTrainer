@@ -52,78 +52,8 @@ public struct CalibrationView: View {
             if let score = scalesModel.score {
                 ScoreView(score: score, widthPadding: false).padding()
             }
-            HStack {
-                Spacer()
-                Text("Octaves")
-                Picker("", selection: $selectedOctaves) {
-                    ForEach(1..<5) { value in
-                        Text("\(value)").tag(value)
-                    }
-                }
-                .onChange(of: selectedOctaves) { oldValue, newValue in
-                    setScale(octaves: newValue, hand: selectedHand)
-                }
-                
-//                Spacer()
-//                Text("Hand")
-//                Picker("", selection: $selectedHand) {
-//                    ForEach(0..<2) { value in
-//                        Text("\(value)").tag(value)
-//                    }
-//                }
-//                .onChange(of: selectedHand) { oldValue, newValue in
-//                    //setScale(octaves: scalesModel.selectedOctavesIndex+1, hand: selectedHand)
-//                }
 
-                Spacer()
-                Button(playingScale ? "Stop Playing Scale" : "Start Playing Scale") {
-                    playingScale.toggle()
-                    analysingResults = false
-                    if playingScale {
-                        scalesModel.calibrationResults.reset()
-                        scalesModel.setRunningProcess(.calibrating)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.none)
-                        if let result = scalesModel.calibrationResults.calculateAverageAmplitude() {
-                            userMessage = "Calibration as scale average " + String(format:"%.4f", result)
-                            self.amplitudeCalibrationValue = result
-                        }
-                    }
-                }
-                if true {
-                    ///This section tries different amplitude Filters to find the best.
-                    ///For the moment just go with the average calculated after the scale was recorded
-                    if calibrationResults.calibrationEvents != nil {
-                        Spacer()
-                        let results = ScalesModel.shared.calibrationResults
-                        if !analysingResults {
-                            Button("Analyse Best Settings") {
-                                analysingResults = true
-                                results.analyseBestSettings(onNext: {amp in
-                                    self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
-                                }, onDone: {best in
-                                    var msg = "Finished analysing."
-                                    self.analysingResults = false
-                                    if let best = best {
-                                        msg += " Result:"+String(format:"%.4f", best)
-                                        self.amplitudeCalibrationValue = best
-                                    }
-                                    self.userMessage = msg
-                                })
-                            }
-                        }
-                    }
-                    if self.analysingResults {
-                        let results = ScalesModel.shared.calibrationResults
-                        if let status = results.status {
-                            Spacer()
-                            Text("Status: \(status)")
-                        }
-                    }
-                    Spacer()
-                }
-            }
+            //Spacer()
             
             if let results = calibrationResults.calibrationResults {
                 List(results) { result in
@@ -153,8 +83,13 @@ public struct CalibrationView: View {
             }
             
             if !playingScale {
-                Text(userMessage).font(.title3).padding().font(.title3).padding()
-                Text("Current Amplitude Filter:\(String(format: "%.4f", amplitudeCalibrationValue))").font(.title3).padding()
+                HStack {
+                    Spacer()
+                    Text(userMessage).font(.title3).padding().font(.title3).padding()
+                    Spacer()
+                    Text("Current Amplitude Filter:\(String(format: "%.4f", amplitudeCalibrationValue))").font(.title3).padding()
+                    Spacer()
+                }
                 HStack {
                     Text("Adjust:").padding()
                     Slider(
@@ -180,19 +115,75 @@ public struct CalibrationView: View {
                     }
                 }
             }
-            Spacer()
-//            Button(action: {
-//                tabSelectionManager.nextNavigationTab()
-//            }) {
-//                HStack {
-//                    Text("Exit").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                }
-//            }
-            Button(action: {
-                Settings.shared.save(amplitudeFilter: amplitudeCalibrationValue)
-            }) {
-                HStack {
-                    Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
+//            Spacer()
+
+            HStack {
+                if self.analysingResults {
+                    Spacer()
+                    let results = ScalesModel.shared.calibrationResults
+                    if let status = results.status {
+                        Spacer()
+                        Text("Status: \(status)")
+                    }
+                }
+                if !analysingResults {
+                    Spacer()
+                    Button(action: {
+                        playingScale.toggle()
+                        analysingResults = false
+                        if playingScale {
+                            scalesModel.calibrationResults.reset()
+                            scalesModel.setRunningProcess(.calibrating, tapBufferSize: Settings.shared.tapBufferSize)
+                        }
+                        else {
+                            scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+                            if let result = scalesModel.calibrationResults.calculateAverageAmplitude() {
+                                userMessage = "Calibration as scale average " + String(format:"%.4f", result)
+                                self.amplitudeCalibrationValue = result
+                            }
+                        }
+                        
+                    }) {
+                        Text(playingScale ? "Stop Playing Scale" : "Start Playing Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+                    }
+                }
+
+                if true {
+                    ///This section tries different amplitude Filters to find the best.
+                    ///For the moment just go with the average calculated after the scale was recorded
+                    if calibrationResults.calibrationEvents != nil {
+                        Spacer()
+                        let results = ScalesModel.shared.calibrationResults
+                        if !analysingResults {
+                            Button(action: {
+                                analysingResults = true
+                                results.analyseBestSettings(onNext: {amp in
+                                    self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
+                                }, onDone: {best in
+                                    var msg = "Finished analysing."
+                                    self.analysingResults = false
+                                    if let best = best {
+                                        msg += " Result:"+String(format:"%.4f", best)
+                                        self.amplitudeCalibrationValue = best
+                                    }
+                                    self.userMessage = msg
+                                },
+                                                            tapBufferSize: Settings.shared.tapBufferSize)
+                            })
+                            {
+                                Text("Analyse Best Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            }
+                        }
+                    }
+                    Spacer()
+                    Button(action: {
+                        Settings.shared.save(amplitudeFilter: amplitudeCalibrationValue)
+                    }) {
+                        HStack {
+                            Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
+                    }
+                    Spacer()
                 }
             }
 

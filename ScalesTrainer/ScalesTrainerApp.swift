@@ -14,6 +14,7 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
+                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor, octaves: 2, hand: 0))
                     selectedTab = 0
                 }
                 else {
@@ -48,7 +49,8 @@ struct ScalesTrainerApp: App {
     }
     
     static func runningInXcode() -> Bool {
-        return ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
+        let running = ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
+        return running
     }
     
     var body: some Scene {

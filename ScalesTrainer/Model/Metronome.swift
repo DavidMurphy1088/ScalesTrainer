@@ -42,16 +42,16 @@ class MetronomeModel {
         }
     }
     
-    func getTempoString(_ tempo:Int, useQuavers:Bool) -> String {
+    func getTempoString(_ tempo:Int) -> String {
 //        if tempo > 120 {
 //            return "\u{266A}=\(tempo / 2)"
 //        }
-        if useQuavers {
-            return "\u{266A}=\(tempo / 2)"
-        }
-        else {
+//        if useQuavers {
+//            return "\u{266A}=\(tempo / 2)"
+//        }
+//        else {
             return "♩=\(tempo)"
-        }
+//        }
     }
     
     func stop() {
@@ -67,7 +67,7 @@ class MetronomeModel {
 //            audioManager.mixer?.removeInput(player)
 //        }
     }
-    
+        
     public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
         for player in self.audioPlayers {
             audioManager.mixer?.addInput(player)

@@ -39,7 +39,8 @@ class CalibrationResults : ObservableObject {
             self.calibrationEvents = []
             var tapNum = 0
             for event in tapEvents {
-                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none, expectedScaleNoteStates: [], midi: event.midi, tapMidi: event.tapMidi))
+                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none,
+                                                        expectedMidis:[], midi: event.midi, tapMidi: event.tapMidi, consecutiveCount: 1))
                 tapNum += 1
             }
             self.calibrationResults = nil
@@ -54,7 +55,7 @@ class CalibrationResults : ObservableObject {
         }
     }
     
-    func analyseBestSettings(onNext:@escaping(_:Double)->Void, onDone:@escaping(_:Double?)->Void) {
+    func analyseBestSettings(onNext:@escaping(_:Double)->Void, onDone:@escaping(_:Double?)->Void, tapBufferSize:Int) {
         DispatchQueue.global(qos: .background).async {
             self.calibrationResults = []
             var higherThanMinCount = 0
@@ -65,7 +66,7 @@ class CalibrationResults : ObservableObject {
             while true {
                 let ampFilter = Double(index) * 0.005
                 onNext(ampFilter)
-                scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: ampFilter)
+                scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: ampFilter, tapBufferSize: tapBufferSize)
                 if let result = scalesModel.resultInternal {
                     let totalErrors = result.getTotalErrors()
                     self.appendResult(num: index, result: result, amplFilter: ampFilter)
@@ -127,7 +128,7 @@ class CalibrationResults : ObservableObject {
     func run(amplitudeFilter: Double) {
         let scalesModel = ScalesModel.shared
         ///Show the result visually
-        scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: amplitudeFilter)
+        scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: amplitudeFilter, tapBufferSize: Settings.shared.tapBufferSize)
     }
     
     func calculateAverageAmplitude() -> Double? {

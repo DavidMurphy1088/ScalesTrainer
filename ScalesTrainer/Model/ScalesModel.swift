@@ -79,12 +79,6 @@ public class ScalesModel : ObservableObject {
     
     let calibrationResults = CalibrationResults()
     
-//    let scaleRootValues = ["C", "G", "D", "A", "E", "B", "", "F", "B♭", "E♭", "A♭", "D♭"]
-//    var selectedScaleRootIndex = 0
-
-//    var scaleTypeNames:[String] //= ["Major", "Minor", "Harmonic Minor", "Melodic Minor", "Major Arpeggio", "Minor Arpeggio", "Dominant Seventh Arpeggio", "Major Arpeggio""Chromatic"]
-//    var selectedScaleTypeNameIndex = 0
-    
     var scaleLeadInCounts:[String] = ["None", "One Bar", "Two Bars", "Four Bars"]
     
     var directionTypes = ["⬆", "⬇"]
@@ -95,10 +89,6 @@ public class ScalesModel : ObservableObject {
     var tempoSettings = ["♩=40", "♩=50", "♩=60", "♩=70", "♩=80", "♩=90", "♩=100", "♩=110", "♩=120", "♩=130", "♩=140", "♩=150", "♩=160"]
     var selectedTempoIndex = 5 //60=2
         
-    ///More than two cannot fit comforatably on screen. Keys are too narrow and score has too many ledger lines
-    //let octaveNumberValues = [1,2,3,4]
-    //var selectedOctavesIndex = ScalesTrainerApp.runningInXcode() ? 1 : 1
-    
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
@@ -110,10 +100,12 @@ public class ScalesModel : ObservableObject {
     
     private(set) var tapHandlerEventSet:TapEventSet? = nil
     @Published var tapHandlerEventSetPublished = false
-    func setTapHandlerEventSet(_ value:TapEventSet?) {
+    func setTapHandlerEventSet(_ value:TapEventSet?, publish:Bool) {
         self.tapHandlerEventSet = value
-        DispatchQueue.main.async {
-            self.tapHandlerEventSetPublished = value != nil
+        if publish {
+            DispatchQueue.main.async {
+                self.tapHandlerEventSetPublished = value != nil
+            }
         }
     }
 
@@ -235,7 +227,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
+    func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil, tapBufferSize:Int) {
         let coinBank = CoinBank.shared
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         DispatchQueue.main.async {
@@ -266,8 +258,8 @@ public class ScalesModel : ObservableObject {
         if [.followingScale, .practicing, .calibrating].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
-            let tapHandler = PracticeTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, 
-                                                hilightPlayingNotes: true, logTaps: true, filterStartOfTapping: false)
+            let tapHandler = PracticeTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: true,
+                                                logTaps: true, filterStartOfTapping: false, bufferSize: tapBufferSize)
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -286,7 +278,7 @@ public class ScalesModel : ObservableObject {
             self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: false)
             if setProcess == .followingScale {
                 self.followScaleProcess(onDone: {cancelled in
-                    self.setRunningProcess(.none)
+                    self.setRunningProcess(.none, tapBufferSize: tapBufferSize)
                 })
             }
         }
@@ -309,7 +301,7 @@ public class ScalesModel : ObservableObject {
         if [RunningProcess.hearingRecording].contains(setProcess)  {
             let metronome = MetronomeModel.shared
             metronome.startTimer(notified: HearUserScale(), onDone: {
-                self.setRunningProcess(.none)
+                self.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
             })
         }
 
@@ -322,10 +314,10 @@ public class ScalesModel : ObservableObject {
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
             self.setUserMessage(nil)
-            self.setTapHandlerEventSet(nil)
+            self.setTapHandlerEventSet(nil, publish: true)
             keyboard.redraw()
             let tapAmplitudeFilter:Double = amplitudeFilter == nil ? ScalesModel.shared.amplitudeFilter : amplitudeFilter!
-            let tapHandler = ScaleTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData, filterStartOfTapping: Settings.shared.scaleLeadInBarCount == 0)
+            let tapHandler = ScaleTapHandler(fromProcess: setProcess, amplitudeFilter: tapAmplitudeFilter, hilightPlayingNotes: false, logTaps: setProcess != .recordScaleWithTapData, filterStartOfTapping: Settings.shared.scaleLeadInBarCount == 0, bufferSize: tapBufferSize)
             if setProcess == .recordScaleWithFileData {
                 let tapEvents = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandler: tapHandler)

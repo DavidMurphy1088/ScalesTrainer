@@ -56,9 +56,10 @@ class Result : Equatable {
         return str
     }
     
-    func getErrorString() -> String {
+    func getResultsString() -> String {
         var str = "Result Errors:\(self.getTotalErrors()) WrongKeys:[\(self.playedAndWrongCountAsc),\(self.playedAndWrongCountDesc)]"
         str += ", MissingInScale:[\(self.missedFromScaleCountAsc),\(missedFromScaleCountDesc)]"
+        str += ", Correct:[\(self.correctNotes)]"
         return str
     }
     

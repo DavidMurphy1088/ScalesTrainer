@@ -29,7 +29,7 @@ struct ScalesView: View {
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
-    @State private var tempoIndex = 5 ///60 BPM
+    @State private var tempoIndex = Settings.shared.scaleNoteValue == 0 ? 5 : 2
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
@@ -155,7 +155,7 @@ struct ScalesView: View {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
                     }) {
                         Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -165,7 +165,7 @@ struct ScalesView: View {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
                     }) {
                         Text("Stop Practicing").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -174,7 +174,7 @@ struct ScalesView: View {
             if scalesModel.runningProcess == .playingAlongWithScale {
                 HStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
                     }) {
                         Text("Stop Playing Along").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -186,7 +186,7 @@ struct ScalesView: View {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
                     ProcessUnderwayView()
                     Button(action: {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
                     }) {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -200,7 +200,7 @@ struct ScalesView: View {
             
             if scalesModel.runningProcess == .hearingRecording {
                 Button(action: {
-                    scalesModel.setRunningProcess(.none)
+                    scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
                 }) {
                     Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
@@ -225,7 +225,7 @@ struct ScalesView: View {
                 }
                 Text("")
                 Button("Follow\nThe\nScale") {
-                    scalesModel.setRunningProcess(.followingScale)
+                    scalesModel.setRunningProcess(.followingScale, tapBufferSize: Settings.shared.tapBufferSize)
                     scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
                 
@@ -248,10 +248,10 @@ struct ScalesView: View {
                 Text("")
                 Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
                     if scalesModel.runningProcess == .practicing {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
                     }
                     else {
-                        scalesModel.setRunningProcess(.practicing)
+                        scalesModel.setRunningProcess(.practicing, tapBufferSize: Settings.shared.tapBufferSize)
                         scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                     }
                 }
@@ -275,7 +275,7 @@ struct ScalesView: View {
                 }
                 Text("")
                 Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
-                    scalesModel.setRunningProcess(.playingAlongWithScale)
+                    scalesModel.setRunningProcess(.playingAlongWithScale, tapBufferSize: Settings.shared.tapBufferSize)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
             }
@@ -297,10 +297,10 @@ struct ScalesView: View {
                 Text("")
                 Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
                     if scalesModel.runningProcess == .recordingScale {
-                        scalesModel.setRunningProcess(.none)
+                        scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
                     }
                     else {
-                        scalesModel.setRunningProcess(.recordingScale)
+                        scalesModel.setRunningProcess(.recordingScale, tapBufferSize: Settings.shared.tapBufferSize)
                     }
                 }
             }
@@ -321,7 +321,7 @@ struct ScalesView: View {
                     }
                     Text("")
                     Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
-                        scalesModel.setRunningProcess(.hearingRecording)
+                        scalesModel.setRunningProcess(.hearingRecording, tapBufferSize: Settings.shared.tapBufferSize)
                     }
                     
                 }
@@ -365,7 +365,7 @@ struct ScalesView: View {
         HStack {
             Spacer()
             Button("READ_TEST_DATA") {
-                scalesModel.setRunningProcess(.recordScaleWithFileData)
+                scalesModel.setRunningProcess(.recordScaleWithFileData, tapBufferSize: Settings.shared.tapBufferSize)
             }.padding()
             if scalesModel.tapHandlerEventSetPublished  {
                 Spacer()
@@ -538,7 +538,7 @@ struct ScalesView: View {
             //self.numberOfOctaves = Settings.shared.defaultOctaves
             self.directionIndex = 0
             if let process = initialRunProcess {
-                scalesModel.setRunningProcess(process)
+                scalesModel.setRunningProcess(process, tapBufferSize: Settings.shared.tapBufferSize)
             }
         }
         

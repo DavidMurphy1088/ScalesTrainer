@@ -372,19 +372,19 @@ public class Scale {
     }
     
     ///Return the next expected note in a scale playing
-    func getNextExpectedNotes(count:Int) -> [ScaleNoteState] {
-        var result:[ScaleNoteState] = []
-        for i in 0..<self.scaleNoteState.count {
-            if self.scaleNoteState[i].matchedTime == nil &&
-                self.scaleNoteState[i].unmatchedTime == nil {
-                result.append(scaleNoteState[i])
-                if result.count >= count {
-                    break
-                }
-            }
-        }
-        return result
-    }
+//    func getNextExpectedNotes(count:Int) -> [ScaleNoteState] {
+//        var result:[ScaleNoteState] = []
+//        for i in 0..<self.scaleNoteState.count {
+//            if self.scaleNoteState[i].matchedTime == nil &&
+//                self.scaleNoteState[i].unmatchedTime == nil {
+//                result.append(scaleNoteState[i])
+//                if result.count >= count {
+//                    break
+//                }
+//            }
+//        }
+//        return result
+//    }
     
     func getStateForMidi(midi:Int, direction:Int) -> ScaleNoteState? {
         let start = direction == 0 ? 0 : self.scaleNoteState.count / 2
@@ -439,6 +439,14 @@ public class Scale {
     func getMinMax() -> (Int, Int) {
         let mid = self.scaleNoteState.count / 2
         return (self.scaleNoteState[0].midi, self.scaleNoteState[mid].midi)
+    }
+    
+    func getMidisInScale() -> [Int] {
+        var notes:[Int] = []
+        for note in self.scaleNoteState {
+            notes.append(note.midi)
+        }
+        return notes
     }
     
     func stringIndexToInt(index:Int, fingers:String) -> Int {

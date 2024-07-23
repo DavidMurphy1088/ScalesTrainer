@@ -4,12 +4,10 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
-//import Speech
 
 class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
-    //let tapBufferSize = Setti
     var installedTap: BaseTap?
     var midiSampler:MIDISampler?
     var recorder: NodeRecorder?
@@ -264,7 +262,7 @@ class AudioManager {
             tap.stop()
         }
         if let eventSet = self.tapHandler?.stopTapping("AudioMgr.stopRecording") {
-            ScalesModel.shared.setTapHandlerEventSet(eventSet)
+            ScalesModel.shared.setTapHandlerEventSet(eventSet, publish: true)
         }
         if let recorder = recorder {
             recorder.stop()
@@ -333,10 +331,17 @@ class AudioManager {
                 if ctr == 0 {
                     ctr += 1
                     let fields = line.split(separator: " ")
-                    let ampFilter = Double(fields[1])
-                    //let reqStartAmpl = Double(fields[2])
-                    if let ampFilter = ampFilter {
-                        scalesModel.setAmplitudeFilter(ampFilter)
+                    if fields.count > 1 {
+                        let ampFilter = Double(fields[1])
+                        if let ampFilter = ampFilter {
+                            scalesModel.setAmplitudeFilter(ampFilter)
+                        }
+                    }
+                    if fields.count > 2 {
+                        let tapBufferSize = Int(fields[2])
+                        if let tapBufferSize = tapBufferSize {
+                            Settings.shared.tapBufferSize = tapBufferSize
+                        }
                     }
                     continue
                 }
@@ -348,7 +353,8 @@ class AudioManager {
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none, expectedScaleNoteStates: [], midi: 0, tapMidi: 0))
+                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none,
+                                                  expectedMidis: [], midi: 0, tapMidi: 0, consecutiveCount: 1))
                         tapNum += 1
                     }
                 }
@@ -400,9 +406,10 @@ class AudioManager {
             let a:AUValue = tapEvent.amplitude
             tapHandler.tapUpdate([f, f], [a, a])
         }
-        ScalesModel.shared.setTapHandlerEventSet(tapHandler.stopTapping("AudioMgr.playbackEvents"))
+        let events = tapHandler.stopTapping("AudioMgr.playbackEvents")
+        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
         Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
-        scalesModel.setRunningProcess(.none)
+        scalesModel.setRunningProcess(.none, tapBufferSize: tapHandler.tapBufferSize)
     }
     
     func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {

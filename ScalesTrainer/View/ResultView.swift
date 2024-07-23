@@ -37,8 +37,7 @@ struct ResultView: View {
         if getAllCorrect() {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
                 let metronome = MetronomeModel.shared
-                let useQuaverTempo = tempo >= 120
-                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo, useQuavers: useQuaverTempo)) "
+                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
                 var appTempoString = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
                 if appTempoString.count >= 2 {
                     ///Remove to noteType = prefix in tempo setting
@@ -46,7 +45,7 @@ struct ResultView: View {
                     appTempoString = String(appTempoString[index...])
                     let appTempo = Int(appTempoString)
                     if let appTempo = appTempo {
-                        status += "and the metronome setting was \(metronome.getTempoString(appTempo, useQuavers: useQuaverTempo))."
+                        status += "and the metronome setting was \(metronome.getTempoString(appTempo))."
                     }
                 }
             }
@@ -128,7 +127,7 @@ struct TapDataView: View {
         if event.status == .keyPressed {
             color = event.ascending ? .purple : .green
         }
-        if event.status == .discardedSingleton {
+        if event.status == .waitForMore {
             color = .cyan
         }
         return color
@@ -140,14 +139,28 @@ struct TapDataView: View {
 
             if let tapEventSet = scalesModel.tapHandlerEventSet {
                 Text("AmplFilter: \(String(format: "%.4f", tapEventSet.amplitudeFilter)) \(tapEventSet.description)").foregroundColor(Color .blue).font(.title3)
-
+//
+//                ScrollView {
+//                    ForEach(tapEventSet.events, id: \.self) { event in
+//                        if getColor(event) == .black {
+//                            Text(event.tapData()).foregroundColor(getColor(event))
+//                        }
+//                        else {
+//                            Text(event.tapData()).foregroundColor(getColor(event)).bold()
+//                        }
+//                    }
+//                }
                 ScrollView {
                     ForEach(tapEventSet.events, id: \.self) { event in
                         if getColor(event) == .black {
-                            Text(event.tapData()).foregroundColor(getColor(event))
-                        }
-                        else {
-                            Text(event.tapData()).foregroundColor(getColor(event)).bold()
+                            Text(event.tapData())
+                                .foregroundColor(getColor(event))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            Text(event.tapData())
+                                .foregroundColor(getColor(event))
+                                .bold()
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                 }

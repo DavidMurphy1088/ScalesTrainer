@@ -7,47 +7,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0"
+            uuid = "340825A4-A4DD-46FC-997D-59799A7B3CBC"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "506"
-            endingLineNumber = "506"
-            landmarkName = "createScore(scale:)"
+            startingLineNumber = "270"
+            endingLineNumber = "270"
+            landmarkName = "stopTapping(_:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0 - 3e6e6c0d7d3e6709"
+                  uuid = "340825A4-A4DD-46FC-997D-59799A7B3CBC - 186a299dcdc9a99d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTapping(Swift.String) -&gt; ScalesStar.TapEventSet"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "506"
-                  endingLineNumber = "506"
-                  offsetFromSymbolStart = "1036">
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "3960">
                </Location>
                <Location
-                  uuid = "2A183855-AC7D-4C4A-A901-66283782B9E0 - 3e6e6c0d7d3e6728"
+                  uuid = "340825A4-A4DD-46FC-997D-59799A7B3CBC - 186a299dcdc9a99d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTapping(Swift.String) -&gt; ScalesStar.TapEventSet"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "507"
-                  endingLineNumber = "507"
-                  offsetFromSymbolStart = "1008">
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "3948">
+               </Location>
+               <Location
+                  uuid = "340825A4-A4DD-46FC-997D-59799A7B3CBC - 186a299dcdc9a99d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTapping(Swift.String) -&gt; ScalesStar.TapEventSet"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "234"
+                  endingLineNumber = "234"
+                  offsetFromSymbolStart = "3916">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -55,49 +70,145 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA"
+            uuid = "E0187FED-AB57-49F5-9E19-E55AEA7EC58D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "522"
-            endingLineNumber = "522"
-            landmarkName = "createScore(scale:)"
+            startingLineNumber = "457"
+            endingLineNumber = "457"
+            landmarkName = "processTap(ctx:scale:keyboard:eventToProcess:discardSingletons:filterStart:octaveLenient:updateKeyboardDisplay:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "96666318-6953-4762-A2F1-DC300FBDC042"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "396"
+            endingLineNumber = "396"
+            landmarkName = "processTap(ctx:scale:keyboard:eventToProcess:discardSingletons:filterStart:octaveLenient:updateKeyboardDisplay:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA - 3e6e6c0d7d3e5958"
+                  uuid = "96666318-6953-4762-A2F1-DC300FBDC042 - 60415b092524d972"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  symbolName = "ScalesStar.ScaleTapHandler.processTap(ctx: Swift.String, scale: ScalesStar.Scale, keyboard: ScalesStar.PianoKeyboardModel, discardSingletons: Swift.Bool, octaveLenient: Swift.Bool, updateKeyboardDisplay: Swift.Bool, amplitude: Swift.Float, frequency: Swift.Float, recordedTimestamp: Foundation.Date) -&gt; ScalesStar.TapEvent"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "523"
-                  endingLineNumber = "523"
-                  offsetFromSymbolStart = "2208">
+                  startingLineNumber = "352"
+                  endingLineNumber = "352"
+                  offsetFromSymbolStart = "2864">
                </Location>
                <Location
-                  uuid = "F535E7E5-3C69-4CB8-B4BF-A175E24FDDEA - 3e6e6c0d7d3e5939"
+                  uuid = "96666318-6953-4762-A2F1-DC300FBDC042 - 60415b092524d972"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale) -&gt; ScalesStar.Score"
+                  symbolName = "ScalesStar.ScaleTapHandler.processTap(ctx: Swift.String, scale: ScalesStar.Scale, keyboard: ScalesStar.PianoKeyboardModel, discardSingletons: Swift.Bool, octaveLenient: Swift.Bool, updateKeyboardDisplay: Swift.Bool, amplitude: Swift.Float, frequency: Swift.Float, recordedTimestamp: Foundation.Date) -&gt; ScalesStar.TapEvent"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "522"
-                  endingLineNumber = "522"
-                  offsetFromSymbolStart = "2028">
+                  startingLineNumber = "352"
+                  endingLineNumber = "352"
+                  offsetFromSymbolStart = "2984">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75562727-CAC0-4A20-BA8A-4DF39786DF45"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "398"
+            endingLineNumber = "398"
+            landmarkName = "processTap(ctx:scale:keyboard:eventToProcess:discardSingletons:filterStart:octaveLenient:updateKeyboardDisplay:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7C87F1E3-E295-4BF1-8687-0D259F912E04"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "tapUpdate(_:_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5C88933D-B4A3-41DA-B475-8E34797FA4C8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
+            landmarkName = "applyEvents(ctx:recordedTapEvents:offset:scale:keyboard:reducing:discardSingletons:filterStart:octaveLenient:score:updateKeyboard:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C036AF3A-AD8D-42D7-AEC9-E701239466E8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "applyEvents(ctx:recordedTapEvents:offset:scale:keyboard:reducing:discardSingletons:filterStart:octaveLenient:score:updateKeyboard:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8D8E5B75-C70A-411F-9992-784BBC2428B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "processTap(ctx:scale:keyboard:eventToProcess:discardSingletons:filterStart:octaveLenient:updateKeyboardDisplay:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

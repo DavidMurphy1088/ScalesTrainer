@@ -74,6 +74,9 @@ public struct ClassicStyle {
                 guard key.isNatural else {
                     continue
                 }
+                if index >= viewModel.pianoKeyModel.count {
+                    continue
+                }
                 let keyModel = viewModel.pianoKeyModel[index]
 
                 let rect = CGRect(
@@ -186,6 +189,9 @@ public struct ClassicStyle {
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 if key.isNatural {
                     xpos += naturalXIncr
+                    continue
+                }
+                if index >= viewModel.pianoKeyModel.count {
                     continue
                 }
                 let keyModel = viewModel.pianoKeyModel[index]

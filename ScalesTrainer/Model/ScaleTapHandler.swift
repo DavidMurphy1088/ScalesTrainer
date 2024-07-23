@@ -22,11 +22,11 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var lastMatchedMidi:Int? = nil
     var lastTappedMidi:Int? = nil
     var lastTappedMidiCount = 0
-
+    
     var scaleStartAmplitudes:[Float] = []
     var scalePotentialStartAmplitudes:[Float] = []
     var allowableOctaveOffsets:[Int] = []
-
+    
     var unmatchedCount:Int? = nil
     var maxScaleMidi = 0
     var minScaleMidi = 0
@@ -39,12 +39,17 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var noteAmplitudeHeardCount = 0
     var startTappingTime:Date? = nil
     var ascending = true
+    var atEnd = false
+    var tapBufferSize:Int
+    var lastMatchedScaleIndex:Int? = nil
     
     ///When on require a large increase in amplitude to start the scale matching (avoids false starts from noise before tapping)
     ///But settable since tappiong after a lead in has minimal taps at start to measure the increase.
     var filterStartOfTapping:Bool
+    var scaleMidis:[Int]
     
-    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool) {
+    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool,
+                  filterStartOfTapping:Bool, bufferSize:Int) {
         self.recordedTapEvents = []
         self.inputScale = scalesModel.scale
         self.amplitudeFilter = amplitudeFilter
@@ -53,6 +58,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
         self.fromProcess = fromProcess
         self.startTappingTime = nil
         self.filterStartOfTapping = filterStartOfTapping
+        self.tapBufferSize = bufferSize
+        self.scaleMidis = self.inputScale.getMidisInScale()
     }
     
     func resetState(scale:Scale, octaveLenient:Bool) {
@@ -76,6 +83,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
         self.lastTappedMidiCount = 0
         self.eventNumber = 0
         self.ascending = true
+        self.atEnd = false
+        self.lastMatchedScaleIndex = nil
         ///Warning⚠️ don't update keyboard published state here.
         ///Tap processing has now been improved to be keyboard stateless
         //keyboard.configureKeyboardSize(scale: scale)
@@ -95,10 +104,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
         let event = TapEvent(tapNum: eventNumber, frequency: frequency, amplitude: amplitude, ascending: true, status: .none,
-                             expectedScaleNoteStates: nil, midi: tapMidi, tapMidi: 0)
+                             expectedMidis: [], midi: 0, tapMidi: tapMidi, consecutiveCount: 1)
         self.recordedTapEvents.append(event)
         self.eventNumber += 1
-        
         ///Try to figure out when the recording should stop without the user stopping it with a button push
         ///Wait for at least a few likely actual taps with enough amplitude
         if self.startTappingTime == nil {
@@ -116,7 +124,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         if amplitude > 0.02 {
             self.noteAmplitudeHeardCount += 1
         }
-        
+
         if let startTime = self.startTappingTime {
             let seconds = Date().timeIntervalSince(startTime)
             if seconds > 4 {
@@ -125,7 +133,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
                         if amplitude < startingAmplitude {
                             endTappingLowAmplitudeCount += 1
                             if endTappingLowAmplitudeCount > 10 {
-                                scalesModel.setRunningProcess(.none)
+                                scalesModel.setRunningProcess(.none, tapBufferSize: self.tapBufferSize)
                             }
                         }
                         else {
@@ -145,23 +153,58 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
         ///Analyse the tapping aginst different scale starts to determine which has the least errors.
         ///Update the app state after tapping based on the selected scale start.
+        
+        class Config {
+            var scaleOffset:Int
+            var discardSingletons:Bool
+            var reducedEventSetFactor:Int
+            var filterStarts:Bool
+            
+            init(scaleOffset:Int, discardSingletons:Bool, reducedEventSetFactor:Int, filterStarts:Bool) {
+                self.scaleOffset = scaleOffset
+                self.discardSingletons = discardSingletons
+                self.reducedEventSetFactor = reducedEventSetFactor
+                self.filterStarts = filterStarts
+            }
+        }
+        
         if self.recordedTapEvents.isEmpty {
             let empty = TapEventSet(amplitudeFilter: 0, description: "")
             return empty
         }
         
+//        print("======= TAPS")
+//        for event in self.recordedTapEvents {
+//            print(event.tapNum, Util.frequencyToMIDI(frequency: event.frequency),   "   AMpl:", event.amplitude)
+//        }
+//        print("======= END TAPS")
+
         ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
-        let scaleRootOffsets = [0] // [0, 12, -12, 24, -24].reversed()
+        let scaleRootOffsets = [0] //[0, 12, -12, 24, -24].reversed()
         var minErrorResult:Result? = nil
-        var bestOffset:Int? = nil
-        
-        func applyEvents(offset:Int, scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool, score:Score?, updateKeyboard:Bool, recordedTapEvents:[TapEvent]) -> (Result, TapEventSet) {
+        var bestConfiguration:Config? = nil
+                
+        func applyEvents(ctx:String, recordedTapEvents:[TapEvent],
+                         offset:Int, scale:Scale, keyboard:PianoKeyboardModel,
+                         reducing:Int,
+                         discardSingletons:Bool, filterStart:Bool,
+                         octaveLenient:Bool, score:Score?, updateKeyboard:Bool
+                         ) -> (Result, TapEventSet) {
             ///Apply the tapped events to a given scale start
             self.resetState(scale: scale, octaveLenient: octaveLenient)
-            
-            let tapEventSet = TapEventSet(amplitudeFilter: scalesModel.amplitudeFilter, description: "scaleStart:\(scale.getMinMax().0) lenient:\(octaveLenient)")
-            for recordedTapEvent in recordedTapEvents {
-                let processedtapEvent = processTap(scale: scale, keyboard: keyboard, octaveLenient: octaveLenient, updateKeyboardDisplay: updateKeyboard, amplitude: recordedTapEvent.amplitude, frequency: recordedTapEvent.frequency, recordedTimestamp: recordedTapEvent.timestamp)
+            let tapEventSet = TapEventSet(amplitudeFilter: scalesModel.amplitudeFilter,
+                                          description: "scaleStart:\(scale.getMinMax().0) lenient:\(octaveLenient) bufSize:\(self.tapBufferSize)")
+            let tapEvents:[TapEvent]
+            if reducing > 0 {
+                tapEvents = reduceEvents(events: recordedTapEvents, requiredConsecutiveCount: reducing)
+            }
+            else {
+                tapEvents = recordedTapEvents
+            }
+            for event in tapEvents {
+                let processedtapEvent = processTap(ctx: ctx, scale: scale, keyboard: keyboard, eventToProcess: event,
+                                                   discardSingletons: discardSingletons, filterStart: filterStart, octaveLenient: octaveLenient,
+                                                   updateKeyboardDisplay: updateKeyboard)
                 tapEventSet.events.append(processedtapEvent)
             }
             let result = Result(scale: scale, keyboard: keyboard, fromProcess: self.fromProcess,
@@ -173,40 +216,57 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ///Find the best fit scale
         for rootOffsetMidi in scaleRootOffsets {
             ///Set the trial scale for the scale offset
-            let trialScale = self.inputScale.makeNewScale(offset: rootOffsetMidi)
-            //Logger.shared.log(self, "Assessing recording for scale at offset:\(rootOffsetMidi)")
-            let keyboard = PianoKeyboardModel()
-            keyboard.configureKeyboardForScale(scale: trialScale)
-            let result = applyEvents(offset: rootOffsetMidi, scale: trialScale, keyboard: keyboard, octaveLenient: false, 
-                                     score: nil, updateKeyboard: false, recordedTapEvents: self.recordedTapEvents).0
-            if minErrorResult == nil || minErrorResult!.isBetter(compare: result) {
-                minErrorResult = result
-                bestOffset = rootOffsetMidi
+            ///for discardSingletons in [false, true] {
+            //for reducing in [4,3,2,1,0] {
+            for reducing in [3] {
+                
+                let trialScale = self.inputScale.makeNewScale(offset: rootOffsetMidi)
+                let keyboard = PianoKeyboardModel()
+                keyboard.configureKeyboardForScale(scale: trialScale)
+                let discardSingletons = reducing == 0
+                let filterStarts = reducing == 0
+                let result = applyEvents(ctx: "TryOffset", recordedTapEvents: 
+                                         self.recordedTapEvents, offset: rootOffsetMidi, scale: trialScale, keyboard: keyboard,
+                                         reducing: reducing,
+                                         discardSingletons: discardSingletons,
+                                         filterStart: filterStarts,
+                                         octaveLenient: false, score: nil, updateKeyboard: false).0
+                if minErrorResult == nil || minErrorResult!.isBetter(compare: result) {
+                    minErrorResult = result
+                    bestConfiguration = Config(scaleOffset: rootOffsetMidi, discardSingletons: discardSingletons, reducedEventSetFactor: reducing, filterStarts: filterStarts)
+                }
+                Logger.shared.log(self, "Assessed at offset:\(rootOffsetMidi) reduced:\(reducing) discardSingles:\(discardSingletons) errors:\(result.getResultsString())")
             }
-            Logger.shared.log(self, "Assessed at offset:\(rootOffsetMidi) errors:\(result.getErrorString())")
         }
         
         ///Replay the best fit scale to set the app's display state
-        if let bestOffset = bestOffset {
+        if let bestConfiguration = bestConfiguration {
             ///If there are too many errors just display the scale at the octaves it was shown as
             let bestScale:Scale
             if minErrorResult == nil || minErrorResult!.getTotalErrors() > 3 {
                 bestScale = inputScale.makeNewScale(offset: 0)
             }
             else {
-                bestScale = inputScale.makeNewScale(offset: bestOffset)
+                bestScale = inputScale.makeNewScale(offset: bestConfiguration.scaleOffset)
             }
             
             ///Score note status is updated during result build, keyboard key status is updated by tap processing
             let score = scalesModel.createScore(scale: bestScale)
-            Logger.shared.log(self, "Applying recording for ** best ** scale at offset \(bestOffset)")
-            scalesModel.setScaleAndScore(scale: bestScale, score: score, ctx: "ScaleTapHandler:bestOffset")
+            self.scalesModel.setScaleAndScore(scale: bestScale, score: score, ctx: "ScaleTapHandler:bestOffset")
             
             ///Ensure keyboard visible key statuses are updated during events apply
             let keyboard = PianoKeyboardModel.shared
             keyboard.configureKeyboardForScale(scale: bestScale)
-            let (result, eventSet) = applyEvents(offset: bestOffset, scale: bestScale, keyboard: keyboard, octaveLenient: true,
-                                                 score: score, updateKeyboard: true, recordedTapEvents: self.recordedTapEvents)
+            //keyboard.debugSize("useBest")
+            let (result, eventSet) = applyEvents(ctx: "useBest", recordedTapEvents: self.recordedTapEvents,
+                                                 offset: bestConfiguration.scaleOffset, scale: bestScale, keyboard: keyboard, 
+                                                 reducing: bestConfiguration.reducedEventSetFactor,
+                                                 discardSingletons: bestConfiguration.discardSingletons,
+                                                 filterStart: bestConfiguration.filterStarts,
+                                                 octaveLenient: true,
+                                                 score: score, updateKeyboard: true)
+            Logger.shared.log(self, "Applied recording for ** best ** scale at offset \(bestConfiguration.scaleOffset) reduced:\(bestConfiguration.reducedEventSetFactor) discardSingletons:\(bestConfiguration.discardSingletons) result:\(result.getResultsString())")
+            //keyboard.debug11("best")
             scalesModel.setResultInternal(result, "stop Tapping")
             if result.noErrors() {
                 score.setNormalizedValues(scale: bestScale)
@@ -228,90 +288,161 @@ class ScaleTapHandler : TapHandlerProtocol  {
     ///The keyboard keys timestamp is the state that determines the final result of the scale recording as it is applied to the scale.
     ///The events become part of the viewable log of the scale recording.
     ///Filter out spurios tap event frequencies.
-    func processTap(scale:Scale, keyboard:PianoKeyboardModel, octaveLenient:Bool, updateKeyboardDisplay:Bool,
-                    amplitude:Float, frequency:Float, recordedTimestamp:Date) -> TapEvent {
-        let tapMidi = Util.frequencyToMIDI(frequency: frequency)
+    func processTap(ctx:String, scale:Scale, keyboard:PianoKeyboardModel, eventToProcess:TapEvent,
+                    discardSingletons:Bool, filterStart:Bool,
+                    octaveLenient:Bool, updateKeyboardDisplay:Bool) -> TapEvent {
+                    //amplitude:Float, frequency:Float, recordedTimestamp:Date) -> TapEvent {
+        //let tapMidi = Util.frequencyToMIDI(frequency: event.frequency)
         self.eventNumber += 1
         //print ("============>>>", self.eventNumber, "Midi", tapMidi, amplitude)
         
         ///Require a large change in amplitude to start the scale
         ///This avoids false starts and scale note matches with noise before playing notes
         ///Compare averages of amplitudes to detect the major change over averaged tap events
-        if self.filterStartOfTapping && matchCount == 0 {
-            scaleStartAmplitudes.append(amplitude)
-            scalePotentialStartAmplitudes.append(amplitude)
-            if scalePotentialStartAmplitudes.count > 4 {
-                scalePotentialStartAmplitudes.removeFirst()
-            }
-            var sum = scaleStartAmplitudes.reduce(0, +)
-            let startAverage = sum / Float(scaleStartAmplitudes.count)
-            sum = scalePotentialStartAmplitudes.reduce(0, +)
-            let potentialAverage = sum / Float(scalePotentialStartAmplitudes.count)
-            let diff = (potentialAverage - startAverage) / startAverage
-            
-            if diff < 2.0 {
-                let event = TapEvent(tapNum: eventNumber,
-                                     frequency: frequency,
-                                     amplitude: amplitude,
-                                     ascending: self.ascending,
-                                     status: .beforeScaleStart,
-                                     expectedScaleNoteStates: nil,
-                                     midi: tapMidi, tapMidi: tapMidi)
-                return event
+        if filterStart {
+            if self.filterStartOfTapping && matchCount == 0 {
+                scaleStartAmplitudes.append(eventToProcess.amplitude)
+                scalePotentialStartAmplitudes.append(eventToProcess.amplitude)
+                if scalePotentialStartAmplitudes.count > 4 {
+                    scalePotentialStartAmplitudes.removeFirst()
+                }
+                var sum = scaleStartAmplitudes.reduce(0, +)
+                let startAverage = sum / Float(scaleStartAmplitudes.count)
+                sum = scalePotentialStartAmplitudes.reduce(0, +)
+                let potentialAverage = sum / Float(scalePotentialStartAmplitudes.count)
+                let diff = (potentialAverage - startAverage) / startAverage
+                
+                if diff < 2.0 {
+                    let event = TapEvent(tapNum: eventNumber,
+                                         frequency: eventToProcess.frequency,
+                                         amplitude: eventToProcess.amplitude,
+                                         ascending: self.ascending,
+                                         status: .beforeScaleStart,
+                                         expectedMidis: [],
+                                         midi: nil,
+                                         tapMidi: eventToProcess.tapMidi,
+                                         consecutiveCount: eventToProcess.consecutiveCount)
+                    return event
+                }
             }
         }
         
-        guard amplitude > AUValue(self.amplitudeFilter) else {
+        //After scale end
+        if self.atEnd {
             let event = TapEvent(tapNum: eventNumber,
-                                 frequency: frequency,
-                                 amplitude: amplitude,
+                                 frequency: eventToProcess.frequency,
+                                 amplitude: eventToProcess.amplitude,
                                  ascending: self.ascending,
-                                  status: .belowAmplitudeFilter,
-                                 expectedScaleNoteStates: nil,
-                                 midi: tapMidi, tapMidi: tapMidi)
+                                 status: .afterScaleEnd,
+                                 expectedMidis: [],
+                                 midi: nil, 
+                                 tapMidi: eventToProcess.tapMidi,
+                                 consecutiveCount: eventToProcess.consecutiveCount)
+            return event
+        }
+        
+        guard eventToProcess.amplitude > AUValue(self.amplitudeFilter) else {
+            let event = TapEvent(tapNum: eventNumber,
+                                 frequency: eventToProcess.frequency,
+                                 amplitude: eventToProcess.amplitude,
+                                 ascending: self.ascending,
+                                 status: .belowAmplitudeFilter,
+                                 expectedMidis: [],
+                                 midi: nil, 
+                                 tapMidi: eventToProcess.tapMidi,
+                                 consecutiveCount: eventToProcess.consecutiveCount)
             return event
         }
         
         ///Ensure the tap is not a singleton, i.e. we need to see > 0 occurrences of it to proceed so we dont take the first
-        if let lastTappedMidi = lastTappedMidi {
-            if tapMidi == lastTappedMidi {
-                self.lastTappedMidiCount += 1
+        
+        if discardSingletons {
+            if let lastTappedMidi = lastTappedMidi {
+                if eventToProcess.tapMidi == lastTappedMidi {
+                    self.lastTappedMidiCount += 1
+                }
+                else {
+                    self.lastTappedMidiCount = 1
+                }
+                self.lastTappedMidi = eventToProcess.tapMidi
+                if self.lastTappedMidiCount == 1 {
+                    let event = TapEvent(tapNum: eventNumber,
+                                         frequency: eventToProcess.frequency,
+                                         amplitude: eventToProcess.amplitude,
+                                         ascending: self.ascending,
+                                         status: .waitForMore,
+                                         expectedMidis: [],
+                                         midi: nil,
+                                         tapMidi: eventToProcess.tapMidi,
+                                         consecutiveCount: 1)
+                    return event
+                }
             }
             else {
+                self.lastTappedMidi = eventToProcess.tapMidi
                 self.lastTappedMidiCount = 1
             }
-            self.lastTappedMidi = tapMidi
-            if self.lastTappedMidiCount == 1 {
-                let event = TapEvent(tapNum: eventNumber,
-                                     frequency: frequency,
-                                     amplitude: amplitude,
-                                     ascending: self.ascending,
-                                     status: .discardedSingleton,
-                                     expectedScaleNoteStates: nil,
-                                     midi: tapMidi, tapMidi: tapMidi)
-                return event
+        }
+        
+        var midi = eventToProcess.tapMidi
+        var bestDiff:Int? = nil
+        
+        ///A note's pitch can arrive as octave harmonics of the expected pitch.
+        ///Determine the actual midi based on the nearest key that to the last one the user played.
+        //let tappedMidiPossibles = [midi-24, midi - 12, midi, midi + 12, midi + 24]
+        let tappedMidiPossibles = [midi - 48, midi - 36, midi-24, midi - 12, midi, midi + 12, midi + 24, midi + 36, midi + 48]
+        
+//        if eventToProcess.tapMidi == 38 && ascending == false {
+//            print("==================================== ", ctx, "tapped:", eventToProcess.tapMidi, midi, "lastMidi:", self.lastMatchedMidi!, "asc", ascending,
+//                  "discardSingletons:", discardSingletons)
+//        }
+        var expectedMidiByLastKeyPlayed:Int
+        if self.lastMatchedMidi == nil {
+            expectedMidiByLastKeyPlayed = self.scaleMidis[0]
+        }
+        else {
+            //let delta = abs(self.lastMatchedMidi! - ) ...block big changes in expectged
+            expectedMidiByLastKeyPlayed = self.lastMatchedMidi!
+            if ascending {
+                expectedMidiByLastKeyPlayed += 2
+            }
+            else {
+                expectedMidiByLastKeyPlayed -= 2
+            }
+        }
+        var expectedMidiByTheScale:Int = 0
+        if let lastMatchedScaleIndex = self.lastMatchedScaleIndex {
+            if lastMatchedScaleIndex < self.scaleMidis.count {
+                expectedMidiByTheScale = self.scaleMidis[lastMatchedScaleIndex]
+            }
+        }
+//        if event.tapMidi == 67 && ascending == false {
+//            print("==================================== ", ctx, "tapped:", event.tapMidi, midi, "asc", ascending, "expect", expectedMidiByLastKeyPlayed, "expectInScale",
+//                  expectedMidiByLastKeyPlayed, "discardSingletons:", discardSingletons)
+//        }
+        if true {
+            for possibleMidi in tappedMidiPossibles {
+                let diff = abs(possibleMidi - expectedMidiByLastKeyPlayed)
+                if bestDiff == nil || diff < bestDiff! {
+                    bestDiff = diff
+                    midi = possibleMidi
+                }
             }
         }
         else {
-            self.lastTappedMidi = tapMidi
-            self.lastTappedMidiCount = 1
-        }
-        
-        var midi = tapMidi
-        var bestDiff:Int? = nil
-
-        ///A note's pitch can arrive as octave harmonics of the expected pitch.
-        ///Determine the actual midi based on the nearest key that to the last one the user played.
-        let tappedMidiPossibles = [midi-24, midi - 12, midi, midi + 12, midi + 24]
-        let expectedMidi:Int = self.lastMatchedMidi == nil ? scale.getMinMax().0 : self.lastMatchedMidi!
-        for possibleMidi in tappedMidiPossibles {
-            let diff = abs(possibleMidi - expectedMidi)
-            if bestDiff == nil || diff < bestDiff! {
-                bestDiff = diff
-                midi = possibleMidi
+            for possibleMidi in tappedMidiPossibles {
+                let diff = abs(possibleMidi - expectedMidiByTheScale)
+                if bestDiff == nil || diff < bestDiff! {
+                    bestDiff = diff
+                    midi = possibleMidi
+                }
             }
         }
-        
+//        
+//        if tapMidi == 65 {
+//            print("============= ", tapMidi, midi, "expect", expectedMidiByLastKeyPlayed, tappedMidiPossibles, "asc", ascending)
+//        }
+
         ///At top of scale. At end of scale?
         self.matchCount += 1
         var atTop = false
@@ -319,18 +450,23 @@ class ScaleTapHandler : TapHandlerProtocol  {
             atTop = true
             self.ascending = false
         }
-        if midi == scale.getMinMax().0 {
+        //if midi == scale.getMinMax().0 {
+        if eventToProcess.tapMidi == scale.getMinMax().0  && midi == scale.getMinMax().0 {
+
             ///End of scale if the midi is the root and the root has already been played
             if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
                 let keyboardKey = keyboard.pianoKeyModel[index]
                 if keyboardKey.keyWasPlayedState.tappedTimeDescending != nil {
+                    self.atEnd = true
                     let event = TapEvent(tapNum: eventNumber,
-                                         frequency: frequency,
-                                         amplitude: amplitude,
+                                         frequency: eventToProcess.frequency,
+                                         amplitude: eventToProcess.amplitude,
                                          ascending: self.ascending,
                                          status: .afterScaleEnd,
-                                         expectedScaleNoteStates: [],
-                                         midi: midi, tapMidi: midi)
+                                         expectedMidis: [expectedMidiByLastKeyPlayed, expectedMidiByTheScale],
+                                         midi: midi, 
+                                         tapMidi: eventToProcess.tapMidi,
+                                         consecutiveCount: eventToProcess.consecutiveCount)
                     return event
                 }
             }
@@ -342,29 +478,36 @@ class ScaleTapHandler : TapHandlerProtocol  {
         ///Same as last note?
         if midi == lastMatchedMidi {
             let event = TapEvent(tapNum: eventNumber,
-                                  frequency: frequency,
-                                  amplitude: amplitude,
+                                 frequency: eventToProcess.frequency,
+                                 amplitude: eventToProcess.amplitude,
                                  ascending: self.ascending,
                                   status: .sameMidiContinued,
-                                  expectedScaleNoteStates: [],
-                                  midi: midi, tapMidi: midi)
+                                 expectedMidis: [expectedMidiByLastKeyPlayed, expectedMidiByTheScale],
+                                  midi: midi, 
+                                 tapMidi: eventToProcess.tapMidi,
+                                 consecutiveCount: eventToProcess.consecutiveCount)
             return event
         }
 
+        ///Update the state to figure out the next expected MIDI
         self.lastMatchedMidi = midi
-    
+        if self.lastMatchedScaleIndex == nil {
+            self.lastMatchedScaleIndex = 0
+        }
+        self.lastMatchedScaleIndex! += 1
+        
         ///Update key tapped state
         
         if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {
             let keyboardKey = keyboard.pianoKeyModel[keyboardIndex]
             if unmatchedCount == nil {
                 if self.ascending || atTop {
-                    keyboardKey.keyWasPlayedState.tappedTimeAscending = recordedTimestamp //Date()
-                    keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(amplitude)
+                    keyboardKey.keyWasPlayedState.tappedTimeAscending = eventToProcess.timestamp //Date()
+                    keyboardKey.keyWasPlayedState.tappedAmplitudeAscending = Double(eventToProcess.amplitude)
                 }
                 if !self.ascending || atTop  {
-                    keyboardKey.keyWasPlayedState.tappedTimeDescending = recordedTimestamp
-                    keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(amplitude)
+                    keyboardKey.keyWasPlayedState.tappedTimeDescending = eventToProcess.timestamp
+                    keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(eventToProcess.amplitude)
                 }
                 if updateKeyboardDisplay {
                     keyboardKey.setKeyPlaying(ascending: ascending ? 0 : 1, hilight: self.hilightPlayingNotes)
@@ -373,18 +516,65 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         
         let event = TapEvent(tapNum: eventNumber,
-                             frequency: frequency,
-                             amplitude: amplitude,
+                             frequency: eventToProcess.frequency,
+                             amplitude: eventToProcess.amplitude,
                              ascending: self.ascending,
                              status: .keyPressed,
-                             expectedScaleNoteStates: [],
-                             midi: midi, tapMidi: tapMidi)
+                             expectedMidis: [expectedMidiByLastKeyPlayed, expectedMidiByTheScale],
+                             midi: midi,
+                             tapMidi: eventToProcess.tapMidi,
+                             consecutiveCount: eventToProcess.consecutiveCount)
         
         ///Only require timestamp on scale matched taps becuase they are used to calculate tempo (but only on correct notes)
-        event.timestamp = recordedTimestamp
+        event.timestamp = eventToProcess.timestamp
         return event
     }
     
+    ///Reduce the set of events by excluding any that dont occur requiredConsecutiveCount times consecutively
+    func reduceEvents(events:[TapEvent], requiredConsecutiveCount:Int) -> [TapEvent] {
+        var filtered:[TapEvent] = []
+        var lastEvent:TapEvent?
+        var count = 0
+        var eventCount = 0
+        var maxCount:Int = 0
+        
+        for event in events {
+            if eventCount == 149 {
+                eventCount = eventCount - 0
+            }
+            if lastEvent == nil {
+                lastEvent = TapEvent(tap: event)
+                eventCount += 1
+                continue
+            }
+            if event.tapMidi == lastEvent!.tapMidi {
+                count += 1
+                eventCount += 1
+                continue
+            }
+            var keepTap = count >= requiredConsecutiveCount
+//                if self.scaleMidis.contains(lastEvent!.tapMidi) {
+//                    keepTap = true
+//                }
+            if keepTap {
+                if count > maxCount {
+                    maxCount = count
+                }
+                lastEvent!.consecutiveCount = count
+                filtered.append(lastEvent!)
+                count = 0
+            }
+            lastEvent = TapEvent(tap: event)
+            count += 1
+            eventCount += 1
+        }
+        if let lastEvent = lastEvent {
+            filtered.append(lastEvent)
+        }
+        Logger.shared.log(self, "Event Reduce eventsIn:\(events.count) eventsOut:\(filtered.count) maxCount:\(maxCount)")
+        return filtered
+    }
+
     func saveTapsToFile(result:Result) {
         let scale = self.inputScale
         let calendar = Calendar.current
@@ -408,7 +598,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         self.savedTapsFileURL = documentDirectoryURL.appendingPathComponent(fileName)
         do {
             if let fileURL = self.savedTapsFileURL {
-                var config = "config:\t\(self.amplitudeFilter)"
+                var config = "config:\t\(self.amplitudeFilter) tapBufferSize:\t\(self.tapBufferSize)"
                 config += "\n"
                 try config.write(to: fileURL, atomically: true, encoding: .utf8)
             }

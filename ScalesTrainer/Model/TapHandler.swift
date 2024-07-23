@@ -12,7 +12,7 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
-    init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool)
+    init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool, bufferSize:Int)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTapping(_ ctx:String) -> TapEventSet
 }
@@ -30,7 +30,7 @@ class PracticeTapHandler : TapHandlerProtocol {
     let logTaps:Bool
     var tapHandlerEventSet:TapEventSet
     
-    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool) {
+    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool, bufferSize:Int) {
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
@@ -95,8 +95,9 @@ class PracticeTapHandler : TapHandlerProtocol {
                                                  amplitude: amplitude,
                                                  ascending: true,
                                                  status: TapEventStatus.none,
-                                                 expectedScaleNoteStates: nil,
-                                                 midi: 0, tapMidi: midi))
+                                                  expectedMidis: [],
+                                                  midi: 0, tapMidi: midi,
+                                                  consecutiveCount: 1))
 //        if false {
 //            if tapNum % 20 == 0 || !aboveFilter {
 //                var msg = ""

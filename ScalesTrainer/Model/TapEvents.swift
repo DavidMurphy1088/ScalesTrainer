@@ -35,7 +35,7 @@ public enum TapEventStatus {
     case afterScaleEnd
     //case keyNotOnKeyboard
     //case outsideScale
-    case discardedSingleton
+    case waitForMore
     
     ///Practice TapHandlet
     //case farFromExpected
@@ -44,44 +44,60 @@ public enum TapEventStatus {
 
 public class TapEvent:Hashable {
     let id = UUID()
-    var timestamp = Date()
+    var timestamp:Date
     let tapNum:Int
     let amplitude:Float
     let frequency:Float
     
-    let midi:Int ///The octave adjusted midi used for matching
+    let midi:Int? ///The octave adjusted midi used for matching
     let status:TapEventStatus
-    let tapMidi:Int ///The origianl taop midi
-    let expectedScaleNoteStates:[ScaleNoteState]?
+    let tapMidi:Int ///The origianl tap midi
+    let expectedMidis:[Int]
     let ascending:Bool
     let infoMsg:String?
+    var consecutiveCount:Int
     
     public init(tapNum:Int, frequency:Float, amplitude:Float, ascending:Bool, status:TapEventStatus,
-                expectedScaleNoteStates:[ScaleNoteState]?, midi:Int, tapMidi:Int) {
+                expectedMidis:[Int], midi:Int?, tapMidi:Int, consecutiveCount:Int) {
+        self.timestamp = Date()
         self.tapNum = tapNum
         self.amplitude = amplitude
-        //self.ascending = ascending
         self.frequency = frequency
         self.status = status
         self.midi = midi
-        self.expectedScaleNoteStates = expectedScaleNoteStates
-        //self.key = key
+        self.expectedMidis = expectedMidis
         self.tapMidi = tapMidi
         self.infoMsg = nil
         self.ascending = ascending
+        self.consecutiveCount = consecutiveCount
+    }
+    
+    public init(tap:TapEvent) {
+        self.timestamp = tap.timestamp
+        self.tapNum = tap.tapNum
+        self.amplitude = tap.amplitude
+        self.frequency = tap.frequency
+        self.status = tap.status
+        self.midi = tap.midi
+        self.expectedMidis = tap.expectedMidis
+        self.tapMidi = tap.tapMidi
+        self.infoMsg = nil
+        self.ascending = tap.ascending
+        self.consecutiveCount = tap.consecutiveCount
     }
     
     public init(infoMsg:String) {
+        self.timestamp = Date()
         self.tapNum = 0
         self.amplitude = 0
         self.ascending = true
         self.frequency = 0
-        self.midi = 0
+        self.midi = nil
         self.status = TapEventStatus.info
-        self.expectedScaleNoteStates = nil
-        //self.key = nil
+        self.expectedMidis = []
         self.tapMidi = 0
         self.infoMsg = infoMsg
+        self.consecutiveCount = 0
     }
     
     public static func == (lhs: TapEvent, rhs: TapEvent) -> Bool {
@@ -96,21 +112,36 @@ public class TapEvent:Hashable {
         if self.status == .info {
             return self.infoMsg ?? "No info"
         }
-        var row = "" //[\(self.tapNum)] "
-        if let expectedScaleNoteStates = expectedScaleNoteStates {
-            if expectedScaleNoteStates.count > 0 {
-                row += "Expect:\(expectedScaleNoteStates[0].midi)"
-            }
+        var row = "  "
+
+        if expectedMidis.count == 0 {
+            row += "Expect:__"
         }
-        row += " Use:\(self.midi)"
-        row += " Tap:\(self.tapMidi)"
+        else {
+            row += "Expect:\(String(expectedMidis[0]))"
+        }
+        let midi = self.midi == nil ? "00" : String(self.midi!)
+        row += "    Midi:\(midi)"
+        row += "    Tap:\(self.tapMidi)"
+        //if let count = self.consecutiveCount {
+        row += "    Count:\(self.consecutiveCount)"
+//        }
+//        else {
+//            row += "  Count _"
+//        }
+        //row += midi == nil ? "  " : "**"
         
-        var status = "\(self.status)"
+        var status = "  \(self.status)"
         status = String(status.prefix(12))
-        row += "\tA:\(self.ascending ? 1:0) \(status)"
+        row += "   A:\(self.ascending ? 1:0)   \(status)"
         //row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
-        let amps = String(format: "%.4f", self.amplitude)
-        row += "  Amp:\(amps)"
+        let amps = String(format: "%.2f", self.amplitude)
+        row += "   Amp:\(amps)"
+        
+//        let minLength = 50
+//        let paddingCount = minLength - row.count
+//        let padding = String(repeating: "_", count: paddingCount)
+//        let paddedString = row + padding
         return row
     }
 }
@@ -135,12 +166,16 @@ public class TapEventSet {
             if event.status == .keyPressed {
                 if Double(event.amplitude) > max {
                     max = Double(event.amplitude)
-                    maxMidi = event.midi
+                    if let midi = event.midi {
+                        maxMidi = midi
+                    }
                 }
                 if event.amplitude > 0 {
                     if Double(event.amplitude) < min {
                         min = Double(event.amplitude)
-                        minMidi = event.midi
+                        if let midi = event.midi {
+                            minMidi = midi
+                        }
                     }
                 }
             }
