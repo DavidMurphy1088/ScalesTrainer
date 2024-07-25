@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>477</string>
+					<string>230</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>476</string>
+					<string>229</string>
 					<key>Timestamp</key>
-					<string>743428141.272329</string>
+					<string>743599585.6204619</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,23 +27,23 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>ScalesTrainer/Model/ScaleTapHandler.swift</string>
+						<string>ScalesTrainer/Model/ScalesModel.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        
+				<string>    func processTapEvents(fromProcess: RunningProcess) {
 </string>
 				<key>leading</key>
-				<string>//        print ("  ============&gt;&gt;&gt; ", self.eventNumber, "Use", midi, "Tapped:", tapMidi, "expected", expectedMidi, "diff:", bestDiff ?? "None",
-//               "atTop", atTop, "ascending", ascending)
+				<string>    }
+    
 </string>
 				<key>trailing</key>
-				<string>        ///Same as last note?
-        if midi == lastMatchedMidi {
-            let event = TapEvent(tapNum: eventNumber,
+				<string>        var bestResult:Result? = nil
+        for tapHandler in self.tapHandlers {
+            let tappedEvents = tapHandler.stopTappingProcess()
 </string>
 			</dict>
 			<key>type</key>

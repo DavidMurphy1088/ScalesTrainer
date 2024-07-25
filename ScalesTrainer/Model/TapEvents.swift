@@ -147,12 +147,12 @@ public class TapEvent:Hashable {
 }
 
 public class TapEventSet {
-    let amplitudeFilter:Double
+    let bufferSize:Int
     let description:String
     var events:[TapEvent] = []
     
-    init(amplitudeFilter:Double, description:String) {
-        self.amplitudeFilter = amplitudeFilter
+    init(bufferSize:Int, description:String) {
+        self.bufferSize = bufferSize
         self.description = description
     }
         

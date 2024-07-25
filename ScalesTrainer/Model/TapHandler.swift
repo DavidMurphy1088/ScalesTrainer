@@ -12,36 +12,40 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
 
 protocol TapHandlerProtocol {
-    init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool, bufferSize:Int)
+    init(bufferSize:Int)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
-    func stopTapping(_ ctx:String) -> TapEventSet
+    func stopTappingProcess() -> TapEventSet
+    func getBufferSize() -> Int
 }
 
 class PracticeTapHandler : TapHandlerProtocol {
-    let amplitudeFilter:Double
     let startTime:Date = Date()
-    let fromProcess:RunningProcess
+    let bufferSize:Int
+    //let fromProcess:RunningProcess
     let minMidi:Int
     let maxMidi:Int
     var tapNum = 0
     var hilightPlayingNotes:Bool
     var lastMidi:Int? = nil
     var lastMidiHiliteTime:Double? = nil
-    let logTaps:Bool
     var tapHandlerEventSet:TapEventSet
     
-    required init(fromProcess:RunningProcess, amplitudeFilter:Double, hilightPlayingNotes:Bool, logTaps:Bool, filterStartOfTapping:Bool, bufferSize:Int) {
-        self.amplitudeFilter = amplitudeFilter
+    required init(bufferSize:Int) {
+        self.bufferSize = bufferSize
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
         tapNum = 0
-        self.hilightPlayingNotes = hilightPlayingNotes
-        self.logTaps = logTaps
-        self.fromProcess = fromProcess
-        self.tapHandlerEventSet = TapEventSet(amplitudeFilter: amplitudeFilter, description: "PracticeTapHandler")
-        Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
+        //self.hilightPlayingNotes = hilightPlayingNotes
+        //self.fromProcess = fromProcess
+        self.tapHandlerEventSet = TapEventSet(bufferSize: Settings.shared.tapBufferSize, description: "PracticeTapHandler")
+        //Logger.shared.log(self, "PracticeTapHandler amplFilter:\(self.amplitudeFilter)")
+        self.hilightPlayingNotes = true
     }
-
+    
+    func getBufferSize() -> Int {
+        return self.bufferSize
+    }
+    
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         let keyboardModel = PianoKeyboardModel.shared
         let scalesModel = ScalesModel.shared
@@ -57,7 +61,7 @@ class PracticeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
+        let aboveFilter =  amplitude > AUValue(Settings.shared.tapMinimunAmplificationFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -113,7 +117,7 @@ class PracticeTapHandler : TapHandlerProtocol {
         tapNum += 1
     }
     
-    func stopTapping(_ ctx:String) -> TapEventSet {
+    func stopTappingProcess() -> TapEventSet {
         Logger.shared.log(self, "Practice tap handler recorded \(String(describing: tapHandlerEventSet.events.count)) tap events")
         return tapHandlerEventSet
     }

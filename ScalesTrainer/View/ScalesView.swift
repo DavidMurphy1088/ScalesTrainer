@@ -155,7 +155,7 @@ struct ScalesView: View {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
+                        scalesModel.setRunningProcess(.none)
                     }) {
                         Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -165,7 +165,7 @@ struct ScalesView: View {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
+                        scalesModel.setRunningProcess(.none)
                     }) {
                         Text("Stop Practicing").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -174,7 +174,7 @@ struct ScalesView: View {
             if scalesModel.runningProcess == .playingAlongWithScale {
                 HStack {
                     Button(action: {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
+                        scalesModel.setRunningProcess(.none)
                     }) {
                         Text("Stop Playing Along").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -186,7 +186,7 @@ struct ScalesView: View {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
                     ProcessUnderwayView()
                     Button(action: {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: 0)
+                        scalesModel.setRunningProcess(.none)
                     }) {
                         Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
@@ -200,7 +200,7 @@ struct ScalesView: View {
             
             if scalesModel.runningProcess == .hearingRecording {
                 Button(action: {
-                    scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+                    scalesModel.setRunningProcess(.none)
                 }) {
                     Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
@@ -225,7 +225,7 @@ struct ScalesView: View {
                 }
                 Text("")
                 Button("Follow\nThe\nScale") {
-                    scalesModel.setRunningProcess(.followingScale, tapBufferSize: Settings.shared.tapBufferSize)
+                    scalesModel.setRunningProcess(.followingScale)
                     scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
                 
@@ -248,10 +248,10 @@ struct ScalesView: View {
                 Text("")
                 Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
                     if scalesModel.runningProcess == .practicing {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+                        scalesModel.setRunningProcess(.none)
                     }
                     else {
-                        scalesModel.setRunningProcess(.practicing, tapBufferSize: Settings.shared.tapBufferSize)
+                        scalesModel.setRunningProcess(.practicing)
                         scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                     }
                 }
@@ -275,7 +275,7 @@ struct ScalesView: View {
                 }
                 Text("")
                 Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
-                    scalesModel.setRunningProcess(.playingAlongWithScale, tapBufferSize: Settings.shared.tapBufferSize)
+                    scalesModel.setRunningProcess(.playingAlongWithScale)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
             }
@@ -297,10 +297,10 @@ struct ScalesView: View {
                 Text("")
                 Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
                     if scalesModel.runningProcess == .recordingScale {
-                        scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+                        scalesModel.setRunningProcess(.none)
                     }
                     else {
-                        scalesModel.setRunningProcess(.recordingScale, tapBufferSize: Settings.shared.tapBufferSize)
+                        scalesModel.setRunningProcess(.recordingScale)
                     }
                 }
             }
@@ -321,7 +321,7 @@ struct ScalesView: View {
                     }
                     Text("")
                     Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
-                        scalesModel.setRunningProcess(.hearingRecording, tapBufferSize: Settings.shared.tapBufferSize)
+                        scalesModel.setRunningProcess(.hearingRecording)
                     }
                     
                 }
@@ -365,7 +365,7 @@ struct ScalesView: View {
         HStack {
             Spacer()
             Button("READ_TEST_DATA") {
-                scalesModel.setRunningProcess(.recordScaleWithFileData, tapBufferSize: Settings.shared.tapBufferSize)
+                scalesModel.setRunningProcess(.recordScaleWithFileData)
             }.padding()
             if scalesModel.tapHandlerEventSetPublished  {
                 Spacer()
@@ -374,19 +374,20 @@ struct ScalesView: View {
                     Button("Show Tap Data") {
                         showingTapData = true
                     }
-                    if Settings.shared.recordDataMode {
-                        Spacer()
-                        if MFMailComposeViewController.canSendMail() {
-                            Button("Send Tap Data") {
-                                activeSheet = .emailRecording
-                            }
-                        }
-                        else {
-                            Text("No mail")
-                        }
-                    }
                 }
             }
+            if scalesModel.recordedTapsFileName != nil {
+                Spacer()
+                if MFMailComposeViewController.canSendMail() {
+                    Button("Send Tap Data") {
+                        activeSheet = .emailRecording
+                    }
+                }
+                else {
+                    Text("No mail")
+                }
+            }
+        
             Spacer()
         }
     }
@@ -538,7 +539,7 @@ struct ScalesView: View {
             //self.numberOfOctaves = Settings.shared.defaultOctaves
             self.directionIndex = 0
             if let process = initialRunProcess {
-                scalesModel.setRunningProcess(process, tapBufferSize: Settings.shared.tapBufferSize)
+                scalesModel.setRunningProcess(process)
             }
         }
         
@@ -570,12 +571,14 @@ struct ScalesView: View {
             switch item {
             case .emailRecording:
                 if MFMailComposeViewController.canSendMail() {
-                    if let url = scalesModel.recordedTapsFileURL {
-                        SendMailView(isShowing: $emailShowing, result: $emailResult,
-                                     messageRecipient:"davidmurphy1088@gmail.com",
-                                     messageSubject: "Scales Trainer \(getMailInfo())",
-                                     messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly. Please include tempo. Possibly articulation info if relevant, device position if relevant etc. \n",
-                                     attachmentFilePath: url)
+                    if let fileName = scalesModel.recordedTapsFileName {
+                        if let url = scalesModel.recordedTapsFileURL {
+                            SendMailView(isShowing: $emailShowing, result: $emailResult,
+                                         messageRecipient:"davidmurphy1088@gmail.com",
+                                         messageSubject: "Scales Trainer \(getMailInfo())",
+                                         messageContent: "\(getMailInfo())\n\nPlease add details if the scale was assessed incorrectly. Please include tempo. Possibly articulation info if relevant, device position if relevant etc. \n",
+                                         attachmentFilePath: url)
+                        }
                     }
                 }
             }

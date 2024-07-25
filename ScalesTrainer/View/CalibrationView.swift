@@ -133,10 +133,10 @@ public struct CalibrationView: View {
                         analysingResults = false
                         if playingScale {
                             scalesModel.calibrationResults.reset()
-                            scalesModel.setRunningProcess(.calibrating, tapBufferSize: Settings.shared.tapBufferSize)
+                            scalesModel.setRunningProcess(.calibrating)
                         }
                         else {
-                            scalesModel.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+                            scalesModel.setRunningProcess(.none)
                             if let result = scalesModel.calibrationResults.calculateAverageAmplitude() {
                                 userMessage = "Calibration as scale average " + String(format:"%.4f", result)
                                 self.amplitudeCalibrationValue = result

@@ -88,16 +88,6 @@
     "AmplFilter:" : {
 
     },
-    "AmplFilter: %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "AmplFilter: %1$@ %2$@"
-          }
-        }
-      }
-    },
     "Amplitude: %.4f" : {
 
     },
@@ -121,6 +111,16 @@
     },
     "Best:" : {
 
+    },
+    "BufSize: %lld %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "BufSize: %1$lld %2$@"
+          }
+        }
+      }
     },
     "Calibration" : {
 

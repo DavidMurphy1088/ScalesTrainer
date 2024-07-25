@@ -8,7 +8,6 @@ import AudioKitEX
 class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
-    var installedTap: BaseTap?
     var midiSampler:MIDISampler?
     var recorder: NodeRecorder?
     var mixer:Mixer?
@@ -22,13 +21,12 @@ class AudioManager {
     var audioPlayer:AudioPlayer?
     
     ///AudioKit Cookbook example
-    var initialDevice: Device?
-    var pitchTap: PitchTap?
+    //var initialDevice: Device?
+    var pitchTaps: [PitchTap] = []
     var tappableNodeA: Fader?
     var tappableNodeB: Fader?
     var tappableNodeC: Fader?
     var silencer: Fader?
-    var tapHandler: TapHandlerProtocol?
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
@@ -172,7 +170,7 @@ class AudioManager {
         }
     }
 
-    func startRecordingMicWithTapHandler(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
+    func startRecordingMicWithTapHandlers(tapHandlers:[TapHandlerProtocol], recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
         checkMicPermission(completion: {granted in
@@ -188,27 +186,26 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
-        guard let input = engine.input else {
+        guard let engineInput = engine.input else {
             Logger.shared.reportError(self, "No input")
             return
         }
-        if recordAudio {
-            do {
-                self.recorder = try NodeRecorder(node: input)
-            } catch let err {
-                Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
-            }
-        }
-        else {
-            self.recorder = nil
-        }
-        guard let device = engine.inputDevice else {
-            Logger.shared.reportError(self, "No input device")
-            return
-        }
-
-        self.initialDevice = device
-        self.mic = input
+//        if recordAudio {
+//            do {
+//                self.recorder = try NodeRecorder(node: engineInput)
+//            } catch let err {
+//                Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
+//            }
+//        }
+//        else {
+//            self.recorder = nil
+//        }
+//        guard let device = engine.inputDevice else {
+//            Logger.shared.reportError(self, "No input device")
+//            return
+//        }
+//        self.initialDevice = device
+        self.mic = engineInput
         
         if true { 
             self.tappableNodeA = Fader(mic!)
@@ -219,12 +216,12 @@ class AudioManager {
             engine.output = self.silencer
         }
         else {
-            ///Cant inlcude sampler for backer
+            ///Cant include sampler for backer
             ///This setup wont work since the ampl and freq passed to the PitchTap is garbage.
             ///Maybe its not required anyway - anytime another node is generating output and a pitch tap is connected it will pick up output from that node in addition to the microphone.
             ///Whereas the pitch tap should only ever include input from the user's instrument.
-            self.silencer = Fader(input, gain: 0)
-            self.mixer = Mixer(input)
+            self.silencer = Fader(engineInput, gain: 0)
+            self.mixer = Mixer(engineInput)
             mixer?.addInput(self.silencer!)
             self.audioPlayer = AudioPlayer()
             mixer?.addInput(self.audioPlayer!)
@@ -235,14 +232,32 @@ class AudioManager {
             //}
             engine.output = self.mixer
         }
-        Logger.shared.log(self, "Installed pitch tap:\( Settings.shared.tapBufferSize)")
-        self.pitchTap = installTapHandler(node: mic!,
+        
+        if recordAudio {
+            if let fader = self.tappableNodeC {
+                do {
+                    self.recorder = try NodeRecorder(node: fader)
+                } catch let err {
+                    Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
+                }
+            }
+            else {
+                self.recorder = nil
+            }
+        }
+
+        self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
                                           tapBufferSize: Settings.shared.tapBufferSize,
-                                          tapHandler: tapHandler,
-                                          asynch: true)
-        self.tapHandler = tapHandler
-        if let pitchTap = self.pitchTap {
-            pitchTap.start()
+                                          tapHandler: tapHandlers[0],
+                                          asynch: true))
+        
+        self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
+                                          tapBufferSize: 1024,
+                                          tapHandler: tapHandlers[1],
+                                          asynch: true))
+
+        for tap in self.pitchTaps {
+            tap.start()
         }
         
         do {
@@ -258,11 +273,8 @@ class AudioManager {
     }
 
     func stopRecording() {
-        if let tap = self.installedTap {
-            tap.stop()
-        }
-        if let eventSet = self.tapHandler?.stopTapping("AudioMgr.stopRecording") {
-            ScalesModel.shared.setTapHandlerEventSet(eventSet, publish: true)
+        for pitchTap in self.pitchTaps {
+            pitchTap.stop()
         }
         if let recorder = recorder {
             recorder.stop()
@@ -365,59 +377,30 @@ class AudioManager {
         else {
             Logger.shared.reportError(self, "Cant open file bundle")
         }
-        
         return tapEvents
     }
     
-//    func playbackTapEventsOld(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
-//        let backgroundQueue = DispatchQueue.global(qos: .background)
-//        let scalesModel = ScalesModel.shared
-//        backgroundQueue.async {
-//            for tIndex in 0..<tapEvents.count {
-//                let tapEvent = tapEvents[tIndex]
-//                let semaphore = DispatchSemaphore(value: 0)
-//                let queue = DispatchQueue(label: "com.example.timerQueue.\(tIndex)")
-//                let timer = DispatchSource.makeTimerSource(queue: queue)
-//                timer.schedule(deadline: .now() + 0.04, repeating: .never)
-//                timer.setEventHandler {
-//                    semaphore.signal()
-//                    timer.cancel() // Cancel the timer after it fires once
-//                }
-//                timer.resume()
-//                semaphore.wait()
-//                let f:AUValue = tapEvent.frequency
-//                let a:AUValue = tapEvent.amplitude
-//                tapHandler.tapUpdate([f, f], [a, a])
-//            }
-//            tapHandler.stopTapping()
-//            scalesModel.forceRepaint()
-//            Logger.shared.log(self, "Read tap event data: \(tapEvents.count) tap events")
-//        }
-//    }
-    
-    func playbackTapEvents(tapEvents:[TapEvent], tapHandler:ScaleTapHandler) {
+    func playbackTapEvents(tapEvents:[TapEvent], tapHandlers:[TapHandlerProtocol]) {
         ///Set amp filter here to override value the taps were recorded with
         //ScalesModel.shared.setAmplitudeFilter(1.9)
         let scalesModel = ScalesModel.shared
-        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
-        for tIndex in 0..<tapEvents.count {
-            let tapEvent = tapEvents[tIndex]
-            let f:AUValue = tapEvent.frequency
-            let a:AUValue = tapEvent.amplitude
-            tapHandler.tapUpdate([f, f], [a, a])
-        }
-        let events = tapHandler.stopTapping("AudioMgr.playbackEvents")
-        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
-        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandler.amplitudeFilter))")
-        scalesModel.setRunningProcess(.none, tapBufferSize: tapHandler.tapBufferSize)
+//        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandlers[0].amplitudeFilter))")
+//        for tIndex in 0..<tapEvents.count {
+//            let tapEvent = tapEvents[tIndex]
+//            let f:AUValue = tapEvent.frequency
+//            let a:AUValue = tapEvent.amplitude
+//            tapHandlers[0].tapUpdate([f, f], [a, a])
+//        }
+//        let events = tapHandlers[0].stopTappingProcess("AudioMgr.playbackEvents")
+//        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
+//        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandlers[0].amplitudeFilter))")
+//        scalesModel.setRunningProcess(.none, tapBufferSize: tapHandlers[0].tapBufferSize)
     }
     
     func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
-        //self.tapHandler = tapHandler
         let s = String(describing: type(of: tapHandler))
-        Logger.shared.log(self, "Installed tap handler type:\(s)")
+        
         let installedTap = PitchTap(node, bufferSize:UInt32(tapBufferSize)) { pitch, amplitude in
-            //if Double(amplitude[0]) > ScalesModel.shared.amplitudeFilter {
             if !self.blockTaps {
                 if asynch {
                     DispatchQueue.main.async {
@@ -428,8 +411,8 @@ class AudioManager {
                     tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                 }
             }
-            //}
         }
+        Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapBufferSize)")
         return installedTap
     }
     
@@ -437,10 +420,8 @@ class AudioManager {
         switch AVAudioApplication.shared.recordPermission {
         case .granted:
             // Permission already granted
-            //setupRecording()
             completion(true)
         case .denied:
-            // Permission denied
             completion(false)
         case .undetermined:
             // Request permission
@@ -455,7 +436,6 @@ class AudioManager {
 
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
-        //sampler.startNote(UInt8(keyNumber), withVelocity: 64, onChannel: 0)
         if let sampler = midiSampler {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
         }        
@@ -468,197 +448,3 @@ extension AudioManager: PianoKeyboardDelegate {
         }
     }
 }
-
-//    func configureMixer1(useMicrophone:Bool) {
-//        ///Here’s the proper sequence:
-//        ///Create and configure nodes: Set up your NodeRecorder and any other nodes you might be using (like AudioEngine.InputNode for microphone input).
-//        ///Connect nodes: Make sure all your nodes are connected appropriately in the AudioKit graph.
-//        ///Start the engine: Start the AudioKit engine with try engine.start().
-//        ///Start recording: After the engine is running, you can safely start the recorder using recorder.record().
-//
-//        ///The engine.output property is used to specify the final output node of the audio processing graph. This output node is responsible for sending the processed audio to the audio hardware,
-//        ///such as speakers or headphones, or to an audio file for recording.
-//        ///
-//        //setSession()
-//
-//        if useMicrophone {
-//            //mixer.addInput(mic)
-//            setSession()
-//
-//            //engine.output = nil //WARNING - remove any existing mixer from output else engine wont start
-//        }
-//        else {
-//            //engine.stop()
-//            mixer.removeAllInputs()
-//
-//            setupSampler()
-//            mixer.addInput(midiSampler)
-//
-//            //if let audioPlayer = audioPlayer {
-//                mixer.addInput(audioPlayer)
-//            //}
-//            //engine.output = mixer //WARNING - dont add in mic mode - it causes engine not to start when recording
-//        }
-//        //engine.output = mixer //WARNING - dont add in mic mode - it causes engine not to start when recording
-//
-//        do {
-//            try engine.start()
-//            //Logger.shared.log(self, "Engine started mic:\(useMicrophone) \n\(engine.connectionTreeDescription)")
-//            Logger.shared.log(self, "Engine started useMic:\(useMicrophone)")
-//        } catch {
-//            Logger.shared.reportError(self, "Error starting engine: \(error)")
-//        }
-//    }
-
-//    func playSampleFile(fileName:String, tapHandler: TapHandler) {
-//        Logger.shared.clearLog()
-//        //ScalesModel.shared.result = nil
-//        //ScalesModel.shared.scale.resetMatches()
-//        guard let fileURL = Bundle.main.url(forResource: fileName, withExtension: "m4a") else {
-//            Logger.shared.reportError(self, "Audio file not found \(fileName)")
-//            return
-//        }
-//        //startEngine()
-//        do {
-//            //try engine.start()
-//            let file = try AVAudioFile(forReading: fileURL)
-//            try? audioPlayer.load(file: file)
-//        }
-//        catch {
-//            Logger.shared.reportError(self, "File cannot load \(error.localizedDescription)")
-//        }
-//        installTapHandler(node: audioPlayer, bufferSize: 4096,
-//                          tapHandler: tapHandler,
-//                          asynch: true)
-//        audioPlayer.play()
-//        tap!.start()
-//        currentTapHandler = tapHandler
-//        //audioPlayer.play()
-//    }
-    
-
-
-//    func stopPlaySampleFile() {
-//        audioPlayer.stop()
-//        self.tap?.stop()
-//        currentTapHandler?.stopTapping()
-//    }
-    
-//    func startRecordingMicWithTapHandlerOld1(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
-//        self.engine = AudioEngine()
-//        guard let engine = self.engine else {
-//            return
-//        }
-//        mic = engine.input
-//        guard let mic = mic else {
-//            return
-//        }
-//        checkMicPermission(completion: {granted in
-//            if !granted {
-//                Logger.shared.reportError(self, "No microphone permission")
-//            }
-//        })
-//        setSession()
-//        do {
-//            if recordAudio {
-//                recorder = try NodeRecorder(node: mic)
-//            }
-//
-//            if true {
-//                self.mixer = Mixer(mic)
-//            //            //if tap handler attached to mixer the pitches it gets are wrong
-//            //            //if tap handler attached to mic the pitches it gets are rigth
-//            //
-//            //            //if volume is zero and tap handler attached to mixer tap handler gets zero amplitudes
-//            //            //silentMixer.volume = 0.0
-//                engine.output = self.mixer
-//            }
-//
-//            if false {
-//                let silencer = Fader(mic, gain: 0)
-//                self.silencer = silencer
-//                self.mixer = Mixer()
-//                mixer!.addInput(silencer)
-//
-//                //mixer.addInput(audioPlayer)
-//                setupSampler()
-//                mixer!.addInput(midiSampler)
-//
-//                //mixer.addInput(audioPlayer)
-//
-//                self.speechManager = SpeechManager.shared
-//
-//                engine.output = mixer
-//            }
-//            // Setup the pitch tap with the same mixer
-//            //installTapHandler(node: silentMixer,
-//            installTapHandler(node: mic,
-//                              bufferSize: 4096,
-//                              tapHandler: tapHandler,
-//                              asynch: true)
-//
-//            // Start the audio engine
-//            try engine.start()
-//            print("Audio engine started")
-//
-//            // Start recording
-//            if recordAudio {
-//                try recorder?.record()
-//                print("Recording started")
-//            }
-//
-//            // Start the tap
-//            if let tap = installedTap {
-//                tap.start()
-//                print("Tap started")
-//            }
-//        } catch {
-//            print("Error: \(error.localizedDescription)")
-//        }
-//    }
-
-//    func startRecordingMicWithTapHandlerOld(tapHandler:TapHandlerProtocol, recordAudio:Bool) {
-//        Logger.shared.log(self, "startRecordingMicrophone")
-//        do {
-//            let session = AVAudioSession.sharedInstance()
-//            try session.setCategory(.playAndRecord, mode: .default)
-//            try session.setActive(true)
-//           // AudioManager.shared.configureAudio(start: false)
-//
-//            //WARNING 😣 - .record must come before tap.start
-//            if recordAudio {
-//                //self.microphoneRecorder = try NodeRecorder(node: mic!)
-//                if let recorder = self.recorder {
-//                    do {
-//                        //try self.microphoneRecorder!.reset()
-//                        try recorder.record() ///😡Causes exception if tap handler is Callibration
-//                        if false {
-//                            if recorder.isRecording {
-//                                ///Never, never, never access the URL of the audio file here or before stopping recording. This is BRAIN DEAD after hours of research 😡
-//                                ///Any attempt to read the URL causes the file to be zero length at recording end 😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡
-//                                Logger.shared.log(self, "Recording started... file:\(String(describing: recorder.audioFile?.url))")
-//                            }
-//                        }
-//                    }
-//                    catch {
-//                        Logger.shared.reportError(self, "Error starting recording: \(error)")
-//                    }
-//                }
-//            }
-//            try engine?.start()
-//            ///Moved install tap handler after record otherwise the record always records zero len file
-//            installTapHandler(node: mic!,
-//                              bufferSize: 4096,
-//                              tapHandler: tapHandler,
-//                              asynch: true)
-//            try engine?.start()
-//            if let tap = self.installedTap {
-//                tap.start()
-//            }
-//            else {
-//                Logger.shared.reportError(self, "No tap handler")
-//            }
-//        } catch let err {
-//            Logger.shared.reportError(self, err.localizedDescription)
-//        }
-//    }

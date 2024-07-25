@@ -62,6 +62,7 @@
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
 		799BE2AE2C002EF5004B19F6 /* DeviceOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */; };
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
+		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
 		79BCF7EF2C257A5D004E26ED /* HearUserScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
@@ -150,6 +151,7 @@
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
 		799BE2AD2C002EF5004B19F6 /* DeviceOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientation.swift; sourceTree = "<group>"; };
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
 		79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearUserScale.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
 				794D49552BCD29090005A173 /* TapHandler.swift */,
+				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 			);
@@ -499,6 +502,7 @@
 				7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */,
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
+				799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */,
 				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
 				79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,

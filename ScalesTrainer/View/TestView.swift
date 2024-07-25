@@ -264,7 +264,7 @@ struct TestView: View {
         let scaleType = ScaleType.major
         scale = PracticeJournalScale(scaleRoot: root, scaleType: scaleType)
         model.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: 1, hand: 0, ctx: "TestView init")
-        model.setRunningProcess(.none, tapBufferSize: Settings.shared.tapBufferSize)
+        model.setRunningProcess(.none)
     }
     var body: some View {
         ScalesView()
