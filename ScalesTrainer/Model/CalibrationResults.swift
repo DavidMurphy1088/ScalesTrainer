@@ -66,7 +66,7 @@ class CalibrationResults : ObservableObject {
             while true {
                 let ampFilter = Double(index) * 0.005
                 onNext(ampFilter)
-                scalesModel.setRunningProcess(.analyseScaleWithTapData, amplitudeFilter: ampFilter)
+                scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: ampFilter)
                 if let result = scalesModel.resultInternal {
                     let totalErrors = result.getTotalErrors()
                     self.appendResult(num: index, result: result, amplFilter: ampFilter)
@@ -128,7 +128,7 @@ class CalibrationResults : ObservableObject {
     func run(amplitudeFilter: Double) {
         let scalesModel = ScalesModel.shared
         ///Show the result visually
-        scalesModel.setRunningProcess(.analyseScaleWithTapData, amplitudeFilter: amplitudeFilter)
+        scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: amplitudeFilter)
     }
     
     func calculateAverageAmplitude() -> Double? {

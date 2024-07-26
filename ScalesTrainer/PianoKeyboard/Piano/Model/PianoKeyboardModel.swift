@@ -135,7 +135,7 @@ public class PianoKeyboardModel: ObservableObject {
         print("========================= Keyboard Size === \(ctx)", "lowMidi", self.pianoKeyModel[0].midi, "hiMidi", self.pianoKeyModel[self.pianoKeyModel.count-1].midi)
     }
     
-    func debug11(_ ctx:String) {
+    func debug111(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]

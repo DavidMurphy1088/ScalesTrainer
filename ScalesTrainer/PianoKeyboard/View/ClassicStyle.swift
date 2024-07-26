@@ -54,7 +54,32 @@ public struct ClassicStyle {
     public func naturalKeyWidth(_ width: CGFloat, naturalKeyCount: Int, space: CGFloat) -> CGFloat {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
+    
+    private func getKeyStatusColor(key:PianoKeyModel) -> Color {
+//        if keyModel.scaleNoteState != nil {
+//            ///Key is in the scale
+//            if selectedDirection == 0 {
+//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//            else {
+//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//        }
+//        else {
+//            ///Key was not in the scale
+//            if selectedDirection == 0 {
+//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//            else {
+//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//        }
+        let fullOpacity = 0.4
+        let halfOpacity = 0.4
 
+        return key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear : Color.yellow.opacity(halfOpacity)
+    }
+    
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let scalesModel = ScalesModel.shared
@@ -146,7 +171,7 @@ public struct ClassicStyle {
                 let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
                 let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
 
-                let color = scalesModel.getKeyStatusColor(key)
+                let color = getKeyStatusColor(key: key)
                 let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
                 context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
             
@@ -260,7 +285,7 @@ public struct ClassicStyle {
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
 
-                    let color = scalesModel.getKeyStatusColor(key) //getKeyStatusColor(key)
+                    let color = getKeyStatusColor(key: key) //getKeyStatusColor(key)
                     let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
                     context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
                 }

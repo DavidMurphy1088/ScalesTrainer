@@ -370,7 +370,6 @@ struct ScalesView: View {
             if scalesModel.tapHandlerEventSetPublished  {
                 Spacer()
                 HStack {
-                    Spacer()
                     Button("Show Tap Data") {
                         showingTapData = true
                     }
@@ -387,7 +386,6 @@ struct ScalesView: View {
                     Text("No mail")
                 }
             }
-        
             Spacer()
         }
     }

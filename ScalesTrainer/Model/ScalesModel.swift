@@ -227,53 +227,66 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func processTapEvents(fromProcess: RunningProcess) {
+    func processTapEvents(fromProcess: RunningProcess, saveTapEventsToFile:Bool) -> (Result?, TapEventSet?) {
         var bestResult:Result? = nil
+        var bestTapSet:TapEventSet? = nil
+        
+        ///Analyse the events from each tap handler. The number of events for each varies since each tap handler has a different buffer size
         for tapHandler in self.tapHandlers {
             let tappedEvents = tapHandler.stopTappingProcess()
-            Logger.shared.log(self, "Analysing from handler \(tapHandler.getBufferSize())")
-            let analyser = TapsEventsAnalyser(scale: self.scale, 
+            Logger.shared.log(self, "Start analysing from handler. BufferSize:\(tapHandler.getBufferSize())")
+            let analyser = TapsEventsAnalyser(scale: self.scale,
                                               bufferSize: tapHandler.getBufferSize(),
                                               recordedTapEvents: tappedEvents.events, 
                                               keyboard: PianoKeyboardModel.shared,
                                               fromProcess: fromProcess)
             ///Save the best result
-            let result:Result = analyser.getBestResult()
-            if let best = bestResult {
-                if result.isBetter(compare: best) {
-                    bestResult = best
+           // let (result:Result, events:TapEventSet) =
+            let resultPair:(Result?, TapEventSet?) = analyser.getBestResult()
+            if let result = resultPair.0 {
+                if let best = bestResult {
+                    if result.isBetter(compare: best) {
+                        bestResult = best
+                        bestTapSet = resultPair.1
+                    }
                 }
-            }
-            else {
-                bestResult = result
+                else {
+                    bestResult = result
+                    bestTapSet = resultPair.1
+                }
             }
         }
         
         ///Save the taps to a file
-        if Settings.shared.recordDataMode {
+        if saveTapEventsToFile {
             if let bestResult = bestResult {
                 var tapEventSets:[TapEventSet] = []
                 for tapHandler in self.tapHandlers {
                     tapEventSets.append(tapHandler.stopTappingProcess())
                 }
                 self.saveTapsToFile(tapSets: tapEventSets, result: bestResult)
-                //self.setTapHandlerEventSet(bestResult.ev, publish: true)
             }
-            
         }
         
-        //let score = scalesModel.createScore(scale: bestScale)
-        //self.scalesModel.setScaleAndScore(scale: bestScale, score: score, ctx: "ScaleTapHandler:bestOffset")
-        //scalesModel.setResultInternal(result, "stop Tapping")
-//        if result.noErrors() {
-//            score.setNormalizedValues(scale: bestScale)
-//        }
-//        PianoKeyboardModel.shared.redraw()
-//        if ScalesModel.shared.runningProcess == .recordingScale && Settings.shared.recordDataMode{
-//            self.saveTapsToFile(result: result)
-//        }
+        if let result = bestResult {
+            let score = createScore(scale: result.scale)
+            self.scale = result.scale
+            //self.setScaleAndScore(scale: result.scale, score: score, ctx: "ScaleTapHandler:bestOffset")
+            let keyboard = PianoKeyboardModel.shared
+            //keyboard.debug11("Rest")
+            keyboard.redraw()
+            //scalesModel.setResultInternal(result, "stop Tapping")
+            //        if result.noErrors() {
+            //            score.setNormalizedValues(scale: bestScale)
+            //        }
+            //
+            //        if ScalesModel.shared.runningProcess == .recordingScale && Settings.shared.recordDataMode{
+            //            self.saveTapsToFile(result: result)
+            //        }
+        }
         
         self.tapHandlers = []
+        return (bestResult, bestTapSet)
     }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
@@ -281,7 +294,8 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopRecording()
-            processTapEvents(fromProcess: self.runningProcess)
+            let (chosenEventSet, events) = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale)
+            setTapHandlerEventSet(events, publish: true)
         }
 
         DispatchQueue.main.async {
@@ -365,15 +379,17 @@ public class ScalesModel : ObservableObject {
             self.setTapHandlerEventSet(nil, publish: true)
             keyboard.redraw()
             self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048))
+            //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048))
             self.recordedTapsFileURL = nil
             if setProcess == .recordScaleWithFileData {
-                let tapEvents = self.audioManager.readTestDataFile()
-                self.audioManager.playbackTapEvents(tapEvents: tapEvents, tapHandlers: self.tapHandlers)
+                ///For plaback of an emailed file
+                let tapEventSets = self.audioManager.readTestDataFile()
+                self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
             }
             if setProcess == .recordScaleWithTapData {
+                ///For callibration
                 if let calibrationEvents = self.calibrationResults.calibrationEvents {
-                    self.audioManager.playbackTapEvents(tapEvents: calibrationEvents, tapHandlers: self.tapHandlers)
+                    //self.audioManager.playbackTapEvents(tapEventSets: calibrationEvents, tapHandlers: self.tapHandlers)
                 }
             }
             if setProcess == .recordingScale {
@@ -410,37 +426,37 @@ public class ScalesModel : ObservableObject {
         
     }
     
-    ///Return the color a keyboard note should display its status as. Clear -> dont show anything
-    func getKeyStatusColor(_ keyModel:PianoKeyModel) -> Color {
-        guard let result = self.resultDisplay else {
-            return Color.clear
-        }
-        guard result.fromProcess != .followingScale else {
-            return Color.clear
-        }
-        var color:Color
-        let fullOpacity = 0.4
-        let halfOpacity = 0.4
-        if keyModel.scaleNoteState != nil {
-            ///Key is in the scale
-            if selectedDirection == 0 {
-                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-            }
-            else {
-                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-            }
-        }
-        else {
-            ///Key was not in the scale
-            if selectedDirection == 0 {
-                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-            else {
-                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-        }
-        return color
-    }
+//    ///Return the color a keyboard note should display its status as. Clear -> dont show anything
+//    func getKeyStatusColor1(_ keyModel:PianoKeyModel) -> Color {
+//        guard let result = self.resultDisplay else {
+//            return Color.clear
+//        }
+//        guard result.fromProcess != .followingScale else {
+//            return Color.clear
+//        }
+//        var color:Color
+//        let fullOpacity = 0.4
+//        let halfOpacity = 0.4
+//        if keyModel.scaleNoteState != nil {
+//            ///Key is in the scale
+//            if selectedDirection == 0 {
+//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//            else {
+//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//        }
+//        else {
+//            ///Key was not in the scale
+//            if selectedDirection == 0 {
+//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//            else {
+//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//        }
+//        return color
+//    }
     
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note
@@ -584,7 +600,6 @@ public class ScalesModel : ObservableObject {
     
     func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
         Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName()) ctx:\(ctx)")
-
         self.scale = scale
         PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
         setDirection(0)

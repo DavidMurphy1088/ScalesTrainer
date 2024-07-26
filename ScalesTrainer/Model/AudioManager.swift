@@ -312,7 +312,7 @@ class AudioManager {
             //let samplerFileName = "Abbey-Steinway-D-bs16i-v1.9"
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
-            Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+            //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
             return sampler
         }
         catch {
@@ -322,10 +322,12 @@ class AudioManager {
     }
     
     ///Return a list of tap events recorded previously in a file
-    func readTestDataFile() -> [TapEvent] {
+    func readTestDataFile() -> [TapEventSet] {
+        
         let scalesModel = ScalesModel.shared
-        var tapEvents:[TapEvent] = []
+        var tapEventSets:[TapEventSet] = []
         var tapNum = 0
+        //var tapSetCount = 0
         
         if let filePath = Bundle.main.path(forResource: "RecordedTapData", ofType: "txt") {
             let contents:String
@@ -334,30 +336,55 @@ class AudioManager {
             }
             catch {
                 Logger.shared.log(self, "cannot read file \(error.localizedDescription)")
-                return tapEvents
+                return tapEventSets
             }
             let lines = contents.split(separator: "\r\n")
             
-            var ctr = 0
-            for line in lines {
-                if ctr == 0 {
-                    ctr += 1
-                    let fields = line.split(separator: " ")
-                    if fields.count > 1 {
-                        let ampFilter = Double(fields[1])
-                        if let ampFilter = ampFilter {
-                            scalesModel.setAmplitudeFilter(ampFilter)
+            var tapEvents:[TapEvent] = []
+            var lastBufferSize:Int? = nil
+            
+            for i in 0..<lines.count+1 {
+                var line:String
+                if i<lines.count {
+                    line = String(lines[i])
+                }
+                else {
+                    line = "--"
+                }
+                
+                let fields = line.split(separator: " ")
+                if line.starts(with: "--"){
+                    ///e.g. --TapSet BufferSize 4096
+                    if let lastBufferSize = lastBufferSize {
+                        let newTapSet = TapEventSet(bufferSize: lastBufferSize, description: "")
+                        for tap in tapEvents {
+                            newTapSet.events.append(TapEvent(tap:tap))
                         }
+                        tapEventSets.append(newTapSet)
+                        Logger.shared.log(self, "Read \(newTapSet.events.count) events from file for bufferSize:\(lastBufferSize)")
+                        tapEvents = []
+                        tapNum = 0
                     }
-                    if fields.count > 2 {
-                        let tapBufferSize = Int(fields[2])
-                        if let tapBufferSize = tapBufferSize {
-                            Settings.shared.tapBufferSize = tapBufferSize
-                        }
+                    if i>=lines.count {
+                        break
                     }
+                    lastBufferSize = Int(fields[2])
                     continue
                 }
-                let fields = line.split(separator: " ")
+//                    if fields.count > 1 {
+//                        let ampFilter = Double(fields[1])
+//                        if let ampFilter = ampFilter {
+//                            scalesModel.setAmplitudeFilter(ampFilter)
+//                        }
+//                    }
+//                    if fields.count > 2 {
+//                        let tapBufferSize = Int(fields[2])
+//                        if let tapBufferSize = tapBufferSize {
+//                            Settings.shared.tapBufferSize = tapBufferSize
+//                        }
+//                    }
+//                    continue
+                
                 //let time = fields[0].split(separator: ":")[1]
                 let freq = fields[1].split(separator: ":")[1]
                 let ampl = fields[2].split(separator: ":")[1]
@@ -370,31 +397,35 @@ class AudioManager {
                         tapNum += 1
                     }
                 }
-                ctr += 1
+                //ctr += 1
             }
-            Logger.shared.log(self, "Read \(tapEvents.count) events from file. AmplFilter:\(scalesModel.amplitudeFilter)")
         }
         else {
             Logger.shared.reportError(self, "Cant open file bundle")
         }
-        return tapEvents
+        return tapEventSets
     }
     
-    func playbackTapEvents(tapEvents:[TapEvent], tapHandlers:[TapHandlerProtocol]) {
-        ///Set amp filter here to override value the taps were recorded with
-        //ScalesModel.shared.setAmplitudeFilter(1.9)
-        let scalesModel = ScalesModel.shared
-//        Logger.shared.log(self, "Start play back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandlers[0].amplitudeFilter))")
-//        for tIndex in 0..<tapEvents.count {
-//            let tapEvent = tapEvents[tIndex]
-//            let f:AUValue = tapEvent.frequency
-//            let a:AUValue = tapEvent.amplitude
-//            tapHandlers[0].tapUpdate([f, f], [a, a])
-//        }
+    func playbackTapEvents(tapEventSets:[TapEventSet], tapHandlers:[TapHandlerProtocol]) {
+        var tapHandlerIndex = 0
+        for tapEventSet in tapEventSets {
+            Logger.shared.log(self, "Start play back \(tapEventSet.events.count) tap events for bufferSize:\(tapEventSet.bufferSize)")
+            for tIndex in 0..<tapEventSet.events.count {
+                let tapEvent = tapEventSet.events[tIndex]
+                let f:AUValue = tapEvent.frequency
+                let a:AUValue = tapEvent.amplitude
+                tapHandlers[tapHandlerIndex].tapUpdate([f, f], [a, a])
+            }
+            tapHandlerIndex += 1
+            if tapHandlerIndex >= tapHandlers.count {
+                break
+            }
+        }
+
 //        let events = tapHandlers[0].stopTappingProcess("AudioMgr.playbackEvents")
 //        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
-//        Logger.shared.log(self, "Played back \(tapEvents.count) tap events, amplFilter:\(String(format:"%.4f", tapHandlers[0].amplitudeFilter))")
-//        scalesModel.setRunningProcess(.none, tapBufferSize: tapHandlers[0].tapBufferSize)
+        Logger.shared.log(self, "Played back \(tapHandlerIndex) tap event sets")
+        ScalesModel.shared.setRunningProcess(.none)
     }
     
     func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {

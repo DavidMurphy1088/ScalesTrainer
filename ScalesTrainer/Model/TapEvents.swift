@@ -135,7 +135,7 @@ public class TapEvent:Hashable {
         status = String(status.prefix(12))
         row += "   A:\(self.ascending ? 1:0)   \(status)"
         //row += "\t\tAm:\(amps)\t▵:\(ampDiff)"
-        let amps = String(format: "%.2f", self.amplitude)
+        let amps = String(format: "%.4f", self.amplitude)
         row += "   Amp:\(amps)"
         
 //        let minLength = 50

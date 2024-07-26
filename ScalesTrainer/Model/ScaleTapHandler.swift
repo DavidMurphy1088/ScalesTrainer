@@ -42,9 +42,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
         let event = TapEvent(tapNum: eventNumber, frequency: frequency, amplitude: amplitude, ascending: true, status: .none,
                              expectedMidis: [], midi: 0, tapMidi: tapMidi, consecutiveCount: 1)
-        if eventNumber % 10 == 0 {
-            print("-------------------------------------- Tapped \(eventNumber) \(self.bufferSize) \(self.eventNumber) midi:\(tapMidi) \(amplitude)")
-        }
+//        if eventNumber % 8 == 0 {
+//            print("-------------------------------------- Tapped \(eventNumber) \(self.bufferSize) \(self.eventNumber) midi:\(tapMidi) \(amplitude)")
+//        }
         self.recordedTapEvents.append(event)
         self.eventNumber += 1
         ///Try to figure out when the recording should stop without the user stopping it with a button push

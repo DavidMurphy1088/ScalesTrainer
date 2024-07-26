@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>230</string>
+					<string>213</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>229</string>
+					<string>212</string>
 					<key>Timestamp</key>
-					<string>743599585.6204619</string>
+					<string>743686862.268271</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,24 +27,43 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>ScalesTrainer/Model/ScalesModel.swift</string>
+						<string>ScalesTrainer/Model/TapsEventsAnalyser.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func processTapEvents(fromProcess: RunningProcess) {
+				<string>    func processTap(ctx:String, scale:Scale, keyboard:PianoKeyboardModel, eventToProcess:TapEvent,
 </string>
 				<key>leading</key>
-				<string>    }
-    
+				<string>    ///The events become part of the viewable log of the scale recording.
+    ///Filter out spurios tap event frequencies.
 </string>
 				<key>trailing</key>
-				<string>        var bestResult:Result? = nil
-        for tapHandler in self.tapHandlers {
-            let tappedEvents = tapHandler.stopTappingProcess()
+				<string>                    discardSingletons:Bool, filterStart:Bool,
+                    octaveLenient:Bool, updateKeyboardDisplay:Bool) -&gt; TapEvent {
+                    //amplitude:Float, frequency:Float, recordedTimestamp:Date) -&gt; TapEvent {
 </string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/TapsEventsAnalyser.swift</string>
+					</dict>
+				</dict>
+				<key>type</key>
+				<string>DVTDocumentLocation</string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>
