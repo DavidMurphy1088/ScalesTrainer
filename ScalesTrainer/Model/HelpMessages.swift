@@ -26,7 +26,7 @@ class HelpMessages {
         m += "\n\n➤ After Analyse Best Settings is finished some calibration value rows should show zero errors. If not, its best to redo the calibration."
         m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales. In particular, if notes you are play are not detected you may need to decrease the amplitude filter slightly. If notes appear that you did not play you may need to increase the amplitude filter slightly."
 
-        messages["Calibration"] = m
+        messages["Calibration"] = "Instructions to come..."
         
         m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are hilighted."
         m += "\n\n➤ Each note of the scale will be highlighted in turn. When the scale note is highlighted play the note on your piano. Then the next note will be hilighted. The keyboard shows the correct finger to use for every note of the scale."

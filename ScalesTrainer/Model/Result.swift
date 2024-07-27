@@ -5,10 +5,9 @@ class Result : Equatable {
     let id = UUID()
     let fromProcess:RunningProcess
     let scale:Scale
-    //let offset:Int
     let amplitudeFilter:Double
     let compressingFactor:Int
-    
+    let bufferSize:Int
     var eventsID:UUID? = nil ///The events set the result was  built from
     
     let userMessage:String
@@ -20,11 +19,9 @@ class Result : Equatable {
     var playedAndWrongCountAsc = 0
     var playedAndWrongCountDesc = 0
     var correctNotes = 0
-    
-   // let score:Score
     let keyboard:PianoKeyboardModel
     
-    init(scale:Scale, keyboard:PianoKeyboardModel, fromProcess:RunningProcess, amplitudeFilter:Double, compressingFactor:Int, userMessage:String) {
+    init(scale:Scale, keyboard:PianoKeyboardModel, fromProcess:RunningProcess, amplitudeFilter:Double, bufferSize:Int, compressingFactor:Int, userMessage:String) {
         self.scale = scale
         self.fromProcess = fromProcess
         self.userMessage = userMessage
@@ -32,6 +29,7 @@ class Result : Equatable {
         self.keyboard = keyboard
         //self.score = score
         self.compressingFactor = compressingFactor
+        self.bufferSize = bufferSize
     }
     
     func noErrors() -> Bool {
@@ -54,23 +52,20 @@ class Result : Equatable {
     
     func getInfo() -> String {
         var str = "Result:"
-        str += " scale: \(scale.getMinMax())"
-        str += " missed: \(missedFromScaleCountAsc + missedFromScaleCountDesc)"
-        str += " correct:\(correctNotes)"
+        str += " Scale:\(scale.getMinMax())"
+        str += " BufferSize:\(self.bufferSize)"
+        str += " AmpFilter:\(self.amplitudeFilter)"
+        str += " Compress:\(self.compressingFactor)"
+        str += " Missed:\(missedFromScaleCountAsc + missedFromScaleCountDesc)"
+        str += " WrongKeys:[Asc:\(self.playedAndWrongCountAsc),Dsc:\(self.playedAndWrongCountDesc)],  TotalErrors:\(self.getTotalErrors()) "
+        str += " TotErrors:\(self.getTotalErrors())"
+        str += " Correct:\(correctNotes)"
         return str
     }
-    
-    func getResultsString() -> String {
-        var str = "Result Errors "
-        str += ", MissingInScale:[\(self.missedFromScaleCountAsc),\(missedFromScaleCountDesc)]"
-        str += ", Correct:[\(self.correctNotes)]"
-        str += ", WrongKeys:[Asc:\(self.playedAndWrongCountAsc),Dsc:\(self.playedAndWrongCountDesc)],  **TotalErrors:\(self.getTotalErrors()) "
-        return str
-    }
-    
+
     ///Build the result from the timestamps on the keyboard. These track ascending and descending times when each key was played.
     ///Set the assocated notes in the scale with their played time
-    func buildResult(offset:Int) {
+    func buildResult(offset:Int, score:Score?) {
         self.missedFromScaleCountAsc = 0
         self.missedFromScaleCountDesc = 0
         self.playedAndWrongCountAsc = 0
@@ -86,7 +81,9 @@ class Result : Equatable {
 //                      "\tscaleNote", key.scaleNoteState?.midi ?? "  ", key.scaleNoteState?.matchedTime ?? "None")
 //            }
 //        }
-        scale.resetMatchedData()
+        
+            scale.resetMatchedData()
+        
         
         ///For each key played check its its midi is in the scale. If not, its a wrongly played key
         for direction in [0,1] {
@@ -100,11 +97,11 @@ class Result : Equatable {
                         else {
                             scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeDescending
                         }
-//                        if let score = score {
-//                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, occurence: direction == 0 ? 0 : 1) {
-//                                timeSlice.setStatusTag(.correct)
-//                            }
-//                        }
+                        if let score = score {
+                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, occurence: direction == 0 ? 0 : 1) {
+                                timeSlice.setStatusTag(.correct)
+                            }
+                        }
                     }
                     else {
                         if direction == 0 {
@@ -128,11 +125,11 @@ class Result : Equatable {
                 } else {
                     self.missedFromScaleCountDesc += 1
                 }
-//                if let score = score {
-//                    if let timeSlice = score.getTimeSliceForMidi(midi: scaleNote.midi, occurence: direction == 0 ? 0 : 1) {
-//                        timeSlice.setStatusTag(.missingError)
-//                    }
-//                }
+                if let score = score {
+                    if let timeSlice = score.getTimeSliceForMidi(midi: scaleNote.midi, occurence: direction == 0 ? 0 : 1) {
+                        timeSlice.setStatusTag(.missingError)
+                    }
+                }
             }
             if scaleNote.midi == topNoteMidi {
                 direction = 1
@@ -141,9 +138,9 @@ class Result : Equatable {
         
         if noErrors() {
             let _ = scale.setNoteNormalizedValues()
-//            if let score = score {
-//                score.setNormalizedValues(scale: scale)
-//            }
+            if let score = score {
+                score.setNormalizedValues(scale: scale)
+            }
         }
         //Logger.shared.log(self, "Built result. scaleStart:\(scale.scaleNoteState[0].midi) Errors:\(self.getErrorString()) Ampl Filter:\(self.amplitudeFilter)")
     }

@@ -18,7 +18,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var noteAmplitudeHeardCount = 0
     var endTappingLowAmplitudeCount = 0
     
-    required init(bufferSize:Int) {
+    required init(bufferSize:Int, amplitudeFilter:Double) {
         self.recordedTapEvents = []
         self.startTappingTime = nil
         self.bufferSize = bufferSize
@@ -40,11 +40,8 @@ class ScaleTapHandler : TapHandlerProtocol  {
             amplitude = amplitudes[1]
         }
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
-        let event = TapEvent(tapNum: eventNumber, frequency: frequency, amplitude: amplitude, ascending: true, status: .none,
-                             expectedMidis: [], midi: 0, tapMidi: tapMidi, consecutiveCount: 1)
-//        if eventNumber % 8 == 0 {
-//            print("-------------------------------------- Tapped \(eventNumber) \(self.bufferSize) \(self.eventNumber) midi:\(tapMidi) \(amplitude)")
-//        }
+        let event = TapEvent(tapNum: eventNumber, consecutiveCount: 1, frequency: frequency, amplitude: amplitude)
+
         self.recordedTapEvents.append(event)
         self.eventNumber += 1
         ///Try to figure out when the recording should stop without the user stopping it with a button push
@@ -86,8 +83,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     }
     
     func stopTappingProcess() -> TapEventSet {
-        let tapEventSet = TapEventSet(bufferSize: self.bufferSize, description: "")
-        tapEventSet.events = self.recordedTapEvents
+        let tapEventSet = TapEventSet(bufferSize: self.bufferSize, events: self.recordedTapEvents)
         return tapEventSet
     }
     

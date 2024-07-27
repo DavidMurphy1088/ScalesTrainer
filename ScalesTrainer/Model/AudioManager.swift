@@ -26,6 +26,8 @@ class AudioManager {
     var tappableNodeA: Fader?
     var tappableNodeB: Fader?
     var tappableNodeC: Fader?
+    var tappableNodeD: Fader?
+    var tappableNodeE: Fader?
     var silencer: Fader?
 
     init() {
@@ -211,7 +213,9 @@ class AudioManager {
             self.tappableNodeA = Fader(mic!)
             self.tappableNodeB = Fader(tappableNodeA!)
             self.tappableNodeC = Fader(tappableNodeB!)
-            self.silencer = Fader(tappableNodeC!, gain: 0)
+            self.tappableNodeD = Fader(tappableNodeC!)
+            self.tappableNodeE = Fader(tappableNodeD!)
+            self.silencer = Fader(tappableNodeE!, gain: 0)
             ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
             engine.output = self.silencer
         }
@@ -247,14 +251,23 @@ class AudioManager {
         }
 
         self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
-                                          tapBufferSize: Settings.shared.tapBufferSize,
-                                          tapHandler: tapHandlers[0],
-                                          asynch: true))
-        
-        self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
-                                          tapBufferSize: 1024,
-                                          tapHandler: tapHandlers[1],
-                                          asynch: true))
+                                                tapHandler: tapHandlers[0],
+                                                asynch: true))
+        if tapHandlers.count > 1 {
+            self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
+                                                    tapHandler: tapHandlers[1],
+                                                    asynch: true))
+        }
+        if tapHandlers.count > 2 {
+            self.pitchTaps.append(installTapHandler(node: self.tappableNodeC!,
+                                                    tapHandler: tapHandlers[2],
+                                                    asynch: true))
+        }
+        if tapHandlers.count > 3 {
+            self.pitchTaps.append(installTapHandler(node: self.tappableNodeD!,
+                                                    tapHandler: tapHandlers[3],
+                                                    asynch: true))
+        }
 
         for tap in self.pitchTaps {
             tap.start()
@@ -327,7 +340,6 @@ class AudioManager {
         let scalesModel = ScalesModel.shared
         var tapEventSets:[TapEventSet] = []
         var tapNum = 0
-        //var tapSetCount = 0
         
         if let filePath = Bundle.main.path(forResource: "RecordedTapData", ofType: "txt") {
             let contents:String
@@ -340,8 +352,9 @@ class AudioManager {
             }
             let lines = contents.split(separator: "\r\n")
             
-            var tapEvents:[TapEvent] = []
-            var lastBufferSize:Int? = nil
+            //var tapEvents:[TapEvent] = []
+            //var lastBufferSize:Int? = nil
+            var currentTapSet:TapEventSet? = nil
             
             for i in 0..<lines.count+1 {
                 var line:String
@@ -355,49 +368,36 @@ class AudioManager {
                 let fields = line.split(separator: " ")
                 if line.starts(with: "--"){
                     ///e.g. --TapSet BufferSize 4096
-                    if let lastBufferSize = lastBufferSize {
-                        let newTapSet = TapEventSet(bufferSize: lastBufferSize, description: "")
-                        for tap in tapEvents {
-                            newTapSet.events.append(TapEvent(tap:tap))
-                        }
-                        tapEventSets.append(newTapSet)
-                        Logger.shared.log(self, "Read \(newTapSet.events.count) events from file for bufferSize:\(lastBufferSize)")
-                        tapEvents = []
+                    if let currentTapSet = currentTapSet {
+                        tapEventSets.append(currentTapSet)
+                        //let newTapSet = TapEventSet(bufferSize: lastBufferSize, events: [] )
+//                        for tap in tapEvents {
+//                            newTapSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: tap/, amplitude: <#Float#>))
+//                        }
+                        //tapEventSets.append(newTapSet)
+                        Logger.shared.log(self, "Read \(currentTapSet.events.count) events from file for bufferSize:\(currentTapSet.bufferSize)")
+                        //tapEvents = []
                         tapNum = 0
                     }
                     if i>=lines.count {
                         break
                     }
-                    lastBufferSize = Int(fields[2])
+                    currentTapSet = TapEventSet(bufferSize: Int(fields[2]) ?? 0, events: [])
                     continue
                 }
-//                    if fields.count > 1 {
-//                        let ampFilter = Double(fields[1])
-//                        if let ampFilter = ampFilter {
-//                            scalesModel.setAmplitudeFilter(ampFilter)
-//                        }
-//                    }
-//                    if fields.count > 2 {
-//                        let tapBufferSize = Int(fields[2])
-//                        if let tapBufferSize = tapBufferSize {
-//                            Settings.shared.tapBufferSize = tapBufferSize
-//                        }
-//                    }
-//                    continue
                 
-                //let time = fields[0].split(separator: ":")[1]
                 let freq = fields[1].split(separator: ":")[1]
                 let ampl = fields[2].split(separator: ":")[1]
                 let f = Float(freq)
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none,
-                                                  expectedMidis: [], midi: 0, tapMidi: 0, consecutiveCount: 1))
+                        currentTapSet?.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: f, amplitude: a))
+//                        currentTapSet.tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none,
+//                                                  expectedMidis: [], midi: 0, tapMidi: 0, consecutiveCount: 1))
                         tapNum += 1
                     }
                 }
-                //ctr += 1
             }
         }
         else {
@@ -428,10 +428,10 @@ class AudioManager {
         ScalesModel.shared.setRunningProcess(.none)
     }
     
-    func installTapHandler(node:Node, tapBufferSize:Int, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
+    func installTapHandler(node:Node, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
         let s = String(describing: type(of: tapHandler))
         
-        let installedTap = PitchTap(node, bufferSize:UInt32(tapBufferSize)) { pitch, amplitude in
+        let installedTap = PitchTap(node, bufferSize:UInt32(tapHandler.getBufferSize())) { pitch, amplitude in
             if !self.blockTaps {
                 if asynch {
                     DispatchQueue.main.async {
@@ -443,7 +443,7 @@ class AudioManager {
                 }
             }
         }
-        Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapBufferSize)")
+        Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapHandler.getBufferSize())")
         return installedTap
     }
     

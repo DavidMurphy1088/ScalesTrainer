@@ -85,16 +85,13 @@
     "Adjust:" : {
 
     },
-    "AmplFilter:" : {
-
-    },
     "Amplitude: %.4f" : {
 
     },
-    "Analyse Best Settings" : {
+    "Are you sure you want to go back?" : {
 
     },
-    "Are you sure you want to go back?" : {
+    "asddasd" : {
 
     },
     "Back" : {
@@ -109,24 +106,21 @@
     "Backing Off" : {
 
     },
-    "Best:" : {
-
-    },
-    "BufSize: %lld %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "BufSize: %1$lld %2$@"
-          }
-        }
-      }
-    },
     "Calibration" : {
 
     },
     "Completed" : {
 
+    },
+    "Correct:%lld Errors:%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Correct:%1$lld Errors:%2$lld"
+          }
+        }
+      }
     },
     "Correctly Played" : {
 
@@ -141,9 +135,6 @@
 
     },
     "Detected Pitch: %.0f Hz" : {
-
-    },
-    "Errors:" : {
 
     },
     "Famous Quotes" : {
@@ -227,9 +218,6 @@
     "Minor Scales" : {
 
     },
-    "MissedKeys[%lld]" : {
-
-    },
     "Missing" : {
 
     },
@@ -288,9 +276,6 @@
 
     },
     "RH\nProgress" : {
-
-    },
-    "Save" : {
 
     },
     "Save Configuration" : {
@@ -382,7 +367,7 @@
     "Stats: %@" : {
 
     },
-    "Status: %@" : {
+    "Status: %lld" : {
 
     },
     "Stop Analysis" : {
@@ -424,19 +409,10 @@
     "Tempo" : {
 
     },
-    "Test runs" : {
-
-    },
     "Under Construction" : {
 
     },
     "Various progress assessments and notes for this scale..." : {
-
-    },
-    "View At\nThis Setting" : {
-
-    },
-    "View This Result" : {
 
     },
     "Viewing\nDirection" : {
@@ -456,9 +432,6 @@
       }
     },
     "Warning" : {
-
-    },
-    "WrongKeys[%lld]" : {
 
     },
     "Yes" : {

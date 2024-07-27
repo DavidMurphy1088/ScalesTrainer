@@ -141,7 +141,7 @@ struct ScalesView: View {
     
     func StopProcessView() -> some View {
         VStack {
-            if scalesModel.runningProcess == .leadingIn {
+            if scalesModel.runningProcessPublished == .leadingIn {
                 Spacer()
                 VStack {
                     Text("👉 \(leadInMsg())")
@@ -151,7 +151,7 @@ struct ScalesView: View {
 
                 Spacer()
             }
-            if scalesModel.runningProcess == .followingScale {
+            if scalesModel.runningProcessPublished == .followingScale {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
@@ -161,7 +161,7 @@ struct ScalesView: View {
                     }
                 }
             }
-            if scalesModel.runningProcess == .practicing {
+            if scalesModel.runningProcessPublished == .practicing {
                 ProcessUnderwayView()
                 VStack {
                     Button(action: {
@@ -171,7 +171,7 @@ struct ScalesView: View {
                     }
                 }
             }
-            if scalesModel.runningProcess == .playingAlongWithScale {
+            if scalesModel.runningProcessPublished == .playingAlongWithScale {
                 HStack {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -180,7 +180,7 @@ struct ScalesView: View {
                     }
                 }
             }
-            if [.recordingScale].contains(scalesModel.runningProcess) {
+            if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 Spacer()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
@@ -198,7 +198,7 @@ struct ScalesView: View {
                 Spacer()
             }
             
-            if scalesModel.runningProcess == .hearingRecording {
+            if scalesModel.runningProcessPublished == .hearingRecording {
                 Button(action: {
                     scalesModel.setRunningProcess(.none)
                 }) {
@@ -246,8 +246,8 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcess == .practicing ? "Stop Practicing" : "Practice") {
-                    if scalesModel.runningProcess == .practicing {
+                Button(scalesModel.runningProcessPublished == .practicing ? "Stop Practicing" : "Practice") {
+                    if scalesModel.runningProcessPublished == .practicing {
                         scalesModel.setRunningProcess(.none)
                     }
                     else {
@@ -274,7 +274,7 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcess == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
+                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
                     scalesModel.setRunningProcess(.playingAlongWithScale)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
@@ -295,8 +295,8 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcess == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
-                    if scalesModel.runningProcess == .recordingScale {
+                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
+                    if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
                     }
                     else {
@@ -307,7 +307,7 @@ struct ScalesView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
-            if scalesModel.resultDisplay != nil {
+            if scalesModel.resultPublished != nil {
                 VStack {
                     Button(action: {
                         showHelp("Hear Recording")
@@ -421,7 +421,7 @@ struct ScalesView: View {
                 if scalesModel.showParameters {
                     VStack {
                         Text(scalesModel.scale.getScaleName()).font(.title)//.padding()
-                        if scalesModel.runningProcess == .none {
+                        if scalesModel.runningProcessPublished == .none {
                             SelectScaleParametersView()
                         }
                         ViewSettingsView()
@@ -454,7 +454,7 @@ struct ScalesView: View {
                     LegendView().commonFrameStyle()
                 }
                 
-                if scalesModel.runningProcess != .none {
+                if scalesModel.runningProcessPublished != .none {
                     //Spacer()
                     StopProcessView()
                     //Spacer()
@@ -464,7 +464,7 @@ struct ScalesView: View {
                         Text(userMessage).padding().commonFrameStyle()
                     }
                     
-                    if let result = scalesModel.resultDisplay {
+                    if let result = scalesModel.resultPublished {
                         HStack {
                             ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
 //                            ZStack {

@@ -16,7 +16,7 @@ struct SettingsView: View {
     @State var scaleNoteValue = 0
     
     @State private var defaultOctaves = 2
-    @State private var tapBufferSize = 4
+    @State private var tapBufferSize = 4096
     
     let width = UIScreen.main.bounds.width * 0.25
     
@@ -115,13 +115,13 @@ struct SettingsView: View {
                     Text("TapBufferSize").padding(0)
                     Picker("Select", selection: $tapBufferSize) {
                         ForEach(1..<16+1) { number in
-                            Text("\(number * 1024)").tag(number)
+                            Text("\(number * 1024)").tag(number * 1024)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
                     .padding()
                     .onChange(of: tapBufferSize) { oldValue, newValue in
-                        settings.tapBufferSize = tapBufferSize * 1024
+                        settings.defaultTapBufferSize = tapBufferSize //* 1024
                     }
                 }
 
@@ -129,7 +129,7 @@ struct SettingsView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                        settings.save()
                     }) {
                         HStack {
                             Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -145,7 +145,7 @@ struct SettingsView: View {
         .onAppear() {
             leadInBarCount = settings.scaleLeadInBarCount
             self.defaultOctaves = settings.defaultOctaves
-            self.tapBufferSize = settings.tapBufferSize / 1024
+            self.tapBufferSize = settings.defaultTapBufferSize // 1024
             self.scaleNoteValue = settings.scaleNoteValue
         }
     }

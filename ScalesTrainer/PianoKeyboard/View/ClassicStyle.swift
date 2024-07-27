@@ -56,28 +56,30 @@ public struct ClassicStyle {
     }
     
     private func getKeyStatusColor(key:PianoKeyModel) -> Color {
-//        if keyModel.scaleNoteState != nil {
-//            ///Key is in the scale
-//            if selectedDirection == 0 {
-//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//            else {
-//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//        }
-//        else {
-//            ///Key was not in the scale
-//            if selectedDirection == 0 {
-//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//            else {
-//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//        }
         let fullOpacity = 0.4
         let halfOpacity = 0.4
-
-        return key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear : Color.yellow.opacity(halfOpacity)
+        let scalesModel = ScalesModel.shared
+        var color:Color = Color.clear
+        if key.scale.getStateForMidi(midi: key.midi, direction: 0) != nil {
+            ///Key is in the scale
+            if scalesModel.selectedDirection == 0 {
+                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
+            }
+            else {
+                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
+            }
+        }
+        else {
+            ///Key was not in the scale
+            if scalesModel.selectedDirection == 0 {
+                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+            }
+            else {
+                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+            }
+        }
+        return color
+        
     }
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
@@ -167,13 +169,15 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note status -----------
-                let width = playingMidiRadius * 1.1
-                let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
-                let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
-
-                let color = getKeyStatusColor(key: key)
-                let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-                context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
+                if scalesModel.resultPublished != nil {
+                    let width = playingMidiRadius * 1.1
+                    let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
+                    let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
+                    
+                    let color = getKeyStatusColor(key: key)
+                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
+                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
+                }
             
                 ///----------- Finger number
                 if scalesModel.showFingers {
@@ -280,7 +284,7 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                if scalesModel.resultDisplay != nil {
+                if scalesModel.resultPublished != nil {
                     let width = playingMidiRadius * 1.0
                     let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
                     let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)

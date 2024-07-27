@@ -1,30 +1,5 @@
 import Foundation
 
-//public enum TapEventStatus1 {
-//    case none
-//    case info
-//    
-//    case pressWithoutScaleMatch
-//    
-//    ///Pressed the expected next note
-//    case pressNextScaleMatch
-//    
-//    ///Pressed note 1 further on than the one expected
-//    case pressFollowingScaleMatch
-//    
-//    ///Pressed wrong note but wait for one more wrong before reporting it. The singleton supposed error maybe only a harmonic
-//    case wrongButWaitForNext
-//    
-//    case continued
-//    case farFromExpected
-//    case pastEndOfScale
-//    case belowAmplitudeFilter
-//    case beforeScaleStart
-//    case keyNotOnKeyboard
-//    case outsideScale
-//    case singleton
-//
-//}
 public enum TapEventStatus {
     case none
     case info
@@ -33,25 +8,41 @@ public enum TapEventStatus {
     case belowAmplitudeFilter
     case beforeScaleStart
     case afterScaleEnd
-    //case keyNotOnKeyboard
-    //case outsideScale
     case waitForMore
-    
-    ///Practice TapHandlet
-    //case farFromExpected
-    //case pastEndOfScale
 }
 
-public class TapEvent:Hashable {
+///The tap events collected by a tap handler.
+///May also be compressed events where duplicate tap events are compressed into a single record. i.e. consecutiveCount > 1
+public class TapEvent {
+    let id = UUID()
+    var timestamp:Date
+    let tapNum:Int
+    var consecutiveCount:Int
+    let amplitude:Float
+    let frequency:Float
+    let tapMidi:Int
+    
+    public init(tapNum:Int, consecutiveCount:Int, frequency:Float, amplitude:Float) {
+        self.timestamp = Date()
+        self.tapNum = tapNum
+        self.consecutiveCount = consecutiveCount
+        self.amplitude = amplitude
+        self.frequency = frequency
+        self.tapMidi = Util.frequencyToMIDI(frequency: frequency)
+    }
+}
+
+///The status of a tap event after processing
+public class TapStatusRecord:Hashable {
     let id = UUID()
     var timestamp:Date
     let tapNum:Int
     let amplitude:Float
     let frequency:Float
     
+    let tapMidi:Int ///The origianl tap midi
     let midi:Int? ///The octave adjusted midi used for matching
     let status:TapEventStatus
-    let tapMidi:Int ///The origianl tap midi
     let expectedMidis:[Int]
     let ascending:Bool
     let infoMsg:String?
@@ -72,7 +63,7 @@ public class TapEvent:Hashable {
         self.consecutiveCount = consecutiveCount
     }
     
-    public init(tap:TapEvent) {
+    public init(tap:TapStatusRecord) {
         self.timestamp = tap.timestamp
         self.tapNum = tap.tapNum
         self.amplitude = tap.amplitude
@@ -100,7 +91,7 @@ public class TapEvent:Hashable {
         self.consecutiveCount = 0
     }
     
-    public static func == (lhs: TapEvent, rhs: TapEvent) -> Bool {
+    public static func == (lhs: TapStatusRecord, rhs: TapStatusRecord) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -148,12 +139,21 @@ public class TapEvent:Hashable {
 
 public class TapEventSet {
     let bufferSize:Int
-    let description:String
     var events:[TapEvent] = []
     
-    init(bufferSize:Int, description:String) {
+    init(bufferSize:Int, events:[TapEvent]) {
         self.bufferSize = bufferSize
+        self.events = events
+    }
+}
+
+public class TapStatusRecordSet {
+    let description:String
+    var events:[TapStatusRecord]
+    
+    init(description:String, events:[TapStatusRecord]) {
         self.description = description
+        self.events = events
     }
         
     func minMax() -> String {

@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>213</string>
+					<string>290</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>212</string>
+					<string>289</string>
 					<key>Timestamp</key>
-					<string>743686862.268271</string>
+					<string>743767985.428436</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -27,43 +27,24 @@
 					<key>payload</key>
 					<dict>
 						<key>relative-path</key>
-						<string>ScalesTrainer/Model/TapsEventsAnalyser.swift</string>
+						<string>ScalesTrainer/Model/ScalesModel.swift</string>
 					</dict>
 				</dict>
 			</dict>
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func processTap(ctx:String, scale:Scale, keyboard:PianoKeyboardModel, eventToProcess:TapEvent,
+				<string>        let bestScale:Scale = self.scale
 </string>
 				<key>leading</key>
-				<string>    ///The events become part of the viewable log of the scale recording.
-    ///Filter out spurios tap event frequencies.
+				<string>        ///Replay the best fit scale to set the app's display state
+        ///If there are too many errors just display the scale at the octaves it was shown as
 </string>
 				<key>trailing</key>
-				<string>                    discardSingletons:Bool, filterStart:Bool,
-                    octaveLenient:Bool, updateKeyboardDisplay:Bool) -&gt; TapEvent {
-                    //amplitude:Float, frequency:Float, recordedTimestamp:Date) -&gt; TapEvent {
+				<string>//            if bestResult == nil || bestResult!.getTotalErrors() &gt; 3 {
+//                bestScale = self.scale.makeNewScale(offset: 0)
+//            }
 </string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Model/TapsEventsAnalyser.swift</string>
-					</dict>
-				</dict>
-				<key>type</key>
-				<string>DVTDocumentLocation</string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>

@@ -103,7 +103,7 @@ struct TapDataView: View {
         return asc
     }
     
-    func getColor(_ event:TapEvent) -> Color {
+    func getColor(_ event:TapStatusRecord) -> Color {
         //var color = event.ascending ? Color.gray : Color.green
         var color = Color.gray
 //        if event.status == .pressNextScaleMatch {
@@ -137,8 +137,8 @@ struct TapDataView: View {
         VStack {
             Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
 
-            if let tapEventSet = scalesModel.tapHandlerEventSet {
-                Text("BufSize: \(tapEventSet.bufferSize) \(tapEventSet.description)").foregroundColor(Color .blue).font(.title3)
+            if let tapStatusRecordSet = scalesModel.tapHandlerEventSet {
+                Text("\(tapStatusRecordSet.description)").foregroundColor(Color .blue).font(.title3)
 //
 //                ScrollView {
 //                    ForEach(tapEventSet.events, id: \.self) { event in
@@ -151,7 +151,7 @@ struct TapDataView: View {
 //                    }
 //                }
                 ScrollView {
-                    ForEach(tapEventSet.events, id: \.self) { event in
+                    ForEach(tapStatusRecordSet.events, id: \.self) { event in
                         if getColor(event) == .black {
                             Text(event.tapData())
                                 .foregroundColor(getColor(event))

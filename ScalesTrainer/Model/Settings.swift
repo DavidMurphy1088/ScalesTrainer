@@ -6,9 +6,9 @@ public class Settings : Codable  {
     var firstName = ""
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
-    var tapMinimunAmplificationFilter:Double = 0
-    var tapBufferSize = 4096
-    var scaleNoteValue = 4 // What note values the score is wrtiewn with  1/4, 1/87 or 1/16
+    var amplitudeFilter:Double = 0
+    var defaultTapBufferSize = 4096
+    var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     
     private var wasLoaded = false
     
@@ -21,7 +21,7 @@ public class Settings : Codable  {
     }
     
     public func calibrationIsSet() -> Bool {
-       return tapMinimunAmplificationFilter > 0
+       return amplitudeFilter > 0
     }
 
     private func toJSON() -> String? {
@@ -38,25 +38,23 @@ public class Settings : Codable  {
     }
     
     func toString() -> String {
-        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.tapMinimunAmplificationFilter)) "
+        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
         //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
-        str += " TapBuffer:\(self.tapBufferSize)"
+        str += " TapBuffer:\(self.defaultTapBufferSize)"
         return str
     }
     
-    func save(amplitudeFilter:Double) {
-        self.tapMinimunAmplificationFilter = amplitudeFilter
+    func save() {
+        //self.amplitudeFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
         }
-        //if log {
-            Logger.shared.log(self, "Setting saved, \(toString())")
-        //}
+        Logger.shared.log(self, "Setting saved, \(toString())")
         UserDefaults.standard.set(str, forKey: "settings")
         self.wasLoaded = true
     }
@@ -73,12 +71,12 @@ public class Settings : Codable  {
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
                     self.recordDataMode = loaded.recordDataMode
-                    self.tapMinimunAmplificationFilter = loaded.tapMinimunAmplificationFilter
+                    self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
-                    self.tapBufferSize = loaded.tapBufferSize
+                    self.defaultTapBufferSize = loaded.defaultTapBufferSize
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
