@@ -34,7 +34,7 @@ struct ScalesView: View {
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
     @State var hearingBacking = false
-    @State var hearingRecording = false
+    //@State var hearingRecording = false
     @State var showingTapData = false
     @State var recordingScale = false
     @State var showResultPopup = false
@@ -152,7 +152,7 @@ struct ScalesView: View {
                 Spacer()
             }
             if scalesModel.runningProcessPublished == .followingScale {
-                ProcessUnderwayView()
+                RecordingIsUnderwayView()
                 VStack {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -162,7 +162,7 @@ struct ScalesView: View {
                 }
             }
             if scalesModel.runningProcessPublished == .practicing {
-                ProcessUnderwayView()
+                RecordingIsUnderwayView()
                 VStack {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -184,7 +184,7 @@ struct ScalesView: View {
                 Spacer()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
-                    ProcessUnderwayView()
+                    RecordingIsUnderwayView()
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -198,9 +198,9 @@ struct ScalesView: View {
                 Spacer()
             }
             
-            if scalesModel.runningProcessPublished == .hearingRecording {
+            if scalesModel.recordingIsPlaying {
                 Button(action: {
-                    scalesModel.setRunningProcess(.none)
+                    AudioManager.shared.stopPlayingRecordedFile()
                 }) {
                     Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
@@ -320,15 +320,38 @@ struct ScalesView: View {
                         }
                     }
                     Text("")
-                    Button(hearingRecording ? "Stop Hearing Your Recording" : "Hear\nYour\nRecording") {
-                        scalesModel.setRunningProcess(.hearingRecording)
+
+                    Button("Hear\nRecording") {
+                        AudioManager.shared.playRecordedFile()
                     }
-                    
+
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .padding()
             }
             
+            if scalesModel.resultPublished != nil {
+                VStack {
+                    Button(action: {
+                        showHelp("Sync The Scale")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)//.bold()
+                                .foregroundColor(.green)
+                        }
+                    }
+                    Text("")
+                    Button("Sync\nRecording") {
+                        scalesModel.setRunningProcess(.syncRecording)
+                    }
+
+                }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding()
+            }
+
             Spacer()
             VStack {
                 Button(action: {
@@ -454,7 +477,7 @@ struct ScalesView: View {
                     LegendView().commonFrameStyle()
                 }
                 
-                if scalesModel.runningProcessPublished != .none {
+                if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying {
                     //Spacer()
                     StopProcessView()
                     //Spacer()

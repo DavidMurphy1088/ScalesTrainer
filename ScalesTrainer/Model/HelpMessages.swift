@@ -58,7 +58,8 @@ class HelpMessages {
         m = "Listen to the last scale recording you made."
         messages["Hear Recording"] = m
         
-
+        m = "Listen to your recording synchronised to the scale."
+        messages["Sync The Scale"] = m
 
     }
 }

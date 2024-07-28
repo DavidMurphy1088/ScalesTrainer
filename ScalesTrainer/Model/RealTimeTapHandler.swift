@@ -9,7 +9,7 @@ import UIKit
 ///The key parameter that determines the frequency at which the closure (handler) is called is the bufferSize.
 ///The bufferSize parameter specifies the number of audio samples that will be processed in each iteration before calling the closure with the detected pitch and amplitude values.
 ///By default, the bufferSize is set to 4096 samples. Assuming a typical sample rate of 44,100 Hz, this means that the closure will be called approximately 10.7 times per second (44,100 / 4096).
-///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance. For example:
+///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance.
 
 protocol TapHandlerProtocol {
     init(bufferSize:Int, amplitudeFilter:Double)
@@ -18,7 +18,8 @@ protocol TapHandlerProtocol {
     func getBufferSize() -> Int
 }
 
-class PracticeTapHandler : TapHandlerProtocol {
+///Tap handerl to udate the model in real time as events are received
+class RealTimeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let bufferSize:Int
     let amplitudeFilter:Double
@@ -68,23 +69,6 @@ class PracticeTapHandler : TapHandlerProtocol {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
                 let keyboardKey = keyboardModel.pianoKeyModel[index]
                 let hilightKey = true
-                ///Dont hilite same note just echoing ...
-//                if let lastMidi = lastMidi {
-//                    if keyboardKey.midi != lastMidi {
-//                        hilightKey = true
-//                    }
-//                    else {
-//                        if let lastMidiHiliteTime = lastMidiHiliteTime {
-//                            let diff = secs - lastMidiHiliteTime
-//                            if diff > 1.2 {
-//                                hilightKey = true
-//                            }
-//                        }
-//                    }
-//                }
-//                else {
-//                    hilightKey = true
-//                }
                 if hilightKey {
                     keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                     lastMidiHiliteTime = secs
@@ -92,7 +76,6 @@ class PracticeTapHandler : TapHandlerProtocol {
                 lastMidi = keyboardKey.midi
             }
         }
-
         tapHandlerEventSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: frequency, amplitude: amplitude))
         tapNum += 1
     }

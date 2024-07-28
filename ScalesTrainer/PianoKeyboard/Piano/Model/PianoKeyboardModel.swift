@@ -131,7 +131,7 @@ public class PianoKeyboardModel: ObservableObject {
         }
     }
     
-    func debugSize(_ ctx:String) {
+    func debugSize1(_ ctx:String) {
         print("========================= Keyboard Size === \(ctx)", "lowMidi", self.pianoKeyModel[0].midi, "hiMidi", self.pianoKeyModel[self.pianoKeyModel.count-1].midi)
     }
     

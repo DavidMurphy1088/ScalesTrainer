@@ -31,18 +31,21 @@ class ActivityMode : Identifiable {
     }
 }
 
-struct SelectScaleGroupView: View {
-    @State var isOn = [Bool](repeating: false, count: 18)
-    @State var index = 0
+struct BoardGradesView: View {
+    let board:String
     let width = 0.7
     let background = UIGlobals.shared.getBackground()
+    let grades = Array(1...8)
     
-    func setOn(index:Int)  {
-        isOn = [Bool](repeating: false, count: 18)
-        for i in 0..<isOn.count {
-            isOn[i] = i == index
-        }
-    }
+    @State private var isOn = [Bool](repeating: false, count: 8)
+    @State var index = 0
+    
+//    func setOn(index:Int)  {
+//        isOn = [Bool](repeating: false, count: grades.count )
+//        for i in 0..<isOn.count {
+//            isOn[i] = i == index
+//        }
+//    }
     
     var body: some View {
         ZStack {
@@ -53,36 +56,27 @@ struct SelectScaleGroupView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
                 VStack {
-                    Text("Select Exam Scales").font(.title)//.foregroundColor(.blue)
+                    Text("Select Your Grade for \(self.board)").font(.title)//.foregroundColor(.blue)
                 }
                 .commonTitleStyle()
                 .padding()
                 Spacer()
                 List {
-                    ForEach(Array(ScaleGroup.options.enumerated()), id: \.element.id) { index, scaleGroup in
+                    ForEach(0..<grades.count, id: \.self) { i in
                         HStack {
-                            Text(scaleGroup.name).background(Color.clear)
+                            Text(i == 0 ? "Preliminary" : "Grade \(i) Piano").background(Color.clear).padding()
                             Spacer()
-                            HStack {
-                                GeometryReader { geometry in
-                                    Image(scaleGroup.imageName)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(height: geometry.size.height)
-                                }
-                            }
-                            .padding()
-                            Spacer()
-                            Toggle(isOn: Binding<Bool>(
-                                get: { self.isOn[index] },
-                                set: { newValue in
-                                    if newValue {
-                                        self.setOn(index: index)
+                            Toggle("", isOn: $isOn[i])
+                                .onChange(of: isOn[i]) { old, value in
+                                    if value {
+                                        for j in 0..<isOn.count {
+                                            if j != i {
+                                                isOn[j] = false
+                                            }
+                                        }
                                     }
                                 }
-                            )) {
-                                EmptyView()
-                            }                        }
+                        }
                     }
                 }
                 .commonFrameStyle(backgroundColor: .white)
@@ -90,8 +84,67 @@ struct SelectScaleGroupView: View {
             }
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
             .onAppear() {
-                self.setOn(index: 11)
+                isOn[3] = true
             }
+        }
+    }
+}
+
+struct SelectMusicBoardView: View {
+    let width = 0.7
+    let background = UIGlobals.shared.getBackground()
+    
+    var body: some View {
+        ZStack {
+            Image(background)
+                .resizable()
+                .scaledToFill()
+                .edgesIgnoringSafeArea(.top)
+                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+            VStack {
+                VStack {
+                    Text("Select Music Board").font(.title)//.foregroundColor(.blue)
+                }
+                .commonTitleStyle()
+                .padding()
+                Spacer()
+                List {
+                    ForEach(Array(MusicBoard.options.enumerated()), id: \.element.id) { index, scaleGroup in
+                        NavigationLink(destination: BoardGradesView(board: scaleGroup.name)) {
+                            HStack {
+                                Text(scaleGroup.name).background(Color.clear).padding()
+                                //Spacer()
+                                Text(scaleGroup.fullName).background(Color.clear).padding()
+                                Spacer()
+
+                                HStack {
+                                    GeometryReader { geometry in
+                                        Image(scaleGroup.imageName)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: geometry.size.height)
+                                    }
+                                }
+                                //.padding()
+                                //                            Spacer()
+                                //                            Toggle(isOn: Binding<Bool>(
+                                //                                get: { self.isOn[index] },
+                                //                                set: { newValue in
+                                //                                    if newValue {
+                                //                                        self.setOn(index: index)
+                                //                                    }
+                                //                                }
+                                //                            )) {
+                                //                                EmptyView()
+                                //                            }
+                            }
+                        }
+                    }
+                }
+                .commonFrameStyle(backgroundColor: .white)
+                .padding()
+            }
+            .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
         }
     }
 }
@@ -185,7 +238,7 @@ struct ActivityModeView: View {
     
         .onAppear() {
             if menuOptions.count == 0 {
-                menuOptions.append(ActivityMode(name: "Select Exam Scales", view: AnyView(SelectScaleGroupView())))
+                menuOptions.append(ActivityMode(name: "Select Music Board", view: AnyView(SelectMusicBoardView())))
                 menuOptions.append(ActivityMode(name: "Practice Chart", view: AnyView(PracticeChartView(rows: 10, columns: 3))))
                 
                 if let practiceJournal = PracticeJournal.shared {
@@ -257,7 +310,7 @@ struct HomeView: View {
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
         .onAppear() {
-            PracticeJournal.shared = PracticeJournal(scaleGroup: ScaleGroup.options[11])
+            PracticeJournal.shared = PracticeJournal(scaleGroup: MusicBoard.options[5])
         }
     }
 }

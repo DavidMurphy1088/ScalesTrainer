@@ -23,7 +23,7 @@ enum RunningProcess {
     case leadingIn
     case recordScaleWithFileData
     //case recordScaleWithTapData
-    case hearingRecording
+    case syncRecording
     case playingAlongWithScale
 
     var description: String {
@@ -44,8 +44,8 @@ enum RunningProcess {
 //            return "Recording Scale With Tap Data"
 //        case .identifyingScale:
 //            return "Identifying Scale"
-        case .hearingRecording:
-            return "Hearing Recording"
+        case .syncRecording:
+            return "Synchronize Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
         case .leadingIn:
@@ -68,9 +68,9 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
     @Published var selectedDirection = 0
-    
     @Published var score:Score?
-    
+    @Published var recordingIsPlaying = false
+
     var scoreHidden = false
     
     var recordedTapsFileURL:URL? //File where recorded taps were written
@@ -306,19 +306,22 @@ public class ScalesModel : ObservableObject {
         let keyboard = PianoKeyboardModel.shared
         if let result = bestResult {
             if let eventSet = bestEvents {
-                let (result, statusSet) = analyser.applyEvents(ctx: "useBest",
+                
+                //result.compressingFactor = 1
+                let (finalResult, statusSet) = analyser.applyEvents(ctx: "useBest",
                                                        bufferSize: result.bufferSize,
-                                                       recordedTapEvents: eventSet.events,
+                                                                    //recordedTapEvents: eventSet.events,
+                                                                    recordedTapEvents: result.tappedEventsSet.events,
                                                        offset: 0, scale: bestScale,
                                                        keyboard: keyboard,
-                                                       compressingFactor: result.compressingFactor,
+                                                        compressingFactor: result.compressingFactor,
                                                        octaveLenient: true,
                                                        score: score,
                                                        updateKeyboard: true)
                 eventStatusSet = statusSet
                 keyboard.redraw()
                 Logger.shared.log(self, "=======> Applied best events. Offset:\(0) Result:\(result.getInfo())")
-                scalesModel.setResultInternal(bestResult, "stop Tapping")
+                scalesModel.setResultInternal(finalResult, "stop Tapping")
             }
         }
         self.tapHandlers = []
@@ -360,7 +363,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .practicing].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            self.tapHandlers.append(PracticeTapHandler(bufferSize: 4096, amplitudeFilter: Settings.shared.amplitudeFilter))
+            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, amplitudeFilter: Settings.shared.amplitudeFilter))
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note only. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -399,7 +402,7 @@ public class ScalesModel : ObservableObject {
             })
         }
         
-        if [RunningProcess.hearingRecording].contains(setProcess)  {
+        if [RunningProcess.syncRecording].contains(setProcess)  {
             let metronome = MetronomeModel.shared
             metronome.startTimer(notified: HearUserScale(), onDone: {
                 self.setRunningProcess(.none) //, tapBufferSize: Settings.shared.tapBufferSize)
@@ -443,7 +446,7 @@ public class ScalesModel : ObservableObject {
                     DispatchQueue.main.async {
                         self.runningProcess = RunningProcess.recordingScale
                     }
-                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
                 })
             }
         }

@@ -1,44 +1,35 @@
 import Foundation
 
-class ScaleGroup : Identifiable {
+class MusicBoard : Identifiable {
     let name:String
+    let fullName:String
     let imageName:String
     var scales:[PracticeJournalScale] = []
     
     static let options = [
-        ScaleGroup(name: "ABRSM Grade 1", imageName: "abrsm"),
-        ScaleGroup(name: "ABRSM Grade 2", imageName: "abrsm"),
-        ScaleGroup(name: "ABRSM Grade 3", imageName: "abrsm"),
+        MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
         
-        ScaleGroup(name: "AMEB, Grade 1", imageName: "AMEB"),
-        ScaleGroup(name: "AMEB, Grade 2", imageName: "AMEB"),
-        ScaleGroup(name: "AMEB, Grade 3", imageName: "AMEB"),
+        MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"),
 
-        ScaleGroup(name: "Central Conservatory of Music, Grade 1", imageName: "Central_Conservatory_of_Music_logo"),
-        ScaleGroup(name: "Central Conservatory of Music, Grade 2", imageName: "Central_Conservatory_of_Music_logo"),
-        ScaleGroup(name: "Central Conservatory of Music, Grade 3", imageName: "Central_Conservatory_of_Music_logo"),
+        MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"),
         
-        ScaleGroup(name: "NZMEB Grade 4", imageName: "nzmeb"),
-        ScaleGroup(name: "NZMEB Grade 5", imageName: "nzmeb"),
-        ScaleGroup(name: "NZMEB Grade 6", imageName: "nzmeb"),
+        MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"),
         
-        ScaleGroup(name: "Korea Music Association Grade 1", imageName: "Korea_SJAlogo"),
-        ScaleGroup(name: "Korea Music Association Grade 2", imageName: "Korea_SJAlogo"),
-        ScaleGroup(name: "Korea Music Association Grade 3", imageName: "Korea_SJAlogo"),
+        MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"),
 
-        ScaleGroup(name: "Trinity Grade 1", imageName: "trinity"),
-        ScaleGroup(name: "Trinity Grade 2", imageName: "trinity"),
-        ScaleGroup(name: "Trinity Grade 3", imageName: "trinity")
+        MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"),
     ]
     
     init() {
         self.name = "Empty"
         self.imageName = ""
+        self.fullName = ""
     }
 
-    init(name:String, imageName:String) {
+    init(name:String, fullName:String, imageName:String) {
         self.name = name
         self.imageName = imageName
+        self.fullName = fullName
 
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .major))

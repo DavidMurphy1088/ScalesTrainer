@@ -116,11 +116,6 @@ public class TapStatusRecord:Hashable {
         row += "    Tap:\(self.tapMidi)"
         //if let count = self.consecutiveCount {
         row += "    Count:\(self.consecutiveCount)"
-//        }
-//        else {
-//            row += "  Count _"
-//        }
-        //row += midi == nil ? "  " : "**"
         
         var status = "  \(self.status)"
         status = String(status.prefix(12))
@@ -144,6 +139,48 @@ public class TapEventSet {
     init(bufferSize:Int, events:[TapEvent]) {
         self.bufferSize = bufferSize
         self.events = events
+    }
+    
+    func debug1(_ ctx:String) {
+        print(" ======== DEBUG TapEventSet", ctx)
+        for event in self.events {
+            print(event.tapNum, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)
+        }
+    }
+    
+    func getStartAmplitude(bufferSize:Int) -> Double {
+        var trailing:[Float] = []
+        var recent:[Float] = []
+        let bufferFactor =  Double(4096) / Double(bufferSize)
+        let recentMaxSize = Int(4 * bufferFactor)
+        let trailingMaxSize = Int(32 * bufferFactor)
+
+        func calculateAverage(_ array:[Float]) -> Float {
+            guard !array.isEmpty else { return 0.0 } // Return 0.0 if the array is empty
+            let sum = array.reduce(0, +)
+            return sum / Float(array.count)
+        }
+        var trailingAvg:Float = 0.0
+        for i in 0..<self.events.count {
+            trailing.append(self.events[i].amplitude)
+            if trailing.count > trailingMaxSize {
+                trailing.remove(at: 0)
+            }
+
+            recent.append(self.events[i].amplitude)
+            if recent.count > recentMaxSize {
+                recent.remove(at: 0)
+            }
+            trailingAvg = calculateAverage(trailing)
+            let recentAvg = calculateAverage(recent)
+            let delta = trailingAvg == 0 ? 0 : (recentAvg - trailingAvg) / trailingAvg
+            print("TAPSETAVG", self.events[i].tapMidi, i, delta, String(format: "%.8f", events[i].amplitude), "toDate", String(format: "%.8f", trailingAvg), "recent", String(format: "%.8f", recentAvg), "count", recent.count)
+            if delta > 1 {
+                //break
+            }
+        }
+        print ("============== TRailing", trailingAvg, bufferSize)
+        return Double(trailingAvg)
     }
 }
 
@@ -183,10 +220,10 @@ public class TapStatusRecordSet {
         return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
     
-//    func debug(_ ctx:String) {
-//        print(" TapEventSet", ctx)
-//        for event in self.events {
-//            print(event.tapData())
-//        }
-//    }
+    func debug1(_ ctx:String) {
+        print(" TapEventSet", ctx)
+        for event in self.events {
+            print(event.tapData())
+        }
+    }
 }

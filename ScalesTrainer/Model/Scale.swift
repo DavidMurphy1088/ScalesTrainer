@@ -286,7 +286,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug111(_ msg:String)  {
+    func debug1111(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

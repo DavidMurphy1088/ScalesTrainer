@@ -28,6 +28,7 @@ class AudioManager {
     var tappableNodeC: Fader?
     var tappableNodeD: Fader?
     var tappableNodeE: Fader?
+    var tappableNodeF: Fader?
     var silencer: Fader?
 
     init() {
@@ -35,85 +36,32 @@ class AudioManager {
         resetAudioKit()
     }
     
-//    func configureAudioOld() {
-//        //WARNING do not change a single character of this setup. It took hours to get to and is very fragile
-//        //Record on mic will never work on simulator - dont even try 😡😡😡😡
-//        self.engine = AudioEngine() 
-//        guard let engine = self.engine else {
-//            Logger.shared.log(self, "Engine is nil")
-//            return
-//        }
-//
-//        guard let input = engine.input else {
-//            Logger.shared.log(self, "Engine has no input")
-//            return
-//        }
-//        mic = input
-//        do {
-//            recorder = try NodeRecorder(node: input)
-//        } catch let err {
-//            Logger.shared.reportError(self, "\(err)")
-//            return
-//        }
-//        //mic.gain = 1.0
-//        checkMicPermission(completion: {granted in
-//            if !granted {
-//                Logger.shared.reportError(self, "No microphone permission")
-//            }
-//        })
-//    
-//    ///In AudioKit, the engine.output = mixer line of code sets the final node in the audio processing chain to be the mixer node. This means that the mixer node's output is what will be sent to the speakers or the output device.
-//    ///When you set engine.output = mixer, you are specifying that the mixer's output should be the final audio output of the entire audio engine. This is crucial because:
-//    
-//    ///Signal Routing: It determines where the processed audio should go. Without setting the engine.output, the audio engine doesn't know which node's output should be routed to the speakers or headphones.
-//    ///Start of Audio Processing: Setting the engine.output is necessary before starting the engine with engine.start(). If the output is not set, there will be no audio output even if the engine is running.
-//    ///End Point: It effectively makes the mixer the end point of your audio signal chain. All audio processing done in the nodes connected to this mixer will be heard in the final output.
-//    
-//        simulator = false
-//#if targetEnvironment(simulator)
-//        simulator = true
-//#endif
-//        if simulator {
-//            //setupSampler()
-//            engine.output = midiSampler
-//        }
-//        else {
-//            self.mixer = Mixer(input)
-//            ///Without this the recorder causes a fatal error when it starts recording - no idea why 😣
-//            let silencer = Fader(input, gain: 0)
-//            self.silencer = silencer
-//            mixer?.addInput(silencer)
-//            
-//            self.audioPlayer = AudioPlayer()
-//            mixer?.addInput(self.audioPlayer!)
-//            //setupSampler()
-//            //mixer?.addInput(midiSampler ?? <#default value#>)
-//            
-//            //self.speechManager = SpeechManager.shared
-//            engine.output = mixer
-//            setSession()
-//        }
-//        do {
-//            try engine.start()
-//        }
-//        catch {
-//            Logger.shared.reportError(self, "Could not start engine", error)
-//        }
-//
-//    }
-    
-    func playRecordedFile(audioFile:AVAudioFile) {
-        do {
-            //try audioPlayer.load(file: audioFile)
-            Logger.shared.log(self, "Playing file len:\(audioFile.length) duration:\(audioFile.duration)")
-            //audioPlayer = AudioPlayer(file: audioFile)!
-            //audioPlayer.volume = 1.0
-            //engine?.output = audioPlayer
-            try engine?.start()
-            audioPlayer?.play()
+    func stopPlayingRecordedFile() {
+        if let audioPlayer = self.audioPlayer {
+            audioPlayer.stop()
+            DispatchQueue.main.async {
+                ScalesModel.shared.recordingIsPlaying = false
+            }
         }
-        catch {
-            Logger.shared.reportError(self, "Cannot load file len:\(audioFile.length) duration:\(audioFile.duration)")
+    }
+    
+    func playRecordedFile() {
+        if let recorder = recorder {
+            if let audioFile = recorder.audioFile {
+                self.audioPlayer = AudioPlayer(file: audioFile)
+                self.audioPlayer?.volume = 1.0  // Set volume to maximum
+                engine?.output = self.audioPlayer
+                print("Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
+                audioPlayer?.completionHandler = {
+                    DispatchQueue.main.async {
+                        ScalesModel.shared.recordingIsPlaying = false
+                    }
+                }
+                self.audioPlayer?.play()
+                DispatchQueue.main.async {
+                    ScalesModel.shared.recordingIsPlaying = true
+                }
+            }
         }
     }
     
@@ -192,21 +140,7 @@ class AudioManager {
             Logger.shared.reportError(self, "No input")
             return
         }
-//        if recordAudio {
-//            do {
-//                self.recorder = try NodeRecorder(node: engineInput)
-//            } catch let err {
-//                Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
-//            }
-//        }
-//        else {
-//            self.recorder = nil
-//        }
-//        guard let device = engine.inputDevice else {
-//            Logger.shared.reportError(self, "No input device")
-//            return
-//        }
-//        self.initialDevice = device
+
         self.mic = engineInput
         
         if true { 
@@ -215,30 +149,31 @@ class AudioManager {
             self.tappableNodeC = Fader(tappableNodeB!)
             self.tappableNodeD = Fader(tappableNodeC!)
             self.tappableNodeE = Fader(tappableNodeD!)
-            self.silencer = Fader(tappableNodeE!, gain: 0)
+            self.tappableNodeF = Fader(tappableNodeE!)
+            self.silencer = Fader(tappableNodeF!, gain: 0)
             ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
             engine.output = self.silencer
         }
-        else {
-            ///Cant include sampler for backer
-            ///This setup wont work since the ampl and freq passed to the PitchTap is garbage.
-            ///Maybe its not required anyway - anytime another node is generating output and a pitch tap is connected it will pick up output from that node in addition to the microphone.
-            ///Whereas the pitch tap should only ever include input from the user's instrument.
-            self.silencer = Fader(engineInput, gain: 0)
-            self.mixer = Mixer(engineInput)
-            mixer?.addInput(self.silencer!)
-            self.audioPlayer = AudioPlayer()
-            mixer?.addInput(self.audioPlayer!)
-            //if let midiSampler = setupSampler() {
-            if let midiSampler = self.midiSampler {
-                mixer?.addInput(midiSampler)
-            }
-            //}
-            engine.output = self.mixer
-        }
+//        else {
+//            ///Cant include sampler for backer
+//            ///This setup wont work since the ampl and freq passed to the PitchTap is garbage.
+//            ///Maybe its not required anyway - anytime another node is generating output and a pitch tap is connected it will pick up output from that node in addition to the microphone.
+//            ///Whereas the pitch tap should only ever include input from the user's instrument.
+//            self.silencer = Fader(engineInput, gain: 0)
+//            self.mixer = Mixer(engineInput)
+//            mixer?.addInput(self.silencer!)
+//            self.audioPlayer = AudioPlayer()
+//            mixer?.addInput(self.audioPlayer!)
+//            //if let midiSampler = setupSampler() {
+//            if let midiSampler = self.midiSampler {
+//                mixer?.addInput(midiSampler)
+//            }
+//            //}
+//            engine.output = self.mixer
+//        }
         
         if recordAudio {
-            if let fader = self.tappableNodeC {
+            if let fader = self.tappableNodeF {
                 do {
                     self.recorder = try NodeRecorder(node: fader)
                 } catch let err {
@@ -296,10 +231,7 @@ class AudioManager {
                 ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
                 let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
                 Logger.shared.log(self, log)
-                self.audioPlayer = AudioPlayer(file: audioFile)
-                self.audioPlayer?.volume = 1.0  // Set volume to maximum
-                engine?.output = self.audioPlayer
-                //print("Player setup with file: \(file?.url)")
+
             } else {
                 print("No audio file found after stopping recording")
             }
@@ -307,6 +239,7 @@ class AudioManager {
         engine?.stop()
     }
     
+
     func setSession() {
         ///nightmare
         do {

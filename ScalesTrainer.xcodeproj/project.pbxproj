@@ -16,7 +16,7 @@
 		79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */; };
 		79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* ResultView.swift */; };
 		79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */; };
-		79312DB52C106D3D005FDE8B /* ProcessUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */; };
+		79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */; };
 		79312DB72C118B41005FDE8B /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB62C118B41005FDE8B /* HelpView.swift */; };
 		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
@@ -30,7 +30,7 @@
 		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
 		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
 		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
-		794D49562BCD29090005A173 /* TapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* TapHandler.swift */; };
+		794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* RealTimeTapHandler.swift */; };
 		794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49572BCD29390005A173 /* ScaleMatcher.swift */; };
 		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
 		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
@@ -70,7 +70,7 @@
 		79C3904C2C1ECEAA00F0A658 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */; };
 		79C390502C20346300F0A658 /* PickAnyScaleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */; };
 		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
-		79C8AD002C127D8400770C10 /* ScaleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* ScaleGroup.swift */; };
+		79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoard.swift */; };
 		79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD012C128F0200770C10 /* PracticeJournalView.swift */; };
 		79C8AD042C12F81C00770C10 /* PracticeJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD032C12F81C00770C10 /* PracticeJournal.swift */; };
 		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
@@ -106,7 +106,7 @@
 		79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLeadIn.swift; sourceTree = "<group>"; };
 		79312DB02C0B2B7E005FDE8B /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSliceEntry.swift; sourceTree = "<group>"; };
-		79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessUnderwayView.swift; sourceTree = "<group>"; };
+		79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIsUnderwayView.swift; sourceTree = "<group>"; };
 		79312DB62C118B41005FDE8B /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
@@ -119,7 +119,7 @@
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = akai_steinway.sf2; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
-		794D49552BCD29090005A173 /* TapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapHandler.swift; sourceTree = "<group>"; };
+		794D49552BCD29090005A173 /* RealTimeTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeTapHandler.swift; sourceTree = "<group>"; };
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
 		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
 		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 		79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickAnyScaleView.swift; sourceTree = "<group>"; };
 		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
-		79C8ACFF2C127D8400770C10 /* ScaleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleGroup.swift; sourceTree = "<group>"; };
+		79C8ACFF2C127D8400770C10 /* MusicBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoard.swift; sourceTree = "<group>"; };
 		79C8AD012C128F0200770C10 /* PracticeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalView.swift; sourceTree = "<group>"; };
 		79C8AD032C12F81C00770C10 /* PracticeJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournal.swift; sourceTree = "<group>"; };
 		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
@@ -349,7 +349,7 @@
 				79C3904F2C20346300F0A658 /* PickAnyScaleView.swift */,
 				790537042C47319600AC794D /* PracticeChartView.swift */,
 				79C8AD012C128F0200770C10 /* PracticeJournalView.swift */,
-				79312DB42C106D3D005FDE8B /* ProcessUnderwayView.swift */,
+				79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */,
 				79312DB02C0B2B7E005FDE8B /* ResultView.swift */,
 				794A9FC42C2B73770001297E /* ScaleIntervals.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
@@ -374,10 +374,11 @@
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
+				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
 				79C8AD032C12F81C00770C10 /* PracticeJournal.swift */,
+				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
 				79552FB52BDB975D00A27531 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
-				79C8ACFF2C127D8400770C10 /* ScaleGroup.swift */,
 				79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
@@ -386,7 +387,6 @@
 				7985635C2C0349BF008BAC79 /* Settings.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
-				794D49552BCD29090005A173 /* TapHandler.swift */,
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
@@ -528,7 +528,7 @@
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
 				799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */,
-				794D49562BCD29090005A173 /* TapHandler.swift in Sources */,
+				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,
 				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
 				796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
@@ -538,7 +538,7 @@
 				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
 				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
-				79C8AD002C127D8400770C10 /* ScaleGroup.swift in Sources */,
+				79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */,
 				79C390502C20346300F0A658 /* PickAnyScaleView.swift in Sources */,
 				797013972BEE3E45009F85D6 /* StemView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
@@ -561,7 +561,7 @@
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
 				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */,
-				79312DB52C106D3D005FDE8B /* ProcessUnderwayView.swift in Sources */,
+				79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */,
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,

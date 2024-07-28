@@ -73,7 +73,6 @@ class TapsEventsAnalyser {
         //keyboard.linkScaleFingersToKeyboardKeys(scale: scale, direction: 0)
     }
     
-
     ///On stop tapping test which scale offset best fits the user's scale recording. This is required so that if a scale is say starting on middle C (60) the user may elect to record it at another octave.
     ///The set of tap frequences, amplitudes and times is processed against each scale offset. For each event set process the keyboard must be configured to the scale octave range being tested.
     ///This analysis is 'fuzzy' becuase a piano key tap produces a range of pitches (e.g. octaves) and so its not straightforward to know which scale offset best fits.
@@ -118,6 +117,9 @@ class TapsEventsAnalyser {
                                                          score: nil,
                                                          updateKeyboard: false)
 
+                    if bestResult != nil {
+                        print("=========================IS BETTER", bestResult!.isBetter(compare: result), bestResult?.bufferSize, result.bufferSize )
+                    }
                     if bestResult == nil || bestResult!.isBetter(compare: result) {
                         bestResult = result
                         bestTapEventSet = tapEventSet
@@ -140,6 +142,7 @@ class TapsEventsAnalyser {
                      ) -> (Result, TapStatusRecordSet) {
         ///Apply the tapped events to a given scale start
         resetState(scale: scale, octaveLenient: false)
+
         let tapStatusRecordSet = TapStatusRecordSet(description: "bufferSize:\(bufferSize) ampFilter:\(self.amplitudeFilter) offset:\(offset) compress:\(compressingFactor)", events: [])
         let tapEvents:[TapEvent]
         if compressingFactor > 0 {
@@ -147,6 +150,9 @@ class TapsEventsAnalyser {
         }
         else {
             tapEvents = recordedTapEvents
+        }
+        if bufferSize == 8192 {
+            print("========+++XX", compressingFactor, recordedTapEvents.count, tapEvents.count)
         }
         for event in tapEvents {
             let processedtapEvent = processTap(ctx: ctx, scale: scale, 
@@ -158,8 +164,10 @@ class TapsEventsAnalyser {
                                                updateKeyboardDisplay: updateKeyboard)
             tapStatusRecordSet.events.append(processedtapEvent)
         }
-        let result = Result(scale: scale, keyboard: keyboard, fromProcess: self.fromProcess, amplitudeFilter: self.amplitudeFilter, bufferSize: bufferSize,
+        let result = Result(scale: scale, tappedEventsSet: TapEventSet(bufferSize: bufferSize, events: recordedTapEvents), keyboard: keyboard,
+                            fromProcess: self.fromProcess, amplitudeFilter: self.amplitudeFilter, bufferSize: bufferSize,
                             compressingFactor: compressingFactor, userMessage: "")
+        //tapStatusRecordSet.debug("===end of taps")
         result.buildResult(offset: offset, score: score)
         return (result, tapStatusRecordSet)
     }

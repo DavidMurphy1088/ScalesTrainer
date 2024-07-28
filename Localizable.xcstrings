@@ -158,10 +158,13 @@
     "Go to Screen B" : {
 
     },
+    "Grade %lld Piano" : {
+
+    },
     "Hand:" : {
 
     },
-    "Hear\nYour\nRecording" : {
+    "Hear\nRecording" : {
 
     },
     "Hide Fingers" : {
@@ -254,6 +257,9 @@
     "Practice" : {
 
     },
+    "Preliminary" : {
+
+    },
     "Progress" : {
 
     },
@@ -322,10 +328,13 @@
     "Select a number" : {
 
     },
-    "Select Exam Scales" : {
+    "Select Music Board" : {
 
     },
     "Select Value" : {
+
+    },
+    "Select Your Grade for %@" : {
 
     },
     "Send Tap Data" : {
@@ -379,9 +388,6 @@
     "Stop Hearing" : {
 
     },
-    "Stop Hearing Your Recording" : {
-
-    },
     "Stop Playback" : {
 
     },
@@ -398,6 +404,9 @@
 
     },
     "Stop Recording Scale" : {
+
+    },
+    "Sync\nRecording" : {
 
     },
     "TapBufferSize" : {

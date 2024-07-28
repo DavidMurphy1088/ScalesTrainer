@@ -5,8 +5,9 @@ class Result : Equatable {
     let id = UUID()
     let fromProcess:RunningProcess
     let scale:Scale
+    let tappedEventsSet:TapEventSet
     let amplitudeFilter:Double
-    let compressingFactor:Int
+    var compressingFactor:Int
     let bufferSize:Int
     var eventsID:UUID? = nil ///The events set the result was  built from
     
@@ -21,13 +22,13 @@ class Result : Equatable {
     var correctNotes = 0
     let keyboard:PianoKeyboardModel
     
-    init(scale:Scale, keyboard:PianoKeyboardModel, fromProcess:RunningProcess, amplitudeFilter:Double, bufferSize:Int, compressingFactor:Int, userMessage:String) {
+    init(scale:Scale, tappedEventsSet:TapEventSet, keyboard:PianoKeyboardModel, fromProcess:RunningProcess, amplitudeFilter:Double, bufferSize:Int, compressingFactor:Int, userMessage:String) {
         self.scale = scale
+        self.tappedEventsSet = tappedEventsSet
         self.fromProcess = fromProcess
         self.userMessage = userMessage
         self.amplitudeFilter = amplitudeFilter
         self.keyboard = keyboard
-        //self.score = score
         self.compressingFactor = compressingFactor
         self.bufferSize = bufferSize
     }
@@ -82,15 +83,13 @@ class Result : Equatable {
 //            }
 //        }
         
-            scale.resetMatchedData()
-        
+        scale.resetMatchedData()
         
         ///For each key played check its its midi is in the scale. If not, its a wrongly played key
         for direction in [0,1] {
             for key in self.keyboard.pianoKeyModel {
                 if let matchedTime = direction == 0 ? key.keyWasPlayedState.tappedTimeAscending : key.keyWasPlayedState.tappedTimeDescending {
                     if let scaleNote = scale.getStateForMidi(midi: key.midi, direction: direction) {
-                        self.correctNotes += 1
                         if direction == 0 {
                             scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeAscending
                         }
@@ -103,13 +102,36 @@ class Result : Equatable {
                             }
                         }
                     }
-                    else {
-                        if direction == 0 {
-                            self.playedAndWrongCountAsc += 1
-                        }
-                        else {
-                            self.playedAndWrongCountDesc += 1
-                        }
+//                    else {
+//                        if direction == 0 {
+//                            self.playedAndWrongCountAsc += 1
+//                        }
+//                        else {
+//                            self.playedAndWrongCountDesc += 1
+//                        }
+//                    }
+                }
+            }
+        }
+        
+        let maxScaleMidi = scale.getMinMax().1
+        for key in self.keyboard.pianoKeyModel {
+            if key.scaleNoteState == nil {
+                if key.keyWasPlayedState.tappedTimeAscending != nil {
+                    self.playedAndWrongCountAsc += 1
+                }
+                if key.keyWasPlayedState.tappedTimeDescending != nil {
+                    self.playedAndWrongCountDesc += 1
+                }
+            }
+            else {
+                if key.keyWasPlayedState.tappedTimeAscending != nil {
+                    self.correctNotes += 1
+                }
+                if key.keyWasPlayedState.tappedTimeDescending != nil {
+                    if key.midi != maxScaleMidi {
+                        ///Dont double count the top of scale already played ascending
+                        self.correctNotes += 1
                     }
                 }
             }

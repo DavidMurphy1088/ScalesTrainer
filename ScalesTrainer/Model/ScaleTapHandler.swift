@@ -13,6 +13,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var eventNumber = 0
     var recordedTapEvents:[TapEvent]
     var startTappingTime:Date? = nil
+    var lastTappedTime:Date? = nil
     var startTappingAvgAmplitude:Float? = nil
     var startTappingAmplitudes:[Float] = []
     var noteAmplitudeHeardCount = 0
@@ -62,9 +63,9 @@ class ScaleTapHandler : TapHandlerProtocol  {
             self.noteAmplitudeHeardCount += 1
         }
 
-        if let startTime = self.startTappingTime {
-            let seconds = Date().timeIntervalSince(startTime)
-            if seconds > 4 {
+        if let lastTappedTime = self.lastTappedTime {
+            let seconds = Date().timeIntervalSince(lastTappedTime)
+            if seconds > 3 {
                 if self.noteAmplitudeHeardCount > 4 {
                     if let startingAmplitude = self.startTappingAvgAmplitude {
                         if amplitude < startingAmplitude {
@@ -80,10 +81,13 @@ class ScaleTapHandler : TapHandlerProtocol  {
                 }
             }
         }
+        self.lastTappedTime = Date()
     }
     
     func stopTappingProcess() -> TapEventSet {
         let tapEventSet = TapEventSet(bufferSize: self.bufferSize, events: self.recordedTapEvents)
+        tapEventSet.debug1("end tap")
+        tapEventSet.getStartAmplitude(bufferSize: self.bufferSize)
         return tapEventSet
     }
     

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ProcessUnderwayView: View {
+struct RecordingIsUnderwayView: View {
     @State private var isRecording = true
     @State private var animate = false
 

@@ -142,7 +142,7 @@ struct SpinWheelView: View {
         return msg
     }
     
-    func log4(index:Int, group: ScaleGroup, scale: PracticeJournalScale) -> Int {
+    func log4(index:Int, group: MusicBoard, scale: PracticeJournalScale) -> Int {
         return 0
     }
     

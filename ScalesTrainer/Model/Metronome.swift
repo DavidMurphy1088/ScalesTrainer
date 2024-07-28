@@ -50,7 +50,7 @@ class MetronomeModel {
 //            return "\u{266A}=\(tempo / 2)"
 //        }
 //        else {
-            return "♩=\(tempo)"
+            return "♩= \(tempo)"
 //        }
     }
     

@@ -38,11 +38,11 @@ class PracticeJournalScale : Identifiable { //} : Identifiable, Comparable {
 
 class PracticeJournal {
     static var shared:PracticeJournal?
-    let scaleGroup: ScaleGroup
+    let scaleGroup: MusicBoard
     let title:String
     var randomScale: PracticeJournalScale? = nil
     
-    init(scaleGroup: ScaleGroup) {
+    init(scaleGroup: MusicBoard) {
         self.scaleGroup = scaleGroup
         self.title = scaleGroup.name
     }
