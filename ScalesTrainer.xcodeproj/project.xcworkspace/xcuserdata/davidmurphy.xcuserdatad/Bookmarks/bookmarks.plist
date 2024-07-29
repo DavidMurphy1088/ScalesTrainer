@@ -9,16 +9,12 @@
 			<dict>
 				<key>location-parameters</key>
 				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>290</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
+					<string>776</string>
 					<key>StartingLineNumber</key>
-					<string>289</string>
+					<string>776</string>
 					<key>Timestamp</key>
-					<string>743818273.93721</string>
+					<string>743941867.338158</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,17 +30,13 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>        let bestScale:Scale = self.scale
-</string>
+				<string></string>
 				<key>leading</key>
-				<string>        ///Replay the best fit scale to set the app's display state
-        ///If there are too many errors just display the scale at the octaves it was shown as
+				<string>
+
 </string>
 				<key>trailing</key>
-				<string>//            if bestResult == nil || bestResult!.getTotalErrors() &gt; 3 {
-//                bestScale = self.scale.makeNewScale(offset: 0)
-//            }
-</string>
+				<string></string>
 			</dict>
 			<key>type</key>
 			<string>bookmark</string>

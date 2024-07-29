@@ -112,12 +112,12 @@
     "Completed" : {
 
     },
-    "Correct:%lld Errors:%lld" : {
+    "Correct Notes:%lld Errors:%lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Correct:%1$lld Errors:%2$lld"
+            "value" : "Correct Notes:%1$lld Errors:%2$lld"
           }
         }
       }
@@ -222,6 +222,9 @@
 
     },
     "Missing" : {
+
+    },
+    "New Amplitude Filter:%@" : {
 
     },
     "No" : {
@@ -407,9 +410,6 @@
 
     },
     "Sync\nRecording" : {
-
-    },
-    "TapBufferSize" : {
 
     },
     "Taps" : {

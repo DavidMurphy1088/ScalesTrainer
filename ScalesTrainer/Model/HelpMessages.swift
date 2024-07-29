@@ -18,15 +18,17 @@ class HelpMessages {
         
         messages["Your Coin Bank"] = "Shows all the gold coins in your scales bank. You can win coins as you record scales but if you make mistakes you loose coins."
         
-        m = "Calibration is required so Scales Star can accurately hear your piano."
-        m += "\n\n➤ For best recording results your device should be placed near or against your piano."
-        m += "\n\n➤ You will need to perform calibration again if you change the location of where the app is positioned when it listens."
-        m += "\n\n➤ Press Start Playing Scale and play the scale shown softly (piano) and at a moderate tempo. Press Stop when the scale is finished."
-        m += " Then press Analyse Best Settings to save the calibration."
-        m += "\n\n➤ After Analyse Best Settings is finished some calibration value rows should show zero errors. If not, its best to redo the calibration."
-        m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales. In particular, if notes you are play are not detected you may need to decrease the amplitude filter slightly. If notes appear that you did not play you may need to increase the amplitude filter slightly."
+        m = "Calibration is required so Scales Star can accurately hear your piano and filter out background noise."
+        m += "\n\n➤ For best recording results using your device's microphone your device should be placed near or directly against your piano."
+        m += "\n\n➤ You will need to perform calibration again if you change the location of where the device is positioned when it listens to you play."
+        m += "\n\n➤ Press Start Playing Scale and play the scale shown at a Mezzo-forte (mf) dynamic and at a moderate tempo. Press Stop Playing when the scale is finished."
+        m += "\n\n➤ Press Save Configuration to save the configuration."
 
-        messages["Calibration"] = "Instructions to come..."
+        //m += " Then press Analyse Best Settings to save the calibration."
+        //m += "\n\n➤ After Analyse Best Settings is finished some calibration value rows should show zero errors. If not, its best to redo the calibration."
+        //m += "\n\n➤ Calibration will need to be reviewed if the app is not accurately hearing your scales. In particular, if notes you are play are not detected you may need to decrease the amplitude filter slightly. If notes appear that you did not play you may need to increase the amplitude filter slightly."
+
+        messages["Calibration"] = m
         
         m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are hilighted."
         m += "\n\n➤ Each note of the scale will be highlighted in turn. When the scale note is highlighted play the note on your piano. Then the next note will be hilighted. The keyboard shows the correct finger to use for every note of the scale."

@@ -148,40 +148,6 @@ public class TapEventSet {
         }
     }
     
-    func getStartAmplitude(bufferSize:Int) -> Double {
-        var trailing:[Float] = []
-        var recent:[Float] = []
-        let bufferFactor =  Double(4096) / Double(bufferSize)
-        let recentMaxSize = Int(4 * bufferFactor)
-        let trailingMaxSize = Int(32 * bufferFactor)
-
-        func calculateAverage(_ array:[Float]) -> Float {
-            guard !array.isEmpty else { return 0.0 } // Return 0.0 if the array is empty
-            let sum = array.reduce(0, +)
-            return sum / Float(array.count)
-        }
-        var trailingAvg:Float = 0.0
-        for i in 0..<self.events.count {
-            trailing.append(self.events[i].amplitude)
-            if trailing.count > trailingMaxSize {
-                trailing.remove(at: 0)
-            }
-
-            recent.append(self.events[i].amplitude)
-            if recent.count > recentMaxSize {
-                recent.remove(at: 0)
-            }
-            trailingAvg = calculateAverage(trailing)
-            let recentAvg = calculateAverage(recent)
-            let delta = trailingAvg == 0 ? 0 : (recentAvg - trailingAvg) / trailingAvg
-            print("TAPSETAVG", self.events[i].tapMidi, i, delta, String(format: "%.8f", events[i].amplitude), "toDate", String(format: "%.8f", trailingAvg), "recent", String(format: "%.8f", recentAvg), "count", recent.count)
-            if delta > 1 {
-                //break
-            }
-        }
-        print ("============== TRailing", trailingAvg, bufferSize)
-        return Double(trailingAvg)
-    }
 }
 
 public class TapStatusRecordSet {

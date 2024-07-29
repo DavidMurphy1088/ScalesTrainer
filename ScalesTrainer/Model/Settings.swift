@@ -7,7 +7,7 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var amplitudeFilter:Double = 0
-    var defaultTapBufferSize = 4096
+    //var defaultTapBufferSize = 4096
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     
     private var wasLoaded = false
@@ -39,18 +39,16 @@ public class Settings : Codable  {
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
-        //str += " RequireStartAmpl:\(String(format: "%.4f", self.requiredScaleRecordStartAmplitude)) "
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
-        str += " TapBuffer:\(self.defaultTapBufferSize)"
+        //str += " TapBuffer:\(self.defaultTapBufferSize)"
         return str
     }
     
     func save() {
-        //self.amplitudeFilter = amplitudeFilter
         guard let str = toJSON() else {
             return
         }
@@ -59,8 +57,8 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
-    func getScaleNoteValue() -> Double {
-        return self.scaleNoteValue == 0 ? 1.0 : 0.5
+    func getSettingsNoteValueFactor() -> Double {
+        return self.scaleNoteValue == 4 ? 1.0 : 0.5
     }
     
     func load() {
@@ -76,7 +74,7 @@ public class Settings : Codable  {
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
-                    self.defaultTapBufferSize = loaded.defaultTapBufferSize
+                    //self.defaultTapBufferSize = loaded.defaultTapBufferSize
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {

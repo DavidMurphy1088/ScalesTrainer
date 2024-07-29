@@ -4,7 +4,6 @@ public struct CalibrationView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared
-    //@ObservedObject var calibrationResults = ScalesModel.shared.calibrationResults
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilter:Double = 0
@@ -15,6 +14,7 @@ public struct CalibrationView: View {
     @State private var helpShowing = false
     @State var showSaveQuestion = false
     @State var showingTapData = false
+    @State var info:String? = nil
     
     func setScale(octaves:Int, hand:Int) {
         let scaleRoot = ScaleRoot(name: "C")
@@ -23,7 +23,7 @@ public struct CalibrationView: View {
         scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
         scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand))
         PianoKeyboardModel.shared.redraw()
-        self.amplitudeFilter = Settings.shared.amplitudeFilter
+        //self.amplitudeFilter = Settings.shared.amplitudeFilter
     }
     
     func getScaleName() -> String {
@@ -34,6 +34,56 @@ public struct CalibrationView: View {
         VStack {
             Text("asddasd")
         }
+    }
+    
+    func getStartAmplitudeAndInfo(tapEventSet:TapEventSet) -> (Double, String) {
+        var trailingAmplitudes:[Float] = []
+        var recent:[Float] = []
+        var allAmplitudes:[Float] = []
+        let bufferFactor =  Double(4096) / Double(tapEventSet.bufferSize)
+        let recentMaxSize = Int(4 * bufferFactor)
+        let trailingMaxSize = Int(32 * bufferFactor)
+        var foundStart = false
+        var maxAmplitude:Float = 0
+        
+        func calculateAverage(_ array:[Float]) -> Float {
+            guard !array.isEmpty else { return 0.0 } // Return 0.0 if the array is empty
+            let sum = array.reduce(0, +)
+            return sum / Float(array.count)
+        }
+        
+        var trailingAvg:Float = 0.0
+        
+        for i in 0..<tapEventSet.events.count {
+            let event = tapEventSet.events[i]
+            allAmplitudes.append(event.amplitude)
+            if event.amplitude > maxAmplitude {
+                maxAmplitude = event.amplitude
+            }
+            if foundStart {
+                continue
+            }
+            
+            trailingAmplitudes.append(event.amplitude)
+            if trailingAmplitudes.count > trailingMaxSize {
+                trailingAmplitudes.remove(at: 0)
+            }
+
+            recent.append(event.amplitude)
+            if recent.count > recentMaxSize {
+                recent.remove(at: 0)
+            }
+            trailingAvg = calculateAverage(trailingAmplitudes)
+            let recentAvg = calculateAverage(recent)
+            let delta = trailingAvg == 0 ? 0 : (recentAvg - trailingAvg) / trailingAvg
+            print("TAPSETAVG", tapEventSet.events[i].tapMidi, i, delta, String(format: "%.8f", event.amplitude), "toDate", String(format: "%.8f", trailingAvg), "recent", String(format: "%.8f", recentAvg), "count", recent.count)
+            if delta > 1 {
+                foundStart = true
+            }
+        }
+        let avg = calculateAverage(allAmplitudes)
+        let info = "maxAmpl:\(String(format: "%.2f", maxAmplitude)) avgAmpl:\(String(format: "%.2f", avg)) taps:\(tapEventSet.events.count) bufferSize:\(tapEventSet.bufferSize)"
+        return (Double(trailingAvg), info)
     }
     
     public var body: some View {
@@ -59,20 +109,23 @@ public struct CalibrationView: View {
             }
             
             if !playingScale {
-                HStack {
+                VStack {
                     Spacer()
                     if let result = scalesModel.resultPublished {
-                        Text("Correct:\(result.correctNotes) Errors:\(result.getTotalErrors())").font(.title3).padding().font(.title3).padding()
+                        Text("Correct Notes:\(result.correctNotes) Errors:\(result.getTotalErrors())").font(.title3).padding().font(.title3).padding()
                     }
-                    Spacer()
-                    Text("Current Amplitude Filter:\(String(format: "%.4f", amplitudeFilter))").font(.title3).padding()
+                    Text("Current Amplitude Filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))").font(.title3).padding()
+                    Text("New Amplitude Filter:\(String(format: "%.4f", self.amplitudeFilter))").font(.title3).padding()
+                    if let info = self.info {
+                        Text(info).font(.title3).padding()
+                    }
                     Spacer()
                 }
                 HStack {
                     Text("Adjust:").padding()
                     Slider(
                         value: $amplitudeFilter,
-                        in: 0...0.2,
+                        in: 0...0.1,
                         step: 0.01
                     )
                     .padding()
@@ -83,10 +136,8 @@ public struct CalibrationView: View {
                 if self.analysingResults {
                     Spacer()
                     if let results = ScalesModel.shared.resultPublished {
-                        //let status = results.getInfo() {
-                            Spacer()
-                            Text("Status: \(results.getTotalErrors())")
-                        //}
+                        Spacer()
+                        Text("Status: \(results.getTotalErrors())")
                     }
                 }
                 if !analysingResults {
@@ -95,17 +146,17 @@ public struct CalibrationView: View {
                         playingScale.toggle()
                         analysingResults = false
                         if playingScale {
-                            //scalesModel.calibrationResults.reset()
-                            //scalesModel.setRunningProcess(.calibrating)
                             scalesModel.setRunningProcess(.recordingScale)
                         }
                         else {
-                            Settings.shared.amplitudeFilter = self.amplitudeFilter
+                            for handler in scalesModel.tapHandlers {
+                                if handler.getBufferSize() == 4096 {
+                                    let eventSet = handler.stopTappingProcess()
+                                    (self.amplitudeFilter, self.info) = self.getStartAmplitudeAndInfo(tapEventSet: eventSet)
+                                    //Settings.shared.amplitudeFilter = self.amplitudeFilter
+                                }
+                            }
                             scalesModel.setRunningProcess(.none)
-//                            if let result = scalesModel.resultPublished {
-//                                userMessage = "Calibration as scale average " + String(format:"%.4f", result)
-//                                //self.amplitudeCalibrationValue = result
-//                            }
                         }
                         
                     }) {
@@ -143,6 +194,7 @@ public struct CalibrationView: View {
                 Button(action: {
                     Settings.shared.amplitudeFilter = self.amplitudeFilter
                     Settings.shared.save()
+                    tabSelectionManager.selectedTab = 1
                 }) {
                     HStack {
                         Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)

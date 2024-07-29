@@ -37,30 +37,31 @@ class Result : Equatable {
         return missedFromScaleCountAsc == 0 && missedFromScaleCountDesc == 0 && playedAndWrongCountAsc == 0 && playedAndWrongCountDesc == 0
     }
     
-    func isBetter(compare:Result) -> Bool {
-        if compare.getTotalErrors() < self.getTotalErrors() {
-            return true
-        }
-        if compare.correctNotes < self.correctNotes {
-            return false
-        }
-        return true
-    }
+//    func isBetter(compare:Result) -> Bool {
+//        if compare.getTotalErrors() < self.getTotalErrors() {
+//            return true
+//        }
+//        if compare.correctNotes < self.correctNotes {
+//            return false
+//        }
+//        return true
+//    }
     
     func getTotalErrors() -> Int {
         return missedFromScaleCountAsc + missedFromScaleCountDesc + playedAndWrongCountAsc + playedAndWrongCountDesc
     }
     
     func getInfo() -> String {
-        var str = "Result:"
+        var str = "["
         str += " Scale:\(scale.getMinMax())"
         str += " BufferSize:\(self.bufferSize)"
         str += " AmpFilter:\(self.amplitudeFilter)"
         str += " Compress:\(self.compressingFactor)"
         str += " Missed:\(missedFromScaleCountAsc + missedFromScaleCountDesc)"
-        str += " WrongKeys:[Asc:\(self.playedAndWrongCountAsc),Dsc:\(self.playedAndWrongCountDesc)],  TotalErrors:\(self.getTotalErrors()) "
+        str += " WrongKeys:[Asc:\(self.playedAndWrongCountAsc),Dsc:\(self.playedAndWrongCountDesc)]"
         str += " TotErrors:\(self.getTotalErrors())"
         str += " Correct:\(correctNotes)"
+        str += "]"
         return str
     }
 

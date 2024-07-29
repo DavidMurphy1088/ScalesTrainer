@@ -58,7 +58,7 @@ enum SpinState {
     case notStarted
     case selectedBet
     case spinning
-    case spunAndStopped    
+    case spunAndStopped
 }
 
 public class ScalesModel : ObservableObject {
@@ -67,7 +67,6 @@ public class ScalesModel : ObservableObject {
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
-    @Published var selectedDirection = 0
     @Published var score:Score?
     @Published var recordingIsPlaying = false
 
@@ -160,7 +159,16 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             self.showFingers = newValue
         }
-    }    
+    }
+    
+    @Published var selectedDirection = 0
+    func setSelectedDirection(_ index:Int) {
+        DispatchQueue.main.async {
+            self.selectedDirection = index
+            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
+            PianoKeyboardModel.shared.redraw()
+        }
+    }
     
     @Published private(set) var userMessage:String? = nil
     func setUserMessage(_ newValue: String?) {
@@ -231,7 +239,6 @@ public class ScalesModel : ObservableObject {
         
         let analyser = TapsEventsAnalyser(scale: self.scale,
                                           recordedTapEventSets: tapEventSets,
-                                          amplitudeFilter: Settings.shared.amplitudeFilter,
                                           keyboard: PianoKeyboardModel.shared,
                                           fromProcess: self.runningProcess)
         let (bestResult, bestEvents) = analyser.getBestResult()
@@ -240,7 +247,7 @@ public class ScalesModel : ObservableObject {
 //        for tapHandler in self.tapHandlers {
 //            let tappedEvents = tapHandler.stopTappingProcess()
 //            Logger.shared.log(self, "Start analysing from handler. BufferSize:\(tapHandler.getBufferSize())")
-//            
+//
 //            ///Save the best result
 //            let resultPair:(Result?, TapEventSet?) = analyser.getBestResult()
 //            if let result = resultPair.0 {
@@ -309,15 +316,15 @@ public class ScalesModel : ObservableObject {
                 
                 //result.compressingFactor = 1
                 let (finalResult, statusSet) = analyser.applyEvents(ctx: "useBest",
-                                                       bufferSize: result.bufferSize,
-                                                                    //recordedTapEvents: eventSet.events,
-                                                                    recordedTapEvents: result.tappedEventsSet.events,
-                                                       offset: 0, scale: bestScale,
-                                                       keyboard: keyboard,
-                                                        compressingFactor: result.compressingFactor,
-                                                       octaveLenient: true,
-                                                       score: score,
-                                                       updateKeyboard: true)
+                                                    bufferSize: result.bufferSize,
+                                                    recordedTapEvents: result.tappedEventsSet.events,
+                                                    offset: 0, scale: bestScale,
+                                                    keyboard: keyboard, 
+                                                    amplitudeFilter:result.amplitudeFilter,
+                                                    compressingFactor: result.compressingFactor,
+                                                    octaveLenient: true,
+                                                    score: score,
+                                                    updateKeyboard: true)
                 eventStatusSet = statusSet
                 keyboard.redraw()
                 Logger.shared.log(self, "=======> Applied best events. Offset:\(0) Result:\(result.getInfo())")
@@ -334,7 +341,6 @@ public class ScalesModel : ObservableObject {
         if setProcess == .none {
             self.audioManager.stopRecording()
             if [.recordingScale, .recordScaleWithFileData].contains(self.runningProcess) {
-
                 if let statsSet = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale) {
                     setTapHandlerEventSet(statsSet, publish: true)
                 }
@@ -350,7 +356,7 @@ public class ScalesModel : ObservableObject {
         self.setShowKeyboard(true)
         self.setShowParameters(true)
         self.setShowLegend(true)
-        self.setDirection(0)
+        self.setSelectedDirection(0)
         self.setProcessInstructions(nil)
         if resultInternal != nil {
             self.setShowStaff(true)
@@ -420,22 +426,18 @@ public class ScalesModel : ObservableObject {
             self.setUserMessage(nil)
             self.setTapHandlerEventSet(nil, publish: true)
             keyboard.redraw()
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, amplitudeFilter: Settings.shared.amplitudeFilter))
+            ///4096 has extra params to figure out automatic scale play end
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: nil, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192, scale: nil, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
             self.recordedTapsFileURL = nil
             if setProcess == .recordScaleWithFileData {
                 ///For plaback of an emailed file
                 let tapEventSets = self.audioManager.readTestDataFile()
                 self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
             }
-//            if setProcess == .recordScaleWithTapData {
-//                ///For callibration
-//                if let calibrationEvents = self.calibrationResults.calibrationEvents {
-//                    self.audioManager.playbackTapEvents(tapEventSets: [TapEventSet(bufferSize: Settings.shared.defaultTapBufferSize, events: calibrationEvents)], tapHandlers: self.tapHandlers)
-//                }
-//            }
+
             if setProcess == .recordingScale {
                 DispatchQueue.main.async {
                     self.runningProcess = .leadingIn
@@ -458,7 +460,8 @@ public class ScalesModel : ObservableObject {
             ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
             audioManager.blockTaps = true
             self.setProcessInstructions(scaleLeadIn.getInstructions())
-            MetronomeModel.shared.startTimer(notified: scaleLeadIn, onDone: {                self.setProcessInstructions(instruction)
+            MetronomeModel.shared.startTimer(notified: scaleLeadIn, onDone: {                
+                self.setProcessInstructions(instruction)
                 self.audioManager.blockTaps = false
                 leadInDone()
             })
@@ -469,39 +472,7 @@ public class ScalesModel : ObservableObject {
         }
         
     }
-    
-//    ///Return the color a keyboard note should display its status as. Clear -> dont show anything
-//    func getKeyStatusColor1(_ keyModel:PianoKeyModel) -> Color {
-//        guard let result = self.resultDisplay else {
-//            return Color.clear
-//        }
-//        guard result.fromProcess != .followingScale else {
-//            return Color.clear
-//        }
-//        var color:Color
-//        let fullOpacity = 0.4
-//        let halfOpacity = 0.4
-//        if keyModel.scaleNoteState != nil {
-//            ///Key is in the scale
-//            if selectedDirection == 0 {
-//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//            else {
-//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//        }
-//        else {
-//            ///Key was not in the scale
-//            if selectedDirection == 0 {
-//                color = keyModel.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//            else {
-//                color = keyModel.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//        }
-//        return color
-//    }
-    
+
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
@@ -553,7 +524,7 @@ public class ScalesModel : ObservableObject {
                 ///Change direction
                 let highest = self.scale.getMinMax().1
                 if pianoKey.midi == highest {
-                    self.setDirection(1)
+                    self.setSelectedDirection(1)
                 }
                 if scaleIndex > self.scale.scaleNoteState.count - 1 {
                     break
@@ -602,7 +573,7 @@ public class ScalesModel : ObservableObject {
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
         var lastNote:StaffNote?
-        let noteValue = Settings.shared.getScaleNoteValue()
+        let noteValue = Settings.shared.getSettingsNoteValueFactor()
         
         for i in 0..<scale.scaleNoteState.count {
             if Int(inBarTotalValue) >= 4 {
@@ -648,7 +619,7 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName()) ctx:\(ctx)")
         self.scale = scale
         PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
-        setDirection(0)
+        self.setSelectedDirection(0)
         PianoKeyboardModel.shared.redraw()
 
         DispatchQueue.main.async {
@@ -682,10 +653,10 @@ public class ScalesModel : ObservableObject {
 //            setScore()
 //            return
 //        }
-//        
+//
 //        let piano = PianoKeyboardModel.shared
 //        var noteCount = 0
-//        
+//
 //        for direction in [0,1] {
 //            piano.mapScaleFingersToKeyboard(direction: direction)
 //            var start:Int
@@ -698,7 +669,7 @@ public class ScalesModel : ObservableObject {
 //                start = piano.pianoKeyModel.count - 2
 //                end = 0
 //            }
-//            
+//
 //            for i in stride(from: start, through: end, by: direction == 0 ? 1 : -1) {
 //                let key = piano.pianoKeyModel[i]
 //                if direction == 0 {
@@ -726,21 +697,13 @@ public class ScalesModel : ObservableObject {
 //        }
 //        piano.mapScaleFingersToKeyboard(direction: 0)
 //    }
-//    
+//
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1
         }
     }
         
-    func setDirection(_ index:Int) {
-        DispatchQueue.main.async {
-            self.selectedDirection = index
-            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
-            PianoKeyboardModel.shared.redraw()
-        }
-    }
-    
     func setTempo(_ index:Int) {
         //DispatchQueue.main.async {
             self.selectedTempoIndex = index
@@ -777,9 +740,12 @@ public class ScalesModel : ObservableObject {
                 FileManager.default.createFile(atPath: url.path, contents: nil, attributes: nil)
             }
             let fileHandle = try FileHandle(forWritingTo: url)
-            
+            let header = "--FileName "+fileName+"\n"
+            if let data = header.data(using: .utf8) {
+                fileHandle.write(data)
+            }
             for tapSet in tapSets {
-                var config = "--TapSet BufferSize \(tapSet.bufferSize)" 
+                var config = "--TapSet BufferSize \(tapSet.bufferSize)"
                 config += "\n"
                 //try config.write(to: savedTapsFileURL, atomically: true, encoding: .utf8)
                 if let data = config.data(using: .utf8) {

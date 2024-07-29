@@ -32,7 +32,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
                     if key?.midi == maxMidi {
                         nextKeyToPlay -= 1
                         direction = 1
-                        ScalesModel.shared.setDirection(1)
+                        ScalesModel.shared.setSelectedDirection(1)
                     }
                     else {
                         nextKeyToPlay += 1
@@ -62,7 +62,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStop() {
-        ScalesModel.shared.setDirection(0)
+        ScalesModel.shared.setSelectedDirection(0)
     }
     
 }

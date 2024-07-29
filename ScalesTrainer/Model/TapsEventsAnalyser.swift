@@ -12,7 +12,7 @@ class TapsEventsAnalyser {
     let recordedTapEventSets:[TapEventSet]
     let keyboard:PianoKeyboardModel
     let fromProcess: RunningProcess
-    let amplitudeFilter:Double
+    //let amplitudeFilter:Double
     
     var eventNumber:Int = 0
     var matchCount:Int = 0
@@ -36,13 +36,13 @@ class TapsEventsAnalyser {
     var filterStartOfTapping:Bool = false
     var scaleMidis:[Int]
  
-    init (scale: Scale, recordedTapEventSets: [TapEventSet], amplitudeFilter:Double, keyboard: PianoKeyboardModel, fromProcess: RunningProcess) {
+    init (scale: Scale, recordedTapEventSets: [TapEventSet], keyboard: PianoKeyboardModel, fromProcess: RunningProcess) {
         self.scale = scale
         self.keyboard = keyboard
         self.fromProcess = fromProcess
         self.scaleMidis = scale.getMidisInScale()
         self.recordedTapEventSets = recordedTapEventSets
-        self.amplitudeFilter = amplitudeFilter
+        //self.amplitudeFilter = amplitudeFilter
     }
     
     func resetState(scale:Scale, octaveLenient:Bool) {
@@ -92,39 +92,51 @@ class TapsEventsAnalyser {
 
         ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
         let scaleRootOffsets = [0] //[0, 12, -12, 24, -24].reversed()
-        let compressingFactors = [2, 0]  //[4,3,2,1,0] {
+        let setAmpFilter = Settings.shared.amplitudeFilter
+        let amplitudeFilters = [setAmpFilter * 0.25, setAmpFilter * 0.5, setAmpFilter * 1.0, setAmpFilter * 2.0]
+        let compressingFactors = [4, 3, 2, 0]
         
         var bestResult:Result? = nil
         var bestTapEventSet:TapEventSet? = nil
         
         ///Find the best fit scale
+        var assessmentCtr = 0
         for tapEventSet in self.recordedTapEventSets {
             let recordedTapEvents = tapEventSet.events
             for rootOffsetMidi in scaleRootOffsets {
                 for compressingFactor in compressingFactors {
-                    let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
-                    let keyboard = PianoKeyboardModel()
-                    keyboard.configureKeyboardForScale(scale: offsetScale)
-                    let filterStarts = compressingFactor == 0
-                    let (result, eventSet) = applyEvents(ctx: "TryOffset",
-                                                         bufferSize: tapEventSet.bufferSize,
-                                                         recordedTapEvents: tapEventSet.events,
-                                                         offset: rootOffsetMidi,
-                                                         scale: offsetScale, 
-                                                         keyboard: keyboard,
-                                                         compressingFactor: compressingFactor,
-                                                         octaveLenient: false,
-                                                         score: nil,
-                                                         updateKeyboard: false)
-
-                    if bestResult != nil {
-                        print("=========================IS BETTER", bestResult!.isBetter(compare: result), bestResult?.bufferSize, result.bufferSize )
+                    for amplitudeFilter in amplitudeFilters {
+                        let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
+                        let keyboard = PianoKeyboardModel()
+                        keyboard.configureKeyboardForScale(scale: offsetScale)
+                        let filterStarts = compressingFactor == 0
+                        let (result1, eventSet) = applyEvents(ctx: "TryOffset",
+                                                             bufferSize: tapEventSet.bufferSize,
+                                                             recordedTapEvents: tapEventSet.events,
+                                                             offset: rootOffsetMidi,
+                                                             scale: offsetScale,
+                                                             keyboard: keyboard,
+                                                             amplitudeFilter: amplitudeFilter,
+                                                             compressingFactor: compressingFactor,
+                                                             octaveLenient: false,
+                                                             score: nil,
+                                                             updateKeyboard: false)
+                        
+                        if bestResult == nil || result1.getTotalErrors() < bestResult!.getTotalErrors() {
+                            if let best = bestResult {
+                                if result1.getTotalErrors() > (best.getTotalErrors()) {
+                                    print("===================")
+                                }
+                            }
+                            bestResult = result1
+                            bestTapEventSet = tapEventSet
+                        }
+                        Logger.shared.log(self, "==[\(assessmentCtr)] Assessed:Result:\(result1.getInfo())")
+                        if let best = bestResult{
+                            print("                                                ==", best.getInfo(), "    ", best.getTotalErrors())
+                        }
+                        assessmentCtr += 1
                     }
-                    if bestResult == nil || bestResult!.isBetter(compare: result) {
-                        bestResult = result
-                        bestTapEventSet = tapEventSet
-                    }
-                    Logger.shared.log(self, "===> Assessed events. ResultingEvents:\(eventSet.events.count) BufferSize:\(tapEventSet.bufferSize) Offset:\(rootOffsetMidi) Errors:\(result.getInfo())")
                 }
             }
         }
@@ -135,6 +147,7 @@ class TapsEventsAnalyser {
                      bufferSize:Int,
                      recordedTapEvents:[TapEvent],
                      offset:Int, scale:Scale, keyboard:PianoKeyboardModel,
+                     amplitudeFilter:Double,
                      compressingFactor:Int,
                      octaveLenient:Bool,
                      score:Score?,
@@ -143,7 +156,7 @@ class TapsEventsAnalyser {
         ///Apply the tapped events to a given scale start
         resetState(scale: scale, octaveLenient: false)
 
-        let tapStatusRecordSet = TapStatusRecordSet(description: "bufferSize:\(bufferSize) ampFilter:\(self.amplitudeFilter) offset:\(offset) compress:\(compressingFactor)", events: [])
+        let tapStatusRecordSet = TapStatusRecordSet(description: "bufferSize:\(bufferSize) ampFilter:\(String(format: "%.4f", amplitudeFilter)) offset:\(offset) compress:\(compressingFactor)", events: [])
         let tapEvents:[TapEvent]
         if compressingFactor > 0 {
             tapEvents = compressEvents(events: recordedTapEvents, requiredConsecutiveCount: compressingFactor, bufferSize: bufferSize)
@@ -151,21 +164,20 @@ class TapsEventsAnalyser {
         else {
             tapEvents = recordedTapEvents
         }
-        if bufferSize == 8192 {
-            print("========+++XX", compressingFactor, recordedTapEvents.count, tapEvents.count)
-        }
+
         for event in tapEvents {
-            let processedtapEvent = processTap(ctx: ctx, scale: scale, 
+            let processedtapEvent = processTap(ctx: ctx, scale: scale,
                                                keyboard: keyboard,
                                                eventToProcess: event,
+                                               amplitudeFilter: amplitudeFilter,
                                                discardSingletons: compressingFactor == 0,
-                                               filterStart: true, 
+                                               filterStart: true,
                                                //octaveLenient: octaveLenient,
                                                updateKeyboardDisplay: updateKeyboard)
             tapStatusRecordSet.events.append(processedtapEvent)
         }
         let result = Result(scale: scale, tappedEventsSet: TapEventSet(bufferSize: bufferSize, events: recordedTapEvents), keyboard: keyboard,
-                            fromProcess: self.fromProcess, amplitudeFilter: self.amplitudeFilter, bufferSize: bufferSize,
+                            fromProcess: self.fromProcess, amplitudeFilter: amplitudeFilter, bufferSize: bufferSize,
                             compressingFactor: compressingFactor, userMessage: "")
         //tapStatusRecordSet.debug("===end of taps")
         result.buildResult(offset: offset, score: score)
@@ -178,9 +190,10 @@ class TapsEventsAnalyser {
     ///The keyboard keys timestamp is the state that determines the final result of the scale recording as it is applied to the scale.
     ///The events become part of the viewable log of the scale recording.
     ///Filter out spurios tap event frequencies.
-    func processTap(ctx:String, scale:Scale, 
+    func processTap(ctx:String, scale:Scale,
                     keyboard:PianoKeyboardModel,
                     eventToProcess:TapEvent,
+                    amplitudeFilter:Double,
                     discardSingletons:Bool, filterStart:Bool,
                     //octaveLenient:Bool,
                     updateKeyboardDisplay:Bool) -> TapStatusRecord {
@@ -233,7 +246,7 @@ class TapsEventsAnalyser {
             return event
         }
         
-        guard eventToProcess.amplitude > AUValue(self.amplitudeFilter) else {
+        guard eventToProcess.amplitude > AUValue(amplitudeFilter) else {
             let event = TapStatusRecord(tapNum: eventNumber,
                                  frequency: eventToProcess.frequency,
                                  amplitude: eventToProcess.amplitude,
@@ -432,7 +445,7 @@ class TapsEventsAnalyser {
         if let lastEvent = lastEvent {
             filtered.append(lastEvent)
         }
-        Logger.shared.log(self, "EventsReduce. buffer:\(bufferSize) eventsIn:\(events.count) eventsOut:\(filtered.count) maxCount:\(maxCount)")
+        //Logger.shared.log(self, "EventsReduce. buffer:\(bufferSize) eventsIn:\(events.count) eventsOut:\(filtered.count) maxCount:\(maxCount)")
         return filtered
     }
 

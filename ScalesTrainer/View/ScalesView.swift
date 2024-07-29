@@ -29,7 +29,7 @@ struct ScalesView: View {
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
-    @State private var tempoIndex = Settings.shared.scaleNoteValue == 0 ? 5 : 2
+    @State private var tempoIndex = 5 //Settings.shared.scaleNoteValue == 0 ? 5 : 2
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
@@ -103,7 +103,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
-                scalesModel.setDirection(self.directionIndex)
+                scalesModel.setSelectedDirection(self.directionIndex)
             })
             
             Spacer()

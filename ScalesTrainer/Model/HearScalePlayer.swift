@@ -26,14 +26,14 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             
             ///Scale turnaround
             if noteToPlay == ScalesModel.shared.scale.scaleNoteState.count / 2 {
-                scalesModel.setDirection(1)
+                scalesModel.setSelectedDirection(1)
                 direction = 1
                 //scalesModel.forceRepaint()
                 //setFingers(direction: 1)
             }
         //}
         if noteToPlay >= ScalesModel.shared.scale.scaleNoteState.count - 1 {
-            scalesModel.setDirection(0)
+            scalesModel.setSelectedDirection(0)
             ///Dont repeat the scale root on replays
             noteToPlay = 1
         }
@@ -44,7 +44,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStop() {
-        ScalesModel.shared.setDirection(0)
+        ScalesModel.shared.setSelectedDirection(0)
     }
     
 }

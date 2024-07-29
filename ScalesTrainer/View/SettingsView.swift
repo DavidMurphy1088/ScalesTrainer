@@ -71,7 +71,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: scaleNoteValue, {
-                        settings.scaleNoteValue = scaleNoteValue
+                        settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
                     })
                 }
                 
@@ -111,25 +111,28 @@ struct SettingsView: View {
                     settings.recordDataMode = recordDataMode
                 })
                 .padding()
-                HStack {
-                    Text("TapBufferSize").padding(0)
-                    Picker("Select", selection: $tapBufferSize) {
-                        ForEach(1..<16+1) { number in
-                            Text("\(number * 1024)").tag(number * 1024)
-                        }
-                    }
-                    .pickerStyle(MenuPickerStyle())
-                    .padding()
-                    .onChange(of: tapBufferSize) { oldValue, newValue in
-                        settings.defaultTapBufferSize = tapBufferSize //* 1024
-                    }
-                }
+//                HStack {
+//                    Text("TapBufferSize").padding(0)
+//                    Picker("Select", selection: $tapBufferSize) {
+//                        ForEach(1..<16+1) { number in
+//                            Text("\(number * 1024)").tag(number * 1024)
+//                        }
+//                    }
+//                    .pickerStyle(MenuPickerStyle())
+//                    .padding()
+//                    .onChange(of: tapBufferSize) { oldValue, newValue in
+//                        settings.defaultTapBufferSize = tapBufferSize //* 1024
+//                    }
+//                }
 
                 Spacer()
                 HStack {
                     Spacer()
                     Button(action: {
                         settings.save()
+                        if settings.amplitudeFilter == 0 {
+                            tabSelectionManager.selectedTab = 3
+                        }
                     }) {
                         HStack {
                             Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -145,8 +148,8 @@ struct SettingsView: View {
         .onAppear() {
             leadInBarCount = settings.scaleLeadInBarCount
             self.defaultOctaves = settings.defaultOctaves
-            self.tapBufferSize = settings.defaultTapBufferSize // 1024
-            self.scaleNoteValue = settings.scaleNoteValue
+            //self.tapBufferSize = settings.defaultTapBufferSize // 1024
+            self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
         }
     }
 }

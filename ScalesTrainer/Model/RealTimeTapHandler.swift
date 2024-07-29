@@ -12,7 +12,7 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance.
 
 protocol TapHandlerProtocol {
-    init(bufferSize:Int, amplitudeFilter:Double)
+    init(bufferSize:Int, scale:Scale?, amplitudeFilter:Double?)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTappingProcess() -> TapEventSet
     func getBufferSize() -> Int
@@ -22,7 +22,7 @@ protocol TapHandlerProtocol {
 class RealTimeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let bufferSize:Int
-    let amplitudeFilter:Double
+    let amplitudeFilter:Double?
     //let fromProcess:RunningProcess
     let minMidi:Int
     let maxMidi:Int
@@ -32,13 +32,13 @@ class RealTimeTapHandler : TapHandlerProtocol {
     var lastMidiHiliteTime:Double? = nil
     var tapHandlerEventSet:TapEventSet
     
-    required init(bufferSize:Int, amplitudeFilter:Double) {
+    required init(bufferSize:Int, scale:Scale? = nil, amplitudeFilter:Double?) {
         self.bufferSize = bufferSize
         self.amplitudeFilter = amplitudeFilter
         minMidi = ScalesModel.shared.scale.getMinMax().0
         maxMidi = ScalesModel.shared.scale.getMinMax().1
         tapNum = 0
-        self.tapHandlerEventSet = TapEventSet(bufferSize: Settings.shared.defaultTapBufferSize, events: [])
+        self.tapHandlerEventSet = TapEventSet(bufferSize: bufferSize, events: [])
     }
     
     func getBufferSize() -> Int {
@@ -60,7 +60,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
+        let aboveFilter =  self.amplitudeFilter == nil || amplitude > AUValue(self.amplitudeFilter!)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
@@ -85,4 +85,3 @@ class RealTimeTapHandler : TapHandlerProtocol {
         return tapHandlerEventSet
     }
 }
-

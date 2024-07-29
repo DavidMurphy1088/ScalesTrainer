@@ -74,10 +74,7 @@ class MetronomeModel {
         }
         timerTickerNumber = 0
         var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
-        delay = delay * Settings.shared.getScaleNoteValue()
-        //if countAtQuaverRate {
-            //delay = delay * 0.5 ///Scales are written as 1/8 notes
-        //}
+        delay = delay * Settings.shared.getSettingsNoteValueFactor()
         notified.metronomeStart()
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
