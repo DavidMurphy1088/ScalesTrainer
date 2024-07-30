@@ -82,7 +82,7 @@ struct LegendView: View {
         }
         else {
             if scalesModel.resultPublished != nil {
-                title = "Notes"
+                title = "Results"
             }
         }
         return title
@@ -123,24 +123,25 @@ struct LegendView: View {
                     Spacer()
                 }
                 
-                if scalesModel.resultPublished != nil {
+                if let result = scalesModel.resultPublished  {
                     Spacer()
                     Circle()
                         .fill(Color.green.opacity(0.4))
                         .frame(width: width())
                     Text("Correctly Played")
-                    Spacer()
-                    Circle()
-                        .fill(Color.red.opacity(0.4))
-                        .frame(width: width())
-                    //Text("Played But Not in Scale")
-                    Text("Not in Scale")
-                    Spacer()
-                    Circle()
-                        .fill(Color.yellow.opacity(0.4))
-                        .frame(width: width())
-                    //Text("In Scale But Not Played")
-                    Text("Missing")
+                    if result.getTotalErrors() > 0 {
+                        Spacer()
+                        Circle()
+                            .fill(Color.red.opacity(0.4))
+                            .frame(width: width())
+                        Text("Not in Scale")
+                        Spacer()
+                        Circle()
+                            .fill(Color.yellow.opacity(0.4))
+                            .frame(width: width())
+                        //Text("In Scale But Not Played")
+                        Text("Missing")
+                    }
                     Spacer()
                 }
 

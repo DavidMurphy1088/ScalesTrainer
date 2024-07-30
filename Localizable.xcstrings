@@ -106,6 +106,9 @@
     "Backing Off" : {
 
     },
+    "C" : {
+
+    },
     "Calibration" : {
 
     },
@@ -316,6 +319,9 @@
     "Scale Root:" : {
 
     },
+    "Scale Start" : {
+
+    },
     "Scale Type:" : {
 
     },
@@ -418,10 +424,10 @@
     "Tempo" : {
 
     },
-    "Under Construction" : {
+    "This view could show various progress assessments and notes for this scale..." : {
 
     },
-    "Various progress assessments and notes for this scale..." : {
+    "Under Construction" : {
 
     },
     "Viewing\nDirection" : {

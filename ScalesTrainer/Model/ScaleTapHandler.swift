@@ -27,7 +27,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
     
     required init(bufferSize:Int, scale:Scale?, amplitudeFilter:Double?) {
         self.recordedTapEvents = []
-//        self.startTappingTime = nil
         self.bufferSize = bufferSize
         self.scale = scale
         self.amplitudeFilter = amplitudeFilter
@@ -53,7 +52,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
         }
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
         let event = TapEvent(tapNum: eventNumber, consecutiveCount: 1, frequency: frequency, amplitude: amplitude)
-
         self.recordedTapEvents.append(event)
         self.eventNumber += 1
         
@@ -86,6 +84,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
     
     func stopTappingProcess() -> TapEventSet {
         let tapEventSet = TapEventSet(bufferSize: self.bufferSize, events: self.recordedTapEvents)
+        print("=========================>EVENT SET SIZE", self.bufferSize, self.recordedTapEvents.count)
         return tapEventSet
     }
     

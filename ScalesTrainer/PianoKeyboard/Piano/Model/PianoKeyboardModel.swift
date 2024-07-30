@@ -7,6 +7,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
 
 public class PianoKeyboardModel: ObservableObject {
     public static var shared = PianoKeyboardModel()
+    public static var shared1 = PianoKeyboardModel()
     let scalesModel = ScalesModel.shared
     //@Published
     public var pianoKeyModel: [PianoKeyModel] = []
@@ -26,6 +27,8 @@ public class PianoKeyboardModel: ObservableObject {
     weak var keyboardAudioManager: AudioManager?
     
     public init() {
+        self.pianoKeyModel = []
+        self.keyRects = []
     }
     
     func clearAllKeyWasPlayedState(besidesID:UUID? = nil) {
@@ -120,6 +123,25 @@ public class PianoKeyboardModel: ObservableObject {
         self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection)
     }
     
+    func configureKeyboardForScaleStartView(start:Int, numberOfKeys:Int, scaleStartMidi:Int) {
+        self.pianoKeyModel = []
+        self.keyRects = Array(repeating: .zero, count: numberOfKeys)
+        self.firstKeyMidi = start
+        for i in 0..<numberOfKeys {
+            let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
+            self.pianoKeyModel.append(pianoKeyModel)
+            if pianoKeyModel.midi == scaleStartMidi {
+                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi)
+                ///Mark the start of scale
+                keyState.finger = 9
+                pianoKeyModel.scaleNoteState = keyState
+            }
+        }
+        //let key = self.pianoKeyModel[i]
+        //key[10].scaleNoteState = ScaleNoteState()
+        //self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection)
+    }
+
     ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
     public func linkScaleFingersToKeyboardKeys(scale:Scale, direction:Int) {
@@ -148,7 +170,7 @@ public class PianoKeyboardModel: ObservableObject {
         }
     }
     
-    private func updateKeysForUpDown() {
+    public func updateKeysForUpDown() {
         var keyDownAt = Array(repeating: false, count: numberOfKeys)
 
         for touch in touches {

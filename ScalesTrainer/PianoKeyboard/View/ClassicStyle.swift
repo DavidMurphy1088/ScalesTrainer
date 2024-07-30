@@ -12,10 +12,8 @@ public struct ClassicStyle {
     public let naturalKeySpace: CGFloat
 
     public init(
-        //sfKeyWidthMultiplier: CGFloat = 0.55,
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
-        //sfKeyHeightMultiplier: CGFloat = 0.70,
 
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
@@ -131,17 +129,17 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {
                         ///Hilite Middle C
-                        if keyModel.midi == 60 { //}|| keyModel.midi == 64 {
-                            //let w = playingMidiRadius + 7.0
-                            //let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
-                            let circleRadius = 15
-                            let circle = CGRect(x: Int(rect.midX) - circleRadius,
-                                                y: 6,
-                                                width: circleRadius * 2,
-                                                height: circleRadius * 2)
-                            context.fill(Path(ellipseIn: circle), with: .color(.white))
-                            context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
-                        }
+//                        if keyModel.midi == 60 { //}|| keyModel.midi == 64 {
+//                            //let w = playingMidiRadius + 7.0
+//                            //let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
+//                            let circleRadius = 15
+//                            let circle = CGRect(x: Int(rect.midX) - circleRadius,
+//                                                y: 6,
+//                                                width: circleRadius * 2,
+//                                                height: circleRadius * 2)
+//                            context.fill(Path(ellipseIn: circle), with: .color(.white))
+//                            context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
+//                        }
                         context.draw(
                             Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
@@ -183,26 +181,12 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+                        let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
                         context.draw(
-                            Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
+                            Text(finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
                                 .font(.title).bold(),
                             at: point
                         )
-//                        if scaleNote.fingerSequenceBreak {
-//                            let width = rect.width * 0.1
-//                            for w in [width, 0 - width] {
-//                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
-//                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
-//                                context.stroke(
-//                                    Path { path in
-//                                        path.move(to: point1)
-//                                        path.addLine(to: point2)
-//                                    },
-//                                    with: .color(.blue),
-//                                    lineWidth: 2
-//                               )
-//                            }
-//                        }
                     }
                 }
                 xpos += naturalXIncr
@@ -264,6 +248,22 @@ public struct ClassicStyle {
                     }
                 }
                 
+                ///Hilite Middle C
+                ///Draw it here (not during white key draw) to ensure it appears above the black note
+                if keyModel.midi == 61 { //}|| keyModel.midi == 64 {
+                    let circleRadius = 15
+                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
+                                        y: 6,
+                                        width: circleRadius * 2,
+                                        height: circleRadius * 2)
+                    context.fill(Path(ellipseIn: circle), with: .color(.white))
+                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
+                    context.draw(
+                        Text("C").font(labelFont).foregroundColor(.blue),
+                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
+                    )
+                }
+
                 /// ----------- The note from the key touch is playiong ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
@@ -298,7 +298,7 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-
+                        let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
                         //if !scalesModel.showStaff {
                             if false {
                                 ///White background for finger number on a black key
@@ -312,7 +312,7 @@ public struct ClassicStyle {
                                 }
                             }
                             context.draw(
-                                Text(String(scaleNote.finger)).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
+                                Text(finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
                                     .font(.title).bold(),
                                 at: point
                             )

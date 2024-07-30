@@ -68,7 +68,8 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
     @Published var score:Score?
-    @Published var recordingIsPlaying = false
+    @Published var recordingIsPlaying1 = false
+    @Published var synchedIsPlaying = false
 
     var scoreHidden = false
     
@@ -243,27 +244,6 @@ public class ScalesModel : ObservableObject {
                                           fromProcess: self.runningProcess)
         let (bestResult, bestEvents) = analyser.getBestResult()
         
-//        ///Analyse the events from each tap handler. The number of events for each varies since each tap handler has a different buffer size
-//        for tapHandler in self.tapHandlers {
-//            let tappedEvents = tapHandler.stopTappingProcess()
-//            Logger.shared.log(self, "Start analysing from handler. BufferSize:\(tapHandler.getBufferSize())")
-//
-//            ///Save the best result
-//            let resultPair:(Result?, TapEventSet?) = analyser.getBestResult()
-//            if let result = resultPair.0 {
-//                if let best = bestResult {
-//                    if result.isBetter(compare: best) {
-//                        bestResult = best
-//                        bestTapSet = resultPair.1
-//                    }
-//                }
-//                else {
-//                    bestResult = result
-//                    bestTapSet = resultPair.1
-//                }
-//            }
-//        }
-        
         ///Save the taps to a file
         if saveTapEventsToFile {
             if let bestResult = bestResult {
@@ -274,24 +254,7 @@ public class ScalesModel : ObservableObject {
                 self.saveTapsToFile(tapSets: tapEventSets, result: bestResult)
             }
         }
-        
-//        if let result = bestResult {
-//            let score = createScore(scale: result.scale)
-//            self.scale = result.scale
-//            //self.setScaleAndScore(scale: result.scale, score: score, ctx: "ScaleTapHandler:bestOffset")
-//            let keyboard = PianoKeyboardModel.shared
-//            //keyboard.debug11("Rest")
-//            keyboard.redraw()
-//            //scalesModel.setResultInternal(result, "stop Tapping")
-//            //        if result.noErrors() {
-//            //            score.setNormalizedValues(scale: bestScale)
-//            //        }
-//            //
-//            //        if ScalesModel.shared.runningProcess == .recordingScale && Settings.shared.recordDataMode{
-//            //            self.saveTapsToFile(result: result)
-//            //        }
-//        }
-        
+                
         ///Replay the best fit scale to set the app's display state
         ///If there are too many errors just display the scale at the octaves it was shown as
         let bestScale:Scale = self.scale
@@ -308,14 +271,13 @@ public class ScalesModel : ObservableObject {
         scalesModel.setScaleAndScore(scale: bestScale, score: score, ctx: "ScaleTapHandler:bestOffset")
             
         ///Ensure keyboard visible key statuses are updated during events apply
-        var eventStatusSet:TapStatusRecordSet? = nil
+        var finalEventStatusSet:TapStatusRecordSet? = nil
         
         let keyboard = PianoKeyboardModel.shared
         if let result = bestResult {
             if let eventSet = bestEvents {
                 
-                //result.compressingFactor = 1
-                let (finalResult, statusSet) = analyser.applyEvents(ctx: "useBest",
+                let (finalResult, finalSet) = analyser.applyEvents(ctx: "useBest",
                                                     bufferSize: result.bufferSize,
                                                     recordedTapEvents: result.tappedEventsSet.events,
                                                     offset: 0, scale: bestScale,
@@ -325,14 +287,14 @@ public class ScalesModel : ObservableObject {
                                                     octaveLenient: true,
                                                     score: score,
                                                     updateKeyboard: true)
-                eventStatusSet = statusSet
                 keyboard.redraw()
                 Logger.shared.log(self, "=======> Applied best events. Offset:\(0) Result:\(result.getInfo())")
                 scalesModel.setResultInternal(finalResult, "stop Tapping")
+                finalEventStatusSet = finalSet
             }
         }
         self.tapHandlers = []
-        return eventStatusSet
+        return finalEventStatusSet
     }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
@@ -343,6 +305,11 @@ public class ScalesModel : ObservableObject {
             if [.recordingScale, .recordScaleWithFileData].contains(self.runningProcess) {
                 if let statsSet = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale) {
                     setTapHandlerEventSet(statsSet, publish: true)
+                }
+            }
+            if self.runningProcess == .syncRecording {
+                DispatchQueue.main.async {
+                    self.synchedIsPlaying = false
                 }
             }
         }
@@ -410,6 +377,9 @@ public class ScalesModel : ObservableObject {
         
         if [RunningProcess.syncRecording].contains(setProcess)  {
             let metronome = MetronomeModel.shared
+            DispatchQueue.main.async {
+                self.synchedIsPlaying = true
+            }
             metronome.startTimer(notified: HearUserScale(), onDone: {
                 self.setRunningProcess(.none) //, tapBufferSize: Settings.shared.tapBufferSize)
             })
@@ -427,10 +397,13 @@ public class ScalesModel : ObservableObject {
             self.setTapHandlerEventSet(nil, publish: true)
             keyboard.redraw()
             ///4096 has extra params to figure out automatic scale play end
+            ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
             self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: nil, amplitudeFilter: nil))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192, scale: nil, amplitudeFilter: nil))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
+//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 1024, scale: nil, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: nil, amplitudeFilter: nil))
+
+            //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
             self.recordedTapsFileURL = nil
             if setProcess == .recordScaleWithFileData {
                 ///For plaback of an emailed file
@@ -626,6 +599,25 @@ public class ScalesModel : ObservableObject {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
                 self.score = score
+            }
+        }
+    }
+    
+    func setKeyboard() {
+        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName())")
+        var scale = self.scale
+        scale.octaves = 4
+        //scale.scaleType = .major
+        self.scale = scale
+        PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
+        self.setSelectedDirection(0)
+        PianoKeyboardModel.shared.unmapScaleFingersToKeyboard()
+        PianoKeyboardModel.shared.redraw()
+
+        DispatchQueue.main.async {
+            ///Absolutely no idea why but if not here the score wont display 😡
+            DispatchQueue.main.async {
+                self.score = self.score
             }
         }
     }

@@ -18,7 +18,7 @@ public class TapEvent {
     var timestamp:Date
     let tapNum:Int
     var consecutiveCount:Int
-    let amplitude:Float
+    var amplitude:Float
     let frequency:Float
     let tapMidi:Int
     
@@ -141,10 +141,10 @@ public class TapEventSet {
         self.events = events
     }
     
-    func debug1(_ ctx:String) {
+    func debug111(_ ctx:String) {
         print(" ======== DEBUG TapEventSet", ctx)
         for event in self.events {
-            print(event.tapNum, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)
+            print(event.tapNum, "time:", event.timestamp, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)
         }
     }
     
@@ -186,7 +186,7 @@ public class TapStatusRecordSet {
         return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print(" TapEventSet", ctx)
         for event in self.events {
             print(event.tapData())

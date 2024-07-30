@@ -40,7 +40,7 @@ class AudioManager {
         if let audioPlayer = self.audioPlayer {
             audioPlayer.stop()
             DispatchQueue.main.async {
-                ScalesModel.shared.recordingIsPlaying = false
+                ScalesModel.shared.recordingIsPlaying1 = false
             }
         }
     }
@@ -54,12 +54,12 @@ class AudioManager {
                 print("Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
                 audioPlayer?.completionHandler = {
                     DispatchQueue.main.async {
-                        ScalesModel.shared.recordingIsPlaying = false
+                        ScalesModel.shared.recordingIsPlaying1 = false
                     }
                 }
                 self.audioPlayer?.play()
                 DispatchQueue.main.async {
-                    ScalesModel.shared.recordingIsPlaying = true
+                    ScalesModel.shared.recordingIsPlaying1 = true
                 }
             }
         }
@@ -184,7 +184,10 @@ class AudioManager {
                 self.recorder = nil
             }
         }
-
+        if tapHandlers.count > 4 {
+            Logger.shared.reportError(self, "Too many pitch tap handlers to install \(tapHandlers.count)")
+            return
+        }
         self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
                                                 tapHandler: tapHandlers[0],
                                                 asynch: true))
@@ -203,6 +206,7 @@ class AudioManager {
                                                     tapHandler: tapHandlers[3],
                                                     asynch: true))
         }
+
 
         for tap in self.pitchTaps {
             tap.start()
@@ -299,23 +303,25 @@ class AudioManager {
                 }
                 
                 let fields = line.split(separator: " ")
-                if line.starts(with: "--"){
-                    ///e.g. --TapSet BufferSize 4096
-                    if let currentTapSet = currentTapSet {
-                        tapEventSets.append(currentTapSet)
-                        //let newTapSet = TapEventSet(bufferSize: lastBufferSize, events: [] )
-//                        for tap in tapEvents {
-//                            newTapSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: tap/, amplitude: <#Float#>))
-//                        }
-                        //tapEventSets.append(newTapSet)
-                        Logger.shared.log(self, "Read \(currentTapSet.events.count) events from file for bufferSize:\(currentTapSet.bufferSize)")
-                        //tapEvents = []
-                        tapNum = 0
+                if line.starts(with: "--") {
+                    if line.starts(with: "--TapSet") {
+                        ///e.g. --TapSet BufferSize 4096
+                        if let currentTapSet = currentTapSet {
+                            tapEventSets.append(currentTapSet)
+                            //let newTapSet = TapEventSet(bufferSize: lastBufferSize, events: [] )
+                            //                        for tap in tapEvents {
+                            //                            newTapSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: tap/, amplitude: <#Float#>))
+                            //                        }
+                            //tapEventSets.append(newTapSet)
+                            Logger.shared.log(self, "Read \(currentTapSet.events.count) events from file for bufferSize:\(currentTapSet.bufferSize)")
+                            //tapEvents = []
+                            tapNum = 0
+                        }
+                        if i>=lines.count {
+                            break
+                        }
+                        currentTapSet = TapEventSet(bufferSize: Int(fields[2]) ?? 0, events: [])
                     }
-                    if i>=lines.count {
-                        break
-                    }
-                    currentTapSet = TapEventSet(bufferSize: Int(fields[2]) ?? 0, events: [])
                     continue
                 }
                 

@@ -11,6 +11,26 @@ enum ActiveSheet: Identifiable {
     }
 }
 
+struct ScaleStartView: View {
+    func showScaleStart() {
+        PianoKeyboardModel.shared1.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 52, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
+        PianoKeyboardModel.shared1.redraw()
+    }
+    
+    var body: some View {
+        VStack {
+            Text("Scale Start")
+            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared1)
+                .frame(height: 120)
+                .border(Color.gray)
+                .padding()
+        }
+        .onAppear() {
+            showScaleStart()
+        }
+    }
+}
+
 struct ScalesView: View {
     let initialRunProcess:RunningProcess?
 
@@ -34,7 +54,6 @@ struct ScalesView: View {
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
     @State var hearingBacking = false
-    //@State var hearingRecording = false
     @State var showingTapData = false
     @State var recordingScale = false
     @State var showResultPopup = false
@@ -184,11 +203,14 @@ struct ScalesView: View {
                 Spacer()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
+                    ScaleStartView()
                     RecordingIsUnderwayView()
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
-                        Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        VStack {
+                            Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
                     }
                     if coinBank.lastBet > 0 {
                         CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
@@ -198,9 +220,16 @@ struct ScalesView: View {
                 Spacer()
             }
             
-            if scalesModel.recordingIsPlaying {
+            if scalesModel.recordingIsPlaying1 {
                 Button(action: {
                     AudioManager.shared.stopPlayingRecordedFile()
+                }) {
+                    Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
+                }
+            }
+            if scalesModel.synchedIsPlaying {
+                Button(action: {
+                    scalesModel.setRunningProcess(.none)
                 }) {
                     Text("Stop Hearing").padding().font(.title2).hilighted(backgroundColor: .blue)
                 }
@@ -301,6 +330,7 @@ struct ScalesView: View {
                     }
                     else {
                         scalesModel.setRunningProcess(.recordingScale)
+                        //showScaleStart()
                     }
                 }
             }
@@ -394,6 +424,7 @@ struct ScalesView: View {
                 Spacer()
                 HStack {
                     Button("Show Tap Data") {
+                        //self.showScaleStart()
                         showingTapData = true
                     }
                 }
@@ -477,7 +508,7 @@ struct ScalesView: View {
                     LegendView().commonFrameStyle()
                 }
                 
-                if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying {
+                if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
                     //Spacer()
                     StopProcessView()
                     //Spacer()

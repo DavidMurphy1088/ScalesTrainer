@@ -2,7 +2,7 @@ import Foundation
 
 public class Settings : Codable  {    
     static var shared = Settings()
-    var recordDataMode = true
+    var recordDataMode = false
     var firstName = ""
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0

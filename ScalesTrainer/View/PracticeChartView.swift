@@ -142,7 +142,7 @@ struct CellView: View {
                 let label = cell.scaleRoot.name + " " + cell.scaleType.description //+ " " + cell.hand
                 Text(label).font(.title).foregroundColor(.black)
                 Text("📈 📉 📊").font(.title).padding()
-                Text("Various progress assessments and notes for this scale...").padding()
+                Text("This view could show various progress assessments and notes for this scale...").padding()
 //                .overlay {
 //                    GeometryReader { geometry in
 //                        Color.clear.preference(key: InnerHeightPreferenceKey.self, value: geometry.size.height)

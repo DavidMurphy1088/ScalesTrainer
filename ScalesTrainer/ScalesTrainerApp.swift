@@ -14,7 +14,8 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
-                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioDiminishedSeventh, octaves: 2, hand: 0))
+                    //ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioDiminishedSeventh, octaves: 2, hand: 0))
+                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .major, octaves: 2, hand: 0))
                     selectedTab = 0
                 }
                 else {

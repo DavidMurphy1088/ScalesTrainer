@@ -21,7 +21,7 @@ class TapsEventsAnalyser {
     var lastMatchedMidi:Int? = nil
     var minScaleMidi = 0
     var maxScaleMidi = 0
-    var allowableOctaveOffsets:[Int] = []
+    var allowableScaleOctaveOffsets:[Int] = [] ///Allow the scale to start at different octaves
     var startTappingAmplitudes:[Int] = []
     var startTappingAvgAmplitude:Double? = nil
     var endTappingLowAmplitudeCount = 0
@@ -53,10 +53,10 @@ class TapsEventsAnalyser {
         self.lastMatchedMidi = nil
         (self.minScaleMidi, self.maxScaleMidi) = scale.getMinMax()
         if octaveLenient {
-            self.allowableOctaveOffsets = [0, 12, -12]
+            self.allowableScaleOctaveOffsets = [0, 12, -12]
         }
         else {
-            self.allowableOctaveOffsets = [0]
+            self.allowableScaleOctaveOffsets = [0]
         }
         startTappingAmplitudes = []
         startTappingAvgAmplitude = nil
@@ -71,76 +71,6 @@ class TapsEventsAnalyser {
         ///Tap processing has now been improved to be keyboard stateless
         //keyboard.configureKeyboardSize(scale: scale)
         //keyboard.linkScaleFingersToKeyboardKeys(scale: scale, direction: 0)
-    }
-    
-    ///On stop tapping test which scale offset best fits the user's scale recording. This is required so that if a scale is say starting on middle C (60) the user may elect to record it at another octave.
-    ///The set of tap frequences, amplitudes and times is processed against each scale offset. For each event set process the keyboard must be configured to the scale octave range being tested.
-    ///This analysis is 'fuzzy' becuase a piano key tap produces a range of pitches (e.g. octaves) and so its not straightforward to know which scale offset best fits.
-    ///Pick the scale offset with the lowest errors and assume that is the scale the user played. Run the tap events past that scale and keyboard configuration one more time to have the UI updated with the correct result.
-    
-    func getBestResult() -> (Result?, TapEventSet?) {
-        ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
-        ///Analyse the tapping aginst different scale starts to determine which has the least errors.
-        ///Update the app state after tapping based on the selected scale start.
-        
-//
-//        print("======= TAPS")
-//        for event in self.recordedTapEvents {
-//            print(event.tapNum, Util.frequencyToMIDI(frequency: event.frequency),   "   AMpl:", event.amplitude)
-//        }
-//        print("======= END TAPS")
-
-        ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
-        let scaleRootOffsets = [0] //[0, 12, -12, 24, -24].reversed()
-        let setAmpFilter = Settings.shared.amplitudeFilter
-        let amplitudeFilters = [setAmpFilter * 0.25, setAmpFilter * 0.5, setAmpFilter * 1.0, setAmpFilter * 2.0]
-        let compressingFactors = [4, 3, 2, 0]
-        
-        var bestResult:Result? = nil
-        var bestTapEventSet:TapEventSet? = nil
-        
-        ///Find the best fit scale
-        var assessmentCtr = 0
-        for tapEventSet in self.recordedTapEventSets {
-            let recordedTapEvents = tapEventSet.events
-            for rootOffsetMidi in scaleRootOffsets {
-                for compressingFactor in compressingFactors {
-                    for amplitudeFilter in amplitudeFilters {
-                        let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
-                        let keyboard = PianoKeyboardModel()
-                        keyboard.configureKeyboardForScale(scale: offsetScale)
-                        let filterStarts = compressingFactor == 0
-                        let (result1, eventSet) = applyEvents(ctx: "TryOffset",
-                                                             bufferSize: tapEventSet.bufferSize,
-                                                             recordedTapEvents: tapEventSet.events,
-                                                             offset: rootOffsetMidi,
-                                                             scale: offsetScale,
-                                                             keyboard: keyboard,
-                                                             amplitudeFilter: amplitudeFilter,
-                                                             compressingFactor: compressingFactor,
-                                                             octaveLenient: false,
-                                                             score: nil,
-                                                             updateKeyboard: false)
-                        
-                        if bestResult == nil || result1.getTotalErrors() < bestResult!.getTotalErrors() {
-                            if let best = bestResult {
-                                if result1.getTotalErrors() > (best.getTotalErrors()) {
-                                    print("===================")
-                                }
-                            }
-                            bestResult = result1
-                            bestTapEventSet = tapEventSet
-                        }
-                        Logger.shared.log(self, "==[\(assessmentCtr)] Assessed:Result:\(result1.getInfo())")
-                        if let best = bestResult{
-                            print("                                                ==", best.getInfo(), "    ", best.getTotalErrors())
-                        }
-                        assessmentCtr += 1
-                    }
-                }
-            }
-        }
-        return (bestResult, bestTapEventSet)
     }
     
     func applyEvents(ctx:String,
@@ -172,16 +102,101 @@ class TapsEventsAnalyser {
                                                amplitudeFilter: amplitudeFilter,
                                                discardSingletons: compressingFactor == 0,
                                                filterStart: true,
-                                               //octaveLenient: octaveLenient,
                                                updateKeyboardDisplay: updateKeyboard)
             tapStatusRecordSet.events.append(processedtapEvent)
         }
-        let result = Result(scale: scale, tappedEventsSet: TapEventSet(bufferSize: bufferSize, events: recordedTapEvents), keyboard: keyboard,
+        let eventSet = TapEventSet(bufferSize: bufferSize, events: recordedTapEvents)
+        //let eventSet = TapEventSet(bufferSize: bufferSize, events: tapEvents)
+        let result = Result(scale: scale,
+                            tappedEventsSet: eventSet,
+                            keyboard: keyboard,
                             fromProcess: self.fromProcess, amplitudeFilter: amplitudeFilter, bufferSize: bufferSize,
                             compressingFactor: compressingFactor, userMessage: "")
         //tapStatusRecordSet.debug("===end of taps")
         result.buildResult(offset: offset, score: score)
         return (result, tapStatusRecordSet)
+    }
+    
+    ///On stop tapping test which scale offset best fits the user's scale recording. This is required so that if a scale is say starting on middle C (60) the user may elect to record it at another octave.
+    ///The set of tap frequences, amplitudes and times is processed against each scale offset. For each event set process the keyboard must be configured to the scale octave range being tested.
+    ///This analysis is 'fuzzy' becuase a piano key tap produces a range of pitches (e.g. octaves) and so its not straightforward to know which scale offset best fits.
+    ///Pick the scale offset with the lowest errors and assume that is the scale the user played. Run the tap events past that scale and keyboard configuration one more time to have the UI updated with the correct result.
+    
+    func getBestResult() -> (Result?, TapEventSet?) {
+        ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
+        ///Analyse the tapping aginst different scale starts to determine which has the least errors.
+        ///Update the app state after tapping based on the selected scale start.
+        
+//
+//        print("======= TAPS")
+//        for event in self.recordedTapEvents {
+//            print(event.tapNum, Util.frequencyToMIDI(frequency: event.frequency),   "   AMpl:", event.amplitude)
+//        }
+//        print("======= END TAPS")
+
+        ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
+        let scaleRootOffsets = [0] //[0, 12, -12, 24, -24].reversed()
+        let setAmpFilter = Settings.shared.amplitudeFilter
+        //let amplitudeFilters = [setAmpFilter * 0.25, setAmpFilter * 0.5, setAmpFilter * 1.0, setAmpFilter * 2.0]
+        let amplitudeFilters = [setAmpFilter * 0.0, setAmpFilter * 0.25, setAmpFilter * 0.5,
+                                setAmpFilter * 1.0, setAmpFilter * 2.0, setAmpFilter * 3.0, setAmpFilter * 4.0,
+                                setAmpFilter * 5.0, setAmpFilter * 6.0, setAmpFilter * 7.0, setAmpFilter * 8.0, setAmpFilter * 10.0]
+        //let amplitudeFilters = [setAmpFilter * 1.0]
+        let compressingFactors = [5, 4, 3, 2, 0]
+        //let compressingFactors = [2]
+
+        var bestResult:Result? = nil
+        var bestTapEventSet:TapEventSet? = nil
+        var atZeroErrors = false
+        
+        ///Find the best fit scale
+        var assessmentCtr = 0
+        for tapEventSet in self.recordedTapEventSets {
+            if atZeroErrors {
+                break
+            }
+            //let recordedTapEvents = tapEventSet.events
+            for rootOffsetMidi in scaleRootOffsets {
+                if atZeroErrors {
+                    break
+                }
+                for compressingFactor in compressingFactors {
+                    if atZeroErrors {
+                        break
+                    }
+                    for amplitudeFilter in amplitudeFilters {
+                        let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
+                        let keyboard = PianoKeyboardModel()
+                        keyboard.configureKeyboardForScale(scale: offsetScale)
+                        //let filterStarts = compressingFactor == 0
+                        let (result1, _) = applyEvents(ctx: "TryOffset",
+                                                              bufferSize: tapEventSet.bufferSize,
+                                                              recordedTapEvents: tapEventSet.events,
+                                                              offset: rootOffsetMidi,
+                                                              scale: offsetScale,
+                                                              keyboard: keyboard,
+                                                              amplitudeFilter: amplitudeFilter,
+                                                              compressingFactor: compressingFactor,
+                                                              octaveLenient: false,
+                                                              score: nil,
+                                                              updateKeyboard: false)
+                        
+                        if bestResult == nil || result1.getTotalErrors() < bestResult!.getTotalErrors() {
+                            bestResult = result1
+                            bestTapEventSet = tapEventSet
+                        }
+                        let bestErrors:Int = bestResult?.getTotalErrors() ?? -1
+                        Logger.shared.log(self, "==[\(assessmentCtr)] Result:\(result1.getInfo()) bestErrors:\(bestErrors)")
+                        if bestErrors == 0 {
+                            atZeroErrors = true
+                            break
+                        }
+                        assessmentCtr += 1
+                    }
+                }
+            }
+        }
+        return (bestResult, bestTapEventSet)
     }
     
     ///Build an event record that describes how this tap was handled. The record has various states to describe the handling.
@@ -200,6 +215,10 @@ class TapsEventsAnalyser {
                     //amplitude:Float, frequency:Float, recordedTimestamp:Date) -> TapEvent {
         self.eventNumber += 1
         
+        if eventToProcess.tapMidi == 42 {
+            print("===========", eventToProcess.tapMidi, amplitudeFilter, eventToProcess.amplitude)
+        }
+
         ///Require a large change in amplitude to start the scale
         ///This avoids false starts and scale note matches with noise before playing notes
         ///Compare averages of amplitudes to detect the major change over averaged tap events
@@ -295,7 +314,8 @@ class TapsEventsAnalyser {
         ///Determine the actual midi based on the nearest key that to the last one the user played.
         //let tappedMidiPossibles = [midi-24, midi - 12, midi, midi + 12, midi + 24]
         let tappedMidiPossibles = [midi - 48, midi - 36, midi-24, midi - 12, midi, midi + 12, midi + 24, midi + 36, midi + 48]
-        
+        //let tappedMidiPossibles = [midi - 36, midi-24, midi - 12, midi, midi + 12, midi + 24, midi + 36]
+
 //        if eventToProcess.tapMidi == 38 && ascending == false {
 //            print("==================================== ", ctx, "tapped:", eventToProcess.tapMidi, midi, "lastMidi:", self.lastMatchedMidi!, "asc", ascending,
 //                  "discardSingletons:", discardSingletons)
@@ -432,6 +452,10 @@ class TapsEventsAnalyser {
             }
             if event.tapMidi == last.tapMidi {
                 last.consecutiveCount += 1
+                if event.amplitude > last.amplitude {
+                    last.amplitude = event.amplitude
+                }
+                //last.timestamp = event.timestamp
                 continue
             }
             if last.consecutiveCount >= requiredConsecutiveCount {
@@ -441,6 +465,7 @@ class TapsEventsAnalyser {
                 filtered.append(last)
             }
             lastEvent = TapEvent(tapNum: filtered.count, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude)
+            lastEvent!.timestamp = event.timestamp
         }
         if let lastEvent = lastEvent {
             filtered.append(lastEvent)

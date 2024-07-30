@@ -87,9 +87,9 @@ public class Scale {
     private(set) var scaleRoot:ScaleRoot
     private(set) var scaleNoteState:[ScaleNoteState]
     private var metronomeAscending = true
-    let octaves:Int
+    var octaves:Int
     let hand:Int
-    let scaleType:ScaleType
+    var scaleType:ScaleType
     var scaleShape:ScaleShape
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
@@ -286,7 +286,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug1111(_ msg:String)  {
+    func debug1(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

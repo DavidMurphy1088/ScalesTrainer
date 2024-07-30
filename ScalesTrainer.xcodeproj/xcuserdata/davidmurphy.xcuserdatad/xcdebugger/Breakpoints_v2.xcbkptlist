@@ -7,47 +7,77 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "80B10D46-740A-42A0-83C2-C4729EC451E1"
+            uuid = "01BF39E2-8E32-4F49-A9D1-22AD4DD9F5FE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Metronome.swift"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "startTimer(notified:onDone:)"
+            startingLineNumber = "88"
+            endingLineNumber = "88"
+            landmarkName = "stopTappingProcess()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "80B10D46-740A-42A0-83C2-C4729EC451E1 - a7c3ae4a633af4ab"
+                  uuid = "01BF39E2-8E32-4F49-A9D1-22AD4DD9F5FE - 864ce3dbb2e4324"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MetronomeModel.startTimer(notified: ScalesStar.MetronomeTimerNotificationProtocol, onDone: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTappingProcess() -&gt; ScalesStar.TapEventSet"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "77"
-                  endingLineNumber = "77"
-                  offsetFromSymbolStart = "1032">
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "92">
                </Location>
                <Location
-                  uuid = "80B10D46-740A-42A0-83C2-C4729EC451E1 - a7c3ae4a633af4c8"
+                  uuid = "01BF39E2-8E32-4F49-A9D1-22AD4DD9F5FE - 864ce3dbb2e4324"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MetronomeModel.startTimer(notified: ScalesStar.MetronomeTimerNotificationProtocol, onDone: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; ()"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTappingProcess() -&gt; ScalesStar.TapEventSet"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "78"
-                  endingLineNumber = "78"
-                  offsetFromSymbolStart = "1052">
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "348">
+               </Location>
+               <Location
+                  uuid = "01BF39E2-8E32-4F49-A9D1-22AD4DD9F5FE - 864ce3dbb2e4324"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTappingProcess() -&gt; ScalesStar.TapEventSet"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "376">
+               </Location>
+               <Location
+                  uuid = "01BF39E2-8E32-4F49-A9D1-22AD4DD9F5FE - 864ce3dbb2e43c3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScaleTapHandler.stopTappingProcess() -&gt; ScalesStar.TapEventSet"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScaleTapHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "376">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -55,47 +85,79 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3BB69827-CBF6-4F56-8219-8BB9B05629ED"
+            uuid = "C141366B-B60F-4D6A-83D0-27102B0FE138"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Settings.swift"
+            filePath = "ScalesTrainer/Model/AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
-            landmarkName = "getSettingsNoteValueFactor()"
+            startingLineNumber = "373"
+            endingLineNumber = "373"
+            landmarkName = "installTapHandler(node:tapHandler:asynch:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9F0AB5C-94C5-4567-8DBD-A4B7E0F0058B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "371"
+            endingLineNumber = "371"
+            landmarkName = "installTapHandler(node:tapHandler:asynch:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8C919BD7-9373-4538-9216-A5DBBA5DE67A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/AudioManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
+            landmarkName = "startRecordingMicWithTapHandlers(tapHandlers:recordAudio:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "3BB69827-CBF6-4F56-8219-8BB9B05629ED - f8c582f9be6ed381"
+                  uuid = "8C919BD7-9373-4538-9216-A5DBBA5DE67A - c6840daf84a11aab"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Settings.getScaleNoteValue() -&gt; Swift.Double"
+                  symbolName = "ScalesStar.AudioManager.startRecordingMicWithTapHandlers(tapHandlers: Swift.Array&lt;ScalesStar.TapHandlerProtocol&gt;, recordAudio: Swift.Bool) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "62"
-                  endingLineNumber = "62"
-                  offsetFromSymbolStart = "24">
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "2160">
                </Location>
                <Location
-                  uuid = "3BB69827-CBF6-4F56-8219-8BB9B05629ED - f8c582f9be6ed3ee"
+                  uuid = "8C919BD7-9373-4538-9216-A5DBBA5DE67A - c6840daf84a11aab"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Settings.getScaleNoteValue() -&gt; Swift.Double"
+                  symbolName = "ScalesStar.AudioManager.startRecordingMicWithTapHandlers(tapHandlers: Swift.Array&lt;ScalesStar.TapHandlerProtocol&gt;, recordAudio: Swift.Bool) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Settings.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "61"
-                  endingLineNumber = "61"
-                  offsetFromSymbolStart = "24">
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "2180">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -103,95 +165,96 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1B3BD0AB-A822-435C-B1AD-FCA77379B2D8"
+            uuid = "466695CE-B572-4066-810E-9EF233675BE9"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/AudioManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "552"
-            endingLineNumber = "552"
-            landmarkName = "getTempo()"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "startRecordingMicWithTapHandlers(tapHandlers:recordAudio:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "466695CE-B572-4066-810E-9EF233675BE9 - c6840daf84a102a5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.AudioManager.startRecordingMicWithTapHandlers(tapHandlers: Swift.Array&lt;ScalesStar.TapHandlerProtocol&gt;, recordAudio: Swift.Bool) -&gt; ()"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126"
+                  offsetFromSymbolStart = "236">
+               </Location>
+               <Location
+                  uuid = "466695CE-B572-4066-810E-9EF233675BE9 - 68c4d03994d343bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Bool) -&gt; () in ScalesStar.AudioManager.startRecordingMicWithTapHandlers(tapHandlers: Swift.Array&lt;ScalesStar.TapHandlerProtocol&gt;, recordAudio: Swift.Bool) -&gt; ()"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "44">
+               </Location>
+               <Location
+                  uuid = "466695CE-B572-4066-810E-9EF233675BE9 - c6840daf84a102a5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.AudioManager.startRecordingMicWithTapHandlers(tapHandlers: Swift.Array&lt;ScalesStar.TapHandlerProtocol&gt;, recordAudio: Swift.Bool) -&gt; ()"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/AudioManager.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126"
+                  offsetFromSymbolStart = "256">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2F4343A1-A70F-43E0-92D4-1E2404DB0378"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "tapUpdate(_:_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "059CF56C-EC7E-4BBE-8FAC-76BA472D197B"
-            shouldBeEnabled = "Yes"
+            uuid = "BCDFDB3A-9145-4193-80D9-98D48B055DAB"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/TapsEventsAnalyser.swift"
+            filePath = "ScalesTrainer/Model/ScaleTapHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
-            landmarkName = "getBestResult()"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "stopTappingProcess()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "059CF56C-EC7E-4BBE-8FAC-76BA472D197B - f9163243fd6e7fdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.TapsEventsAnalyser.getBestResult() -&gt; (Swift.Optional&lt;ScalesStar.Result&gt;, Swift.Optional&lt;ScalesStar.TapEventSet&gt;)"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/TapsEventsAnalyser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "2008">
-               </Location>
-               <Location
-                  uuid = "059CF56C-EC7E-4BBE-8FAC-76BA472D197B - f9163243fd6e7fdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.TapsEventsAnalyser.getBestResult() -&gt; (Swift.Optional&lt;ScalesStar.Result&gt;, Swift.Optional&lt;ScalesStar.TapEventSet&gt;)"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/TapsEventsAnalyser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "1736">
-               </Location>
-               <Location
-                  uuid = "059CF56C-EC7E-4BBE-8FAC-76BA472D197B - f9163243fd6e7fdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.TapsEventsAnalyser.getBestResult() -&gt; (Swift.Optional&lt;ScalesStar.Result&gt;, Swift.Optional&lt;ScalesStar.TapEventSet&gt;)"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/TapsEventsAnalyser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "1920">
-               </Location>
-               <Location
-                  uuid = "059CF56C-EC7E-4BBE-8FAC-76BA472D197B - f9163243fd6e7fdf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.TapsEventsAnalyser.getBestResult() -&gt; (Swift.Optional&lt;ScalesStar.Result&gt;, Swift.Optional&lt;ScalesStar.TapEventSet&gt;)"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/TapsEventsAnalyser.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "1948">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
