@@ -8,6 +8,7 @@ public struct ClassicStyle {
     let cornerRadiusMultiplier: CGFloat
     let labelFont: Font
     let labelColor: Color
+    let keyColor: Color
 
     public let naturalKeySpace: CGFloat
 
@@ -19,7 +20,8 @@ public struct ClassicStyle {
         cornerRadiusMultiplier: CGFloat = 0.008,
         naturalKeySpace: CGFloat = 3,
         labelFont: Font = .title3.bold(),
-        labelColor: Color = .blue //.gray
+        labelColor: Color = .blue, //.gray
+        keyColor:Color
     ) {
         self.sfKeyWidthMultiplier = sfKeyWidthMultiplier
         self.sfKeyHeightMultiplier = sfKeyHeightMultiplier
@@ -28,10 +30,12 @@ public struct ClassicStyle {
         self.naturalKeySpace = naturalKeySpace
         self.labelFont = labelFont
         self.labelColor = labelColor
+        self.keyColor = keyColor
     }
 
     public func naturalColor(_ down: Bool) -> Color {
-        return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
+        //return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
+        return down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.7, green: 0.7, blue: 0.7)
     }
     
     public func hiliteKeyColor(_ down: Bool) -> Color {
@@ -113,9 +117,11 @@ public struct ClassicStyle {
                     .path(in: rect)
                 
                 ///Hilight the key if in following keys mode
+                let middle = 0.9
                 let gradient = Gradient(colors: [
                     keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
-                    Color(red: 1, green: 1, blue: 1),
+                    //Color(red: middle * 0.6, green: middle, blue: middle),
+                    keyColor,
                     Color(red: 1, green: 1, blue: 1),
                 ])
                 

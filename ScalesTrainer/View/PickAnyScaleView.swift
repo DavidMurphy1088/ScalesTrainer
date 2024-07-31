@@ -28,6 +28,8 @@ struct PickAnyScaleView: View {
             case 3:
                 scaleType = .arpeggioMajorSeventh
             case 4:
+                scaleType = .brokenChordMajor
+            case 5:
                 scaleType = .chromatic
             default:
                 scaleType = .major
@@ -52,7 +54,9 @@ struct PickAnyScaleView: View {
                 scaleType = .arpeggioDiminishedSeventh
             case 7:
                 scaleType = .arpeggioHalfDiminished
-                
+            case 8:
+                scaleType = .brokenChordMinor
+
             default:
                 scaleType = .harmonicMinor
             }

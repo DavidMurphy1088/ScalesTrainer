@@ -16,13 +16,11 @@ enum MicTappingMode {
 
 enum RunningProcess {
     case none
-    //case calibrating
     case followingScale
     case practicing
     case recordingScale
     case leadingIn
     case recordScaleWithFileData
-    //case recordScaleWithTapData
     case syncRecording
     case playingAlongWithScale
 
@@ -30,8 +28,7 @@ enum RunningProcess {
         switch self {
         case .none:
             return "None"
-//        case .calibrating:
-//            return "Calibrating"
+
         case .followingScale:
             return "Following Scale"
         case .practicing:
@@ -62,7 +59,9 @@ enum SpinState {
 }
 
 public class ScalesModel : ObservableObject {
-    static public var shared = ScalesModel()
+    
+    static public var shared = ScalesModel(musicBoardGrade: MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: ""), gradeName: "Grade1"))
+    let musicBoardGrade:MusicBoardGrade
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -145,7 +144,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    @Published private(set) var showStaff = false
+    @Published private(set) var showStaff = true
     func setShowStaff(_ newValue: Bool) {
         DispatchQueue.main.async {
 //            PianoKeyboardModel.shared.configureKeyboardSize()
@@ -224,7 +223,8 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    init() {
+    init(musicBoardGrade:MusicBoardGrade) {
+        self.musicBoardGrade = musicBoardGrade
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
@@ -537,19 +537,20 @@ public class ScalesModel : ObservableObject {
         else {
             staffType = .treble
         }
-        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic].contains(scale.scaleType) ? .major : .minor
+        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
-        let score = Score(key: staffKey, timeSignature: TimeSignature(top: 4, bottom: 4), linesPerStaff: 5)
+        let top = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 3 : 4
+        let score = Score(key: staffKey, timeSignature: TimeSignature(top: top, bottom: 4), linesPerStaff: 5)
 
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
-        var lastNote:StaffNote?
-        let noteValue = Settings.shared.getSettingsNoteValueFactor()
+        //var lastNote:StaffNote?
+        //let noteValue = Settings.shared.getSettingsNoteValueFactor()
         
         for i in 0..<scale.scaleNoteState.count {
-            if Int(inBarTotalValue) >= 4 {
+            if Int(inBarTotalValue) >= top {
                 score.addBarLine()
                 inBarTotalValue = 0.0
             }
@@ -557,16 +558,16 @@ public class ScalesModel : ObservableObject {
             let noteState = scale.scaleNoteState[i]
             let ts = score.createTimeSlice()
             
-            let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteValue, staffNum: 0)
+            let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteState.value, staffNum: 0)
             ts.addNote(n: note)
-            inBarTotalValue += noteValue
-            lastNote = note
+            inBarTotalValue += noteState.value
+            //lastNote = note
         }
-        if let lastNote = lastNote {
-            let valueInLastBar = inBarTotalValue - lastNote.getValue()
-            lastNote.setValue(value: 4 - valueInLastBar)
-        }
-        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState.count/12) range:\(scale.getMinMax()) noteValue:\(noteValue)")
+//        if let lastNote = lastNote {
+//            let valueInLastBar = inBarTotalValue - lastNote.getValue()
+//            lastNote.setValue(value: 4 - valueInLastBar)
+//        }
+        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState.count/12) range:\(scale.getMinMax()) noteValue:\(Settings.shared.getSettingsNoteValueFactor())")
         return score
     }
     
@@ -579,7 +580,8 @@ public class ScalesModel : ObservableObject {
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int, ctx:String) {
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(scaleRoot.name) type:\(scaleType.description)  ctx:\(ctx) from:\(self.scale.getScaleName())")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
-                           scaleType: Scale.getScaleType(name: scaleType.description),
+                          //scaleType: Scale.getScaleType(name: scaleType.description),
+                          scaleType: scaleType,
                            octaves: octaves,
                            hand: hand)
         let score = self.createScore(scale: scale)

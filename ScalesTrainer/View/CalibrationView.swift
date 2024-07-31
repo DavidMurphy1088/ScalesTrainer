@@ -100,7 +100,7 @@ public struct CalibrationView: View {
                 }
             }
             Text(getScaleName()).padding()
-            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
+            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel, keyColor: .white)
                 .frame(height: UIScreen.main.bounds.size.height / 6)
                 .commonFrameStyle(backgroundColor: .clear).padding()
 

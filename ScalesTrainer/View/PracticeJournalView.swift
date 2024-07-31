@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PracticeJournalView: View {
-    let practiceJournal:PracticeJournal
+    let musicBoardGrade:MusicBoardGrade
     @State private var navigateToScales = false
     
     let days = ["Mon","Tue","Wed ","Thu","Fri","Sat", "Sun"]
@@ -13,9 +13,10 @@ struct PracticeJournalView: View {
     }
     @State var ordering:ScaleOrder = .none
     
-    init(practiceJournal:PracticeJournal) {
-        self.practiceJournal = practiceJournal
+    init(musicBoardGrade:MusicBoardGrade) {
+        self.musicBoardGrade = musicBoardGrade
     }
+    
     func getName() -> String {
         let name = Settings.shared.firstName
         let journalName = "Practice Journal " + (name.count > 0 ? "for \(name)" : "")
@@ -47,7 +48,7 @@ struct PracticeJournalView: View {
     }
     
     func getTitle() -> String {
-        var title = "Practice Journal for \(practiceJournal.title)"
+        var title = "Practice Journal for \(self.musicBoardGrade.gradeName)"
         let name = Settings.shared.firstName
         if name.count > 0 {
             title = name + "'s \(title)"
@@ -85,7 +86,7 @@ struct PracticeJournalView: View {
                         Spacer()
                     }
                     List {
-                        ForEach(Array(self.practiceJournal.scaleGroup.scales.sorted(by: { lhs, rhs in
+                        ForEach(Array(self.musicBoardGrade.scales.sorted(by: { lhs, rhs in
                             switch self.ordering {
                             case .best:
                                 lhs.progressLH + lhs.progressRH > rhs.progressLH + lhs.progressRH

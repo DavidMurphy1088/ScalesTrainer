@@ -55,7 +55,7 @@
     "%@\n♩=90" : {
 
     },
-    "%@ Notes" : {
+    "%@ Practice Chart" : {
 
     },
     "%lld" : {
@@ -70,7 +70,13 @@
     "👉 %@" : {
 
     },
-    "📈 📉 📊" : {
+    "📈 " : {
+
+    },
+    "📉" : {
+
+    },
+    "📊" : {
 
     },
     "😊" : {
@@ -112,6 +118,12 @@
     "Calibration" : {
 
     },
+    "Choose your keyboard colour" : {
+
+    },
+    "Choose your keyboard colour " : {
+
+    },
     "Completed" : {
 
     },
@@ -129,9 +141,6 @@
 
     },
     "Current Amplitude Filter:%@" : {
-
-    },
-    "Day %lld" : {
 
     },
     "Default Octaves" : {
@@ -202,6 +211,9 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
+    "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
+
+    },
     "LH\nProgress" : {
 
     },
@@ -219,6 +231,9 @@
       }
     },
     "Major Scales" : {
+
+    },
+    "Minimum ♩=70, mf, legato" : {
 
     },
     "Minor Scales" : {
@@ -427,6 +442,9 @@
     "This view could show various progress assessments and notes for this scale..." : {
 
     },
+    "Tips" : {
+
+    },
     "Under Construction" : {
 
     },
@@ -453,6 +471,9 @@
 
     },
     "You can earn more coins by recording scales 😊" : {
+
+    },
+    "Your Progress With %@" : {
 
     }
   },

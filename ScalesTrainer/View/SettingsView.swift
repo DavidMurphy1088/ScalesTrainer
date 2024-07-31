@@ -17,32 +17,55 @@ struct SettingsView: View {
     
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
-    
+    @State private var keyColor: Color = .white
+
     let width = UIScreen.main.bounds.width * 0.25
     
+    struct ColourView: View {
+        @Binding var parentColor: Color
+        @State private var selectedColor: Color = .white
+        
+        var body: some View {
+            VStack {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("Choose your keyboard colour ")
+                        ColorPicker("Choose your keyboard colour", selection: $selectedColor)
+                            .padding()
+                            .onChange(of: selectedColor) { oldColor, newColor in
+                                PianoKeyboardModel.shared2.redraw()
+                                parentColor = newColor
+                            }
+                            .labelsHidden()
+                        Spacer()
+                    }
+                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared2, keyColor: selectedColor).padding()
+                }
+            }
+        }
+    }
+
     var body: some View {
         VStack {
             Text("Settings").font(.title)
             VStack {
                 Spacer()
                 HStack() {
-                    Text("Please enter your first name")
+                    Text("Please enter your first name").padding()
                     TextField("First name", text: $firstName)
                         .padding()
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .border(Color.gray)
-                        
                         .frame(width: width)
                         .padding()
-//
-//                    Text("You entered: \(inputText)")
-//                        .padding()
                 }
                 .onChange(of: firstName, {
                     settings.firstName = firstName
-                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
                 })
-                .padding()
+                .commonFrameStyle(backgroundColor: .white).padding()
+                
+                ColourView(parentColor: $keyColor).commonFrameStyle(backgroundColor: .white).padding()
                 
                 ///default octaves
                 HStack {
@@ -129,6 +152,7 @@ struct SettingsView: View {
                 HStack {
                     Spacer()
                     Button(action: {
+                        Settings.shared.setKeyColor(keyColor)
                         settings.save()
                         if settings.amplitudeFilter == 0 {
                             tabSelectionManager.selectedTab = 3
@@ -150,6 +174,7 @@ struct SettingsView: View {
             self.defaultOctaves = settings.defaultOctaves
             //self.tapBufferSize = settings.defaultTapBufferSize // 1024
             self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
+            PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
         }
     }
 }

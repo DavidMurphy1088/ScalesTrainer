@@ -20,7 +20,7 @@ struct ScaleStartView: View {
     var body: some View {
         VStack {
             Text("Scale Start")
-            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared1)
+            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared1, keyColor: .white)
                 .frame(height: 120)
                 .border(Color.gray)
                 .padding()
@@ -485,7 +485,7 @@ struct ScalesView: View {
                 
                 if scalesModel.showKeyboard {
                     VStack {
-                        PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel)
+                        PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel, keyColor: Settings.shared.getKeyColor())
                             .frame(height: getKeyboardHeight())
                             .border(Color.gray)
                             .padding()
@@ -588,7 +588,7 @@ struct ScalesView: View {
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
             self.handIndex = scalesModel.scale.hand
             ///Causes setState()
-            //self.numberOfOctaves = Settings.shared.defaultOctaves
+            
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)

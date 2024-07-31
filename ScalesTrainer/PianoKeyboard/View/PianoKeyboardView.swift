@@ -5,11 +5,14 @@ import UIKit
 public struct PianoKeyboardView : View {
     @ObservedObject var scalesModel: ScalesModel
     @ObservedObject private var viewModel: PianoKeyboardModel
-    var style = ClassicStyle()
+    let keyColor:Color
+    var style:ClassicStyle
 
-    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardModel) {// //, //= PianoKeyboardViewModel()) {
+    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardModel, keyColor:Color) {
         self.scalesModel = scalesModel
         self.viewModel = viewModel
+        self.keyColor = keyColor
+        style = ClassicStyle(keyColor: keyColor)
     }
 
     public var body: some View {

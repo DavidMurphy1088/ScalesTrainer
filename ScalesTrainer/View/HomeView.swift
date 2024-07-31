@@ -239,19 +239,15 @@ struct ActivityModeView: View {
         .onAppear() {
             if menuOptions.count == 0 {
                 menuOptions.append(ActivityMode(name: "Select Music Board", view: AnyView(SelectMusicBoardView())))
-                menuOptions.append(ActivityMode(name: "Practice Chart", view: AnyView(PracticeChartView(rows: 10, columns: 3))))
+                let practiceChart = PracticeChart(musicBoardGrade: ScalesModel.shared.musicBoardGrade)
+                menuOptions.append(ActivityMode(name: "Practice Chart", view: AnyView(PracticeChartView(practiceChart: practiceChart))))
                 
-                if let practiceJournal = PracticeJournal.shared {
-                    let name = "Practice Journal" // for " + practiceJournal.title
-                    menuOptions.append(ActivityMode(name: name, view: AnyView(PracticeJournalView(practiceJournal: practiceJournal))))
-                    menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
-                    menuOptions.append(ActivityMode(name: "Spin The Scale Wheel", view: AnyView(SpinWheelView(practiceJournal: practiceJournal))))
-                    //menuOptions.append(ActivityMode(name: "Identify The Scale", view: AnyView(SpinWheelView(practiceJournal: practiceJournal, mode: .identifyTheScale))))
-                }
+                //menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(musicBoardGrade: ScalesModel.shared.musicBoardGrade))))
+                menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
+                menuOptions.append(ActivityMode(name: "Spin The Scale Wheel", view: AnyView(SpinWheelView(boardGrade: ScalesModel.shared.musicBoardGrade))))
+
                 menuOptions.append(ActivityMode(name: "Pick Any Scale", view: AnyView(PickAnyScaleView())))
-                
-                //            menuOptions.append(ActivityMode(name: "Practice Scales", view: AnyView(ScalesView(practiceJournalScale: PracticeJournal.shared)), showStaff: true, showFingers: true))
-                
+                                
                 //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
                 //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
                 //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
@@ -310,7 +306,7 @@ struct HomeView: View {
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
         .onAppear() {
-            PracticeJournal.shared = PracticeJournal(scaleGroup: MusicBoard.options[5])
+           PracticeJournalOld.shared = PracticeJournalOld(scaleGroup: MusicBoard.options[5])
         }
     }
 }

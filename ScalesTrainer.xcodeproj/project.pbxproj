@@ -72,8 +72,9 @@
 		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
 		79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoard.swift */; };
 		79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD012C128F0200770C10 /* PracticeJournalView.swift */; };
-		79C8AD042C12F81C00770C10 /* PracticeJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD032C12F81C00770C10 /* PracticeJournal.swift */; };
+		79C8AD042C12F81C00770C10 /* PracticeJournalOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD032C12F81C00770C10 /* PracticeJournalOld.swift */; };
 		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
+		79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB56202C599D9F00BB328F /* PracticeChart.swift */; };
 		79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D6F2BEE426B00454BB6 /* Staff.swift */; };
 		79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* SettingsView.swift */; };
 		79CFA1F02C3808A90018DC8A /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA1EF2C3808A90018DC8A /* Test.swift */; };
@@ -162,8 +163,9 @@
 		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
 		79C8ACFF2C127D8400770C10 /* MusicBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoard.swift; sourceTree = "<group>"; };
 		79C8AD012C128F0200770C10 /* PracticeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalView.swift; sourceTree = "<group>"; };
-		79C8AD032C12F81C00770C10 /* PracticeJournal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournal.swift; sourceTree = "<group>"; };
+		79C8AD032C12F81C00770C10 /* PracticeJournalOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalOld.swift; sourceTree = "<group>"; };
 		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		79CB56202C599D9F00BB328F /* PracticeChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChart.swift; sourceTree = "<group>"; };
 		79CF5D6F2BEE426B00454BB6 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
 		79CF5D712BEE46C900454BB6 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		79CFA1EF2C3808A90018DC8A /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
@@ -375,7 +377,7 @@
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
-				79C8AD032C12F81C00770C10 /* PracticeJournal.swift */,
+				79C8AD032C12F81C00770C10 /* PracticeJournalOld.swift */,
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
 				79552FB52BDB975D00A27531 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
@@ -390,6 +392,7 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
+				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* Result.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
+				79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */,
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* SettingsView.swift in Sources */,
 				79BCF7EF2C257A5D004E26ED /* HearUserScale.swift in Sources */,
@@ -556,7 +560,7 @@
 				799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
 				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
-				79C8AD042C12F81C00770C10 /* PracticeJournal.swift in Sources */,
+				79C8AD042C12F81C00770C10 /* PracticeJournalOld.swift in Sources */,
 				794A9FC92C2BFC270001297E /* CoinBank.swift in Sources */,
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
 				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,

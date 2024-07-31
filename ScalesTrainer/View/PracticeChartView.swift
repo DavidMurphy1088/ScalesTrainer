@@ -1,48 +1,9 @@
 import SwiftUI
 
-// Define the model
-struct PracticeCell {
-    var scaleRoot: ScaleRoot
-    var scaleType: ScaleType
-    var hand:String
-    var selected: Bool
-}
 
-class PracticeChart {
-    static let shared = PracticeChart(rows: 10, columns: 3)
-    var rows: Int
-    var columns: Int
-    var cells: [[PracticeCell]]
-    
-    init(rows: Int, columns: Int) {
-        self.rows = rows
-        self.columns = columns
-        self.cells = []
-        let rowScales = [("E", ScaleType.major),
-                         ("B", ScaleType.major),
-                         ("E", ScaleType.harmonicMinor),
-                         ("B", ScaleType.harmonicMinor),
-                         ("E", ScaleType.melodicMinor),
-                         ("B", ScaleType.harmonicMinor),
-                         ("B", ScaleType.arpeggioMajor),
-                         ("E", ScaleType.arpeggioMinor),
-                         ("B", ScaleType.major),
-                         ("A", ScaleType.major)
-        ]
-        for i in 0..<10 {
-            let hands = ["RH", "LH", "Hands Together"].shuffled()
-            var row:[PracticeCell] = []
-            for j in 0..<3 {
-                let k = i % rowScales.count
-                row.append(PracticeCell(scaleRoot: ScaleRoot(name: rowScales[k].0), scaleType: rowScales[k].1, hand: hands[j], selected: false))
-            }
-            self.cells.append(row)
-        }
-    }
-
-}
 struct CellView: View {
     @Binding var cell: PracticeCell
+    ///let description:String
     @State private var showingDetail = false
     var cellWidth: CGFloat
     var cellHeight: CGFloat
@@ -69,29 +30,38 @@ struct CellView: View {
         }
     }
     
+    func getHandStr(hand:Int) -> String {
+        return hand == 0 ? "Right Hand" : "Left Hand"
+    }
+    
+    func getDescr() -> String {
+        return self.cell.scaleRoot.name + " " + self.cell.scaleType.description
+    }
+    
     var body: some View {
         VStack {
 //            NavigationLink(destination: ScalesView(initialRunProcess: RunningProcess.none)) {
-//                Text(cell.scaleRoot.name + " " + cell.scaleType.description + " " + cell.hand)
+//                Text(cell.scaleRoot.name + " " + cell.scaleType.description + " " + hand)
 //                    .padding(5)
 //                    .foregroundColor(.blue)
 //            }
+            if true {
+                Button(action: {
+                    let _ = ScalesModel.shared.setScale(scale: Scale(scaleRoot: cell.scaleRoot,
+                                                                     scaleType: cell.scaleType,
+                                                                     octaves: Settings.shared.defaultOctaves,
+                                                                     hand: cell.hand))
+                    navigateToScales = true
+                }) {
+                    let label = cell.scaleRoot.name + " " + cell.scaleType.description + ", " + getHandStr(hand: cell.hand)
+                    Text(label)
+                        .foregroundColor(.blue)
+                }
+                .padding(self.padding)
                 
-            Button(action: {
-                let _ = ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: cell.scaleRoot.name),
-                                                                 scaleType: cell.scaleType,
-                                                                 octaves: Settings.shared.defaultOctaves,
-                                                                 hand: cell.hand == "LH" ? 1 : 0))
-                navigateToScales = true
-            }) {
-                let label = cell.scaleRoot.name + " " + cell.scaleType.description + " " + cell.hand
-                Text(label)
-                    .foregroundColor(.blue)
+                NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
+                }.frame(width: 0.0)
             }
-            .padding(self.padding)
-                                
-            NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
-            }.frame(width: 0.0)
 
             VStack {
                 HStack {
@@ -138,11 +108,24 @@ struct CellView: View {
             VStack {
                 let name = Settings.shared.firstName
                 let name1 = name + (name.count>0 ? "'s" : "")
-                Text("\(name1) Notes").font(.title).foregroundColor(.blue)
-                let label = cell.scaleRoot.name + " " + cell.scaleType.description //+ " " + cell.hand
+                Text("\(name1) Practice Chart").font(.title).foregroundColor(.blue)
+                let label = cell.scaleRoot.name + " " + cell.scaleType.description + ", " + (cell.hand == 0 ? "Right Hand" : "Left Hand")
                 Text(label).font(.title).foregroundColor(.black)
-                Text("📈 📉 📊").font(.title).padding()
-                Text("This view could show various progress assessments and notes for this scale...").padding()
+                Text("Minimum ♩=70, mf, legato").font(.title2).foregroundColor(.black)
+                
+                VStack {
+                    Text("Tips").font(.title).foregroundColor(.black)
+                    Text("Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other.").font(.title2).foregroundColor(.black)
+                }.padding()
+                
+                VStack {
+                    Text("Your Progress With \(self.getDescr())").font(.title).foregroundColor(.black)
+                    Text("This view could show various progress assessments and notes for this scale...").font(.title2).foregroundColor(.black)
+                    Text("📊").font(.title).padding()
+                    Text("📈 ").font(.title).padding()
+                    Text("📉").font(.title).padding()
+                }.padding()
+
 //                .overlay {
 //                    GeometryReader { geometry in
 //                        Color.clear.preference(key: InnerHeightPreferenceKey.self, value: geometry.size.height)
@@ -158,12 +141,12 @@ struct CellView: View {
 }
 
 struct PracticeChartView: View {
-    @State private var practiceChart = PracticeChart.shared
+    @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
     let background = UIGlobals.shared.getBackground()
     
-    init(rows: Int, columns: Int) {
-        //_practiceChart = State(initialValue: PracticeChart(rows: rows, columns: columns, scaleNames: scaleNames))
+    init(practiceChart:PracticeChart) {
+        self.practiceChart = practiceChart
         self.daysOfWeek = getDaysOfWeek()
     }
 
@@ -199,7 +182,7 @@ struct PracticeChartView: View {
                     HStack(spacing: 0) {
                         ForEach(0..<practiceChart.columns, id: \.self) { index in
                             VStack {
-                                Text("Day \(index + 1)")
+                                //Text("Day \(index + 1)")
                                 Text(self.daysOfWeek[index])
                             }
                             .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
@@ -219,7 +202,9 @@ struct PracticeChartView: View {
                     ForEach(0..<practiceChart.rows, id: \.self) { row in
                         HStack(spacing: 0) {
                             ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                CellView(cell: $practiceChart.cells[row][column], cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
+                                CellView(cell: $practiceChart.cells[row][column], 
+                                         
+                                         cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
                             }
                         }

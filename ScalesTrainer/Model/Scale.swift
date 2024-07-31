@@ -5,6 +5,7 @@ enum ScaleShape {
     case scale
     case arpgeggio
     case arpgeggio4Note
+    case brokenChord
 }
 
 public enum ScaleType: CaseIterable, Comparable {
@@ -22,11 +23,14 @@ public enum ScaleType: CaseIterable, Comparable {
     case arpeggioDiminishedSeventh
     case arpeggioHalfDiminished
     
+    case brokenChordMajor
+    case brokenChordMinor
+
     case chromatic
     
     func isMajor() -> Bool {
         return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh 
-        || self == .chromatic
+        || self == .chromatic || self == .brokenChordMajor
     }
     
     var description: String {
@@ -57,8 +61,11 @@ public enum ScaleType: CaseIterable, Comparable {
             return "Half Diminished Arpeggio"
         case .chromatic:
             return "Chromatic"
+        case .brokenChordMajor:
+            return "Broken Chord Major"
+        case .brokenChordMinor:
+            return "Broken Chord Minor"
         }
-        //return name
     }
 }
 ///In terms of arpeggios: major, minor, dominant 7ths and diminished 7ths.
@@ -67,6 +74,7 @@ public class ScaleNoteState {
     let id = UUID()
     let sequence:Int
     var midi:Int
+    let value:Double
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
@@ -76,9 +84,10 @@ public class ScaleNoteState {
     ///The tempo adjusted normalized duration (value) of the note
     var valueNormalized:Double? = nil
     
-    init(sequence: Int, midi:Int) {
+    init(sequence: Int, midi:Int, value:Double) {
         self.sequence = sequence
         self.midi = midi
+        self.value = value
     }
 }
 
@@ -90,7 +99,7 @@ public class Scale {
     var octaves:Int
     let hand:Int
     var scaleType:ScaleType
-    var scaleShape:ScaleShape
+    var scaleShapeForFingering:ScaleShape
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int) {
         self.scaleRoot = scaleRoot
@@ -154,55 +163,60 @@ public class Scale {
         }
         
         ///Set midi values in scale
-        self.scaleShape = .none
+        self.scaleShapeForFingering = .none
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
 
         var sequence = 0
         for oct in 0..<octaves {
             for i in 0..<scaleOffsets.count {
+                var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
+                    noteValue *= 3
+                }
                 if oct == 0 {
-                    scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: nextMidi))
+                    scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue))
                     nextMidi += scaleOffsets[i]
                 }
                 else {
-                    scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[i % 8].midi + (oct * 12)))
+                    scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[i % 8].midi + (oct * 12), value: noteValue))
                 }
                 sequence += 1
             }
             if oct == octaves - 1 {
-                scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[0].midi + (octaves) * 12))
+                var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
+                    noteValue *= 3
+                }
+                scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[0].midi + (octaves) * 12, value: noteValue))
                 sequence += 1
             }
         }
-        
-//        if (scaleNoteState.count - 1) % 7 == 0 {
-//            self.scaleShape = .scale
-//        }
-//        else {
-//            if (scaleNoteState.count - 1) % 3 == 0 {
-//                self.scaleShape = .arpgeggio
-//            }
-//            else {
-//                self.scaleShape = .arpgeggio4Note
-//            }
-//        }
+
         if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
-            self.scaleShape = .scale
+            self.scaleShapeForFingering = .scale
         }
         else {
             if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
-                self.scaleShape = .arpgeggio
+                self.scaleShapeForFingering = .arpgeggio
             }
             else {
-                self.scaleShape = .arpgeggio4Note
+                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+                    
+                }
+                else {
+                    self.scaleShapeForFingering = .arpgeggio4Note
+                }
             }
         }
         
         ///Add notes with midis for the downwards direction
+        
         let up = Array(scaleNoteState)
         var ctr = 0
+        var lastMidi = 0
         for i in stride(from: up.count - 2, through: 0, by: -1) {
             var downMidi = up[i].midi
+            var downValue = up[i].value
             if scaleType == .melodicMinor {
                 if i > 0 {
                     if ctr % 7 == 0 {
@@ -213,15 +227,21 @@ public class Scale {
                     }
                 }
             }
-            let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi)
-            scaleNoteState.append(descendingNote )
+            let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi, value: downValue)
+            scaleNoteState.append(descendingNote)
+            lastMidi = downMidi
             ctr += 1
             sequence += 1
+        }
+        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+            let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3)
+            scaleNoteState.append(lastNote)
         }
 
         setFingers(hand: hand)
         setFingerBreaks(hand: hand)
-        //debug111("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        //debug111()
     }
     
 //    func getMatchCount(matched:Bool) -> Int {
@@ -280,9 +300,13 @@ public class Scale {
             scaleOffsets = [3,3,3,3]
         case .chromatic:
             scaleOffsets = [1,1,1,1,1,1,1,1,1,1,1,1]
-
+            
+        case .brokenChordMajor:
+            scaleOffsets = [4, 3, -3,   3, 5, -5,   5, 4, -4 ]
+        case .brokenChordMinor:
+            scaleOffsets = [3, 4, -4   ]
         }
-
+        
         return scaleOffsets
     }
     
@@ -297,7 +321,7 @@ public class Scale {
             }
         }
         for state in self.scaleNoteState {
-            print("Midi:", state.midi,  "finger:", state.finger, "break:", state.fingerSequenceBreak, 
+            print("Midi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
                   "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
                   "valueNormalized:", getValue(state.valueNormalized))
         }
@@ -403,7 +427,7 @@ public class Scale {
         for note in self.scaleNoteState {
             note.fingerSequenceBreak = false
         }
-        guard self.scaleShape == .scale else {
+        guard self.scaleShapeForFingering == .scale else {
             return
         }
         let halfway = self.scaleNoteState.count/2-1
@@ -450,6 +474,9 @@ public class Scale {
     }
     
     func stringIndexToInt(index:Int, fingers:String) -> Int {
+        if fingers.count == 0 {
+            return 0
+        }
         let index = index % fingers.count
         let charIndex = fingers.index(fingers.startIndex, offsetBy: index)
         let character = fingers[charIndex]
@@ -469,7 +496,7 @@ public class Scale {
         
         ///Regular scale
         
-        if scaleShape == .scale {
+        if scaleShapeForFingering == .scale {
             ///Note that for LH finger the given pattern goes from high to low notes (reversed)
             switch self.scaleRoot.name {
             case "B":
@@ -521,7 +548,7 @@ public class Scale {
                 
         ///Three note arpeggio
         
-        if scaleShape == .arpgeggio {
+        if scaleShapeForFingering == .arpgeggio {
             switch self.scaleRoot.name {
             case "C", "G":
                 fingers = hand == 0 ? "123" : "124"
@@ -584,7 +611,7 @@ public class Scale {
         
         ///Four note arpeggio
         
-        if scaleShape == .arpgeggio4Note {
+        if scaleShapeForFingering == .arpgeggio4Note {
             switch self.scaleRoot.name {
             case "B♭":
                 fingers = hand == 0 ? "4123" : "2312"
@@ -610,7 +637,7 @@ public class Scale {
             }
             f -= 1
             var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
-            if scaleShape == .arpgeggio {
+            if scaleShapeForFingering == .arpgeggio {
                 if highNoteFinger < 5 {
                     highNoteFinger += 1
                 }
@@ -720,6 +747,12 @@ public class Scale {
             return ScaleType.arpeggioDiminishedSeventh
         case "Half Diminished Arpeggio":
             return ScaleType.arpeggioHalfDiminished
+            
+        case "Broken Chord Major":
+            return ScaleType.brokenChordMajor
+        case "Broken Chord Minor":
+            return ScaleType.brokenChordMinor
+
         default:
             return ScaleType.major
         }

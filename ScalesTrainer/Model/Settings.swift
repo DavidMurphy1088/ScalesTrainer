@@ -1,4 +1,9 @@
 import Foundation
+import SwiftUI
+import Combine
+import SwiftUI
+import AVFoundation
+import AudioKit
 
 public class Settings : Codable  {    
     static var shared = Settings()
@@ -7,9 +12,8 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var amplitudeFilter:Double = 0
-    //var defaultTapBufferSize = 4096
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
-    
+    private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     private var wasLoaded = false
     
     init() {
@@ -44,7 +48,7 @@ public class Settings : Codable  {
         str += " FirstName:\(self.firstName)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
-        //str += " TapBuffer:\(self.defaultTapBufferSize)"
+        str += " KeyColor:\(self.keyColor)"
         return str
     }
     
@@ -74,7 +78,7 @@ public class Settings : Codable  {
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
-                    //self.defaultTapBufferSize = loaded.defaultTapBufferSize
+                    self.keyColor = loaded.keyColor
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
@@ -84,5 +88,26 @@ public class Settings : Codable  {
             }
         }
     }
-
+    
+    func setKeyColor(_ color: Color) {
+        let uiColor = UIColor(color)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        self.keyColor = [Double(red), Double(green), Double(blue), Double(alpha)]
+    }
+    
+    func getKeyColor() -> Color {
+//        guard array.count == 4 else {
+//            return Color.black
+//        }
+        let red = CGFloat(self.keyColor[0])
+        let green = CGFloat(self.keyColor[1])
+        let blue = CGFloat(self.keyColor[2])
+        let alpha = CGFloat(self.keyColor[3])
+        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+        return Color(uiColor)
+    }
 }

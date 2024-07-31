@@ -1,36 +1,23 @@
 import Foundation
 
-class MusicBoard : Identifiable {
-    let name:String
-    let fullName:String
-    let imageName:String
+class MusicBoardGrade {
+    let board:MusicBoard
+    let gradeName:String
     var scales:[PracticeJournalScale] = []
     
-    static let options = [
-        MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
-        
-        MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"),
-
-        MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"),
-        
-        MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"),
-        
-        MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"),
-
-        MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"),
-    ]
+    init(board:MusicBoard, gradeName:String) {
+        self.gradeName = gradeName
+        self.board = board
+        loadScales()
+    }
     
-    init() {
-        self.name = "Empty"
-        self.imageName = ""
-        self.fullName = ""
+    func loadScales() {
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major))
+        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor))
     }
 
-    init(name:String, fullName:String, imageName:String) {
-        self.name = name
-        self.imageName = imageName
-        self.fullName = fullName
-
+    func loadScales1() {
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .major))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major))
@@ -61,8 +48,28 @@ class MusicBoard : Identifiable {
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioDiminishedSeventh))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .arpeggioDiminishedSeventh))
         scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioDiminishedSeventh))
+    }
+}
 
+class MusicBoard : Identifiable {
+    let name:String
+    let fullName:String
+    let imageName:String
+    var grades:[MusicBoardGrade] = []
 
+    static let options = [
+        MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
+        MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"),
+        MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"),
+        MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"),
+        MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"),
+        MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"),
+    ]
 
+    init(name:String, fullName:String, imageName:String) {
+        self.name = name
+        self.imageName = imageName
+        self.fullName = fullName
+        self.grades.append(MusicBoardGrade(board: self, gradeName: "Grade1"))
     }
 }

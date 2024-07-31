@@ -66,11 +66,11 @@ struct Arrow: View {
     }
 }
 
-
 struct SpinWheelView: View {
     @ObservedObject var coinBase = CoinBank.shared
     @ObservedObject var scalesModel = ScalesModel.shared
-    let practiceJournal:PracticeJournal
+    //let practiceJournal:PracticeJournalOld
+    let boardGrade:MusicBoardGrade
 
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
@@ -92,7 +92,7 @@ struct SpinWheelView: View {
 
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
-        for scale in practiceJournal.scaleGroup.scales {
+        for scale in boardGrade.scales {
             scaleRoots.insert(scale.scaleRoot.name)
         }
         return Array(scaleRoots).sorted()
@@ -100,7 +100,7 @@ struct SpinWheelView: View {
     
     func getTypes() -> [ScaleType] {
         var scaleTypes:Set<ScaleType> = []
-        for scale in practiceJournal.scaleGroup.scales {
+        for scale in boardGrade.scales  {
             scaleTypes.insert(scale.scaleType)
         }
 
@@ -116,7 +116,7 @@ struct SpinWheelView: View {
     }
     
     func getTitle() -> String {
-        var title = "Scales for \(practiceJournal.title)"
+        var title = "Scales for \(boardGrade.gradeName)"
         let name = Settings.shared.firstName
         if name.count > 0 {
             title = name + "'s \(title)"

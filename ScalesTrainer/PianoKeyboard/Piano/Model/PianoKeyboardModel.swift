@@ -8,6 +8,8 @@ public protocol PianoKeyboardDelegate: AnyObject {
 public class PianoKeyboardModel: ObservableObject {
     public static var shared = PianoKeyboardModel()
     public static var shared1 = PianoKeyboardModel()
+    public static var shared2 = PianoKeyboardModel()
+
     let scalesModel = ScalesModel.shared
     //@Published
     public var pianoKeyModel: [PianoKeyModel] = []
@@ -131,7 +133,7 @@ public class PianoKeyboardModel: ObservableObject {
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
             if pianoKeyModel.midi == scaleStartMidi {
-                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi)
+                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1)
                 ///Mark the start of scale
                 keyState.finger = 9
                 pianoKeyModel.scaleNoteState = keyState
