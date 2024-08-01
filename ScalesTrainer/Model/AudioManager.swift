@@ -4,16 +4,17 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
+import AudioToolbox
 
 class AudioManager {
     static let shared = AudioManager()
     public var engine: AudioEngine?
-    var midiSampler:MIDISampler?
+    var keyboardMidiSampler:MIDISampler?
+    var backingMidiSampler:MIDISampler?
     var recorder: NodeRecorder?
     var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
-
     var recordedFileSequenceNum = 0
     var metronomeCount = 0
     var simulator = false
@@ -107,11 +108,33 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
-        //if self.midiSampler == nil {
-            self.midiSampler = loadSampler()
-        //}
-        //self.midiSampler = setupSampler()
-        engine.output = self.midiSampler
+        self.keyboardMidiSampler = loadSampler(num: 0, preset: 0)
+        let preset:Int
+        switch Settings.shared.backingSamplerPreset {
+        case 1: preset = 28
+        case 2: preset = 37
+        case 3: preset = 49
+        case 4: preset = 33
+        case 5: preset = 39
+        case 6: preset = 43
+        case 7: preset = 2
+        case 8: preset = 4
+        default: preset = 0
+        }
+        self.backingMidiSampler = loadSampler(num: 1, preset: preset)
+
+        if self.mixer == nil {
+            self.mixer = Mixer()
+        }
+        if let mixer = self.mixer {
+            if let sampler = self.keyboardMidiSampler {
+                mixer.addInput(sampler)
+            }
+            if let sampler = self.backingMidiSampler {
+                mixer.addInput(sampler)
+            }
+            engine.output = self.mixer
+        }
         do {
             try engine.start()
         }
@@ -256,12 +279,11 @@ class AudioManager {
         }
     }
     
-    private func loadSampler() -> MIDISampler? {
+    private func loadSampler(num:Int, preset:Int) -> MIDISampler? {
         do {
-            let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
-            //let samplerFileName = "Abbey-Steinway-D-bs16i-v1.9"
+            let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
             let sampler = MIDISampler()
-            try sampler.loadSoundFont(samplerFileName, preset: 0, bank: 0)
+            try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
             //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
             return sampler
         }
@@ -274,7 +296,7 @@ class AudioManager {
     ///Return a list of tap events recorded previously in a file
     func readTestDataFile() -> [TapEventSet] {
         
-        let scalesModel = ScalesModel.shared
+        //let scalesModel = ScalesModel.shared
         var tapEventSets:[TapEventSet] = []
         var tapNum = 0
         
@@ -406,14 +428,14 @@ class AudioManager {
 
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
-        if let sampler = midiSampler {
+        if let sampler = keyboardMidiSampler {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
         }        
     }
 
     func pianoKeyUp(_ keyNumber: Int) {
         //sampler.stopNote(UInt8(keyNumber), onChannel: 0)
-        if let sampler = midiSampler {
+        if let sampler = keyboardMidiSampler {
             sampler.stop()
         }
     }

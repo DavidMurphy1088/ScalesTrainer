@@ -343,7 +343,7 @@ public class ScalesModel : ObservableObject {
                 ///Wait for note to die down otherwise it triggers the first note detection
                 //DispatchQueue.main.async {
                     if self.scale.scaleNoteState.count > 0 {
-                        if let sampler = self.audioManager.midiSampler {
+                        if let sampler = self.audioManager.keyboardMidiSampler {
                             let midi = UInt8(self.scale.scaleNoteState[0].midi)
                             sampler.play(noteNumber: midi, velocity: 64, channel: 0)
                             ///Without delay here the fist note wont hilight - no idea why

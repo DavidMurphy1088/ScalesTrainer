@@ -14,7 +14,8 @@ struct SettingsView: View {
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var scaleNoteValue = 0
-    
+    @State var backingPresetNumber = 0
+
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
@@ -43,9 +44,29 @@ struct SettingsView: View {
                     PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared2, keyColor: selectedColor).padding()
                 }
             }
+            .onAppear() {
+                self.selectedColor = parentColor
+            }
         }
     }
 
+    func backingSoundName(_ n:Int) -> String {
+        var str:String
+        switch n {
+        case 1: str = "Cello"
+        case 2: str = "Synthesiser"
+        case 3: str = "Guitar"
+        case 4: str = "Saxophone"
+        case 5: str = "Moog Synthesiser"
+        case 6: str = "Steel Guitar"
+        case 7: str = "Choir"
+        case 8: str = "Melody Bell"
+        default:
+            str = "Piano"
+        }
+        return str
+    }
+    
     var body: some View {
         VStack {
             Text("Settings").font(.title)
@@ -76,7 +97,6 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .padding()
                     .onChange(of: defaultOctaves) { oldValue, newValue in
                         settings.defaultOctaves = newValue
                     }
@@ -114,6 +134,22 @@ struct SettingsView: View {
                     })
                 }
                 
+                ///Backing sampler
+                Spacer()
+                HStack {
+                    Text(LocalizedStringResource("Backing Sound")).padding(0)
+                    Picker("Select Value", selection: $backingPresetNumber) {
+                        ForEach(0..<9) { number in
+                            Text("\(backingSoundName(number))")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: backingPresetNumber, {
+                        settings.backingSamplerPreset = backingPresetNumber
+                        AudioManager.shared.resetAudioKit()
+                    })
+                }
+
                 Spacer()
                 Button(action: {
                     CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
@@ -175,6 +211,7 @@ struct SettingsView: View {
             //self.tapBufferSize = settings.defaultTapBufferSize // 1024
             self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
             PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
+            self.keyColor = Settings.shared.getKeyColor()
         }
     }
 }

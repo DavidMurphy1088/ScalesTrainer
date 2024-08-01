@@ -6,15 +6,15 @@ import Foundation
 import AVFoundation
 import Foundation
 import AudioKitEX
-//import Speech
 
 class Backer :MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var callNum = 0
     var chordRoots:[Int] = []
+    var lastMidi:Int? = nil
     
     func useMajor(_ scale:Scale) -> Bool {
-        return [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh].contains(scale.scaleType)
+        return [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .brokenChordMajor].contains(scale.scaleType)
     }
     
     func metronomeStart() {
@@ -39,6 +39,11 @@ class Backer :MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStop() {
+        if let sampler = audioManager.backingMidiSampler {
+            if let lastMidi = lastMidi {
+                sampler.stop(noteNumber: MIDINoteNumber(lastMidi), channel: 0)
+            }
+        }
     }
     
     func getMidi(bar:Int, beat:Int) -> Int {
@@ -80,14 +85,17 @@ class Backer :MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
-        //let keyPlayingSeconds = 1.0 //How long the key stays hilighed when played
         let beat = callNum % 4
         var midi = 0
         let bar = callNum / 4
         midi = getMidi(bar: bar, beat: beat)
-        if let sampler = audioManager.midiSampler {
+        if let sampler = audioManager.backingMidiSampler {
+            if let lastMidi = lastMidi {
+                sampler.stop(noteNumber: MIDINoteNumber(lastMidi), channel: 0)
+            }
             sampler.play(noteNumber: MIDINoteNumber(midi), velocity: 60, channel: 0)
         }
+        lastMidi = midi
         callNum += 1
         return false
     }

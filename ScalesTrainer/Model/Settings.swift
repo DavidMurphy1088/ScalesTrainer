@@ -14,6 +14,8 @@ public class Settings : Codable  {
     var amplitudeFilter:Double = 0
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
+    var backingSamplerPreset:Int = 0
+    
     private var wasLoaded = false
     
     init() {
@@ -49,6 +51,7 @@ public class Settings : Codable  {
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " KeyColor:\(self.keyColor)"
+        str += " BackingMidi:\(self.backingSamplerPreset)"
         return str
     }
     
@@ -79,6 +82,7 @@ public class Settings : Codable  {
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
                     self.keyColor = loaded.keyColor
+                    self.backingSamplerPreset = loaded.backingSamplerPreset
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {

@@ -21,6 +21,7 @@ class MetronomeModel {
     private var timerTickerNumber = 0
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
+    private var metronomeTimerNotificationProtocol:MetronomeTimerNotificationProtocol? = nil
     
     init() {
         for i in 0..<2 {
@@ -56,17 +57,21 @@ class MetronomeModel {
     
     func stop() {
         isTiming = false
+        if let notified = metronomeTimerNotificationProtocol {
+            notified.metronomeStop()
+        }
+        metronomeTimerNotificationProtocol = nil
     }
     
-    private func stopTicking(notified: MetronomeTimerNotificationProtocol) {
-        notified.metronomeStop()
-        DispatchQueue.main.async { [self] in
-            self.isTiming = false
-        }
-//        for player in self.audioPlayers {
-//            audioManager.mixer?.removeInput(player)
+//    private func stopTicking(notified: MetronomeTimerNotificationProtocol) {
+//        notified.metronomeStop()
+//        DispatchQueue.main.async { [self] in
+//            self.isTiming = false
 //        }
-    }
+////        for player in self.audioPlayers {
+////            audioManager.mixer?.removeInput(player)
+////        }
+//    }
         
     public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
         for player in self.audioPlayers {
@@ -76,6 +81,7 @@ class MetronomeModel {
         var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
         delay = delay * Settings.shared.getSettingsNoteValueFactor()
         notified.metronomeStart()
+        self.metronomeTimerNotificationProtocol = notified
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
 //        if false {

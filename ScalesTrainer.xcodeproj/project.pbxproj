@@ -11,6 +11,7 @@
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
 		790974C32C37B0E900B9AFFC /* RecordedTapData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 790974C22C37B0E900B9AFFC /* RecordedTapData.txt */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
+		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */; };
@@ -27,7 +28,6 @@
 		794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC62C2BD24C0001297E /* CoinBankView.swift */; };
 		794A9FC92C2BFC270001297E /* CoinBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC82C2BFC270001297E /* CoinBank.swift */; };
 		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
-		794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 794D494B2BCD16E60005A173 /* akai_steinway.sf2 */; };
 		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
 		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
 		794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* RealTimeTapHandler.swift */; };
@@ -102,6 +102,7 @@
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		790974C22C37B0E900B9AFFC /* RecordedTapData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordedTapData.txt; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLeadIn.swift; sourceTree = "<group>"; };
@@ -118,7 +119,6 @@
 		794A9FC62C2BD24C0001297E /* CoinBankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBankView.swift; sourceTree = "<group>"; };
 		794A9FC82C2BFC270001297E /* CoinBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBank.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		794D494B2BCD16E60005A173 /* akai_steinway.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = akai_steinway.sf2; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		794D49552BCD29090005A173 /* RealTimeTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeTapHandler.swift; sourceTree = "<group>"; };
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
@@ -223,9 +223,9 @@
 			children = (
 				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
-				794D494B2BCD16E60005A173 /* akai_steinway.sf2 */,
 				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
 				79552FC02BDBB41100A27531 /* Home_2_60.m4a */,
+				790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */,
 				79552FC12BDBB41100A27531 /* Home_3_60.m4a */,
 				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
 				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
@@ -480,7 +480,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
-				794D494C2BCD16E60005A173 /* akai_steinway.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				790974C32C37B0E900B9AFFC /* RecordedTapData.txt in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
@@ -489,6 +488,7 @@
 				790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
+				790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */,
 				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,

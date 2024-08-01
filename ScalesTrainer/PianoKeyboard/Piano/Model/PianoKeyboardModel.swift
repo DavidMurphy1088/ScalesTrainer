@@ -111,6 +111,9 @@ public class PianoKeyboardModel: ObservableObject {
         if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 6
         }
+        if [.brokenChordMajor, .brokenChordMinor].contains(self.scalesModel.scale.scaleType) {
+            numKeys += 4
+        }
         return (firstKeyMidi, numKeys)
     }
     

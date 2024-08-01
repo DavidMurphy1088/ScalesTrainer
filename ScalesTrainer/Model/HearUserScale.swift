@@ -20,7 +20,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
         let audioManager = AudioManager.shared
-        let sampler = audioManager.midiSampler
+        let sampler = audioManager.keyboardMidiSampler
         
         var key:PianoKeyModel? = nil
         ///Playing the user's scale

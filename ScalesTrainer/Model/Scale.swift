@@ -240,8 +240,7 @@ public class Scale {
 
         setFingers(hand: hand)
         setFingerBreaks(hand: hand)
-        self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
-        //debug111()
+        //self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
 //    func getMatchCount(matched:Bool) -> Int {
@@ -310,7 +309,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug1(_ msg:String)  {
+    func debug12(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
