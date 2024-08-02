@@ -64,14 +64,15 @@ struct ScalesTrainerApp: App {
 //                        .tag(0)
 //                }
 
-
-                ScalesView()
-                //PracticeChartView(rows: 10, columns: 3)
-                //SpinWheelView(practiceJournal: PracticeJournal.shared!)
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
-                    .tag(0)
+                if ScalesTrainerApp.runningInXcode() {
+                    ScalesView()
+                    //PracticeChartView(rows: 10, columns: 3)
+                    //SpinWheelView(practiceJournal: PracticeJournal.shared!)
+                        .tabItem {
+                            Label("Home", systemImage: "house")
+                        }
+                        .tag(0)
+                }
                 
                 HomeView()
                     .tabItem {

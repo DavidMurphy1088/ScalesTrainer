@@ -79,13 +79,11 @@ class FFTAnalyzer: ObservableObject {
     }
         
     func setupTap() {
-        //let fftValidBinCount:FFTValidBinCount = .twoThousandAndFortyEight
         let bufferSize:UInt32 = 4096 * 1//* 4 * 4
         
         self.ampTap = AmplitudeTap(mixerC, bufferSize: bufferSize) {amp in
             if amp > 0.005 {
                 let timeStamp = self.getTime()
-                print("AT     ===========  ", timeStamp, "amp:", String(format: "%.4f", amp))
                 self.showFFT = 12
             }
         }
@@ -93,9 +91,6 @@ class FFTAnalyzer: ObservableObject {
         self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
             ///PitchTap: BaseTap {
             if a[0] > 0.03 {
-                //let timeStamp = self.getTime()
-                //let midi = self.frequencyToMIDI(frequencyHz: [f[0]])
-                //print("PT     ===========  ", timeStamp, "freq:", Int(f[0]), "\t", "midi:", midi, "amp:", String(format: "%.2f", a[0]))
             }
         }
         
@@ -111,7 +106,6 @@ class FFTAnalyzer: ObservableObject {
                         let timeStamp = self.getTime()
                         let topFreqInt = topFreqs.map { Int($0) }
                         //let mf = self.mostFreqInArray(inArr: midis)
-                        print("FFTTap ============ ", timeStamp, "cnt:(\(self.showFFT))", "freq:", topFreqInt, "\t", midis, "Best", midis[0])
                         self.showFFT -= 1
                         DispatchQueue.main.async {
                             self.magnitudes = Array(fftData.prefix(50))

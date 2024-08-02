@@ -141,7 +141,7 @@ public class TapEventSet {
         self.events = events
     }
     
-    func debug111(_ ctx:String) {
+    func debug1121(_ ctx:String) {
         print(" ======== DEBUG TapEventSet", ctx)
         for event in self.events {
             print(event.tapNum, "time:", event.timestamp, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)
@@ -186,7 +186,7 @@ public class TapStatusRecordSet {
         return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
     
-    func debug11(_ ctx:String) {
+    func debug121(_ ctx:String) {
         print(" TapEventSet", ctx)
         for event in self.events {
             print(event.tapData())

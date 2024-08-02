@@ -52,7 +52,7 @@ class AudioManager {
                 self.audioPlayer = AudioPlayer(file: audioFile)
                 self.audioPlayer?.volume = 1.0  // Set volume to maximum
                 engine?.output = self.audioPlayer
-                print("Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
+                Logger.shared.log(self, "Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
                 audioPlayer?.completionHandler = {
                     DispatchQueue.main.async {
                         ScalesModel.shared.recordingIsPlaying1 = false
@@ -253,14 +253,13 @@ class AudioManager {
         }
         if let recorder = recorder {
             recorder.stop()
-            print("Recording stopped")
             if let audioFile = recorder.audioFile {
                 ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
                 let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
                 Logger.shared.log(self, log)
 
             } else {
-                print("No audio file found after stopping recording")
+                Logger.shared.reportError(self, "No audio file found after stopping recording")
             }
         }
         engine?.stop()

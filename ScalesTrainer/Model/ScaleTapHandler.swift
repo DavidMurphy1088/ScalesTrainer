@@ -84,7 +84,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
     
     func stopTappingProcess() -> TapEventSet {
         let tapEventSet = TapEventSet(bufferSize: self.bufferSize, events: self.recordedTapEvents)
-        print("=========================>EVENT SET SIZE", self.bufferSize, self.recordedTapEvents.count)
         return tapEventSet
     }
     

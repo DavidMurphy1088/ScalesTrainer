@@ -76,7 +76,7 @@ public struct CalibrationView: View {
             trailingAvg = calculateAverage(trailingAmplitudes)
             let recentAvg = calculateAverage(recent)
             let delta = trailingAvg == 0 ? 0 : (recentAvg - trailingAvg) / trailingAvg
-            print("TAPSETAVG", tapEventSet.events[i].tapMidi, i, delta, String(format: "%.8f", event.amplitude), "toDate", String(format: "%.8f", trailingAvg), "recent", String(format: "%.8f", recentAvg), "count", recent.count)
+
             if delta > 1 {
                 foundStart = true
             }

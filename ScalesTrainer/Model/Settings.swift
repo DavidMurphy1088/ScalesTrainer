@@ -9,7 +9,7 @@ public class Settings : Codable  {
     static var shared = Settings()
     var recordDataMode = false
     var firstName = ""
-    var defaultOctaves = 2
+    var defaultOctaves = 1
     var scaleLeadInBarCount:Int = 0
     var amplitudeFilter:Double = 0
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16

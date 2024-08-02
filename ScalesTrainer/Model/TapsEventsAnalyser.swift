@@ -126,13 +126,6 @@ class TapsEventsAnalyser {
         ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
         ///Analyse the tapping aginst different scale starts to determine which has the least errors.
         ///Update the app state after tapping based on the selected scale start.
-        
-//
-//        print("======= TAPS")
-//        for event in self.recordedTapEvents {
-//            print(event.tapNum, Util.frequencyToMIDI(frequency: event.frequency),   "   AMpl:", event.amplitude)
-//        }
-//        print("======= END TAPS")
 
         ///Reversed - if lots of errors make sure the 0 offset is the final one displayed
         let scaleRootOffsets = [0] //[0, 12, -12, 24, -24].reversed()
@@ -214,10 +207,6 @@ class TapsEventsAnalyser {
                     updateKeyboardDisplay:Bool) -> TapStatusRecord {
                     //amplitude:Float, frequency:Float, recordedTimestamp:Date) -> TapEvent {
         self.eventNumber += 1
-        
-        if eventToProcess.tapMidi == 42 {
-            print("===========", eventToProcess.tapMidi, amplitudeFilter, eventToProcess.amplitude)
-        }
 
         ///Require a large change in amplitude to start the scale
         ///This avoids false starts and scale note matches with noise before playing notes
@@ -316,10 +305,6 @@ class TapsEventsAnalyser {
         let tappedMidiPossibles = [midi - 48, midi - 36, midi-24, midi - 12, midi, midi + 12, midi + 24, midi + 36, midi + 48]
         //let tappedMidiPossibles = [midi - 36, midi-24, midi - 12, midi, midi + 12, midi + 24, midi + 36]
 
-//        if eventToProcess.tapMidi == 38 && ascending == false {
-//            print("==================================== ", ctx, "tapped:", eventToProcess.tapMidi, midi, "lastMidi:", self.lastMatchedMidi!, "asc", ascending,
-//                  "discardSingletons:", discardSingletons)
-//        }
         var expectedMidiByLastKeyPlayed:Int
         if self.lastMatchedMidi == nil {
             expectedMidiByLastKeyPlayed = self.scaleMidis[0]
@@ -340,10 +325,6 @@ class TapsEventsAnalyser {
                 expectedMidiByTheScale = self.scaleMidis[lastMatchedScaleIndex]
             }
         }
-//        if event.tapMidi == 67 && ascending == false {
-//            print("==================================== ", ctx, "tapped:", event.tapMidi, midi, "asc", ascending, "expect", expectedMidiByLastKeyPlayed, "expectInScale",
-//                  expectedMidiByLastKeyPlayed, "discardSingletons:", discardSingletons)
-//        }
 
         for possibleMidi in tappedMidiPossibles {
             let diff = abs(possibleMidi - expectedMidiByLastKeyPlayed)

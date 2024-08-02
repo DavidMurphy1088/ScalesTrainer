@@ -6,13 +6,13 @@ class HelpMessages {
     init() {
         ///Activities
         var m = ""
-        messages["Select Exam Scales"] = "Select the the music board and grade that you are studying for. This determines which scales will appear in your practice journal."
+        messages["Select Music Board"] = "Select the the music board that you are studying for. This determines which scales from which grades will appear in your practice chart."
         
-        messages["Practice Journal"] = "Practice journal lists all the scales in your selected grade. The journal describes which scales should be practised each day. The journal also shows your progress on each scale."
+        messages["Practice Journal"] = "Practice chart lists all the scales in your selected grade. The chart describes which scales should be practised each day. The chart also shows your progress on each scale."
         
-        messages["Spin The Scale Wheel"] = "Pick a scale randomly from your journal to practise and record."
+        messages["Spin The Scale Wheel"] = "Pick a scale randomly from your practise chart to practise and record."
         
-        messages["Identify The Scale"] = "Listen to a random scale and identify the type of the scale."
+        //messages["Identify The Scale"] = "Listen to a random scale and identify the type of the scale."
         
         messages["Pick Any Scale"] = "Select any combination of scale root and type of scale to practice."
         

@@ -38,7 +38,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        //print(location)
         let box = SKShapeNode(circleOfRadius: 5)
         box.fillColor = .gray
         box.strokeColor = .gray

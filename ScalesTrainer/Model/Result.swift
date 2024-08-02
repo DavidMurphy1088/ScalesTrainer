@@ -74,16 +74,6 @@ class Result : Equatable {
         self.playedAndWrongCountDesc = 0
         self.correctNotes = 0
         
-//        if true {
-//            print("======== ResultCalc...")
-//            for key in self.keyboard.pianoKeyModel {
-//                print("   ---->", key.midi,
-//                      "playedAsc:", key.keyWasPlayedState.tappedTimeAscending ?? "_" ,
-//                      "playedDesc:", key.keyWasPlayedState.tappedTimeDescending ?? "_" ,
-//                      "\tscaleNote", key.scaleNoteState?.midi ?? "  ", key.scaleNoteState?.matchedTime ?? "None")
-//            }
-//        }
-        
         scale.resetMatchedData()
         
         ///For each key played check its its midi is in the scale. If not, its a wrongly played key

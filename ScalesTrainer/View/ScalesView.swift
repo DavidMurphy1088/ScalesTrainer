@@ -140,11 +140,7 @@ struct ScalesView: View {
             Spacer()
         }
     }
-    
-//    func log124() -> Int {
-//        //print("============= VIEW ABOUT TO RECORD", scalesModel.scale.getScaleName(), "Octaves:", scalesModel.scale.octaves)
-//        return 0
-//    }
+
     
     func leadInMsg() -> String {
         let leadIn = Settings.shared.scaleLeadInBarCount

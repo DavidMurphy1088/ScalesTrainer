@@ -122,15 +122,7 @@ struct CoinStackView: View {
     func getPileFrameWidth() -> Double {
         return coinBank.coinWidth + Double((getPileCount() - 1)) * (coinBank.coinWidth * pileOverlapWidthWise)
     }
-    
-//    func debug1(_ ctx: String) {
-//        print("\n====CoinBankView", ctx)
-//        print(" LOW H:", "coins", totalCoins, "heightEach", coinBank.coinHeight, "overlap", coinOverlapHeightWise)
-//        print(" UIScreen height", UIScreen.main.bounds.height, UIScreen.main.bounds.width)
-//        print(" heights", coinBank.pileCoinCounts, "drawwingHeights:", coinBank.pileDrawingHeights)
-//        print(" Draw order", coinBank.drawingOrder)
-//    }
-    
+        
     func coinYPos(_ pileIndex:Int, _ indexInPile:Int) -> Double {
         ///Offset the coin veritically based on its position in the pile
         let midIndex = coinBank.pileCoinCounts[pileIndex] / 2
@@ -159,11 +151,6 @@ struct CoinStackView: View {
         }
         return xPos
     }
-    
-//    func log(_ pileIdx:Int, _ pileXidx:Int, _ index:Int) -> Int {
-//        print("===== pile", pileIdx, "PileXPos:", pileXidx, "\tindex", index)
-//        return 0
-//    }
     
     var body: some View {
         VStack {
