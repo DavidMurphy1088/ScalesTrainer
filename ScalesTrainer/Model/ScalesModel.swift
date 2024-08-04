@@ -61,7 +61,7 @@ enum SpinState {
 public class ScalesModel : ObservableObject {
     
     static public var shared = ScalesModel(musicBoardGrade: MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: ""), gradeName: "Grade1"))
-    let musicBoardGrade:MusicBoardGrade
+    
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -224,7 +224,6 @@ public class ScalesModel : ObservableObject {
     }
     
     init(musicBoardGrade:MusicBoardGrade) {
-        self.musicBoardGrade = musicBoardGrade
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {

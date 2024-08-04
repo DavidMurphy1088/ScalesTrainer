@@ -106,9 +106,7 @@ struct CellView: View {
         )
         .sheet(isPresented: $showingDetail) {
             VStack {
-                let name = Settings.shared.firstName
-                let name1 = name + (name.count>0 ? "'s" : "")
-                Text("\(name1) Practice Chart").font(.title).foregroundColor(.blue)
+
                 let label = cell.scaleRoot.name + " " + cell.scaleType.description + ", " + (cell.hand == 0 ? "Right Hand" : "Left Hand")
                 Text(label).font(.title).foregroundColor(.black)
                 Text("Minimum ♩=70, mf, legato").font(.title2).foregroundColor(.black)
@@ -175,43 +173,47 @@ struct PracticeChartView: View {
             let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
             let cellHeight: CGFloat = screenHeight / 9.0
             let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
-        
-            ScrollView(.vertical) {
-                VStack(spacing: 0) {
-                    // Column Headers
-                    HStack(spacing: 0) {
-                        ForEach(0..<practiceChart.columns, id: \.self) { index in
-                            VStack {
-                                //Text("Day \(index + 1)")
-                                Text(self.daysOfWeek[index])
-                            }
-                            .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                            //.background(Color.gray.opacity(0.2))
-                            .background(Color.gray)
-                            .foregroundColor(.white).bold()
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.white, lineWidth: 3)
-                            )
-                            .padding(cellPadding)
-                        }
-                    }
-                    
-                    ///Rows
-                    ForEach(0..<practiceChart.rows, id: \.self) { row in
+            
+            VStack {
+                Text("\(Settings.shared.getName()) Practice Chart").font(.title).foregroundColor(.blue).commonTitleStyle().padding().frame(width: cellWidth * 3)
+                ScrollView(.vertical) {
+                    VStack(spacing: 0) {
+                        
+                        // Column Headers
                         HStack(spacing: 0) {
-                            ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                CellView(cell: $practiceChart.cells[row][column], 
-                                         
-                                         cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
+                            ForEach(0..<practiceChart.columns, id: \.self) { index in
+                                VStack {
+                                    //Text("Day \(index + 1)")
+                                    Text(self.daysOfWeek[index])
+                                }
+                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
+                                //.background(Color.gray.opacity(0.2))
+                                .background(Color.gray)
+                                .foregroundColor(.white).bold()
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white, lineWidth: 3)
+                                )
+                                .padding(cellPadding)
+                            }
+                        }
+                        
+                        ///Rows
+                        ForEach(0..<practiceChart.rows, id: \.self) { row in
+                            HStack(spacing: 0) {
+                                ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                    CellView(cell: $practiceChart.cells[row][column],
+                                             
+                                             cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
+                                }
                             }
                         }
                     }
                 }
+                .padding(cellPadding)
             }
-            .padding(cellPadding)
         }
 
     }

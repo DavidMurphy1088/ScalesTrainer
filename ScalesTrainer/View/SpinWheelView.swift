@@ -69,7 +69,6 @@ struct Arrow: View {
 struct SpinWheelView: View {
     @ObservedObject var coinBase = CoinBank.shared
     @ObservedObject var scalesModel = ScalesModel.shared
-    //let practiceJournal:PracticeJournalOld
     let boardGrade:MusicBoardGrade
 
     @State private var rotation: Double = 0

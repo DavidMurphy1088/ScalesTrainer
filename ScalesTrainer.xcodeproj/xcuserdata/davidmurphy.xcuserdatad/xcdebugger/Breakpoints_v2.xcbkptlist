@@ -3,4 +3,54 @@
    uuid = "598FF346-62DA-418E-BD27-717FEF9F35F8"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2C3B0E07-6398-4265-8F00-44F1AA5A8FEC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/View/SpinWheelView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "getTypes()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2C3B0E07-6398-4265-8F00-44F1AA5A8FEC - 428b602ba5ff8362"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.SpinWheelView.getTypes() -&gt; Swift.Array&lt;ScalesStar.ScaleType&gt;"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/SpinWheelView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "100">
+               </Location>
+               <Location
+                  uuid = "2C3B0E07-6398-4265-8F00-44F1AA5A8FEC - 428b602ba5ff8362"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.SpinWheelView.getTypes() -&gt; Swift.Array&lt;ScalesStar.ScaleType&gt;"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/SpinWheelView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "103"
+                  endingLineNumber = "103"
+                  offsetFromSymbolStart = "272">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

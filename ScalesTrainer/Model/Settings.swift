@@ -64,6 +64,17 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
+    func getMusicBoardAndGrade() -> MusicBoardGrade {
+        let board = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity")
+        return MusicBoardGrade(board: board, gradeName: "Grade 1")
+    }
+    
+    func getName() -> String {
+        let name = firstName
+        let name1 = name + (name.count>0 ? "'s" : "")
+        return name1
+    }
+    
     func getSettingsNoteValueFactor() -> Double {
         return self.scaleNoteValue == 4 ? 1.0 : 0.5
     }

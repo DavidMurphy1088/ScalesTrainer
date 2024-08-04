@@ -19,10 +19,11 @@ struct SettingsView: View {
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
-
+    @State private var navigateToSelectBoard = false
+    
     let width = UIScreen.main.bounds.width * 0.25
     
-    struct ColourView: View {
+    struct SetKeyboardColourView: View {
         @Binding var parentColor: Color
         @State private var selectedColor: Color = .white
         
@@ -68,143 +69,144 @@ struct SettingsView: View {
     }
     
     var body: some View {
-        VStack {
-            Text("Settings").font(.title)
+        NavigationView {
             VStack {
-                Spacer()
-                HStack() {
-                    Text("Please enter your first name").padding()
-                    TextField("First name", text: $firstName)
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .border(Color.gray)
-                        .frame(width: width)
-                        .padding()
-                }
-                .onChange(of: firstName, {
-                    settings.firstName = firstName
-                })
-                .commonFrameStyle(backgroundColor: .white).padding()
-                
-                ColourView(parentColor: $keyColor).commonFrameStyle(backgroundColor: .white).padding()
-                
-                ///default octaves
-                HStack {
-                    Text("Default Octaves").padding(0)
-                    Picker("Select", selection: $defaultOctaves) {
-                        ForEach(1..<5) { number in
-                            Text("\(number)").tag(number)
-                        }
+                Text("Settings").font(.title)
+                VStack {
+                    Spacer()
+                    HStack() {
+                        Text("Please enter your first name").padding()
+                        TextField("First name", text: $firstName)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .border(Color.gray)
+                            .frame(width: width)
+                            .padding()
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    .onChange(of: defaultOctaves) { oldValue, newValue in
-                        settings.defaultOctaves = newValue
-                    }
-                }
-                
-                ///Score values
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Scale Note Value")).padding(0)
-                    Picker("Select Value", selection: $scaleNoteValue) {
-                        ForEach(0..<2) { number in
-                            let valueStr = number == 0 ? "Crotchet" : "Quaver"
-                            Text("\(valueStr)")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: scaleNoteValue, {
-                        settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
+                    .onChange(of: firstName, {
+                        settings.firstName = firstName
                     })
-                }
-                
-                ///Lead in
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
-                    Picker("Select Value", selection: $leadInBarCount) {
-                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                            Text("\(scalesModel.scaleLeadInCounts[index])")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: leadInBarCount, {
-                        settings.scaleLeadInBarCount = leadInBarCount
-                        //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
-                    })
-                }
-                
-                ///Backing sampler
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Backing Sound")).padding(0)
-                    Picker("Select Value", selection: $backingPresetNumber) {
-                        ForEach(0..<9) { number in
-                            Text("\(backingSoundName(number))")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: backingPresetNumber, {
-                        settings.backingSamplerPreset = backingPresetNumber
-                        AudioManager.shared.resetAudioKit()
-                    })
-                }
-
-                Spacer()
-                Button(action: {
-                    CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
+                    .commonFrameStyle(backgroundColor: .white).padding()
                     
-                }) {
-                    HStack {
-                        Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
+                    Button(action: {
+                        navigateToSelectBoard = true
+                    }) {
+                        Text("Select Your Music Board and Grade").foregroundColor(.blue).padding()
                     }
-                }
-
-                Spacer()
-                Text("---------- TEST ONLY ----------")
-                HStack() {
-                    Toggle("Record Data Mode", isOn: $recordDataMode)
-                }
-                .frame(width: width)
-                .onChange(of: recordDataMode, {
-                    settings.recordDataMode = recordDataMode
-                })
-                .padding()
-//                HStack {
-//                    Text("TapBufferSize").padding(0)
-//                    Picker("Select", selection: $tapBufferSize) {
-//                        ForEach(1..<16+1) { number in
-//                            Text("\(number * 1024)").tag(number * 1024)
-//                        }
-//                    }
-//                    .pickerStyle(MenuPickerStyle())
-//                    .padding()
-//                    .onChange(of: tapBufferSize) { oldValue, newValue in
-//                        settings.defaultTapBufferSize = tapBufferSize //* 1024
-//                    }
-//                }
-
-                Spacer()
-                HStack {
+                    .commonFrameStyle(backgroundColor: .white).padding()
+                    .onAppear() {
+                        
+                    }
+                    NavigationLink(destination: SelectMusicBoardView(), isActive: $navigateToSelectBoard) {
+                    }.frame(width: 0.0)
+ 
+                    SetKeyboardColourView(parentColor: $keyColor).commonFrameStyle(backgroundColor: .white).padding()
+                    
+                    ///default octaves
+                    HStack {
+                        Text("Default Octaves").padding(0)
+                        Picker("Select", selection: $defaultOctaves) {
+                            ForEach(1..<5) { number in
+                                Text("\(number)").tag(number)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .onChange(of: defaultOctaves) { oldValue, newValue in
+                            settings.defaultOctaves = newValue
+                        }
+                    }
+                    
+                    ///Score values
+                    Spacer()
+                    HStack {
+                        Text(LocalizedStringResource("Scale Note Value")).padding(0)
+                        Picker("Select Value", selection: $scaleNoteValue) {
+                            ForEach(0..<2) { number in
+                                let valueStr = number == 0 ? "Crotchet" : "Quaver"
+                                Text("\(valueStr)")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: scaleNoteValue, {
+                            settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
+                        })
+                    }
+                    
+                    ///Lead in
+                    Spacer()
+                    HStack {
+                        Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
+                        Picker("Select Value", selection: $leadInBarCount) {
+                            ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+                                Text("\(scalesModel.scaleLeadInCounts[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: leadInBarCount, {
+                            settings.scaleLeadInBarCount = leadInBarCount
+                            //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                        })
+                    }
+                    
+                    ///Backing sampler
+                    Spacer()
+                    HStack {
+                        Text(LocalizedStringResource("Backing Sound")).padding(0)
+                        Picker("Select Value", selection: $backingPresetNumber) {
+                            ForEach(0..<9) { number in
+                                Text("\(backingSoundName(number))")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: backingPresetNumber, {
+                            settings.backingSamplerPreset = backingPresetNumber
+                            AudioManager.shared.resetAudioKit()
+                        })
+                    }
+                    
                     Spacer()
                     Button(action: {
-                        Settings.shared.setKeyColor(keyColor)
-                        settings.save()
-                        if settings.amplitudeFilter == 0 {
-                            tabSelectionManager.selectedTab = 3
-                        }
+                        CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
+                        
                     }) {
                         HStack {
-                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
                         }
+                    }
+                    
+                    Spacer()
+                    Text("---------- TEST ONLY ----------")
+                    HStack() {
+                        Toggle("Record Data Mode", isOn: $recordDataMode)
+                    }
+                    .frame(width: width)
+                    .onChange(of: recordDataMode, {
+                        settings.recordDataMode = recordDataMode
+                    })
+                    .padding()
+                    
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            Settings.shared.setKeyColor(keyColor)
+                            settings.save()
+                            if settings.amplitudeFilter == 0 {
+                                tabSelectionManager.selectedTab = 3
+                            }
+                        }) {
+                            HStack {
+                                Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            }
+                        }
+                        Spacer()
                     }
                     Spacer()
                 }
-                Spacer()
+                //Text(Settings.shared.toString())
             }
-            //let req = settings.requiredScaleRecordStartAmplitude
-            Text(Settings.shared.toString())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
             leadInBarCount = settings.scaleLeadInBarCount
             self.defaultOctaves = settings.defaultOctaves

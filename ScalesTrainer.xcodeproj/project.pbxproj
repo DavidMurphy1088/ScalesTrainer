@@ -22,6 +22,7 @@
 		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
 		793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E552BD65E4F0012F701 /* MetronomeView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
+		793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
 		794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC42C2B73770001297E /* ScaleIntervals.swift */; };
@@ -113,6 +114,7 @@
 		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
 		793D6E552BD65E4F0012F701 /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMusicBoardView.swift; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794A9FC42C2B73770001297E /* ScaleIntervals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleIntervals.swift; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 				79CF5D712BEE46C900454BB6 /* SettingsView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
+				793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -556,6 +559,7 @@
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
 				793D6E562BD65E4F0012F701 /* MetronomeView.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
+				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
 				799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
@@ -710,7 +714,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScalesTrainer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Scales Star";
+				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";
@@ -745,7 +749,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScalesTrainer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Scales Star";
+				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";

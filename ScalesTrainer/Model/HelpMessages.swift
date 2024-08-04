@@ -18,7 +18,7 @@ class HelpMessages {
         
         messages["Your Coin Bank"] = "Shows all the gold coins in your scales bank. You can win coins as you record scales but if you make mistakes you loose coins."
         
-        m = "Calibration is required so Scales Star can accurately hear your piano and filter out background noise."
+        m = "Calibration is required so Scales Academy can accurately hear your piano and filter out background noise."
         m += "\n\n➤ For best recording results using your device's microphone your device should be placed near or directly against your piano."
         m += "\n\n➤ You will need to perform calibration again if you change the location of where the device is positioned when it listens to you play."
         m += "\n\n➤ Press Start Playing Scale and play the scale shown at a Mezzo-forte (mf) dynamic and at a moderate tempo. Press Stop Playing when the scale is finished."
