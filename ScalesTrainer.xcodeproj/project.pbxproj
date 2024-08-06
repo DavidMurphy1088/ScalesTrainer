@@ -56,6 +56,7 @@
 		797013962BEE3E45009F85D6 /* StaffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013912BEE3E45009F85D6 /* StaffView.swift */; };
 		797013972BEE3E45009F85D6 /* StemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013922BEE3E45009F85D6 /* StemView.swift */; };
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
+		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
 		7985635D2C0349BF008BAC79 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* Settings.swift */; };
 		799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A52BFDDBC5004B19F6 /* Backer.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
@@ -147,6 +148,7 @@
 		797013912BEE3E45009F85D6 /* StaffView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffView.swift; sourceTree = "<group>"; };
 		797013922BEE3E45009F85D6 /* StemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StemView.swift; sourceTree = "<group>"; };
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
+		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
 		7985635C2C0349BF008BAC79 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		799BE2A52BFDDBC5004B19F6 /* Backer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backer.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
+				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -519,6 +522,7 @@
 				79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */,
 				7985635D2C0349BF008BAC79 /* Settings.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
+				797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */,
 				794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */,
 				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,
 				799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */,

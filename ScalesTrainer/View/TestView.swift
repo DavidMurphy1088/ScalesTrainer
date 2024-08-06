@@ -10,9 +10,23 @@ import Foundation
 import AudioKitEX
 import Speech
 import SwiftUI
-    //.navigationViewStyle(StackNavigationViewStyle())
-
 import SwiftUI
+
+struct MIDIView: View {
+    @Environment(\.presentationMode) var presentationMode
+    let midiModel = MIDIModel.shared
+    @State private var showAlert = false
+
+    var body: some View {
+        VStack {
+            Button(action: {
+                //self.showAlert = true
+            }) {
+                Text("Show MIDI")
+            }
+        }
+    }
+}
 
 struct ScreenA: View {
     var body: some View {
@@ -255,7 +269,7 @@ class AudioRecorder: ObservableObject {
 
     }
 }
-struct TestView: View {
+struct TestView1: View {
     let scale:PracticeJournalScale
     
     init() {
@@ -271,7 +285,7 @@ struct TestView: View {
     }
 }
 
-struct TestView1: View {
+struct TestView: View {
     @ObservedObject var audioRecorder = AudioRecorder()
 
     var body: some View {

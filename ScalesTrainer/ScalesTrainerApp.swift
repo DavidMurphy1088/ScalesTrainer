@@ -65,7 +65,7 @@ struct ScalesTrainerApp: App {
 //                }
 
                 if ScalesTrainerApp.runningInXcode() {
-                    ScalesView()
+                    MIDIView()
                     //PracticeChartView(rows: 10, columns: 3)
                     //SpinWheelView(practiceJournal: PracticeJournal.shared!)
                         .tabItem {
