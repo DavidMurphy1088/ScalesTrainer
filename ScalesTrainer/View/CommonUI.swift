@@ -9,7 +9,8 @@ class UIGlobals {
     }
     
     //let screenImageBackgroundOpacity = 0.5
-    let screenImageBackgroundOpacity = 0.8
+    let screenImageBackgroundOpacity = 0.5
+    let screenWidth = 0.9
 }
 
 struct CommonFrameStyle: ViewModifier {

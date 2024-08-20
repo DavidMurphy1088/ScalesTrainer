@@ -56,58 +56,61 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $tabSelectionManager.selectedTab) {
-
-//                ScalesIntervalsView()
-//                        .tabItem {
-//                            Label("TEST", systemImage: "scribble")
-//                        }
-//                        .tag(0)
-//                }
-
-                if ScalesTrainerApp.runningInXcode() {
-                    MIDIView()
-                    //PracticeChartView(rows: 10, columns: 3)
-                    //SpinWheelView(practiceJournal: PracticeJournal.shared!)
-                        .tabItem {
-                            Label("Home", systemImage: "house")
-                        }
-                        .tag(0)
-                }
+                
+                //                ScalesIntervalsView()
+                //                        .tabItem {
+                //                            Label("TEST", systemImage: "scribble")
+                //                        }
+                //                        .tag(0)
+                //                }
+                
+                //                if ScalesTrainerApp.runningInXcode() {
+                //                    MIDIView()
+                //                    //PracticeChartView(rows: 10, columns: 3)
+                //                    //SpinWheelView(practiceJournal: PracticeJournal.shared!)
+                //                        .tabItem {
+                //                            Label("Home", systemImage: "house")
+                //                        }
+                //                        .tag(0)
+                //                }
                 
                 HomeView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(1)
-
-                SettingsView()
+                
+                SettingsView(allSettings: false)
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
                     .tag(2)
+                    .environmentObject(tabSelectionManager)
                 
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
                     .tag(3)
-
+                    .environmentObject(tabSelectionManager)
+                
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")
                     }
                     .tag(4)
                 
-                FFTContentView()
-                     .tabItem {
-                         Label("Home", systemImage: "house")
-                     }
-                     .tag(5)
-                }
+                //                FFTContentView()
+                //                     .tabItem {
+                //                         Label("Home", systemImage: "house")
+                //                     }
+                //                     .tag(5)
+                //                }
                 //.border(Color.red)
                 .onAppear() {
                 }
                 .environmentObject(tabSelectionManager)
+            }
         }
     }
 }

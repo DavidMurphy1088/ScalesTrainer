@@ -7,7 +7,7 @@ import AudioKit
 
 struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
-
+    let allSettings:Bool
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
@@ -20,8 +20,9 @@ struct SettingsView: View {
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
+    let background = UIGlobals.shared.getBackground()
     
-    let width = UIScreen.main.bounds.width * 0.25
+    let width = UIScreen.main.bounds.width * 0.7
     
     struct SetKeyboardColourView: View {
         @Binding var parentColor: Color
@@ -51,6 +52,94 @@ struct SettingsView: View {
         }
     }
 
+    func DetailedSettingsView() -> some View {
+        VStack {
+            HStack {
+                Text("Default Octaves").padding(0)
+                Picker("Select", selection: $defaultOctaves) {
+                    ForEach(1..<5) { number in
+                        Text("\(number)").tag(number)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .onChange(of: defaultOctaves) { oldValue, newValue in
+                    settings.defaultOctaves = newValue
+                }
+            }
+            
+            ///Score values
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Scale Note Value")).padding(0)
+                Picker("Select Value", selection: $scaleNoteValue) {
+                    ForEach(0..<2) { number in
+                        let valueStr = number == 0 ? "Crotchet" : "Quaver"
+                        Text("\(valueStr)")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: scaleNoteValue, {
+                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
+                })
+            }
+            
+            ///Lead in
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
+                Picker("Select Value", selection: $leadInBarCount) {
+                    ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+                        Text("\(scalesModel.scaleLeadInCounts[index])")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: leadInBarCount, {
+                    settings.scaleLeadInBarCount = leadInBarCount
+                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
+                })
+            }
+            
+            ///Backing sampler
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Backing Sound")).padding(0)
+                Picker("Select Value", selection: $backingPresetNumber) {
+                    ForEach(0..<9) { number in
+                        Text("\(backingSoundName(number))")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: backingPresetNumber, {
+                    settings.backingSamplerPreset = backingPresetNumber
+                    AudioManager.shared.resetAudioKit()
+                })
+            }
+            
+            Spacer()
+            Button(action: {
+                CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
+                
+            }) {
+                HStack {
+                    Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
+                }
+            }
+            
+            Spacer()
+            Text("---------- TEST ONLY ----------")
+            HStack() {
+                Toggle("Record Data Mode", isOn: $recordDataMode)
+            }
+            .frame(width: width)
+            .onChange(of: recordDataMode, {
+                settings.recordDataMode = recordDataMode
+            })
+            .padding()
+            
+            Spacer()
+        }
+    }
+    
     func backingSoundName(_ n:Int) -> String {
         var str:String
         switch n {
@@ -69,153 +158,100 @@ struct SettingsView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("Settings").font(.title)
+        NavigationStack {
+            ZStack {
                 VStack {
+                    Image(background)
+                        .resizable()
+                        .scaledToFill()
+                        .edgesIgnoringSafeArea(.top)
+                        .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+                }
+                VStack {
+                    Text("Settings").font(.title)
+                        .commonTitleStyle()
+                        .padding()
                     Spacer()
-                    HStack() {
-                        Text("Please enter your first name").padding()
-                        TextField("First name", text: $firstName)
+                    VStack {
+                        VStack {
+                            HStack() {
+                                Text("Please enter your first name").padding()
+                                TextField("First name", text: $firstName)
+                                    .padding()
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                //.border(Color.gray)
+                                //.padding()
+                            }
+                            .onChange(of: firstName, {
+                                settings.firstName = firstName
+                            })
+                            
+                            Button("Select Your Music Board and Grade") {
+                                navigateToSelectBoard = true
+                            }
                             .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .border(Color.gray)
-                            .frame(width: width)
-                            .padding()
-                    }
-                    .onChange(of: firstName, {
-                        settings.firstName = firstName
-                    })
-                    .commonFrameStyle(backgroundColor: .white).padding()
-                    
-                    Button(action: {
-                        navigateToSelectBoard = true
-                    }) {
-                        Text("Select Your Music Board and Grade").foregroundColor(.blue).padding()
-                    }
-                    .commonFrameStyle(backgroundColor: .white).padding()
-                    .onAppear() {
-                        
-                    }
-                    NavigationLink(destination: SelectMusicBoardView(), isActive: $navigateToSelectBoard) {
-                    }.frame(width: 0.0)
- 
-                    SetKeyboardColourView(parentColor: $keyColor).commonFrameStyle(backgroundColor: .white).padding()
-                    
-                    ///default octaves
-                    HStack {
-                        Text("Default Octaves").padding(0)
-                        Picker("Select", selection: $defaultOctaves) {
-                            ForEach(1..<5) { number in
-                                Text("\(number)").tag(number)
+                            .navigationDestination(isPresented: $navigateToSelectBoard) {
+                                SelectMusicBoardView()
+                            }
+                            
+                            GeometryReader { geometry in
+                                HStack {
+                                    Spacer()
+                                    VStack {
+                                        SetKeyboardColourView(parentColor: $keyColor)
+                                    }
+                                    .padding()
+                                    .hilighted(backgroundColor: .gray)
+                                    .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
+                                    Spacer()
+                                }
                             }
                         }
-                        .pickerStyle(MenuPickerStyle())
-                        .onChange(of: defaultOctaves) { oldValue, newValue in
-                            settings.defaultOctaves = newValue
-                        }
-                    }
-                    
-                    ///Score values
-                    Spacer()
-                    HStack {
-                        Text(LocalizedStringResource("Scale Note Value")).padding(0)
-                        Picker("Select Value", selection: $scaleNoteValue) {
-                            ForEach(0..<2) { number in
-                                let valueStr = number == 0 ? "Crotchet" : "Quaver"
-                                Text("\(valueStr)")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: scaleNoteValue, {
-                            settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
-                        })
-                    }
-                    
-                    ///Lead in
-                    Spacer()
-                    HStack {
-                        Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
-                        Picker("Select Value", selection: $leadInBarCount) {
-                            ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                                Text("\(scalesModel.scaleLeadInCounts[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: leadInBarCount, {
-                            settings.scaleLeadInBarCount = leadInBarCount
-                            //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
-                        })
-                    }
-                    
-                    ///Backing sampler
-                    Spacer()
-                    HStack {
-                        Text(LocalizedStringResource("Backing Sound")).padding(0)
-                        Picker("Select Value", selection: $backingPresetNumber) {
-                            ForEach(0..<9) { number in
-                                Text("\(backingSoundName(number))")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: backingPresetNumber, {
-                            settings.backingSamplerPreset = backingPresetNumber
-                            AudioManager.shared.resetAudioKit()
-                        })
-                    }
-                    
-                    Spacer()
-                    Button(action: {
-                        CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
-                        
-                    }) {
+                        Spacer()
                         HStack {
-                            Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
+                            Spacer()
+                            Button(action: {
+                                Settings.shared.setKeyColor(keyColor)
+                                settings.save()
+                                if settings.amplitudeFilter == 0 {
+                                    tabSelectionManager.selectedTab = 3
+                                }
+                            }) {
+                                HStack {
+                                    Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+                                }
+                            }
+                            Spacer()
                         }
+
                     }
-                    
-                    Spacer()
-                    Text("---------- TEST ONLY ----------")
-                    HStack() {
-                        Toggle("Record Data Mode", isOn: $recordDataMode)
-                    }
-                    .frame(width: width)
-                    .onChange(of: recordDataMode, {
-                        settings.recordDataMode = recordDataMode
-                    })
+                    .commonTitleStyle()
                     .padding()
                     
                     Spacer()
-                    HStack {
+
+                    if allSettings {
                         Spacer()
-                        Button(action: {
-                            Settings.shared.setKeyColor(keyColor)
-                            settings.save()
-                            if settings.amplitudeFilter == 0 {
-                                tabSelectionManager.selectedTab = 3
-                            }
-                        }) {
-                            HStack {
-                                Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-                            }
-                        }
-                        Spacer()
+                        DetailedSettingsView()
                     }
-                    Spacer()
+                    //Spacer()
+
                 }
-                //Text(Settings.shared.toString())
+                .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
+                //.navigationViewStyle(StackNavigationViewStyle())
+                .onAppear() {
+                    leadInBarCount = settings.scaleLeadInBarCount
+                    self.defaultOctaves = settings.defaultOctaves
+                    self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
+                    PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
+                    self.keyColor = Settings.shared.getKeyColor()
+                    self.backingPresetNumber = settings.backingSamplerPreset
+                }
+
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear() {
-            leadInBarCount = settings.scaleLeadInBarCount
-            self.defaultOctaves = settings.defaultOctaves
-            self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
-            PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
-            self.keyColor = Settings.shared.getKeyColor()
-            self.backingPresetNumber = settings.backingSamplerPreset
-        }
     }
+    
 }
 
 func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
