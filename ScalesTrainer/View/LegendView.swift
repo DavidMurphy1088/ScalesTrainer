@@ -77,7 +77,7 @@ struct LegendView: View {
     
     func title() -> String? {
         var title:String = scalesModel.showKeyboard ? "Fingers" : ""
-        if scalesModel.runningProcess == .practicing  {
+        if scalesModel.runningProcess == .leadingTheScale  {
             title = "Practice"
         }
         else {
@@ -108,7 +108,7 @@ struct LegendView: View {
                         }
                     }
                 }
-                if scalesModel.runningProcess == .practicing {
+                if scalesModel.runningProcess == .leadingTheScale {
                     Spacer()
                     Circle()
                         .stroke(Color.green.opacity(1.0), lineWidth: 3)

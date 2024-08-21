@@ -21,6 +21,31 @@ struct CustomBackButton: View {
     }
 }
 
+struct TitleView: View {
+    let screenName:String
+    
+    func getTitle() -> String {
+        let name = Settings.shared.firstName
+        var title = "Scales Academy"
+        if name.count > 0 {
+            title = name+"'s " + title
+        }
+        return title
+    }
+    
+    var body: some View {
+        VStack {
+            Text(getTitle()).font(.title)
+            Text("Trinity, Grade 3").font(.title2)
+            Text(screenName).font(.title2)
+        }
+        .commonFrameStyle()
+        .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth)
+        .padding()
+    }
+}
+
+
 class ActivityMode : Identifiable {
     let name:String
     let view:AnyView
@@ -73,7 +98,6 @@ struct FamousQuotesView: View {
             .commonFrameStyle(backgroundColor: .white)
             .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
         }
-        //.navigationBarTitle("Famous Quotes")
     }
 }
 
@@ -96,13 +120,15 @@ struct ActivityModeView: View {
                                 Image(activityMode.imageName)
                                     .resizable()
                                     .scaledToFit()
+                                    .frame(width: geo.size.width * 0.50) //, height: geo.size.height * 0.25)
                                     .border(Color.gray)
                                     .clipShape(Circle()) // Clips the image to a circular shape
-                                                .overlay(Circle().stroke(Color.gray, lineWidth: 4)) // Optional: Add a circular border
-                                                .shadow(radius: 10) // Optional: Add a shadow for depth
+                                    .overlay(Circle().stroke(Color.gray, lineWidth: 4)) // Optional: Add a circular border
+                                    .shadow(radius: 10) // Optional: Add a shadow for depth
+                                    //.border(.blue)
                                 Text(activityMode.name).font(.title2)
                             }
-                            //.frame(width: geo.size.width * 0.33, height: geo.size.height * 0.33)
+                            //.border(.red)
                         }
                     }
                 }
@@ -167,15 +193,6 @@ struct HomeView: View {
     @State var scaleGroupsSheet = false
     //let width = 0.7
     
-    func getTitle() -> String {
-        let name = Settings.shared.firstName
-        var title = "Scales Academy"
-        if name.count > 0 {
-            title = name+"'s " + title
-        }
-        return title
-    }
-    
     var body: some View {
         VStack {
             NavigationView {
@@ -187,14 +204,9 @@ struct HomeView: View {
                         .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
                     VStack {
                         Spacer()
-                        VStack {
-                            Text(getTitle()).font(.title)
-                            Text("Trinity, Grade 1").font(.title2)
-                        }
-                        .commonTitleStyle()
-                        .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth)
-                        .padding()
-
+                        
+                        TitleView(screenName: "")
+                        
                         ActivityModeView()
                             .commonFrameStyle(backgroundColor: .white)
                             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)

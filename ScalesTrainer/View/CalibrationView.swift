@@ -140,29 +140,29 @@ public struct CalibrationView: View {
                         Text("Status: \(results.getTotalErrors())")
                     }
                 }
-                if !analysingResults {
-                    Spacer()
-                    Button(action: {
-                        playingScale.toggle()
-                        analysingResults = false
-                        if playingScale {
-                            scalesModel.setRunningProcess(.recordingScale)
-                        }
-                        else {
-                            for handler in scalesModel.tapHandlers {
-                                if handler.getBufferSize() == 4096 {
-                                    let eventSet = handler.stopTappingProcess()
-                                    (self.amplitudeFilter, self.info) = self.getStartAmplitudeAndInfo(tapEventSet: eventSet)
-                                    //Settings.shared.amplitudeFilter = self.amplitudeFilter
-                                }
-                            }
-                            scalesModel.setRunningProcess(.none)
-                        }
-                        
-                    }) {
-                        Text(playingScale ? "Stop Playing Scale" : "Start Playing Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
-                    }
-                }
+//                if !analysingResults {
+//                    Spacer()
+//                    Button(action: {
+//                        playingScale.toggle()
+//                        analysingResults = false
+//                        if playingScale {
+//                            scalesModel.setRunningProcess(.recordingScale)
+//                        }
+//                        else {
+//                            for handler in scalesModel.tapHandlers {
+//                                if handler.getBufferSize() == 4096 {
+//                                    let eventSet = handler.stopTappingProcess()
+//                                    (self.amplitudeFilter, self.info) = self.getStartAmplitudeAndInfo(tapEventSet: eventSet)
+//                                    //Settings.shared.amplitudeFilter = self.amplitudeFilter
+//                                }
+//                            }
+//                            scalesModel.setRunningProcess(.none)
+//                        }
+//                        
+//                    }) {
+//                        Text(playingScale ? "Stop Playing Scale" : "Start Playing Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                    }
+//                }
                 
                 ///This section tries different amplitude Filters to find the best.
                 ///For the moment just go with the average calculated after the scale was recorded

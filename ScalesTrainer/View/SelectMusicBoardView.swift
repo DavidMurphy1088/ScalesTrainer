@@ -28,7 +28,7 @@ struct BoardGradesView: View {
                 VStack {
                     Text("Select Your Grade for \(self.board)").font(.title)//.foregroundColor(.blue)
                 }
-                .commonTitleStyle()
+                .commonFrameStyle()
                 .padding()
                 Spacer()
                 List {
@@ -54,13 +54,11 @@ struct BoardGradesView: View {
             }
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
             .onAppear() {
-                isOn[1] = true
+                isOn[3] = true
             }
         }
     }
 }
-
-
 
 struct SelectMusicBoardView: View {
     let width = 0.7
@@ -77,7 +75,7 @@ struct SelectMusicBoardView: View {
                 VStack {
                     Text("Select Music Board").font(.title)//.foregroundColor(.blue)
                 }
-                .commonTitleStyle()
+                .commonFrameStyle()
                 .padding()
                 Spacer()
                 List {

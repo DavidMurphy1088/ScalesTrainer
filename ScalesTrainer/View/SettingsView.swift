@@ -7,16 +7,11 @@ import AudioKit
 
 struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
-    let allSettings:Bool
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var recordDataMode = Settings.shared.recordDataMode
     @State var firstName = Settings.shared.firstName
-    @State var leadInBarCount = 0
-    @State var scaleNoteValue = 0
-    @State var backingPresetNumber = 0
-
-    @State private var defaultOctaves = 2
+    
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
@@ -51,94 +46,6 @@ struct SettingsView: View {
             }
         }
     }
-
-    func DetailedSettingsView() -> some View {
-        VStack {
-            HStack {
-                Text("Default Octaves").padding(0)
-                Picker("Select", selection: $defaultOctaves) {
-                    ForEach(1..<5) { number in
-                        Text("\(number)").tag(number)
-                    }
-                }
-                .pickerStyle(MenuPickerStyle())
-                .onChange(of: defaultOctaves) { oldValue, newValue in
-                    settings.defaultOctaves = newValue
-                }
-            }
-            
-            ///Score values
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Scale Note Value")).padding(0)
-                Picker("Select Value", selection: $scaleNoteValue) {
-                    ForEach(0..<2) { number in
-                        let valueStr = number == 0 ? "Crotchet" : "Quaver"
-                        Text("\(valueStr)")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: scaleNoteValue, {
-                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
-                })
-            }
-            
-            ///Lead in
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Recording Scale Lead in Count")).padding(0)
-                Picker("Select Value", selection: $leadInBarCount) {
-                    ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                        Text("\(scalesModel.scaleLeadInCounts[index])")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: leadInBarCount, {
-                    settings.scaleLeadInBarCount = leadInBarCount
-                    //settings.save(amplitudeFilter: scalesModel.amplitudeFilter)
-                })
-            }
-            
-            ///Backing sampler
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Backing Sound")).padding(0)
-                Picker("Select Value", selection: $backingPresetNumber) {
-                    ForEach(0..<9) { number in
-                        Text("\(backingSoundName(number))")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: backingPresetNumber, {
-                    settings.backingSamplerPreset = backingPresetNumber
-                    AudioManager.shared.resetAudioKit()
-                })
-            }
-            
-            Spacer()
-            Button(action: {
-                CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
-                
-            }) {
-                HStack {
-                    Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
-                }
-            }
-            
-            Spacer()
-            Text("---------- TEST ONLY ----------")
-            HStack() {
-                Toggle("Record Data Mode", isOn: $recordDataMode)
-            }
-            .frame(width: width)
-            .onChange(of: recordDataMode, {
-                settings.recordDataMode = recordDataMode
-            })
-            .padding()
-            
-            Spacer()
-        }
-    }
     
     func backingSoundName(_ n:Int) -> String {
         var str:String
@@ -168,9 +75,8 @@ struct SettingsView: View {
                         .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
                 }
                 VStack {
-                    Text("Settings").font(.title)
-                        .commonTitleStyle()
-                        .padding()
+                    TitleView(screenName: "Settings")
+
                     Spacer()
                     VStack {
                         VStack {
@@ -223,35 +129,19 @@ struct SettingsView: View {
                             }
                             Spacer()
                         }
-
                     }
-                    .commonTitleStyle()
+                    .commonFrameStyle()
                     .padding()
-                    
                     Spacer()
-
-                    if allSettings {
-                        Spacer()
-                        DetailedSettingsView()
-                    }
-                    //Spacer()
-
                 }
                 .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
-                //.navigationViewStyle(StackNavigationViewStyle())
                 .onAppear() {
-                    leadInBarCount = settings.scaleLeadInBarCount
-                    self.defaultOctaves = settings.defaultOctaves
-                    self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                     PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
                     self.keyColor = Settings.shared.getKeyColor()
-                    self.backingPresetNumber = settings.backingSamplerPreset
                 }
-
             }
         }
     }
-    
 }
 
 func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {

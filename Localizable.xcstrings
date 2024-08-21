@@ -19,6 +19,9 @@
     "  👉 %@  " : {
 
     },
+    "  Practice - %@  " : {
+
+    },
     " %lld" : {
 
     },
@@ -38,9 +41,6 @@
 
     },
     " Spin The Wheel " : {
-
-    },
-    "---------- TEST ONLY ----------" : {
 
     },
     "?" : {
@@ -106,10 +106,10 @@
     "Back %@" : {
 
     },
-    "Backing\nOn" : {
+    "Backing Off" : {
 
     },
-    "Backing Off" : {
+    "Backing On" : {
 
     },
     "Backing Sound" : {
@@ -146,6 +146,9 @@
     "Current Amplitude Filter:%@" : {
 
     },
+    "Customise" : {
+
+    },
     "Default Octaves" : {
 
     },
@@ -164,7 +167,7 @@
     "First name" : {
 
     },
-    "Follow\nThe\nScale" : {
+    "Follow The Scale" : {
 
     },
     "Go to \n Scale" : {
@@ -174,9 +177,6 @@
 
     },
     "Grade %lld Piano" : {
-
-    },
-    "Hand:" : {
 
     },
     "Hear\nRecording" : {
@@ -213,6 +213,9 @@
     },
     "Key 1" : {
       "extractionState" : "manual"
+    },
+    "Lead the Scale" : {
+
     },
     "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
 
@@ -266,19 +269,13 @@
     "Piano Calibration" : {
 
     },
-    "Pick Any Scale" : {
-
-    },
-    "Play Along\nWith Scale" : {
+    "Play Along With Scale" : {
 
     },
     "Play Recording" : {
 
     },
     "Please enter your first name" : {
-
-    },
-    "Practice" : {
 
     },
     "Preliminary" : {
@@ -290,19 +287,10 @@
     "READ_TEST_DATA" : {
 
     },
-    "Record\nThe\nScale" : {
-
-    },
-    "Record Data Mode" : {
+    "Record The Scale" : {
 
     },
     "Recording %@" : {
-
-    },
-    "Recording Scale Lead in Count" : {
-
-    },
-    "Reset Coin Count" : {
 
     },
     "RH\nProgress" : {
@@ -330,6 +318,9 @@
           }
         }
       }
+    },
+    "Scale Lead in Count" : {
+
     },
     "Scale Note Value" : {
 
@@ -400,9 +391,6 @@
     "Start Analysis" : {
 
     },
-    "Start Playing Scale" : {
-
-    },
     "Start Recording" : {
 
     },
@@ -421,25 +409,19 @@
     "Stop Hearing" : {
 
     },
+    "Stop Leading" : {
+
+    },
     "Stop Playback" : {
 
     },
     "Stop Playing Along" : {
 
     },
-    "Stop Playing Scale" : {
-
-    },
-    "Stop Practicing" : {
-
-    },
     "Stop Recording" : {
 
     },
     "Stop Recording Scale" : {
-
-    },
-    "Sync\nRecording" : {
 
     },
     "Taps" : {
@@ -454,7 +436,7 @@
     "Tips" : {
 
     },
-    "Trinity, Grade 1" : {
+    "Trinity, Grade 3" : {
 
     },
     "Under Construction" : {

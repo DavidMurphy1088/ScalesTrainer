@@ -18,7 +18,7 @@ protocol TapHandlerProtocol {
     func getBufferSize() -> Int
 }
 
-///Tap handerl to udate the model in real time as events are received
+///Tap handlel to udate the model in real time as events are received
 class RealTimeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let bufferSize:Int

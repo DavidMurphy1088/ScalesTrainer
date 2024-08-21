@@ -15,7 +15,8 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
                     //ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioDiminishedSeventh, octaves: 2, hand: 0))
-                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .brokenChordMajor, octaves: 1, hand: 0))
+                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, 
+                                                             octaves: Settings.shared.defaultOctaves, hand: 0))
                     selectedTab = 0
                 }
                 else {
@@ -23,7 +24,7 @@ class TabSelectionManager: ObservableObject {
                 }
             }
             else{
-                selectedTab = 3
+                selectedTab = 4
             }
         }
         else {
@@ -64,15 +65,16 @@ struct ScalesTrainerApp: App {
                 //                        .tag(0)
                 //                }
                 
-                //                if ScalesTrainerApp.runningInXcode() {
-                //                    MIDIView()
-                //                    //PracticeChartView(rows: 10, columns: 3)
-                //                    //SpinWheelView(practiceJournal: PracticeJournal.shared!)
-                //                        .tabItem {
-                //                            Label("Home", systemImage: "house")
-                //                        }
-                //                        .tag(0)
-                //                }
+                if ScalesTrainerApp.runningInXcode() {
+                    //MIDIView()
+                    //PracticeChartView(rows: 10, columns: 3)
+                    //SpinWheelView(practiceJournal: PracticeJournal.shared!)
+                    ScalesView()
+                        .tabItem {
+                            Label("Home", systemImage: "house")
+                        }
+                        .tag(0)
+                }
                 
                 HomeView()
                     .tabItem {
@@ -80,25 +82,32 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(1)
                 
-                SettingsView(allSettings: false)
+                SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
                     .tag(2)
                     .environmentObject(tabSelectionManager)
                 
+                CustomSettingsView()
+                    .tabItem {
+                        Label("Customise", systemImage: "gearshape.fill")
+                    }
+                    .tag(3)
+                    .environmentObject(tabSelectionManager)
+
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
-                    .tag(3)
+                    .tag(4)
                     .environmentObject(tabSelectionManager)
                 
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")
                     }
-                    .tag(4)
+                    .tag(5)
                 
                 //                FFTContentView()
                 //                     .tabItem {

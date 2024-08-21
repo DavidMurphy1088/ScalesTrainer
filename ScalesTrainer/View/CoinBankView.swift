@@ -219,9 +219,7 @@ struct CoinBankView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                VStack {
-                    Text(getTitle()).font(.title).commonTitleStyle()
-                }
+                TitleView(screenName: "Coin Bank")
                 VStack {
                     //Text("")
                     Text("").padding(/*@START_MENU_TOKEN@*/EdgeInsets()/*@END_MENU_TOKEN@*/)

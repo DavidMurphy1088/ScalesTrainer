@@ -45,7 +45,6 @@ struct ScalesView: View {
     private let audioManager = AudioManager.shared
 
     @State private var numberOfOctaves = Settings.shared.defaultOctaves
-    @State private var handIndex = 0
     @State private var rootNameIndex = 0
     @State private var scaleTypeNameIndex = 0
     @State private var directionIndex = 0
@@ -77,40 +76,28 @@ struct ScalesView: View {
     }
     
     ///Set state of the model and the view
-    func setState(octaves:Int, hand:Int) {
+    func setState(octaves:Int) {
         ///There maybe a change in octaves or LH vs. RH
         let root = scalesModel.scale.scaleRoot
         let scaleType = scalesModel.scale.scaleType
+        let hand = scalesModel.scale.hand
         scalesModel.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: octaves, hand: hand, ctx: "ScalesView setState")
         self.directionIndex = 0
     }
     
     func SelectScaleParametersView() -> some View {
         HStack {
-            Spacer()
-            Text("Hand:")
-            Picker("Select Value", selection: $handIndex) {
-                ForEach(scalesModel.handTypes.indices, id: \.self) { index in
-                    Text("\(scalesModel.handTypes[index])")
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: handIndex, {
-                setState(octaves: self.numberOfOctaves, hand: handIndex)
-            })
-            Spacer()
-            
-            Text("Octaves:").padding(0)
-            Picker("Select", selection: $numberOfOctaves) {
-                ForEach(1..<5) { number in
-                    Text("\(number)").tag(number)
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: numberOfOctaves, {
-                setState(octaves: numberOfOctaves, hand: handIndex)
-            })
-            
+//            Spacer()
+//            Text("Hand:")
+//            Picker("Select Value", selection: $handIndex) {
+//                ForEach(scalesModel.handTypes.indices, id: \.self) { index in
+//                    Text("\(scalesModel.handTypes[index])")
+//                }
+//            }
+//            .pickerStyle(.menu)
+//            .onChange(of: handIndex, {
+//                setState(octaves: self.numberOfOctaves, hand: handIndex)
+//            })
             Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
@@ -123,6 +110,18 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
                 scalesModel.setSelectedDirection(self.directionIndex)
+            })
+            
+            Spacer()
+            Text("Octaves:").padding(0)
+            Picker("Select", selection: $numberOfOctaves) {
+                ForEach(1..<5) { number in
+                    Text("\(number)").tag(number)
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: numberOfOctaves, {
+                setState(octaves: numberOfOctaves)
             })
             
             Spacer()
@@ -176,13 +175,13 @@ struct ScalesView: View {
                     }
                 }
             }
-            if scalesModel.runningProcessPublished == .practicing {
+            if scalesModel.runningProcessPublished == .leadingTheScale {
                 RecordingIsUnderwayView()
                 VStack {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
-                        Text("Stop Practicing").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        Text("Stop Leading").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
                 }
             }
@@ -236,7 +235,6 @@ struct ScalesView: View {
     func SelectActionView() -> some View {
         HStack(alignment: .top) {
             Spacer()
-            
             VStack()  {
                 Button(action: {
                     showHelp("Follow The Scale")
@@ -249,19 +247,18 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button("Follow\nThe\nScale") {
+                Button("Follow The Scale") {
                     scalesModel.setRunningProcess(.followingScale)
                     scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
                 
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
             VStack() {
                 Button(action: {
-                    showHelp("Practice")
+                    showHelp("LeadTheScale")
                 }) {
                     VStack {
                         Image(systemName: "questionmark.circle")
@@ -271,19 +268,17 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcessPublished == .practicing ? "Stop Practicing" : "Practice") {
-                    if scalesModel.runningProcessPublished == .practicing {
+                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : "Lead the Scale") {
+                    if scalesModel.runningProcessPublished == .leadingTheScale {
                         scalesModel.setRunningProcess(.none)
                     }
                     else {
-                        scalesModel.setRunningProcess(.practicing)
+                        scalesModel.setRunningProcess(.leadingTheScale)
                         scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                     }
                 }
                 
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
@@ -299,12 +294,11 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along\nWith Scale") {
+                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along With Scale") {
                     scalesModel.setRunningProcess(.playingAlongWithScale)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
@@ -320,7 +314,7 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record\nThe\nScale") {
+                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
                     if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -330,7 +324,6 @@ struct ScalesView: View {
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             if scalesModel.resultPublished != nil {
@@ -352,31 +345,30 @@ struct ScalesView: View {
                     }
 
                 }
-                .frame(maxWidth: .infinity, alignment: .topLeading)
                 .padding()
             }
             
-            if scalesModel.resultPublished != nil {
-                VStack {
-                    Button(action: {
-                        showHelp("Sync The Scale")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)//.bold()
-                                .foregroundColor(.green)
-                        }
-                    }
-                    Text("")
-                    Button("Sync\nRecording") {
-                        scalesModel.setRunningProcess(.syncRecording)
-                    }
-
-                }
-                .frame(maxWidth: .infinity, alignment: .topLeading)
-                .padding()
-            }
+//            if scalesModel.resultPublished != nil {
+//                VStack {
+//                    Button(action: {
+//                        showHelp("Sync The Scale")
+//                    }) {
+//                        VStack {
+//                            Image(systemName: "questionmark.circle")
+//                                .imageScale(.large)
+//                                .font(.title2)//.bold()
+//                                .foregroundColor(.green)
+//                        }
+//                    }
+//                    Text("")
+//                    Button("Sync\nRecording") {
+//                        scalesModel.setRunningProcess(.syncRecording)
+//                    }
+//
+//                }
+//                .frame(maxWidth: .infinity, alignment: .topLeading)
+//                .padding()
+//            }
 
             Spacer()
             VStack {
@@ -391,7 +383,7 @@ struct ScalesView: View {
                     }
                 }
                 Text("")
-                Button(hearingBacking ? "Backing Off" : "Backing\nOn") {
+                Button(hearingBacking ? "Backing Off" : "Backing On") {
                     hearingBacking.toggle()
                     if hearingBacking {
                         scalesModel.setBacking(true)
@@ -402,12 +394,10 @@ struct ScalesView: View {
                 }
                 
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding()
             
             Spacer()
         }
-
     }
     
     func DeveloperView() -> some View {
@@ -488,6 +478,10 @@ struct ScalesView: View {
                     }
                     .commonFrameStyle()
                 }
+
+                if scalesModel.showLegend {
+                    LegendView().commonFrameStyle()
+                }
                 
                 if scalesModel.showStaff {
                     if let score = scalesModel.score {
@@ -498,10 +492,6 @@ struct ScalesView: View {
                         }
                         .commonFrameStyle()
                     }
-                }
-                
-                if scalesModel.showLegend {
-                    LegendView().commonFrameStyle()
                 }
                 
                 if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
@@ -582,7 +572,7 @@ struct ScalesView: View {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.shared.resetKeysWerePlayedState()
             pianoKeyboardViewModel.keyboardAudioManager = audioManager
-            self.handIndex = scalesModel.scale.hand
+            //self.handIndex = scalesModel.scale.hand
             ///Causes setState()
             
             self.directionIndex = 0

@@ -81,7 +81,6 @@ public struct ClassicStyle {
             }
         }
         return color
-        
     }
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
@@ -156,9 +155,8 @@ public struct ClassicStyle {
                 /// ----------- Playing the note ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
-                    let w = playingMidiRadius + 7.0
-                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
-                                       width: w, height: w)
+                    //let w = playingMidiRadius + 7.0
+                    let w = playingMidiRadius * 1.6
                     let color:Color
                     if keyModel.scaleNoteState != nil {
                         color = .green
@@ -166,10 +164,12 @@ public struct ClassicStyle {
                     else {
                         color = .red
                     }
+                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
+                                       width: w, height: w)
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: 3)
+                        lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
                 }
                 
                 ///----------- Note status -----------
@@ -273,7 +273,8 @@ public struct ClassicStyle {
                 /// ----------- The note from the key touch is playiong ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
-                    let w = playingMidiRadius + 7.0
+                    //let w = playingMidiRadius + 7.0
+                    let w = playingMidiRadius * 1.6
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
                                        width: w, height: w)
                     let color:Color
@@ -286,7 +287,7 @@ public struct ClassicStyle {
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: 3)
+                        lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
                 }
                 
                 ///----------- Note Status-----------

@@ -46,16 +46,7 @@ struct PracticeJournalView: View {
         }
         return Color.green
     }
-    
-    func getTitle() -> String {
-        var title = "Practice Journal for \(self.musicBoardGrade.gradeName)"
-        let name = Settings.shared.firstName
-        if name.count > 0 {
-            title = name + "'s \(title)"
-        }
-        return title
-    }
-    
+        
     var body: some View {
         ZStack {
             let width = UIScreen.main.bounds.width * 0.95
@@ -68,7 +59,7 @@ struct PracticeJournalView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                Text(getTitle()).font(.title).commonTitleStyle()
+                TitleView(screenName: "")
                 VStack {
                     HStack {
                         Spacer()

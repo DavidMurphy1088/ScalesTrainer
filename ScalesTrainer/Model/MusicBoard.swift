@@ -2,11 +2,9 @@ import Foundation
 
 class MusicBoardGrade {
     let board:MusicBoard
-    let gradeName:String
     var scales:[PracticeJournalScale] = []
     
-    init(board:MusicBoard, gradeName:String) {
-        self.gradeName = gradeName
+    init(board:MusicBoard) {
         self.board = board
         loadScales()
     }
@@ -76,6 +74,6 @@ class MusicBoard : Identifiable {
         self.name = name
         self.imageName = imageName
         self.fullName = fullName
-        self.grades.append(MusicBoardGrade(board: self, gradeName: "Grade1"))
+        self.grades.append(MusicBoardGrade(board: self))
     }
 }

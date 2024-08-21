@@ -75,15 +75,13 @@ struct PickAnyScaleView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             
             VStack {
-                VStack {
-                    Text("Pick Any Scale").font(.title)//.foregroundColor(.blue)
-                }
-                .commonTitleStyle()
+                TitleView(screenName: "")
+                
                 VStack {
                     VStack {
-                        Text("Major Scales").padding()
+                        Text("Major Scales").font(.title2).padding()
                         HStack {
-                            Text("Scale Root:")//.padding()
+                            Text("Scale Root:").font(.title2).padding()
                             Picker("Select Value", selection: $rootIndexMajor) {
                                 ForEach(rootsMajor.indices, id: \.self) { index in
                                     Text("\(rootsMajor[index])")
@@ -93,7 +91,7 @@ struct PickAnyScaleView: View {
                         }
                         
                         HStack {
-                            Text("Scale Type:").padding()
+                            Text("Scale Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMajor) {
                                 ForEach(typesMajor.indices, id: \.self) { index in
                                     Text("\(typesMajor[index])")
@@ -104,7 +102,7 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: true)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2)
+                                Text("  Practice - \(scale.getScaleName(short: true))  ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -112,14 +110,13 @@ struct PickAnyScaleView: View {
                             let _ = setModelScale(major: true)
                         })
                     }
-                    //.border(Color.gray)
                     .commonFrameStyle()
                     .padding()
                     
                     VStack {
                         Text("Minor Scales").padding()
                         HStack {
-                            Text("Scale Root:")//.padding()
+                            Text("Scale Root:").font(.title2).padding()
                             Picker("Select Value", selection: $rootIndexMinor) {
                                 ForEach(rootsMinor.indices, id: \.self) { index in
                                     Text("\(rootsMinor[index])")
@@ -129,7 +126,7 @@ struct PickAnyScaleView: View {
                         }
                         
                         HStack {
-                            Text("Scale Type:").padding()
+                            Text("Scale Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMinor) {
                                 ForEach(typesMinor.indices, id: \.self) { index in
                                     Text("\(typesMinor[index])")
@@ -140,7 +137,7 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: false)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2)
+                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -154,7 +151,7 @@ struct PickAnyScaleView: View {
                 .commonFrameStyle(backgroundColor: .white)
 
             }
-            .frame(width: UIScreen.main.bounds.width * 0.8, height: UIScreen.main.bounds.height * 0.8)
+            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
             .onAppear() {
                 if self.typesMinor.count == 0 {
                     for scale in ScaleType.allCases {

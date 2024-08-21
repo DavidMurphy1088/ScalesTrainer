@@ -9,9 +9,9 @@ public class Settings : Codable  {
     static var shared = Settings()
     var recordDataMode = false
     var firstName = ""
-    var defaultOctaves = 1
+    var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
-    var amplitudeFilter:Double = 0
+    var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
@@ -66,7 +66,7 @@ public class Settings : Codable  {
     
     func getMusicBoardAndGrade() -> MusicBoardGrade {
         let board = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity")
-        return MusicBoardGrade(board: board, gradeName: "Grade 1")
+        return MusicBoardGrade(board: board)
     }
     
     func getName() -> String {

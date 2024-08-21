@@ -175,7 +175,7 @@ struct PracticeChartView: View {
             let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
             
             VStack {
-                Text("\(Settings.shared.getName()) Practice Chart").font(.title).foregroundColor(.blue).commonTitleStyle().padding().frame(width: cellWidth * 3)
+                Text("\(Settings.shared.getName()) Practice Chart").font(.title).foregroundColor(.blue).commonFrameStyle().padding().frame(width: cellWidth * 3)
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
                         

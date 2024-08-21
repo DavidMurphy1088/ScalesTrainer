@@ -17,7 +17,7 @@ enum MicTappingMode {
 enum RunningProcess {
     case none
     case followingScale
-    case practicing
+    case leadingTheScale
     case recordingScale
     case leadingIn
     case recordScaleWithFileData
@@ -31,7 +31,7 @@ enum RunningProcess {
 
         case .followingScale:
             return "Following Scale"
-        case .practicing:
+        case .leadingTheScale:
             return "Practicing"
         case .recordingScale:
             return "Recording Scale"
@@ -60,7 +60,8 @@ enum SpinState {
 
 public class ScalesModel : ObservableObject {
     
-    static public var shared = ScalesModel(musicBoardGrade: MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: ""), gradeName: "Grade1"))
+    static public var shared = ScalesModel(musicBoardGrade:
+                                            MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
     
     private(set) var scale:Scale
     
@@ -74,8 +75,6 @@ public class ScalesModel : ObservableObject {
     
     var recordedTapsFileURL:URL? //File where recorded taps were written
     @Published var recordedTapsFileName:String?
-    
-    //let calibrationResults = CalibrationResults()
     
     var scaleLeadInCounts:[String] = ["None", "One Bar", "Two Bars", "Four Bars"]
     
@@ -301,11 +300,11 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopRecording()
-            if [.recordingScale, .recordScaleWithFileData].contains(self.runningProcess) {
-                if let statsSet = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale) {
-                    setTapHandlerEventSet(statsSet, publish: true)
-                }
-            }
+//            if [.recordingScale, .recordScaleWithFileData].contains(self.runningProcess) {
+//                if let statsSet = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale) {
+//                    setTapHandlerEventSet(statsSet, publish: true)
+//                }
+//            }
             if self.runningProcess == .syncRecording {
                 DispatchQueue.main.async {
                     self.synchedIsPlaying = false
@@ -333,7 +332,7 @@ public class ScalesModel : ObservableObject {
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
-        if [.followingScale, .practicing].contains(setProcess)  {
+        if [.followingScale, .leadingTheScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, amplitudeFilter: Settings.shared.amplitudeFilter))
             if setProcess == .followingScale {

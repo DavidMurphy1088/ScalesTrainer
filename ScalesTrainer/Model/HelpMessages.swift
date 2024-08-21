@@ -36,10 +36,10 @@ class HelpMessages {
         m += "\n\n➤ Once you've learnt the pattern of the scale you can try following the scale without the fingers displayed to check if you remember the correct fingering."
         messages["Follow The Scale"] = m
         
-        m = "Practice lets you practice playing the scale by watching the notes you play appear on the keyboard and staff to check that they are correct."
+        m = "Leading the scale lets you practice playing the scale by watching the notes you play appear on the keyboard and staff to check that they are correct."
         m += "\n\n➤ The displayed keyboard shows the right finger to use for each note."
-        m += "\n\n➤ When you have learnt the scale trying practicing without the finger numbers displayed to see how well you remember the scale."
-        messages["Practice"] = m
+        m += "\n\n➤ When you have learnt the scale trying leading without the finger numbers displayed to see how well you remember the scale."
+        messages["LeadTheScale"] = m
         
         m = "Play along on your piano as the scale is played. "
         m += "\n\n➤ The scale will be played ascending and descending. "
