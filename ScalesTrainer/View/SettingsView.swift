@@ -32,13 +32,13 @@ struct SettingsView: View {
                         ColorPicker("Choose your keyboard colour", selection: $selectedColor)
                             .padding()
                             .onChange(of: selectedColor) { oldColor, newColor in
-                                PianoKeyboardModel.shared2.redraw()
+                                PianoKeyboardModel.sharedForSettings.redraw()
                                 parentColor = newColor
                             }
                             .labelsHidden()
                         Spacer()
                     }
-                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared2, keyColor: selectedColor).padding()
+                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
                 }
             }
             .onAppear() {
@@ -90,6 +90,7 @@ struct SettingsView: View {
                             }
                             .onChange(of: firstName, {
                                 settings.firstName = firstName
+                                SettingsPublished.shared.firstName = firstName
                             })
                             
                             Button("Select Your Music Board and Grade") {
@@ -119,9 +120,10 @@ struct SettingsView: View {
                             Button(action: {
                                 Settings.shared.setKeyColor(keyColor)
                                 settings.save()
-                                if settings.amplitudeFilter == 0 {
-                                    tabSelectionManager.selectedTab = 3
-                                }
+//                                if settings.amplitudeFilter == 0 {
+//                                    tabSelectionManager.selectedTab = 3
+//                                }
+                                tabSelectionManager.selectedTab = 1
                             }) {
                                 HStack {
                                     Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -136,7 +138,7 @@ struct SettingsView: View {
                 }
                 .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
                 .onAppear() {
-                    PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
+                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
                     self.keyColor = Settings.shared.getKeyColor()
                 }
             }
@@ -146,7 +148,6 @@ struct SettingsView: View {
 
 func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
     var availableMicrophones: [AVAudioSessionPortDescription] = []
-    //var selectedMicrophone: AVAudioSessionPortDescription? = nil
     let audioSession = AVAudioSession.sharedInstance()
     availableMicrophones = audioSession.availableInputs ?? []
     return availableMicrophones

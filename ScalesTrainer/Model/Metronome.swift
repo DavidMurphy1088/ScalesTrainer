@@ -115,7 +115,6 @@ class MetronomeModel {
                     //DispatchQueue.main.async { [self] in
                     self.isTiming = false
                     usleep(useconds_t(delay / 1.0))
-                    //}
                     break
                 }
                 else {
@@ -133,5 +132,4 @@ class MetronomeModel {
             }
         }
     }
-    
 }

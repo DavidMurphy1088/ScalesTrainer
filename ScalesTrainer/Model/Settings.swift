@@ -5,10 +5,31 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-public class Settings : Codable  {    
+public class SettingsPublished : ObservableObject {
+    static var shared = SettingsPublished()
+    @Published var firstName = ""
+    @Published var board = ""
+    @Published var grade = ""
+    
+    func setBoardAndGrade(board:String, grade:String) {
+        DispatchQueue.main.async {
+            self.board = board
+            self.grade = grade
+        }
+    }
+    func setFirstName(firstName:String) {
+        DispatchQueue.main.async {
+            self.firstName = firstName
+        }
+    }
+}
+
+public class Settings : Codable  {
     static var shared = Settings()
     var recordDataMode = false
     var firstName = ""
+    var board = ""
+    var grade = ""
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
@@ -48,6 +69,8 @@ public class Settings : Codable  {
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
+        str += " Board:\(self.board)"
+        str += " Grade:\(self.grade)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " KeyColor:\(self.keyColor)"
@@ -64,11 +87,14 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
-    func getMusicBoardAndGrade() -> MusicBoardGrade {
-        let board = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity")
-        return MusicBoardGrade(board: board)
+    func getMusicBoardAndGrade() -> MusicBoardGrade? {
+        if let board = MusicBoard.options.first(where: { $0.name == self.board}) {
+            let board = MusicBoard(name: board.name, fullName: board.fullName, imageName: board.imageName)
+            return MusicBoardGrade(board: board)
+        }
+        return nil
     }
-    
+
     func getName() -> String {
         let name = firstName
         let name1 = name + (name.count>0 ? "'s" : "")
@@ -89,16 +115,19 @@ public class Settings : Codable  {
                     self.recordDataMode = loaded.recordDataMode
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
+                    self.board = loaded.board
+                    self.grade = loaded.grade
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
                     self.keyColor = loaded.keyColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset
+                    SettingsPublished.shared.setBoardAndGrade(board: self.board, grade: self.grade)
+                    SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
                     Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
-                    //Logger.shared.reportError(self, "load:" + error.localizedDescription)
                 }
             }
         }

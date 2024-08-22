@@ -11,7 +11,7 @@ class AudioManager {
     public var engine: AudioEngine?
     var keyboardMidiSampler:MIDISampler?
     var backingMidiSampler:MIDISampler?
-    var recorder: NodeRecorder?
+    var nodeRecorder: NodeRecorder?
     var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
@@ -22,7 +22,6 @@ class AudioManager {
     var audioPlayer:AudioPlayer?
     
     ///AudioKit Cookbook example
-    //var initialDevice: Device?
     var pitchTaps: [PitchTap] = []
     var tappableNodeA: Fader?
     var tappableNodeB: Fader?
@@ -47,7 +46,7 @@ class AudioManager {
     }
     
     func playRecordedFile() {
-        if let recorder = recorder {
+        if let recorder = nodeRecorder {
             if let audioFile = recorder.audioFile {
                 self.audioPlayer = AudioPlayer(file: audioFile)
                 self.audioPlayer?.volume = 1.0  // Set volume to maximum
@@ -83,23 +82,6 @@ class AudioManager {
         Logger.shared.log(self, "Loaded audio players")
         return nil
     }
-    
-//    func initSampler() {
-//        setSession()
-//        self.engine = AudioEngine()
-//        guard let engine = self.engine else {
-//            Logger.shared.reportError(self, "No engine")
-//            return
-//        }
-//        self.midiSampler = setupSampler()
-//        engine.output = self.midiSampler
-//        do {
-//            try engine.start()
-//        }
-//        catch {
-//            Logger.shared.reportError(self, "Error starting engine: \(error)")
-//        }
-//    }
     
     func resetAudioKit() {
         setSession()
@@ -142,7 +124,7 @@ class AudioManager {
             Logger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
-
+    
     func startRecordingMicWithTapHandlers(tapHandlers:[TapHandlerProtocol], recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
@@ -195,18 +177,18 @@ class AudioManager {
 //            engine.output = self.mixer
 //        }
         
-        if recordAudio {
-            if let fader = self.tappableNodeF {
-                do {
-                    self.recorder = try NodeRecorder(node: fader)
-                } catch let err {
-                    Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
-                }
-            }
-            else {
-                self.recorder = nil
-            }
-        }
+//        if recordAudio {
+//            if let fader = self.tappableNodeF {
+//                do {
+//                    self.recorder = try NodeRecorder(node: fader)
+//                } catch let err {
+//                    Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
+//                }
+//            }
+//            else {
+//                self.recorder = nil
+//            }
+//        }
         if tapHandlers.count > 4 {
             Logger.shared.reportError(self, "Too many pitch tap handlers to install \(tapHandlers.count)")
             return
@@ -230,7 +212,6 @@ class AudioManager {
                                                     asynch: true))
         }
 
-
         for tap in self.pitchTaps {
             tap.start()
         }
@@ -238,26 +219,66 @@ class AudioManager {
         do {
             ///As per the order in Cookbook Recorder example
             try engine.start()
-            if recordAudio {
-                try recorder?.record()
-            }
+//            if recordAudio {
+//                try recorder?.record()
+//            }
         }
         catch {
             Logger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
+    
+    func startRecordingMicToRecord() {
+        checkMicPermission(completion: {granted in
+            if !granted {
+                Logger.shared.reportError(self, "No microphone permission")
+                return
+            }
+        })
+        setSession()
+        
+        ///Based on CookBook Tuner
+        self.engine = AudioEngine()
+        guard let engine = self.engine else {
+            Logger.shared.reportError(self, "No engine")
+            return
+        }
+        guard let engineInput = engine.input else {
+            Logger.shared.reportError(self, "No input")
+            return
+        }
+        self.mic = engineInput
+        self.tappableNodeA = Fader(self.mic!)
+        self.silencer = Fader(tappableNodeA!, gain: 0)
+        ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
+        engine.output = self.silencer
 
+        do {
+            let fader = self.tappableNodeA
+            //self.nodeRecorder = try NodeRecorder(node: self.mic!) //Does not work. Absolutley no idea why...
+            self.nodeRecorder = try NodeRecorder(node: fader!)
+            ///The recorded file is stored in the temporary directory of your app by default. This means that the file is placed in a location that can be cleared
+            ///by the system when the app is terminated or when storage space is needed.
+            if let recorder = self.nodeRecorder {
+                try engine.start()
+                try recorder.record()
+                Logger.shared.log(self, "Recording started: \(recorder.isRecording)")
+            }
+        } catch let err {
+            Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
+        }
+    }
+    
     func stopRecording() {
         for pitchTap in self.pitchTaps {
             pitchTap.stop()
         }
-        if let recorder = recorder {
+        if let recorder = nodeRecorder {
             recorder.stop()
             if let audioFile = recorder.audioFile {
                 ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
-                let log = "Stopped recording, recorded file: \(audioFile.url) len:\(audioFile.length) duration:\(audioFile.duration)"
+                let log = "Stopped recording, len:\(audioFile.length) duration:\(audioFile.duration) recorded file: \(audioFile.url) "
                 Logger.shared.log(self, log)
-
             } else {
                 Logger.shared.reportError(self, "No audio file found after stopping recording")
             }
@@ -265,16 +286,16 @@ class AudioManager {
         engine?.stop()
     }
     
-
     func setSession() {
         ///nightmare
         do {
             let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            //try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+            try audioSession.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try audioSession.setActive(true) //EXTREME WARNING - without this death 😡
         }
         catch {
-            Logger.shared.reportError(self, "Error starting engine: \(error)")
+            Logger.shared.reportError(self, "Error setting audio session: \(error)")
         }
     }
     

@@ -9,14 +9,7 @@ struct BoardGradesView: View {
     
     @State private var isOn = [Bool](repeating: false, count: 8)
     @State var index = 0
-    
-//    func setOn(index:Int)  {
-//        isOn = [Bool](repeating: false, count: grades.count )
-//        for i in 0..<isOn.count {
-//            isOn[i] = i == index
-//        }
-//    }
-    
+        
     var body: some View {
         ZStack {
             Image(background)
@@ -26,7 +19,7 @@ struct BoardGradesView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
                 VStack {
-                    Text("Select Your Grade for \(self.board)").font(.title)//.foregroundColor(.blue)
+                    Text("\(self.board), Select Your Grade").font(.title)//.foregroundColor(.blue)
                 }
                 .commonFrameStyle()
                 .padding()
@@ -56,6 +49,13 @@ struct BoardGradesView: View {
             .onAppear() {
                 isOn[3] = true
             }
+            .onDisappear() {
+                if let grade = isOn.firstIndex(where: { $0 == true }) {
+                    Settings.shared.board = board
+                    Settings.shared.grade = String(grade)
+                    SettingsPublished.shared.setBoardAndGrade(board: board, grade: String(grade))
+                }
+            }
         }
     }
 }
@@ -73,7 +73,7 @@ struct SelectMusicBoardView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
                 VStack {
-                    Text("Select Music Board").font(.title)//.foregroundColor(.blue)
+                    Text("Select Music Board").font(.title)
                 }
                 .commonFrameStyle()
                 .padding()
@@ -94,18 +94,6 @@ struct SelectMusicBoardView: View {
                                             .frame(height: geometry.size.height)
                                     }
                                 }
-                                //.padding()
-                                //                            Spacer()
-                                //                            Toggle(isOn: Binding<Bool>(
-                                //                                get: { self.isOn[index] },
-                                //                                set: { newValue in
-                                //                                    if newValue {
-                                //                                        self.setOn(index: index)
-                                //                                    }
-                                //                                }
-                                //                            )) {
-                                //                                EmptyView()
-                                //                            }
                             }
                         }
                     }

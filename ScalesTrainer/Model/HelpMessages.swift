@@ -52,9 +52,10 @@ class HelpMessages {
         m += "\n\n➤ When you play the scale with backing on, correctly played notes will sound good with the backing harmony. Notice that notes not in the scale sound unpleasant against the backing harmony."
         messages["Backing"] = m
         
-        m = "Record your playing to see how well you know the scale. No keyboard or fingering is shown. This means recording is similiar to how you would play the scale in an exam."
+        m = "Record your playing to see how well you know the scale."
+        //No keyboard or fingering is shown. This means recording is similiar to how you would play the scale in an exam."
         m += "\n\n➤ You will hear the metronome lead in and when its finished start to play the scale."
-        m += "\n\n➤ Make sure to play your scale accurately and evenly. When your recording is complete, you will see the results of your recording."
+        m += "\n\n➤ Make sure to play your scale accurately and evenly. When your recording is complete, you can listen to your recording."
         messages["Record The Scale"] = m
 
         m = "Listen to the last scale recording you made."

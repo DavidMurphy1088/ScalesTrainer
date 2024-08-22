@@ -163,7 +163,7 @@ struct CustomSettingsView: View {
                     leadInBarCount = settings.scaleLeadInBarCount
                     self.defaultOctaves = settings.defaultOctaves
                     self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
-                    PianoKeyboardModel.shared2.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
+                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
                     self.keyColor = Settings.shared.getKeyColor()
                     self.backingPresetNumber = settings.backingSamplerPreset
                 }

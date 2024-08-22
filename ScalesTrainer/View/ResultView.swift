@@ -54,7 +54,7 @@ struct ResultView: View {
     }
 
     func getResultStatus() -> (Bool, String)? {
-        if [.recordingScale, .recordScaleWithFileData].contains(self.result.fromProcess) {
+        if [.recordingScaleForAssessment, .recordScaleWithFileData].contains(self.result.fromProcess) {
             return recordStatus()
         }
         if self.result.fromProcess == .followingScale {

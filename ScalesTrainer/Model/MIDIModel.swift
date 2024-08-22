@@ -17,7 +17,7 @@ class MIDIModel {
             let packets = packetList.pointee
             print("DataIN", Date())
             for packet in packets {
-                let midiData = packet.data
+                //let midiData = packet.data
                 //print( "\(self.midiMessNum)  MIDIData", midiData)
             }
         }

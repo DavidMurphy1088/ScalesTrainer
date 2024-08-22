@@ -8,7 +8,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
 public class PianoKeyboardModel: ObservableObject {
     public static var shared = PianoKeyboardModel()
     public static var shared1 = PianoKeyboardModel()
-    public static var shared2 = PianoKeyboardModel()
+    public static var sharedForSettings = PianoKeyboardModel()
 
     let scalesModel = ScalesModel.shared
     //@Published

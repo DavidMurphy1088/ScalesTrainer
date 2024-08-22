@@ -22,10 +22,11 @@ struct CustomBackButton: View {
 }
 
 struct TitleView: View {
+    @ObservedObject var settingsPublished = SettingsPublished.shared
     let screenName:String
     
     func getTitle() -> String {
-        let name = Settings.shared.firstName
+        let name = self.settingsPublished.firstName
         var title = "Scales Academy"
         if name.count > 0 {
             title = name+"'s " + title
@@ -36,7 +37,9 @@ struct TitleView: View {
     var body: some View {
         VStack {
             Text(getTitle()).font(.title)
-            Text("Trinity, Grade 3").font(.title2)
+            if Settings.shared.board.count > 0 {
+                Text("\(settingsPublished.board), Grade \(settingsPublished.grade)").font(.title2)
+            }
             Text(screenName).font(.title2)
         }
         .commonFrameStyle()
@@ -57,7 +60,6 @@ class ActivityMode : Identifiable {
         self.imageName = imageName
     }
 }
-
 
 struct UnderConstructionView: View {
     var body: some View {
@@ -160,30 +162,32 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            if menuOptionsLeft.count == 0 {
-                let practiceChart = PracticeChart(musicBoardGrade: Settings.shared.getMusicBoardAndGrade())
-                menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
-                                                    view: AnyView(PracticeChartView(practiceChart: practiceChart)),
-                                                    imageName: "practice_chart"))
-                
-                //menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(musicBoardGrade: ScalesModel.shared.musicBoardGrade))))
-                //menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
-                menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel", 
-                                                    view: AnyView(SpinWheelView(boardGrade: Settings.shared.getMusicBoardAndGrade())),
-                                                    imageName: "scales_wheel"))
-
-                menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale", 
-                                                    view: AnyView(PickAnyScaleView()),
-                                                    imageName: "pick_any_scale"))
-                                
-                //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
-                //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
-                //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-                menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: ""))
-                menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: ""))
-//                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
-//                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
-//                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
+            if let boardAndGrade = Settings.shared.getMusicBoardAndGrade() {
+                if menuOptionsLeft.count == 0 {
+                    let practiceChart = PracticeChart(musicBoardGrade: boardAndGrade)
+                    menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
+                                                        view: AnyView(PracticeChartView(practiceChart: practiceChart)),
+                                                        imageName: "practice_chart"))
+                    
+                    //menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(musicBoardGrade: ScalesModel.shared.musicBoardGrade))))
+                    //menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
+                    menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
+                                                        view: AnyView(SpinWheelView(boardGrade: boardAndGrade)),
+                                                        imageName: "scales_wheel"))
+                    
+                    menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
+                                                        view: AnyView(PickAnyScaleView()),
+                                                        imageName: "pick_any_scale"))
+                    
+                    //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
+                    //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
+                    //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
+                    menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: ""))
+                    menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: ""))
+                    //                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
+                    //                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
+                    //                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
+                }
             }
         }
     }

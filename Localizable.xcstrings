@@ -58,6 +58,19 @@
     "%@ Practice Chart" : {
 
     },
+    "%@, Grade %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, Grade %2$@"
+          }
+        }
+      }
+    },
+    "%@, Select Your Grade" : {
+
+    },
     "%lld" : {
 
     },
@@ -65,9 +78,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "👉 %@" : {
 
     },
     "📈 " : {
@@ -170,6 +180,9 @@
     "Follow The Scale" : {
 
     },
+    "Go" : {
+
+    },
     "Go to \n Scale" : {
 
     },
@@ -214,7 +227,13 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
+    "Lead In" : {
+
+    },
     "Lead the Scale" : {
+
+    },
+    "Leading In" : {
 
     },
     "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
@@ -352,9 +371,6 @@
     "Select Value" : {
 
     },
-    "Select Your Grade for %@" : {
-
-    },
     "Select Your Music Board and Grade" : {
 
     },
@@ -434,9 +450,6 @@
 
     },
     "Tips" : {
-
-    },
-    "Trinity, Grade 3" : {
 
     },
     "Under Construction" : {

@@ -6,8 +6,37 @@ import WebKit
 
 enum ActiveSheet: Identifiable {
     case emailRecording
+    case leadingIn
     var id: Int {
         hashValue
+    }
+}
+
+struct LeadingInView: View {
+    @Environment(\.presentationMode) var presentationMode
+    let scalesModel = ScalesModel.shared
+    var body: some View {
+        VStack {
+            Text("Leading In")
+            Button(action: {
+                scalesModel.doLeadIn(instruction: "", leadInDone: {
+                    presentationMode.wrappedValue.dismiss()
+                    scalesModel.setRunningProcess(.recordingScale)
+                })
+            }) {
+                Text("Lead In").padding().font(.title2).hilighted(backgroundColor: .blue)
+            }
+
+            Button(action: {
+                scalesModel.setRunningProcess(.recordingScale)
+                presentationMode.wrappedValue.dismiss()
+            }) {
+                Text("Go").padding().font(.title2).hilighted(backgroundColor: .blue)
+            }
+        }
+        
+        //.frame(width: UIScreen.main.bounds.width * 0.2, height: UIScreen.main.bounds.height * 0.2)
+        //.fixedSize()
     }
 }
 
@@ -140,31 +169,31 @@ struct ScalesView: View {
         }
     }
 
-    
-    func leadInMsg() -> String {
-        let leadIn = Settings.shared.scaleLeadInBarCount
-        var msg = "Leading In For "
-        if leadIn == 1 {
-             msg += "One Bar"
-        }
-        else {
-            msg += "\(leadIn) Bars"
-        }
-        return msg
-    }
+//    
+//    func leadInMsg() -> String {
+//        let leadIn = Settings.shared.scaleLeadInBarCount
+//        var msg = "Leading In For "
+//        if leadIn == 1 {
+//             msg += "One Bar"
+//        }
+//        else {
+//            msg += "\(leadIn) Bars"
+//        }
+//        return msg
+//    }
     
     func StopProcessView() -> some View {
         VStack {
-            if scalesModel.runningProcessPublished == .leadingIn {
-                Spacer()
-                VStack {
-                    Text("👉 \(leadInMsg())")
-                    Text("\(scalesModel.scale.getScaleName())")
-                }
-                .padding().font(.title2).commonFrameStyle()
-
-                Spacer()
-            }
+//            if scalesModel.runningProcessPublished == .leadingIn {
+//                Spacer()
+//                VStack {
+//                    Text("👉 \(leadInMsg())")
+//                    Text("\(scalesModel.scale.getScaleName())")
+//                }
+//                .padding().font(.title2).commonFrameStyle()
+//                Spacer()
+//            }
+            
             if scalesModel.runningProcessPublished == .followingScale {
                 RecordingIsUnderwayView()
                 VStack {
@@ -175,6 +204,7 @@ struct ScalesView: View {
                     }
                 }
             }
+            
             if scalesModel.runningProcessPublished == .leadingTheScale {
                 RecordingIsUnderwayView()
                 VStack {
@@ -195,6 +225,15 @@ struct ScalesView: View {
                 }
             }
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
+                HStack {
+                    Button(action: {
+                        scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("Stop Recording").padding().font(.title2).hilighted(backgroundColor: .blue)
+                    }
+                }
+            }
+            if [.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
                 Spacer()
                 VStack {
                     Text("Recording \(scalesModel.scale.getScaleName())").font(.title).padding()
@@ -309,7 +348,7 @@ struct ScalesView: View {
                     VStack {
                         Image(systemName: "questionmark.circle")
                             .imageScale(.large)
-                            .font(.title2)//.bold()
+                            .font(.title2)
                             .foregroundColor(.green)
                     }
                 }
@@ -319,14 +358,14 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.none)
                     }
                     else {
-                        scalesModel.setRunningProcess(.recordingScale)
-                        //showScaleStart()
+                        activeSheet = .leadingIn
+                        //scalesModel.setRunningProcess(.recordingScale)
                     }
                 }
             }
             .padding()
             
-            if scalesModel.resultPublished != nil {
+            if scalesModel.recordedAudioFile != nil {
                 VStack {
                     Button(action: {
                         showHelp("Hear Recording")
@@ -339,11 +378,9 @@ struct ScalesView: View {
                         }
                     }
                     Text("")
-
                     Button("Hear\nRecording") {
                         AudioManager.shared.playRecordedFile()
                     }
-
                 }
                 .padding()
             }
@@ -495,29 +532,19 @@ struct ScalesView: View {
                 }
                 
                 if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
-                    //Spacer()
                     StopProcessView()
-                    //Spacer()
                 }
                 else {
-                    if let userMessage = scalesModel.userMessage {
-                        Text(userMessage).padding().commonFrameStyle()
-                    }
-                    
-                    if let result = scalesModel.resultPublished {
-                        HStack {
-                            ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
-//                            ZStack {
-//                                CoinStackView(totalCoins: coinBank.totalCoinsInBank, compactView: true)
-//                                VStack {
-//                                    Text("")
-//                                    Text(coinBank.getCoinsStatusMsg()).padding()
-//                                    Spacer()
-//                                }
-//                            }
-                        }
-                        .commonFrameStyle()
-                    }
+//                    if let userMessage = scalesModel.userMessage {
+//                        Text(userMessage).padding().commonFrameStyle()
+//                    }
+//                    
+//                    if let result = scalesModel.resultPublished {
+//                        HStack {
+//                            ResultView(keyboardModel: PianoKeyboardModel.shared, result: result)
+//                        }
+//                        .commonFrameStyle()
+//                    }
                     SelectActionView().commonFrameStyle()
                 }
                 
@@ -604,7 +631,7 @@ struct ScalesView: View {
         }
         //.navigationBarTitle("\(activityMode.name)", displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
-
+        
         .sheet(item: $activeSheet) { item in
             switch item {
             case .emailRecording:
@@ -619,9 +646,17 @@ struct ScalesView: View {
                         }
                     }
                 }
+            case .leadingIn:
+            LeadingInView()
+                    .presentationDetents([
+                        .height(20),   // 100 points
+                        .fraction(0.2), // 20% of the available height
+                        .medium,        // Takes up about half the screen
+                        .large]         // The previous default size
+                    )
+                    .edgesIgnoringSafeArea(.all)
             }
         }
-
     }
 }
 
