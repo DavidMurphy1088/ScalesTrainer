@@ -225,7 +225,7 @@ struct HomeView: View {
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
         .onAppear() {
-           PracticeJournalOld.shared = PracticeJournalOld(scaleGroup: MusicBoard.options[5])
+           //PracticeJournalOld.shared = PracticeJournalOld(scaleGroup: MusicBoard.options[5])
         }
     }
 }

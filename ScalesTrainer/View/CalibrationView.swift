@@ -3,7 +3,7 @@ import SwiftUI
 public struct CalibrationView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
-    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared
+    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedSingle
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilter:Double = 0
@@ -21,13 +21,14 @@ public struct CalibrationView: View {
         //self.scalesModel.selectedOctavesIndex = octaves-1
         self.scalesModel.selectedHandIndex = hand
         scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
-        scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand))
-        PianoKeyboardModel.shared.redraw()
+        scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand,
+                                                                 minTempo: 90, dynamicType: .mf, articulationType: .legato))
+        PianoKeyboardModel.sharedSingle.redraw()
         //self.amplitudeFilter = Settings.shared.amplitudeFilter
     }
     
     func getScaleName() -> String {
-        let name = scalesModel.scale.getScaleName()
+        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true)
         return name
     }
     public var body1: some View {
@@ -231,7 +232,7 @@ public struct CalibrationView: View {
         .onAppear() {
             let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
             setScale(octaves: octaves, hand: 0)
-            PianoKeyboardModel.shared.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedSingle.resetKeysWerePlayedState()
             ScalesModel.shared.selectedHandIndex = 0
             self.amplitudeFilter = Settings.shared.amplitudeFilter
         }
@@ -239,7 +240,7 @@ public struct CalibrationView: View {
             self.audioManager.stopRecording()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.shared)
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedSingle)
         }
     }
 }

@@ -6,13 +6,32 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var noteToPlay = 0
     var lastNoteValue:Double? = nil
     let audioManager = AudioManager.shared
-    let keyboard = PianoKeyboardModel.shared
+    let keyboard = PianoKeyboardModel.sharedSingle
     let scalesModel = ScalesModel.shared
+    let metronome:MetronomeModel
+    let ticker:MetronomeTicker
+    
+    init(metronome:MetronomeModel) {
+        self.metronome = metronome
+        self.ticker = MetronomeTicker(metronome: metronome)
+    }
     
     func metronomeStart() {
+        ticker.metronomeStart()
     }
     
     func metronomeTicked(timerTickerNumber: Int) -> Bool {
+        ///Wait for lead in if specified
+        if Settings.shared.metronomeOn {
+            let _ = ticker.metronomeTicked(timerTickerNumber: timerTickerNumber)
+            if Settings.shared.scaleLeadInBarCount > 0 {
+                let bar = timerTickerNumber / 4
+                if bar < Settings.shared.scaleLeadInBarCount {
+                    return false
+                }
+            }
+        }
+        
         let sampler = audioManager.keyboardMidiSampler
 
         ///Playing the app's scale

@@ -47,7 +47,7 @@ struct BoardGradesView: View {
             }
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
             .onAppear() {
-                isOn[3] = true
+                isOn[1] = true
             }
             .onDisappear() {
                 if let grade = isOn.firstIndex(where: { $0 == true }) {

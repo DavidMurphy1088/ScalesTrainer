@@ -20,7 +20,7 @@ enum RunningProcess {
     case leadingTheScale
     case recordingScale
     case recordingScaleForAssessment
-    case leadingIn
+    //case leadingIn
     case recordScaleWithFileData
     case syncRecording
     case playingAlongWithScale
@@ -48,8 +48,8 @@ enum RunningProcess {
             return "Synchronize Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
-        case .leadingIn:
-            return "Leading In"
+//        case .leadingIn:
+//            return "Leading In"
         }
     }
 }
@@ -63,8 +63,8 @@ enum SpinState {
 
 public class ScalesModel : ObservableObject {
     
-    static public var shared = ScalesModel(musicBoardGrade:
-                                            MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
+    static public var shared = ScalesModel() //musicBoardGrade:
+                                            //MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
     
     private(set) var scale:Scale
     
@@ -130,7 +130,7 @@ public class ScalesModel : ObservableObject {
         self.resultInternal = result
         DispatchQueue.main.async {
             self.resultPublished = result
-            PianoKeyboardModel.shared.redraw()
+            PianoKeyboardModel.sharedSingle.redraw()
         }
         let coinBank = CoinBank.shared
         if result != nil {
@@ -167,8 +167,8 @@ public class ScalesModel : ObservableObject {
     func setSelectedDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.shared.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
-            PianoKeyboardModel.shared.redraw()
+            PianoKeyboardModel.sharedSingle.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
+            PianoKeyboardModel.sharedSingle.redraw()
         }
     }
     
@@ -225,11 +225,13 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    init(musicBoardGrade:MusicBoardGrade) {
-        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0)
+    //init(musicBoardGrade:MusicBoardGrade) {
+    init() {
+        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0,
+                           minTempo: 90, dynamicType: .mf, articulationType: .legato)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
-            PianoKeyboardModel.shared.configureKeyboardForScale(scale: self.scale)
+            PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: self.scale)
         }
     }
     
@@ -237,11 +239,6 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopRecording()
-//            if [.recordingScale, .recordScaleWithFileData].contains(self.runningProcess) {
-//                if let statsSet = processTapEvents(fromProcess: self.runningProcess, saveTapEventsToFile: self.runningProcess == .recordingScale) {
-//                    setTapHandlerEventSet(statsSet, publish: true)
-//                }
-//            }
             if self.runningProcess == .syncRecording {
                 DispatchQueue.main.async {
                     self.synchedIsPlaying = false
@@ -265,7 +262,7 @@ public class ScalesModel : ObservableObject {
         }
         MetronomeModel.shared.isTiming = false
         
-        let keyboard = PianoKeyboardModel.shared
+        let keyboard = PianoKeyboardModel.sharedSingle
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
@@ -295,42 +292,36 @@ public class ScalesModel : ObservableObject {
             }
         }
         
-        if [RunningProcess.playingAlongWithScale].contains(setProcess)  {
-            let metronome = MetronomeModel.shared
-            metronome.isTiming = true
-            DispatchQueue.main.async {
-                self.runningProcess = .leadingIn
-                self.runningProcessPublished = .leadingIn
-            }
-            doLeadIn(instruction: "Play along with the scale", leadInDone: {
-                DispatchQueue.main.async {
-                    self.runningProcess = .playingAlongWithScale
-                    self.runningProcessPublished = .playingAlongWithScale
-                }
-                metronome.startTimer(notified: HearScalePlayer(), onDone: {
-                })
-            })
-        }
-        
-        if [RunningProcess.recordingScale].contains(setProcess) {
-            self.audioManager.startRecordingMicToRecord()
+//        if [RunningProcess.playingAlongWithScale].contains(setProcess)  {
 //            let metronome = MetronomeModel.shared
 //            metronome.isTiming = true
 //            DispatchQueue.main.async {
-//                self.showLeadInPopup = true
-//                self.runningProcess = .leadingIn
-//                self.runningProcessPublished = .leadingIn
+//                //self.runningProcess = .leadingIn
+//                //self.runningProcessPublished = .leadingIn
 //            }
-//                //usleep(1000000 * UInt32(2.0))
-//                self.doLeadIn(instruction: "Play along with the scale", leadInDone: {
-//                    DispatchQueue.main.async {
-//                        self.audioManager.startRecordingMicToRecord()
-//                        self.runningProcess = .recordingScale
-//                        self.runningProcessPublished = .recordingScale
-//                        self.showLeadInPopup = false
-//                    }
-//                })
-//            //}
+////            doLeadIn(instruction: "Play along with the scale", leadInDone: {
+////                DispatchQueue.main.async {
+////                    self.runningProcess = .playingAlongWithScale
+////                    self.runningProcessPublished = .playingAlongWithScale
+////                }
+////                metronome.startTimer(notified: HearScalePlayer(), onDone: {
+////                })
+////            })
+//        }
+        
+        if [RunningProcess.playingAlongWithScale].contains(setProcess) {
+            let metronome = MetronomeModel.shared
+            metronome.isTiming = true
+            metronome.startTimer(notified: HearScalePlayer(metronome: metronome), onDone: {
+            })
+        }
+
+        if [RunningProcess.recordingScale].contains(setProcess) {
+            self.audioManager.startRecordingMicToRecord()
+            let metronome = MetronomeModel.shared
+            metronome.isTiming = true
+            metronome.startTimer(notified: MetronomeTicker(metronome: metronome), onDone: {
+            })
         }
         
         if [RunningProcess.syncRecording].contains(setProcess)  {
@@ -371,44 +362,44 @@ public class ScalesModel : ObservableObject {
 
             if setProcess == .recordingScaleForAssessment {
                 DispatchQueue.main.async {
-                    self.runningProcess = .leadingIn
+                    //self.runningProcess = .leadingIn
                 }
-                doLeadIn(instruction: "Record your scale", leadInDone: {
-                    //😡😡 cannot record and tap concurrenlty
-                    //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
-                    DispatchQueue.main.async {
-                        self.runningProcess = RunningProcess.recordingScaleForAssessment
-                    }
-                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
-                })
+//                doLeadIn(instruction: "Record your scale", leadInDone: {
+//                    //😡😡 cannot record and tap concurrenlty
+//                    //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+//                    DispatchQueue.main.async {
+//                        self.runningProcess = RunningProcess.recordingScaleForAssessment
+//                    }
+//                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
+//                })
             }
         }
     }
 
-    func doLeadIn(instruction:String, leadInDone:@escaping ()->Void) {
-        let scaleLeadIn = ScaleLeadIn()
-        if Settings.shared.scaleLeadInBarCount > 0 {
-            ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
-            audioManager.blockTaps = true
-            //self.setProcessInstructions(scaleLeadIn.getInstructions())
-            MetronomeModel.shared.startTimer(notified: scaleLeadIn, onDone: {                
-                self.setProcessInstructions(instruction)
-                self.audioManager.blockTaps = false
-                leadInDone()
-            })
-        }
-        else {
-            leadInDone()
-            self.setProcessInstructions("Start recording your scale")
-        }
-    }
+//    func doLeadIn(instruction:String, leadInDone:@escaping ()->Void) {
+//        let scaleLeadIn = MetronomeTicker(metronome: MetronomeModel.shared)
+//        if Settings.shared.scaleLeadInBarCount > 0 {
+//            ///Dont let the metronome ticks fire erroneous frequencies during the lead-in.
+//            audioManager.blockTaps = true
+//            //self.setProcessInstructions(scaleLeadIn.getInstructions())
+//            MetronomeModel.shared.startTimer(notified: scaleLeadIn, onDone: {                
+//                self.setProcessInstructions(instruction)
+//                self.audioManager.blockTaps = false
+//                leadInDone()
+//            })
+//        }
+//        else {
+//            leadInDone()
+//            self.setProcessInstructions("Start recording your scale")
+//        }
+//    }
 
     ///Allow user to follow notes hilighted on the keyboard
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async { [self] in
             let semaphore = DispatchSemaphore(value: 0)
-            let keyboard = PianoKeyboardModel.shared
+            let keyboard = PianoKeyboardModel.sharedSingle
             var scaleIndex = 0
             var cancelled = false
             
@@ -529,30 +520,32 @@ public class ScalesModel : ObservableObject {
     }
     
     func setScale(scale:Scale) {
-        Logger.shared.log(self, "setScale to:\(scale.getScaleName()) from:\(self.scale.getScaleName())")
+        Logger.shared.log(self, "setScale to:\(scale.getScaleName(handFull: false, octaves: false)) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
         let score = self.createScore(scale: scale)
         self.setScaleAndScore(scale: scale, score: score, ctx: "setScale")
     }
 
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int, ctx:String) {
-        Logger.shared.log(self, "setScaleByRootAndType to:root:\(scaleRoot.name) type:\(scaleType.description)  ctx:\(ctx) from:\(self.scale.getScaleName())")
+        Logger.shared.log(self, "setScaleByRootAndType to:root:\(scaleRoot.name) type:\(scaleType.description)  ctx:\(ctx) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           //scaleType: Scale.getScaleType(name: scaleType.description),
                           scaleType: scaleType,
                            octaves: octaves,
-                           hand: hand)
+                           hand: hand,
+                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
         let score = self.createScore(scale: scale)
         self.setScaleAndScore(scale: scale, score: score, ctx: "setKeyAndScale")
         self.setResultInternal(nil, "setScaleByRootAndType")
-        PianoKeyboardModel.shared.redraw()
+        PianoKeyboardModel.sharedSingle.redraw()
     }
     
     func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
-        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName()) ctx:\(ctx)")
+        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName(handFull: false, octaves: false)) ctx:\(ctx)")
         self.scale = scale
-        PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
+        PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: scale)
+        PianoKeyboardModel.sharedDouble.configureKeyboardForScale(scale: scale)
         self.setSelectedDirection(0)
-        PianoKeyboardModel.shared.redraw()
+        PianoKeyboardModel.sharedSingle.redraw()
 
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
@@ -563,15 +556,15 @@ public class ScalesModel : ObservableObject {
     }
     
     func setKeyboard() {
-        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName())")
+        Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName(handFull: false, octaves: false))")
         var scale = self.scale
         scale.octaves = 4
         //scale.scaleType = .major
         self.scale = scale
-        PianoKeyboardModel.shared.configureKeyboardForScale(scale: scale)
+        PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: scale)
         self.setSelectedDirection(0)
-        PianoKeyboardModel.shared.unmapScaleFingersToKeyboard()
-        PianoKeyboardModel.shared.redraw()
+        PianoKeyboardModel.sharedSingle.unmapScaleFingersToKeyboard()
+        PianoKeyboardModel.sharedSingle.redraw()
 
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
@@ -589,7 +582,7 @@ public class ScalesModel : ObservableObject {
         
         let analyser = TapsEventsAnalyser(scale: self.scale,
                                           recordedTapEventSets: tapEventSets,
-                                          keyboard: PianoKeyboardModel.shared,
+                                          keyboard: PianoKeyboardModel.sharedSingle,
                                           fromProcess: self.runningProcess)
         let (bestResult, bestEvents) = analyser.getBestResult()
         
@@ -622,7 +615,7 @@ public class ScalesModel : ObservableObject {
         ///Ensure keyboard visible key statuses are updated during events apply
         var finalEventStatusSet:TapStatusRecordSet? = nil
         
-        let keyboard = PianoKeyboardModel.shared
+        let keyboard = PianoKeyboardModel.sharedSingle
         if let result = bestResult {
             if let eventSet = bestEvents {
                 
@@ -736,7 +729,7 @@ public class ScalesModel : ObservableObject {
         let minute = calendar.component(.minute, from: Date())
         let device = UIDevice.current
         let modelName = device.model
-        var keyName = scale.getScaleName()
+        var keyName = scale.getScaleName(handFull: false, octaves: true)
         keyName = keyName.replacingOccurrences(of: " ", with: "")
         var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
         fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[0].midi) + "_" + modelName

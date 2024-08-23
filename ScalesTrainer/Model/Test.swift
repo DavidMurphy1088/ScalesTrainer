@@ -83,7 +83,7 @@ class FFTAnalyzer: ObservableObject {
         
         self.ampTap = AmplitudeTap(mixerC, bufferSize: bufferSize) {amp in
             if amp > 0.005 {
-                let timeStamp = self.getTime()
+                //let timeStamp = self.getTime()
                 self.showFFT = 12
             }
         }
@@ -103,8 +103,8 @@ class FFTAnalyzer: ObservableObject {
             if self.showFFT > 0 {
                 if midis[0] >= 60 {
                     if Set(midis).count <= 2 {
-                        let timeStamp = self.getTime()
-                        let topFreqInt = topFreqs.map { Int($0) }
+                        //let timeStamp = self.getTime()
+                        //let topFreqInt = topFreqs.map { Int($0) }
                         //let mf = self.mostFreqInArray(inArr: midis)
                         self.showFFT -= 1
                         DispatchQueue.main.async {

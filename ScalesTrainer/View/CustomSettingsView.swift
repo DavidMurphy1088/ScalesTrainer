@@ -14,7 +14,8 @@ struct CustomSettingsView: View {
     @State var leadInBarCount = 0
     @State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
-
+    @State var metronomeOn = false
+    
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
@@ -37,6 +38,36 @@ struct CustomSettingsView: View {
                 }
             }
             
+            ///Metronome on
+            Spacer()
+            HStack {
+                Spacer()
+                Toggle(isOn: $metronomeOn) {
+                    Text("Metronome On").font(.title2).padding(0)
+                }
+                .onChange(of: metronomeOn, {
+                    settings.metronomeOn = metronomeOn
+                })
+                Spacer()
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.30)
+        
+            ///Lead in count
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Scale Lead in Count")).font(.title2).padding(0)
+                Picker("Select Value", selection: $leadInBarCount) {
+                    ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+                        Text("\(scalesModel.scaleLeadInCounts[index])")
+                    }
+                }
+                .disabled(!self.metronomeOn)
+                .pickerStyle(.menu)
+                .onChange(of: leadInBarCount, {
+                    settings.scaleLeadInBarCount = leadInBarCount
+                })
+            }
+            
             ///Backing sampler
             Spacer()
             HStack {
@@ -52,6 +83,7 @@ struct CustomSettingsView: View {
                     AudioManager.shared.resetAudioKit()
                 })
             }
+            
             ///Score values
             Spacer()
             HStack {
@@ -65,21 +97,6 @@ struct CustomSettingsView: View {
                 .pickerStyle(.menu)
                 .onChange(of: scaleNoteValue, {
                     settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
-                })
-            }
-            
-            ///Lead in
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Scale Lead in Count")).font(.title2).padding(0)
-                Picker("Select Value", selection: $leadInBarCount) {
-                    ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                        Text("\(scalesModel.scaleLeadInCounts[index])")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: leadInBarCount, {
-                    settings.scaleLeadInBarCount = leadInBarCount
                 })
             }
             
@@ -166,11 +183,10 @@ struct CustomSettingsView: View {
                     PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
                     self.keyColor = Settings.shared.getKeyColor()
                     self.backingPresetNumber = settings.backingSamplerPreset
+                    self.metronomeOn = settings.metronomeOn
                 }
-
             }
         }
     }
-    
 }
 

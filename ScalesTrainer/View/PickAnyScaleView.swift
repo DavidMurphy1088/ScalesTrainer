@@ -34,7 +34,8 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .major
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0,
+                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         else {
             switch typeIndexMinor {
@@ -60,7 +61,8 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .harmonicMinor
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0,
+                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         ScalesModel.shared.setScale(scale: scale)
         return scale
@@ -102,7 +104,7 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: true)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text("  Practice - \(scale.getScaleName(short: true))  ").font(.title2).padding()
+                                Text("  Practice - \(scale.getScaleName(handFull: true, octaves: false))  ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -137,7 +139,7 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: false)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice - \(scale.getScaleName(short: true)) ").font(.title2).padding()
+                                Text(" Practice - \(scale.getScaleName(handFull: true, octaves: false)) ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }

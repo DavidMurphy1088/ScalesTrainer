@@ -269,21 +269,21 @@ class AudioRecorder: ObservableObject {
 
     }
 }
-struct TestView1: View {
-    let scale:PracticeJournalScale
-    
-    init() {
-        let model = ScalesModel.shared
-        let root = ScaleRoot(name: "C")
-        let scaleType = ScaleType.major
-        scale = PracticeJournalScale(scaleRoot: root, scaleType: scaleType)
-        model.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: 1, hand: 0, ctx: "TestView init")
-        model.setRunningProcess(.none)
-    }
-    var body: some View {
-        ScalesView()
-    }
-}
+//struct TestView1: View {
+//    let scale:PracticeJournalScale
+//    
+//    init() {
+//        let model = ScalesModel.shared
+//        let root = ScaleRoot(name: "C")
+//        let scaleType = ScaleType.major
+//        scale = PracticeJournalScale(scaleRoot: root, scaleType: scaleType)
+//        model.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: 1, hand: 0, ctx: "TestView init")
+//        model.setRunningProcess(.none)
+//    }
+//    var body: some View {
+//        ScalesView()
+//    }
+//}
 
 struct TestView: View {
     @ObservedObject var audioRecorder = AudioRecorder()

@@ -16,10 +16,10 @@ class MIDIModel {
         let midiInputCallback: MIDIReadProc = { packetList, srcConnRefCon, connRefCon in
             let packets = packetList.pointee
             print("DataIN", Date())
-            for packet in packets {
+            //for packet in packets {
                 //let midiData = packet.data
                 //print( "\(self.midiMessNum)  MIDIData", midiData)
-            }
+            //}
         }
         
         MIDIInputPortCreate(midiClient, "Input Port" as CFString, midiInputCallback, nil, &midiInPort)

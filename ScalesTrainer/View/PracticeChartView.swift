@@ -1,8 +1,7 @@
 import SwiftUI
 
-
 struct CellView: View {
-    @Binding var cell: PracticeCell
+    @Binding var cellScale: Scale
     ///let description:String
     @State private var showingDetail = false
     var cellWidth: CGFloat
@@ -35,7 +34,7 @@ struct CellView: View {
     }
     
     func getDescr() -> String {
-        return self.cell.scaleRoot.name + " " + self.cell.scaleType.description
+        return self.cellScale.scaleRoot.name + " " + self.cellScale.scaleType.description
     }
     
     var body: some View {
@@ -47,13 +46,10 @@ struct CellView: View {
 //            }
             if true {
                 Button(action: {
-                    let _ = ScalesModel.shared.setScale(scale: Scale(scaleRoot: cell.scaleRoot,
-                                                                     scaleType: cell.scaleType,
-                                                                     octaves: Settings.shared.defaultOctaves,
-                                                                     hand: cell.hand))
+                    ScalesModel.shared.setScale(scale: cellScale)
                     navigateToScales = true
                 }) {
-                    let label = cell.scaleRoot.name + " " + cell.scaleType.description + ", " + getHandStr(hand: cell.hand)
+                    let label = cellScale.getScaleName(handFull: true, octaves: false) //cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + getHandStr(hand: cellScale.hand)
                     Text(label)
                         .foregroundColor(.blue)
                 }
@@ -63,21 +59,21 @@ struct CellView: View {
                 }.frame(width: 0.0)
             }
 
-            VStack {
-                HStack {
-                    Text("Progress")
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .stroke(Color.gray, lineWidth: 1)
-                            .frame(width: barWidth(1.0), height: barHeight)
-
-                        Rectangle()
-                            .fill(getColor())
-                            .frame(width: barWidth(progress()), height: barHeight)
-                    }
-                }
-            }
-            .padding(self.padding)
+//            VStack {
+//                HStack {
+//                    Text("Progress")
+//                    ZStack(alignment: .leading) {
+//                        Rectangle()
+//                            .stroke(Color.gray, lineWidth: 1)
+//                            .frame(width: barWidth(1.0), height: barHeight)
+//
+//                        Rectangle()
+//                            .fill(getColor())
+//                            .frame(width: barWidth(progress()), height: barHeight)
+//                    }
+//                }
+//            }
+//            .padding(self.padding)
             
             HStack {
                 Button(action: {
@@ -89,13 +85,11 @@ struct CellView: View {
                 .padding(.vertical, 0)
                 .padding(.horizontal)
                 Text("    ")
-                Toggle(isOn: $cell.selected) {
-                    Text("Completed").foregroundColor(.black).padding(.horizontal, 0).padding(.vertical, 0)
-                }
+//                Toggle(isOn: $cell.selected) {
+//                    Text("Completed").foregroundColor(.black).padding(.horizontal, 0).padding(.vertical, 0)
+//                }
             }
             .padding(self.padding)
-            //.border(.red)
-
         }
         .frame(width: cellWidth, height: cellHeight) // Adjusted dimensions for cells
         .background(Color.white)
@@ -107,7 +101,7 @@ struct CellView: View {
         .sheet(isPresented: $showingDetail) {
             VStack {
 
-                let label = cell.scaleRoot.name + " " + cell.scaleType.description + ", " + (cell.hand == 0 ? "Right Hand" : "Left Hand")
+                let label = cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + (cellScale.hand == 0 ? "Right Hand" : "Left Hand")
                 Text(label).font(.title).foregroundColor(.black)
                 Text("Minimum ♩=70, mf, legato").font(.title2).foregroundColor(.black)
                 
@@ -171,11 +165,11 @@ struct PracticeChartView: View {
             let screenWidth = UIScreen.main.bounds.width //geometry.size.width
             let screenHeight = UIScreen.main.bounds.height
             let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
-            let cellHeight: CGFloat = screenHeight / 9.0
+            let cellHeight: CGFloat = screenHeight / 12.0
             let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
             
             VStack {
-                Text("\(Settings.shared.getName()) Practice Chart").font(.title).foregroundColor(.blue).commonFrameStyle().padding().frame(width: cellWidth * 3)
+                TitleView(screenName: "Practice Chart")
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
                         
@@ -203,8 +197,7 @@ struct PracticeChartView: View {
                         ForEach(0..<practiceChart.rows, id: \.self) { row in
                             HStack(spacing: 0) {
                                 ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(cell: $practiceChart.cells[row][column],
-                                             
+                                    CellView(cellScale: $practiceChart.cells[row][column],
                                              cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
                                 }

@@ -116,7 +116,7 @@ public struct ClassicStyle {
                     .path(in: rect)
                 
                 ///Hilight the key if in following keys mode
-                let middle = 0.9
+                //let middle = 0.9
                 let gradient = Gradient(colors: [
                     keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     //Color(red: middle * 0.6, green: middle, blue: middle),

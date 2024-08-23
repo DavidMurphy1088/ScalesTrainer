@@ -14,7 +14,7 @@
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
-		79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */; };
+		79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */; };
 		79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* ResultView.swift */; };
 		79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */; };
 		79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */; };
@@ -109,7 +109,7 @@
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
-		79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleLeadIn.swift; sourceTree = "<group>"; };
+		79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTicker.swift; sourceTree = "<group>"; };
 		79312DB02C0B2B7E005FDE8B /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSliceEntry.swift; sourceTree = "<group>"; };
 		79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIsUnderwayView.swift; sourceTree = "<group>"; };
@@ -394,7 +394,7 @@
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
 				79552FB52BDB975D00A27531 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
-				79312DAC2C09A13B005FDE8B /* ScaleLeadIn.swift */,
+				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
@@ -565,7 +565,7 @@
 				79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */,
 				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
 				799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */,
-				79312DAD2C09A13B005FDE8B /* ScaleLeadIn.swift in Sources */,
+				79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				799381792C75D1A400734FDE /* CustomSettingsView.swift in Sources */,
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,

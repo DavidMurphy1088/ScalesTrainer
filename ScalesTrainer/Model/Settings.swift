@@ -36,6 +36,7 @@ public class Settings : Codable  {
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
+    var metronomeOn:Bool = false
     
     private var wasLoaded = false
     
@@ -66,6 +67,7 @@ public class Settings : Codable  {
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
+        str += " MetronomeOn:\(self.metronomeOn)"
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.recordDataMode)"
         str += " FirstName:\(self.firstName)"
@@ -90,7 +92,7 @@ public class Settings : Codable  {
     func getMusicBoardAndGrade() -> MusicBoardGrade? {
         if let board = MusicBoard.options.first(where: { $0.name == self.board}) {
             let board = MusicBoard(name: board.name, fullName: board.fullName, imageName: board.imageName)
-            return MusicBoardGrade(board: board)
+            return MusicBoardGrade(board: board, grade: self.grade)
         }
         return nil
     }
@@ -117,6 +119,7 @@ public class Settings : Codable  {
                     self.firstName = loaded.firstName
                     self.board = loaded.board
                     self.grade = loaded.grade
+                    self.metronomeOn = loaded.metronomeOn
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue

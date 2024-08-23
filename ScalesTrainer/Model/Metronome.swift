@@ -11,14 +11,14 @@ protocol MetronomeTimerNotificationProtocol {
     func metronomeStop()
 }
 
-class MetronomeModel {
+class MetronomeModel:ObservableObject {
+    @Published var timerTickerCountPublished = 0
+    private var timerTickerCount = 0
+    
     public static let shared = MetronomeModel()
-
     var isTiming = false
-
     private let scalesModel = ScalesModel.shared
     private var audioPlayers:[AudioPlayer] = []
-    private var timerTickerNumber = 0
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
     private var metronomeTimerNotificationProtocol:MetronomeTimerNotificationProtocol? = nil
@@ -43,6 +43,18 @@ class MetronomeModel {
         }
     }
     
+    func isLeadingIn() -> Bool {
+        if !Settings.shared.metronomeOn {
+            return false
+        }
+
+        if Settings.shared.scaleLeadInBarCount == 0 {
+            return false
+        }
+        let bar = self.timerTickerCountPublished / 4
+        return bar < Settings.shared.scaleLeadInBarCount
+    }
+    
     func getTempoString(_ tempo:Int) -> String {
 //        if tempo > 120 {
 //            return "\u{266A}=\(tempo / 2)"
@@ -61,23 +73,14 @@ class MetronomeModel {
             notified.metronomeStop()
         }
         metronomeTimerNotificationProtocol = nil
+        timerTickerCount = 0
     }
-    
-//    private func stopTicking(notified: MetronomeTimerNotificationProtocol) {
-//        notified.metronomeStop()
-//        DispatchQueue.main.async { [self] in
-//            self.isTiming = false
-//        }
-////        for player in self.audioPlayers {
-////            audioManager.mixer?.removeInput(player)
-////        }
-//    }
         
     public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
         for player in self.audioPlayers {
             audioManager.mixer?.addInput(player)
         }
-        timerTickerNumber = 0
+        timerTickerCount = 0
         var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
         delay = delay * Settings.shared.getSettingsNoteValueFactor()
         notified.metronomeStart()
@@ -110,23 +113,20 @@ class MetronomeModel {
         DispatchQueue.global(qos: .background).async { [self] in
             self.isTiming = true
             while self.isTiming {
-                let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerCount)
                 if stop {
-                    //DispatchQueue.main.async { [self] in
                     self.isTiming = false
                     usleep(useconds_t(delay / 1.0))
                     break
                 }
                 else {
-                    self.timerTickerNumber += 1
+                    self.timerTickerCount += 1
+                    DispatchQueue.main.async {
+                        self.timerTickerCountPublished = self.timerTickerCount
+                    }
                     usleep(useconds_t(delay))
                 }
             }
-            ///Let the last 'played' key show for a short time
-            ///Following ruins lead in for play along
-//            let endDelay = (1.2) * 1000000
-//            usleep(useconds_t(endDelay))
-//            self.stopTicking(notified: notified)
             if let onDone = onDone {
                 onDone()
             }

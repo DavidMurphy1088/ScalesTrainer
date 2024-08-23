@@ -55,9 +55,6 @@
     "%@\n♩=90" : {
 
     },
-    "%@ Practice Chart" : {
-
-    },
     "%@, Grade %@" : {
       "localizations" : {
         "en" : {
@@ -137,9 +134,6 @@
     "Choose your keyboard colour " : {
 
     },
-    "Completed" : {
-
-    },
     "Correct Notes:%lld Errors:%lld" : {
       "localizations" : {
         "en" : {
@@ -178,9 +172,6 @@
 
     },
     "Follow The Scale" : {
-
-    },
-    "Go" : {
 
     },
     "Go to \n Scale" : {
@@ -227,13 +218,7 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
-    "Lead In" : {
-
-    },
     "Lead the Scale" : {
-
-    },
-    "Leading In" : {
 
     },
     "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
@@ -256,6 +241,9 @@
       }
     },
     "Major Scales" : {
+
+    },
+    "Metronome On" : {
 
     },
     "Minimum ♩=70, mf, legato" : {
@@ -282,7 +270,7 @@
     "Not in Scale" : {
 
     },
-    "Octaves:" : {
+    "Octaves" : {
 
     },
     "Piano Calibration" : {
@@ -298,9 +286,6 @@
 
     },
     "Preliminary" : {
-
-    },
-    "Progress" : {
 
     },
     "READ_TEST_DATA" : {
@@ -345,9 +330,6 @@
 
     },
     "Scale Root:" : {
-
-    },
-    "Scale Start" : {
 
     },
     "Scale Type:" : {

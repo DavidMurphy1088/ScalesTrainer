@@ -5,7 +5,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
     var direction = 0
     var nextKeyToPlay = 0
     var maxMidi = 0
-    let keyboard = PianoKeyboardModel.shared
+    let keyboard = PianoKeyboardModel.sharedSingle
     
     func metronomeStart() {
         for i in 0..<keyboard.pianoKeyModel.count {

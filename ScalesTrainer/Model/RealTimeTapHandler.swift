@@ -46,7 +46,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        let keyboardModel = PianoKeyboardModel.shared
+        let keyboardModel = PianoKeyboardModel.sharedSingle
         let scalesModel = ScalesModel.shared
 
         var frequency:Float

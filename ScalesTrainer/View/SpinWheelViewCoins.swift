@@ -91,7 +91,7 @@ struct SpinWheelViewCoins: View {
 
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
-        for scale in boardGrade.scales {
+        for scale in boardGrade.getScales() {
             scaleRoots.insert(scale.scaleRoot.name)
         }
         return Array(scaleRoots).sorted()
@@ -99,7 +99,7 @@ struct SpinWheelViewCoins: View {
     
     func getTypes() -> [ScaleType] {
         var scaleTypes:Set<ScaleType> = []
-        for scale in boardGrade.scales  {
+        for scale in boardGrade.getScales() {
             scaleTypes.insert(scale.scaleType)
         }
 
@@ -132,9 +132,9 @@ struct SpinWheelViewCoins: View {
         return msg
     }
     
-    func log4(index:Int, group: MusicBoard, scale: PracticeJournalScale) -> Int {
-        return 0
-    }
+//    func log4(index:Int, group: MusicBoard, scale: PracticeJournalScale) -> Int {
+//        return 0
+//    }
     
     var body: some View {
         ZStack {
@@ -253,7 +253,7 @@ struct SpinWheelViewCoins: View {
                         else {
                             let scale = scalesModel.scale
                             NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
-                                Text(" Go To Scale \(scale.getScaleName()) - Good Luck 😊").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                Text(" Go To Scale \(scale.getScaleName(handFull: true, octaves: false)) - Good Luck 😊").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }
@@ -321,7 +321,8 @@ struct SpinWheelViewCoins: View {
 
             let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]), 
                               scaleType: getTypes()[self.selectedScaleType],
-                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand ])
+                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
+                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
             let _ = ScalesModel.shared.setScale(scale: scale)
         }
     }

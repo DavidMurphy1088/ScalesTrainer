@@ -2,24 +2,59 @@ import Foundation
 
 class MusicBoardGrade {
     let board:MusicBoard
-    var scales:[PracticeJournalScale] = []
-    
-    init(board:MusicBoard) {
-        self.board = board
-        loadScales()
-    }
-    
-    func loadScales() {
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor))
-        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor))
+    let grade:String
 
+    init(board:MusicBoard, grade:String) {
+        self.board = board
+        self.grade = grade
     }
+    
+    func getScales() -> [Scale] {
+        var scales:[Scale] = []
+        let octaves = 1
+        let minTempo = 70
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, octaves: octaves, hand: 0,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, octaves: octaves, hand: 1,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, octaves: octaves, hand: 0,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, octaves: octaves, hand: 1,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, octaves: octaves, hand: 0,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, octaves: octaves, hand: 1,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, octaves: octaves, hand: 0,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, octaves: octaves, hand: 1,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .contraryMotion, octaves: octaves, hand: 2,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, octaves: octaves, hand: 2,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+
+        ///Are we doing broken chords - are they scales? Maybe only required for Trinity
+//        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, octaves: octaves, hand: 0,
+//                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+//        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, octaves: octaves, hand: 1,
+//                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+
+        return scales
+    }
+//    func loadScales() {
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor))
+//        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor))
+//
+//    }
 
 //    func loadScales1() {
 //        scales.append(PracticeJournalScale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major))
@@ -74,6 +109,6 @@ class MusicBoard : Identifiable {
         self.name = name
         self.imageName = imageName
         self.fullName = fullName
-        self.grades.append(MusicBoardGrade(board: self))
+        self.grades.append(MusicBoardGrade(board: self, grade: "1"))
     }
 }
