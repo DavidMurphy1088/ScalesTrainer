@@ -6,16 +6,14 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardModel: ObservableObject {
-    public static var sharedSingle = PianoKeyboardModel()
-    public static var sharedDouble = PianoKeyboardModel()
+    public static var sharedRightHand = PianoKeyboardModel()
+    public static var sharedLeftHand = PianoKeyboardModel()
     public static var sharedForSettings = PianoKeyboardModel()
 
-    let scalesModel = ScalesModel.shared
-    //@Published
-    public var pianoKeyModel: [PianoKeyModel] = []
     @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
+    let scalesModel = ScalesModel.shared
+    public var pianoKeyModel: [PianoKeyModel] = []
 
-    //public var scale:Scale = ScalesModel.shared.scale
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
     private var ascending = true

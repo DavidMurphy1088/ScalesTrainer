@@ -6,7 +6,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var noteToPlay = 0
     var lastNoteValue:Double? = nil
     let audioManager = AudioManager.shared
-    let keyboard = PianoKeyboardModel.sharedSingle
+    let keyboard = PianoKeyboardModel.sharedRightHand
     let scalesModel = ScalesModel.shared
     let metronome:MetronomeModel
     let ticker:MetronomeTicker

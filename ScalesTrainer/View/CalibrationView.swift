@@ -3,7 +3,7 @@ import SwiftUI
 public struct CalibrationView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
-    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedSingle
+    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedRightHand
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilter:Double = 0
@@ -23,7 +23,7 @@ public struct CalibrationView: View {
         scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
         scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand,
                                                                  minTempo: 90, dynamicType: .mf, articulationType: .legato))
-        PianoKeyboardModel.sharedSingle.redraw()
+        PianoKeyboardModel.sharedRightHand.redraw()
         //self.amplitudeFilter = Settings.shared.amplitudeFilter
     }
     
@@ -232,7 +232,7 @@ public struct CalibrationView: View {
         .onAppear() {
             let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
             setScale(octaves: octaves, hand: 0)
-            PianoKeyboardModel.sharedSingle.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
             ScalesModel.shared.selectedHandIndex = 0
             self.amplitudeFilter = Settings.shared.amplitudeFilter
         }
@@ -240,7 +240,7 @@ public struct CalibrationView: View {
             self.audioManager.stopRecording()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.sharedSingle)
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
         }
     }
 }

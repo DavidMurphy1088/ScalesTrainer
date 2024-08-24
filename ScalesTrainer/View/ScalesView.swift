@@ -83,8 +83,8 @@ struct ScalesView: View {
     let backgroundImage = UIGlobals.shared.getBackground()
     
     init(initialRunProcess:RunningProcess? = nil) {
-        self.pianoKeyboardSingle = PianoKeyboardModel.sharedSingle
-        self.pianoKeyboardDouble = PianoKeyboardModel.sharedDouble
+        self.pianoKeyboardSingle = PianoKeyboardModel.sharedRightHand
+        self.pianoKeyboardDouble = PianoKeyboardModel.sharedLeftHand
         self.initialRunProcess = initialRunProcess
     }
     
@@ -563,7 +563,7 @@ struct ScalesView: View {
         }
         
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.sharedSingle)
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
         }
         
         .sheet(isPresented: $helpShowing) {
@@ -600,7 +600,7 @@ struct ScalesView: View {
         ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
-            PianoKeyboardModel.sharedSingle.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
             pianoKeyboardSingle.keyboardAudioManager = audioManager
             //self.handIndex = scalesModel.scale.hand
             ///Causes setState()

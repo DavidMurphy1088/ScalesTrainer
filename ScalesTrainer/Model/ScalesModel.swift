@@ -130,7 +130,7 @@ public class ScalesModel : ObservableObject {
         self.resultInternal = result
         DispatchQueue.main.async {
             self.resultPublished = result
-            PianoKeyboardModel.sharedSingle.redraw()
+            PianoKeyboardModel.sharedRightHand.redraw()
         }
         let coinBank = CoinBank.shared
         if result != nil {
@@ -167,8 +167,8 @@ public class ScalesModel : ObservableObject {
     func setSelectedDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.sharedSingle.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
-            PianoKeyboardModel.sharedSingle.redraw()
+            PianoKeyboardModel.sharedRightHand.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index)
+            PianoKeyboardModel.sharedRightHand.redraw()
         }
     }
     
@@ -231,7 +231,7 @@ public class ScalesModel : ObservableObject {
                            minTempo: 90, dynamicType: .mf, articulationType: .legato)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
-            PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: self.scale)
+            PianoKeyboardModel.sharedRightHand.configureKeyboardForScale(scale: self.scale)
         }
     }
     
@@ -262,7 +262,7 @@ public class ScalesModel : ObservableObject {
         }
         MetronomeModel.shared.isTiming = false
         
-        let keyboard = PianoKeyboardModel.sharedSingle
+        let keyboard = PianoKeyboardModel.sharedRightHand
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
@@ -399,7 +399,7 @@ public class ScalesModel : ObservableObject {
     func followScaleProcess(onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async { [self] in
             let semaphore = DispatchSemaphore(value: 0)
-            let keyboard = PianoKeyboardModel.sharedSingle
+            let keyboard = PianoKeyboardModel.sharedRightHand
             var scaleIndex = 0
             var cancelled = false
             
@@ -536,16 +536,21 @@ public class ScalesModel : ObservableObject {
         let score = self.createScore(scale: scale)
         self.setScaleAndScore(scale: scale, score: score, ctx: "setKeyAndScale")
         self.setResultInternal(nil, "setScaleByRootAndType")
-        PianoKeyboardModel.sharedSingle.redraw()
+        PianoKeyboardModel.sharedRightHand.redraw()
     }
     
     func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
         Logger.shared.log(self, "setScaleAndScore to:\(scale.getScaleName(handFull: false, octaves: false)) ctx:\(ctx)")
         self.scale = scale
-        PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: scale)
-        PianoKeyboardModel.sharedDouble.configureKeyboardForScale(scale: scale)
+        if [0,2].contains(scale.hand) {
+            PianoKeyboardModel.sharedRightHand.configureKeyboardForScale(scale: scale)
+        }
+        if [1,2].contains(scale.hand) {
+            PianoKeyboardModel.sharedLeftHand.configureKeyboardForScale(scale: scale)
+        }
         self.setSelectedDirection(0)
-        PianoKeyboardModel.sharedSingle.redraw()
+        PianoKeyboardModel.sharedRightHand.redraw()
+        PianoKeyboardModel.sharedLeftHand.redraw()
 
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
@@ -561,10 +566,10 @@ public class ScalesModel : ObservableObject {
         scale.octaves = 4
         //scale.scaleType = .major
         self.scale = scale
-        PianoKeyboardModel.sharedSingle.configureKeyboardForScale(scale: scale)
+        PianoKeyboardModel.sharedRightHand.configureKeyboardForScale(scale: scale)
         self.setSelectedDirection(0)
-        PianoKeyboardModel.sharedSingle.unmapScaleFingersToKeyboard()
-        PianoKeyboardModel.sharedSingle.redraw()
+        PianoKeyboardModel.sharedRightHand.unmapScaleFingersToKeyboard()
+        PianoKeyboardModel.sharedRightHand.redraw()
 
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
@@ -582,7 +587,7 @@ public class ScalesModel : ObservableObject {
         
         let analyser = TapsEventsAnalyser(scale: self.scale,
                                           recordedTapEventSets: tapEventSets,
-                                          keyboard: PianoKeyboardModel.sharedSingle,
+                                          keyboard: PianoKeyboardModel.sharedRightHand,
                                           fromProcess: self.runningProcess)
         let (bestResult, bestEvents) = analyser.getBestResult()
         
@@ -615,7 +620,7 @@ public class ScalesModel : ObservableObject {
         ///Ensure keyboard visible key statuses are updated during events apply
         var finalEventStatusSet:TapStatusRecordSet? = nil
         
-        let keyboard = PianoKeyboardModel.sharedSingle
+        let keyboard = PianoKeyboardModel.sharedRightHand
         if let result = bestResult {
             if let eventSet = bestEvents {
                 
