@@ -84,6 +84,12 @@ class AudioManager {
     }
     
     func resetAudioKit() {
+        if let sampler = self.keyboardMidiSampler {
+            sampler.stop()
+        }
+        if let engine = self.engine {
+            engine.stop()
+        }
         setSession()
         self.engine = AudioEngine()
         guard let engine = self.engine else {

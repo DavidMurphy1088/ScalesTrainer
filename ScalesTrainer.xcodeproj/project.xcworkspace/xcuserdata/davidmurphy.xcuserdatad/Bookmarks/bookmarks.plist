@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>349</string>
+					<string>351</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>348</string>
+					<string>350</string>
 					<key>Timestamp</key>
-					<string>746104593.756809</string>
+					<string>746272133.948428</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>238</string>
+					<string>242</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>237</string>
+					<string>241</string>
 					<key>Timestamp</key>
-					<string>746096207.184924</string>
+					<string>746271829.31292</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>547</string>
+					<string>557</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>546</string>
+					<string>556</string>
 					<key>Timestamp</key>
-					<string>746104888.746189</string>
+					<string>746272353.590616</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -134,6 +134,50 @@
 				<string>                    StopProcessView()
                 }
                 else {
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>22</string>
+					<key>EndingLineNumber</key>
+					<string>85</string>
+					<key>StartingColumnNumber</key>
+					<string>9</string>
+					<key>StartingLineNumber</key>
+					<string>85</string>
+					<key>Timestamp</key>
+					<string>746267982.91398</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/AudioManager.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>resetAudioKit</string>
+				<key>leading</key>
+				<string>    }
+    
+    func </string>
+				<key>trailing</key>
+				<string>() {
+        if let sampler = self.keyboardMidiSampler {
+            sampler.stop()
 </string>
 			</dict>
 			<key>type</key>

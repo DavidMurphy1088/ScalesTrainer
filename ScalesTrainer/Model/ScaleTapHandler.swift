@@ -12,26 +12,23 @@ class ScaleTapHandler : TapHandlerProtocol  {
     let bufferSize:Int
     let amplitudeFilter:Double?
     let scale:Scale?
+    let handIndex: Int
     var eventNumber = 0
     var recordedTapEvents:[TapEvent]
     var lastTappedTime:Date? = nil
     var lastTappedMidi = 0
-//    var uniqueMidisPlayed: Set<Int> = Set()
-//    var startTappingTime:Date? = nil
-//    var startTappingAvgAmplitude:Float? = nil
-//    var startTappingAmplitudes:[Float] = []
-//    var noteAmplitudeHeardCount = 0
-//    var endTappingLowAmplitudeCount = 0
+
     var midisInScale:[Int] = []
     var firstQuietTime:Date? = nil
     
-    required init(bufferSize:Int, scale:Scale?, amplitudeFilter:Double?) {
+    required init(bufferSize:Int, scale:Scale?, handIndex:Int, amplitudeFilter:Double?) {
         self.recordedTapEvents = []
         self.bufferSize = bufferSize
         self.scale = scale
+        self.handIndex = handIndex
         self.amplitudeFilter = amplitudeFilter
         if let scale = scale {
-            midisInScale = scale.getMidisInScale()
+            midisInScale = scale.getMidisInScale(handIndex: handIndex)
         }
     }
     

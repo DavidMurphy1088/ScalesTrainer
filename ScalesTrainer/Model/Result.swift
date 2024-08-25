@@ -53,7 +53,7 @@ class Result : Equatable {
     
     func getInfo() -> String {
         var str = "["
-        str += " Scale:\(scale.getMinMax())"
+        str += " Scale:\(scale.getMinMax(handIndex: 0))"
         str += " BufferSize:\(self.bufferSize)"
         str += " AmpFilter:\(self.amplitudeFilter)"
         str += " Compress:\(self.compressingFactor)"
@@ -75,12 +75,13 @@ class Result : Equatable {
         self.correctNotes = 0
         
         scale.resetMatchedData()
+        let handIndex = 0
         
         ///For each key played check its its midi is in the scale. If not, its a wrongly played key
         for direction in [0,1] {
             for key in self.keyboard.pianoKeyModel {
                 if let matchedTime = direction == 0 ? key.keyWasPlayedState.tappedTimeAscending : key.keyWasPlayedState.tappedTimeDescending {
-                    if let scaleNote = scale.getStateForMidi(midi: key.midi, direction: direction) {
+                    if let scaleNote = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, direction: direction) {
                         if direction == 0 {
                             scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeAscending
                         }
@@ -105,7 +106,7 @@ class Result : Equatable {
             }
         }
         
-        let maxScaleMidi = scale.getMinMax().1
+        let maxScaleMidi = scale.getMinMax(handIndex: handIndex).1
         for key in self.keyboard.pianoKeyModel {
             if key.scaleNoteState == nil {
                 if key.keyWasPlayedState.tappedTimeAscending != nil {
@@ -129,9 +130,9 @@ class Result : Equatable {
         }
         
         ///Look for notes in scale that were not played
-        let topNoteMidi = scale.getMinMax().1
+        let topNoteMidi = scale.getMinMax(handIndex: handIndex).1
         var direction = 0
-        for scaleNote in scale.scaleNoteState {
+        for scaleNote in scale.scaleNoteState[handIndex] {
             if scaleNote.matchedTime == nil {
                 if direction == 0 {
                     self.missedFromScaleCountAsc += 1
@@ -152,11 +153,10 @@ class Result : Equatable {
         if noErrors() {
             let _ = scale.setNoteNormalizedValues()
             if let score = score {
-                score.setNormalizedValues(scale: scale)
+                score.setNormalizedValues(scale: scale, handIndex: handIndex)
             }
         }
         //Logger.shared.log(self, "Built result. scaleStart:\(scale.scaleNoteState[0].midi) Errors:\(self.getErrorString()) Ampl Filter:\(self.amplitudeFilter)")
     }
-    
 }
 

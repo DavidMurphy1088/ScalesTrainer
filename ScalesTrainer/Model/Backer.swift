@@ -19,7 +19,7 @@ class Backer :MetronomeTimerNotificationProtocol {
     
     func metronomeStart() {
         let scale = ScalesModel.shared.scale
-        let scaleRoot = scale.scaleNoteState[0].midi % 12
+        let scaleRoot = scale.scaleNoteState[0][0].midi % 12
         var root = scaleRoot + 60 - 12
         if root >= 55 {
             root -= 12

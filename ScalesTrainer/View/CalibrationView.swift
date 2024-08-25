@@ -28,7 +28,7 @@ public struct CalibrationView: View {
     }
     
     func getScaleName() -> String {
-        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true)
+        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
         return name
     }
     public var body1: some View {

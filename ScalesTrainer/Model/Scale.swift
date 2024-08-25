@@ -10,10 +10,26 @@ enum ScaleShape {
 
 public enum DynamicType: CaseIterable, Comparable {
     case mf
+    var description: String {
+        switch self {
+        case .mf:
+            return "Mezzo-forte"
+//        default:
+//            return ""
+        }
+    }
 }
 
 public enum ArticulationType: CaseIterable, Comparable {
     case legato
+    var description: String {
+        switch self {
+        case .legato:
+            return "Legarto"
+//        default:
+//            return ""
+        }
+    }
 }
 
 public enum ScaleType: CaseIterable, Comparable {
@@ -35,7 +51,6 @@ public enum ScaleType: CaseIterable, Comparable {
     case brokenChordMinor
     
     case contraryMotion
-
     case chromatic
     
     func isMajor() -> Bool {
@@ -105,8 +120,9 @@ public class ScaleNoteState {
 
 public class Scale { 
     let id = UUID()
+    static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
-    private(set) var scaleNoteState:[ScaleNoteState]
+    private(set) var scaleNoteState:[[ScaleNoteState]]
     private var metronomeAscending = true
     var octaves:Int
     let hand:Int
@@ -131,83 +147,90 @@ public class Scale {
         ///B, B♭, A, A♭ drop below Middle C for one and two octaves
         ///G drops below Middle C only for 2 octaves
         ///The start of the scale for one octave -
-        var nextMidi = 0
+        var firstMidi = 0
         switch scaleRoot.name {
         case "C":
-            nextMidi = 60
+            firstMidi = 60
         case "C#":
-            nextMidi = 61
+            firstMidi = 61
         case "D♭":
-            nextMidi = 61
+            firstMidi = 61
         case "D":
-            nextMidi = 62
+            firstMidi = 62
         case "D#":
-            nextMidi = 63
+            firstMidi = 63
         case "E♭":
-            nextMidi = 63
+            firstMidi = 63
         case "E":
-            nextMidi = 64
+            firstMidi = 64
         case "F":
-            nextMidi = 65
+            firstMidi = 65
         case "F#":
-            nextMidi = 66
+            firstMidi = 66
         case "G♭":
-            nextMidi = 66
+            firstMidi = 66
         case "G":
-            nextMidi = 67 - 12
+            firstMidi = 67 - 12
         case "G#":
-            nextMidi = 68 - 12
+            firstMidi = 68 - 12
         case "A♭":
-            nextMidi = 68 - 12
+            firstMidi = 68 - 12
         case "A":
-            nextMidi = 69 - 12
+            firstMidi = 69 - 12
         case "A#":
-            nextMidi = 70 - 12
+            firstMidi = 70 - 12
         case "B♭":
-            nextMidi = 70 - 12
+            firstMidi = 70 - 12
         case "B":
-            nextMidi = 71 - 12
+            firstMidi = 71 - 12
         default:
-            nextMidi = 60
+            firstMidi = 60
         }
         
-        if octaves > 3 {
-            nextMidi -= 12
-        }
+//        if octaves > 3 {
+//            firstMidiMidi -= 12
+//        }
 
         ///All are low and some drop off 88-key keyboard
-        if hand == 1 {
-            //nextMidi -= 12
-            nextMidi -= 12 * octaves
-        }
+//        if hand == 1 {
+//            //nextMidi -= 12
+//            nextMidi -= 12 * octaves
+//        }
         
         ///Set midi values in scale
         self.scaleShapeForFingering = .none
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
 
         var sequence = 0
-        for oct in 0..<octaves {
-            for i in 0..<scaleOffsets.count {
-                var noteValue = Settings.shared.getSettingsNoteValueFactor()
-                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
-                    noteValue *= 3
-                }
-                if oct == 0 {
-                    scaleNoteState.append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue))
-                    nextMidi += scaleOffsets[i]
-                }
-                else {
-                    scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[i % 8].midi + (oct * 12), value: noteValue))
-                }
-                sequence += 1
+        for handIndex in [0,1] {
+            var nextMidi = firstMidi
+            if handIndex == 1 {
+                nextMidi -= 12
             }
-            if oct == octaves - 1 {
-                var noteValue = Settings.shared.getSettingsNoteValueFactor()
-                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
-                    noteValue *= 3
+            self.scaleNoteState.append([])
+            for oct in 0..<octaves {
+                for i in 0..<scaleOffsets.count {
+                    var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                    if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
+                        noteValue *= 3
+                    }
+                    if oct == 0 {
+                        scaleNoteState[handIndex].append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue))
+                        nextMidi += scaleOffsets[i]
+                    }
+                    else {
+                        scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][i % 8].midi + (oct * 12), value: noteValue))
+                    }
+                    sequence += 1
                 }
-                scaleNoteState.append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[0].midi + (octaves) * 12, value: noteValue))
-                sequence += 1
+                if oct == octaves - 1 {
+                    var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                    if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
+                        noteValue *= 3
+                    }
+                    scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][0].midi + (octaves) * 12, value: noteValue))
+                    sequence += 1
+                }
             }
         }
 
@@ -233,33 +256,35 @@ public class Scale {
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
-        for i in stride(from: up.count - 2, through: 0, by: -1) {
-            var downMidi = up[i].midi
-            let downValue = up[i].value
-            if scaleType == .melodicMinor {
-                if i > 0 {
-                    if ctr % 7 == 0 {
-                        downMidi = downMidi - 1
-                    }
-                    if ctr % 7 == 1 {
-                        downMidi = downMidi - 1
+        for handIndex in [0,1] {
+            for i in stride(from: up[handIndex].count - 2, through: 0, by: -1) {
+                var downMidi = up[handIndex][i].midi
+                let downValue = up[handIndex][i].value
+                if scaleType == .melodicMinor {
+                    if i > 0 {
+                        if ctr % 7 == 0 {
+                            downMidi = downMidi - 1
+                        }
+                        if ctr % 7 == 1 {
+                            downMidi = downMidi - 1
+                        }
                     }
                 }
+                let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi, value: downValue)
+                scaleNoteState[handIndex].append(descendingNote)
+                lastMidi = downMidi
+                ctr += 1
+                sequence += 1
             }
-            let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi, value: downValue)
-            scaleNoteState.append(descendingNote)
-            lastMidi = downMidi
-            ctr += 1
-            sequence += 1
+            if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+                let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3)
+                scaleNoteState[handIndex].append(lastNote)
+            }
+            setFingers(handIndex: handIndex)
+            setFingerBreaks(handIndex: handIndex)
         }
-        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-            let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3)
-            scaleNoteState.append(lastNote)
-        }
-
-        setFingers(hand: hand)
-        setFingerBreaks(hand: hand)
-        //self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        Scale.createCount += 1
+        //self.debug13("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
     }
     
 //    func getMatchCount(matched:Bool) -> Int {
@@ -282,8 +307,10 @@ public class Scale {
     func makeNewScale(offset:Int) -> Scale {
         let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand, 
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
-        for note in scale.scaleNoteState {
-            note.midi += offset
+        for handIndex in [0,1] {
+            for note in scale.scaleNoteState[handIndex] {
+                note.midi += offset
+            }
         }
         return scale
     }
@@ -331,8 +358,8 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug122(_ msg:String)  {
-        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, self.id)
+    func debug13(_ msg:String)  {
+        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hand", self.hand, "octaves", self.octaves, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
                 return "None"
@@ -341,102 +368,98 @@ public class Scale {
                 return String(format: "%.2f", value!)
             }
         }
-        for state in self.scaleNoteState {
-            print("Midi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
-                  "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
-                  "valueNormalized:", getValue(state.valueNormalized))
+        for handIndex in [0,1] {
+            for state in self.scaleNoteState[handIndex] {
+                print("Hand", handIndex, "Midi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
+                      "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
+                      "valueNormalized:", getValue(state.valueNormalized))
+            }
         }
     }
     
     ///Set note durations normalized to the tempo and return an average tempo
     public func setNoteNormalizedValues() -> Int? {
-        for note in self.scaleNoteState {
-            note.valueNormalized = nil
-        }
-        guard self.scaleNoteState.count > 4 else {
-            return nil
-        }
-        guard self.scaleNoteState[0].matchedTime != nil else {
-            return nil
-        }
-        var timeIntervals:[Double] = []
-        
-        ///Calculate the the note durations for all notes except the first (from the previous note time)
-        var lastMatch:Date? = nil //self.scaleNoteState[0].matchedTime
-        var sumOfDurations:Double = 0
-        var timedNotesCount = 0
-        
-        for note in self.scaleNoteState {
-            if let matched = note.matchedTime {
-                if lastMatch == nil {
+        var tempoSum = 0
+        for handIndex in [0,1] {
+            for note in self.scaleNoteState[handIndex] {
+                note.valueNormalized = nil
+            }
+            
+            guard self.scaleNoteState.count > 4 else {
+                return nil
+            }
+            guard self.scaleNoteState[handIndex][0].matchedTime != nil else {
+                return nil
+            }
+            
+            var timeIntervals:[Double] = []
+            
+            ///Calculate the the note durations for all notes except the first (from the previous note time)
+            var lastMatch:Date? = nil //self.scaleNoteState[0].matchedTime
+            var sumOfDurations:Double = 0
+            var timedNotesCount = 0
+            
+            for note in self.scaleNoteState[handIndex] {
+                if let matched = note.matchedTime {
+                    if lastMatch == nil {
+                        lastMatch = matched
+                        //timeIntervals.append(0)
+                        continue
+                    }
+                    let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
+                    timeIntervals.append(delta)
+                    sumOfDurations += delta
+                    timedNotesCount += 1
                     lastMatch = matched
-                    //timeIntervals.append(0)
-                    continue
                 }
-                let delta = matched.timeIntervalSince1970 - lastMatch!.timeIntervalSince1970
-                timeIntervals.append(delta)
-                sumOfDurations += delta
-                timedNotesCount += 1
-                lastMatch = matched
             }
-        }
+            
+            ///Calculate the average and apply the deltas to each note
+            if sumOfDurations > 0 {
+                let averageDuration = Double(sumOfDurations) / Double(timedNotesCount)
+                for n in 0..<self.scaleNoteState[handIndex].count {
+                    let note = scaleNoteState[handIndex][n]
+                    if n == self.scaleNoteState.count - 1 {
+                        ///Cant know duration for last note
+                        note.valueNormalized = 1.0
+                    }
+                    else {
+                        let normalized = timeIntervals[n] / averageDuration
+                        note.valueNormalized = normalized
+                    }
+                }
+            }
+            guard timedNotesCount > 0 else {
+                return 0
+            }
         
-        ///Calculate the average and apply the deltas to each note
-        if sumOfDurations > 0 {
-            let averageDuration = Double(sumOfDurations) / Double(timedNotesCount)
-            for n in 0..<self.scaleNoteState.count {
-                let note = scaleNoteState[n]
-                if n == self.scaleNoteState.count - 1 {
-                    ///Cant know duration for last note
-                    note.valueNormalized = 1.0
-                }
-                else {
-                    let normalized = timeIntervals[n] / averageDuration
-                    note.valueNormalized = normalized
-                }
+            let tempo = 60.0 / (sumOfDurations / Double(timedNotesCount))
+            if tempo.isFinite && !tempo.isNaN {
+                tempoSum += Int(tempo)
+            }
+            else {
+                tempoSum += 0
             }
         }
-        guard timedNotesCount > 0 else {
-            return 0
-        }
-        let tempo = 60.0 / (sumOfDurations / Double(timedNotesCount))
-        if tempo.isFinite && !tempo.isNaN {
-            return Int(tempo)
-        }
-        else {
-            return 0
-        }
+        return tempoSum / 2
     }
     
     func resetMatchedData() {
-        for state in self.scaleNoteState {
-            state.matchedAmplitude = nil
-            state.matchedTime = nil
-            state.unmatchedTime = nil
+        for handIndex in [0,1] {
+            for state in self.scaleNoteState[handIndex] {
+                state.matchedAmplitude = nil
+                state.matchedTime = nil
+                state.unmatchedTime = nil
+            }
         }
     }
     
-    ///Return the next expected note in a scale playing
-//    func getNextExpectedNotes(count:Int) -> [ScaleNoteState] {
-//        var result:[ScaleNoteState] = []
-//        for i in 0..<self.scaleNoteState.count {
-//            if self.scaleNoteState[i].matchedTime == nil &&
-//                self.scaleNoteState[i].unmatchedTime == nil {
-//                result.append(scaleNoteState[i])
-//                if result.count >= count {
-//                    break
-//                }
-//            }
-//        }
-//        return result
-//    }
-    
-    func getStateForMidi(midi:Int, direction:Int) -> ScaleNoteState? {
-        let start = direction == 0 ? 0 : self.scaleNoteState.count / 2
-        let end = direction == 0 ? self.scaleNoteState.count / 2 : self.scaleNoteState.count - 1
+    func getStateForMidi(handIndex:Int, midi:Int, direction:Int) -> ScaleNoteState? {
+        let start = direction == 0 ? 0 : self.scaleNoteState[handIndex].count / 2
+        let end = direction == 0 ? self.scaleNoteState[handIndex].count / 2 : self.scaleNoteState[handIndex].count - 1
         for i in start...end {
-            if self.scaleNoteState[i].midi == midi {
-                return self.scaleNoteState[i]
+            if self.scaleNoteState[handIndex][i].midi == midi {
+                return self.scaleNoteState[handIndex][i]
             }
         }
         return nil
@@ -444,51 +467,51 @@ public class Scale {
 
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key
-    private func setFingerBreaks(hand:Int) {
-        for note in self.scaleNoteState {
+    private func setFingerBreaks(handIndex:Int) {
+        for note in self.scaleNoteState[handIndex] {
             note.fingerSequenceBreak = false
         }
         guard self.scaleShapeForFingering == .scale else {
             return
         }
-        let halfway = self.scaleNoteState.count/2-1
+        let halfway = self.scaleNoteState[handIndex].count/2-1
         if hand == 0 {
-            var lastFinger = self.scaleNoteState[0].finger
+            var lastFinger = self.scaleNoteState[handIndex][0].finger
             for i in 1...halfway {
-                let finger = self.scaleNoteState[i].finger
+                let finger = self.scaleNoteState[handIndex][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[i].fingerSequenceBreak = true
-                    self.scaleNoteState[self.scaleNoteState.count - i].fingerSequenceBreak = true
+                    self.scaleNoteState[handIndex][i].fingerSequenceBreak = true
+                    self.scaleNoteState[handIndex][self.scaleNoteState[handIndex].count - i].fingerSequenceBreak = true
                 }
-                lastFinger = self.scaleNoteState[i].finger
+                lastFinger = self.scaleNoteState[handIndex][i].finger
             }
         }
         else {
-            var lastFinger = self.scaleNoteState[halfway].finger
+            var lastFinger = self.scaleNoteState[handIndex][halfway].finger
             for i in stride(from: halfway-1, to: 0, by: -1) {
-                let finger = self.scaleNoteState[i].finger
+                let finger = self.scaleNoteState[handIndex][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[i+1].fingerSequenceBreak = true
+                    self.scaleNoteState[handIndex][i+1].fingerSequenceBreak = true
                     let mirror = halfway + (halfway - i) + 2
                     if mirror < self.scaleNoteState.count - 1 {
-                        self.scaleNoteState[mirror].fingerSequenceBreak = true
+                        self.scaleNoteState[handIndex][mirror].fingerSequenceBreak = true
                     }
                 }
-                lastFinger = self.scaleNoteState[i].finger
+                lastFinger = self.scaleNoteState[handIndex][i].finger
             }
         }
     }
     
-    func getMinMax() -> (Int, Int) {
-        let mid = self.scaleNoteState.count / 2
-        return (self.scaleNoteState[0].midi, self.scaleNoteState[mid].midi)
+    func getMinMax(handIndex:Int) -> (Int, Int) {
+        let mid = self.scaleNoteState[handIndex].count / 2
+        return (self.scaleNoteState[handIndex][0].midi, self.scaleNoteState[handIndex][mid].midi)
     }
     
-    func getMidisInScale() -> [Int] {
+    func getMidisInScale(handIndex:Int) -> [Int] {
         var notes:[Int] = []
-        for note in self.scaleNoteState {
+        for note in self.scaleNoteState[handIndex] {
             notes.append(note.midi)
         }
         return notes
@@ -511,7 +534,7 @@ public class Scale {
     }
     
     ///Alfreds page 88. RH read left to right, LH read right to left. Use numbers in paren e.g. (3) instead of 3
-    func setFingers(hand:Int) {
+    func setFingers(handIndex:Int) {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
         
@@ -649,11 +672,11 @@ public class Scale {
         
         ///Apply the finger patterns for ascending and descending
         
-        let halfway = scaleNoteState.count / 2
-        if hand == 0 {
+        let halfway = scaleNoteState[handIndex].count / 2
+        if handIndex == 0 {
             var f = 0
             for i in 0..<halfway {
-                scaleNoteState[i].finger = stringIndexToInt(index: i, fingers: fingers)
+                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: i, fingers: fingers)
                 f += 1
             }
             f -= 1
@@ -663,9 +686,9 @@ public class Scale {
                     highNoteFinger += 1
                 }
             }
-            scaleNoteState[halfway].finger = highNoteFinger
-            for i in (halfway+1..<scaleNoteState.count) {
-                scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
+            scaleNoteState[handIndex][halfway].finger = highNoteFinger
+            for i in (halfway+1..<scaleNoteState[handIndex].count) {
+                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
                 f -= 1
             }
         }
@@ -674,8 +697,8 @@ public class Scale {
             ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
             for i in stride(from: halfway, through: 0, by: -1) {
             //for i in stride(from: halfway, to: 0, by: -1) {
-                scaleNoteState[i].finger = stringIndexToInt(index: f, fingers: fingers)
-                scaleNoteState[i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
                 f += 1
             }
             if leftHandLastFingerJump > 0  {
@@ -687,13 +710,13 @@ public class Scale {
 //                        edgeFinger += 1
 //                    }
 //                }
-                scaleNoteState[0].finger = nextToLastFinger + leftHandLastFingerJump
+                scaleNoteState[handIndex][0].finger = nextToLastFinger + leftHandLastFingerJump
             }
             //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
     }
 
-    func getScaleName(handFull:Bool, octaves:Bool) -> String {
+    func getScaleName(handFull:Bool, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool) -> String {
         var name = scaleRoot.name + " " + scaleType.description
         var handName = ""
         if handFull {
@@ -713,6 +736,15 @@ public class Scale {
         name += ", " + handName
         if octaves {
             name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+        }
+        if tempo {
+            name += ", \(self.minTempo) BPM"
+        }
+        if dynamic {
+            name += ", \(self.dynamicType.description)"
+        }
+        if articulation {
+            name += ", \(self.articulationType.description)"
         }
         return name
     }

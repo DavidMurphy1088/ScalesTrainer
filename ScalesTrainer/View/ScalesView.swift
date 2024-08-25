@@ -56,8 +56,8 @@ struct ScalesView: View {
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
     
-    @ObservedObject private var pianoKeyboardSingle: PianoKeyboardModel
-    @ObservedObject private var pianoKeyboardDouble: PianoKeyboardModel
+    @ObservedObject private var pianoKeyboardRightHand: PianoKeyboardModel
+    @ObservedObject private var pianoKeyboardLeftHand: PianoKeyboardModel
     @ObservedObject private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
@@ -83,8 +83,8 @@ struct ScalesView: View {
     let backgroundImage = UIGlobals.shared.getBackground()
     
     init(initialRunProcess:RunningProcess? = nil) {
-        self.pianoKeyboardSingle = PianoKeyboardModel.sharedRightHand
-        self.pianoKeyboardDouble = PianoKeyboardModel.sharedLeftHand
+        self.pianoKeyboardRightHand = PianoKeyboardModel.sharedRightHand
+        self.pianoKeyboardLeftHand = PianoKeyboardModel.sharedLeftHand
         self.initialRunProcess = initialRunProcess
     }
     
@@ -116,19 +116,20 @@ struct ScalesView: View {
 //            .onChange(of: handIndex, {
 //                setState(octaves: self.numberOfOctaves, hand: handIndex)
 //            })
-            Spacer()
-            Text(LocalizedStringResource("Tempo"))
+            //Spacer()
+            Text(LocalizedStringResource("Tempo")).padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
-                    Text("\(scalesModel.tempoSettings[index])")
+                    Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
                 }
             }
             .pickerStyle(.menu)
+            .padding(.horizontal, 0)
             .onChange(of: tempoIndex, {
                 scalesModel.setTempo(self.tempoIndex)
             })
             
-            Spacer()
+            //Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
                 ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
@@ -142,8 +143,8 @@ struct ScalesView: View {
                 scalesModel.setSelectedDirection(self.directionIndex)
             })
             
-            Spacer()
-            Text("Octaves").padding(0)
+            //Spacer()
+            Text("Octaves").padding(.horizontal, 0)
             Picker("Select", selection: $numberOfOctaves) {
                 ForEach(1..<5) { number in
                     Text("\(number)").tag(number)
@@ -154,7 +155,7 @@ struct ScalesView: View {
                 setState(octaves: numberOfOctaves)
             })
             
-            Spacer()
+            //Spacer()
         }
     }
 
@@ -240,7 +241,8 @@ struct ScalesView: View {
             if [.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
                 Spacer()
                 VStack {
-                    Text("Recording \(scalesModel.scale.getScaleName(handFull: true, octaves: true))").font(.title).padding()
+                    let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                    Text("Recording \(name)").font(.title).padding()
                     //ScaleStartView()
                     RecordingIsUnderwayView()
                     Button(action: {
@@ -501,11 +503,14 @@ struct ScalesView: View {
             VStack {
                 if scalesModel.showParameters {
                     VStack {
-                        Text(scalesModel.scale.getScaleName(handFull: true, octaves: false)).font(.title)//.padding()
-                        if scalesModel.runningProcessPublished == .none {
-                            SelectScaleParametersView()
+                        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                        Text(name).font(.title)//.padding()
+                        HStack {
+                            if scalesModel.runningProcessPublished == .none {
+                                SelectScaleParametersView()
+                            }
+                            ViewSettingsView()
                         }
-                        ViewSettingsView()
                     }
                     .commonFrameStyle()
                 }
@@ -513,16 +518,21 @@ struct ScalesView: View {
                 if scalesModel.showKeyboard {
                     HStack {
                         VStack {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardSingle, keyColor: Settings.shared.getKeyColor())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
                                 .frame(height: getKeyboardHeight())
-                                .border(Color.gray)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                )
                                 .padding()
                         }
-                        .commonFrameStyle()
                         VStack {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardDouble, keyColor: Settings.shared.getKeyColor())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
                                 .frame(height: getKeyboardHeight())
-                                .border(Color.gray)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                )
                                 .padding()
                         }
                     }
@@ -601,7 +611,10 @@ struct ScalesView: View {
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
-            pianoKeyboardSingle.keyboardAudioManager = audioManager
+            pianoKeyboardRightHand.keyboardAudioManager = audioManager
+            PianoKeyboardModel.sharedLeftHand.resetKeysWerePlayedState()
+            pianoKeyboardLeftHand.keyboardAudioManager = audioManager
+
             //self.handIndex = scalesModel.scale.hand
             ///Causes setState()
             

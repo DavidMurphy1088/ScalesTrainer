@@ -49,7 +49,7 @@ struct CellView: View {
                     ScalesModel.shared.setScale(scale: cellScale)
                     navigateToScales = true
                 }) {
-                    let label = cellScale.getScaleName(handFull: true, octaves: false) //cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + getHandStr(hand: cellScale.hand)
+                    let label = cellScale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
                     Text(label)
                         .foregroundColor(.blue)
                 }

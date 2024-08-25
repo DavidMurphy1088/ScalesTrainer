@@ -16,10 +16,7 @@
     "  %@   " : {
 
     },
-    "  👉 %@  " : {
-
-    },
-    "  Practice - %@  " : {
+    "  Practice - %@)  " : {
 
     },
     " %lld" : {
@@ -31,7 +28,7 @@
     " Go To Scale %@ - Good Luck 😊" : {
 
     },
-    " Practice - %@ " : {
+    " Practice - %@) " : {
 
     },
     " Show Highest Progress Scales " : {

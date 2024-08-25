@@ -9,13 +9,14 @@ public struct ClassicStyle {
     let labelFont: Font
     let labelColor: Color
     let keyColor: Color
-
+    let hand:Int
+    
     public let naturalKeySpace: CGFloat
 
     public init(
+        hand:Int,
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
-
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
         naturalKeySpace: CGFloat = 3,
@@ -23,6 +24,7 @@ public struct ClassicStyle {
         labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
+        self.hand = hand
         self.sfKeyWidthMultiplier = sfKeyWidthMultiplier
         self.sfKeyHeightMultiplier = sfKeyHeightMultiplier
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
@@ -62,7 +64,7 @@ public struct ClassicStyle {
         let halfOpacity = 0.4
         let scalesModel = ScalesModel.shared
         var color:Color = Color.clear
-        if key.scale.getStateForMidi(midi: key.midi, direction: 0) != nil {
+        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, direction: 0) != nil {
             ///Key is in the scale
             if scalesModel.selectedDirection == 0 {
                 color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)

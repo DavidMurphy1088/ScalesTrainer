@@ -36,22 +36,22 @@ class TapsEventsAnalyser {
     var filterStartOfTapping:Bool = false
     var scaleMidis:[Int]
  
-    init (scale: Scale, recordedTapEventSets: [TapEventSet], keyboard: PianoKeyboardModel, fromProcess: RunningProcess) {
+    init (scale: Scale, handIndex: Int, recordedTapEventSets: [TapEventSet], keyboard: PianoKeyboardModel, fromProcess: RunningProcess) {
         self.scale = scale
         self.keyboard = keyboard
         self.fromProcess = fromProcess
-        self.scaleMidis = scale.getMidisInScale()
+        self.scaleMidis = scale.getMidisInScale(handIndex: handIndex)
         self.recordedTapEventSets = recordedTapEventSets
         //self.amplitudeFilter = amplitudeFilter
     }
     
-    func resetState(scale:Scale, octaveLenient:Bool) {
+    func resetState(scale:Scale, handIndex: Int, octaveLenient:Bool) {
         self.matchCount = 0
         self.eventNumber = 0
         self.scaleStartAmplitudes = []
         self.scalePotentialStartAmplitudes = []
         self.lastMatchedMidi = nil
-        (self.minScaleMidi, self.maxScaleMidi) = scale.getMinMax()
+        (self.minScaleMidi, self.maxScaleMidi) = scale.getMinMax(handIndex: handIndex)
         if octaveLenient {
             self.allowableScaleOctaveOffsets = [0, 12, -12]
         }
@@ -81,10 +81,11 @@ class TapsEventsAnalyser {
                      compressingFactor:Int,
                      octaveLenient:Bool,
                      score:Score?,
+                     handIndex: Int,
                      updateKeyboard:Bool
                      ) -> (Result, TapStatusRecordSet) {
         ///Apply the tapped events to a given scale start
-        resetState(scale: scale, octaveLenient: false)
+        resetState(scale: scale, handIndex: handIndex, octaveLenient: false)
 
         let tapStatusRecordSet = TapStatusRecordSet(description: "bufferSize:\(bufferSize) ampFilter:\(String(format: "%.4f", amplitudeFilter)) offset:\(offset) compress:\(compressingFactor)", events: [])
         let tapEvents:[TapEvent]
@@ -99,6 +100,7 @@ class TapsEventsAnalyser {
             let processedtapEvent = processTap(ctx: ctx, scale: scale,
                                                keyboard: keyboard,
                                                eventToProcess: event,
+                                               handIndex: handIndex,
                                                amplitudeFilter: amplitudeFilter,
                                                discardSingletons: compressingFactor == 0,
                                                filterStart: true,
@@ -122,7 +124,7 @@ class TapsEventsAnalyser {
     ///This analysis is 'fuzzy' becuase a piano key tap produces a range of pitches (e.g. octaves) and so its not straightforward to know which scale offset best fits.
     ///Pick the scale offset with the lowest errors and assume that is the scale the user played. Run the tap events past that scale and keyboard configuration one more time to have the UI updated with the correct result.
     
-    func getBestResult() -> (Result?, TapEventSet?) {
+    func getBestResult(handIndex: Int) -> (Result?, TapEventSet?) {
         ///Determine which scale range the user played. e.g. for C Maj RH they have started on midi 60 or 72 or 48. All would be correct.
         ///Analyse the tapping aginst different scale starts to determine which has the least errors.
         ///Update the app state after tapping based on the selected scale start.
@@ -159,8 +161,8 @@ class TapsEventsAnalyser {
                     }
                     for amplitudeFilter in amplitudeFilters {
                         let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
-                        let keyboard = PianoKeyboardModel()
-                        keyboard.configureKeyboardForScale(scale: offsetScale)
+                        let keyboard = PianoKeyboardModel(hand: handIndex)
+                        keyboard.configureKeyboardForScale(scale: offsetScale, handIndex: handIndex)
                         //let filterStarts = compressingFactor == 0
                         let (result1, _) = applyEvents(ctx: "TryOffset",
                                                               bufferSize: tapEventSet.bufferSize,
@@ -171,7 +173,8 @@ class TapsEventsAnalyser {
                                                               amplitudeFilter: amplitudeFilter,
                                                               compressingFactor: compressingFactor,
                                                               octaveLenient: false,
-                                                              score: nil,
+                                                                score: nil,
+                                                                handIndex: handIndex,
                                                               updateKeyboard: false)
                         
                         if bestResult == nil || result1.getTotalErrors() < bestResult!.getTotalErrors() {
@@ -201,6 +204,7 @@ class TapsEventsAnalyser {
     func processTap(ctx:String, scale:Scale,
                     keyboard:PianoKeyboardModel,
                     eventToProcess:TapEvent,
+                    handIndex: Int,
                     amplitudeFilter:Double,
                     discardSingletons:Bool, filterStart:Bool,
                     //octaveLenient:Bool,
@@ -337,12 +341,12 @@ class TapsEventsAnalyser {
         ///At top of scale. At end of scale?
         self.matchCount += 1
         var atTop = false
-        if midi == scale.getMinMax().1 {
+        if midi == scale.getMinMax(handIndex: handIndex).1 {
             atTop = true
             self.ascending = false
         }
 
-        if eventToProcess.tapMidi == scale.getMinMax().0  && midi == scale.getMinMax().0 {
+        if eventToProcess.tapMidi == scale.getMinMax(handIndex: handIndex).0  && midi == scale.getMinMax(handIndex: handIndex).0 {
 
             ///End of scale if the midi is the root and the root has already been played
             if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: ascending ? 0 : 1) {

@@ -147,9 +147,9 @@ struct LegendView: View {
 
                 Spacer()
             }
-            if let instructions = scalesModel.processInstructions {
-                Text("  👉 \(instructions)  ").padding()
-            }
+//            if let instructions = scalesModel.processInstructions {
+//                Text("  👉 \(instructions)  ").padding()
+//            }
         }
 
     }

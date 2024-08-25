@@ -685,10 +685,10 @@ public class Score : ObservableObject {
         }
     }
     
-    public func setNormalizedValues(scale:Scale) {
+    public func setNormalizedValues(scale:Scale, handIndex: Int) {
         for i in 0..<self.getAllTimeSlices().count {
             let ts = self.getAllTimeSlices()[i]
-            ts.tapDurationNormalised = scale.scaleNoteState[i].valueNormalized
+            ts.tapDurationNormalised = scale.scaleNoteState[handIndex][i].valueNormalized
         }
     }
 

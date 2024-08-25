@@ -253,7 +253,8 @@ struct SpinWheelViewCoins: View {
                         else {
                             let scale = scalesModel.scale
                             NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
-                                Text(" Go To Scale \(scale.getScaleName(handFull: true, octaves: false)) - Good Luck 😊").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
+                                let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:true, articulation:true)
+                                Text(" Go To Scale \(name) - Good Luck 😊").padding() //.foregroundStyle(Color .blue) //.hilighted(backgroundColor: .blue)
                                     .font(.title2)
                                     .hilighted(backgroundColor: .blue)
                             }

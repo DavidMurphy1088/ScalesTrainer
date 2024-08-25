@@ -12,31 +12,31 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance.
 
 protocol TapHandlerProtocol {
-    init(bufferSize:Int, scale:Scale?, amplitudeFilter:Double?)
+    init(bufferSize:Int, scale:Scale?, handIndex:Int, amplitudeFilter:Double?)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTappingProcess() -> TapEventSet
     func getBufferSize() -> Int
 }
 
-///Tap handlel to udate the model in real time as events are received
+///Tap handler to udate the model in real time as events are received
 class RealTimeTapHandler : TapHandlerProtocol {
     let startTime:Date = Date()
     let bufferSize:Int
     let amplitudeFilter:Double?
-    //let fromProcess:RunningProcess
     let minMidi:Int
     let maxMidi:Int
     var tapNum = 0
-    //var hilightPlayingNotes:Bool
     var lastMidi:Int? = nil
     var lastMidiHiliteTime:Double? = nil
     var tapHandlerEventSet:TapEventSet
+    var handIndex:Int
     
-    required init(bufferSize:Int, scale:Scale? = nil, amplitudeFilter:Double?) {
+    required init(bufferSize:Int, scale:Scale? = nil, handIndex:Int, amplitudeFilter:Double?) {
         self.bufferSize = bufferSize
         self.amplitudeFilter = amplitudeFilter
-        minMidi = ScalesModel.shared.scale.getMinMax().0
-        maxMidi = ScalesModel.shared.scale.getMinMax().1
+        self.handIndex = handIndex
+        minMidi = ScalesModel.shared.scale.getMinMax(handIndex: handIndex).0
+        maxMidi = ScalesModel.shared.scale.getMinMax(handIndex: handIndex).1
         tapNum = 0
         self.tapHandlerEventSet = TapEventSet(bufferSize: bufferSize, events: [])
     }
@@ -46,7 +46,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        let keyboardModel = PianoKeyboardModel.sharedRightHand
         let scalesModel = ScalesModel.shared
 
         var frequency:Float
@@ -64,6 +63,8 @@ class RealTimeTapHandler : TapHandlerProtocol {
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         let secs = Double(ms) / 1000.0
+        
+        let keyboardModel = self.handIndex == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
 
         if aboveFilter {
             if let index = keyboardModel.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {

@@ -104,7 +104,8 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: true)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text("  Practice - \(scale.getScaleName(handFull: true, octaves: false))  ").font(.title2).padding()
+                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                                Text("  Practice - \(name))  ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -139,7 +140,8 @@ struct PickAnyScaleView: View {
                         let scale = setModelScale(major: false)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                Text(" Practice - \(scale.getScaleName(handFull: true, octaves: false)) ").font(.title2).padding()
+                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                                Text(" Practice - \(name)) ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
