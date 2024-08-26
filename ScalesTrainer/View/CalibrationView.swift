@@ -203,7 +203,7 @@ public struct CalibrationView: View {
                 }
                 Spacer()
             }
-            if scalesModel.tapHandlerEventSetPublished  {
+            if scalesModel.processedEventSetPublished  {
                 Spacer()
                 Button(action: {
                     showingTapData = true

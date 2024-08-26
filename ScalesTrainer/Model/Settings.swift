@@ -26,7 +26,7 @@ public class SettingsPublished : ObservableObject {
 
 public class Settings : Codable  {
     static var shared = Settings()
-    var recordDataMode = false
+    var developerModeOn = false
     var firstName = ""
     var board = ""
     var grade = ""
@@ -69,7 +69,7 @@ public class Settings : Codable  {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
         str += " MetronomeOn:\(self.metronomeOn)"
         str += " LeadIn:\(self.scaleLeadInBarCount)"
-        str += " RecordDataMode:\(self.recordDataMode)"
+        str += " RecordDataMode:\(self.developerModeOn )"
         str += " FirstName:\(self.firstName)"
         str += " Board:\(self.board)"
         str += " Grade:\(self.grade)"
@@ -114,7 +114,7 @@ public class Settings : Codable  {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
-                    self.recordDataMode = loaded.recordDataMode
+                    self.developerModeOn  = loaded.developerModeOn 
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
                     self.board = loaded.board

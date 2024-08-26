@@ -134,7 +134,7 @@ class CalibrationResults : ObservableObject {
     
     func calculateAverageAmplitude() -> Double? {
         let scalesModel = ScalesModel.shared
-        guard let eventSet = scalesModel.tapHandlerEventSet else {
+        guard let eventSet = scalesModel.processedEventSet else {
             Logger.shared.reportError(self, "No events")
             return nil
         }

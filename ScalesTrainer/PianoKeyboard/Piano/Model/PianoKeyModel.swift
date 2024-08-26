@@ -57,7 +57,7 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
             
-            if let score  = scalesModel.score {
+            if let score = scalesModel.score {
                 if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
                     DispatchQueue.global(qos: .background).async {
                         usleep(1000000 * UInt32(self.keySoundingSeconds))

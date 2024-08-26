@@ -81,16 +81,6 @@ struct ResultView: View {
     }
 }
 
-//struct UserFeedbackView: View {
-//    let scalesModel = ScalesModel.shared
-//    let feedbackMsg:String
-//    //var keyboardModel:PianoKeyboardModel
-//
-//    var body: some View {
-//        Text(feedbackMsg)
-//    }
-//}
-
 struct TapDataView: View {
     let scalesModel = ScalesModel.shared
     var keyboardModel:PianoKeyboardModel
@@ -133,11 +123,31 @@ struct TapDataView: View {
         return color
     }
     
+    func getColor(_ event:TapEvent) -> Color {
+        var color = Color.black
+        if Double(event.amplitude) < Settings.shared.amplitudeFilter {
+            color = .brown
+        }
+        return color
+    }
+    
     var body: some View {
         VStack {
-            Text("Taps").foregroundColor(Color .blue).font(.title3)//.padding()
+            Text("Taps AmplFilter:\(Settings.shared.amplitudeFilter)").foregroundColor(Color .blue).font(.title3)//.padding()
+            
+            if let tapEventSet = scalesModel.tapEventSet {
+                ScrollView {
+                    ForEach(tapEventSet.events, id: \.self) { event in
+                        Text(event.tapData())
+                            .foregroundColor(getColor(event))
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+            }
 
-            if let tapStatusRecordSet = scalesModel.tapHandlerEventSet {
+            ///Process events with statuses
+            if let tapStatusRecordSet = scalesModel.processedEventSet {
                 Text("\(tapStatusRecordSet.description)").foregroundColor(Color .blue).font(.title3)
 //
 //                ScrollView {
@@ -165,7 +175,7 @@ struct TapDataView: View {
                     }
                 }
             }
-            if let eventSet = scalesModel.tapHandlerEventSet {
+            if let eventSet = scalesModel.processedEventSet {
                 Text("Stats: \(eventSet.minMax())").foregroundColor(Color .blue).font(.title3)
             }
         }

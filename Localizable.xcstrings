@@ -31,12 +31,6 @@
     " Practice - %@) " : {
 
     },
-    " Show Highest Progress Scales " : {
-
-    },
-    " Show Lowest Progress Scales " : {
-
-    },
     " Spin The Wheel " : {
 
     },
@@ -47,9 +41,6 @@
 
     },
     "%@" : {
-
-    },
-    "%@\n♩=90" : {
 
     },
     "%@, Grade %@" : {
@@ -156,6 +147,9 @@
     "Detected Pitch: %.0f Hz" : {
 
     },
+    "Dev" : {
+
+    },
     "Famous Quotes" : {
 
     },
@@ -169,9 +163,6 @@
 
     },
     "Follow The Scale" : {
-
-    },
-    "Go to \n Scale" : {
 
     },
     "Go to Screen B" : {
@@ -221,9 +212,6 @@
     "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
 
     },
-    "LH\nProgress" : {
-
-    },
     "Log" : {
 
     },
@@ -258,9 +246,6 @@
     "No" : {
 
     },
-    "No mail" : {
-
-    },
     "None" : {
 
     },
@@ -285,16 +270,10 @@
     "Preliminary" : {
 
     },
-    "READ_TEST_DATA" : {
-
-    },
     "Record The Scale" : {
 
     },
     "Recording %@" : {
-
-    },
-    "RH\nProgress" : {
 
     },
     "Save Configuration" : {
@@ -351,9 +330,6 @@
 
     },
     "Select Your Music Board and Grade" : {
-
-    },
-    "Send Tap Data" : {
 
     },
     "Settings" : {
@@ -419,10 +395,13 @@
     "Stop Recording Scale" : {
 
     },
-    "Taps" : {
+    "Taps AmplFilter:%lf" : {
 
     },
     "Tempo" : {
+
+    },
+    "Test Mode On" : {
 
     },
     "This view could show various progress assessments and notes for this scale..." : {

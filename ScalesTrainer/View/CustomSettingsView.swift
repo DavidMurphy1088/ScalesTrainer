@@ -9,13 +9,14 @@ struct CustomSettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    @State var recordDataMode = Settings.shared.recordDataMode
+    @State var recordDataMode = Settings.shared.developerModeOn 
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
     @State var metronomeOn = false
-    
+    @State var developerModeOn = false
+
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
@@ -99,6 +100,21 @@ struct CustomSettingsView: View {
                     settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
                 })
             }
+            
+            ///Developer
+            Spacer()
+            HStack {
+                Spacer()
+                Toggle(isOn: $developerModeOn) {
+                    Text("Test Mode On").font(.title2).padding(0)
+                }
+                .onChange(of: developerModeOn, {
+                    settings.developerModeOn = developerModeOn
+                })
+                Spacer()
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.30)
+            
             
             Spacer()
             HStack {
@@ -184,6 +200,7 @@ struct CustomSettingsView: View {
                     self.keyColor = Settings.shared.getKeyColor()
                     self.backingPresetNumber = settings.backingSamplerPreset
                     self.metronomeOn = settings.metronomeOn
+                    self.developerModeOn = settings.developerModeOn
                 }
             }
         }

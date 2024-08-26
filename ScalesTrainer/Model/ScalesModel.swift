@@ -100,15 +100,26 @@ public class ScalesModel : ObservableObject {
     var onRecordingDoneCallback:(()->Void)?
     var tapHandlers:[TapHandlerProtocol] = []
     
-    private(set) var tapHandlerEventSet:TapStatusRecordSet? = nil
-    @Published var tapHandlerEventSetPublished = false
-    func setTapHandlerEventSet(_ value:TapStatusRecordSet?, publish:Bool) {
-        self.tapHandlerEventSet = value
+    private(set) var processedEventSet:TapStatusRecordSet? = nil
+    @Published var processedEventSetPublished = false
+    func setProcessedEventSet(_ value:TapStatusRecordSet?, publish:Bool) {
+        self.processedEventSet = value
         if publish {
             DispatchQueue.main.async {
-                self.tapHandlerEventSetPublished = value != nil
+                self.processedEventSetPublished = value != nil
             }
         }
+    }
+    
+    private(set) var tapEventSet:TapEventSet? = nil
+    //@Published var tapHandlerEventSetPublished = false
+    func setTapEventSet(_ value:TapEventSet?, publish:Bool) {
+        self.tapEventSet = value
+//        if publish {
+//            DispatchQueue.main.async {
+//                self.tapHandlerEventSetPublished = value != nil
+//            }
+//        }
     }
 
     //@Published
@@ -248,6 +259,10 @@ public class ScalesModel : ObservableObject {
                     self.synchedIsPlaying = false
                 }
             }
+            if self.tapHandlers.count > 0 {
+                self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
+            }
+            self.tapHandlers = []
         }
         self.runningProcess = setProcess
         DispatchQueue.main.async {
@@ -274,7 +289,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .leadingTheScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, handIndex: scale.hand, amplitudeFilter: Settings.shared.amplitudeFilter))
+            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, handIndex: scale.hand, amplitudeFilter: Settings.shared.amplitudeFilter))
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note to start then wait some time. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -293,7 +308,7 @@ public class ScalesModel : ObservableObject {
             self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
             if setProcess == .followingScale {
                 self.followScaleProcess(handIndex: scale.hand, onDone: {cancelled in
-                    self.setRunningProcess(.none)
+                    //self.setRunningProcess(.none)
                 })
             }
         }
@@ -332,14 +347,14 @@ public class ScalesModel : ObservableObject {
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
             self.setUserMessage(nil)
-            self.setTapHandlerEventSet(nil, publish: true)
+            self.setProcessedEventSet(nil, publish: true)
             keyboard.redraw()
             ///4096 has extra params to figure out automatic scale play end
             ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
             self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, handIndex: scale.hand, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: nil, handIndex: scale.hand, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, handIndex: scale.hand, amplitudeFilter: nil))
 //            self.tapHandlers.append(ScaleTapHandler(bufferSize: 1024, scale: nil, amplitudeFilter: nil))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: nil, handIndex: scale.hand, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, handIndex: scale.hand, amplitudeFilter: nil))
 
             //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
             self.recordedTapsFileURL = nil

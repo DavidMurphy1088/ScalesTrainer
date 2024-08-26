@@ -4,6 +4,43 @@ import AVFoundation
 import SwiftUI
 import Foundation
 
+struct DeveloperView: View {
+    let scalesModel = ScalesModel.shared
+    @State var showingTapData = false
+
+    var body: some View {
+        VStack {
+            Spacer()
+//            Button("READ_TEST_DATA") {
+//                scalesModel.setRunningProcess(.recordScaleWithFileData)
+//            }.padding()
+            //if scalesModel.tapHandlerEventSetPublished  {
+
+            Button("Show Tap Data") {
+                //self.showScaleStart()
+                showingTapData = true
+            }
+                
+            //}
+//            if scalesModel.recordedTapsFileName != nil {
+//                Spacer()
+//                if MFMailComposeViewController.canSendMail() {
+//                    Button("Send Tap Data") {
+//                        activeSheet = .emailRecording
+//                    }
+//                }
+//                else {
+//                    Text("No mail")
+//                }
+//            }
+            Spacer()
+        }
+        .sheet(isPresented: $showingTapData) {
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
+        }
+    }
+}
+
 class TabSelectionManager: ObservableObject {
     @Published var selectedTab: Int = 0
     init() {
@@ -56,14 +93,6 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $tabSelectionManager.selectedTab) {
-                
-                //                ScalesIntervalsView()
-                //                        .tabItem {
-                //                            Label("TEST", systemImage: "scribble")
-                //                        }
-                //                        .tag(0)
-                //                }
-                
                 if ScalesTrainerApp.runningInXcode() {
                     //MIDIView()
                     //PracticeChartView(rows: 10, columns: 3)
@@ -80,21 +109,19 @@ struct ScalesTrainerApp: App {
                         Label("Home", systemImage: "house")
                     }
                     .tag(1)
-                
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
                     .tag(2)
                     .environmentObject(tabSelectionManager)
-                
                 CustomSettingsView()
                     .tabItem {
                         Label("Customise", systemImage: "gearshape.fill")
                     }
                     .tag(3)
                     .environmentObject(tabSelectionManager)
-
+                
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
@@ -102,22 +129,21 @@ struct ScalesTrainerApp: App {
                     .tag(4)
                     .environmentObject(tabSelectionManager)
                 
-                LogView()
-                    .tabItem {
-                        Label("Log", systemImage: "book.pages")
-                    }
-                    .tag(5)
-                
-                //                FFTContentView()
-                //                     .tabItem {
-                //                         Label("Home", systemImage: "house")
-                //                     }
-                //                     .tag(5)
-                //                }
-                //.border(Color.red)
-                .onAppear() {
+                if Settings.shared.developerModeOn  {
+                    // DeveloperView().commonFrameStyle()
+                    LogView()
+                        .tabItem {
+                            Label("Log", systemImage: "book.pages")
+                        }
+                        .tag(5)
+                        .environmentObject(tabSelectionManager)
+                    DeveloperView()
+                        .tabItem {
+                            Label("Dev", systemImage: "book.pages")
+                        }
+                        .tag(6)
+                        .environmentObject(tabSelectionManager)
                 }
-                .environmentObject(tabSelectionManager)
             }
         }
     }

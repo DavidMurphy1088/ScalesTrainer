@@ -70,7 +70,6 @@ struct ScalesView: View {
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
     @State var hearingBacking = false
-    @State var showingTapData = false
     @State var recordingScale = false
     @State var showResultPopup = false
     @State var notesHidden = false
@@ -443,36 +442,6 @@ struct ScalesView: View {
         }
     }
     
-    func DeveloperView() -> some View {
-        HStack {
-            Spacer()
-            Button("READ_TEST_DATA") {
-                scalesModel.setRunningProcess(.recordScaleWithFileData)
-            }.padding()
-            if scalesModel.tapHandlerEventSetPublished  {
-                Spacer()
-                HStack {
-                    Button("Show Tap Data") {
-                        //self.showScaleStart()
-                        showingTapData = true
-                    }
-                }
-            }
-            if scalesModel.recordedTapsFileName != nil {
-                Spacer()
-                if MFMailComposeViewController.canSendMail() {
-                    Button("Send Tap Data") {
-                        activeSheet = .emailRecording
-                    }
-                }
-                else {
-                    Text("No mail")
-                }
-            }
-            Spacer()
-        }
-    }
-    
     func getKeyboardHeight() -> CGFloat {
         var height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
         if scalesModel.scale.octaves > 1 {
@@ -561,19 +530,11 @@ struct ScalesView: View {
                     SelectActionView().commonFrameStyle()
                 }
                 
-                if settings.recordDataMode {
-                    DeveloperView().commonFrameStyle()
-                }
-            
                 Spacer()
             }
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
             ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
             .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-        }
-        
-        .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
         }
         
         .sheet(isPresented: $helpShowing) {
@@ -632,7 +593,7 @@ struct ScalesView: View {
         .onDisappear {
             metronome.stop()
             ///Clean up any recorded files
-            if Settings.shared.recordDataMode {
+            if Settings.shared.developerModeOn  {
                 let fileManager = FileManager.default
                 if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                     do {

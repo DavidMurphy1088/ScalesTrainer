@@ -13,8 +13,8 @@ public enum TapEventStatus {
 
 ///The tap events collected by a tap handler.
 ///May also be compressed events where duplicate tap events are compressed into a single record. i.e. consecutiveCount > 1
-public class TapEvent {
-    let id = UUID()
+public class TapEvent : Hashable, Identifiable  {
+    public let id = UUID()
     var timestamp:Date
     let tapNum:Int
     var consecutiveCount:Int
@@ -29,6 +29,23 @@ public class TapEvent {
         self.amplitude = amplitude
         self.frequency = frequency
         self.tapMidi = Util.frequencyToMIDI(frequency: frequency)
+    }
+    
+    public static func == (lhs: TapEvent, rhs: TapEvent) -> Bool {
+        return lhs.id == rhs.id
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+    }
+    
+    func tapData() -> String {
+        var row = "  "
+        row += "    Num:\(tapNum)"
+        row += "    Midi:\(tapMidi)"
+        row += "    Count:\(self.consecutiveCount)"
+        let amps = String(format: "%.4f", self.amplitude)
+        row += "   Amp:\(amps)"
+        return row
     }
 }
 
