@@ -144,7 +144,10 @@ struct LegendView: View {
                     }
                     Spacer()
                 }
-
+                if let msg = scalesModel.userMessage {
+                    Spacer()
+                    Text(msg).padding()
+                }
                 Spacer()
             }
 //            if let instructions = scalesModel.processInstructions {

@@ -8,7 +8,7 @@ import AudioToolbox
 
 class AudioManager {
     static let shared = AudioManager()
-    public var engine: AudioEngine?
+    private var engine: AudioEngine?
     var keyboardMidiSampler:MIDISampler?
     var backingMidiSampler:MIDISampler?
     var nodeRecorder: NodeRecorder?
@@ -91,7 +91,10 @@ class AudioManager {
             engine.stop()
         }
         setSession()
-        self.engine = AudioEngine()
+        if self.engine == nil {
+            ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
+            self.engine = AudioEngine()
+        }
         guard let engine = self.engine else {
             Logger.shared.reportError(self, "No engine")
             return

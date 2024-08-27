@@ -12,7 +12,7 @@ import UIKit
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance.
 
 protocol TapHandlerProtocol {
-    init(bufferSize:Int, scale:Scale, handIndex:Int, amplitudeFilter:Double?)
+    init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
     func stopTappingProcess() -> TapEventSet
     func getBufferSize() -> Int
@@ -25,13 +25,12 @@ class RealTimeTapHandler : TapHandlerProtocol {
     let amplitudeFilter:Double?
     var tapNum = 0
     var tapHandlerEventSet:TapEventSet
-    var handIndex:Int
+    //var handIndex:Int
     var scale:Scale
     
-    required init(bufferSize:Int, scale:Scale, handIndex:Int, amplitudeFilter:Double?) {
+    required init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?) {
         self.bufferSize = bufferSize
         self.amplitudeFilter = amplitudeFilter
-        self.handIndex = handIndex
         tapNum = 0
         self.tapHandlerEventSet = TapEventSet(bufferSize: bufferSize, events: [])
         self.scale = scale
@@ -42,6 +41,16 @@ class RealTimeTapHandler : TapHandlerProtocol {
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
+        class PossibleKeyPlayed {
+            let hand:Int
+            let keyIndex: Int
+            let inScale:Bool
+            init(hand:Int, keyIndex:Int, inScale:Bool) {
+                self.hand = hand
+                self.keyIndex = keyIndex
+                self.inScale = inScale
+            }
+        }
         let scalesModel = ScalesModel.shared
 
         var frequency:Float
@@ -61,42 +70,45 @@ class RealTimeTapHandler : TapHandlerProtocol {
         
         if aboveFilter {
             var keyboards:[PianoKeyboardModel] = []
-            if [0,2].contains(self.handIndex) {
+            if [0,2].contains(self.scale.hand) {
                 keyboards.append(PianoKeyboardModel.sharedRightHand)
             }
-            if [1,2].contains(self.handIndex) {
+            if [1,2].contains(self.scale.hand) {
                 keyboards.append(PianoKeyboardModel.sharedLeftHand)
             }
             
             ///hand, keyboard key index, inScale
-            var playedNotes:[(Int, Int, Bool)] = []
+            var possibleKeysPlayed:[PossibleKeyPlayed] = []
             for i in 0..<keyboards.count{
                 let keyboard = i == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
                 if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
                     let inScale = scale.getStateForMidi(handIndex: keyboard.hand, midi: midi, direction: 0) != nil
-                    playedNotes.append((keyboard.hand, index, inScale))
+                    possibleKeysPlayed.append(PossibleKeyPlayed(hand: keyboard.hand, keyIndex: index, inScale: inScale))
                 }
             }
-            if playedNotes.count > 0 {
+            if possibleKeysPlayed.count > 0 {
                 //print("==============TAP:", tapNum, midi, "notes:", playedNotes)
                 if keyboards.count == 1 {
                     let keyboard = keyboards[0]
-                    let keyboardKey = keyboard.pianoKeyModel[playedNotes[0].1]
+                    let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
                     keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                 }
                 else {
-                    ///For all keys played show the played status only on one keyboard - RH or LH, not both
-                    ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
-                    if let inScale = playedNotes.first(where: { $0.2 == true}) {
-                        let keyboard = inScale.0 == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-                        let keyboardKey = keyboard.pianoKeyModel[inScale.1]
-                        keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                    if let inScale = possibleKeysPlayed.first(where: { $0.inScale == true}) {
+                        ///New option for scale Leacd in? - For all keys played show the played status only on one keyboard - RH or LH, not both
+                        ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
+                        let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
+                        for possibleKey in possibleKeysPlayed {
+                            let keyboard = possibleKey.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
+                            keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                        }
                     }
                     else {
                         ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
-                        if let outOfScale = playedNotes.first(where: { $0.2 == false}) {
-                            let keyboard = outOfScale.0 == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-                            let keyboardKey = keyboard.pianoKeyModel[outOfScale.1]
+                        if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
+                            let keyboard = outOfScale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                         }
                     }

@@ -52,7 +52,8 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
                     //ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioDiminishedSeventh, octaves: 2, hand: 0))
-                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"), 
+                                                             scaleType: .contraryMotion,
                                                              octaves: 1, hand: 2,
                                                              minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0

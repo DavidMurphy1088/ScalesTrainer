@@ -12,7 +12,6 @@ class ScaleTapHandler : TapHandlerProtocol  {
     let bufferSize:Int
     let amplitudeFilter:Double?
     let scale:Scale?
-    let handIndex: Int
     var eventNumber = 0
     var recordedTapEvents:[TapEvent]
     var lastTappedTime:Date? = nil
@@ -21,13 +20,12 @@ class ScaleTapHandler : TapHandlerProtocol  {
     var midisInScale:[Int] = []
     var firstQuietTime:Date? = nil
     
-    required init(bufferSize:Int, scale:Scale, handIndex:Int, amplitudeFilter:Double?) {
+    required init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?) {
         self.recordedTapEvents = []
         self.bufferSize = bufferSize
         self.scale = scale
-        self.handIndex = handIndex
         self.amplitudeFilter = amplitudeFilter
-        midisInScale = scale.getMidisInScale(handIndex: handIndex)
+        midisInScale = scale.getMidisInScale(handIndex: scale.hand)
     }
     
     func getBufferSize() -> Int {

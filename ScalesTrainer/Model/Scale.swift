@@ -54,7 +54,7 @@ public enum ScaleType: CaseIterable, Comparable {
     case chromatic
     
     func isMajor() -> Bool {
-        return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh 
+        return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh
         || self == .chromatic || self == .brokenChordMajor
     }
     
@@ -118,7 +118,7 @@ public class ScaleNoteState {
     }
 }
 
-public class Scale { 
+public class Scale {
     let id = UUID()
     static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
@@ -202,21 +202,32 @@ public class Scale {
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
 
         var sequence = 0
-        for handIndex in [0,1] {
+        let handIndexs = [0,1]
+        for handIndex in handIndexs {
             var nextMidi = firstMidi
-            if handIndex == 1 {
-                nextMidi -= 12
+            let scaleOffsetsForHand:[Int]
+            if scaleType == .contraryMotion && handIndex == 1 {
+                scaleOffsetsForHand = scaleOffsets.reversed()
+            }
+            else {
+                scaleOffsetsForHand = scaleOffsets
+            }
+            if scaleType != .contraryMotion {
+                if handIndex == 1 {
+                    nextMidi -= 12
+                }
             }
             self.scaleNoteState.append([])
             for oct in 0..<octaves {
-                for i in 0..<scaleOffsets.count {
+                for i in 0..<scaleOffsetsForHand.count {
                     var noteValue = Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
                         noteValue *= 3
                     }
                     if oct == 0 {
                         scaleNoteState[handIndex].append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue))
-                        nextMidi += scaleOffsets[i]
+                        let deltaDirection = (scaleType == .contraryMotion && handIndex==1) ? -1 : 1
+                        nextMidi += scaleOffsetsForHand[i] * deltaDirection
                     }
                     else {
                         scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][i % 8].midi + (oct * 12), value: noteValue))
@@ -233,7 +244,23 @@ public class Scale {
                 }
             }
         }
-
+        if scaleType == .contraryMotion {
+            self.debug13("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        }
+//
+//
+//        if scaleType == .contraryMotion {
+//            ///Mirror the right hand
+//            let firstMidi = self.scaleNoteState[0][0].midi
+//            self.scaleNoteState.append([])
+//            for i in 0..<self.scaleNoteState[0].count {
+//                let rhMidi = self.scaleNoteState[0][i].midi
+//                let offset = rhMidi - firstMidi
+//                let lhNote = ScaleNoteState(sequence: i, midi: firstMidi - offset, value: self.scaleNoteState[0][i].value)
+//                self.scaleNoteState[1].append(lhNote)
+//            }
+//        }
+                
         if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
             self.scaleShapeForFingering = .scale
         }
@@ -252,7 +279,6 @@ public class Scale {
         }
         
         ///Add notes with midis for the downwards direction
-        
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
@@ -305,7 +331,7 @@ public class Scale {
 //    }
     
     func makeNewScale(offset:Int) -> Scale {
-        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand, 
+        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
         for handIndex in [0,1] {
             for note in scale.scaleNoteState[handIndex] {
@@ -319,7 +345,8 @@ public class Scale {
         var scaleOffsets:[Int] = []
         switch scaleType {
         case .major:
-            scaleOffsets = [2,2,1,2,2,2,2]
+            //scaleOffsets = [2,2,1,2,2,2,2]
+            scaleOffsets = [2,2,1,2,2,2,1]
         case .naturalMinor:
             scaleOffsets = [2,1,2,2,1,2,2]
         case .harmonicMinor:
@@ -352,7 +379,7 @@ public class Scale {
         case .brokenChordMinor:
             scaleOffsets = [3, 4, -4   ]
         case .contraryMotion:
-            scaleOffsets = [2,2,1,2,2,2,2]
+            scaleOffsets = [2,2,1,2,2,2,1]
         }
         
         return scaleOffsets

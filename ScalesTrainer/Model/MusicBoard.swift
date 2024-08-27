@@ -33,6 +33,8 @@ class MusicBoardGrade {
         
         scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: octaves, hand: 2,
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .contraryMotion, octaves: octaves, hand: 2,
+                            minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
         scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, octaves: octaves, hand: 2,
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
 

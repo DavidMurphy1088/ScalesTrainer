@@ -264,6 +264,9 @@ public class ScalesModel : ObservableObject {
             }
             self.tapHandlers = []
         }
+        else {
+            setUserMessage(nil)
+        }
         self.runningProcess = setProcess
         DispatchQueue.main.async {
             self.runningProcessPublished = self.runningProcess
@@ -289,7 +292,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .leadingTheScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, handIndex: scale.hand, amplitudeFilter: Settings.shared.amplitudeFilter))
+            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note to start then wait some time. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
@@ -297,8 +300,18 @@ public class ScalesModel : ObservableObject {
                 //DispatchQueue.main.async {
                     if self.scale.scaleNoteState.count > 0 {
                         if let sampler = self.audioManager.keyboardMidiSampler {
-                            let midi = UInt8(self.scale.scaleNoteState[scale.hand][0].midi)
-                            sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                            var hands:[Int] = []
+                            if scale.hand < 2 {
+                                hands.append(scale.hand)
+                            }
+                            else {
+                                hands.append(0)
+                                hands.append(1)
+                            }
+                            for hand in hands {
+                                let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
+                                sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                            }
                             ///Without delay here the fist note wont hilight - no idea why
                             usleep(1000000 * UInt32(1.5))
                         }
@@ -308,7 +321,7 @@ public class ScalesModel : ObservableObject {
             self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
             if setProcess == .followingScale {
                 self.followScaleProcess(handIndex: scale.hand, onDone: {cancelled in
-                    //self.setRunningProcess(.none)
+                    self.setRunningProcess(.none)
                 })
             }
         }
@@ -351,10 +364,10 @@ public class ScalesModel : ObservableObject {
             keyboard.redraw()
             ///4096 has extra params to figure out automatic scale play end
             ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, handIndex: scale.hand, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, handIndex: scale.hand, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, amplitudeFilter: nil))
 //            self.tapHandlers.append(ScaleTapHandler(bufferSize: 1024, scale: nil, amplitudeFilter: nil))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, handIndex: scale.hand, amplitudeFilter: nil))
+            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, amplitudeFilter: nil))
 
             //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
             self.recordedTapsFileURL = nil
@@ -384,31 +397,56 @@ public class ScalesModel : ObservableObject {
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(handIndex:Int, onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async { [self] in
-            let semaphore = DispatchSemaphore(value: 0)
-            let keyboard = handIndex == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+            class KeyboardSemaphore {
+                let keyboard:PianoKeyboardModel
+                let semaphore:DispatchSemaphore
+                init(keyboard:PianoKeyboardModel, semaphore:DispatchSemaphore) {
+                    self.keyboard = keyboard
+                    self.semaphore = semaphore
+                }
+            }
+            var keyboardSemaphores:[KeyboardSemaphore] = []
+            if handIndex == 0 {
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRightHand, semaphore: DispatchSemaphore(value: 0)))
+            }
+            if handIndex == 1 {
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 1)))
+            }
+            if handIndex == 2 {
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRightHand, semaphore: DispatchSemaphore(value: 0)))
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 1)))
+            }
+
             var scaleIndex = 0
             var cancelled = false
             
             while true {
-                if scaleIndex >= self.scale.scaleNoteState[handIndex].count {
+                if scaleIndex >= self.scale.scaleNoteState[0].count {
                     break
                 }
-                let note = self.scale.scaleNoteState[handIndex][scaleIndex]
-                guard let keyIndex = keyboard.getKeyIndexForMidi(midi:note.midi, direction:0) else {
-                    scaleIndex += 1
-                    continue
-                }
-                let pianoKey = keyboard.pianoKeyModel[keyIndex]
-                keyboard.clearAllFollowingKeyHilights(except: keyIndex)
-                pianoKey.hilightFollowingKey = true
-                keyboard.redraw()
-
-                ///Listen for piano key pressed
                 
-                pianoKey.wasPlayedCallback = {
-                    semaphore.signal()
-                    keyboard.redraw()
-                    pianoKey.wasPlayedCallback = nil
+                var currentMidis:[Int] = []
+                
+                ///Add a semaphore to detect when the expected keyboard key is played
+                for keyboardSemaphore in keyboardSemaphores {
+                    let note = self.scale.scaleNoteState[keyboardSemaphore.keyboard.hand][scaleIndex]
+                    guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, direction:0) else {
+                        scaleIndex += 1
+                        continue
+                    }
+                    currentMidis.append(note.midi)
+                    let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
+                    keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
+                    pianoKey.hilightFollowingKey = true
+                    keyboardSemaphore.keyboard.redraw()
+                    //print("============added semaphore for hand", keyboardSemaphore.keyboard.hand, note.midi)
+                    ///Listen for piano key pressed
+                    pianoKey.wasPlayedCallback = {
+                        //print("    ========key plyed", keyboardSemaphore.keyboard.hand, pianoKey.midi)
+                        keyboardSemaphore.semaphore.signal()
+                        keyboardSemaphore.keyboard.redraw()
+                        pianoKey.wasPlayedCallback = nil
+                    }
                 }
 
                 ///Listen for cancel activity
@@ -421,29 +459,34 @@ public class ScalesModel : ObservableObject {
                             break
                         }
                     }
-                    semaphore.signal()
-                }
-                semaphore.wait()
-                if self.runningProcess != .followingScale {
-                    break
+                    for keyboardSemaphore in keyboardSemaphores {
+                        keyboardSemaphore.semaphore.signal()
+                        keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: nil)
+                    }
                 }
                 
-                ///Change direction
-                let highest = self.scale.getMinMax(handIndex: handIndex).1
-                if pianoKey.midi == highest {
+                ///Wait for the right key to be played on every keyboard
+                for keyboardSemaphore in keyboardSemaphores {
+                    if self.runningProcess != .followingScale {
+                        break
+                    }
+                    print("============sem wait for hand", keyboardSemaphore.keyboard.hand)
+                    keyboardSemaphore.semaphore.wait()
+                    print("============sem recd for hand", keyboardSemaphore.keyboard.hand)
+                }
+                
+                ///Change direction to descending
+                let highest = self.scale.getMinMax(handIndex: keyboardSemaphores[0].keyboard.hand).1
+                if currentMidis[0] == highest {
                     self.setSelectedDirection(1)
                 }
-                if scaleIndex > self.scale.scaleNoteState[handIndex].count - 1 {
+                if scaleIndex >= self.scale.scaleNoteState[0].count - 1 {
                     break
                 }
                 scaleIndex += 1
             }
             self.audioManager.stopRecording()
             if !cancelled {
-//                let result = Result(runningProcess: .followingScale, userMessage: cancelled ? "Cancelled" : "😊 Good job 😊")
-//                ///Follow mode should not make a right/wrong result. It has
-//                //result.buildResult()
-//                self.setResult(result)
                 ScalesModel.shared.setUserMessage("😊 Good job following the scale 😊")
             }
 
