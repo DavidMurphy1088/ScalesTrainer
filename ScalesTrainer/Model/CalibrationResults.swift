@@ -39,7 +39,7 @@ class CalibrationResults : ObservableObject {
             self.calibrationEvents = []
             var tapNum = 0
             for event in tapEvents {
-                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude))
+                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude, status: .none))
 //                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none,
 //                                                        expectedMidis:[], midi: event.midi, tapMidi: event.tapMidi, consecutiveCount: 1))
                 tapNum += 1

@@ -87,13 +87,15 @@ class AudioManager {
         if let sampler = self.keyboardMidiSampler {
             sampler.stop()
         }
-        if let engine = self.engine {
-            engine.stop()
-        }
+
         setSession()
         if self.engine == nil {
             ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
             self.engine = AudioEngine()
+        }
+        else {
+            engine!.stop()
+            //public static var inputDevices: [Device] {
         }
         guard let engine = self.engine else {
             Logger.shared.reportError(self, "No engine")
@@ -382,7 +384,7 @@ class AudioManager {
                 let a = Float(ampl)
                 if let f = f {
                     if let a = a {
-                        currentTapSet?.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: f, amplitude: a))
+                        currentTapSet?.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: f, amplitude: a, status: .none))
 //                        currentTapSet.tapEvents.append(TapEvent(tapNum: tapNum, frequency: f, amplitude: a, ascending: true, status: .none,
 //                                                  expectedMidis: [], midi: 0, tapMidi: 0, consecutiveCount: 1))
                         tapNum += 1

@@ -244,9 +244,7 @@ public class Scale {
                 }
             }
         }
-        if scaleType == .contraryMotion {
-            self.debug13("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
-        }
+
 //
 //
 //        if scaleType == .contraryMotion {
@@ -310,7 +308,9 @@ public class Scale {
             setFingerBreaks(handIndex: handIndex)
         }
         Scale.createCount += 1
+        //if self.octaves == 2 {
         //self.debug13("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        //}
     }
     
 //    func getMatchCount(matched:Bool) -> Int {

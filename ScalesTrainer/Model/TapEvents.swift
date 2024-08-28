@@ -5,13 +5,16 @@ public enum TapEventStatus {
     case info
     case keyPressed
     case sameMidiContinued
-    case belowAmplitudeFilter
     case beforeScaleStart
     case afterScaleEnd
     case waitForMore
+    
+    ///TapEvents
+    case belowAmplitudeFilter
+    case outsideRange ///To far from the last key pressed. Probable frequency overtone
 }
 
-///The tap events collected by a tap handler.
+///The raw tap events collected by a tap handler.
 ///May also be compressed events where duplicate tap events are compressed into a single record. i.e. consecutiveCount > 1
 public class TapEvent : Hashable, Identifiable  {
     public let id = UUID()
@@ -21,14 +24,16 @@ public class TapEvent : Hashable, Identifiable  {
     var amplitude:Float
     let frequency:Float
     let tapMidi:Int
+    let status:TapEventStatus
     
-    public init(tapNum:Int, consecutiveCount:Int, frequency:Float, amplitude:Float) {
+    public init(tapNum:Int, consecutiveCount:Int, frequency:Float, amplitude:Float, status:TapEventStatus) {
         self.timestamp = Date()
         self.tapNum = tapNum
         self.consecutiveCount = consecutiveCount
         self.amplitude = amplitude
         self.frequency = frequency
         self.tapMidi = Util.frequencyToMIDI(frequency: frequency)
+        self.status = status
     }
     
     public static func == (lhs: TapEvent, rhs: TapEvent) -> Bool {
@@ -45,6 +50,7 @@ public class TapEvent : Hashable, Identifiable  {
         row += "    Count:\(self.consecutiveCount)"
         let amps = String(format: "%.4f", self.amplitude)
         row += "   Amp:\(amps)"
+        row += "   Status:\(status)"
         return row
     }
 }

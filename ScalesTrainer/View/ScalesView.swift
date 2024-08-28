@@ -486,23 +486,27 @@ struct ScalesView: View {
                 
                 if scalesModel.showKeyboard {
                     HStack {
-                        VStack {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight())
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.gray, lineWidth: 2)  // Set border color and width
-                                )
-                                .padding()
+                        if [1,2].contains(scalesModel.scale.hand) {
+                            VStack {
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight())
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                    )
+                                    .padding()
+                            }
                         }
-                        VStack {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight())
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.gray, lineWidth: 2)  // Set border color and width
-                                )
-                                .padding()
+                        if [0,2].contains(scalesModel.scale.hand) {
+                            VStack {
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight())
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                    )
+                                    .padding()
+                            }
                         }
                     }
                     .commonFrameStyle()

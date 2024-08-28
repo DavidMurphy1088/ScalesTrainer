@@ -44,7 +44,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
             amplitude = amplitudes[1]
         }
         let tapMidi = Util.frequencyToMIDI(frequency: frequency)
-        let event = TapEvent(tapNum: eventNumber, consecutiveCount: 1, frequency: frequency, amplitude: amplitude)
+        let event = TapEvent(tapNum: eventNumber, consecutiveCount: 1, frequency: frequency, amplitude: amplitude, status: .none)
         self.recordedTapEvents.append(event)
         self.eventNumber += 1
         

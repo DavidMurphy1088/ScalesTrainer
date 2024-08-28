@@ -135,6 +135,7 @@ struct TapDataView: View {
         VStack {
             Text("Taps AmplFilter:\(Settings.shared.amplitudeFilter)").foregroundColor(Color .blue).font(.title3)//.padding()
             
+            ///Process raw taps
             if let tapEventSet = scalesModel.tapEventSet {
                 ScrollView {
                     ForEach(tapEventSet.events, id: \.self) { event in

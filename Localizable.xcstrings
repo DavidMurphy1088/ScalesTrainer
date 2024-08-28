@@ -92,9 +92,6 @@
     "Are you sure you want to go back?" : {
 
     },
-    "asddasd" : {
-
-    },
     "Back" : {
 
     },
@@ -264,6 +261,9 @@
     "Play Recording" : {
 
     },
+    "Play The Scale" : {
+
+    },
     "Please enter your first name" : {
 
     },
@@ -384,6 +384,9 @@
 
     },
     "Stop Playback" : {
+
+    },
+    "Stop Playing" : {
 
     },
     "Stop Playing Along" : {

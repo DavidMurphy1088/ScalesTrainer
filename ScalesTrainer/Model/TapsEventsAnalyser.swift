@@ -432,7 +432,7 @@ class TapsEventsAnalyser {
         
         for event in events {
             guard let last = lastEvent else {
-                lastEvent = TapEvent(tapNum: 0, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude)
+                lastEvent = TapEvent(tapNum: 0, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude, status: .none)
                 continue
             }
             if event.tapMidi == last.tapMidi {
@@ -449,7 +449,7 @@ class TapsEventsAnalyser {
                 }
                 filtered.append(last)
             }
-            lastEvent = TapEvent(tapNum: filtered.count, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude)
+            lastEvent = TapEvent(tapNum: filtered.count, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude, status: .none)
             lastEvent!.timestamp = event.timestamp
         }
         if let lastEvent = lastEvent {

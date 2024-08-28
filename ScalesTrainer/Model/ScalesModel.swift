@@ -93,7 +93,8 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let calibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
+    //let calibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
+    let calibrationTapHandler:RealTimeTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
     var helpTopic:String? = nil
@@ -274,7 +275,7 @@ public class ScalesModel : ObservableObject {
 
         ///For some unknwon reason the 1st call does not silence some residue sound from the sampler. The 2nd does appear to.
         self.audioManager.resetAudioKit()
-        self.audioManager.resetAudioKit()
+        //self.audioManager.resetAudioKit()
 
         self.setShowKeyboard(true)
         self.setShowParameters(true)
@@ -312,8 +313,8 @@ public class ScalesModel : ObservableObject {
                                 let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
                                 sampler.play(noteNumber: midi, velocity: 64, channel: 0)
                             }
-                            ///Without delay here the fist note wont hilight - no idea why
-                            usleep(1000000 * UInt32(1.5))
+                            ///Need delay to avoid the first note being 'heard' from this sampler playing note
+                            usleep(1000000 * UInt32(2.0))
                         }
                     }
                 //}
@@ -470,9 +471,9 @@ public class ScalesModel : ObservableObject {
                     if self.runningProcess != .followingScale {
                         break
                     }
-                    print("============sem wait for hand", keyboardSemaphore.keyboard.hand)
+                    //print("============sem wait for hand", keyboardSemaphore.keyboard.hand)
                     keyboardSemaphore.semaphore.wait()
-                    print("============sem recd for hand", keyboardSemaphore.keyboard.hand)
+                    //print("============sem recd for hand", keyboardSemaphore.keyboard.hand)
                 }
                 
                 ///Change direction to descending
@@ -551,7 +552,6 @@ public class ScalesModel : ObservableObject {
     
     func setScale(scale:Scale) {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false) 
-        //Logger.shared.log(self, "setScale to:\(name) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
         Logger.shared.log(self, "setScale to:\(name)")
         let score = self.createScore(scale: scale)
         self.setScaleAndScore(scale: scale, score: score, ctx: "setScale")
@@ -577,12 +577,9 @@ public class ScalesModel : ObservableObject {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
-        //if [0,2].contains(scale.hand) {
-            PianoKeyboardModel.sharedRightHand.configureKeyboardForScale(scale: scale, handIndex: 0)
-        //}
-        //if [1,2].contains(scale.hand) {
-            PianoKeyboardModel.sharedLeftHand.configureKeyboardForScale(scale: scale, handIndex: 1)
-        //}
+        PianoKeyboardModel.sharedRightHand.configureKeyboardForScale(scale: scale, handIndex: 0)
+        PianoKeyboardModel.sharedLeftHand.configureKeyboardForScale(scale: scale, handIndex: 1)
+
         self.setSelectedDirection(0)
         PianoKeyboardModel.sharedRightHand.redraw()
         PianoKeyboardModel.sharedLeftHand.redraw()

@@ -25,7 +25,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
     let amplitudeFilter:Double?
     var tapNum = 0
     var tapHandlerEventSet:TapEventSet
-    //var handIndex:Int
+    var lastPlayedKeyMidi:Int? = nil
     var scale:Scale
     
     required init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?) {
@@ -34,6 +34,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
         tapNum = 0
         self.tapHandlerEventSet = TapEventSet(bufferSize: bufferSize, events: [])
         self.scale = scale
+        lastPlayedKeyMidi = nil
     }
     
     func getBufferSize() -> Int {
@@ -51,6 +52,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 self.inScale = inScale
             }
         }
+        var tapStatus:TapEventStatus = .none
         let scalesModel = ScalesModel.shared
 
         var frequency:Float
@@ -68,7 +70,16 @@ class RealTimeTapHandler : TapHandlerProtocol {
         let midi = Util.frequencyToMIDI(frequency: frequency)
         let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         
-        if aboveFilter {
+        if let lastPlayedKeyMidi = lastPlayedKeyMidi {
+            if abs(midi - lastPlayedKeyMidi) > 4 {
+                tapStatus = .outsideRange
+            }
+        }
+        if !aboveFilter {
+            tapStatus = .belowAmplitudeFilter
+        }
+        
+        if ![.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
             var keyboards:[PianoKeyboardModel] = []
             if [0,2].contains(self.scale.hand) {
                 keyboards.append(PianoKeyboardModel.sharedRightHand)
@@ -77,6 +88,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 keyboards.append(PianoKeyboardModel.sharedLeftHand)
             }
             
+            ///A played MIDI may be in both the LH and RH keyboards.
             ///hand, keyboard key index, inScale
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
             for i in 0..<keyboards.count{
@@ -84,6 +96,9 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
                     let inScale = scale.getStateForMidi(handIndex: keyboard.hand, midi: midi, direction: 0) != nil
                     possibleKeysPlayed.append(PossibleKeyPlayed(hand: keyboard.hand, keyIndex: index, inScale: inScale))
+                    if inScale {
+                        lastPlayedKeyMidi = midi
+                    }
                 }
             }
             if possibleKeysPlayed.count > 0 {
@@ -114,9 +129,8 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     }
                 }
             }
-                
         }
-        tapHandlerEventSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: frequency, amplitude: amplitude))
+        tapHandlerEventSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: frequency, amplitude: amplitude, status: tapStatus))
         tapNum += 1
     }
     

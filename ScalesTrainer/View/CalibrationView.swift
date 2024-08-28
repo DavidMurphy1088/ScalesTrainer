@@ -16,27 +16,20 @@ public struct CalibrationView: View {
     @State var showingTapData = false
     @State var info:String? = nil
     
-    func setScale(octaves:Int, hand:Int) {
-        let scaleRoot = ScaleRoot(name: "C")
-        //self.scalesModel.selectedOctavesIndex = octaves-1
-        self.scalesModel.selectedHandIndex = hand
-        scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
-        scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand,
-                                                                 minTempo: 90, dynamicType: .mf, articulationType: .legato))
-        PianoKeyboardModel.sharedRightHand.redraw()
-        //self.amplitudeFilter = Settings.shared.amplitudeFilter
-    }
+//    func setScale(octaves:Int, hand:Int) {
+//        let scaleRoot = ScaleRoot(name: "C")
+//        self.scalesModel.selectedHandIndex = hand
+//        scalesModel.setScaleByRootAndType(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand, ctx: "Callibration")
+//        scalesModel.score = scalesModel.createScore(scale: Scale(scaleRoot: scaleRoot, scaleType: .major, octaves: octaves, hand: hand,
+//                                                                 minTempo: 90, dynamicType: .mf, articulationType: .legato))
+//        PianoKeyboardModel.sharedRightHand.redraw()
+//    }
     
     func getScaleName() -> String {
         let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
         return name
     }
-    public var body1: some View {
-        VStack {
-            Text("asddasd")
-        }
-    }
-    
+
     func getStartAmplitudeAndInfo(tapEventSet:TapEventSet) -> (Double, String) {
         var trailingAmplitudes:[Float] = []
         var recent:[Float] = []
@@ -117,19 +110,21 @@ public struct CalibrationView: View {
                     }
                     Text("Current Amplitude Filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))").font(.title3).padding()
                     Text("New Amplitude Filter:\(String(format: "%.4f", self.amplitudeFilter))").font(.title3).padding()
-                    if let info = self.info {
-                        Text(info).font(.title3).padding()
-                    }
-                    Spacer()
+//                    if let info = self.info {
+//                        Text(info).font(.title3).padding()
+//                    }
                 }
                 HStack {
                     Text("Adjust:").padding()
                     Slider(
                         value: $amplitudeFilter,
                         in: 0...0.1,
-                        step: 0.01
+                        step: 0.005
                     )
                     .padding()
+                    .onChange(of: amplitudeFilter) { oldValue, newValue in
+                        Settings.shared.amplitudeFilter = newValue
+                    }
                 }
             }
 
@@ -141,67 +136,37 @@ public struct CalibrationView: View {
                         Text("Status: \(results.getTotalErrors())")
                     }
                 }
-//                if !analysingResults {
-//                    Spacer()
-//                    Button(action: {
-//                        playingScale.toggle()
-//                        analysingResults = false
-//                        if playingScale {
-//                            scalesModel.setRunningProcess(.recordingScale)
-//                        }
-//                        else {
-//                            for handler in scalesModel.tapHandlers {
-//                                if handler.getBufferSize() == 4096 {
-//                                    let eventSet = handler.stopTappingProcess()
-//                                    (self.amplitudeFilter, self.info) = self.getStartAmplitudeAndInfo(tapEventSet: eventSet)
-//                                    //Settings.shared.amplitudeFilter = self.amplitudeFilter
-//                                }
-//                            }
-//                            scalesModel.setRunningProcess(.none)
-//                        }
-//                        
-//                    }) {
-//                        Text(playingScale ? "Stop Playing Scale" : "Start Playing Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                    }
-//                }
-                
-                ///This section tries different amplitude Filters to find the best.
-                ///For the moment just go with the average calculated after the scale was recorded
-//                if calibrationResults.calibrationEvents != nil {
-//                    Spacer()
-//                    let results = ScalesModel.shared.calibrationResults
-//                    if !analysingResults {
-//                        Button(action: {
-//                            analysingResults = true
-//                            results.analyseBestSettings(onNext: {amp in
-//                                self.userMessage = "Analysing with " + String(format: "%.4f", amp) + ", please wait..."
-//                            }, onDone: {best in
-//                                var msg = "Finished analysing."
-//                                self.analysingResults = false
-//                                if let best = best {
-//                                    msg += " Result:"+String(format:"%.4f", best)
-//                                    self.amplitudeCalibrationValue = best
-//                                }
-//                                self.userMessage = msg
-//                            },
-//                                                        tapBufferSize: Settings.shared.defaultTapBufferSize)
-//                        })
-//                        {
-//                            Text("Analyse Best Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                        }
-//                    }
-//                }
+
                 Spacer()
-                Button(action: {
-                    Settings.shared.amplitudeFilter = self.amplitudeFilter
-                    Settings.shared.save()
-                    tabSelectionManager.selectedTab = 1
-                }) {
-                    HStack {
-                        Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
+                if playingScale {
+                    Button(action: {
+                        playingScale = false
+                        scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("Stop Playing").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
+
                 }
-                Spacer()
+                else {
+                    Button(action: {
+                        playingScale = true
+                        scalesModel.setRunningProcess(.leadingTheScale)
+                    }) {
+                        Text("Play The Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+                    }
+
+                    Spacer()
+                    Button(action: {
+                        Settings.shared.amplitudeFilter = self.amplitudeFilter
+                        Settings.shared.save()
+                        tabSelectionManager.selectedTab = 1
+                    }) {
+                        HStack {
+                            Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
+                    }
+                    Spacer()
+                }
             }
             if scalesModel.processedEventSetPublished  {
                 Spacer()
@@ -230,8 +195,8 @@ public struct CalibrationView: View {
 //            )
 //        }
         .onAppear() {
-            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
-            setScale(octaves: octaves, hand: 0)
+//            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
+//            setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
             ScalesModel.shared.selectedHandIndex = 0
             self.amplitudeFilter = Settings.shared.amplitudeFilter
