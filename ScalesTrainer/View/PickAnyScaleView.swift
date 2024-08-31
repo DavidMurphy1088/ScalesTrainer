@@ -10,6 +10,13 @@ struct PickAnyScaleView: View {
     @State var rootIndexMinor:Int = 0
     @State var typesMinor:[String] = []
     @State var rootsMinor:[String] = ["A", "B♭", "B", "C", "C#", "D", "E♭", "E", "F", "F#", "G", "G#"]
+    
+    @State var hands:[String] = ["Right Hand", "Left Hand", "Hands Together"]
+    @State var indexHands:Int = 0
+    
+    @State var octaves:[String] = ["1", "2", "3","4"]
+    @State var indexOctave:Int = 0
+
     let backgroundImage = UIGlobals.shared.getBackground()
     init() {
     }
@@ -34,8 +41,8 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .major
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0,
-                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, 
+                          octaves: self.indexOctave+1, hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         else {
             switch typeIndexMinor {
@@ -61,8 +68,8 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .harmonicMinor
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: Settings.shared.defaultOctaves, hand: 0,
-                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: self.indexOctave+1,
+                          hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         ScalesModel.shared.setScale(scale: scale)
         return scale
@@ -81,7 +88,7 @@ struct PickAnyScaleView: View {
                 
                 VStack {
                     VStack {
-                        Text("Major Scales").font(.title2).padding()
+                        Text("Major Scales").font(.title).padding()
                         HStack {
                             Text("Scale Root:").font(.title2).padding()
                             Picker("Select Value", selection: $rootIndexMajor) {
@@ -101,11 +108,30 @@ struct PickAnyScaleView: View {
                             }
                             .pickerStyle(.menu)
                         }
+                        
+                        HStack {
+                            Text("Hand:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexHands) {
+                                ForEach(hands.indices, id: \.self) { index in
+                                    Text("\(hands[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+
+                            Text("Octaves:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexOctave) {
+                                ForEach(octaves.indices, id: \.self) { index in
+                                    Text("\(octaves[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+
                         let scale = setModelScale(major: true)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-                                Text("  Practice - \(name))  ").font(.title2).padding()
+                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                                Text("  Practice - \(name)  ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -117,7 +143,7 @@ struct PickAnyScaleView: View {
                     .padding()
                     
                     VStack {
-                        Text("Minor Scales").padding()
+                        Text("Minor Scales").font(.title).padding()
                         HStack {
                             Text("Scale Root:").font(.title2).padding()
                             Picker("Select Value", selection: $rootIndexMinor) {
@@ -137,11 +163,30 @@ struct PickAnyScaleView: View {
                             }
                             .pickerStyle(.menu)
                         }
+
+                        HStack {
+                            Text("Hand:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexHands) {
+                                ForEach(hands.indices, id: \.self) { index in
+                                    Text("\(hands[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            
+                            Text("Octaves:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexOctave) {
+                                ForEach(octaves.indices, id: \.self) { index in
+                                    Text("\(octaves[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+
                         let scale = setModelScale(major: false)
                         NavigationLink(destination: ScalesView()) {
                             HStack {
-                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-                                Text(" Practice - \(name)) ").font(.title2).padding()
+                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                                Text(" Practice - \(name) ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -155,7 +200,7 @@ struct PickAnyScaleView: View {
                 .commonFrameStyle(backgroundColor: .white)
 
             }
-            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
+            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
             .onAppear() {
                 if self.typesMinor.count == 0 {
                     for scale in ScaleType.allCases {

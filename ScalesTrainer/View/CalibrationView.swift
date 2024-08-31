@@ -26,6 +26,7 @@ public struct CalibrationView: View {
 //    }
     
     func getScaleName() -> String {
+        //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
         let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
         return name
     }
@@ -145,7 +146,6 @@ public struct CalibrationView: View {
                     }) {
                         Text("Stop Playing").padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
-
                 }
                 else {
                     Button(action: {
@@ -165,8 +165,8 @@ public struct CalibrationView: View {
                             Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
-                    Spacer()
                 }
+                Spacer()
             }
             if scalesModel.processedEventSetPublished  {
                 Spacer()
@@ -198,7 +198,6 @@ public struct CalibrationView: View {
 //            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
 //            setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
-            ScalesModel.shared.selectedHandIndex = 0
             self.amplitudeFilter = Settings.shared.amplitudeFilter
         }
         .onDisappear() {

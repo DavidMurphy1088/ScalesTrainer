@@ -34,19 +34,21 @@ class CalibrationResults : ObservableObject {
         }
     }
     
-    func setEvents(tapEvents:[TapStatusRecord]) {
-        DispatchQueue.main.async {
-            self.calibrationEvents = []
-            var tapNum = 0
-            for event in tapEvents {
-                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude, status: .none))
-//                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none,
-//                                                        expectedMidis:[], midi: event.midi, tapMidi: event.tapMidi, consecutiveCount: 1))
-                tapNum += 1
-            }
-            self.calibrationResults = nil
-        }
-    }
+//    func setEvents(tapEvents:[TapStatusRecord]) {
+//        DispatchQueue.main.async {
+//            self.calibrationEvents = []
+//            var tapNum = 0
+//            for event in tapEvents {
+//                self.calibrationEvents!.append(event)
+//                TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: event.frequency, amplitude: event.amplitude,
+//                                                        status: .none, inScale: event.status == .keyPressed))
+////                self.calibrationEvents!.append(TapEvent(tapNum: tapNum, frequency: event.frequency, amplitude: event.amplitude, ascending: event.ascending, status: .none,
+////                                                        expectedMidis:[], midi: event.midi, tapMidi: event.tapMidi, consecutiveCount: 1))
+//                tapNum += 1
+//            }
+//            self.calibrationResults = nil
+//        }
+//    }
     
     func reset() {
         DispatchQueue.main.async {
@@ -132,32 +134,32 @@ class CalibrationResults : ObservableObject {
 //        scalesModel.setRunningProcess(.recordScaleWithTapData, amplitudeFilter: amplitudeFilter)
 //    }
     
-    func calculateAverageAmplitude() -> Double? {
-        let scalesModel = ScalesModel.shared
-        guard let eventSet = scalesModel.processedEventSet else {
-            Logger.shared.reportError(self, "No events")
-            return nil
-        }
-        var amplitudes:[Float] = []
-        for event in eventSet.events {
-            let amplitude = Float(event.amplitude)
-            amplitudes.append(amplitude)
-        }
-        let n = 8
-        guard amplitudes.count >= n else {
-            Logger.shared.reportError(self, "Calibration amplitudes must contain at least \(n) elements.")
-            return nil
-        }
-        
-        let highest = amplitudes.sorted(by: >).prefix(n)
-        let total = highest.reduce(0, +)
-        let avgAmplitude = Double(total / Float(highest.count))
-        //scalesModel.setAmplitudeFilter(avgAmplitude)
-        //Settings.shared.save(amplitudeFilter: avgAmplitude)
-        Logger.shared.log(self, "Calibration amplitude set at: \(avgAmplitude) from \(n) averages")
-        
-        ///Save events as callibration events
-        self.setEvents(tapEvents: eventSet.events)
-        return avgAmplitude
-    }
+//    func calculateAverageAmplitude() -> Double? {
+//        let scalesModel = ScalesModel.shared
+//        guard let eventSet = scalesModel.processedEventSet else {
+//            Logger.shared.reportError(self, "No events")
+//            return nil
+//        }
+//        var amplitudes:[Float] = []
+//        for event in eventSet.events {
+//            let amplitude = Float(event.amplitude)
+//            amplitudes.append(amplitude)
+//        }
+//        let n = 8
+//        guard amplitudes.count >= n else {
+//            Logger.shared.reportError(self, "Calibration amplitudes must contain at least \(n) elements.")
+//            return nil
+//        }
+//        
+//        let highest = amplitudes.sorted(by: >).prefix(n)
+//        let total = highest.reduce(0, +)
+//        let avgAmplitude = Double(total / Float(highest.count))
+//        //scalesModel.setAmplitudeFilter(avgAmplitude)
+//        //Settings.shared.save(amplitudeFilter: avgAmplitude)
+//        Logger.shared.log(self, "Calibration amplitude set at: \(avgAmplitude) from \(n) averages")
+//        
+//        ///Save events as callibration events
+//        self.setEvents(tapEvents: eventSet.events)
+//        return avgAmplitude
+//    }
 }

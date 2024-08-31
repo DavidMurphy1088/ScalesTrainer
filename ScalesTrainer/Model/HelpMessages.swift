@@ -21,7 +21,7 @@ class HelpMessages {
         m = "Calibration is required so Scales Academy can accurately hear your piano and filter out background noise."
         m += "\n\n➤ For best recording results using your device's microphone your device should be placed near or directly against your piano."
         m += "\n\n➤ You will need to perform calibration again if you change the location of where the device is positioned when it listens to you play."
-        m += "\n\n➤ Press Start Playing Scale and play the scale shown at a Mezzo-forte (mf) dynamic and at a moderate tempo. Press Stop Playing when the scale is finished."
+        m += "\n\n➤ Press Start Playing Scale and play the scale shown at a Mezzo-Forte (mf) dynamic and at a moderate tempo. Press Stop Playing when the scale is finished."
         m += "\n\n➤ Press Save Configuration to save the configuration."
 
         //m += " Then press Analyse Best Settings to save the calibration."

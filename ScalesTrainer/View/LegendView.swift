@@ -37,6 +37,7 @@ struct ViewSettingsView: View {
 }
 
 struct LegendView: View {
+    let hand:Int
     @ObservedObject var logger = Logger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     @State private var scrollToEnd = false
@@ -49,26 +50,26 @@ struct LegendView: View {
         }
         return .black
     }
-    
+        
     func fingerChangeName() -> String {
-        var name:String
-        if scalesModel.selectedHandIndex == 0 {
+        var result:String
+        if hand == 0 {
             if scalesModel.selectedDirection == 0 {
-                name = "Thumb Under"
+                result = "Thumb Under"
             }
             else {
-                name = "Finger Over"
+                result = "Finger Over"
             }
         }
         else {
             if scalesModel.selectedDirection == 0 {
-                name = "Finger Over" // Note"
+                result = "Finger Over"
             }
             else {
-                name = "Thumb Under" // Note"
+                result = "Thumb Under"
             }
         }
-        return name
+        return result
     }
     
     func width() -> CGFloat {
@@ -98,17 +99,18 @@ struct LegendView: View {
                     if scalesModel.showKeyboard {
                         if scalesModel.showFingers {
                             Spacer()
-                            Text("1").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                            Text("Finger")
+                            Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
+                            Text("Finger Number")
                             
                             Spacer()
-                            Text("1").foregroundColor(.orange).font(.title2).bold()
+                            //Text("1").foregroundColor(.orange).font(.title2).bold()
+                            Text("●").foregroundColor(.orange).font(.title2).bold()
                             Text(fingerChangeName())
                             Spacer()
                         }
                     }
                 }
-                if scalesModel.runningProcess == .leadingTheScale {
+                if false && scalesModel.runningProcess == .leadingTheScale {
                     Spacer()
                     Circle()
                         .stroke(Color.green.opacity(1.0), lineWidth: 3)
@@ -144,16 +146,8 @@ struct LegendView: View {
                     }
                     Spacer()
                 }
-                if let msg = scalesModel.userMessage {
-                    Spacer()
-                    Text(msg).padding()
-                }
                 Spacer()
             }
-//            if let instructions = scalesModel.processInstructions {
-//                Text("  👉 \(instructions)  ").padding()
-//            }
         }
-
     }
 }

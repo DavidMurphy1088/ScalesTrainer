@@ -18,13 +18,13 @@ struct MetronomeView: View {
     
     var body: some View {
         let beat = (metronome.timerTickerCountPublished % 4) + 1
-        let bar = metronome.timerTickerCountPublished / 4
-            HStack {
-                Image("metronome-left")
-                    .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
-                    //.animation(.easeInOut(duration: 0.1), value: beat)
-            }
+        //let bar = metronome.timerTickerCountPublished / 4
+        HStack {
+            Image("metronome-left")
+                .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
+                //.animation(.easeInOut(duration: 0.1), value: beat)
         }
+    }
 }
 
 //struct ScaleStartView: View {
@@ -115,7 +115,7 @@ struct ScalesView: View {
 //            .onChange(of: handIndex, {
 //                setState(octaves: self.numberOfOctaves, hand: handIndex)
 //            })
-            //Spacer()
+            Spacer()
             Text(LocalizedStringResource("Tempo")).padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
@@ -485,16 +485,21 @@ struct ScalesView: View {
                 }
                 
                 if scalesModel.showKeyboard {
+                    let cornerRadius:CGFloat = 6
                     HStack {
                         if [1,2].contains(scalesModel.scale.hand) {
                             VStack {
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
                                     .frame(height: getKeyboardHeight())
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
                                     )
-                                    .padding()
+                                if scalesModel.showLegend {
+                                    LegendView(hand: 1)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
+                                    )
+                                }
                             }
                         }
                         if [0,2].contains(scalesModel.scale.hand) {
@@ -502,26 +507,26 @@ struct ScalesView: View {
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
                                     .frame(height: getKeyboardHeight())
                                     .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray, lineWidth: 2)  // Set border color and width
+                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)  // Set border color and width
                                     )
-                                    .padding()
+                                if scalesModel.showLegend {
+                                    LegendView(hand: 0)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
+                                    )
+                                }
                             }
                         }
                     }
                     .commonFrameStyle()
                 }
 
-                if scalesModel.showLegend {
-                    LegendView().commonFrameStyle()
-                }
-                
                 if scalesModel.showStaff {
                     if let score = scalesModel.score {
                         VStack {
                             ScoreView(score: score, widthPadding: false)
-                                .border(Color.gray)
-                                .padding()
+                                //.border(Color.gray)
+                                //.padding()
                         }
                         .commonFrameStyle()
                     }
@@ -596,6 +601,7 @@ struct ScalesView: View {
         
         .onDisappear {
             metronome.stop()
+            scalesModel.setRunningProcess(.none)
             ///Clean up any recorded files
             if Settings.shared.developerModeOn  {
                 let fileManager = FileManager.default
@@ -616,6 +622,10 @@ struct ScalesView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+
+        .alert(isPresented: $scalesModel.showUserMessage) {
+            Alert(title: Text("Good job 😊"), message: Text(scalesModel.userMessage ?? ""), dismissButton: .default(Text("OK")))
+        }
         
         .sheet(item: $activeSheet) { item in
             switch item {

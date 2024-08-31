@@ -127,7 +127,6 @@ struct ActivityModeView: View {
                                     .clipShape(Circle()) // Clips the image to a circular shape
                                     .overlay(Circle().stroke(Color.gray, lineWidth: 4)) // Optional: Add a circular border
                                     .shadow(radius: 10) // Optional: Add a shadow for depth
-                                    //.border(.blue)
                                 Text(activityMode.name).font(.title2)
                             }
                             //.border(.red)
@@ -136,19 +135,22 @@ struct ActivityModeView: View {
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
                 
-                List(menuOptionsRight) { activityMode in
-                    HStack {
+                GeometryReader { geo in
+                    List(menuOptionsRight) { activityMode in
                         NavigationLink(destination: getView(activityMode: activityMode)) {
                             HStack {
-                                VStack {
-                                    Text(activityMode.name).background(Color.clear).padding(.vertical, 8)
-                                }
-                                Spacer()
+                                Image(activityMode.imageName)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geo.size.width * 0.50)
+                                    .border(Color.gray)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.gray, lineWidth: 4))
+                                    .shadow(radius: 10)
+                                Text(activityMode.name).font(.title2)
                             }
-                            .contentShape(Rectangle()) // Ensure the link only covers the text and spacer
+                            //.contentShape(Rectangle()) // Ensure the link only covers the text and spacer
                         }
-                        Spacer()
-
                     }
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
@@ -182,8 +184,8 @@ struct ActivityModeView: View {
                     //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
                     //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
                     //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-                    menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: ""))
-                    menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: ""))
+                    menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "WhyLearnScales"))
+                    menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "UnderstandingScales"))
                     //                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
                     //                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
                     //                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
@@ -195,7 +197,6 @@ struct ActivityModeView: View {
 
 struct HomeView: View {
     @State var scaleGroupsSheet = false
-    //let width = 0.7
     
     var body: some View {
         VStack {
@@ -213,19 +214,17 @@ struct HomeView: View {
                         
                         ActivityModeView()
                             .commonFrameStyle(backgroundColor: .white)
-                            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
+                            //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
                         Spacer()
                     }
                }
             }
-
             .navigationViewStyle(StackNavigationViewStyle())
         }
         //This causes all views navigated to to have the same dimensions
         //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
         .padding(.horizontal, 0)
         .onAppear() {
-           //PracticeJournalOld.shared = PracticeJournalOld(scaleGroup: MusicBoard.options[5])
         }
     }
 }

@@ -7,16 +7,13 @@
     " " : {
 
     },
-    "    " : {
-
-    },
     "  %@  " : {
 
     },
     "  %@   " : {
 
     },
-    "  Practice - %@)  " : {
+    "  Practice - %@  " : {
 
     },
     " %lld" : {
@@ -28,7 +25,7 @@
     " Go To Scale %@ - Good Luck 😊" : {
 
     },
-    " Practice - %@) " : {
+    " Practice - %@ " : {
 
     },
     " Spin The Wheel " : {
@@ -59,6 +56,12 @@
     "%lld" : {
 
     },
+    "© 2024 Musicmaster Education LLC." : {
+
+    },
+    "●" : {
+
+    },
     "𝄞" : {
 
     },
@@ -78,9 +81,6 @@
 
     },
     "😔" : {
-
-    },
-    "1" : {
 
     },
     "Adjust:" : {
@@ -153,7 +153,7 @@
     "FFT Analyzer" : {
 
     },
-    "Finger" : {
+    "Finger Number" : {
 
     },
     "First name" : {
@@ -165,7 +165,13 @@
     "Go to Screen B" : {
 
     },
+    "Good job 😊" : {
+
+    },
     "Grade %lld Piano" : {
+
+    },
+    "Hand:" : {
 
     },
     "Hear\nRecording" : {
@@ -252,6 +258,12 @@
     "Octaves" : {
 
     },
+    "Octaves:" : {
+
+    },
+    "OK" : {
+
+    },
     "Piano Calibration" : {
 
     },
@@ -309,6 +321,9 @@
 
     },
     "Scale Type:" : {
+
+    },
+    "Scales Academy" : {
 
     },
     "Screen A" : {
@@ -414,6 +429,9 @@
 
     },
     "Under Construction" : {
+
+    },
+    "Version %@" : {
 
     },
     "Viewing\nDirection" : {

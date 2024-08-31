@@ -2,16 +2,10 @@ import Foundation
 
 public enum TapEventStatus {
     case none
-    case info
-    case keyPressed
-    case sameMidiContinued
-    case beforeScaleStart
-    case afterScaleEnd
-    case waitForMore
-    
-    ///TapEvents
     case belowAmplitudeFilter
     case outsideRange ///To far from the last key pressed. Probable frequency overtone
+    case countTooLow
+    case inScale
 }
 
 ///The raw tap events collected by a tap handler.
@@ -45,14 +39,29 @@ public class TapEvent : Hashable, Identifiable  {
     
     func tapData() -> String {
         var row = "  "
-        row += "    Num:\(tapNum)"
-        row += "    Midi:\(tapMidi)"
-        row += "    Count:\(self.consecutiveCount)"
+        row += "    #:\(tapNum)"
+        row += "    M:\(tapMidi)"
+        row += "    Cnt:\(self.consecutiveCount)"
         let amps = String(format: "%.4f", self.amplitude)
         row += "   Amp:\(amps)"
         row += "   Status:\(status)"
+
         return row
     }
+}
+
+public enum TapRecordStatus {
+    case none
+    case info
+    case keyPressed
+    case sameMidiContinued
+    case beforeScaleStart
+    case afterScaleEnd
+    case waitForMore
+    
+    ///TapEvents
+    case belowAmplitudeFilter
+    case outsideRange ///To far from the last key pressed. Probable frequency overtone
 }
 
 ///The status of a tap event after processing
@@ -65,13 +74,13 @@ public class TapStatusRecord:Hashable {
     
     let tapMidi:Int ///The origianl tap midi
     let midi:Int? ///The octave adjusted midi used for matching
-    let status:TapEventStatus
+    let status:TapRecordStatus
     let expectedMidis:[Int]
     let ascending:Bool
     let infoMsg:String?
     var consecutiveCount:Int
     
-    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending:Bool, status:TapEventStatus,
+    public init(tapNum:Int, frequency:Float, amplitude:Float, ascending:Bool, status:TapRecordStatus,
                 expectedMidis:[Int], midi:Int?, tapMidi:Int, consecutiveCount:Int) {
         self.timestamp = Date()
         self.tapNum = tapNum
@@ -107,7 +116,7 @@ public class TapStatusRecord:Hashable {
         self.ascending = true
         self.frequency = 0
         self.midi = nil
-        self.status = TapEventStatus.info
+        self.status = TapRecordStatus.info
         self.expectedMidis = []
         self.tapMidi = 0
         self.infoMsg = infoMsg
@@ -164,13 +173,22 @@ public class TapEventSet {
         self.events = events
     }
     
-    func debug1121(_ ctx:String) {
+    func debug1(_ ctx:String) {
         print(" ======== DEBUG TapEventSet", ctx)
         for event in self.events {
             print(event.tapNum, "time:", event.timestamp, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)
         }
     }
     
+    func eventsOutOfScale() -> [TapEvent] {
+        var result:[TapEvent] = []
+        for event in self.events {
+            if event.status == .none {
+                result.append(event)
+            }
+        }
+        return result
+    }
 }
 
 public class TapStatusRecordSet {

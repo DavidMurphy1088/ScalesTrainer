@@ -13,7 +13,7 @@ public enum DynamicType: CaseIterable, Comparable {
     var description: String {
         switch self {
         case .mf:
-            return "Mezzo-forte"
+            return "Mezzo-Forte"
 //        default:
 //            return ""
         }
@@ -197,13 +197,30 @@ public class Scale {
 //            nextMidi -= 12 * octaves
 //        }
         
-        ///Set midi values in scale
         self.scaleShapeForFingering = .none
+        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
+            self.scaleShapeForFingering = .scale
+        }
+        else {
+            if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
+                self.scaleShapeForFingering = .arpgeggio
+            }
+            else {
+                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+                    
+                }
+                else {
+                    self.scaleShapeForFingering = .arpgeggio4Note
+                }
+            }
+        }
+        
+        ///Set midi values in scale
+        
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
-
-        var sequence = 0
-        let handIndexs = [0,1]
-        for handIndex in handIndexs {
+        
+        for handIndex in [0,1] {
+            var sequence = 0
             var nextMidi = firstMidi
             let scaleOffsetsForHand:[Int]
             if scaleType == .contraryMotion && handIndex == 1 {
@@ -218,6 +235,7 @@ public class Scale {
                 }
             }
             self.scaleNoteState.append([])
+            
             for oct in 0..<octaves {
                 for i in 0..<scaleOffsetsForHand.count {
                     var noteValue = Settings.shared.getSettingsNoteValueFactor()
@@ -245,8 +263,6 @@ public class Scale {
             }
         }
 
-//
-//
 //        if scaleType == .contraryMotion {
 //            ///Mirror the right hand
 //            let firstMidi = self.scaleNoteState[0][0].midi
@@ -258,29 +274,13 @@ public class Scale {
 //                self.scaleNoteState[1].append(lhNote)
 //            }
 //        }
-                
-        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
-            self.scaleShapeForFingering = .scale
-        }
-        else {
-            if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
-                self.scaleShapeForFingering = .arpgeggio
-            }
-            else {
-                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-                    
-                }
-                else {
-                    self.scaleShapeForFingering = .arpgeggio4Note
-                }
-            }
-        }
-        
+                        
         ///Add notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
         for handIndex in [0,1] {
+            var sequence = 0
             for i in stride(from: up[handIndex].count - 2, through: 0, by: -1) {
                 var downMidi = up[handIndex][i].midi
                 let downValue = up[handIndex][i].value
@@ -304,12 +304,14 @@ public class Scale {
                 let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3)
                 scaleNoteState[handIndex].append(lastNote)
             }
+        }
+        for handIndex in [0,1] {
             setFingers(handIndex: handIndex)
             setFingerBreaks(handIndex: handIndex)
         }
         Scale.createCount += 1
         //if self.octaves == 2 {
-        //self.debug13("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
+        //self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
         //}
     }
     
@@ -385,7 +387,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug13(_ msg:String)  {
+    func debug11(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hand", self.hand, "octaves", self.octaves, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
@@ -502,7 +504,7 @@ public class Scale {
             return
         }
         let halfway = self.scaleNoteState[handIndex].count/2-1
-        if hand == 0 {
+        if handIndex == 0 {
             var lastFinger = self.scaleNoteState[handIndex][0].finger
             for i in 1...halfway {
                 let finger = self.scaleNoteState[handIndex][i].finger
@@ -522,7 +524,7 @@ public class Scale {
                 if diff > 1 {
                     self.scaleNoteState[handIndex][i+1].fingerSequenceBreak = true
                     let mirror = halfway + (halfway - i) + 2
-                    if mirror < self.scaleNoteState.count - 1 {
+                    if mirror < self.scaleNoteState[handIndex].count - 1 {
                         self.scaleNoteState[handIndex][mirror].fingerSequenceBreak = true
                     }
                 }

@@ -37,61 +37,58 @@ struct CellView: View {
         return self.cellScale.scaleRoot.name + " " + self.cellScale.scaleType.description
     }
     
+    func determineNumberOfBadges() -> Int {
+
+        return Int.random(in: 0..<3)
+    }
+    
     var body: some View {
         VStack {
-//            NavigationLink(destination: ScalesView(initialRunProcess: RunningProcess.none)) {
-//                Text(cell.scaleRoot.name + " " + cell.scaleType.description + " " + hand)
-//                    .padding(5)
-//                    .foregroundColor(.blue)
-//            }
-            if true {
-                Button(action: {
-                    ScalesModel.shared.setScale(scale: cellScale)
-                    navigateToScales = true
-                }) {
-                    let label = cellScale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
-                    Text(label)
-                        .foregroundColor(.blue)
-                }
-                .padding(self.padding)
-                
-                NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
-                }.frame(width: 0.0)
+            Button(action: {
+                ScalesModel.shared.setScale(scale: cellScale)
+                navigateToScales = true
+            }) {
+                let label = cellScale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
+                Text(label)
+                    .foregroundColor(.blue)
             }
-
-//            VStack {
-//                HStack {
-//                    Text("Progress")
-//                    ZStack(alignment: .leading) {
-//                        Rectangle()
-//                            .stroke(Color.gray, lineWidth: 1)
-//                            .frame(width: barWidth(1.0), height: barHeight)
-//
-//                        Rectangle()
-//                            .fill(getColor())
-//                            .frame(width: barWidth(progress()), height: barHeight)
-//                    }
-//                }
-//            }
-//            .padding(self.padding)
+            .padding(self.padding)
+            
+            NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
+            }.frame(width: 0.0)
             
             HStack {
                 Button(action: {
                     showingDetail = true
                 }) {
-                    //Text("Notes").foregroundColor(.blue)
                     Image(systemName: "note.text")
+                        //.resizable()
+                        //.scaledToFit()
                 }
                 .padding(.vertical, 0)
                 .padding(.horizontal)
-                Text("    ")
-//                Toggle(isOn: $cell.selected) {
-//                    Text("Completed").foregroundColor(.black).padding(.horizontal, 0).padding(.vertical, 0)
-//                }
             }
             .padding(self.padding)
+            
+            HStack {
+                let badges = determineNumberOfBadges()
+                if badges > 0 {
+                    ForEach(0..<badges, id: \.self) { _ in
+                        Image("gold_star")
+                            //.resizable()
+                            //.scaledToFit()
+                    }
+                }
+                else {
+                    Image("gold_star")
+                        //.resizable()
+                        //.scaledToFit()
+                        .opacity(0.0)
+                }
+            }
+            .padding()
         }
-        .frame(width: cellWidth, height: cellHeight) // Adjusted dimensions for cells
+        .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
         .cornerRadius(10)
         .overlay(

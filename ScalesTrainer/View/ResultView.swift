@@ -126,7 +126,12 @@ struct TapDataView: View {
     func getColor(_ event:TapEvent) -> Color {
         var color = Color.black
         if Double(event.amplitude) < Settings.shared.amplitudeFilter {
-            color = .brown
+            color = .gray
+        }
+        else {
+            if event.status == .inScale {
+                color = .green
+            }
         }
         return color
     }

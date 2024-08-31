@@ -65,7 +65,6 @@ public class ScalesModel : ObservableObject {
     
     static public var shared = ScalesModel() //musicBoardGrade:
                                             //MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
-    
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -82,11 +81,9 @@ public class ScalesModel : ObservableObject {
     var scaleLeadInCounts:[String] = ["None", "One Bar", "Two Bars", "Four Bars"]
     
     var directionTypes = ["⬆", "⬇"]
-    var selectedHandIndex = 0
     
     var handTypes = ["Right", "Left"]
 
-    //var tempoSettings = ["♩=40", "♩=50", "♩=60", "♩=70", "♩=80", "♩=90", "♩=100", "♩=110", "♩=120", "♩=130", "♩=140", "♩=150", "♩=160"]
     var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
     var selectedTempoIndex = 5 //60=2
         
@@ -113,14 +110,8 @@ public class ScalesModel : ObservableObject {
     }
     
     private(set) var tapEventSet:TapEventSet? = nil
-    //@Published var tapHandlerEventSetPublished = false
     func setTapEventSet(_ value:TapEventSet?, publish:Bool) {
         self.tapEventSet = value
-//        if publish {
-//            DispatchQueue.main.async {
-//                self.tapHandlerEventSetPublished = value != nil
-//            }
-//        }
     }
 
     //@Published
@@ -188,9 +179,13 @@ public class ScalesModel : ObservableObject {
     }
     
     @Published private(set) var userMessage:String? = nil
-    func setUserMessage(_ newValue: String?) {
+    @Published var showUserMessage: Bool = false
+    @Published var userMessageHeading: String? = nil
+    func setUserMessage(heading: String?, msg: String?) {
         DispatchQueue.main.async {
-            self.userMessage = newValue
+            self.userMessageHeading = heading
+            self.userMessage = msg
+            self.showUserMessage = msg != nil
         }
     }
     
@@ -242,7 +237,7 @@ public class ScalesModel : ObservableObject {
     
     //init(musicBoardGrade:MusicBoardGrade) {
     init() {
-        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: Settings.shared.defaultOctaves, hand: 0,
+        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0,
                            minTempo: 90, dynamicType: .mf, articulationType: .legato)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
@@ -263,10 +258,11 @@ public class ScalesModel : ObservableObject {
             if self.tapHandlers.count > 0 {
                 self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
             }
-            self.tapHandlers = []
+            //self.tapHandlers = [] //Dont remove them here. Processes may want them before next process
         }
         else {
-            setUserMessage(nil)
+            self.tapHandlers = []
+            setUserMessage(heading: nil, msg: nil)
         }
         self.runningProcess = setProcess
         DispatchQueue.main.async {
@@ -296,9 +292,10 @@ public class ScalesModel : ObservableObject {
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             if setProcess == .followingScale {
                 setShowKeyboard(true)
-                ///Play first note to start then wait some time. Tried play all notes in scale but the app then listens to itself via the mic and responds to its own sounds
+                ///Play first note to start then wait some time.
                 ///Wait for note to die down otherwise it triggers the first note detection
                 //DispatchQueue.main.async {
+                if true {
                     if self.scale.scaleNoteState.count > 0 {
                         if let sampler = self.audioManager.keyboardMidiSampler {
                             var hands:[Int] = []
@@ -314,9 +311,10 @@ public class ScalesModel : ObservableObject {
                                 sampler.play(noteNumber: midi, velocity: 64, channel: 0)
                             }
                             ///Need delay to avoid the first note being 'heard' from this sampler playing note
-                            usleep(1000000 * UInt32(2.0))
+                            usleep(1000000 * UInt32(1.5))
                         }
                     }
+                }
                 //}
             }
             self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
@@ -360,7 +358,7 @@ public class ScalesModel : ObservableObject {
             self.setShowParameters(false)
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
-            self.setUserMessage(nil)
+            setUserMessage(heading: nil, msg: nil)
             self.setProcessedEventSet(nil, publish: true)
             keyboard.redraw()
             ///4096 has extra params to figure out automatic scale play end
@@ -394,7 +392,7 @@ public class ScalesModel : ObservableObject {
         }
     }
 
-    ///Allow user to follow notes hilighted on the keyboard
+    ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(handIndex:Int, onDone:((_ cancelled:Bool)->Void)?) {
         DispatchQueue.global(qos: .background).async { [self] in
@@ -411,15 +409,16 @@ public class ScalesModel : ObservableObject {
                 keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRightHand, semaphore: DispatchSemaphore(value: 0)))
             }
             if handIndex == 1 {
-                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 1)))
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 0)))
             }
             if handIndex == 2 {
                 keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRightHand, semaphore: DispatchSemaphore(value: 0)))
-                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 1)))
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 0)))
             }
 
             var scaleIndex = 0
             var cancelled = false
+            var inScaleCount = 0
             
             while true {
                 if scaleIndex >= self.scale.scaleNoteState[0].count {
@@ -443,8 +442,8 @@ public class ScalesModel : ObservableObject {
                     //print("============added semaphore for hand", keyboardSemaphore.keyboard.hand, note.midi)
                     ///Listen for piano key pressed
                     pianoKey.wasPlayedCallback = {
-                        //print("    ========key plyed", keyboardSemaphore.keyboard.hand, pianoKey.midi)
                         keyboardSemaphore.semaphore.signal()
+                        inScaleCount += 1
                         keyboardSemaphore.keyboard.redraw()
                         pianoKey.wasPlayedCallback = nil
                     }
@@ -471,9 +470,7 @@ public class ScalesModel : ObservableObject {
                     if self.runningProcess != .followingScale {
                         break
                     }
-                    //print("============sem wait for hand", keyboardSemaphore.keyboard.hand)
                     keyboardSemaphore.semaphore.wait()
-                    //print("============sem recd for hand", keyboardSemaphore.keyboard.hand)
                 }
                 
                 ///Change direction to descending
@@ -487,8 +484,15 @@ public class ScalesModel : ObservableObject {
                 scaleIndex += 1
             }
             self.audioManager.stopRecording()
-            if !cancelled {
-                ScalesModel.shared.setUserMessage("😊 Good job following the scale 😊")
+
+            if inScaleCount > 2 {
+                if let eventSet = self.self.tapEventSet {
+                    let xx = eventSet.eventsOutOfScale()
+                    var msg = "😊 Good job following the scale"
+                    msg += "\nYou played \(inScaleCount) notes in the scale"
+                    //msg += "\nYou played \(xxx) notes out of the scale"
+                    ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
+                }
             }
 
             if let onDone = onDone {
@@ -507,11 +511,11 @@ public class ScalesModel : ObservableObject {
     func createScore(scale:Scale) -> Score {
         //let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
         let staffType:StaffType
-        let handIndex = 0
+        
         if scale.scaleNoteState.count > 0 {
-            //staffType = scale.scaleNoteState[0].midi >= 60 ? .treble : .bass
             ///52 = Max is E below middle C which requires 3 ledger in treble clef
-            staffType = scale.scaleNoteState[handIndex][0].midi >= 52 ? .treble : .bass
+            //staffType = scale.scaleNoteState[handIndex][0].midi >= 52 ? .treble : .bass
+            staffType = scale.hand == 0 ? .treble : .bass
         }
         else {
             staffType = .treble
@@ -525,8 +529,7 @@ public class ScalesModel : ObservableObject {
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
-        //var lastNote:StaffNote?
-        //let noteValue = Settings.shared.getSettingsNoteValueFactor()
+        let handIndex = scale.hand == 1 ? 1 : 0
         
         for i in 0..<scale.scaleNoteState[handIndex].count {
             if Int(inBarTotalValue) >= top {
@@ -595,7 +598,7 @@ public class ScalesModel : ObservableObject {
     func setKeyboard() {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleAndScore to:\(name))")
-        var scale = self.scale
+        let scale = self.scale
         scale.octaves = 4
         //scale.scaleType = .major
         self.scale = scale
