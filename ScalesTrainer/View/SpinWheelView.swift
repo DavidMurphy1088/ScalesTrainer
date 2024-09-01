@@ -55,6 +55,67 @@ struct SpinWheelView: View {
 //        return 0
 //    }
     
+    func startSpinningWheel(scaleNames:[String]) {
+        let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
+        let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
+        withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
+            rotation += totalRotations + randomAngle
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
+            scalesModel.setSpinState1(.spunAndStopped)
+            // Adjust to ensure the rotation ends at a random position
+            rotation = rotation.truncatingRemainder(dividingBy: 360)
+            // Determine which segment is at the top
+            let segments = 360.0 / Double(scaleNames.count)
+            let index = Int((360 - rotation) / segments) % scaleNames.count
+            self.selectedScaleType = index
+//            segments = 360.0 / Double(scaleRoots.count)
+//            index = Int((360 - rotation) / segments) % scaleRoots.count
+//            self.selectedScaleRoot = index
+//
+//            segments = 360.0 / Double(hands.count)
+//            index = Int((360 - rotation) / segments) % hands.count
+//            self.selectedHand = index
+
+//            let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
+//                              scaleType: getTypes()[self.selectedScaleType],
+//                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
+//                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
+            let _ = ScalesModel.shared.setScale(scale: boardGrade.getScales()[index])
+        }
+    }
+
+    func startSpinning3Wheels(scaleTypes:[String], scaleRoots:[String], hands:[Int]) {
+        let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
+        let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
+        withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
+            rotation += totalRotations + randomAngle
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
+            scalesModel.setSpinState1(.spunAndStopped)
+            // Adjust to ensure the rotation ends at a random position
+            rotation = rotation.truncatingRemainder(dividingBy: 360)
+            // Determine which segment is at the top
+            var segments = 360.0 / Double(scaleTypes.count)
+            var index = Int((360 - rotation) / segments) % scaleTypes.count
+            self.selectedScaleType = index
+            
+            segments = 360.0 / Double(scaleRoots.count)
+            index = Int((360 - rotation) / segments) % scaleRoots.count
+            self.selectedScaleRoot = index
+
+            segments = 360.0 / Double(hands.count)
+            index = Int((360 - rotation) / segments) % hands.count
+            self.selectedHand = index
+
+            let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
+                              scaleType: getTypes()[self.selectedScaleType],
+                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
+                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
+            let _ = ScalesModel.shared.setScale(scale: scale)
+        }
+    }
+
     var body: some View {
         ZStack {
             Image(background)
@@ -63,7 +124,7 @@ struct SpinWheelView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                TitleView(screenName: "Spin The Scale Wheel")
+                TitleView(screenName: nil)
                 VStack {
                     ZStack {
                         GeometryReader { geometry in
@@ -123,7 +184,7 @@ struct SpinWheelView: View {
                             VStack {
                                 Button(action: {
                                     //startSpinning3Wheels(scaleTypes: self.getTypeNames(),scaleRoots: self.getRootNames(),hands: [1,0])
-                                    startSpinning1Wheel(scaleNames: getScaleNames())
+                                    startSpinningWheel(scaleNames: getScaleNames())
                                 }) {
                                     HStack {
                                         Text(" Spin The Wheel ").padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -154,69 +215,9 @@ struct SpinWheelView: View {
             background = UIGlobals.shared.getBackground()
             width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.45 : 0.9
         }
-        .navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
+        ///Block the back button for a badge attempt
+        //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }
     
-    func startSpinning1Wheel(scaleNames:[String]) {
-        let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
-        let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
-        withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
-            rotation += totalRotations + randomAngle
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState1(.spunAndStopped)
-            // Adjust to ensure the rotation ends at a random position
-            rotation = rotation.truncatingRemainder(dividingBy: 360)
-            // Determine which segment is at the top
-            let segments = 360.0 / Double(scaleNames.count)
-            let index = Int((360 - rotation) / segments) % scaleNames.count
-            self.selectedScaleType = index
-            print("==============", index)
-//            segments = 360.0 / Double(scaleRoots.count)
-//            index = Int((360 - rotation) / segments) % scaleRoots.count
-//            self.selectedScaleRoot = index
-//
-//            segments = 360.0 / Double(hands.count)
-//            index = Int((360 - rotation) / segments) % hands.count
-//            self.selectedHand = index
-
-//            let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
-//                              scaleType: getTypes()[self.selectedScaleType],
-//                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
-//                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
-            let _ = ScalesModel.shared.setScale(scale: boardGrade.getScales()[index])
-        }
-    }
-
-    func startSpinning3Wheels(scaleTypes:[String], scaleRoots:[String], hands:[Int]) {
-        let totalRotations = maxRotations * totalDuration * 360 // Total rotation in degrees
-        let randomAngle = Double.random(in: 0..<360) // Random angle to add to the final rotation
-        withAnimation(Animation.timingCurve(0.5, 0, 0.5, 1, duration: totalDuration)) {
-            rotation += totalRotations + randomAngle
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState1(.spunAndStopped)
-            // Adjust to ensure the rotation ends at a random position
-            rotation = rotation.truncatingRemainder(dividingBy: 360)
-            // Determine which segment is at the top
-            var segments = 360.0 / Double(scaleTypes.count)
-            var index = Int((360 - rotation) / segments) % scaleTypes.count
-            self.selectedScaleType = index
-            
-            segments = 360.0 / Double(scaleRoots.count)
-            index = Int((360 - rotation) / segments) % scaleRoots.count
-            self.selectedScaleRoot = index
-
-            segments = 360.0 / Double(hands.count)
-            index = Int((360 - rotation) / segments) % hands.count
-            self.selectedHand = index
-
-            let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
-                              scaleType: getTypes()[self.selectedScaleType],
-                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
-                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
-            let _ = ScalesModel.shared.setScale(scale: scale)
-        }
-    }
 }
 

@@ -49,16 +49,16 @@ struct CoinStackView: View {
 //            return 3
 //        }
         ///Make it always odd so it can be centered in the view
-        if totalCoins == 0 {
+        if coinBank.totalCoinsInBank == 0 {
             return 1
         }
-        if totalCoins < 6 {
-            return totalCoins/2 + 1
-        }
-        if totalCoins < 20 {
+//        if coinBank.totalCoinsInBank < 6 {
+//            return coinBank.totalCoinsInBanks/2 + 1
+//        }
+        if coinBank.totalCoinsInBank < 20 {
             return 3
         }
-        if totalCoins < 30 {
+        if coinBank.totalCoinsInBank < 30 {
             return 7
         }
         return 15
@@ -75,7 +75,7 @@ struct CoinStackView: View {
         //pileVertLocations = Array(repeating: 0.0, count: pileCount)
         coinBank.drawingOrder = Array(repeating: 0, count: pileCount)
 
-        for i in 0..<totalCoins {
+        for i in 0..<coinBank.totalCoinsInBank {
             coinBank.pileCoinCounts[i % coinBank.pileCoinCounts.count] += 1
         }
         for _ in 0..<coinBank.pileCoinCounts.count {
@@ -176,10 +176,12 @@ struct CoinStackView: View {
             .onAppear() {
                 self.frameHeight = getPileFrameHeight()
                 self.frameWidth = getPileFrameWidth()
-                if self.totalCoins > 0 {
-                    //debug(" after .InAppear ")
-                }
             }
+            .onChange(of: coinBank.totalCoinsInBank) {newValue in 
+                self.frameHeight = getPileFrameHeight()
+                self.frameWidth = getPileFrameWidth()
+            }
+            Text("coins \(CoinBank.shared.totalCoinsInBank) draw:\(coinBank.drawingOrder.count) \(getPileCount()) ")
         }
 //        HStack {
 //            Spacer()

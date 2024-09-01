@@ -97,9 +97,7 @@ struct PickAnyScaleView: View {
                                 }
                             }
                             .pickerStyle(.menu)
-                        }
-                        
-                        HStack {
+
                             Text("Scale Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMajor) {
                                 ForEach(typesMajor.indices, id: \.self) { index in
@@ -131,7 +129,7 @@ struct PickAnyScaleView: View {
                         NavigationLink(destination: ScalesView()) {
                             HStack {
                                 let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
-                                Text("  Practice - \(name)  ").font(.title2).padding()
+                                Text("  \(name)  ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -152,9 +150,7 @@ struct PickAnyScaleView: View {
                                 }
                             }
                             .pickerStyle(.menu)
-                        }
-                        
-                        HStack {
+
                             Text("Scale Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMinor) {
                                 ForEach(typesMinor.indices, id: \.self) { index in
@@ -186,7 +182,7 @@ struct PickAnyScaleView: View {
                         NavigationLink(destination: ScalesView()) {
                             HStack {
                                 let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
-                                Text(" Practice - \(name) ").font(.title2).padding()
+                                Text(" \(name) ").font(.title2).padding()
                             }
                             .hilighted(backgroundColor: .blue)
                         }
@@ -198,7 +194,6 @@ struct PickAnyScaleView: View {
                     .padding()
                 }
                 .commonFrameStyle(backgroundColor: .white)
-
             }
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
             .onAppear() {
@@ -214,5 +209,6 @@ struct PickAnyScaleView: View {
                 }
             }
         }
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 }

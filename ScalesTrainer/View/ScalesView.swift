@@ -192,6 +192,9 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.none)
                     }) {
                         Text("Stop Leading").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        
+                        //CoinBankView()
+
                     }
                 }
             }
@@ -530,6 +533,9 @@ struct ScalesView: View {
                         }
                         .commonFrameStyle()
                     }
+                }
+                if scalesModel.runningProcess == .leadingTheScale {
+                    CoinStackView(totalCoins: CoinBank.shared.totalCoinsInBank, compactView: false)
                 }
                 
                 if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {

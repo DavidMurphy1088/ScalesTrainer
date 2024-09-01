@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct CellView: View {
+    let column:Int
     @Binding var cellScale: Scale
-    ///let description:String
     @State private var showingDetail = false
     var cellWidth: CGFloat
     var cellHeight: CGFloat
@@ -11,11 +11,7 @@ struct CellView: View {
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScales = false
     let padding = 5.0
-    
-    func barWidth(_ factor:Double) -> CGFloat {
-        return (cellWidth / 2.0) * factor
-    }
-    
+        
     func getColor() -> Color {
         return .green
     }
@@ -62,17 +58,16 @@ struct CellView: View {
                     showingDetail = true
                 }) {
                     Image(systemName: "note.text")
-                        //.resizable()
-                        //.scaledToFit()
                 }
                 .padding(.vertical, 0)
                 .padding(.horizontal)
             }
             .padding(self.padding)
+            //.border(.red)
             
             HStack {
                 let badges = determineNumberOfBadges()
-                if badges > 0 {
+                if column == 0 && badges > 0 {
                     ForEach(0..<badges, id: \.self) { _ in
                         Image("gold_star")
                             //.resizable()
@@ -86,43 +81,32 @@ struct CellView: View {
                         .opacity(0.0)
                 }
             }
-            .padding()
+            .padding(.vertical, 0)
+            Spacer()
+            //.border(.red)
         }
         .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
         .cornerRadius(10)
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
         )
         .sheet(isPresented: $showingDetail) {
             VStack {
-
-                let label = cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + (cellScale.hand == 0 ? "Right Hand" : "Left Hand")
-                Text(label).font(.title).foregroundColor(.black)
-                Text("Minimum ♩=70, mf, legato").font(.title2).foregroundColor(.black)
+                //let label = cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + (cellScale.hand == 0 ? "Right Hand" : "Left Hand")
+                let label = cellScale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic: true, articulation: true)
+                Text(label).font(.title).foregroundColor(.blue)
                 
                 VStack {
-                    Text("Tips").font(.title).foregroundColor(.black)
+                    Text("Tips").font(.title2).foregroundColor(.blue)
                     Text("Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other.").font(.title2).foregroundColor(.black)
                 }.padding()
                 
                 VStack {
-                    Text("Your Progress With \(self.getDescr())").font(.title).foregroundColor(.black)
+                    Text("Your Progress With \(self.getDescr())").font(.title2).foregroundColor(.blue)
                     Text("This view could show various progress assessments and notes for this scale...").font(.title2).foregroundColor(.black)
-                    Text("📊").font(.title).padding()
-                    Text("📈 ").font(.title).padding()
-                    Text("📉").font(.title).padding()
+                    Image("ProgressChart")
                 }.padding()
-
-//                .overlay {
-//                    GeometryReader { geometry in
-//                        Color.clear.preference(key: InnerHeightPreferenceKey.self, value: geometry.size.height)
-//                    }
-//                }
-//                .onPreferenceChange(InnerHeightPreferenceKey.self) { newHeight in
-//                    sheetHeight = newHeight
-//                }
                 .presentationDetents([.height(sheetHeight)])
             }
         }
@@ -152,18 +136,22 @@ struct PracticeChartView: View {
     }
     
     var body: some View {
+        ///Tried using GeometryReader since it supposedly reacts to orientation changes.
+        ///But using it casues all the child view centering not to work
+//      let screenWidth = geo.size.width
+//      let screenHeight = geo.size.height
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
+        let cellHeight: CGFloat = screenHeight / 12.0
+        let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
+        
         ZStack {
             Image(background)
                 .resizable()
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-            
-            let screenWidth = UIScreen.main.bounds.width //geometry.size.width
-            let screenHeight = UIScreen.main.bounds.height
-            let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
-            let cellHeight: CGFloat = screenHeight / 12.0
-            let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
             
             VStack {
                 TitleView(screenName: "Practice Chart")
@@ -174,11 +162,9 @@ struct PracticeChartView: View {
                         HStack(spacing: 0) {
                             ForEach(0..<practiceChart.columns, id: \.self) { index in
                                 VStack {
-                                    //Text("Day \(index + 1)")
                                     Text(self.daysOfWeek[index])
                                 }
                                 .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                //.background(Color.gray.opacity(0.2))
                                 .background(Color.gray)
                                 .foregroundColor(.white).bold()
                                 .cornerRadius(10)
@@ -194,7 +180,7 @@ struct PracticeChartView: View {
                         ForEach(0..<practiceChart.rows, id: \.self) { row in
                             HStack(spacing: 0) {
                                 ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(cellScale: $practiceChart.cells[row][column],
+                                    CellView(column: column, cellScale: $practiceChart.cells[row][column],
                                              cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
                                 }
@@ -202,10 +188,10 @@ struct PracticeChartView: View {
                         }
                     }
                 }
-                .padding(cellPadding)
             }
+            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
         }
-
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 }
 

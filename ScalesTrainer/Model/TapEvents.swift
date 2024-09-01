@@ -6,6 +6,7 @@ public enum TapEventStatus {
     case outsideRange ///To far from the last key pressed. Probable frequency overtone
     case countTooLow
     case inScale
+    case outOfScale
 }
 
 ///The raw tap events collected by a tap handler.
@@ -45,7 +46,6 @@ public class TapEvent : Hashable, Identifiable  {
         let amps = String(format: "%.4f", self.amplitude)
         row += "   Amp:\(amps)"
         row += "   Status:\(status)"
-
         return row
     }
 }

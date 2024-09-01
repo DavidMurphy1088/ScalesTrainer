@@ -323,6 +323,11 @@ public class ScalesModel : ObservableObject {
                     self.setRunningProcess(.none)
                 })
             }
+            if setProcess == .leadingTheScale {
+                CoinBank.shared.setTotalCoinsInBank(1)
+                let lead = LeadScaleProcess(scalesModel: self)
+                lead.start()
+            }
         }
                 
         if [RunningProcess.playingAlongWithScale].contains(setProcess) {
@@ -388,6 +393,45 @@ public class ScalesModel : ObservableObject {
 //                    }
 //                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
 //                })
+            }
+        }
+    }
+    
+    class LeadScaleProcess {
+        let scalesModel:ScalesModel
+        var cancelled = false
+        init(scalesModel:ScalesModel) {
+            self.scalesModel = scalesModel
+        }
+        func start() {
+            DispatchQueue.global(qos: .background).async { [self] in
+                let x = scalesModel.tapHandlers[0] as! RealTimeTapHandler
+                x.notifyFunction = self.n
+                scalesModel.scale.resetMatchedData()
+                DispatchQueue.global(qos: .background).async {
+                    ///appmode is None at start since its set (for publish)  in main thread
+                    while true {
+                        if self.scalesModel.runningProcess != .leadingTheScale {
+                            self.cancelled = true
+                            break
+                        }
+                    }
+                }
+                while !cancelled {
+                    usleep(1000000 * UInt32(0.5))
+               }
+            }
+        }
+        func n(midi:Int, status:TapEventStatus) {
+            if [.inScale, .outOfScale].contains(status) {
+                print("============ HERE", midi, status, CoinBank.shared.totalCoinsInBank)
+                if status == .inScale {
+                    CoinBank.shared.setTotalCoinsInBank(CoinBank.shared.totalCoinsInBank + 1)
+                }
+                if status == .outOfScale {
+                    CoinBank.shared.setTotalCoinsInBank(CoinBank.shared.totalCoinsInBank / 2)
+                }
+
             }
         }
     }

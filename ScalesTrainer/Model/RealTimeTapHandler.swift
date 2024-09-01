@@ -28,6 +28,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
     var tapNum = 0
     var consecutiveCount = 0
     var ascending = true
+    var notifyFunction: ((Int, TapEventStatus ) -> Void)?
     
     class LastPlayedKey {
         let midi:Int
@@ -79,7 +80,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
         
         let aboveFilter =  self.amplitudeFilter == nil || amplitude > AUValue(self.amplitudeFilter!)
         let midi = Util.frequencyToMIDI(frequency: frequency)
-        //let ms = Int(Date().timeIntervalSince1970 * 1000) - Int(self.startTime.timeIntervalSince1970 * 1000)
         
 //        if let lastPlayedKey = lastPlayedKey {
 //            let deltaTime = Date().timeIntervalSince(lastPlayedKey.time)
@@ -93,27 +93,28 @@ class RealTimeTapHandler : TapHandlerProtocol {
 //                }
 //            }
 //        }
-        if !aboveFilter {
-            tapStatus = .belowAmplitudeFilter
-        }
-        
-        if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
-            consecutiveCount = 0
-        }
-        
-        if let lastPlayedKey = lastPlayedKey {
-            if midi % 12 != lastPlayedKey.midi % 12 {
+        if aboveFilter {
+            if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
                 consecutiveCount = 0
             }
-            else {
-                consecutiveCount += 1
+            if let lastPlayedKey = lastPlayedKey {
+                if midi % 12 != lastPlayedKey.midi % 12 {
+                    consecutiveCount = 0
+                }
+                else {
+                    consecutiveCount += 1
+                }
             }
-        }
 
-        if consecutiveCount < 2 {
-            tapStatus = .countTooLow
+            if consecutiveCount < 2 {
+                tapStatus = .countTooLow
+            }
+            lastPlayedKey = LastPlayedKey(midi: midi)
         }
-        lastPlayedKey = LastPlayedKey(midi: midi)
+        else {
+            tapStatus = .belowAmplitudeFilter
+            consecutiveCount = 0
+        }
         
         ///Determine if the midi represents a keyboard key.
         ///Hilight the keyboard key
@@ -126,16 +127,8 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 keyboards.append(PianoKeyboardModel.sharedLeftHand)
             }
             
-//            if let lastPlayedKey = lastPlayedKey {
-//                if midi == lastPlayedKey.midi {
-//                    consecutiveCount += 1
-//                }
-//                else {
-//                    consecutiveCount = 0
-//                }
-//            }
             ///A played MIDI may be in both the LH and RH keyboards.
-            ///hand, keyboard key index, inScale
+            ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
             for i in 0..<keyboards.count {
                 let keyboard:PianoKeyboardModel
@@ -155,7 +148,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
             }
             
             if possibleKeysPlayed.count > 0 {
-                //print("==============TAP:", tapNum, midi, "notes:", playedNotes)
                 if keyboards.count == 1 {
                     let keyboard = keyboards[0]
                     let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
@@ -163,12 +155,15 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     if possibleKeysPlayed[0].inScale {
                         tapStatus = .inScale
                     }
+                    else {
+                        tapStatus = .outOfScale
+                    }
                 }
                 else {
                     if let inScale = possibleKeysPlayed.first(where: { $0.inScale == true}) {
                         ///New option for scale Leacd in? - For all keys played show the played status only on one keyboard - RH or LH, not both
                         ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
-                        let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
+                        //let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
                         for possibleKey in possibleKeysPlayed {
                             let keyboard = possibleKey.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
                             let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
@@ -183,9 +178,13 @@ class RealTimeTapHandler : TapHandlerProtocol {
                             let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                         }
+                        tapStatus = .outOfScale
                     }
                 }
             }
+        }
+        if let notifyFunction = notifyFunction {
+            notifyFunction(midi, tapStatus)
         }
         tapHandlerEventSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: consecutiveCount, frequency: frequency, amplitude: amplitude,
                                                   status: tapStatus))

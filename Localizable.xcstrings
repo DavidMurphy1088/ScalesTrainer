@@ -13,7 +13,7 @@
     "  %@   " : {
 
     },
-    "  Practice - %@  " : {
+    " %@ " : {
 
     },
     " %lld" : {
@@ -23,9 +23,6 @@
 
     },
     " Go To Scale %@ - Good Luck 😊" : {
-
-    },
-    " Practice - %@ " : {
 
     },
     " Spin The Wheel " : {
@@ -59,6 +56,9 @@
     "© 2024 Musicmaster Education LLC." : {
 
     },
+    "========= Title ========= " : {
+
+    },
     "●" : {
 
     },
@@ -66,15 +66,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "📈 " : {
-
-    },
-    "📉" : {
-
-    },
-    "📊" : {
 
     },
     "😊" : {
@@ -118,6 +109,16 @@
     },
     "Choose your keyboard colour " : {
 
+    },
+    "coins %lld draw:%lld %lld " : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "coins %1$lld draw:%2$lld %3$lld "
+          }
+        }
+      }
     },
     "Correct Notes:%lld Errors:%lld" : {
       "localizations" : {
@@ -232,9 +233,6 @@
 
     },
     "Metronome On" : {
-
-    },
-    "Minimum ♩=70, mf, legato" : {
 
     },
     "Minor Scales" : {

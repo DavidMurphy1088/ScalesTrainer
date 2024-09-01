@@ -132,6 +132,9 @@ struct TapDataView: View {
             if event.status == .inScale {
                 color = .green
             }
+            if event.status == .outOfScale {
+                color = .red
+            }
         }
         return color
     }

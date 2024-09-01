@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>350</string>
+					<string>353</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>349</string>
+					<string>352</string>
 					<key>Timestamp</key>
-					<string>746761713.290722</string>
+					<string>746878641.108778</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -63,7 +63,7 @@
 					<key>StartingLineNumber</key>
 					<string>248</string>
 					<key>Timestamp</key>
-					<string>746768655.533085</string>
+					<string>746879470.031056</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>535</string>
+					<string>541</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>534</string>
+					<string>540</string>
 					<key>Timestamp</key>
-					<string>746792496.9613</string>
+					<string>746881315.306918</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -201,6 +201,51 @@
 			</dict>
 			<key>title</key>
 			<string>followScale</string>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>400</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>399</string>
+					<key>Timestamp</key>
+					<string>746881266.889728</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/ScalesModel.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    class LeadScaleProcess {
+</string>
+				<key>leading</key>
+				<string>    }
+    
+</string>
+				<key>trailing</key>
+				<string>        let scalesModel:ScalesModel
+        var cancelled = false
+        init(scalesModel:ScalesModel) {
+</string>
+			</dict>
 			<key>type</key>
 			<string>bookmark</string>
 		</dict>

@@ -285,7 +285,92 @@ class AudioRecorder: ObservableObject {
 //    }
 //}
 
+
+import SwiftUI
+
+struct FaceView: View {
+    let eyesY: CGFloat
+    let mouthOffsetY: CGFloat
+    let mouthPath: Path
+    
+    var body: some View {
+        ZStack {
+            // Face Circle
+            Circle()
+                .stroke(Color.black, lineWidth: 2)
+                .frame(width: 80, height: 80)
+            
+            // Left Eye
+            Circle()
+                .fill(Color.black)
+                .frame(width: 10, height: 10)
+                .offset(x: -15, y: eyesY)
+            
+            // Right Eye
+            Circle()
+                .fill(Color.black)
+                .frame(width: 10, height: 10)
+                .offset(x: 15, y: eyesY)
+            
+            // Mouth
+            mouthPath
+                .stroke(Color.black, lineWidth: 2)
+                .offset(y: mouthOffsetY)
+        }
+    }
+}
+
 struct TestView: View {
+    var body: some View {
+        HStack(spacing: 20) {
+            FaceView(eyesY: -10, mouthOffsetY: 500, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -10))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -5))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -2))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addLine(to: CGPoint(x: 70, y: 0))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 2))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 5))
+            })
+            
+            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 10))
+            })
+            
+            FaceView(eyesY: -15, mouthOffsetY: 10, mouthPath: Path { path in
+                path.move(to: CGPoint(x: 30, y: 0))
+                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 15))
+            })
+        }
+        .padding()
+    }
+}
+
+
+
+
+struct TestView1: View {
     @ObservedObject var audioRecorder = AudioRecorder()
 
     var body: some View {

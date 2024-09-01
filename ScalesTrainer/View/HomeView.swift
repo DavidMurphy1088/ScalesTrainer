@@ -21,33 +21,39 @@ struct CustomBackButton: View {
     }
 }
 
+import SwiftUI
+
 struct TitleView: View {
     @ObservedObject var settingsPublished = SettingsPublished.shared
-    let screenName:String
+    let screenName: String?
     
     func getTitle() -> String {
         let name = self.settingsPublished.firstName
         var title = "Scales Academy"
         if name.count > 0 {
-            title = name+"'s " + title
+            title = name + "'s " + title
         }
         return title
     }
-    
+    var body1: some View {
+        VStack {
+            Text("========= Title ========= ")
+        }
+        .border(Color.red)
+    }
     var body: some View {
         VStack {
             Text(getTitle()).font(.title)
             if Settings.shared.board.count > 0 {
                 Text("\(settingsPublished.board), Grade \(settingsPublished.grade)").font(.title2)
             }
-            Text(screenName).font(.title2)
+            if let screenName = screenName {
+                Text(screenName).font(.title2)
+            }
         }
         .commonFrameStyle()
-        .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth)
-        .padding()
     }
 }
-
 
 class ActivityMode : Identifiable {
     let name:String
@@ -122,7 +128,7 @@ struct ActivityModeView: View {
                                 Image(activityMode.imageName)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: geo.size.width * 0.50) //, height: geo.size.height * 0.25)
+                                    .frame(width: geo.size.width * 0.30) //, height: geo.size.height * 0.25)
                                     .border(Color.gray)
                                     .clipShape(Circle()) // Clips the image to a circular shape
                                     .overlay(Circle().stroke(Color.gray, lineWidth: 4)) // Optional: Add a circular border
@@ -142,7 +148,7 @@ struct ActivityModeView: View {
                                 Image(activityMode.imageName)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: geo.size.width * 0.50)
+                                    .frame(width: geo.size.width * 0.30)
                                     .border(Color.gray)
                                     .clipShape(Circle())
                                     .overlay(Circle().stroke(Color.gray, lineWidth: 4))
@@ -157,6 +163,7 @@ struct ActivityModeView: View {
             }
             Spacer()
         }
+        .commonFrameStyle(backgroundColor: .white)
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
                 HelpView(topic: topic)
@@ -199,34 +206,28 @@ struct HomeView: View {
     @State var scaleGroupsSheet = false
     
     var body: some View {
-        VStack {
-            NavigationView {
-                ZStack {
-                    Image(UIGlobals.shared.getBackground())
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.top)
-                        .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-                    VStack {
-                        Spacer()
-                        
-                        TitleView(screenName: "")
-                        
-                        ActivityModeView()
-                            .commonFrameStyle(backgroundColor: .white)
-                            //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
-                        Spacer()
+        GeometryReader { geometry in
+            VStack {
+                NavigationView {
+                    ZStack {
+                        Image(UIGlobals.shared.getBackground())
+                            .resizable()
+                            .scaledToFill()
+                            .edgesIgnoringSafeArea(.top)
+                            .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+
+                        VStack {
+                            Spacer()
+                            TitleView(screenName: "")
+                            ActivityModeView()
+                            Spacer()
+                        }
+                        .frame(width: geometry.size.width * UIGlobals.shared.screenWidth, height: geometry.size.height)
                     }
-               }
+                }
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }
-        //This causes all views navigated to to have the same dimensions
-        //.frame(width: UIScreen.main.bounds.width * 0.7, height: UIScreen.main.bounds.height * 0.8)
-        .padding(.horizontal, 0)
-        .onAppear() {
-        }
     }
+    
 }
-
-
