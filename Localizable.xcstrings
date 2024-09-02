@@ -37,6 +37,9 @@
     "%@" : {
 
     },
+    "%@ Badges" : {
+
+    },
     "%@, Grade %@" : {
       "localizations" : {
         "en" : {
@@ -57,6 +60,9 @@
 
     },
     "========= Title ========= " : {
+
+    },
+    "⊙" : {
 
     },
     "●" : {
@@ -130,6 +136,9 @@
         }
       }
     },
+    "Correct:%lld" : {
+
+    },
     "Correctly Played" : {
 
     },
@@ -188,6 +197,9 @@
 
     },
     "Home" : {
+
+    },
+    "Incorrect:%lld" : {
 
     },
     "Key" : {
@@ -284,6 +296,9 @@
 
     },
     "Recording %@" : {
+
+    },
+    "Required Consecutive Count" : {
 
     },
     "Save Configuration" : {
@@ -411,8 +426,15 @@
     "Stop Recording Scale" : {
 
     },
-    "Taps AmplFilter:%lf" : {
-
+    "Taps AmpFilter:%lf RequiredConcurrent:%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Taps AmpFilter:%1$lf RequiredConcurrent:%2$lld"
+          }
+        }
+      }
     },
     "Tempo" : {
 

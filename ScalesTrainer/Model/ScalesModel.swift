@@ -263,6 +263,7 @@ public class ScalesModel : ObservableObject {
         else {
             self.tapHandlers = []
             setUserMessage(heading: nil, msg: nil)
+            BadgeBank.shared.setShow(false)
         }
         self.runningProcess = setProcess
         DispatchQueue.main.async {
@@ -290,41 +291,41 @@ public class ScalesModel : ObservableObject {
         if [.followingScale, .leadingTheScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            
             if setProcess == .followingScale {
                 setShowKeyboard(true)
                 ///Play first note to start then wait some time.
                 ///Wait for note to die down otherwise it triggers the first note detection
-                //DispatchQueue.main.async {
-                if true {
-                    if self.scale.scaleNoteState.count > 0 {
-                        if let sampler = self.audioManager.keyboardMidiSampler {
-                            var hands:[Int] = []
-                            if scale.hand < 2 {
-                                hands.append(scale.hand)
-                            }
-                            else {
-                                hands.append(0)
-                                hands.append(1)
-                            }
-                            for hand in hands {
-                                let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
-                                sampler.play(noteNumber: midi, velocity: 64, channel: 0)
-                            }
-                            ///Need delay to avoid the first note being 'heard' from this sampler playing note
-                            usleep(1000000 * UInt32(1.5))
+                if self.scale.scaleNoteState.count > 0 {
+                    if let sampler = self.audioManager.keyboardMidiSampler {
+                        var hands:[Int] = []
+                        if scale.hand < 2 {
+                            hands.append(scale.hand)
                         }
+                        else {
+                            hands.append(0)
+                            hands.append(1)
+                        }
+                        for hand in hands {
+                            let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
+                            sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                        }
+                        ///Need delay to avoid the first note being 'heard' from this sampler playing note
+                        usleep(1000000 * UInt32(2.0))
                     }
                 }
-                //}
             }
+            
             self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
             if setProcess == .followingScale {
+                BadgeBank.shared.setShow(true)
                 self.followScaleProcess(handIndex: scale.hand, onDone: {cancelled in
                     self.setRunningProcess(.none)
                 })
             }
             if setProcess == .leadingTheScale {
                 CoinBank.shared.setTotalCoinsInBank(1)
+                BadgeBank.shared.setShow(true)
                 let lead = LeadScaleProcess(scalesModel: self)
                 lead.start()
             }
@@ -397,45 +398,6 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    class LeadScaleProcess {
-        let scalesModel:ScalesModel
-        var cancelled = false
-        init(scalesModel:ScalesModel) {
-            self.scalesModel = scalesModel
-        }
-        func start() {
-            DispatchQueue.global(qos: .background).async { [self] in
-                let x = scalesModel.tapHandlers[0] as! RealTimeTapHandler
-                x.notifyFunction = self.n
-                scalesModel.scale.resetMatchedData()
-                DispatchQueue.global(qos: .background).async {
-                    ///appmode is None at start since its set (for publish)  in main thread
-                    while true {
-                        if self.scalesModel.runningProcess != .leadingTheScale {
-                            self.cancelled = true
-                            break
-                        }
-                    }
-                }
-                while !cancelled {
-                    usleep(1000000 * UInt32(0.5))
-               }
-            }
-        }
-        func n(midi:Int, status:TapEventStatus) {
-            if [.inScale, .outOfScale].contains(status) {
-                print("============ HERE", midi, status, CoinBank.shared.totalCoinsInBank)
-                if status == .inScale {
-                    CoinBank.shared.setTotalCoinsInBank(CoinBank.shared.totalCoinsInBank + 1)
-                }
-                if status == .outOfScale {
-                    CoinBank.shared.setTotalCoinsInBank(CoinBank.shared.totalCoinsInBank / 2)
-                }
-
-            }
-        }
-    }
-
     ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(handIndex:Int, onDone:((_ cancelled:Bool)->Void)?) {
@@ -463,7 +425,7 @@ public class ScalesModel : ObservableObject {
             var scaleIndex = 0
             var cancelled = false
             var inScaleCount = 0
-            
+            BadgeBank.shared.setTotalCorrect(0)
             while true {
                 if scaleIndex >= self.scale.scaleNoteState[0].count {
                     break
@@ -518,6 +480,7 @@ public class ScalesModel : ObservableObject {
                 }
                 
                 ///Change direction to descending
+                BadgeBank.shared.setTotalCorrect(BadgeBank.shared.totalCorrect + 1)
                 let highest = self.scale.getMinMax(handIndex: keyboardSemaphores[0].keyboard.hand).1
                 if currentMidis[0] == highest {
                     self.setSelectedDirection(1)

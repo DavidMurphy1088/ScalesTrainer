@@ -37,6 +37,7 @@ public class Settings : Codable  {
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
     var metronomeOn:Bool = false
+    var requiredConsecutiveCount = 2
     
     private var wasLoaded = false
     
@@ -77,6 +78,7 @@ public class Settings : Codable  {
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " KeyColor:\(self.keyColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
+        str += " RequiredConsecutiveCount:\(requiredConsecutiveCount)"
         return str
     }
     
@@ -125,6 +127,7 @@ public class Settings : Codable  {
                     self.scaleNoteValue = loaded.scaleNoteValue
                     self.keyColor = loaded.keyColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset
+                    self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
                     SettingsPublished.shared.setBoardAndGrade(board: self.board, grade: self.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")

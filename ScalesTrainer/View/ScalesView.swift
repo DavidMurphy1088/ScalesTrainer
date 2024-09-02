@@ -49,9 +49,9 @@ struct MetronomeView: View {
 
 struct ScalesView: View {
     let initialRunProcess:RunningProcess?
-
+        
     @ObservedObject private var scalesModel = ScalesModel.shared
-    @ObservedObject private var coinBank = CoinBank.shared
+    @ObservedObject private var badgeBank = BadgeBank.shared
     
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
@@ -254,9 +254,9 @@ struct ScalesView: View {
                             Text("Stop Recording Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
-                    if coinBank.lastBet > 0 {
-                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
-                    }
+//                    if coinBank.lastBet > 0 {
+//                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
+//                    }
                 }
                 .commonFrameStyle()
                 Spacer()
@@ -534,8 +534,9 @@ struct ScalesView: View {
                         .commonFrameStyle()
                     }
                 }
-                if scalesModel.runningProcess == .leadingTheScale {
-                    CoinStackView(totalCoins: CoinBank.shared.totalCoinsInBank, compactView: false)
+                
+                if badgeBank.show {
+                    BadgeView(scale: scalesModel.scale).commonFrameStyle()
                 }
                 
                 if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {

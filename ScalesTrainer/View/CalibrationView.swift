@@ -15,7 +15,8 @@ public struct CalibrationView: View {
     @State var showSaveQuestion = false
     @State var showingTapData = false
     @State var info:String? = nil
-    
+    @State var requiredConsecutiveCount:Int = 0
+
 //    func setScale(octaves:Int, hand:Int) {
 //        let scaleRoot = ScaleRoot(name: "C")
 //        self.scalesModel.selectedHandIndex = hand
@@ -111,9 +112,18 @@ public struct CalibrationView: View {
                     }
                     Text("Current Amplitude Filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))").font(.title3).padding()
                     Text("New Amplitude Filter:\(String(format: "%.4f", self.amplitudeFilter))").font(.title3).padding()
-//                    if let info = self.info {
-//                        Text(info).font(.title3).padding()
-//                    }
+                    HStack {
+                        Text("Required Consecutive Count").font(.title2).padding(0)
+                        Picker("Select", selection: $requiredConsecutiveCount) {
+                            ForEach(1..<9) { number in
+                                Text("\(number)").tag(number)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .onChange(of: requiredConsecutiveCount) { oldValue, newValue in
+                            Settings.shared.requiredConsecutiveCount = newValue
+                        }
+                    }
                 }
                 HStack {
                     Text("Adjust:").padding()
@@ -199,6 +209,7 @@ public struct CalibrationView: View {
 //            setScale(octaves: octaves, hand: 0)
             PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
             self.amplitudeFilter = Settings.shared.amplitudeFilter
+            self.requiredConsecutiveCount = Settings.shared.requiredConsecutiveCount
         }
         .onDisappear() {
             self.audioManager.stopRecording()

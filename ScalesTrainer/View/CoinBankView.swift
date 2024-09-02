@@ -1,7 +1,4 @@
 import SwiftUI
-import SwiftUI
-
-import SwiftUI
 
 struct CoinView: View {
     let coinWidth: CGFloat

@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>541</string>
+					<string>542</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>540</string>
+					<string>541</string>
 					<key>Timestamp</key>
-					<string>746881315.306918</string>
+					<string>746963774.217985</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -218,7 +218,7 @@
 					<key>StartingLineNumber</key>
 					<string>399</string>
 					<key>Timestamp</key>
-					<string>746881266.889728</string>
+					<string>746968076.1992691</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -234,16 +234,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    class LeadScaleProcess {
+				<string>    
 </string>
 				<key>leading</key>
-				<string>    }
-    
+				<string>        }
+    }
 </string>
 				<key>trailing</key>
-				<string>        let scalesModel:ScalesModel
-        var cancelled = false
-        init(scalesModel:ScalesModel) {
+				<string>    ///Allow user to follow notes hilighted on the keyboard.
+    ///Wait till user hits correct key before moving to and highlighting the next note
+    func followScaleProcess(handIndex:Int, onDone:((_ cancelled:Bool)-&gt;Void)?) {
 </string>
 			</dict>
 			<key>type</key>

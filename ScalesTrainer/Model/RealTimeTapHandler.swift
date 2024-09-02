@@ -98,22 +98,22 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 consecutiveCount = 0
             }
             if let lastPlayedKey = lastPlayedKey {
-                if midi % 12 != lastPlayedKey.midi % 12 {
-                    consecutiveCount = 0
-                }
-                else {
+                if midi % 12 == lastPlayedKey.midi % 12 {
                     consecutiveCount += 1
                 }
+                else {
+                    consecutiveCount = 0
+                }
             }
-
-            if consecutiveCount < 2 {
+            
+            if consecutiveCount < Settings.shared.requiredConsecutiveCount - 1 {
                 tapStatus = .countTooLow
             }
             lastPlayedKey = LastPlayedKey(midi: midi)
         }
         else {
             tapStatus = .belowAmplitudeFilter
-            consecutiveCount = 0
+            //consecutiveCount = 0
         }
         
         ///Determine if the midi represents a keyboard key.
