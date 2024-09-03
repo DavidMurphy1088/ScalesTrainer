@@ -23,6 +23,18 @@ class BadgeBank : ObservableObject {
             self.show = value
         }
     }
+    
+    @Published private(set) var matches:[Int] = []
+    func addMatch(_ value:Int) {
+        DispatchQueue.main.async {
+            self.matches.append(value)
+        }
+    }
+    func clearMatches() {
+        DispatchQueue.main.async {
+            self.matches = []
+        }
+    }
 }
 
 struct HexagramShape: View {
@@ -80,14 +92,20 @@ struct BadgeView: View {
     @State private var size: CGFloat = 0
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
-    @State private var verticalOffset: CGFloat = -20
+    @State private var verticalOffset: CGFloat = -50
+    @State var imageId:[Int] = []
     
     var body: some View {
         VStack {
             HStack {
-                Text("\(scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic: false, articulation: false)) Stars").font(.title)
+                Text("\(scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic: false, articulation: false))").font(.title)
                 Text("Correct:\(bank.totalCorrect)")
-                Text("Incorrect:\(bank.totalIncorrect)")
+                //Text("Correct:\(String(bank.matches))")
+                if Settings.shared.developerModeOn {
+                    Text(bank.matches.map { String($0) }.joined(separator: ", "))
+                }
+
+                //Text("Incorrect:\(bank.totalIncorrect)")
                 Button(action: {
                     bank.setShow(false)
                 }) {
@@ -95,23 +113,39 @@ struct BadgeView: View {
                         .foregroundColor(.blue)
                 }
             }
-            HStack(spacing: 4) {
+            HStack(spacing: 10) {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
+                let imWidth = CGFloat(40)
                 ForEach(0..<scale.scaleNoteState[scale.hand].count, id: \.self) { n in
                     if n == BadgeBank.shared.totalCorrect - 1  {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             //Text("\(n)").foregroundColor(.blue)
                             if BadgeBank.shared.totalCorrect > 0 {
-                                HexagramShape(size: size, offset: offset, color: c)
-                                    .rotationEffect(Angle.degrees(rotationAngle))
+                                if Settings.shared.badgeStyle == 0 {
+                                    HexagramShape(size: size, offset: offset, color: c)
+                                        .rotationEffect(Angle.degrees(rotationAngle))
                                     .offset(y: verticalOffset)
                                     .onAppear {
-                                        withAnimation(Animation.easeOut(duration: 0.5)) {
+                                        withAnimation(Animation.easeOut(duration: 1.0)) {
                                             rotationAngle = 360
                                             verticalOffset = 0
                                         }
                                     }
+                                }
+                                else {
+                                    Image(self.imageId[n] == 0 ? "dogface_icon" : "catface_icon")
+                                    .resizable()
+                                    .frame(width: imWidth)
+                                    .rotationEffect(Angle.degrees(rotationAngle))
+                                    .offset(y: verticalOffset)
+                                    .onAppear {
+                                        withAnimation(Animation.easeOut(duration: 1.0)) {
+                                            rotationAngle = 360
+                                            verticalOffset = 0
+                                        }
+                                    }
+                                }
                             }
                         }
                         .frame(width:size, height: size)
@@ -120,12 +154,22 @@ struct BadgeView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             //Text("\(n)").foregroundColor(.blue)
-                            HexagramShape(size: size, offset: offset, color: c).opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                            if n < BadgeBank.shared.totalCorrect {
+                                if Settings.shared.badgeStyle == 0 {
+                                    HexagramShape(size: size, offset: offset, color: c).opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                                }
+                                else {
+                                    Image(self.imageId[n] == 0 ? "dogface_icon" : "catface_icon")
+                                        .resizable()
+                                        .frame(width: imWidth)
+                                }
+                            }
                         }
-                        .frame(width:size, height: size)
+                        .frame(width:size, height: size)//.opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
                     }
                 }
             }
+            Text("")
             .onChange(of: BadgeBank.shared.totalCorrect, {
                 verticalOffset = -50
                 rotationAngle = 0
@@ -133,6 +177,9 @@ struct BadgeView: View {
         }
         .onAppear() {
             self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[scale.hand].count) * 1.7)
+            for i in 0..<scale.scaleNoteState[scale.hand].count {
+                self.imageId.append(Int.random(in: 0..<2))
+            }
         }
     }
 }

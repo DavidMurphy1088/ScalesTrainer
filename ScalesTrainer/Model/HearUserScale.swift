@@ -18,7 +18,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
         }
     }
     
-    func metronomeTicked(timerTickerNumber: Int) -> Bool {
+    func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         let audioManager = AudioManager.shared
         let sampler = audioManager.keyboardMidiSampler
         
@@ -57,7 +57,6 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
             key.setKeyPlaying(ascending: direction, hilight: true)
             sampler?.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
         }
-        //return true
         return key == nil
     }
     

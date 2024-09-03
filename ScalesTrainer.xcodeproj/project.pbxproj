@@ -390,8 +390,10 @@
 				79BCF7EE2C257A5D004E26ED /* HearUserScale.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
+				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
+				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
@@ -399,7 +401,6 @@
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
 				79552FB52BDB975D00A27531 /* Result.swift */,
 				794D49592BCD29610005A173 /* Scale.swift */,
-				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				794D49572BCD29390005A173 /* ScaleMatcher.swift */,
 				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
@@ -410,7 +411,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

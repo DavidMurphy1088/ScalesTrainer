@@ -49,39 +49,41 @@ struct CellView: View {
                     .foregroundColor(.blue)
             }
             .padding(self.padding)
-            
-            NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
-            }.frame(width: 0.0)
-            
+            Spacer()
             HStack {
-                Button(action: {
-                    showingDetail = true
-                }) {
-                    Image(systemName: "note.text")
+                NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
+                }.frame(width: 0.0)
+                
+                HStack {
+                    Button(action: {
+                        showingDetail = true
+                    }) {
+                        Image(systemName: "note.text")
+                    }
+                    .padding(.vertical, 0)
+                    .padding(.horizontal)
                 }
-                .padding(.vertical, 0)
-                .padding(.horizontal)
-            }
-            .padding(self.padding)
-            //.border(.red)
-            
-            HStack {
-                let badges = determineNumberOfBadges()
-                if column == 0 && badges > 0 {
-                    ForEach(0..<badges, id: \.self) { _ in
-                        Image("gold_star")
+                .padding(self.padding)
+                //.border(.red)
+                
+                HStack {
+                    let badges = determineNumberOfBadges()
+                    if column == 0 && badges > 0 {
+                        ForEach(0..<badges, id: \.self) { _ in
+                            Image("gold_star")
                             //.resizable()
                             //.scaledToFit()
+                        }
                     }
-                }
-                else {
-                    Image("gold_star")
+                    else {
+                        Image("gold_star")
                         //.resizable()
                         //.scaledToFit()
-                        .opacity(0.0)
+                            .opacity(0.0)
+                    }
                 }
+                .padding(.vertical, 0)
             }
-            .padding(.vertical, 0)
             Spacer()
             //.border(.red)
         }

@@ -143,9 +143,18 @@ public class Scale {
         scaleNoteState = []
         self.hand = hand
         
+        ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
-        ///B, B♭, A, A♭ drop below Middle C for one and two octaves
-        ///G drops below Middle C only for 2 octaves
+        ///
+        ///Amber - One octave Treble Clef:
+        ///Lowest start note is B one ledger line below the stave, making highest note A one ledger line above the stave.
+        ///One octave Bass Clef:
+        ///Lowest start note is E one ledger line below the stave, making the highest note D one ledger line above the stave.
+        ///Two octaves Treble Clef:
+        ///Lowest start note is F three ledger lines below the stave, making highest note E three ledger lines above the stave.
+        ///Two octaves Bass Clef:
+        ///Lowest start note is A three ledger lines below the stave, making highest note G three ledger lines above the stave.
+        
         ///The start of the scale for one octave -
         var firstMidi = 0
         switch scaleRoot.name {
@@ -170,13 +179,13 @@ public class Scale {
         case "G♭":
             firstMidi = 66
         case "G":
-            firstMidi = 67 - 12
+            firstMidi = 67 //- 12
         case "G#":
-            firstMidi = 68 - 12
+            firstMidi = 68 //- 12
         case "A♭":
-            firstMidi = 68 - 12
+            firstMidi = 68 //- 12
         case "A":
-            firstMidi = 69 - 12
+            firstMidi = 69 //- 12
         case "A#":
             firstMidi = 70 - 12
         case "B♭":
@@ -229,11 +238,25 @@ public class Scale {
             else {
                 scaleOffsetsForHand = scaleOffsets
             }
-            if scaleType != .contraryMotion {
-                if handIndex == 1 {
+            if handIndex == 1 {
+                nextMidi -= 12
+                if firstMidi >= 62 {
                     nextMidi -= 12
                 }
             }
+            if octaves > 1 {
+                if handIndex == 0 {
+                    if firstMidi >= 65 {
+                        nextMidi -= 12
+                    }
+                }
+                if handIndex == 1 {
+                    if firstMidi >= 69 {
+                        nextMidi -= 12
+                    }
+                }
+            }
+
             self.scaleNoteState.append([])
             
             for oct in 0..<octaves {
@@ -275,7 +298,7 @@ public class Scale {
 //            }
 //        }
                         
-        ///Add notes with midis for the downwards direction
+        ///Downwards direction - Mirror notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
@@ -314,24 +337,7 @@ public class Scale {
         //self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
         //}
     }
-    
-//    func getMatchCount(matched:Bool) -> Int {
-//        var cnt = 0
-//        for note in self.scaleNoteState {
-//            if matched {
-//                if note.matchedTime != nil {
-//                    cnt += 1
-//                }
-//            }
-//            else {
-//                if note.matchedTime == nil {
-//                    cnt += 1
-//                }
-//            }
-//        }
-//        return cnt
-//    }
-    
+        
     func makeNewScale(offset:Int) -> Scale {
         let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)

@@ -16,7 +16,6 @@ class AudioManager {
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
     var recordedFileSequenceNum = 0
-    var metronomeCount = 0
     var simulator = false
     var blockTaps = false
     var audioPlayer:AudioPlayer?

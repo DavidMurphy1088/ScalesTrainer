@@ -136,10 +136,6 @@ public class ScalesModel : ObservableObject {
             self.resultPublished = result
             PianoKeyboardModel.sharedRightHand.redraw()
         }
-        let coinBank = CoinBank.shared
-        if result != nil {
-            coinBank.adjustAfterResult(noErrors: noErrors)
-        }
     }
     @Published private(set) var resultPublished:Result?
 
@@ -272,7 +268,7 @@ public class ScalesModel : ObservableObject {
 
         ///For some unknwon reason the 1st call does not silence some residue sound from the sampler. The 2nd does appear to.
         self.audioManager.resetAudioKit()
-        //self.audioManager.resetAudioKit()
+        self.audioManager.resetAudioKit()
 
         self.setShowKeyboard(true)
         self.setShowParameters(true)
@@ -288,9 +284,10 @@ public class ScalesModel : ObservableObject {
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
         
-        if [.followingScale, .leadingTheScale].contains(setProcess)  {
+        if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            BadgeBank.shared.setTotalCorrect(0)
             
             if setProcess == .followingScale {
                 setShowKeyboard(true)
@@ -323,18 +320,26 @@ public class ScalesModel : ObservableObject {
                     self.setRunningProcess(.none)
                 })
             }
-            if setProcess == .leadingTheScale {
-                CoinBank.shared.setTotalCoinsInBank(1)
-                BadgeBank.shared.setShow(true)
-                let lead = LeadScaleProcess(scalesModel: self)
-                lead.start()
-            }
         }
-                
-        if [RunningProcess.playingAlongWithScale].contains(setProcess) {
+        
+        if [.leadingTheScale].contains(setProcess) {
+            BadgeBank.shared.setShow(true)
+            BadgeBank.shared.setTotalCorrect(0)
+            BadgeBank.shared.setTotalIncorrect(0)
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
-            metronome.startTimer(notified: HearScalePlayer(handIndex: scale.hand, metronome: metronome), onDone: {
+            let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
+            metronome.startTimer(notified: leadProcess, onDone: {
+                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+                leadProcess.start()
+                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+            })
+        }
+        
+        if [.playingAlongWithScale].contains(setProcess) {
+            let metronome = MetronomeModel.shared
+            metronome.isTiming = true
+            metronome.startTimer(notified: HearScalePlayer(handIndex: scale.hand), onDone: {
             })
         }
 
@@ -342,7 +347,7 @@ public class ScalesModel : ObservableObject {
             self.audioManager.startRecordingMicToRecord()
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
-            metronome.startTimer(notified: MetronomeTicker(metronome: metronome), onDone: {
+            metronome.startTimer(notified: MetronomeTicker(), onDone: {
             })
         }
         
@@ -425,7 +430,7 @@ public class ScalesModel : ObservableObject {
             var scaleIndex = 0
             var cancelled = false
             var inScaleCount = 0
-            BadgeBank.shared.setTotalCorrect(0)
+            
             while true {
                 if scaleIndex >= self.scale.scaleNoteState[0].count {
                     break
@@ -479,8 +484,9 @@ public class ScalesModel : ObservableObject {
                     keyboardSemaphore.semaphore.wait()
                 }
                 
-                ///Change direction to descending
                 BadgeBank.shared.setTotalCorrect(BadgeBank.shared.totalCorrect + 1)
+                
+                ///Change direction to descending
                 let highest = self.scale.getMinMax(handIndex: keyboardSemaphores[0].keyboard.hand).1
                 if currentMidis[0] == highest {
                     self.setSelectedDirection(1)
@@ -511,12 +517,12 @@ public class ScalesModel : ObservableObject {
     ///Get tempo for 1/4 note
     func getTempo() -> Int {
         var selected = self.tempoSettings[self.selectedTempoIndex]
-        selected = String(selected.dropFirst(2))
+        //selected = String(selected.dropFirst(2))
+        selected = String(selected)
         return Int(selected) ?? 60
     }
     
     func createScore(scale:Scale) -> Score {
-        //let staffType:StaffType = self.selectedHandIndex == 0 ? .treble : .bass
         let staffType:StaffType
         
         if scale.scaleNoteState.count > 0 {
@@ -537,6 +543,7 @@ public class ScalesModel : ObservableObject {
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
         let handIndex = scale.hand == 1 ? 1 : 0
+        var lastNote:StaffNote?
         
         for i in 0..<scale.scaleNoteState[handIndex].count {
             if Int(inBarTotalValue) >= top {
@@ -550,12 +557,12 @@ public class ScalesModel : ObservableObject {
             let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteState.value, staffNum: 0)
             ts.addNote(n: note)
             inBarTotalValue += noteState.value
-            //lastNote = note
+            lastNote = note
         }
-//        if let lastNote = lastNote {
-//            let valueInLastBar = inBarTotalValue - lastNote.getValue()
-//            lastNote.setValue(value: 4 - valueInLastBar)
-//        }
+        if let lastNote = lastNote {
+            let valueInLastBar = inBarTotalValue - lastNote.getValue()
+            lastNote.setValue(value: 4 - valueInLastBar)
+        }
         Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState[handIndex].count/12) range:\(scale.getMinMax(handIndex: 0)) noteValue:\(Settings.shared.getSettingsNoteValueFactor())")
         return score
     }

@@ -5,7 +5,7 @@ class IdentifyScalePlayer : MetronomeTimerNotificationProtocol {
         
     }
     
-    func metronomeTicked(timerTickerNumber: Int) -> Bool {
+    func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         //let audioManager = AudioManager.shared
         //let sampler = audioManager.midiSampler
 

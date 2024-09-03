@@ -93,14 +93,14 @@ struct ScalesView: View {
     }
     
     ///Set state of the model and the view
-    func setState(octaves:Int) {
-        ///There maybe a change in octaves or LH vs. RH
-        let root = scalesModel.scale.scaleRoot
-        let scaleType = scalesModel.scale.scaleType
-        let hand = scalesModel.scale.hand
-        scalesModel.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: octaves, hand: hand, ctx: "ScalesView setState")
-        self.directionIndex = 0
-    }
+//    func setState(octaves:Int) {
+//        ///There maybe a change in octaves or LH vs. RH
+//        let root = scalesModel.scale.scaleRoot
+//        let scaleType = scalesModel.scale.scaleType
+//        let hand = scalesModel.scale.hand
+//        scalesModel.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: octaves, hand: hand, ctx: "ScalesView setState")
+//        self.directionIndex = 0
+//    }
     
     func SelectScaleParametersView() -> some View {
         HStack {
@@ -143,17 +143,17 @@ struct ScalesView: View {
             })
             
             //Spacer()
-            Text("Octaves").padding(.horizontal, 0)
-            Picker("Select", selection: $numberOfOctaves) {
-                ForEach(1..<5) { number in
-                    Text("\(number)").tag(number)
-                }
-            }
-            .pickerStyle(.menu)
-            .onChange(of: numberOfOctaves, {
-                setState(octaves: numberOfOctaves)
-            })
-            
+//            Text("Octaves").padding(.horizontal, 0)
+//            Picker("Select", selection: $numberOfOctaves) {
+//                ForEach(1..<3) { number in
+//                    Text("\(number)").tag(number)
+//                }
+//            }
+//            .pickerStyle(.menu)
+//            .onChange(of: numberOfOctaves, {
+//                setState(octaves: numberOfOctaves)
+//            })
+//            
             //Spacer()
         }
     }
@@ -184,37 +184,13 @@ struct ScalesView: View {
                     }
                 }
             }
-            
-            if scalesModel.runningProcessPublished == .leadingTheScale {
-                //RecordingIsUnderwayView()
-                VStack {
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                    }) {
-                        Text("Stop Leading").padding().font(.title2).hilighted(backgroundColor: .blue)
                         
-                        //CoinBankView()
-
-                    }
-                }
-            }
-            
-//            if scalesModel.runningProcessPublished == .playingAlongWithScale {
-//                HStack {
-//                    Button(action: {
-//                        scalesModel.setRunningProcess(.none)
-//                    }) {
-//                        Text("Stop Playing Along").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                    }
-//                }
-//            }
-            
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     if Settings.shared.metronomeOn {
                         MetronomeView()
                     }
-                    let text = metronome.isLeadingIn() ? "Leading In  ..." : "Stop Playing"
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Playing"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -224,13 +200,29 @@ struct ScalesView: View {
                 }
             }
 
-            
+            if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
+                HStack {
+                    if Settings.shared.metronomeOn {
+                        if metronome.isLeadingIn {
+                            MetronomeView()
+                        }
+                    }
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading"
+                    Button(action: {
+                        scalesModel.setRunningProcess(.none)
+                    }) {
+                        Text("\(text)")
+                        .padding().font(.title2).hilighted(backgroundColor: .blue)
+                    }
+                }
+            }
+
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     if Settings.shared.metronomeOn {
                         MetronomeView()
                     }
-                    let text = metronome.isLeadingIn() ? "Leading In  ..." : "Stop Recording"
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -604,6 +596,7 @@ struct ScalesView: View {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(scalesModel.scale.hand != 2)
+            BadgeBank.shared.setShow(false)
         }
         
         .onDisappear {

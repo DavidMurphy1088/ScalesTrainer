@@ -37,7 +37,7 @@
     "%@" : {
 
     },
-    "%@ Badges" : {
+    "%@ Stars" : {
 
     },
     "%@, Grade %@" : {
@@ -104,6 +104,9 @@
     "Backing Sound" : {
 
     },
+    "Badge Styles" : {
+
+    },
     "C" : {
 
     },
@@ -157,6 +160,9 @@
     "Dev" : {
 
     },
+    "Developer Mode On" : {
+
+    },
     "Famous Quotes" : {
 
     },
@@ -197,9 +203,6 @@
 
     },
     "Home" : {
-
-    },
-    "Incorrect:%lld" : {
 
     },
     "Key" : {
@@ -259,13 +262,7 @@
     "No" : {
 
     },
-    "None" : {
-
-    },
     "Not in Scale" : {
-
-    },
-    "Octaves" : {
 
     },
     "Octaves:" : {
@@ -348,9 +345,6 @@
     "Select" : {
 
     },
-    "Select a number" : {
-
-    },
     "Select Music Board" : {
 
     },
@@ -379,12 +373,6 @@
 
     },
     "Show Tap Data" : {
-
-    },
-    "Sorry, you dont have enough coins 😌" : {
-
-    },
-    "Spin for how many coins?" : {
 
     },
     "Start Analysis" : {
@@ -437,9 +425,6 @@
       }
     },
     "Tempo" : {
-
-    },
-    "Test Mode On" : {
 
     },
     "This view could show various progress assessments and notes for this scale..." : {

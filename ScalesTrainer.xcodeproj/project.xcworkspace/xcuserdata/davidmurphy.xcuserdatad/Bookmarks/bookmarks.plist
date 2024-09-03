@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>353</string>
+					<string>345</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>352</string>
+					<string>344</string>
 					<key>Timestamp</key>
-					<string>746878641.108778</string>
+					<string>747044072.9627039</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>249</string>
+					<string>245</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>248</string>
+					<string>244</string>
 					<key>Timestamp</key>
-					<string>746879470.031056</string>
+					<string>747029180.22587</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>542</string>
+					<string>534</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>541</string>
+					<string>533</string>
 					<key>Timestamp</key>
-					<string>746963774.217985</string>
+					<string>747044072.962729</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -145,15 +145,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>22</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
 					<string>85</string>
 					<key>StartingColumnNumber</key>
-					<string>9</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>85</string>
+					<string>84</string>
 					<key>Timestamp</key>
-					<string>746267982.91398</string>
+					<string>747027410.838607</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -169,15 +169,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>resetAudioKit</string>
+				<string>    func resetAudioKit() {
+</string>
 				<key>leading</key>
 				<string>    }
     
-    func </string>
+</string>
 				<key>trailing</key>
-				<string>() {
-        if let sampler = self.keyboardMidiSampler {
+				<string>        if let sampler = self.keyboardMidiSampler {
             sampler.stop()
+        }
 </string>
 			</dict>
 			<key>type</key>
@@ -212,13 +213,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>400</string>
+					<string>405</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>399</string>
+					<string>404</string>
 					<key>Timestamp</key>
-					<string>746968076.1992691</string>
+					<string>747052745.421397</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

@@ -98,7 +98,8 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 consecutiveCount = 0
             }
             if let lastPlayedKey = lastPlayedKey {
-                if midi % 12 == lastPlayedKey.midi % 12 {
+                //if midi % 12 == lastPlayedKey.midi % 12 {
+                if midi == lastPlayedKey.midi {
                     consecutiveCount += 1
                 }
                 else {

@@ -38,6 +38,7 @@ public class Settings : Codable  {
     var backingSamplerPreset:Int = 0
     var metronomeOn:Bool = false
     var requiredConsecutiveCount = 2
+    var badgeStyle = 0
     
     private var wasLoaded = false
     
@@ -79,6 +80,7 @@ public class Settings : Codable  {
         str += " KeyColor:\(self.keyColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
         str += " RequiredConsecutiveCount:\(requiredConsecutiveCount)"
+        str += " BadgeStyle:\(badgeStyle)"
         return str
     }
     
@@ -128,6 +130,7 @@ public class Settings : Codable  {
                     self.keyColor = loaded.keyColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset
                     self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
+                    self.badgeStyle = loaded.badgeStyle
                     SettingsPublished.shared.setBoardAndGrade(board: self.board, grade: self.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")

@@ -7,11 +7,12 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol {
     func metronomeStart()
-    func metronomeTicked(timerTickerNumber:Int) -> Bool
+    func soundMetronomeTick(timerTickerNumber:Int, leadingIn:Bool) -> Bool
     func metronomeStop()
 }
 
 class MetronomeModel:ObservableObject {
+    @Published private(set) var isLeadingIn:Bool = false
     @Published var timerTickerCountPublished = 0
     private var timerTickerCount = 0
     
@@ -22,6 +23,7 @@ class MetronomeModel:ObservableObject {
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
     private var metronomeTimerNotificationProtocol:MetronomeTimerNotificationProtocol? = nil
+    let ticker:MetronomeTicker = MetronomeTicker()
     
     init() {
         for i in 0..<2 {
@@ -41,18 +43,7 @@ class MetronomeModel:ObservableObject {
                 Logger.shared.reportError(self, "Audio player cannot load \(error.localizedDescription)")
             }
         }
-    }
-    
-    func isLeadingIn() -> Bool {
-        if !Settings.shared.metronomeOn {
-            return false
-        }
-
-        if Settings.shared.scaleLeadInBarCount == 0 {
-            return false
-        }
-        let bar = self.timerTickerCountPublished / 4
-        return bar < Settings.shared.scaleLeadInBarCount
+        ticker.metronomeStart()
     }
     
     func getTempoString(_ tempo:Int) -> String {
@@ -112,8 +103,37 @@ class MetronomeModel:ObservableObject {
         
         DispatchQueue.global(qos: .background).async { [self] in
             self.isTiming = true
+            var setLeadingIn = false
+            if Settings.shared.metronomeOn {
+                if Settings.shared.scaleLeadInBarCount > 0 {
+                    DispatchQueue.main.async {
+                        self.isLeadingIn = true
+                    }
+                    setLeadingIn = true
+                }
+            }
+            var firstNotifyTickNumber = 0
+            if Settings.shared.metronomeOn {
+                if Settings.shared.scaleLeadInBarCount > 0 {
+                    firstNotifyTickNumber = Settings.shared.scaleLeadInBarCount * 4
+                }
+            }
+            
             while self.isTiming {
-                let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerCount)
+                print("=================== Timer", timerTickerCount, self.isTiming, self.isLeadingIn, firstNotifyTickNumber)
+                var stop = false
+                if timerTickerCount < firstNotifyTickNumber {
+                    ticker.soundMetronomeTick(timerTickerNumber: timerTickerCount, leadingIn: true)
+                }
+                else {
+                    if setLeadingIn {
+                        setLeadingIn = false
+                        DispatchQueue.main.async {
+                            self.isLeadingIn = false
+                        }
+                    }
+                    stop = notified.soundMetronomeTick(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                }
                 if stop {
                     self.isTiming = false
                     usleep(useconds_t(delay / 1.0))
@@ -127,6 +147,7 @@ class MetronomeModel:ObservableObject {
                     usleep(useconds_t(delay))
                 }
             }
+            
             if let onDone = onDone {
                 onDone()
             }

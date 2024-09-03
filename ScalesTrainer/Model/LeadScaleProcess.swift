@@ -3,26 +3,41 @@ import AVFoundation
 import Combine
 import SwiftUI
 
-class LeadScaleProcess {
+class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     let scalesModel:ScalesModel
     var cancelled = false
     var nextExpectedScaleIndex:Int
     let badges = BadgeBank.shared
     var lastMidi:Int? = nil
+    var notifyCount = 0
     
-    init(scalesModel:ScalesModel) {
+    let metronome:MetronomeModel
+    
+    init(scalesModel:ScalesModel, metronome:MetronomeModel) {
         self.scalesModel = scalesModel
         nextExpectedScaleIndex = 0
+        self.metronome = metronome
+        
+    }
+    
+    func metronomeStart() {
+    }
+    
+    func metronomeStop() {
+    }
+    
+    func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+        return !leadingIn
     }
     
     func start() {
-        badges.setTotalCorrect(0)
-        badges.setTotalIncorrect(0)
+        badges.clearMatches()
         scalesModel.scale.resetMatchedData()
-        let x = scalesModel.tapHandlers[0] as! RealTimeTapHandler
-        x.notifyFunction = self.notify
+        let tapHandler = scalesModel.tapHandlers[0] as! RealTimeTapHandler
+        tapHandler.notifyFunction = self.notify
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
+        notifyCount = 0
     }
     
     func notify(midi:Int, status:TapEventStatus) {
@@ -40,10 +55,15 @@ class LeadScaleProcess {
         let hand = scalesModel.scale.hand
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+        //print("\n=====================IN ", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "MIDI", nextExpected.midi, "total", scale.scaleNoteState[hand].count)
+        print("\n=====================IN ", "MIDI", midi, "Cnt", notifyCount, status, "Next", nextExpected.midi, "Correct", badges.totalCorrect)
+
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
                 badges.setTotalCorrect(badges.totalCorrect + 1)
+                print("   Correct")
+                badges.addMatch(midi)
                 nextExpected.matchedTime = Date()
             }
         }
@@ -58,6 +78,8 @@ class LeadScaleProcess {
                     let unplayed = scale.scaleNoteState[hand][i]
                     if unplayed.midi == midi && unplayed.matchedTime == nil {
                         badges.setTotalCorrect(badges.totalCorrect + 1)
+                        print("   Correct but out of sequence")
+                        badges.addMatch(midi)
                         unplayed.matchedTime = Date()
                         nextExpectedScaleIndex = i
                         break
@@ -70,12 +92,13 @@ class LeadScaleProcess {
             nextExpectedScaleIndex += 1
         }
         else {
-            scalesModel.setRunningProcess(.none)
+            //print("========>>>>>>>>>>>>>>>>", "Cnt", notifyCount, self.nextExpectedScaleIndex, scale.scaleNoteState[hand].count)
+            //if self.nextExpectedScaleIndex >= scale.scaleNoteState[hand].count  {
+                scalesModel.setRunningProcess(.none)
+            //}
         }
 
-        if [.inScale, .outOfScale].contains(status) {
-            let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
-            //print("============ Notified", midi, "correct:", badges.totalCorrect, "wrong:", badges.totalIncorrect, "nextExpected:\(nextExpected.midi)")
-        }
+        //print("=====================OUT", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "total", scale.scaleNoteState[hand].count)
+        notifyCount += 1
     }
 }

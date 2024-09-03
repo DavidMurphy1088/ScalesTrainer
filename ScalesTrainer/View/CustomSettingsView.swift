@@ -14,6 +14,7 @@ struct CustomSettingsView: View {
     @State var leadInBarCount = 0
     @State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
+    @State var badgeStyleNumber = 0
     @State var metronomeOn = false
     @State var developerModeOn = false
 
@@ -29,7 +30,7 @@ struct CustomSettingsView: View {
             HStack {
                 Text("Default Octaves").font(.title2).padding(0)
                 Picker("Select", selection: $defaultOctaves) {
-                    ForEach(1..<5) { number in
+                    ForEach(1..<3) { number in
                         Text("\(number)").tag(number)
                     }
                 }
@@ -85,6 +86,21 @@ struct CustomSettingsView: View {
                 })
             }
             
+            ///Backing sampler
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
+                Picker("Select Value", selection: $badgeStyleNumber) {
+                    ForEach(0..<2) { number in
+                        Text("\(badgeStyle(number))")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: badgeStyleNumber, {
+                    settings.badgeStyle = badgeStyleNumber
+                })
+            }
+
             ///Score values
             Spacer()
             HStack {
@@ -106,7 +122,7 @@ struct CustomSettingsView: View {
             HStack {
                 Spacer()
                 Toggle(isOn: $developerModeOn) {
-                    Text("Test Mode On").font(.title2).padding(0)
+                    Text("Developer Mode On").font(.title2).padding(0)
                 }
                 .onChange(of: developerModeOn, {
                     settings.developerModeOn = developerModeOn
@@ -172,6 +188,16 @@ struct CustomSettingsView: View {
         return str
     }
     
+    func badgeStyle(_ n:Int) -> String {
+        var str:String
+        switch n {
+        case 1: str = "Cute Pets"
+        default:
+            str = "Star"
+        }
+        return str
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -201,6 +227,7 @@ struct CustomSettingsView: View {
                     self.backingPresetNumber = settings.backingSamplerPreset
                     self.metronomeOn = settings.metronomeOn
                     self.developerModeOn = settings.developerModeOn
+                    self.badgeStyleNumber = settings.badgeStyle
                 }
             }
         }
