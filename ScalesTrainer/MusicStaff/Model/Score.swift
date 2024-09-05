@@ -253,7 +253,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore121(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore21(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,

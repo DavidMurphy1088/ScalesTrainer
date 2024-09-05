@@ -37,9 +37,6 @@
     "%@" : {
 
     },
-    "%@ Stars" : {
-
-    },
     "%@, Grade %@" : {
       "localizations" : {
         "en" : {
@@ -118,16 +115,6 @@
     },
     "Choose your keyboard colour " : {
 
-    },
-    "coins %lld draw:%lld %lld " : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "coins %1$lld draw:%2$lld %3$lld "
-          }
-        }
-      }
     },
     "Correct Notes:%lld Errors:%lld" : {
       "localizations" : {
@@ -459,9 +446,6 @@
 
     },
     "Yes" : {
-
-    },
-    "You can earn more coins by recording scales 😊" : {
 
     },
     "Your Progress With %@" : {

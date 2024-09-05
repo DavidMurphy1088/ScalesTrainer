@@ -490,7 +490,7 @@ struct ScalesView: View {
                                         RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
                                     )
                                 if scalesModel.showLegend {
-                                    LegendView(hand: 1)
+                                    LegendView(keyboardHand: 1, scale: scalesModel.scale)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
                                     )
@@ -505,7 +505,7 @@ struct ScalesView: View {
                                         RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)  // Set border color and width
                                     )
                                 if scalesModel.showLegend {
-                                    LegendView(hand: 0)
+                                    LegendView(keyboardHand: 0, scale: scalesModel.scale)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
                                     )
@@ -517,13 +517,27 @@ struct ScalesView: View {
                 }
 
                 if scalesModel.showStaff {
-                    if let score = scalesModel.score {
-                        VStack {
-                            ScoreView(score: score, widthPadding: false)
-                                //.border(Color.gray)
-                                //.padding()
+                    if scalesModel.scale.hand < 2 {
+                        if let score = scalesModel.scores[scalesModel.scale.hand] {
+                            VStack {
+                                ScoreView(score: score, widthPadding: false)
+                            }
+                            .commonFrameStyle()
                         }
-                        .commonFrameStyle()
+                    }
+                    else {
+                        if let scoreRH = scalesModel.scores[0] {
+                            VStack {
+                                ScoreView(score: scoreRH, widthPadding: false)
+                            }
+                            .commonFrameStyle()
+                        }
+                        if let scoreLH = scalesModel.scores[1] {
+                            VStack {
+                                ScoreView(score: scoreLH, widthPadding: false)
+                            }
+                            .commonFrameStyle()
+                        }
                     }
                 }
                 
@@ -595,7 +609,7 @@ struct ScalesView: View {
             if let tempoIndex = scalesModel.tempoSettings.firstIndex(where: { $0.contains("\(scalesModel.scale.minTempo)") }) {
                 self.tempoIndex = tempoIndex
             }
-            scalesModel.setShowStaff(scalesModel.scale.hand != 2)
+            scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
         }
         

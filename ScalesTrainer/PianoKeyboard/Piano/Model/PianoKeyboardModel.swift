@@ -68,6 +68,11 @@ public class PianoKeyboardModel: ObservableObject {
     
     func getKeyBoardSize(scale:Scale, handIndex:Int) -> (first:Int, numberKeys:Int) {
         var firstKeyMidi = scale.scaleNoteState[handIndex][0].midi
+        if scale.scaleType == .contraryMotion {
+            if hand == 1 {
+                firstKeyMidi -= 12
+            }
+        }
         
         ///Decide first key to show on the keyboard - either the F key or the C key
         switch self.scalesModel.scale.scaleRoot.name {
@@ -158,11 +163,11 @@ public class PianoKeyboardModel: ObservableObject {
         }
     }
     
-    func debugSize111(_ ctx:String) {
+    func debugSize11(_ ctx:String) {
         print("========================= Keyboard Size === \(ctx)", "lowMidi", self.pianoKeyModel[0].midi, "hiMidi", self.pianoKeyModel[self.pianoKeyModel.count-1].midi)
     }
     
-    func debug1111(_ ctx:String) {
+    func debug111(_ ctx:String) {
         print("=== Keyboard status === \(ctx)")
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]

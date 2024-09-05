@@ -5,6 +5,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var direction = 0
     var noteToPlayIndex:[Int] = [0, 0]
     var lastNoteValue:Double? = nil
+    var waitBeats = 0
     let audioManager = AudioManager.shared
     
     let scalesModel = ScalesModel.shared
@@ -19,6 +20,10 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     
     func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         let sampler = audioManager.keyboardMidiSampler
+        if waitBeats > 0 {
+            waitBeats -= 1
+            return false
+        }
 
         ///Playing the app's scale
         for handIndex in self.handIndexes {
@@ -36,7 +41,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     key.setKeyPlaying(ascending: direction, hilight: true)
                 }
                 sampler?.play(noteNumber: UInt8(scaleNoteState.midi), velocity: 64, channel: 0)
-                
+                waitBeats = Int(scaleNoteState.value) - 1
+
                 ///Scale turnaround
                 if noteToPlayIndex[handIndex] == ScalesModel.shared.scale.scaleNoteState[handIndex].count / 2 {
                     scalesModel.setSelectedDirection(1)

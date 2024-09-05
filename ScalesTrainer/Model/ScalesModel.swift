@@ -69,7 +69,7 @@ public class ScalesModel : ObservableObject {
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
-    @Published var score:Score?
+    @Published var scores:[Score?] = [nil, nil]
     @Published var recordingIsPlaying1 = false
     @Published var synchedIsPlaying = false
 
@@ -522,18 +522,23 @@ public class ScalesModel : ObservableObject {
         return Int(selected) ?? 60
     }
     
-    func createScore(scale:Scale) -> Score {
+    func createScore(scale:Scale, hand:Int) -> Score {
         let staffType:StaffType
         
-        if scale.scaleNoteState.count > 0 {
-            ///52 = Max is E below middle C which requires 3 ledger in treble clef
-            //staffType = scale.scaleNoteState[handIndex][0].midi >= 52 ? .treble : .bass
-            staffType = scale.hand == 0 ? .treble : .bass
-        }
-        else {
-            staffType = .treble
-        }
-        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
+//        if scale.scaleNoteState.count > 0 {
+//            ///52 = Max is E below middle C which requires 3 ledger in treble clef
+//            //staffType = scale.scaleNoteState[handIndex][0].midi >= 52 ? .treble : .bass
+//            if scale.hand == 2 {
+//                staffType = .treble
+//            }
+//            else {
+//                staffType = scale.hand == 0 ? .treble : .basscreateScore
+//        }
+//        else {
+//            staffType = .treble
+//        }
+        staffType = hand == 0 ? .treble : .bass
+        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor, .contraryMotion].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
         let top = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 3 : 4
@@ -542,16 +547,16 @@ public class ScalesModel : ObservableObject {
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
-        let handIndex = scale.hand == 1 ? 1 : 0
+        //let handIndex = scale.hand == 1 ? 1 : 0
         var lastNote:StaffNote?
         
-        for i in 0..<scale.scaleNoteState[handIndex].count {
+        for i in 0..<scale.scaleNoteState[hand].count {
             if Int(inBarTotalValue) >= top {
                 score.addBarLine()
                 inBarTotalValue = 0.0
             }
 
-            let noteState = scale.scaleNoteState[handIndex][i]
+            let noteState = scale.scaleNoteState[hand][i]
             let ts = score.createTimeSlice()
             
             let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteState.value, staffNum: 0)
@@ -563,15 +568,16 @@ public class ScalesModel : ObservableObject {
             let valueInLastBar = inBarTotalValue - lastNote.getValue()
             lastNote.setValue(value: 4 - valueInLastBar)
         }
-        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState[handIndex].count/12) range:\(scale.getMinMax(handIndex: 0)) noteValue:\(Settings.shared.getSettingsNoteValueFactor())")
+        Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState[hand].count/12)")
         return score
     }
     
     func setScale(scale:Scale) {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false) 
         Logger.shared.log(self, "setScale to:\(name)")
-        let score = self.createScore(scale: scale)
-        self.setScaleAndScore(scale: scale, score: score, ctx: "setScale")
+        let scoreRH = self.createScore(scale: scale, hand: 0)
+        let scoreLH = self.createScore(scale: scale, hand: 1)
+        self.setScaleAndScore(scale: scale, scores: [scoreRH, scoreLH], ctx: "setScale")
     }
 
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int, ctx:String) {
@@ -590,7 +596,7 @@ public class ScalesModel : ObservableObject {
 //        PianoKeyboardModel.sharedRightHand.redraw()
     }
     
-    func setScaleAndScore(scale:Scale, score:Score, ctx:String) {
+    func setScaleAndScore(scale:Scale, scores:[Score], ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
@@ -604,7 +610,7 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
-                self.score = score
+                self.scores = scores
             }
         }
     }
@@ -629,7 +635,7 @@ public class ScalesModel : ObservableObject {
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
             DispatchQueue.main.async {
-                self.score = self.score
+                self.scores = self.scores
             }
         }
     }

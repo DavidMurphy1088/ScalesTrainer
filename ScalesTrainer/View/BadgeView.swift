@@ -94,6 +94,17 @@ struct BadgeView: View {
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
     @State var imageId:[Int] = []
+    @State var handIndex = 0
+    
+    func imageName(n:Int) -> String {
+        var name = ""
+        switch n {
+        case 1: name = "catface_icon"
+        case 2: name = "penguinface_icon"
+        default: name = "dogface_icon"
+        }
+        return name
+    }
     
     var body: some View {
         VStack {
@@ -116,7 +127,8 @@ struct BadgeView: View {
             HStack(spacing: 10) {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                 let imWidth = CGFloat(40)
-                ForEach(0..<scale.scaleNoteState[scale.hand].count, id: \.self) { n in
+                
+                ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { n in
                     if n == BadgeBank.shared.totalCorrect - 1  {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
@@ -134,7 +146,7 @@ struct BadgeView: View {
                                     }
                                 }
                                 else {
-                                    Image(self.imageId[n] == 0 ? "dogface_icon" : "catface_icon")
+                                    Image(self.imageName(n: n))
                                     .resizable()
                                     .frame(width: imWidth)
                                     .rotationEffect(Angle.degrees(rotationAngle))
@@ -159,7 +171,7 @@ struct BadgeView: View {
                                     HexagramShape(size: size, offset: offset, color: c).opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
                                 }
                                 else {
-                                    Image(self.imageId[n] == 0 ? "dogface_icon" : "catface_icon")
+                                    Image(self.imageName(n:n))
                                         .resizable()
                                         .frame(width: imWidth)
                                 }
@@ -176,9 +188,10 @@ struct BadgeView: View {
             })
         }
         .onAppear() {
-            self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[scale.hand].count) * 1.7)
-            for i in 0..<scale.scaleNoteState[scale.hand].count {
-                self.imageId.append(Int.random(in: 0..<2))
+            self.handIndex = scale.hand == 2 ? 0 : scale.hand
+            self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[handIndex].count) * 1.7)
+            for _ in 0..<scale.scaleNoteState[handIndex].count {
+                self.imageId.append(Int.random(in: 0..<3))
             }
         }
     }

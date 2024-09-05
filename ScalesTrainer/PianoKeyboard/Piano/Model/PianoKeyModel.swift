@@ -58,7 +58,7 @@ public class PianoKeyModel: Identifiable, Hashable {
             self.keyboardModel.redraw()
             
             ///Update the score if its showing
-            if let score = scalesModel.score {
+            if let score = scalesModel.scores[0] {
                 if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
                     DispatchQueue.global(qos: .background).async {
                         usleep(1000000 * UInt32(self.keySoundingSeconds))

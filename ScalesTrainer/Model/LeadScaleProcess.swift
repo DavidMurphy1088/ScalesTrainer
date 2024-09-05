@@ -52,17 +52,16 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         self.lastMidi = midi
         
         let scale = scalesModel.scale
-        let hand = scalesModel.scale.hand
+        let hand = scalesModel.scale.hand == 2 ? 0 : scalesModel.scale.hand
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         //print("\n=====================IN ", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "MIDI", nextExpected.midi, "total", scale.scaleNoteState[hand].count)
-        print("\n=====================IN ", "MIDI", midi, "Cnt", notifyCount, status, "Next", nextExpected.midi, "Correct", badges.totalCorrect)
+        //print("\n=====================IN ", "MIDI", midi, "Cnt", notifyCount, status, "Next", nextExpected.midi, "Correct", badges.totalCorrect)
 
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
                 badges.setTotalCorrect(badges.totalCorrect + 1)
-                print("   Correct")
                 badges.addMatch(midi)
                 nextExpected.matchedTime = Date()
             }
@@ -78,7 +77,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                     let unplayed = scale.scaleNoteState[hand][i]
                     if unplayed.midi == midi && unplayed.matchedTime == nil {
                         badges.setTotalCorrect(badges.totalCorrect + 1)
-                        print("   Correct but out of sequence")
                         badges.addMatch(midi)
                         unplayed.matchedTime = Date()
                         nextExpectedScaleIndex = i

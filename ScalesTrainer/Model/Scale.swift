@@ -55,7 +55,7 @@ public enum ScaleType: CaseIterable, Comparable {
     
     func isMajor() -> Bool {
         return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh
-        || self == .chromatic || self == .brokenChordMajor
+        || self == .chromatic || self == .brokenChordMajor || self == .contraryMotion
     }
     
     var description: String {
@@ -101,7 +101,7 @@ public class ScaleNoteState {
     let id = UUID()
     let sequence:Int
     var midi:Int
-    let value:Double
+    var value:Double
     var finger:Int = 0
     var fingerSequenceBreak = false
     var matchedTime:Date? = nil
@@ -196,18 +196,8 @@ public class Scale {
             firstMidi = 60
         }
         
-//        if octaves > 3 {
-//            firstMidiMidi -= 12
-//        }
-
-        ///All are low and some drop off 88-key keyboard
-//        if hand == 1 {
-//            //nextMidi -= 12
-//            nextMidi -= 12 * octaves
-//        }
-        
         self.scaleShapeForFingering = .none
-        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
+        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor, .contraryMotion].contains(self.scaleType) {
             self.scaleShapeForFingering = .scale
         }
         else {
@@ -232,12 +222,13 @@ public class Scale {
             var sequence = 0
             var nextMidi = firstMidi
             let scaleOffsetsForHand:[Int]
-            if scaleType == .contraryMotion && handIndex == 1 {
-                scaleOffsetsForHand = scaleOffsets.reversed()
-            }
-            else {
+//            if scaleType == .contraryMotion && handIndex == 1 {
+//                scaleOffsetsForHand = scaleOffsets.reversed()
+//            }
+//            else {
                 scaleOffsetsForHand = scaleOffsets
-            }
+//            }
+
             if handIndex == 1 {
                 nextMidi -= 12
                 if firstMidi >= 62 {
@@ -256,7 +247,7 @@ public class Scale {
                     }
                 }
             }
-
+            
             self.scaleNoteState.append([])
             
             for oct in 0..<octaves {
@@ -267,7 +258,7 @@ public class Scale {
                     }
                     if oct == 0 {
                         scaleNoteState[handIndex].append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue))
-                        let deltaDirection = (scaleType == .contraryMotion && handIndex==1) ? -1 : 1
+                        let deltaDirection = 1 //(scaleType == .contraryMotion && handIndex==1) ? -1 : 1
                         nextMidi += scaleOffsetsForHand[i] * deltaDirection
                     }
                     else {
@@ -275,6 +266,7 @@ public class Scale {
                     }
                     sequence += 1
                 }
+                ///Add top note
                 if oct == octaves - 1 {
                     var noteValue = Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
@@ -286,18 +278,6 @@ public class Scale {
             }
         }
 
-//        if scaleType == .contraryMotion {
-//            ///Mirror the right hand
-//            let firstMidi = self.scaleNoteState[0][0].midi
-//            self.scaleNoteState.append([])
-//            for i in 0..<self.scaleNoteState[0].count {
-//                let rhMidi = self.scaleNoteState[0][i].midi
-//                let offset = rhMidi - firstMidi
-//                let lhNote = ScaleNoteState(sequence: i, midi: firstMidi - offset, value: self.scaleNoteState[0][i].value)
-//                self.scaleNoteState[1].append(lhNote)
-//            }
-//        }
-                        
         ///Downwards direction - Mirror notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         var ctr = 0
@@ -327,15 +307,41 @@ public class Scale {
                 let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3)
                 scaleNoteState[handIndex].append(lastNote)
             }
+            
+            ///Set last note value to fill all of last bar
+            
+            var totalValue = 0.0
+            for note in scaleNoteState[handIndex] {
+                totalValue += note.value
+            }
+            let lastBarValue = Int(totalValue) % 4
+            let lastNoteValue = 4 - lastBarValue + 1
+            scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
+        }
+        
+        
+        if scaleType == .contraryMotion {
+            //self.debug112("start")
         }
         for handIndex in [0,1] {
             setFingers(handIndex: handIndex)
             setFingerBreaks(handIndex: handIndex)
         }
+        
+        if scaleType == .contraryMotion {
+            let firstPart = scaleNoteState[1].prefix(8)
+            let secondPart = scaleNoteState[1].suffix(8)
+            scaleNoteState[1] = []
+            for x in secondPart {
+                scaleNoteState[1].append(x)
+            }
+            for i in 1..<firstPart.count {
+                scaleNoteState[1].append(firstPart[i])
+            }
+            //self.debug112("end")
+        }
+        
         Scale.createCount += 1
-        //if self.octaves == 2 {
-        //self.debug1("Scale Constructor key:\(scaleRoot.name) hand:\(hand)")
-        //}
     }
         
     func makeNewScale(offset:Int) -> Scale {
@@ -353,7 +359,6 @@ public class Scale {
         var scaleOffsets:[Int] = []
         switch scaleType {
         case .major:
-            //scaleOffsets = [2,2,1,2,2,2,2]
             scaleOffsets = [2,2,1,2,2,2,1]
         case .naturalMinor:
             scaleOffsets = [2,1,2,2,1,2,2]
@@ -393,7 +398,7 @@ public class Scale {
         return scaleOffsets
     }
     
-    func debug11(_ msg:String)  {
+    func debug112(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hand", self.hand, "octaves", self.octaves, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

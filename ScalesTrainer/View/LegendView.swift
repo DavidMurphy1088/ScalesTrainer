@@ -37,7 +37,8 @@ struct ViewSettingsView: View {
 }
 
 struct LegendView: View {
-    let hand:Int
+    let keyboardHand:Int
+    let scale:Scale
     @ObservedObject var logger = Logger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     @State private var scrollToEnd = false
@@ -53,6 +54,13 @@ struct LegendView: View {
         
     func fingerChangeName() -> String {
         var result:String
+        let hand:Int
+        if keyboardHand == 1 && scale.scaleType == .contraryMotion {
+            hand = 0
+        }
+        else {
+            hand = keyboardHand
+        }
         if hand == 0 {
             if scalesModel.selectedDirection == 0 {
                 result = "Thumb Under"

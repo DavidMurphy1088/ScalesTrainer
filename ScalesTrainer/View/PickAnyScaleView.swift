@@ -37,6 +37,8 @@ struct PickAnyScaleView: View {
             case 4:
                 scaleType = .brokenChordMajor
             case 5:
+                scaleType = .contraryMotion
+            case 6:
                 scaleType = .chromatic
             default:
                 scaleType = .major

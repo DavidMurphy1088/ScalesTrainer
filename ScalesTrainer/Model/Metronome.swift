@@ -100,7 +100,7 @@ class MetronomeModel:ObservableObject {
 //            }
 //        }
 //        else {
-        
+        print("================ START METRONOME THREAD ...", delay)
         DispatchQueue.global(qos: .background).async { [self] in
             self.isTiming = true
             var setLeadingIn = false
@@ -120,7 +120,6 @@ class MetronomeModel:ObservableObject {
             }
             
             while self.isTiming {
-                print("=================== Timer", timerTickerCount, self.isTiming, self.isLeadingIn, firstNotifyTickNumber)
                 var stop = false
                 if timerTickerCount < firstNotifyTickNumber {
                     ticker.soundMetronomeTick(timerTickerNumber: timerTickerCount, leadingIn: true)
@@ -151,6 +150,7 @@ class MetronomeModel:ObservableObject {
             if let onDone = onDone {
                 onDone()
             }
+            print("================ END METRONOME THREAD ...", delay)
         }
     }
 }
