@@ -97,6 +97,7 @@ public class ScalesModel : ObservableObject {
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     var tapHandlers:[TapHandlerProtocol] = []
+    var backer:Backer?
     
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
@@ -220,11 +221,18 @@ public class ScalesModel : ObservableObject {
     func setBacking(_ way:Bool) {
         let metronome = MetronomeModel.shared
         if way {
-            metronome.startTimer(notified: Backer(), onDone: {
-            })
+            if self.backer == nil {
+                self.backer = Backer()
+            }
+            metronome.addProcessesToNotify(process: self.backer!)
+//            metronome.startTimer(notified: Backer(), onDone: {
+//            })
         }
         else {
-            metronome.stop()
+            //metronome.stop()
+            if let backer = self.backer {
+                metronome.removeProcessesToNotify(process: backer)
+            }
         }
         DispatchQueue.main.async {
             self.backingOn = way
@@ -251,6 +259,7 @@ public class ScalesModel : ObservableObject {
                     self.synchedIsPlaying = false
                 }
             }
+            MetronomeModel.shared.removeAllProcesses()
             if self.tapHandlers.count > 0 {
                 self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
             }
@@ -329,37 +338,38 @@ public class ScalesModel : ObservableObject {
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            metronome.startTimer(notified: leadProcess, onDone: {
-                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-                leadProcess.start()
-                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-            })
+//            metronome.startTimer(notified: leadProcess, onDone: {
+//                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+//                leadProcess.start()
+//                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+//            })
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
-            metronome.startTimer(notified: HearScalePlayer(handIndex: scale.hand), onDone: {
-            })
+            metronome.addProcessesToNotify(process: HearScalePlayer(handIndex: scale.hand))
+//            metronome.startTimer(notified: HearScalePlayer(handIndex: scale.hand), onDone: {
+//            })
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.startRecordingMicToRecord()
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
-            metronome.startTimer(notified: MetronomeTicker(), onDone: {
-            })
+//            metronome.startTimer(notified: MetronomeTicker(), onDone: {
+//            })
         }
         
-        if [RunningProcess.syncRecording].contains(setProcess)  {
-            let metronome = MetronomeModel.shared
-            DispatchQueue.main.async {
-                self.synchedIsPlaying = true
-            }
-            metronome.startTimer(notified: HearUserScale(), onDone: {
-                self.setRunningProcess(.none) //, tapBufferSize: Settings.shared.tapBufferSize)
-            })
-        }
+//        if [RunningProcess.syncRecording].contains(setProcess)  {
+//            let metronome = MetronomeModel.shared
+//            DispatchQueue.main.async {
+//                self.synchedIsPlaying = true
+//            }
+//            metronome.startTimer(notified: HearUserScale(), onDone: {
+//                self.setRunningProcess(.none) //, tapBufferSize: Settings.shared.tapBufferSize)
+//            })
+//        }
 
         if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
             keyboard.resetKeysWerePlayedState()

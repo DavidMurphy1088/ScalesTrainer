@@ -614,7 +614,7 @@ struct ScalesView: View {
         }
         
         .onDisappear {
-            metronome.stop()
+            metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
             ///Clean up any recorded files
             if Settings.shared.developerModeOn  {

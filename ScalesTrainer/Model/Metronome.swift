@@ -5,7 +5,7 @@ import Accelerate
 import AVFoundation
 import AudioKit
 
-protocol MetronomeTimerNotificationProtocol {
+protocol MetronomeTimerNotificationProtocol: AnyObject {
     func metronomeStart()
     func soundMetronomeTick(timerTickerNumber:Int, leadingIn:Bool) -> Bool
     func metronomeStop()
@@ -22,7 +22,7 @@ class MetronomeModel:ObservableObject {
     private var audioPlayers:[AudioPlayer] = []
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
-    private var metronomeTimerNotificationProtocol:MetronomeTimerNotificationProtocol? = nil
+    private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     let ticker:MetronomeTicker = MetronomeTicker()
     
     init() {
@@ -58,99 +58,129 @@ class MetronomeModel:ObservableObject {
 //        }
     }
     
-    func stop() {
-        isTiming = false
-        if let notified = metronomeTimerNotificationProtocol {
-            notified.metronomeStop()
+    func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
+        if self.processesToNotify.count == 0 {
+            self.startTimerThread()
+            self.isTiming = true
         }
-        metronomeTimerNotificationProtocol = nil
-        timerTickerCount = 0
+        process.metronomeStart()
+        self.processesToNotify.append(process)
     }
-        
-    public func startTimer(notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?) {
-        for player in self.audioPlayers {
-            audioManager.mixer?.addInput(player)
+    
+    func removeProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
+        process.metronomeStop()
+        for i in 0..<self.processesToNotify.count {
+            if self.processesToNotify[i] === process {
+                self.processesToNotify.remove(at: i)
+                break
+            }
         }
+        if self.processesToNotify.count == 0 {
+            self.isTiming = false
+        }
+    }
+    
+    func removeAllProcesses() {
+        for  proc in self.processesToNotify {
+            self.removeProcessesToNotify(process: proc)
+        }
+    }
+
+//    private func stopTimerThread() {
+//        isTiming = false
+//        for notified in self.processesToNotify {
+//            notified.metronomeStop()
+//        }
+//        processesToNotify = []
+//        timerTickerCount = 0
+//    }
+        
+    ///notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?
+    ///
+    func startTimerThread() {
         timerTickerCount = 0
-        var delay = (60.0 / Double(scalesModel.getTempo())) * 1000000
+        var delay = (60.0 / Double(scalesModel.getTempo())) //* 1000000
         delay = delay * Settings.shared.getSettingsNoteValueFactor()
-        notified.metronomeStart()
-        self.metronomeTimerNotificationProtocol = notified
+        print("=========== START Metro Thread ======")
+        //notified.metronomeStart()
+        //self.metronomeTimerNotificationProtocol = notified
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
-//        if false {
-//            DispatchQueue.global(qos: .background).async { [self] in
-//                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
-//                    .autoconnect()
-//                    .sink { _ in
-//                        if !self.isTiming {
-//                            self.tickTimer?.cancel()
-//                            self.stopTicking(notified: notified)
-//                        }
-//                        else {
-//                            let stop = notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
-//                            if stop {
-//                                self.isTiming = false
-//                            }
-//                            else {
-//                                self.timerTickerNumber += 1
-//                            }
-//                        }
-//                    }
-//            }
-//        }
-//        else {
-        print("================ START METRONOME THREAD ...", delay)
-        DispatchQueue.global(qos: .background).async { [self] in
-            self.isTiming = true
-            var setLeadingIn = false
-            if Settings.shared.metronomeOn {
-                if Settings.shared.scaleLeadInBarCount > 0 {
-                    DispatchQueue.main.async {
-                        self.isLeadingIn = true
-                    }
-                    setLeadingIn = true
-                }
-            }
-            var firstNotifyTickNumber = 0
-            if Settings.shared.metronomeOn {
-                if Settings.shared.scaleLeadInBarCount > 0 {
-                    firstNotifyTickNumber = Settings.shared.scaleLeadInBarCount * 4
-                }
-            }
-            
-            while self.isTiming {
-                var stop = false
-                if timerTickerCount < firstNotifyTickNumber {
-                    ticker.soundMetronomeTick(timerTickerNumber: timerTickerCount, leadingIn: true)
-                }
-                else {
-                    if setLeadingIn {
-                        setLeadingIn = false
-                        DispatchQueue.main.async {
-                            self.isLeadingIn = false
+        if true {
+            DispatchQueue.global(qos: .background).async { [self] in
+                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
+                    .autoconnect()
+                    .sink { _ in
+                        if !self.isTiming {
+                            self.tickTimer?.cancel()
+                            print("========= ENDED Metro Thread ======")
+                        }
+                        else {
+                            for toNotify in self.processesToNotify {
+                                toNotify.soundMetronomeTick(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                            }
+                            let stop = false //notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
+                            if stop {
+                                self.isTiming = false
+                            }
+                            else {
+                                self.timerTickerCount += 1
+                            }
                         }
                     }
-                    stop = notified.soundMetronomeTick(timerTickerNumber: self.timerTickerCount, leadingIn: false)
-                }
-                if stop {
-                    self.isTiming = false
-                    usleep(useconds_t(delay / 1.0))
-                    break
-                }
-                else {
-                    self.timerTickerCount += 1
-                    DispatchQueue.main.async {
-                        self.timerTickerCountPublished = self.timerTickerCount
-                    }
-                    usleep(useconds_t(delay))
-                }
             }
-            
-            if let onDone = onDone {
-                onDone()
-            }
-            print("================ END METRONOME THREAD ...", delay)
         }
+//        else {
+        ///Currently user can only vary tempo when metronome thread is stopped
+//        DispatchQueue.global(qos: .background).async { [self] in
+//            self.isTiming = true
+//            var setLeadingIn = false
+//            if Settings.shared.metronomeOn {
+//                if Settings.shared.scaleLeadInBarCount > 0 {
+//                    DispatchQueue.main.async {
+//                        self.isLeadingIn = true
+//                    }
+//                    setLeadingIn = true
+//                }
+//            }
+//            var firstNotifyTickNumber = 0
+//            if Settings.shared.metronomeOn {
+//                if Settings.shared.scaleLeadInBarCount > 0 {
+//                    firstNotifyTickNumber = Settings.shared.scaleLeadInBarCount * 4
+//                }
+//            }
+//            
+//            while self.isTiming {
+//                var stop = false
+//                if timerTickerCount < firstNotifyTickNumber {
+//                    ticker.soundMetronomeTick(timerTickerNumber: timerTickerCount, leadingIn: true)
+//                }
+//                else {
+//                    if setLeadingIn {
+//                        setLeadingIn = false
+//                        DispatchQueue.main.async {
+//                            self.isLeadingIn = false
+//                        }
+//                    }
+//                    stop = notified.soundMetronomeTick(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+//                }
+//                if stop {
+//                    self.isTiming = false
+//                    usleep(useconds_t(delay / 1.0))
+//                    break
+//                }
+//                else {
+//                    self.timerTickerCount += 1
+//                    DispatchQueue.main.async {
+//                        self.timerTickerCountPublished = self.timerTickerCount
+//                    }
+//                    usleep(useconds_t(delay))
+//                }
+//            }
+//            
+//            if let onDone = onDone {
+//                onDone()
+//            }
+//        }
     }
 }
