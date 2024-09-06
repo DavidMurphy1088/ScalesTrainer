@@ -55,7 +55,7 @@ struct LegendView: View {
     func fingerChangeName() -> String {
         var result:String
         let hand:Int
-        if keyboardHand == 1 && scale.scaleType == .contraryMotion {
+        if keyboardHand == 1 && scale.scaleMotion ==  .contraryMotion {
             hand = 0
         }
         else {

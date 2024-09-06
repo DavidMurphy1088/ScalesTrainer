@@ -1,6 +1,6 @@
 import Foundation
 
-public class ScaleRoot {
+public class ScaleRoot : Codable{
     let sharps:Int
     let flats:Int
     var name:String

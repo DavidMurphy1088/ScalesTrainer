@@ -1,6 +1,6 @@
 import Foundation
 
-enum ScaleShape {
+enum ScaleShape : Codable {
     case none
     case scale
     case arpgeggio
@@ -8,31 +8,33 @@ enum ScaleShape {
     case brokenChord
 }
 
-public enum DynamicType: CaseIterable, Comparable {
-    case mf
+public enum DynamicType: String, CaseIterable, Comparable, Codable {
+    case mf = "mf"
+    
     var description: String {
         switch self {
         case .mf:
             return "Mezzo-Forte"
-//        default:
-//            return ""
         }
+    }
+
+    // Required for Comparable
+    public static func < (lhs: DynamicType, rhs: DynamicType) -> Bool {
+        return lhs.rawValue < rhs.rawValue
     }
 }
 
-public enum ArticulationType: CaseIterable, Comparable {
+public enum ArticulationType: CaseIterable, Comparable, Codable {
     case legato
     var description: String {
         switch self {
         case .legato:
-            return "Legarto"
-//        default:
-//            return ""
+            return "Legato"
         }
     }
 }
 
-public enum ScaleType: CaseIterable, Comparable {
+public enum ScaleType: CaseIterable, Comparable, Codable {
     case major
     case naturalMinor
     case harmonicMinor
@@ -49,13 +51,11 @@ public enum ScaleType: CaseIterable, Comparable {
     
     case brokenChordMajor
     case brokenChordMinor
-    
-    case contraryMotion
     case chromatic
     
     func isMajor() -> Bool {
         return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh
-        || self == .chromatic || self == .brokenChordMajor || self == .contraryMotion
+        || self == .chromatic || self == .brokenChordMajor
     }
     
     var description: String {
@@ -87,18 +87,28 @@ public enum ScaleType: CaseIterable, Comparable {
         case .chromatic:
             return "Chromatic"
         case .brokenChordMajor:
-            return "Broken Chord Major"
+            return "Major Broken Chord"
         case .brokenChordMinor:
-            return "Broken Chord Minor"
+            return "Minor Broken Chord"
+        }
+    }
+}
+
+public enum ScaleMotion: CaseIterable, Comparable, Codable {
+    case parallelMotion
+    case contraryMotion
+    var description: String {
+        switch self {
+        case .parallelMotion:
+            return "Parallel Motion"
         case .contraryMotion:
             return "Contrary Motion"
         }
     }
 }
-///In terms of arpeggios: major, minor, dominant 7ths and diminished 7ths.
 
-public class ScaleNoteState {
-    let id = UUID()
+public class ScaleNoteState : Codable{
+    var id = UUID()
     let sequence:Int
     var midi:Int
     var value:Double
@@ -118,8 +128,8 @@ public class ScaleNoteState {
     }
 }
 
-public class Scale {
-    let id = UUID()
+public class Scale : Codable {
+    var id = UUID()
     static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
     private(set) var scaleNoteState:[[ScaleNoteState]]
@@ -130,9 +140,10 @@ public class Scale {
     let dynamicType:DynamicType
     let articulationType:ArticulationType
     var scaleType:ScaleType
+    var scaleMotion:ScaleMotion
     var scaleShapeForFingering:ScaleShape
 
-    public init(scaleRoot:ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int,
+    public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hand:Int,
                 minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
@@ -140,6 +151,7 @@ public class Scale {
         self.articulationType = articulationType
         self.octaves = octaves
         self.scaleType = scaleType
+        self.scaleMotion = scaleMotion
         scaleNoteState = []
         self.hand = hand
         
@@ -197,7 +209,7 @@ public class Scale {
         }
         
         self.scaleShapeForFingering = .none
-        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor, .contraryMotion].contains(self.scaleType) {
+        if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
             self.scaleShapeForFingering = .scale
         }
         else {
@@ -320,15 +332,15 @@ public class Scale {
         }
         
         
-        if scaleType == .contraryMotion {
-            //self.debug112("start")
-        }
+//        if scaleType == .contraryMotion {
+//            //self.debug112("start")
+//        }
         for handIndex in [0,1] {
             setFingers(handIndex: handIndex)
             setFingerBreaks(handIndex: handIndex)
         }
         
-        if scaleType == .contraryMotion {
+        if scaleMotion == .contraryMotion {
             let firstPart = scaleNoteState[1].prefix(8)
             let secondPart = scaleNoteState[1].suffix(8)
             scaleNoteState[1] = []
@@ -345,7 +357,7 @@ public class Scale {
     }
         
     func makeNewScale(offset:Int) -> Scale {
-        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, octaves: self.octaves, hand: self.hand,
+        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hand: self.hand,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
         for handIndex in [0,1] {
             for note in scale.scaleNoteState[handIndex] {
@@ -391,8 +403,8 @@ public class Scale {
             scaleOffsets = [4, 3, -3,   3, 5, -5,   5, 4, -4 ]
         case .brokenChordMinor:
             scaleOffsets = [3, 4, -4   ]
-        case .contraryMotion:
-            scaleOffsets = [2,2,1,2,2,2,1]
+//        case .contraryMotion:
+//            scaleOffsets = [2,2,1,2,2,2,1]
         }
         
         return scaleOffsets
@@ -738,7 +750,9 @@ public class Scale {
             for i in stride(from: halfway, through: 0, by: -1) {
             //for i in stride(from: halfway, to: 0, by: -1) {
                 scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
-                scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                if ![.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
+                    scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                }
                 f += 1
             }
             if leftHandLastFingerJump > 0  {
@@ -758,22 +772,27 @@ public class Scale {
 
     func getScaleName(handFull:Bool, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        var handName = ""
-        if handFull {
-            switch self.hand {
-            case 0: handName = "Right Hand"
-            case 1: handName = "Left Hand"
-            default: handName = "Both Hands"
-            }
+        if scaleMotion == .contraryMotion {
+            name += " " + scaleMotion.description
         }
         else {
-            switch self.hand {
-            case 0: handName = "RH"
-            case 1: handName = "LH"
-            default: handName = "Both"
+            var handName = ""
+            if handFull {
+                switch self.hand {
+                case 0: handName = "Right Hand"
+                case 1: handName = "Left Hand"
+                default: handName = "Both Hands"
+                }
             }
+            else {
+                switch self.hand {
+                case 0: handName = "RH"
+                case 1: handName = "LH"
+                default: handName = "Both"
+                }
+            }
+            name += ", " + handName
         }
-        name += ", " + handName
         if octaves {
             name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
         }

@@ -35,16 +35,11 @@ struct TitleView: View {
         }
         return title
     }
-    var body1: some View {
-        VStack {
-            Text("========= Title ========= ")
-        }
-        .border(Color.red)
-    }
+
     var body: some View {
         VStack {
             Text(getTitle()).font(.title)
-            if Settings.shared.board.count > 0 {
+            if Settings.shared.musicBoard.name.count > 0 {
                 Text("\(settingsPublished.board), Grade \(settingsPublished.grade)").font(.title2)
             }
             if let screenName = screenName {
@@ -171,9 +166,16 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            if let boardAndGrade = Settings.shared.getMusicBoardAndGrade() {
+            //if let boardAndGrade = Settings.shared.getMusicBoardAndGrade() {
                 if menuOptionsLeft.count == 0 {
-                    let practiceChart = PracticeChart(musicBoardGrade: boardAndGrade)
+                    var practiceChart:PracticeChart
+                    if let savedChart = PracticeChart.loadPracticeChartFromFile() {
+                        practiceChart = savedChart
+                        print("Loaded PracticeChart with \(savedChart.rows) rows and \(savedChart.columns) columns.")
+                    }
+                    else {
+                        practiceChart = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
+                    }
                     menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
                                                         view: AnyView(PracticeChartView(practiceChart: practiceChart)),
                                                         imageName: "practice_chart"))
@@ -181,7 +183,7 @@ struct ActivityModeView: View {
                     //menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(musicBoardGrade: ScalesModel.shared.musicBoardGrade))))
                     //menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
                     menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
-                                                        view: AnyView(SpinWheelView(boardGrade: boardAndGrade)),
+                                                        view: AnyView(SpinWheelView(board: Settings.shared.musicBoard, boardGrade: Settings.shared.musicBoardGrade)),
                                                         imageName: "scales_wheel"))
                     
                     menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
@@ -197,7 +199,7 @@ struct ActivityModeView: View {
                     //                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
                     //                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
                 }
-            }
+            //}
         }
     }
 }

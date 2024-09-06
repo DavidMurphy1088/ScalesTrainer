@@ -68,7 +68,7 @@ public class PianoKeyboardModel: ObservableObject {
     
     func getKeyBoardSize(scale:Scale, handIndex:Int) -> (first:Int, numberKeys:Int) {
         var firstKeyMidi = scale.scaleNoteState[handIndex][0].midi
-        if scale.scaleType == .contraryMotion {
+        if scale.scaleMotion == .contraryMotion {
             if hand == 1 {
                 firstKeyMidi -= 12
             }

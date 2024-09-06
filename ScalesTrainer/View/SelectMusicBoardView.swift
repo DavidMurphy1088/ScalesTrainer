@@ -51,9 +51,7 @@ struct BoardGradesView: View {
             }
             .onDisappear() {
                 if let grade = isOn.firstIndex(where: { $0 == true }) {
-                    Settings.shared.board = board
-                    Settings.shared.grade = String(grade)
-                    SettingsPublished.shared.setBoardAndGrade(board: board, grade: String(grade))
+                    Settings.shared.musicBoardGrade = MusicBoardGrade(grade: String(grade))
                 }
             }
         }
@@ -79,16 +77,16 @@ struct SelectMusicBoardView: View {
                 .padding()
                 Spacer()
                 List {
-                    ForEach(Array(MusicBoard.options.enumerated()), id: \.element.id) { index, scaleGroup in
-                        NavigationLink(destination: BoardGradesView(board: scaleGroup.name)) {
+                    ForEach(Array(MusicBoard.options.enumerated()), id: \.element.id) { index, board in
+                        NavigationLink(destination: BoardGradesView(board: board.name)) {
                             HStack {
-                                Text(scaleGroup.name).background(Color.clear).padding()
-                                Text(scaleGroup.fullName).background(Color.clear).padding()
+                                Text(board.name).background(Color.clear).padding()
+                                Text(board.fullName).background(Color.clear).padding()
                                 Spacer()
 
                                 HStack {
                                     GeometryReader { geometry in
-                                        Image(scaleGroup.imageName)
+                                        Image(board.imageName)
                                             .resizable()
                                             .aspectRatio(contentMode: .fit)
                                             .frame(height: geometry.size.height)
@@ -102,6 +100,12 @@ struct SelectMusicBoardView: View {
                 .padding()
             }
             .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
+            .onDisappear() {
+                //if let board = MusicBoard.options.firstIndex(where: { $0.name == true }) {
+                Settings.shared.musicBoard = MusicBoard.init(name: "Trinity")
+                //}
+            }
+
         }
     }
 }

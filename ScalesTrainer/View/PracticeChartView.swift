@@ -2,8 +2,7 @@ import SwiftUI
 
 struct CellView: View {
     let column:Int
-    @Binding var cellScale: Scale
-    @State private var showingDetail = false
+    @ObservedObject var practiceCell: PracticeChartCell
     var cellWidth: CGFloat
     var cellHeight: CGFloat
     var cellPadding: CGFloat
@@ -30,7 +29,8 @@ struct CellView: View {
     }
     
     func getDescr() -> String {
-        return self.cellScale.scaleRoot.name + " " + self.cellScale.scaleType.description
+        //return self.practiceCell.scale.scaleRoot.name + " " + self.practiceCell.scaleType.description
+        return self.practiceCell.scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic: false, articulation: false)
     }
     
     func determineNumberOfBadges() -> Int {
@@ -41,10 +41,10 @@ struct CellView: View {
     var body: some View {
         VStack {
             Button(action: {
-                ScalesModel.shared.setScale(scale: cellScale)
+                ScalesModel.shared.setScale(scale:  practiceCell.scale)
                 navigateToScales = true
             }) {
-                let label = cellScale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
+                let label = practiceCell.scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
                 Text(label)
                     .foregroundColor(.blue)
             }
@@ -56,32 +56,19 @@ struct CellView: View {
                 
                 HStack {
                     Button(action: {
-                        showingDetail = true
+                        practiceCell.setEnabled(way: !practiceCell.enabled)
                     }) {
-                        Image(systemName: "note.text")
+                        let name = practiceCell.isActive ? "star.fill" : "star"
+                        Image(systemName: name)
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(Color(red: 1.0, green: 0.843, blue: 0.0))
+                            .frame(height: cellHeight * 0.5)
                     }
                     .padding(.vertical, 0)
                     .padding(.horizontal)
                 }
                 .padding(self.padding)
-                //.border(.red)
-                
-                HStack {
-                    let badges = determineNumberOfBadges()
-                    if column == 0 && badges > 0 {
-                        ForEach(0..<badges, id: \.self) { _ in
-                            Image("gold_star")
-                            //.resizable()
-                            //.scaledToFit()
-                        }
-                    }
-                    else {
-                        Image("gold_star")
-                        //.resizable()
-                        //.scaledToFit()
-                            .opacity(0.0)
-                    }
-                }
                 .padding(.vertical, 0)
             }
             Spacer()
@@ -93,25 +80,6 @@ struct CellView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
         )
-        .sheet(isPresented: $showingDetail) {
-            VStack {
-                //let label = cellScale.scaleRoot.name + " " + cellScale.scaleType.description + ", " + (cellScale.hand == 0 ? "Right Hand" : "Left Hand")
-                let label = cellScale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic: true, articulation: true)
-                Text(label).font(.title).foregroundColor(.blue)
-                
-                VStack {
-                    Text("Tips").font(.title2).foregroundColor(.blue)
-                    Text("Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other.").font(.title2).foregroundColor(.black)
-                }.padding()
-                
-                VStack {
-                    Text("Your Progress With \(self.getDescr())").font(.title2).foregroundColor(.blue)
-                    Text("This view could show various progress assessments and notes for this scale...").font(.title2).foregroundColor(.black)
-                    Image("ProgressChart")
-                }.padding()
-                .presentationDetents([.height(sheetHeight)])
-            }
-        }
     }
 }
 
@@ -140,8 +108,6 @@ struct PracticeChartView: View {
     var body: some View {
         ///Tried using GeometryReader since it supposedly reacts to orientation changes.
         ///But using it casues all the child view centering not to work
-//      let screenWidth = geo.size.width
-//      let screenHeight = geo.size.height
         let screenWidth = UIScreen.main.bounds.width
         let screenHeight = UIScreen.main.bounds.height
         let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
@@ -182,7 +148,7 @@ struct PracticeChartView: View {
                         ForEach(0..<practiceChart.rows, id: \.self) { row in
                             HStack(spacing: 0) {
                                 ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(column: column, cellScale: $practiceChart.cells[row][column],
+                                    CellView(column: column, practiceCell: practiceChart.cells[row][column],
                                              cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
                                 }
@@ -194,6 +160,11 @@ struct PracticeChartView: View {
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .onAppear() {
+        }
+        .onDisappear() {
+            practiceChart.savePracticeChartToFile(chart: practiceChart)
+        }
     }
 }
 

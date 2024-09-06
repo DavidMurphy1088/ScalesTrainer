@@ -86,9 +86,9 @@
     
 </string>
 				<key>trailing</key>
-				<string>        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
+				<string>        
+        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
-            self.audioManager.stopRecording()
 </string>
 			</dict>
 			<key>type</key>
@@ -213,13 +213,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>415</string>
+					<string>416</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>414</string>
+					<string>415</string>
 					<key>Timestamp</key>
-					<string>747225768.203934</string>
+					<string>747229301.3257281</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

@@ -28,8 +28,8 @@ public class Settings : Codable  {
     static var shared = Settings()
     var developerModeOn = false
     var firstName = ""
-    var board = ""
-    var grade = ""
+    var musicBoard:MusicBoard
+    var musicBoardGrade:MusicBoardGrade
     var defaultOctaves = 2
     var scaleLeadInBarCount:Int = 0
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
@@ -43,6 +43,8 @@ public class Settings : Codable  {
     private var wasLoaded = false
     
     init() {
+        self.musicBoard = MusicBoard(name: "")
+        self.musicBoardGrade = MusicBoardGrade(grade: "")
         load()
     }
     
@@ -73,8 +75,8 @@ public class Settings : Codable  {
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.developerModeOn )"
         str += " FirstName:\(self.firstName)"
-        str += " Board:\(self.board)"
-        str += " Grade:\(self.grade)"
+        str += " Board:\(self.musicBoard)"
+        str += " Grade:\(self.musicBoardGrade)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " KeyColor:\(self.keyColor)"
@@ -93,13 +95,13 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
-    func getMusicBoardAndGrade() -> MusicBoardGrade? {
-        if let board = MusicBoard.options.first(where: { $0.name == self.board}) {
-            let board = MusicBoard(name: board.name, fullName: board.fullName, imageName: board.imageName)
-            return MusicBoardGrade(board: board, grade: self.grade)
-        }
-        return nil
-    }
+//    func getMusicBoardAndGrade() -> MusicBoardGrade? {
+//        if let board = MusicBoard.options.first(where: { $0.name == self.board}) {
+//            let board = MusicBoard(name: board.name, fullName: board.fullName, imageName: board.imageName)
+//            return MusicBoardGrade(grade: self.grade)
+//        }
+//        return nil
+//    }
 
     func getName() -> String {
         let name = firstName
@@ -121,8 +123,8 @@ public class Settings : Codable  {
                     self.developerModeOn  = loaded.developerModeOn 
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
-                    self.board = loaded.board
-                    self.grade = loaded.grade
+                    self.musicBoard = loaded.musicBoard
+                    self.musicBoardGrade = loaded.musicBoardGrade
                     self.metronomeOn = loaded.metronomeOn
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
@@ -131,7 +133,7 @@ public class Settings : Codable  {
                     self.backingSamplerPreset = loaded.backingSamplerPreset
                     self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
                     self.badgeStyle = loaded.badgeStyle
-                    SettingsPublished.shared.setBoardAndGrade(board: self.board, grade: self.grade)
+                    SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true

@@ -3,7 +3,10 @@ import SwiftUI
 struct PickAnyScaleView: View {
     @State var typeIndexMajor:Int = 0
     @State var rootIndexMajor:Int = 0
+    @State var motionIndex:Int = 0
+
     @State var typesMajor:[String] = []
+    @State var scaleMotions:[String] = []
     @State var rootsMajor:[String] = ["A", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭"]
 
     @State var typeIndexMinor:Int = 0
@@ -37,13 +40,19 @@ struct PickAnyScaleView: View {
             case 4:
                 scaleType = .brokenChordMajor
             case 5:
-                scaleType = .contraryMotion
-            case 6:
                 scaleType = .chromatic
             default:
                 scaleType = .major
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, 
+            
+            let scaleMotion:ScaleMotion
+            switch motionIndex {
+            case 0:
+                scaleMotion = .parallelMotion
+            default:
+                scaleMotion = .contraryMotion
+            }
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: self.indexOctave+1, hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         else {
@@ -70,7 +79,15 @@ struct PickAnyScaleView: View {
             default:
                 scaleType = .harmonicMinor
             }
-            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, octaves: self.indexOctave+1,
+            
+            let scaleMotion:ScaleMotion
+            switch motionIndex {
+            case 0:
+                scaleMotion = .parallelMotion
+            default:
+                scaleMotion = .contraryMotion
+            }
+            scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
                           hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         ScalesModel.shared.setScale(scale: scale)
@@ -104,6 +121,14 @@ struct PickAnyScaleView: View {
                             Picker("Select Value", selection: $typeIndexMajor) {
                                 ForEach(typesMajor.indices, id: \.self) { index in
                                     Text("\(typesMajor[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            
+                            Text("Motion:").font(.title2).padding()
+                            Picker("Select Value", selection: $motionIndex) {
+                                ForEach(scaleMotions.indices, id: \.self) { index in
+                                    Text("\(scaleMotions[index])")
                                 }
                             }
                             .pickerStyle(.menu)
@@ -160,6 +185,14 @@ struct PickAnyScaleView: View {
                                 }
                             }
                             .pickerStyle(.menu)
+                            
+                            Text("Motion:").font(.title2).padding()
+                            Picker("Select Value", selection: $motionIndex) {
+                                ForEach(scaleMotions.indices, id: \.self) { index in
+                                    Text("\(scaleMotions[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
 
                         HStack {
@@ -208,6 +241,10 @@ struct PickAnyScaleView: View {
                             self.typesMinor.append(scale.description)
                         }
                     }
+                    for scale in ScaleMotion.allCases {
+                        self.scaleMotions.append(scale.description)
+                    }
+
                 }
             }
         }

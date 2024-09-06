@@ -167,7 +167,7 @@ class TabSelectionManager: ObservableObject {
 //                                                             octaves: 1, hand: 2,
 //                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
-                                                             scaleType: .major,
+                                                             scaleType: .major, scaleMotion: .parallelMotion,
                                                              octaves: 1, hand: 0,
                                                              minTempo: 90, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
@@ -253,15 +253,15 @@ struct ScalesTrainerApp: App {
                     Label("Home", systemImage: "house")
                 }
                 .tag(1)
-            SettingsView()
+            GradeAndBoard()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label("Board and Grade", systemImage: "arrowshape.forward.circle")
                 }
                 .tag(2)
                 .environmentObject(tabSelectionManager)
-            CustomSettingsView()
+            SettingsView()
                 .tabItem {
-                    Label("Customise", systemImage: "gearshape.fill")
+                    Label("Settings", systemImage: "gear")
                 }
                 .tag(3)
                 .environmentObject(tabSelectionManager)

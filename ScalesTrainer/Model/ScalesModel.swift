@@ -241,7 +241,7 @@ public class ScalesModel : ObservableObject {
     
     //init(musicBoardGrade:MusicBoardGrade) {
     init() {
-        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, octaves: 1, hand: 0,
+        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .parallelMotion, octaves: 1, hand: 0,
                            minTempo: 90, dynamicType: .mf, articulationType: .legato)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
@@ -251,6 +251,7 @@ public class ScalesModel : ObservableObject {
     }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
+        
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopRecording()
@@ -548,7 +549,7 @@ public class ScalesModel : ObservableObject {
 //            staffType = .treble
 //        }
         staffType = hand == 0 ? .treble : .bass
-        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor, .contraryMotion].contains(scale.scaleType) ? .major : .minor
+        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
         let top = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 3 : 4
@@ -590,12 +591,12 @@ public class ScalesModel : ObservableObject {
         self.setScaleAndScore(scale: scale, scores: [scoreRH, scoreLH], ctx: "setScale")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, octaves:Int, hand:Int, ctx:String) {
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, octaves:Int, hand:Int, ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
                           //ctx:\(ctx) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
-                          scaleType: scaleType,
+                          scaleType: scaleType, scaleMotion: scaleMotion,
                            octaves: octaves,
                            hand: hand,
                           minTempo: 90, dynamicType: .mf, articulationType: .legato)

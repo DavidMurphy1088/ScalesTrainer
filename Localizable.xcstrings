@@ -56,9 +56,6 @@
     "© 2024 Musicmaster Education LLC." : {
 
     },
-    "========= Title ========= " : {
-
-    },
     "⊙" : {
 
     },
@@ -104,6 +101,9 @@
     "Badge Styles" : {
 
     },
+    "Board and Grade" : {
+
+    },
     "C" : {
 
     },
@@ -133,12 +133,6 @@
 
     },
     "Current Amplitude Filter:%@" : {
-
-    },
-    "Customise" : {
-
-    },
-    "Default Octaves" : {
 
     },
     "Detected Pitch: %.0f Hz" : {
@@ -215,9 +209,6 @@
     "Lead the Scale" : {
 
     },
-    "Legato - To play your scale legato, smoothly connect each note to the next without any breaks or gaps in sound, like you're gently flowing from one note to the other." : {
-
-    },
     "Log" : {
 
     },
@@ -241,6 +232,9 @@
 
     },
     "Missing" : {
+
+    },
+    "Motion:" : {
 
     },
     "New Amplitude Filter:%@" : {
@@ -414,12 +408,6 @@
     "Tempo" : {
 
     },
-    "This view could show various progress assessments and notes for this scale..." : {
-
-    },
-    "Tips" : {
-
-    },
     "Under Construction" : {
 
     },
@@ -446,9 +434,6 @@
 
     },
     "Yes" : {
-
-    },
-    "Your Progress With %@" : {
 
     }
   },

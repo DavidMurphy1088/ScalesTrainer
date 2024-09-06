@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SpinWheelView: View {
     @ObservedObject var scalesModel = ScalesModel.shared
+    let board:MusicBoard
     let boardGrade:MusicBoardGrade
 
     @State private var rotation: Double = 0
@@ -109,7 +110,7 @@ struct SpinWheelView: View {
             self.selectedHand = index
 
             let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
-                              scaleType: getTypes()[self.selectedScaleType],
+                              scaleType: getTypes()[self.selectedScaleType], scaleMotion: .parallelMotion,
                               octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
                               minTempo: 90, dynamicType: .mf, articulationType: .legato)
             let _ = ScalesModel.shared.setScale(scale: scale)
