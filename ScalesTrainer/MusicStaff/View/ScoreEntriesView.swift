@@ -191,7 +191,8 @@ struct ScoreEntriesView: View {
         
     var body: some View {
         ZStack {
-            let noteWidth = score.lineSpacing * 1.2
+            //let noteWidth = score.lineSpacing * 1.2
+            let noteWidth = score.lineSpacing * 1.1
             HStack(spacing: 0) { //HStack - score entries display along the staff
                 ForEach(score.scoreEntries) { entry in
                     ZStack { //VStack - required in forEach closure

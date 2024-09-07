@@ -5,7 +5,7 @@ struct ViewSettingsView: View {
     @ObservedObject var scalesModel = ScalesModel.shared
     var body: some View {
         HStack {
-            Spacer()
+            //Spacer()
             Button(action: {
                 scalesModel.setShowKeyboard(!scalesModel.showKeyboard)
             }) {
@@ -14,7 +14,7 @@ struct ViewSettingsView: View {
             .padding()
             
             if scalesModel.showKeyboard {
-                Spacer()
+                //Spacer()
                 Button(action: {
                     scalesModel.setShowFingers(!scalesModel.showFingers)
                 }) {
@@ -23,7 +23,7 @@ struct ViewSettingsView: View {
                 .padding()
             }
             
-            Spacer()
+            //Spacer()
             Button(action: {
                 scalesModel.setShowStaff(!scalesModel.showStaff)
             }) {
@@ -31,7 +31,7 @@ struct ViewSettingsView: View {
             }
             .padding()
             
-            Spacer()
+            //Spacer()
         }
     }
 }

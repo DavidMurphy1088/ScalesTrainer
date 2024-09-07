@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>345</string>
+					<string>337</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>344</string>
+					<string>336</string>
 					<key>Timestamp</key>
-					<string>747044072.9627039</string>
+					<string>747395688.488317</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            VStack {
+				<string>            HStack {
 </string>
 				<key>leading</key>
 				<string>            
             Spacer()
 </string>
 				<key>trailing</key>
-				<string>                Button(action: {
-                    showHelp("Record The Scale")
-                }) {
+				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
+                    if scalesModel.runningProcessPublished == .recordingScale {
+                        scalesModel.setRunningProcess(.none)
 </string>
 			</dict>
 			<key>type</key>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>548</string>
+					<string>550</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>547</string>
+					<string>549</string>
 					<key>Timestamp</key>
-					<string>747124113.411415</string>
+					<string>747395688.48829</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -213,13 +213,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>416</string>
+					<string>402</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>415</string>
+					<string>401</string>
 					<key>Timestamp</key>
-					<string>747229301.3257281</string>
+					<string>747355682.744292</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

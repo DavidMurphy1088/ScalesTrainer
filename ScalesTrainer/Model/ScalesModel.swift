@@ -293,6 +293,7 @@ public class ScalesModel : ObservableObject {
         let keyboard = scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
         keyboard.clearAllFollowingKeyHilights(except: nil)
         keyboard.redraw()
+        let metronome = MetronomeModel.shared
         
         if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
@@ -336,42 +337,27 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setShow(true)
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
-            let metronome = MetronomeModel.shared
             metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-//            metronome.startTimer(notified: leadProcess, onDone: {
-//                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-//                leadProcess.start()
-//                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-//            })
+            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            leadProcess.start()
+            metronome.addProcessesToNotify(process: leadProcess)
+            self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
-            let metronome = MetronomeModel.shared
             metronome.isTiming = true
             metronome.addProcessesToNotify(process: HearScalePlayer(handIndex: scale.hand))
-//            metronome.startTimer(notified: HearScalePlayer(handIndex: scale.hand), onDone: {
-//            })
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.startRecordingMicToRecord()
             let metronome = MetronomeModel.shared
             metronome.isTiming = true
-//            metronome.startTimer(notified: MetronomeTicker(), onDone: {
-//            })
+            let process = RecordScaleProcess()
+            metronome.addProcessesToNotify(process: process)
         }
         
-//        if [RunningProcess.syncRecording].contains(setProcess)  {
-//            let metronome = MetronomeModel.shared
-//            DispatchQueue.main.async {
-//                self.synchedIsPlaying = true
-//            }
-//            metronome.startTimer(notified: HearUserScale(), onDone: {
-//                self.setRunningProcess(.none) //, tapBufferSize: Settings.shared.tapBufferSize)
-//            })
-//        }
-
         if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
             keyboard.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
@@ -559,7 +545,7 @@ public class ScalesModel : ObservableObject {
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
         //let handIndex = scale.hand == 1 ? 1 : 0
-        var lastNote:StaffNote?
+        //var lastNote:StaffNote?
         
         for i in 0..<scale.scaleNoteState[hand].count {
             if Int(inBarTotalValue) >= top {
@@ -571,14 +557,15 @@ public class ScalesModel : ObservableObject {
             let ts = score.createTimeSlice()
             
             let note = StaffNote(timeSlice: ts, num: noteState.midi, value: noteState.value, staffNum: 0)
+            note.setValue(value: noteState.value)
             ts.addNote(n: note)
             inBarTotalValue += noteState.value
-            lastNote = note
+            //lastNote = note
         }
-        if let lastNote = lastNote {
-            let valueInLastBar = inBarTotalValue - lastNote.getValue()
-            lastNote.setValue(value: 4 - valueInLastBar)
-        }
+//        if let lastNote = lastNote {
+//            let valueInLastBar = inBarTotalValue - lastNote.getValue()
+//            lastNote.setValue(value: 4 - valueInLastBar)
+//        }
         Logger.shared.log(self, "Created score type:\(staffType) octaves:\(scale.scaleNoteState[hand].count/12)")
         return score
     }

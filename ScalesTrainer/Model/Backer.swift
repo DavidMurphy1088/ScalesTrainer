@@ -84,7 +84,7 @@ class Backer :MetronomeTimerNotificationProtocol {
         return midi
     }
     
-    func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         let beat = callNum % 4
         var midi = 0
         let bar = callNum / 4

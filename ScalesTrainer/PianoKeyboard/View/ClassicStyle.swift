@@ -118,7 +118,6 @@ public struct ClassicStyle {
                     .path(in: rect)
                 
                 ///Hilight the key if in following keys mode
-                //let middle = 0.9
                 let gradient = Gradient(colors: [
                     keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     //Color(red: middle * 0.6, green: middle, blue: middle),
@@ -131,6 +130,20 @@ public struct ClassicStyle {
                     startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
                 ))
+                
+                if key.midi == 60 {
+                    let circleRadius = 15
+                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
+                                        y: 6,
+                                        width: circleRadius * 2,
+                                        height: circleRadius * 2)
+                    context.fill(Path(ellipseIn: circle), with: .color(.white))
+                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
+                    context.draw(
+                        Text("C").font(labelFont).foregroundColor(.blue),
+                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
+                    )
+                }
                 
                 /// ----------- Note name ----------
                 if scalesModel.showFingers {
@@ -147,10 +160,14 @@ public struct ClassicStyle {
 //                            context.fill(Path(ellipseIn: circle), with: .color(.white))
 //                            context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
 //                        }
-                        context.draw(
-                            Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                        )
+
+                        if key.midi != 60 {
+                            context.draw(
+                                Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
+                                //Text("X").font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
+                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
+                            )
+                        }
                     }
                 }
                 
@@ -158,7 +175,8 @@ public struct ClassicStyle {
                 if keyModel.keyIsSounding {
                     let innerContext = context
                     //let w = playingMidiRadius + 7.0
-                    let w = playingMidiRadius * 1.6
+                    //let w1 = playingMidiRadius * 1.6
+                    let w = playingMidiRadius * 1.0
                     let color:Color
                     if keyModel.scaleNoteState != nil {
                         color = .green
@@ -166,7 +184,9 @@ public struct ClassicStyle {
                     else {
                         color = .red
                     }
-                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
+                    
+                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2,
+                                       y: rect.origin.y + rect.height * 0.80 - w/2,
                                        width: w, height: w)
                     innerContext.stroke(
                         Path(ellipseIn: frame),
@@ -258,25 +278,25 @@ public struct ClassicStyle {
                 
                 ///Hilite Middle C
                 ///Draw it here (not during white key draw) to ensure it appears above the black note
-                if keyModel.midi == 61 { //}|| keyModel.midi == 64 {
-                    let circleRadius = 15
-                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
-                                        y: 6,
-                                        width: circleRadius * 2,
-                                        height: circleRadius * 2)
-                    context.fill(Path(ellipseIn: circle), with: .color(.white))
-                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
-                    context.draw(
-                        Text("C").font(labelFont).foregroundColor(.blue),
-                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
-                    )
-                }
+//                if keyModel.midi == 61 { //}|| keyModel.midi == 64 {
+//                    let circleRadius = 15
+//                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
+//                                        y: 6,
+//                                        width: circleRadius * 2,
+//                                        height: circleRadius * 2)
+//                    context.fill(Path(ellipseIn: circle), with: .color(.white))
+//                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
+//                    context.draw(
+//                        Text("C").font(labelFont).foregroundColor(.blue),
+//                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
+//                    )
+//                }
 
                 /// ----------- The note from the key touch is playiong ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
                     //let w = playingMidiRadius + 7.0
-                    let w = playingMidiRadius * 1.6
+                    let w = playingMidiRadius * 1.0
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
                                        width: w, height: w)
                     let color:Color

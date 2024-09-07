@@ -246,8 +246,8 @@ public struct TimeSliceView: View {
                     let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
                     Text(getAccidental(accidental: accidental))
                         .font(.system(size: lineSpacing * 3.0))
-                        .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
-                        .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.5),
+                        .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
+                        .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
                                   y: noteEllipseMidpoint + yOffset)
                         .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
                     

@@ -126,6 +126,11 @@ public class ScaleNoteState : Codable{
         self.midi = midi
         self.value = value
     }
+    
+    func isWhiteKey() -> Bool {
+        let offset = self.midi % 12
+        return [0,2,4,5,7,9,11].contains(offset)
+    }
 }
 
 public class Scale : Codable {
@@ -212,18 +217,18 @@ public class Scale : Codable {
         if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
             self.scaleShapeForFingering = .scale
         }
-        else {
-            if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
-                self.scaleShapeForFingering = .arpgeggio
-            }
-            else {
-                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-                    
-                }
-                else {
-                    self.scaleShapeForFingering = .arpgeggio4Note
-                }
-            }
+        
+        if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
+            self.scaleShapeForFingering = .arpgeggio
+        }
+        
+        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+            
+        }
+        if [.arpeggioMajorSeventh, .arpeggioMinorSeventh, .arpeggioDominantSeventh, .arpeggioDiminishedSeventh].contains(self.scaleType) {
+            self.scaleShapeForFingering = .arpgeggio4Note
+        }
+        if [.chromatic].contains(self.scaleType) {
         }
         
         ///Set midi values in scale
@@ -331,31 +336,71 @@ public class Scale : Codable {
             scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
         }
         
-        
-//        if scaleType == .contraryMotion {
-//            //self.debug112("start")
-//        }
-        for handIndex in [0,1] {
-            setFingers(handIndex: handIndex)
-            setFingerBreaks(handIndex: handIndex)
-        }
-        
         if scaleMotion == .contraryMotion {
-            let firstPart = scaleNoteState[1].prefix(8)
-            let secondPart = scaleNoteState[1].suffix(8)
+            ///For the left hand interchange the two halves of the scale
+            let middleIndex = (scaleNoteState[1].count / 2) + 1
+            let firstPart = scaleNoteState[1].prefix(middleIndex)
+            let secondPart = scaleNoteState[1].suffix(middleIndex)
             scaleNoteState[1] = []
-            for x in secondPart {
-                scaleNoteState[1].append(x)
+            var seq = 0
+            for state in secondPart {
+                ///Need deep copy
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value))
             }
+            seq = 0
             for i in 1..<firstPart.count {
-                scaleNoteState[1].append(firstPart[i])
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value))
             }
-            //self.debug112("end")
+            ///The last note value is now in the middle of the scale ... so exchange it
+            let lastNoteValue = scaleNoteState[1][middleIndex - 1].value
+            let firstNoteValue = scaleNoteState[1][0].value
+            scaleNoteState[1][middleIndex - 1].value = firstNoteValue
+            let lastNoteIndex = scaleNoteState[1].count-1
+
+            scaleNoteState[1][lastNoteIndex].value = lastNoteValue
+            for handIndex in [0,1] {
+                setFingers(handIndex: handIndex)
+                setChromaticFingerBreaks(hand: handIndex)
+            }
+            debug112("chromatic")
+        }
+        else {
+            for handIndex in [0,1] {
+                setFingers(handIndex: handIndex)
+                setFingerBreaks(handIndex: handIndex)
+            }
         }
         
         Scale.createCount += 1
     }
         
+    func setChromaticFingerBreaks(hand:Int) {
+        var whiteCount = 0
+        let midway = self.scaleNoteState[hand].count / 2
+        for i in 0..<midway {
+            let scaleNote = self.scaleNoteState[hand][i]
+            if i > 0 && scaleNote.isWhiteKey() {
+                scaleNote.fingerSequenceBreak = whiteCount == 0 ? true : false
+                whiteCount += 1
+            }
+            else {
+                whiteCount = 0
+                scaleNote.fingerSequenceBreak = false
+            }
+        }
+        for i in midway+1..<self.scaleNoteState[hand].count {
+            let scaleNote = self.scaleNoteState[hand][i]
+            if scaleNote.isWhiteKey() {
+                scaleNote.fingerSequenceBreak = false
+                whiteCount += 1
+            }
+            else {
+                whiteCount = 0
+                scaleNote.fingerSequenceBreak = true
+            }
+        }
+    }
+    
     func makeNewScale(offset:Int) -> Scale {
         let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hand: self.hand,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
@@ -421,10 +466,12 @@ public class Scale : Codable {
             }
         }
         for handIndex in [0,1] {
+            var idx = 0
             for state in self.scaleNoteState[handIndex] {
-                print("Hand", handIndex, "Midi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
+                print("Hand", handIndex, "idx:", idx, "\tMidi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
                       "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
                       "valueNormalized:", getValue(state.valueNormalized))
+                idx += 1
             }
         }
     }
@@ -523,9 +570,9 @@ public class Scale : Codable {
         for note in self.scaleNoteState[handIndex] {
             note.fingerSequenceBreak = false
         }
-        guard self.scaleShapeForFingering == .scale else {
-            return
-        }
+//        guard self.scaleShapeForFingering == .scale else {
+//            return
+//        }
         let halfway = self.scaleNoteState[handIndex].count/2-1
         if handIndex == 0 {
             var lastFinger = self.scaleNoteState[handIndex][0].finger
@@ -722,51 +769,81 @@ public class Scale : Codable {
             }
         }
         
-        ///Apply the finger patterns for ascending and descending
-        
-        let halfway = scaleNoteState[handIndex].count / 2
-        if handIndex == 0 {
-            var f = 0
-            for i in 0..<halfway {
-                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: i, fingers: fingers)
-                f += 1
-            }
-            f -= 1
-            var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
-            if scaleShapeForFingering == .arpgeggio {
-                if highNoteFinger < 5 {
-                    highNoteFinger += 1
+        if scaleType == .chromatic {
+            ///Note that for LH finger the given pattern goes from high to low notes (reversed)
+            var whiteCount = 0
+            if handIndex == 0 {
+                if [0, 5].contains(scaleNoteState[handIndex][0].midi % 12) {
+                    whiteCount += 1
                 }
             }
-            scaleNoteState[handIndex][halfway].finger = highNoteFinger
-            for i in (halfway+1..<scaleNoteState[handIndex].count) {
-                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
-                f -= 1
+            else {
+//                if [0, 5].contains(scaleNoteState[handIndex][0].midi % 12) {
+//                    whiteCount += 1
+//                }
+            }
+            let midway = scaleNoteState[handIndex].count / 2
+            for i in 0..<scaleNoteState[handIndex].count {
+                let noteState = scaleNoteState[handIndex][i]
+                if noteState.isWhiteKey() {
+                    noteState.finger = whiteCount == 0 ? 1 : 2
+                    whiteCount += 1
+                }
+                else {
+                    noteState.finger = 3
+                    whiteCount = 0
+                }
+                if i == midway {
+                    whiteCount = 0
+                }
             }
         }
         else {
-            var f = 0
-            ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
-            for i in stride(from: halfway, through: 0, by: -1) {
-            //for i in stride(from: halfway, to: 0, by: -1) {
-                scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
-                if ![.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
-                    scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+            ///Apply the finger patterns for ascending and descending
+            let halfway = scaleNoteState[handIndex].count / 2
+            if handIndex == 0 {
+                var f = 0
+                for i in 0..<halfway {
+                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: i, fingers: fingers)
+                    f += 1
                 }
-                f += 1
+                f -= 1
+                var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
+                if scaleShapeForFingering == .arpgeggio {
+                    if highNoteFinger < 5 {
+                        highNoteFinger += 1
+                    }
+                }
+                scaleNoteState[handIndex][halfway].finger = highNoteFinger
+                for i in (halfway+1..<scaleNoteState[handIndex].count) {
+                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                    f -= 1
+                }
             }
-            if leftHandLastFingerJump > 0  {
-                let nextToLastFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers)
-                //var edgeFinger = stringIndexToInt(index: 1, fingers: fingers) + 1
-//                if edgeFinger < 5 {
-//                    let midiDiff = abs(scaleNoteState[0].midi - scaleNoteState[1].midi)
-//                    if midiDiff > 2 {
-//                        edgeFinger += 1
-//                    }
-//                }
-                scaleNoteState[handIndex][0].finger = nextToLastFinger + leftHandLastFingerJump
+            else {
+                var f = 0
+                ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
+                for i in stride(from: halfway, through: 0, by: -1) {
+                    //for i in stride(from: halfway, to: 0, by: -1) {
+                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                    if ![.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
+                        scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                    }
+                    f += 1
+                }
+                if leftHandLastFingerJump > 0  {
+                    let nextToLastFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers)
+                    //var edgeFinger = stringIndexToInt(index: 1, fingers: fingers) + 1
+                    //                if edgeFinger < 5 {
+                    //                    let midiDiff = abs(scaleNoteState[0].midi - scaleNoteState[1].midi)
+                    //                    if midiDiff > 2 {
+                    //                        edgeFinger += 1
+                    //                    }
+                    //                }
+                    scaleNoteState[handIndex][0].finger = nextToLastFinger + leftHandLastFingerJump
+                }
+                //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
             }
-            //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
         }
     }
 

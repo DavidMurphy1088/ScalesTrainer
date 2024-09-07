@@ -51,7 +51,7 @@ class MusicBoardGrade: Codable {
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
         scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hand: 2,
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-        scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .parallelMotion, octaves: octaves, hand: 0,
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .parallelMotion, octaves: octaves, hand: 1,
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
 
         ///Row 4

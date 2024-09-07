@@ -80,24 +80,25 @@ struct SettingsView: View {
                     }
                     .padding()
                     .hilighted(backgroundColor: .gray)
-                    .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
+                    //.frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
                     Spacer()
                 }
+                //.border(Color.red)
             }
             
-            ///Metronome on
-            Spacer()
-            HStack {
-                Spacer()
-                Toggle(isOn: $metronomeOn) {
-                    Text("Metronome On").font(.title2).padding(0)
-                }
-                .onChange(of: metronomeOn, {
-                    settings.metronomeOn = metronomeOn
-                })
-                Spacer()
-            }
-            .frame(width: UIScreen.main.bounds.width * 0.30)
+//            ///Metronome on
+//            Spacer()
+//            HStack {
+//                Spacer()
+//                Toggle(isOn: $metronomeOn) {
+//                    Text("Metronome On").font(.title2).padding(0)
+//                }
+//                .onChange(of: metronomeOn, {
+//                    settings.metronomeOn = metronomeOn
+//                })
+//                Spacer()
+//            }
+//            .frame(width: UIScreen.main.bounds.width * 0.30)
         
             ///Lead in count
             Spacer()
@@ -108,7 +109,7 @@ struct SettingsView: View {
                         Text("\(scalesModel.scaleLeadInCounts[index])")
                     }
                 }
-                .disabled(!self.metronomeOn)
+                //.disabled(!self.metronomeOn)
                 .pickerStyle(.menu)
                 .onChange(of: leadInBarCount, {
                     settings.scaleLeadInBarCount = leadInBarCount
@@ -131,12 +132,12 @@ struct SettingsView: View {
                 })
             }
             
-            ///Backing sampler
+            ///Badges
             Spacer()
             HStack {
                 Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
                 Picker("Select Value", selection: $badgeStyleNumber) {
-                    ForEach(0..<2) { number in
+                    ForEach(0..<3) { number in
                         Text("\(badgeStyle(number))")
                     }
                 }
@@ -146,21 +147,21 @@ struct SettingsView: View {
                 })
             }
 
-            ///Score values
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Scale Note Value")).font(.title2).padding(0)
-                Picker("Select Value", selection: $scaleNoteValue) {
-                    ForEach(0..<2) { number in
-                        let valueStr = number == 0 ? "Crotchet" : "Quaver"
-                        Text("\(valueStr)")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: scaleNoteValue, {
-                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
-                })
-            }
+//            ///Score values
+//            Spacer()
+//            HStack {
+//                Text(LocalizedStringResource("Scale Note Value")).font(.title2).padding(0)
+//                Picker("Select Value", selection: $scaleNoteValue) {
+//                    ForEach(0..<2) { number in
+//                        let valueStr = number == 0 ? "Crotchet" : "Quaver"
+//                        Text("\(valueStr)")
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//                .onChange(of: scaleNoteValue, {
+//                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
+//                })
+//            }
             
             ///Developer
             Spacer()
@@ -176,7 +177,6 @@ struct SettingsView: View {
             }
             .frame(width: UIScreen.main.bounds.width * 0.30)
             
-            
             Spacer()
             HStack {
                 Spacer()
@@ -189,29 +189,6 @@ struct SettingsView: View {
                 }
                 Spacer()
             }
-
-            
-//            Spacer()
-//            Button(action: {
-//                CoinBank.shared.setTotalCoinsInBank(CoinBank.initialCoins)
-//                
-//            }) {
-//                HStack {
-//                    Text("Reset Coin Count").padding()//.font(.title2).hilighted(backgroundColor: .blue)
-//                }
-//            }
-            
-//            Spacer()
-//            Text("---------- TEST ONLY ----------")
-//            HStack() {
-//                Toggle("Record Data Mode", isOn: $recordDataMode)
-//            }
-//            //.frame(width: width)
-//            .onChange(of: recordDataMode, {
-//                settings.recordDataMode = recordDataMode
-//            })
-//            .padding()
-            
             Spacer()
         }
     }
@@ -237,6 +214,7 @@ struct SettingsView: View {
         var str:String
         switch n {
         case 1: str = "Cute Pets"
+        case 2: str = "Cute Bugs"
         default:
             str = "Star"
         }
@@ -254,7 +232,7 @@ struct SettingsView: View {
                         .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
                 }
                 VStack {
-                    TitleView(screenName: "Custom Settings")
+                    TitleView(screenName: "Settings").commonFrameStyle()
                     VStack {
                         DetailedCustomSettingsView()
                     }
@@ -262,7 +240,7 @@ struct SettingsView: View {
                     .padding()
                 }
                 
-                .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
+                .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
                 .onAppear() {
                     leadInBarCount = settings.scaleLeadInBarCount
                     self.defaultOctaves = settings.defaultOctaves
@@ -270,7 +248,7 @@ struct SettingsView: View {
                     PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
                     self.keyColor = Settings.shared.getKeyColor()
                     self.backingPresetNumber = settings.backingSamplerPreset
-                    self.metronomeOn = settings.metronomeOn
+                    self.metronomeOn = settings.metronomeOn1
                     self.developerModeOn = settings.developerModeOn
                     self.badgeStyleNumber = settings.badgeStyle
                 }

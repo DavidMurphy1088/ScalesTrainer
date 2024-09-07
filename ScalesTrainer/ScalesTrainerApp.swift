@@ -167,8 +167,8 @@ class TabSelectionManager: ObservableObject {
 //                                                             octaves: 1, hand: 2,
 //                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
-                                                             scaleType: .major, scaleMotion: .parallelMotion,
-                                                             octaves: 1, hand: 0,
+                                                             scaleType: .chromatic, scaleMotion: .contraryMotion,
+                                                             octaves: 1, hand: 2,
                                                              minTempo: 90, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }

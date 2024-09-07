@@ -15,6 +15,7 @@ struct GradeAndBoard: View {
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
+    @State private var navigateToGrade = false
     let background = UIGlobals.shared.getBackground()
     
     let width = UIScreen.main.bounds.width * 0.7
@@ -30,7 +31,7 @@ struct GradeAndBoard: View {
                         .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
                 }
                 VStack {
-                    TitleView(screenName: "Music Board and Grade")
+                    TitleView(screenName: "Music Board and Grade").commonFrameStyle()
                     
                     VStack {
                         Spacer()
@@ -49,14 +50,19 @@ struct GradeAndBoard: View {
                         })
                         
                         //Spacer()
-                        Button("Select Your Music Board and Grade") {
-                            navigateToSelectBoard = true
+                        //Button("Select Your Music Board and Grade") {
+                        Button("Select Your Grade") {
+                            //navigateToSelectBoard = true
+                            navigateToGrade = true
                         }
                         .padding()
                         .navigationDestination(isPresented: $navigateToSelectBoard) {
                             SelectMusicBoardView()
                         }
-                        
+                        .navigationDestination(isPresented: $navigateToGrade) {
+                            BoardGradesView(board: "trinity")
+                        }
+
                         Spacer()
                         HStack {
                             Spacer()

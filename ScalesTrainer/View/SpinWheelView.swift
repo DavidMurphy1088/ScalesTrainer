@@ -125,7 +125,7 @@ struct SpinWheelView: View {
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
-                TitleView(screenName: nil)
+                TitleView(screenName: nil).commonFrameStyle()
                 VStack {
                     ZStack {
                         GeometryReader { geometry in

@@ -46,7 +46,6 @@ struct TitleView: View {
                 Text(screenName).font(.title2)
             }
         }
-        .commonFrameStyle()
     }
 }
 
@@ -114,50 +113,51 @@ struct ActivityModeView: View {
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                GeometryReader { geo in
-                    List(menuOptionsLeft) { activityMode in
+        HStack {
+            GeometryReader { geo in
+                List(menuOptionsLeft) { activityMode in
+                    ZStack{
                         NavigationLink(destination: getView(activityMode: activityMode)) {
-                            HStack {
-                                Image(activityMode.imageName)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geo.size.width * 0.30) //, height: geo.size.height * 0.25)
-                                    .border(Color.gray)
-                                    .clipShape(Circle()) // Clips the image to a circular shape
-                                    .overlay(Circle().stroke(Color.gray, lineWidth: 4)) // Optional: Add a circular border
-                                    .shadow(radius: 10) // Optional: Add a shadow for depth
-                                Text(activityMode.name).font(.title2)
-                            }
-                            //.border(.red)
+                        }.opacity(0)
+                        VStack(spacing:0) {
+                            Image(activityMode.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: geo.size.width * 0.50, height:geo.size.height * 0.25) //, height: geo.size.height * 0.25)
+                                //.border(Color.gray)
+                                .clipShape(Circle()) // Clips the image to a circular shape
+                                .overlay(Circle().stroke(Color.black, lineWidth: 2)) 
+                                //.shadow(radius: 10) // Optional: Add a shadow for depth
+                            Text(activityMode.name).font(.title2)
                         }
                     }
                 }
-                .navigationViewStyle(StackNavigationViewStyle())
-                
-                GeometryReader { geo in
-                    List(menuOptionsRight) { activityMode in
-                        NavigationLink(destination: getView(activityMode: activityMode)) {
-                            HStack {
-                                Image(activityMode.imageName)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geo.size.width * 0.30)
-                                    .border(Color.gray)
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.gray, lineWidth: 4))
-                                    .shadow(radius: 10)
-                                Text(activityMode.name).font(.title2)
-                            }
-                            //.contentShape(Rectangle()) // Ensure the link only covers the text and spacer
-                        }
-                    }
-                }
-                .navigationViewStyle(StackNavigationViewStyle())
             }
-            Spacer()
+            .navigationViewStyle(StackNavigationViewStyle())
+            
+            GeometryReader { geo in
+                List(menuOptionsRight) { activityMode in
+                    ZStack {
+                        NavigationLink(destination: getView(activityMode: activityMode)) {
+                        }.opacity(0)
+                        VStack {
+                            Image(activityMode.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: geo.size.width * 0.50, height:geo.size.height * 0.25)
+                                //.border(Color.gray)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                                //.shadow(radius: 10)
+                            Text(activityMode.name).font(.title2)
+                        }
+                    }
+                }
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
+        //Spacer()
+        
         .commonFrameStyle(backgroundColor: .white)
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
@@ -166,40 +166,32 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            //if let boardAndGrade = Settings.shared.getMusicBoardAndGrade() {
-                if menuOptionsLeft.count == 0 {
-                    var practiceChart:PracticeChart
-                    if let savedChart = PracticeChart.loadPracticeChartFromFile() {
-                        practiceChart = savedChart
-                        print("Loaded PracticeChart with \(savedChart.rows) rows and \(savedChart.columns) columns.")
-                    }
-                    else {
-                        practiceChart = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
-                    }
-                    menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
-                                                        view: AnyView(PracticeChartView(practiceChart: practiceChart)),
-                                                        imageName: "practice_chart"))
-                    
-                    //menuOptions.append(ActivityMode(name: "Practice Journal", view: AnyView(PracticeJournalView(musicBoardGrade: ScalesModel.shared.musicBoardGrade))))
-                    //menuOptions.append(ActivityMode(name: "Your Coin Bank", view: AnyView(CoinBankView())))
-                    menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
-                                                        view: AnyView(SpinWheelView(board: Settings.shared.musicBoard, boardGrade: Settings.shared.musicBoardGrade)),
-                                                        imageName: "scales_wheel"))
-                    
+            if menuOptionsLeft.count == 0 {
+                var practiceChart:PracticeChart
+                if let savedChart = PracticeChart.loadPracticeChartFromFile() {
+                    practiceChart = savedChart
+                    print("Loaded PracticeChart with \(savedChart.rows) rows and \(savedChart.columns) columns.")
+                }
+                else {
+                    practiceChart = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
+                }
+                menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
+                                                    view: AnyView(PracticeChartView(practiceChart: practiceChart)),
+                                                    imageName: "home_practice_chart_1"))
+                
+                menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
+                                                    view: AnyView(SpinWheelView(board: Settings.shared.musicBoard, boardGrade: Settings.shared.musicBoardGrade)),
+                                                    imageName: "home_scales_wheel_1"))
+                
+                if Settings.shared.developerModeOn {
                     menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
                                                         view: AnyView(PickAnyScaleView()),
-                                                        imageName: "pick_any_scale"))
-                    
-                    //ActivityMode(name: "Practice Meter", imageName: "", showStaff: true, showFingers: true),
-                    //        ActivityMode(name: "Hear and Identify A Scale", implemented: true, imageName: "", showStaff: false, showFingers: false),
-                    //ActivityMode(name: "Scales Exam", view: AnyView(UnderConstructionView()), imageName: "", showStaff: false, showFingers: false),
-                    menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "WhyLearnScales"))
-                    menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "UnderstandingScales"))
-                    //                menuOptions.append(ActivityMode(name: "Scales Technique Instruction Videos", view: AnyView(UnderConstructionView())))
-                    //                menuOptions.append(ActivityMode(name: "Scales Theory and Quizzes", view: AnyView(UnderConstructionView())))
-                    //                menuOptions.append(ActivityMode(name: "Practice Hanon Exercises", view: AnyView(UnderConstructionView())))
+                                                        imageName: "home_pick_any_scale_1"))
                 }
-            //}
+                
+                menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
+                menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
+            }
         }
     }
 }
@@ -220,7 +212,7 @@ struct HomeView: View {
 
                         VStack {
                             Spacer()
-                            TitleView(screenName: "")
+                            TitleView(screenName: "").commonFrameStyle()
                             ActivityModeView()
                             Spacer()
                         }

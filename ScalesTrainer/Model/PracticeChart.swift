@@ -93,6 +93,20 @@ class PracticeChart: Codable {
         }
     }
     
+    func changeScaleTypes(oldTypes:[ScaleType], newType:ScaleType) {
+        for row in cells {
+            for chartCell in row {
+                //if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
+                    if oldTypes.contains(chartCell.scale.scaleType) {
+                        chartCell.scale = Scale(scaleRoot: chartCell.scale.scaleRoot, scaleType: newType, scaleMotion: chartCell.scale.scaleMotion,
+                                                octaves: chartCell.scale.octaves, hand: chartCell.scale.hand, minTempo: chartCell.scale.minTempo,
+                                                dynamicType: chartCell.scale.dynamicType, articulationType: chartCell.scale.articulationType)
+                    }
+                //}
+            }
+        }
+    }
+    
     func savePracticeChartToFile(chart: PracticeChart) {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted  // Optional: to make JSON output readable

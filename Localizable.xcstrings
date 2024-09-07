@@ -186,6 +186,9 @@
     "Home" : {
 
     },
+    "Initial" : {
+
+    },
     "Key" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -225,7 +228,7 @@
     "Major Scales" : {
 
     },
-    "Metronome On" : {
+    "Minor Scale Type" : {
 
     },
     "Minor Scales" : {
@@ -255,7 +258,7 @@
     "Piano Calibration" : {
 
     },
-    "Play Along With Scale" : {
+    "Play Along" : {
 
     },
     "Play Recording" : {
@@ -265,9 +268,6 @@
 
     },
     "Please enter your first name" : {
-
-    },
-    "Preliminary" : {
 
     },
     "Record The Scale" : {
@@ -305,9 +305,6 @@
     "Scale Lead in Count" : {
 
     },
-    "Scale Note Value" : {
-
-    },
     "Scale Root:" : {
 
     },
@@ -332,7 +329,7 @@
     "Select Value" : {
 
     },
-    "Select Your Music Board and Grade" : {
+    "Select Your Grade" : {
 
     },
     "Settings" : {

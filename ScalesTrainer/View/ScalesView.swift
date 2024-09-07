@@ -18,7 +18,6 @@ struct MetronomeView: View {
     
     var body: some View {
         let beat = (metronome.timerTickerCountPublished % 4) + 1
-        //let bar = metronome.timerTickerCountPublished / 4
         HStack {
             Image("metronome-left")
                 .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
@@ -115,7 +114,7 @@ struct ScalesView: View {
 //            .onChange(of: handIndex, {
 //                setState(octaves: self.numberOfOctaves, hand: handIndex)
 //            })
-            Spacer()
+            //Spacer()
             Text(LocalizedStringResource("Tempo")).padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
@@ -153,8 +152,6 @@ struct ScalesView: View {
 //            .onChange(of: numberOfOctaves, {
 //                setState(octaves: numberOfOctaves)
 //            })
-//            
-            //Spacer()
         }
     }
 
@@ -187,9 +184,9 @@ struct ScalesView: View {
                         
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    if Settings.shared.metronomeOn {
+                    //if Settings.shared.metronomeOn {
                         MetronomeView()
-                    }
+                    //}
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Playing"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -202,11 +199,11 @@ struct ScalesView: View {
 
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    if Settings.shared.metronomeOn {
+                    //if Settings.shared.metronomeOn {
                         if metronome.isLeadingIn {
                             MetronomeView()
                         }
-                    }
+                    //}
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -219,9 +216,9 @@ struct ScalesView: View {
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    if Settings.shared.metronomeOn {
+                    //if Settings.shared.metronomeOn {
                         MetronomeView()
-                    }
+                    //}
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -275,7 +272,11 @@ struct ScalesView: View {
     func SelectActionView() -> some View {
         HStack(alignment: .top) {
             Spacer()
-            VStack()  {
+            HStack()  {
+                Button("Follow The Scale") {
+                    scalesModel.setRunningProcess(.followingScale)
+                    scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                }
                 Button(action: {
                     showHelp("Follow The Scale")
                 }) {
@@ -286,17 +287,20 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Text("")
-                Button("Follow The Scale") {
-                    scalesModel.setRunningProcess(.followingScale)
-                    scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                }
-                
             }
             .padding()
             
             Spacer()
-            VStack() {
+            HStack() {
+                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : "Lead the Scale") {
+                    if scalesModel.runningProcessPublished == .leadingTheScale {
+                        scalesModel.setRunningProcess(.none)
+                    }
+                    else {
+                        scalesModel.setRunningProcess(.leadingTheScale)
+                        scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                    }
+                }
                 Button(action: {
                     showHelp("LeadTheScale")
                 }) {
@@ -307,22 +311,15 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Text("")
-                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : "Lead the Scale") {
-                    if scalesModel.runningProcessPublished == .leadingTheScale {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.leadingTheScale)
-                        scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
-                    }
-                }
-                
             }
             .padding()
             
             Spacer()
-            VStack {
+            HStack {
+                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along") {
+                    scalesModel.setRunningProcess(.playingAlongWithScale)
+                    scalesModel.setProcessInstructions("Play along with the scale as its played")
+                }
                 Button(action: {
                     showHelp("PlayAlong")
                 }) {
@@ -333,16 +330,19 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Text("")
-                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along With Scale") {
-                    scalesModel.setRunningProcess(.playingAlongWithScale)
-                    scalesModel.setProcessInstructions("Play along with the scale as its played")
-                }
             }
             .padding()
             
             Spacer()
-            VStack {
+            HStack {
+                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
+                    if scalesModel.runningProcessPublished == .recordingScale {
+                        scalesModel.setRunningProcess(.none)
+                    }
+                    else {
+                        scalesModel.setRunningProcess(.recordingScale)
+                    }
+                }
                 Button(action: {
                     showHelp("Record The Scale")
                 }) {
@@ -353,20 +353,14 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Text("")
-                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
-                    if scalesModel.runningProcessPublished == .recordingScale {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.recordingScale)
-                    }
-                }
             }
             .padding()
             
             if scalesModel.recordedAudioFile != nil {
-                VStack {
+                HStack {
+                    Button("Hear\nRecording") {
+                        AudioManager.shared.playRecordedFile()
+                    }
                     Button(action: {
                         showHelp("Hear Recording")
                     }) {
@@ -376,10 +370,6 @@ struct ScalesView: View {
                                 .font(.title2)
                                 .foregroundColor(.green)
                         }
-                    }
-                    Text("")
-                    Button("Hear\nRecording") {
-                        AudioManager.shared.playRecordedFile()
                     }
                 }
                 .padding()
@@ -408,7 +398,16 @@ struct ScalesView: View {
 //            }
 
             Spacer()
-            VStack {
+            HStack {
+                Button(hearingBacking ? "Backing Off" : "Backing On") {
+                    hearingBacking.toggle()
+                    if hearingBacking {
+                        scalesModel.setBacking(true)
+                    }
+                    else {
+                        scalesModel.setBacking(false)
+                    }
+                }
                 Button(action: {
                     showHelp("Backing")
                 }) {
@@ -419,17 +418,6 @@ struct ScalesView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Text("")
-                Button(hearingBacking ? "Backing Off" : "Backing On") {
-                    hearingBacking.toggle()
-                    if hearingBacking {
-                        scalesModel.setBacking(true)
-                    }
-                    else {
-                        scalesModel.setBacking(false)
-                    }
-                }
-                
             }
             .padding()
             
@@ -437,8 +425,14 @@ struct ScalesView: View {
         }
     }
     
-    func getKeyboardHeight() -> CGFloat {
-        var height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+    func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
+        var height:Double
+        if keyboardCount == 1 {
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+        }
+        else {
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 8)
+        }
         if scalesModel.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
             height = height * 0.7
@@ -466,14 +460,19 @@ struct ScalesView: View {
             }
             VStack {
                 if scalesModel.showParameters {
-                    VStack {
-                        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-                        Text(name).font(.title)//.padding()
+                    VStack(spacing: 0) {
+                        //HStack {
+                            let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
+                            Text(name).font(.title)//.padding()
+                                .padding(.vertical, 0)
+                        //}
                         HStack {
+                            Spacer()
                             if scalesModel.runningProcessPublished == .none {
-                                SelectScaleParametersView()
+                                SelectScaleParametersView().padding(.vertical, 0)
                             }
-                            ViewSettingsView()
+                            ViewSettingsView().padding(.vertical, 0)
+                            Spacer()
                         }
                     }
                     .commonFrameStyle()
@@ -481,36 +480,39 @@ struct ScalesView: View {
                 
                 if scalesModel.showKeyboard {
                     let cornerRadius:CGFloat = 6
-                    HStack {
-                        if [1,2].contains(scalesModel.scale.hand) {
-                            VStack {
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-                                    )
-                                if scalesModel.showLegend {
-                                    LegendView(keyboardHand: 1, scale: scalesModel.scale)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-                                    )
-                                }
-                            }
-                        }
+                    VStack {
                         if [0,2].contains(scalesModel.scale.hand) {
                             VStack {
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight())
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)  // Set border color and width
-                                    )
-                                if scalesModel.showLegend {
-                                    LegendView(keyboardHand: 0, scale: scalesModel.scale)
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hand == 2 ? 2 : 1))
                                     .overlay(
                                         RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
                                     )
-                                }
+
                             }
+                            //.border(Color.cyan)
+                        }
+                        if [1,2].contains(scalesModel.scale.hand) {
+                            VStack {
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hand == 2 ? 2 : 1))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
+                                    )
+//                                if scalesModel.showLegend {
+//                                    LegendView(keyboardHand: 1, scale: scalesModel.scale)
+//                                    .overlay(
+//                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
+//                                    )
+//                                }
+                            }
+                            //.border(Color.red)
+                        }
+                        if scalesModel.showLegend {
+                            LegendView(keyboardHand: 0, scale: scalesModel.scale)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
+                            )
                         }
                     }
                     .commonFrameStyle()

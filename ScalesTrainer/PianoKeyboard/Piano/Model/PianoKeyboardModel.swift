@@ -106,8 +106,6 @@ public class PianoKeyboardModel: ObservableObject {
             firstKeyMidi -= 0
         }
                 
-        //var numKeys = (self.scalesModel.octaveNumberValues[self.scalesModel.selectedOctavesIndex] * 12) + 1
-        //let octaves = scale.octaves
         var numKeys = (scale.octaves * 12) + 1
         numKeys += 2
         if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
@@ -124,6 +122,8 @@ public class PianoKeyboardModel: ObservableObject {
     
     func configureKeyboardForScale(scale:Scale, handIndex: Int) {
         (self.firstKeyMidi, self.numberOfKeys) = getKeyBoardSize(scale: scale, handIndex: handIndex)
+        //let delta = 20
+        //self.numberOfKeys += delta
         self.pianoKeyModel = []
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         for i in 0..<numberOfKeys {

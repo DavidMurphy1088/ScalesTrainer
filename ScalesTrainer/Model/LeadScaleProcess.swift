@@ -10,14 +10,14 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     let badges = BadgeBank.shared
     var lastMidi:Int? = nil
     var notifyCount = 0
-    
+    var beatCount = 0
+    var leadInShowing = false
     let metronome:MetronomeModel
     
     init(scalesModel:ScalesModel, metronome:MetronomeModel) {
         self.scalesModel = scalesModel
         nextExpectedScaleIndex = 0
         self.metronome = metronome
-        
     }
     
     func metronomeStart() {
@@ -26,8 +26,20 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     func metronomeStop() {
     }
     
-    func soundMetronomeTick(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        return !leadingIn
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+        if Settings.shared.scaleLeadInBarCount > 0 {
+            if beatCount / 4 < Settings.shared.scaleLeadInBarCount {
+                MetronomeModel.shared.setLeadingIn(way: true)
+                leadInShowing = true
+                beatCount += 1
+                return false
+            }
+        }
+        if leadInShowing {
+            MetronomeModel.shared.setLeadingIn(way: false)
+            leadInShowing = false
+        }
+        return false
     }
     
     func start() {
@@ -41,6 +53,9 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func notify(midi:Int, status:TapEventStatus) {
+        if leadInShowing {
+            return
+        }
         if ![.inScale, .outOfScale].contains(status) {
             return
         }

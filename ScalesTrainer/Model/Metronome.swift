@@ -7,7 +7,7 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol: AnyObject {
     func metronomeStart()
-    func soundMetronomeTick(timerTickerNumber:Int, leadingIn:Bool) -> Bool
+    func metronomeTickNotification(timerTickerNumber:Int, leadingIn:Bool) -> Bool
     func metronomeStop()
 }
 
@@ -19,43 +19,30 @@ class MetronomeModel:ObservableObject {
     public static let shared = MetronomeModel()
     var isTiming = false
     private let scalesModel = ScalesModel.shared
-    private var audioPlayers:[AudioPlayer] = []
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
-    let ticker:MetronomeTicker = MetronomeTicker()
+    let ticker:MetronomeTicker
     
     init() {
-        for i in 0..<2 {
-            audioPlayers.append(AudioPlayer())
-            let name = i == 0 ? "metronome_mechanical_high" : "metronome_mechanical_low"
-            guard let fileURL = Bundle.main.url(forResource: name, withExtension: "aiff") else {
-                Logger.shared.reportError(self, "Audio file not found ")
-                return
-            }
-            audioPlayers.append(AudioPlayer())
-
-            do {
-                let file = try AVAudioFile(forReading: fileURL)
-                try? audioPlayers[i].load(file: file)
-            }
-            catch {
-                Logger.shared.reportError(self, "Audio player cannot load \(error.localizedDescription)")
-            }
+        self.ticker = MetronomeTicker()
+        self.ticker.metronomeStart()
+    }
+    
+    func setLeadingIn(way:Bool) {
+        DispatchQueue.main.async {
+            self.isLeadingIn = way
         }
-        ticker.metronomeStart()
+    }
+    
+    func setTimerTickerCountPublished(count:Int) {
+        DispatchQueue.main.async {
+            self.timerTickerCountPublished = count
+        }
     }
     
     func getTempoString(_ tempo:Int) -> String {
-//        if tempo > 120 {
-//            return "\u{266A}=\(tempo / 2)"
-//        }
-//        if useQuavers {
-//            return "\u{266A}=\(tempo / 2)"
-//        }
-//        else {
-            return "♩= \(tempo)"
-//        }
+        return "♩= \(tempo)"
     }
     
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
@@ -101,10 +88,8 @@ class MetronomeModel:ObservableObject {
         timerTickerCount = 0
         var delay = (60.0 / Double(scalesModel.getTempo())) //* 1000000
         delay = delay * Settings.shared.getSettingsNoteValueFactor()
-        print("=========== START Metro Thread ======")
-        //notified.metronomeStart()
-        //self.metronomeTimerNotificationProtocol = notified
-        
+        Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo())")
+
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if true {
             DispatchQueue.global(qos: .background).async { [self] in
@@ -113,12 +98,13 @@ class MetronomeModel:ObservableObject {
                     .sink { _ in
                         if !self.isTiming {
                             self.tickTimer?.cancel()
-                            print("========= ENDED Metro Thread ======")
+                            Logger.shared.log(self, "Metronome thread ended count:\(self.timerTickerCount)")
                         }
                         else {
                             for toNotify in self.processesToNotify {
-                                toNotify.soundMetronomeTick(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                                _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
                             }
+                            _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
                             let stop = false //notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
                             if stop {
                                 self.isTiming = false

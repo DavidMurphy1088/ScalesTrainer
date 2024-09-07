@@ -31,12 +31,12 @@ public class Settings : Codable  {
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
     var defaultOctaves = 2
-    var scaleLeadInBarCount:Int = 0
+    var scaleLeadInBarCount:Int = 1
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
-    var metronomeOn:Bool = false
+    var metronomeOn1:Bool = false
     var requiredConsecutiveCount = 2
     var badgeStyle = 0
     
@@ -71,7 +71,7 @@ public class Settings : Codable  {
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
-        str += " MetronomeOn:\(self.metronomeOn)"
+        str += " MetronomeOn:\(self.metronomeOn1)"
         str += " LeadIn:\(self.scaleLeadInBarCount)"
         str += " RecordDataMode:\(self.developerModeOn )"
         str += " FirstName:\(self.firstName)"
@@ -125,7 +125,7 @@ public class Settings : Codable  {
                     self.firstName = loaded.firstName
                     self.musicBoard = loaded.musicBoard
                     self.musicBoardGrade = loaded.musicBoardGrade
-                    self.metronomeOn = loaded.metronomeOn
+                    self.metronomeOn1 = loaded.metronomeOn1
                     self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue

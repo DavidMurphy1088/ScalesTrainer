@@ -93,16 +93,26 @@ struct BadgeView: View {
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
-    @State var imageId:[Int] = []
+    @State var imageIds:[Int] = []
     @State var handIndex = 0
     
-    func imageName(n:Int) -> String {
+    func imageName(imageSet:Int, n:Int) -> String {
         var name = ""
-        switch n {
-        case 1: name = "catface_icon"
-        case 2: name = "penguinface_icon"
-        default: name = "dogface_icon"
+        if imageSet == 1 {
+            switch imageIds[n]  {
+            case 1: name = "pet_catface"
+            case 2: name = "pet_penguinface"
+            default: name = "pet_dogface"
+            }
         }
+        if imageSet == 2 {
+            switch imageIds[n] {
+            case 1: name = "bug_butterfly"
+            case 2: name = "bug_bee"
+            default: name = "bug_beetle"
+            }
+        }
+        print("========", "n", n, "image[n]", imageIds[n], imageIds, "name", name)
         return name
     }
     
@@ -128,8 +138,8 @@ struct BadgeView: View {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                 let imWidth = CGFloat(40)
                 
-                ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { n in
-                    if n == BadgeBank.shared.totalCorrect - 1  {
+                ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { scaleNoteNumber in
+                    if scaleNoteNumber == BadgeBank.shared.totalCorrect - 1  {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             //Text("\(n)").foregroundColor(.blue)
@@ -146,7 +156,7 @@ struct BadgeView: View {
                                     }
                                 }
                                 else {
-                                    Image(self.imageName(n: n))
+                                    Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
                                     .resizable()
                                     .frame(width: imWidth)
                                     .rotationEffect(Angle.degrees(rotationAngle))
@@ -166,12 +176,12 @@ struct BadgeView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             //Text("\(n)").foregroundColor(.blue)
-                            if n < BadgeBank.shared.totalCorrect {
+                            if scaleNoteNumber < BadgeBank.shared.totalCorrect {
                                 if Settings.shared.badgeStyle == 0 {
-                                    HexagramShape(size: size, offset: offset, color: c).opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                                    HexagramShape(size: size, offset: offset, color: c).opacity(scaleNoteNumber < BadgeBank.shared.totalCorrect  ? 1 : 0)
                                 }
                                 else {
-                                    Image(self.imageName(n:n))
+                                    Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
                                         .resizable()
                                         .frame(width: imWidth)
                                 }
@@ -191,7 +201,7 @@ struct BadgeView: View {
             self.handIndex = scale.hand == 2 ? 0 : scale.hand
             self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[handIndex].count) * 1.7)
             for _ in 0..<scale.scaleNoteState[handIndex].count {
-                self.imageId.append(Int.random(in: 0..<3))
+                self.imageIds.append(Int.random(in: 0..<3))
             }
         }
     }

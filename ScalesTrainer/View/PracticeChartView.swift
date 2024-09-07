@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CellView: View {
     let column:Int
+    let practiceChart:PracticeChart
     @ObservedObject var practiceCell: PracticeChartCell
     var cellWidth: CGFloat
     var cellHeight: CGFloat
@@ -34,8 +35,21 @@ struct CellView: View {
     }
     
     func determineNumberOfBadges() -> Int {
-
         return Int.random(in: 0..<3)
+    }
+    
+    func setEnabled(scale:Scale) {
+        for row in practiceChart.cells {
+            for chartCell in row {
+                if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
+                    if chartCell.scale.hand == scale.hand {
+                        if chartCell.scale.scaleType == scale.scaleType {
+                            chartCell.setEnabled(way: !chartCell.enabled)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     var body: some View {
@@ -46,6 +60,7 @@ struct CellView: View {
             }) {
                 let label = practiceCell.scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
                 Text(label)
+                    .font(.title2)
                     .foregroundColor(.blue)
             }
             .padding(self.padding)
@@ -56,7 +71,7 @@ struct CellView: View {
                 
                 HStack {
                     Button(action: {
-                        practiceCell.setEnabled(way: !practiceCell.enabled)
+                        setEnabled(scale: practiceCell.scale)
                     }) {
                         let name = practiceCell.isActive ? "star.fill" : "star"
                         Image(systemName: name)
@@ -87,6 +102,8 @@ struct PracticeChartView: View {
     @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
     let background = UIGlobals.shared.getBackground()
+    @State var minorTypeIndex:Int = 0
+    @State private var reloadTrigger = false
     
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
@@ -113,6 +130,7 @@ struct PracticeChartView: View {
         let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
         let cellHeight: CGFloat = screenHeight / 12.0
         let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
+        var minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
         
         ZStack {
             Image(background)
@@ -122,7 +140,30 @@ struct PracticeChartView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             
             VStack {
-                TitleView(screenName: "Practice Chart")
+                VStack(spacing: 0) {
+                    TitleView(screenName: "Practice Chart")
+                    HStack {
+                        Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
+                        Picker("Select Value", selection: $minorTypeIndex) {
+                            ForEach(minorScaleTypes.indices, id: \.self) { index in
+                                Text("\(minorScaleTypes[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: minorTypeIndex, {
+                            let newType:ScaleType
+                            switch minorTypeIndex {
+                            case 0:newType = .harmonicMinor
+                            case 1:newType = .naturalMinor
+                            default:newType = .melodicMinor
+                            }
+                            practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
+                            self.reloadTrigger = !self.reloadTrigger
+                        })
+                    }
+                }
+                .commonFrameStyle()
+
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
                         
@@ -148,7 +189,7 @@ struct PracticeChartView: View {
                         ForEach(0..<practiceChart.rows, id: \.self) { row in
                             HStack(spacing: 0) {
                                 ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(column: column, practiceCell: practiceChart.cells[row][column],
+                                    CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
                                              cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
                                     .padding(cellPadding)
                                 }
@@ -156,6 +197,7 @@ struct PracticeChartView: View {
                         }
                     }
                 }
+                .id(reloadTrigger)
             }
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
         }

@@ -103,7 +103,7 @@ struct PickAnyScaleView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             
             VStack {
-                TitleView(screenName: "")
+                TitleView(screenName: "").commonFrameStyle()
                 
                 VStack {
                     VStack {
