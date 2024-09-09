@@ -105,60 +105,85 @@ struct FamousQuotesView: View {
 
 struct ActivityModeView: View {
     @State var menuOptionsLeft:[ActivityMode] = []
-    @State var menuOptionsRight:[ActivityMode] = []
+    //@State var menuOptionsRight:[ActivityMode] = []
     @State var helpShowing = false
+    let shade = 8.0
     
     func getView(activityMode: ActivityMode) -> some View {
         return activityMode.view
     }
     
     var body: some View {
-        HStack {
-            GeometryReader { geo in
-                List(menuOptionsLeft) { activityMode in
-                    ZStack{
-                        NavigationLink(destination: getView(activityMode: activityMode)) {
-                        }.opacity(0)
-                        VStack(spacing:0) {
-                            Image(activityMode.imageName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geo.size.width * 0.50, height:geo.size.height * 0.25) //, height: geo.size.height * 0.25)
-                                //.border(Color.gray)
-                                .clipShape(Circle()) // Clips the image to a circular shape
-                                .overlay(Circle().stroke(Color.black, lineWidth: 2)) 
-                                //.shadow(radius: 10) // Optional: Add a shadow for depth
-                            Text(activityMode.name).font(.title2)
-                        }
+        VStack {
+            let overlay = Circle().stroke(Color.black, lineWidth: 2)
+            //List(menuOptionsLeft) { activityMode in
+            if menuOptionsLeft.count > 0 {
+                //Spacer()
+                let activityMode = menuOptionsLeft[0]
+                NavigationLink(destination: getView(activityMode: activityMode)) {
+                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+                        Image(menuOptionsLeft[0].imageName)
+                            .resizable()
+                            .scaledToFit()
+                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
+                            .clipShape(Circle())  // Clips the image to a circular shape
+                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+                            .overlay(overlay)
+                            //.border(.red)
+                            
+                        Text(activityMode.name)
+                            .font(.title2)
                     }
+                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.padding(.vertical, 0)
+                    .padding()
                 }
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-            
-            GeometryReader { geo in
-                List(menuOptionsRight) { activityMode in
-                    ZStack {
-                        NavigationLink(destination: getView(activityMode: activityMode)) {
-                        }.opacity(0)
-                        VStack {
-                            Image(activityMode.imageName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geo.size.width * 0.50, height:geo.size.height * 0.25)
-                                //.border(Color.gray)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                                //.shadow(radius: 10)
-                            Text(activityMode.name).font(.title2)
-                        }
+            if menuOptionsLeft.count > 1 {
+                let activityMode = menuOptionsLeft[1]
+                NavigationLink(destination: getView(activityMode: activityMode)) {
+                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+                        Image(activityMode.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
+                            .clipShape(Circle())
+                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+                            .overlay(overlay)
+                            //.border(.red)
+                        Text(activityMode.name)
+                            .font(.title2)
                     }
+                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.padding(.vertical, 0)
+                    .padding()
                 }
             }
-            .navigationViewStyle(StackNavigationViewStyle())
+            if menuOptionsLeft.count > 2 {
+                let activityMode = menuOptionsLeft[2]
+                NavigationLink(destination: getView(activityMode: activityMode)) {
+                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+                        Image(activityMode.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
+                            
+                            .clipShape(Circle())  // Clips the image to a circular shape
+                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+                            .overlay(overlay)
+                            //.border(.red)
+                        Text(activityMode.name)
+                            .font(.title2)
+                    }
+                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.padding(.vertical, 0)
+                    .padding()
+                }
+            }
+            Spacer()
         }
-        //Spacer()
-        
-        .commonFrameStyle(backgroundColor: .white)
+        //.background()
+        .commonFrameStyle(backgroundColor:UIGlobals.shared.purple)
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
                 HelpView(topic: topic)
@@ -169,12 +194,13 @@ struct ActivityModeView: View {
             if menuOptionsLeft.count == 0 {
                 var practiceChart:PracticeChart
                 if let savedChart = PracticeChart.loadPracticeChartFromFile() {
-                    practiceChart = savedChart
+                    PracticeChart.shared = savedChart
                     print("Loaded PracticeChart with \(savedChart.rows) rows and \(savedChart.columns) columns.")
                 }
                 else {
-                    practiceChart = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
+                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
                 }
+                practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
                                                     view: AnyView(PracticeChartView(practiceChart: practiceChart)),
                                                     imageName: "home_practice_chart_1"))
@@ -189,8 +215,8 @@ struct ActivityModeView: View {
                                                         imageName: "home_pick_any_scale_1"))
                 }
                 
-                menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
-                menuOptionsRight.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
+                //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
+                menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
             }
         }
     }
@@ -203,12 +229,12 @@ struct HomeView: View {
         GeometryReader { geometry in
             VStack {
                 NavigationView {
-                    ZStack {
-                        Image(UIGlobals.shared.getBackground())
-                            .resizable()
-                            .scaledToFill()
-                            .edgesIgnoringSafeArea(.top)
-                            .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+//                    ZStack {
+//                        Image(UIGlobals.shared.getBackground())
+//                            .resizable()
+//                            .scaledToFill()
+//                            .edgesIgnoringSafeArea(.top)
+//                            .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
 
                         VStack {
                             Spacer()
@@ -216,9 +242,9 @@ struct HomeView: View {
                             ActivityModeView()
                             Spacer()
                         }
-                        .frame(width: geometry.size.width * UIGlobals.shared.screenWidth, height: geometry.size.height)
+                        //.frame(width: geometry.size.width * UIGlobals.shared.screenWidth, height: geometry.size.height)
                     }
-                }
+                //}
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }

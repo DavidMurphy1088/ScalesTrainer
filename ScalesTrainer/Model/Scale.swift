@@ -362,7 +362,7 @@ public class Scale : Codable {
                 setFingers(handIndex: handIndex)
                 setChromaticFingerBreaks(hand: handIndex)
             }
-            debug112("chromatic")
+            //debug112("chromatic")
         }
         else {
             for handIndex in [0,1] {
@@ -455,7 +455,7 @@ public class Scale : Codable {
         return scaleOffsets
     }
     
-    func debug112(_ msg:String)  {
+    func debug12(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hand", self.hand, "octaves", self.octaves, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

@@ -36,7 +36,8 @@ struct SpinWheelView: View {
     
     func getScaleNames() -> [String] {
         var res:[String] = []
-        for scale in boardGrade.getScales() {
+        //for scale in boardGrade.getScales() {
+        for scale in PracticeChart.shared.getScales("Spin") {
             let name = scale.getScaleName(handFull: false, octaves: false, tempo: false, dynamic:false, articulation:false)
             //let name = scale.getScaleName(handFull: false, octaves: false)
             res.append(name)

@@ -31,8 +31,9 @@ struct GradeAndBoard: View {
                         .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
                 }
                 VStack {
-                    TitleView(screenName: "Music Board and Grade").commonFrameStyle()
-                    
+                    //TitleView(screenName: "Music Board and Grade").commonFrameStyle()
+                    TitleView(screenName: "Trinity Grade").commonFrameStyle()
+
                     VStack {
                         Spacer()
                         VStack() {

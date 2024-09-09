@@ -20,7 +20,7 @@ enum RunningProcess {
     case leadingTheScale
     case recordingScale
     case recordingScaleForAssessment
-    //case leadingIn
+    //case metronomeOn
     case recordScaleWithFileData
     case syncRecording
     case playingAlongWithScale
@@ -48,8 +48,8 @@ enum RunningProcess {
             return "Synchronize Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
-//        case .leadingIn:
-//            return "Leading In"
+//        case .metronomeOn:
+//            return "Metronome On"
         }
     }
 }
@@ -78,7 +78,7 @@ public class ScalesModel : ObservableObject {
     var recordedTapsFileURL:URL? //File where recorded taps were written
     @Published var recordedTapsFileName:String?
     
-    var scaleLeadInCounts:[String] = ["None", "One Bar", "Two Bars", "Four Bars"]
+    var scaleLeadInCounts:[String] = ["No Clicks", "Two Clicks", "Four Clicks"]
     
     var directionTypes = ["⬆", "⬇"]
     

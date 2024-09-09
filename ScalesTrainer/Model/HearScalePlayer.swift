@@ -45,8 +45,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        if Settings.shared.scaleLeadInBarCount > 0 {
-            if beatCount / 4 < Settings.shared.scaleLeadInBarCount {
+        if Settings.shared.getLeadInBeats() > 0 {
+            if beatCount < Settings.shared.getLeadInBeats() {
                 MetronomeModel.shared.setLeadingIn(way: true)
                 leadInShown = true
                 beatCount += 1

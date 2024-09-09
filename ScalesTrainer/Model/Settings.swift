@@ -31,7 +31,7 @@ public class Settings : Codable  {
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
     var defaultOctaves = 2
-    var scaleLeadInBarCount:Int = 1
+    var scaleLeadInBearCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
@@ -50,6 +50,17 @@ public class Settings : Codable  {
     
     public func settingsExists() -> Bool {
        return wasLoaded
+    }
+    
+    public func getLeadInBeats() -> Int {
+        switch scaleLeadInBearCountIndex {
+        case 1:
+            return 2
+        case 2:
+            return 4
+        default:
+            return 0
+        }
     }
     
     public func calibrationIsSet() -> Bool {
@@ -72,7 +83,7 @@ public class Settings : Codable  {
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
         str += " MetronomeOn:\(self.metronomeOn1)"
-        str += " LeadIn:\(self.scaleLeadInBarCount)"
+        str += " LeadIn:\(self.scaleLeadInBearCountIndex)"
         str += " RecordDataMode:\(self.developerModeOn )"
         str += " FirstName:\(self.firstName)"
         str += " Board:\(self.musicBoard)"
@@ -126,7 +137,7 @@ public class Settings : Codable  {
                     self.musicBoard = loaded.musicBoard
                     self.musicBoardGrade = loaded.musicBoardGrade
                     self.metronomeOn1 = loaded.metronomeOn1
-                    self.scaleLeadInBarCount = loaded.scaleLeadInBarCount
+                    self.scaleLeadInBearCountIndex = loaded.scaleLeadInBearCountIndex
                     self.defaultOctaves = loaded.defaultOctaves
                     self.scaleNoteValue = loaded.scaleNoteValue
                     self.keyColor = loaded.keyColor

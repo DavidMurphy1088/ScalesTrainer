@@ -45,6 +45,16 @@ class MetronomeModel:ObservableObject {
         return "♩= \(tempo)"
     }
     
+    func setTicking(on:Bool) {
+        if on {
+            self.startTimerThread()
+            self.isTiming = true
+        }
+        else {
+            self.isTiming = false
+        }
+    }
+    
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
         if self.processesToNotify.count == 0 {
             self.startTimerThread()

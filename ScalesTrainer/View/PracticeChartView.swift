@@ -98,12 +98,21 @@ struct CellView: View {
     }
 }
 
+struct Star: Identifiable {
+    var id: UUID
+    var xPosition: CGFloat
+    var yPosition: CGFloat
+    var size: CGFloat
+    var duration: Double
+}
+
 struct PracticeChartView: View {
     @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
     let background = UIGlobals.shared.getBackground()
     @State var minorTypeIndex:Int = 0
     @State private var reloadTrigger = false
+    @State private var stars: [Star] = []
     
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
@@ -122,6 +131,31 @@ struct PracticeChartView: View {
         return reorderedDayNames
     }
     
+    // Function to add a falling star
+    private func addFallingStar() {
+        let star = Star(
+            id: UUID(),
+            xPosition: CGFloat.random(in: 0...UIScreen.main.bounds.width),
+            yPosition: -50, // Start above the top of the view
+            size: CGFloat.random(in: 10...30),
+            duration: Double.random(in: 2...4) // Fall duration
+        )
+        
+        stars.append(star)
+
+        // Move the star down the screen
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if let index = stars.firstIndex(where: { $0.id == star.id }) {
+                stars[index].yPosition = UIScreen.main.bounds.height + 50 // End below the bottom of the view
+            }
+        }
+        
+        // Remove the star after it has finished falling
+        DispatchQueue.main.asyncAfter(deadline: .now() + star.duration) {
+            stars.removeAll(where: { $0.id == star.id })
+        }
+    }
+    
     var body: some View {
         ///Tried using GeometryReader since it supposedly reacts to orientation changes.
         ///But using it casues all the child view centering not to work
@@ -130,7 +164,7 @@ struct PracticeChartView: View {
         let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
         let cellHeight: CGFloat = screenHeight / 12.0
         let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
-        var minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
+        let minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
         
         ZStack {
             Image(background)
@@ -138,11 +172,12 @@ struct PracticeChartView: View {
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.top)
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-            
+
             VStack {
                 VStack(spacing: 0) {
                     TitleView(screenName: "Practice Chart")
                     HStack {
+                        Spacer()
                         Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
                         Picker("Select Value", selection: $minorTypeIndex) {
                             ForEach(minorScaleTypes.indices, id: \.self) { index in
@@ -160,6 +195,16 @@ struct PracticeChartView: View {
                             practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
                             self.reloadTrigger = !self.reloadTrigger
                         })
+                        Spacer()
+                        Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
+                        Button(action: {
+                            addFallingStar()
+                            practiceChart.shuffle()
+                        }) {
+                            Text("Shuffle Practice Chart")
+                        }
+                        .padding()
+                        Spacer()
                     }
                 }
                 .commonFrameStyle()
@@ -198,11 +243,23 @@ struct PracticeChartView: View {
                     }
                 }
                 .id(reloadTrigger)
+                
             }
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
+            ForEach(stars) { star in
+                Image(systemName: "star.fill")
+                //Circle()
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: star.size, height: star.size)
+                    .foregroundColor(.yellow)
+                    .position(x: star.xPosition, y: star.yPosition)
+                    .animation(.linear(duration: star.duration))
+            }
         }
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .onAppear() {
+            practiceChart.getScales("View OnAppear")
         }
         .onDisappear() {
             practiceChart.savePracticeChartToFile(chart: practiceChart)

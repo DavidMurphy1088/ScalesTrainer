@@ -47,9 +47,6 @@
         }
       }
     },
-    "%@, Select Your Grade" : {
-
-    },
     "%lld" : {
 
     },
@@ -99,9 +96,6 @@
 
     },
     "Badge Styles" : {
-
-    },
-    "Board and Grade" : {
 
     },
     "C" : {
@@ -163,6 +157,9 @@
 
     },
     "Good job 😊" : {
+
+    },
+    "Grade" : {
 
     },
     "Grade %lld Piano" : {
@@ -256,6 +253,9 @@
 
     },
     "Piano Calibration" : {
+
+    },
+    "PickScale" : {
 
     },
     "Play Along" : {
@@ -353,6 +353,12 @@
     "Show Tap Data" : {
 
     },
+    "Shuffle" : {
+
+    },
+    "Shuffle Practice Chart" : {
+
+    },
     "Start Analysis" : {
 
     },
@@ -403,6 +409,9 @@
       }
     },
     "Tempo" : {
+
+    },
+    "Trinity" : {
 
     },
     "Under Construction" : {

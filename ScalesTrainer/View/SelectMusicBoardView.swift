@@ -5,9 +5,9 @@ struct BoardGradesView: View {
     let board:String
     let width = 0.7
     let background = UIGlobals.shared.getBackground()
-    let grades = Array(1...8)
+    let grades = Array(1...9)
     
-    @State private var isOn = [Bool](repeating: false, count: 8)
+    @State private var isOn = [Bool](repeating: false, count: 9)
     @State var index = 0
         
     var body: some View {
@@ -19,7 +19,8 @@ struct BoardGradesView: View {
                 .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
             VStack {
                 VStack {
-                    Text("\(self.board), Select Your Grade").font(.title)//.foregroundColor(.blue)
+                    //Text("\(self.board), Select Your Grade").font(.title)//.foregroundColor(.blue)
+                    Text("Trinity").font(.title)//.foregroundColor(.blue)
                 }
                 .commonFrameStyle()
                 .padding()

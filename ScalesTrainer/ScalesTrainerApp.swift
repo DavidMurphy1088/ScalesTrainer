@@ -167,8 +167,9 @@ class TabSelectionManager: ObservableObject {
 //                                                             octaves: 1, hand: 2,
 //                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
-                                                             scaleType: .chromatic, scaleMotion: .contraryMotion,
-                                                             octaves: 1, hand: 2,
+                                                             scaleType: .major,
+                                                             scaleMotion: .parallelMotion,
+                                                             octaves: 1, hand: 1,
                                                              minTempo: 90, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }
@@ -255,7 +256,8 @@ struct ScalesTrainerApp: App {
                 .tag(1)
             GradeAndBoard()
                 .tabItem {
-                    Label("Board and Grade", systemImage: "arrowshape.forward.circle")
+                    //Label("Board and Grade", systemImage: "arrowshape.forward.circle")
+                    Label("Grade", systemImage: "arrowshape.forward.circle")
                 }
                 .tag(2)
                 .environmentObject(tabSelectionManager)
@@ -266,26 +268,35 @@ struct ScalesTrainerApp: App {
                 .tag(3)
                 .environmentObject(tabSelectionManager)
             
-            CalibrationView()
-                .tabItem {
-                    Label("Calibration", systemImage: "lines.measurement.vertical")
-                }
-                .tag(4)
-                .environmentObject(tabSelectionManager)
+            if Settings.shared.developerModeOn {
+                CalibrationView()
+                    .tabItem {
+                        Label("Calibration", systemImage: "lines.measurement.vertical")
+                    }
+                    .tag(4)
+                    .environmentObject(tabSelectionManager)
+            }
             
             if Settings.shared.developerModeOn  {
                 // DeveloperView().commonFrameStyle()
+                PickAnyScaleView()
+                    .tabItem {
+                        Label("PickScale", systemImage: "book.pages")
+                    }
+                    .tag(5)
+                    .environmentObject(tabSelectionManager)
+
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")
                     }
-                    .tag(5)
+                    .tag(6)
                     .environmentObject(tabSelectionManager)
                 DeveloperView()
                     .tabItem {
                         Label("Dev", systemImage: "book.pages")
                     }
-                    .tag(6)
+                    .tag(7)
                     .environmentObject(tabSelectionManager)
             }
         }

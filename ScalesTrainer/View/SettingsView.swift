@@ -79,6 +79,9 @@ struct SettingsView: View {
                         SetKeyboardColourView(parentColor: $keyColor)
                     }
                     .padding()
+                    .onChange(of: keyColor, {
+                        Settings.shared.setKeyColor(keyColor)
+                    })
                     .hilighted(backgroundColor: .gray)
                     //.frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
                     Spacer()
@@ -112,7 +115,7 @@ struct SettingsView: View {
                 //.disabled(!self.metronomeOn)
                 .pickerStyle(.menu)
                 .onChange(of: leadInBarCount, {
-                    settings.scaleLeadInBarCount = leadInBarCount
+                    settings.scaleLeadInBearCountIndex = leadInBarCount
                 })
             }
             
@@ -242,7 +245,7 @@ struct SettingsView: View {
                 
                 .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
                 .onAppear() {
-                    leadInBarCount = settings.scaleLeadInBarCount
+                    leadInBarCount = settings.scaleLeadInBearCountIndex
                     self.defaultOctaves = settings.defaultOctaves
                     self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                     PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)

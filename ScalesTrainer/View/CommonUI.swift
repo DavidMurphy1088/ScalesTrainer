@@ -11,6 +11,12 @@ class UIGlobals {
     //let screenImageBackgroundOpacity = 0.5
     let screenImageBackgroundOpacity = 0.5
     let screenWidth = 0.9
+    let purple:Color
+    
+    init() {
+        let shade = 8.0
+        purple = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
+    }
 }
 
 struct CommonFrameStyle: ViewModifier {

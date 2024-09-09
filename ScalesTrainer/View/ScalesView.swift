@@ -20,9 +20,12 @@ struct MetronomeView: View {
         let beat = (metronome.timerTickerCountPublished % 4) + 1
         HStack {
             Image("metronome-left")
+                .resizable()
+                .scaledToFit()
                 .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
                 //.animation(.easeInOut(duration: 0.1), value: beat)
         }
+        .frame(width: UIScreen.main.bounds.size.width * 0.04)
     }
 }
 
@@ -114,7 +117,15 @@ struct ScalesView: View {
 //            .onChange(of: handIndex, {
 //                setState(octaves: self.numberOfOctaves, hand: handIndex)
 //            })
-            //Spacer()
+
+            Button(action: {
+                metronome.setTicking(on: !metronome.isTiming)
+            }) {
+                MetronomeView()
+                    
+            }
+            .padding()
+            
             Text(LocalizedStringResource("Tempo")).padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
@@ -200,9 +211,9 @@ struct ScalesView: View {
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     //if Settings.shared.metronomeOn {
-                        if metronome.isLeadingIn {
+                        //if metronome.isLeadingIn {
                             MetronomeView()
-                        }
+                        //}
                     //}
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading"
                     Button(action: {

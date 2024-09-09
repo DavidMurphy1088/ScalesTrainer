@@ -11,7 +11,7 @@ class RecordScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        if beatCount / 4 < Settings.shared.scaleLeadInBarCount {
+        if beatCount < Settings.shared.getLeadInBeats() {
             MetronomeModel.shared.setLeadingIn(way: true)
             leadInShown = true
             beatCount += 1
