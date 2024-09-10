@@ -146,7 +146,7 @@ struct DeveloperView: View {
             Spacer()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
+            TapDataView(keyboardModel: PianoKeyboardModel.shared1)
         }
     }
 }
@@ -168,9 +168,9 @@ class TabSelectionManager: ObservableObject {
 //                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
                                                              scaleType: .major,
-                                                             scaleMotion: .parallelMotion,
-                                                             octaves: 1, hand: 1,
-                                                             minTempo: 90, dynamicType: .mf, articulationType: .legato))
+                                                             scaleMotion: .similarMotion,
+                                                             octaves: 1, hands: [0,1],
+                                                             minTempo: 70, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }
                 else {

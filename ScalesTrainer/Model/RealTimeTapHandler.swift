@@ -121,27 +121,24 @@ class RealTimeTapHandler : TapHandlerProtocol {
         ///Hilight the keyboard key
         if tapStatus == .none {
             var keyboards:[PianoKeyboardModel] = []
-            if [0,2].contains(self.scale.hand) {
-                keyboards.append(PianoKeyboardModel.sharedRightHand)
-            }
-            if [1,2].contains(self.scale.hand) {
-                keyboards.append(PianoKeyboardModel.sharedLeftHand)
+            keyboards.append(PianoKeyboardModel.shared1)
+            if self.scale.getKeyboardCount() > 1 {
             }
             
             ///A played MIDI may be in both the LH and RH keyboards.
             ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
-            for i in 0..<keyboards.count {
-                let keyboard:PianoKeyboardModel
-                if keyboards.count == 1 {
-                    keyboard = scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-                }
-                else {
-                    keyboard = i == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-                }
+            for _ in 0..<keyboards.count {
+                let keyboard:PianoKeyboardModel = PianoKeyboardModel.shared1
+//                if keyboards.count == 1 {
+//                    keyboard = scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+//                }
+//                else {
+//                    keyboard = i == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+//                }
                 if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
-                    let inScale = scale.getStateForMidi(handIndex: keyboard.hand, midi: midi, direction: 0) != nil
-                    possibleKeysPlayed.append(PossibleKeyPlayed(hand: keyboard.hand, keyIndex: index, inScale: inScale))
+                    let inScale = scale.getStateForMidi(handIndex: keyboard.hands[0], midi: midi, direction: 0) != nil
+                    possibleKeysPlayed.append(PossibleKeyPlayed(hand: keyboard.hands[0], keyIndex: index, inScale: inScale))
 //                    if inScale {
 //                        lastPlayedKey = LastPlayedKey(midi: midi)
 //                    }
@@ -166,7 +163,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                         ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
                         //let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
                         for possibleKey in possibleKeysPlayed {
-                            let keyboard = possibleKey.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboard = PianoKeyboardModel.shared1 //possibleKey.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
                             let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                         }
@@ -175,7 +172,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     else {
                         ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
                         if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
-                            let keyboard = outOfScale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboard = PianoKeyboardModel.shared1 //outOfScale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
                             let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                         }

@@ -20,8 +20,10 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     ///Tracks keyboard key presses as a process like recording a scale is underway
     var keyWasPlayedState:PianoKeyPlayedState
+    
     /// The note in the scale to which the key currently maps. The mapping changes between ascending and descending
-    var scaleNoteState:ScaleNoteState?
+    private(set) var scaleNoteState:ScaleNoteState?
+    //var scaleNoteState1:ScaleNoteState?
     
     /// The key was just played and its note is sounding
     var keyIsSounding = false
@@ -44,7 +46,11 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.midi = midi
     }
     
-    public func setKeyPlaying(ascending:Int, hilight:Bool) {
+    public func setState(state: ScaleNoteState?) {
+        self.scaleNoteState = state
+    }
+    
+    public func setKeyPlaying(ascending:Int, hilight:Bool, scoreNumber:Int? = nil) {
         if hilight {
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
@@ -56,14 +62,16 @@ public class PianoKeyModel: Identifiable, Hashable {
             }
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
-            
+
             ///Update the score if its showing
-            if let score = scalesModel.scores[0] {
-                if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
-                    DispatchQueue.global(qos: .background).async {
-                        usleep(1000000 * UInt32(self.keySoundingSeconds))
-                        DispatchQueue.main.async {
-                            staffNote.setShowIsPlaying(false)
+            if let scoreNumber = scoreNumber {
+                if let score = scalesModel.scores[scoreNumber] {
+                    if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
+                        DispatchQueue.global(qos: .background).async {
+                            usleep(1000000 * UInt32(self.keySoundingSeconds))
+                            DispatchQueue.main.async {
+                                staffNote.setShowIsPlaying(false)
+                            }
                         }
                     }
                 }

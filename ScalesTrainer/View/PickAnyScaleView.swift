@@ -48,12 +48,12 @@ struct PickAnyScaleView: View {
             let scaleMotion:ScaleMotion
             switch motionIndex {
             case 0:
-                scaleMotion = .parallelMotion
+                scaleMotion = .similarMotion
             default:
                 scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
-                          octaves: self.indexOctave+1, hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          octaves: self.indexOctave+1, hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         else {
             switch typeIndexMinor {
@@ -83,12 +83,12 @@ struct PickAnyScaleView: View {
             let scaleMotion:ScaleMotion
             switch motionIndex {
             case 0:
-                scaleMotion = .parallelMotion
+                scaleMotion = .similarMotion
             default:
                 scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
-                          hand: self.indexHands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
         ScalesModel.shared.setScale(scale: scale)
         return scale

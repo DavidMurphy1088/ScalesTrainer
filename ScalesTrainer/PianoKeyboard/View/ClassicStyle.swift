@@ -9,12 +9,12 @@ public struct ClassicStyle {
     let labelFont: Font
     let labelColor: Color
     let keyColor: Color
-    let hand:Int
+    let hands:[Int]
     
     public let naturalKeySpace: CGFloat
 
     public init(
-        hand:Int,
+        hands:[Int],
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
@@ -24,7 +24,7 @@ public struct ClassicStyle {
         labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
-        self.hand = hand
+        self.hands = hands
         self.sfKeyWidthMultiplier = sfKeyWidthMultiplier
         self.sfKeyHeightMultiplier = sfKeyHeightMultiplier
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
@@ -64,7 +64,7 @@ public struct ClassicStyle {
         let halfOpacity = 0.4
         let scalesModel = ScalesModel.shared
         var color:Color = Color.clear
-        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, direction: 0) != nil {
+        if key.scale.getStateForMidi(handIndex: hands[0], midi: key.midi, direction: 0) != nil {
             ///Key is in the scale
             if scalesModel.selectedDirection == 0 {
                 color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
@@ -210,6 +210,7 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
+
                         context.draw(
                             Text(finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
                                 .font(.title).bold(),
@@ -332,7 +333,7 @@ public struct ClassicStyle {
                             if false {
                                 ///White background for finger number on a black key
                                 ///23May dropped and instead make black keys less black
-                                if key.scaleNoteState != nil {
+                                if key.scaleNoteState == nil {
                                     let edge = rect.width * 0.05
                                     let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
                                     let width = rect.width - 2 * edge

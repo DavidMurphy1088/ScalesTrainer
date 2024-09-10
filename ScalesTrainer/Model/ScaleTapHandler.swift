@@ -25,7 +25,7 @@ class ScaleTapHandler : TapHandlerProtocol  {
         self.bufferSize = bufferSize
         self.scale = scale
         self.amplitudeFilter = amplitudeFilter
-        midisInScale = scale.getMidisInScale(handIndex: scale.hand)
+        midisInScale = scale.getMidisInScale(handIndex: scale.hands[0])
     }
     
     func getBufferSize() -> Int {

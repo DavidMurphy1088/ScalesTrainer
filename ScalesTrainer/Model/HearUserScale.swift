@@ -5,7 +5,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
     var direction = 0
     var nextKeyToPlay = 0
     var maxMidi = 0
-    let keyboard = PianoKeyboardModel.sharedRightHand
+    let keyboard = PianoKeyboardModel.shared1
     
     func metronomeStart() {
         for i in 0..<keyboard.pianoKeyModel.count {
@@ -54,7 +54,7 @@ class HearUserScale : MetronomeTimerNotificationProtocol {
 
         }
         if let key = key {
-            key.setKeyPlaying(ascending: direction, hilight: true)
+            key.setKeyPlaying(ascending: direction, hilight: true, scoreNumber: 0)
             sampler?.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
         }
         return key == nil

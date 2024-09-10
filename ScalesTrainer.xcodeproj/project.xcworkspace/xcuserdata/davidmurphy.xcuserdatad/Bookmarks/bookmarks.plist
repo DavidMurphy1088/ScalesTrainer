@@ -18,7 +18,7 @@
 					<key>StartingLineNumber</key>
 					<string>347</string>
 					<key>Timestamp</key>
-					<string>747551908.846004</string>
+					<string>747652439.8938791</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>561</string>
+					<string>542</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>560</string>
+					<string>541</string>
 					<key>Timestamp</key>
-					<string>747551908.845982</string>
+					<string>747659431.616433</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -244,7 +244,7 @@
 				<key>trailing</key>
 				<string>    ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
-    func followScaleProcess(handIndex:Int, onDone:((_ cancelled:Bool)-&gt;Void)?) {
+    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
 </string>
 			</dict>
 			<key>type</key>

@@ -114,7 +114,7 @@ class PracticeChart: Codable {
                 //if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
                     if oldTypes.contains(chartCell.scale.scaleType) {
                         chartCell.scale = Scale(scaleRoot: chartCell.scale.scaleRoot, scaleType: newType, scaleMotion: chartCell.scale.scaleMotion,
-                                                octaves: chartCell.scale.octaves, hand: chartCell.scale.hand, minTempo: chartCell.scale.minTempo,
+                                                octaves: chartCell.scale.octaves, hands: chartCell.scale.hands, minTempo: chartCell.scale.minTempo,
                                                 dynamicType: chartCell.scale.dynamicType, articulationType: chartCell.scale.articulationType)
                     }
                 //}

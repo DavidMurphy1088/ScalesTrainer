@@ -58,8 +58,8 @@ struct ScalesView: View {
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
     
-    @ObservedObject private var pianoKeyboardRightHand: PianoKeyboardModel
-    @ObservedObject private var pianoKeyboardLeftHand: PianoKeyboardModel
+    @ObservedObject private var pianoKeyboard1: PianoKeyboardModel
+    @ObservedObject private var pianoKeyboard2: PianoKeyboardModel
     @ObservedObject private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
@@ -84,8 +84,8 @@ struct ScalesView: View {
     let backgroundImage = UIGlobals.shared.getBackground()
     
     init(initialRunProcess:RunningProcess? = nil) {
-        self.pianoKeyboardRightHand = PianoKeyboardModel.sharedRightHand
-        self.pianoKeyboardLeftHand = PianoKeyboardModel.sharedLeftHand
+        self.pianoKeyboard1 = PianoKeyboardModel.shared1
+        self.pianoKeyboard2 = PianoKeyboardModel.shared2
         self.initialRunProcess = initialRunProcess
     }
     
@@ -438,11 +438,11 @@ struct ScalesView: View {
     
     func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
         var height:Double
-        if keyboardCount == 1 {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+        if scalesModel.scale.needsTwoKeyboards() {
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 8)
         }
         else {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 8)
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
         }
         if scalesModel.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
@@ -461,14 +461,14 @@ struct ScalesView: View {
     }
     
     var body: some View {
-        ZStack {
-            VStack {
-                Image(backgroundImage)
-                    .resizable()
-                    .scaledToFill()
-                    .edgesIgnoringSafeArea(.top)
-                    .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-            }
+//        ZStack {
+//            VStack {
+//                Image(backgroundImage)
+//                    .resizable()
+//                    .scaledToFill()
+//                    .edgesIgnoringSafeArea(.top)
+//                    .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+//            }
             VStack {
                 if scalesModel.showParameters {
                     VStack(spacing: 0) {
@@ -476,6 +476,7 @@ struct ScalesView: View {
                             let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
                             Text(name).font(.title)//.padding()
                                 .padding(.vertical, 0)
+                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                         //}
                         HStack {
                             Spacer()
@@ -485,53 +486,33 @@ struct ScalesView: View {
                             ViewSettingsView().padding(.vertical, 0)
                             Spacer()
                         }
+                        .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
                     }
-                    .commonFrameStyle()
                 }
                 
                 if scalesModel.showKeyboard {
-                    let cornerRadius:CGFloat = 6
+                    //let cornerRadius:CGFloat = 6
                     VStack {
-                        if [0,2].contains(scalesModel.scale.hand) {
-                            VStack {
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardRightHand, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hand == 2 ? 2 : 1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-                                    )
-
-                            }
-                            //.border(Color.cyan)
-                        }
-                        if [1,2].contains(scalesModel.scale.hand) {
-                            VStack {
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardLeftHand, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hand == 2 ? 2 : 1))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-                                    )
-//                                if scalesModel.showLegend {
-//                                    LegendView(keyboardHand: 1, scale: scalesModel.scale)
-//                                    .overlay(
-//                                        RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-//                                    )
-//                                }
-                            }
-                            //.border(Color.red)
-                        }
-                        if scalesModel.showLegend {
-                            LegendView(keyboardHand: 0, scale: scalesModel.scale)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.gray, lineWidth: 1)
-                            )
+                        PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard1, keyColor: Settings.shared.getKeyColor())
+                            .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                        .commonFrameStyle()
+                    }
+                    if scalesModel.scale.needsTwoKeyboards() {
+                        VStack {
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                .commonFrameStyle()
                         }
                     }
-                    .commonFrameStyle()
+                    if scalesModel.showLegend {
+                        LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                            .commonFrameStyle()
+                    }
                 }
-
+                    
                 if scalesModel.showStaff {
-                    if scalesModel.scale.hand < 2 {
-                        if let score = scalesModel.scores[scalesModel.scale.hand] {
+                    if scalesModel.scale.hands.count < 2 {
+                        if let score = scalesModel.scores[scalesModel.scale.hands[0]] {
                             VStack {
                                 ScoreView(score: score, widthPadding: false)
                             }
@@ -569,8 +550,9 @@ struct ScalesView: View {
             }
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
             ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
-            .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-        }
+            //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+        //}
         
         .sheet(isPresented: $helpShowing) {
             if let topic = scalesModel.helpTopic {
@@ -606,13 +588,10 @@ struct ScalesView: View {
         ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
-            PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
-            pianoKeyboardRightHand.keyboardAudioManager = audioManager
-            PianoKeyboardModel.sharedLeftHand.resetKeysWerePlayedState()
-            pianoKeyboardLeftHand.keyboardAudioManager = audioManager
-
-            //self.handIndex = scalesModel.scale.hand
-            ///Causes setState()
+            PianoKeyboardModel.shared1.resetKeysWerePlayedState()
+            pianoKeyboard1.keyboardAudioManager = audioManager
+//            PianoKeyboardModel.shared2.resetKeysWerePlayedState()
+//            pianoKeyboardLeftHand.keyboardAudioManager = audioManager
             
             self.directionIndex = 0
             if let process = initialRunProcess {

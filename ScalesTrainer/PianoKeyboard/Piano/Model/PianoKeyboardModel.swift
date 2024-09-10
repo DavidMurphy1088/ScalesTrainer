@@ -6,18 +6,20 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardModel: ObservableObject {
-    public static var sharedRightHand = PianoKeyboardModel(hand: 0)
-    public static var sharedLeftHand = PianoKeyboardModel(hand: 1)
-    public static var sharedForSettings = PianoKeyboardModel(hand: 0)
+    public static var shared1 = PianoKeyboardModel(keyboardNumber: 0)
+    public static var shared2 = PianoKeyboardModel(keyboardNumber: 1)
+    public static var sharedForSettings = PianoKeyboardModel(keyboardNumber: 2)
 
-    @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
+    let id = UUID()
+    @Published public var forceRepaint = 0 ///Without this the key view does not update when pressed
     let scalesModel = ScalesModel.shared
-    let hand:Int
-    public var pianoKeyModel: [PianoKeyModel] = []
+    var hands:[Int] = []
+    private(set) var pianoKeyModel: [PianoKeyModel] = []
 
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
     private var ascending = true
+    let keyboardNumber:Int
     
     @Published public var latch = false {
         didSet { resetKeyDownKeyUpState() }
@@ -27,10 +29,11 @@ public class PianoKeyboardModel: ObservableObject {
 
     weak var keyboardAudioManager: AudioManager?
     
-    public init(hand:Int) {
+    private init(keyboardNumber:Int) {
         self.pianoKeyModel = []
         self.keyRects = []
-        self.hand = hand
+        //self.hands = hands
+        self.keyboardNumber = keyboardNumber
     }
     
     func clearAllKeyWasPlayedState(besidesID:UUID? = nil) {
@@ -48,7 +51,7 @@ public class PianoKeyboardModel: ObservableObject {
     
     func redraw() {
         DispatchQueue.main.async {
-            self.forceRepaint1 += 1
+            self.forceRepaint += 1
         }
     }
     
@@ -69,9 +72,9 @@ public class PianoKeyboardModel: ObservableObject {
     func getKeyBoardSize(scale:Scale, handIndex:Int) -> (first:Int, numberKeys:Int) {
         var firstKeyMidi = scale.scaleNoteState[handIndex][0].midi
         if scale.scaleMotion == .contraryMotion {
-            if hand == 1 {
-                firstKeyMidi -= 12
-            }
+//            if hand2 == 1 {
+//                firstKeyMidi -= 12
+//            }
         }
         
         ///Decide first key to show on the keyboard - either the F key or the C key
@@ -131,6 +134,7 @@ public class PianoKeyboardModel: ObservableObject {
             self.pianoKeyModel.append(pianoKeyModel)
         }
         self.linkScaleFingersToKeyboardKeys(scale: scale, handIndex: handIndex, direction: ScalesModel.shared.selectedDirection)
+        //self.debug11("configureKeyboardForScale")
     }
     
     func configureKeyboardForScaleStartView(start:Int, numberOfKeys:Int, scaleStartMidi:Int) {
@@ -144,7 +148,11 @@ public class PianoKeyboardModel: ObservableObject {
                 let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1)
                 ///Mark the start of scale
                 keyState.finger = 9
-                pianoKeyModel.scaleNoteState = keyState
+
+                pianoKeyModel.setState(state: keyState)
+                if pianoKeyModel.scaleNoteState == nil {
+                    print("??????????????????????????????????? configureKeyboardForScaleStartView")
+                }
             }
         }
         //let key = self.pianoKeyModel[i]
@@ -158,25 +166,27 @@ public class PianoKeyboardModel: ObservableObject {
         for i in 0..<numberOfKeys {
             if i < self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
-                key.scaleNoteState = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, direction: direction)
+                key.setState(state: scale.getStateForMidi(handIndex: handIndex, midi: key.midi, direction: direction))
             }
         }
     }
     
-    func debugSize11(_ ctx:String) {
-        print("========================= Keyboard Size === \(ctx)", "lowMidi", self.pianoKeyModel[0].midi, "hiMidi", self.pianoKeyModel[self.pianoKeyModel.count-1].midi)
-    }
-    
-    func debug111(_ ctx:String) {
-        print("=== Keyboard status === \(ctx)")
-        for i in 0..<numberOfKeys {
-            let key = self.pianoKeyModel[i]
-            print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "midi:", key.midi, terminator: "")
-            print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
-            if let state = key.scaleNoteState {
-                print("  finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
+    func debug11(_ ctx:String) {
+        let idString = String(self.id.uuidString.suffix(4))
+        print("=== Keyboard status === \(ctx), ID:\(idString))")
+        if self.pianoKeyModel.count > 0 {
+            for i in 0..<numberOfKeys {
+                let key = self.pianoKeyModel[i]
+                print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "midi:", key.midi, terminator: "")
+                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
+                if let state = key.scaleNoteState {
+                    print("  finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
+                }
+                else {
+                    print("  No scale state", terminator: "")
+                }
+                print("")
             }
-            print("")
         }
     }
     
@@ -189,7 +199,7 @@ public class PianoKeyboardModel: ObservableObject {
             }
         }
         ///👉 😡 Do not remove this repaint. Removing it causes keydowns on the keyboard not to draw the down or up state changes
-        self.forceRepaint1 += 1
+        self.forceRepaint += 1
         for index in 0..<numberOfKeys {
             let noteNumber = pianoKeyModel[index].noteMidiNumber
 
@@ -271,7 +281,7 @@ public class PianoKeyboardModel: ObservableObject {
     public func unmapScaleFingersToKeyboard() {
         for i in 0..<numberOfKeys {
             let key = self.pianoKeyModel[i]
-            key.scaleNoteState = nil
+            key.setState(state: nil)
         }
     }
     

@@ -161,8 +161,8 @@ class TapsEventsAnalyser {
                     }
                     for amplitudeFilter in amplitudeFilters {
                         let offsetScale = scale.makeNewScale(offset: rootOffsetMidi)
-                        let keyboard = PianoKeyboardModel(hand: handIndex)
-                        keyboard.configureKeyboardForScale(scale: offsetScale, handIndex: handIndex)
+                        //let keyboard = PianoKeyboardModel(keyboardNumber: 0)
+                        //keyboard.configureKeyboardForScale(scale: offsetScale, handIndex: handIndex)
                         //let filterStarts = compressingFactor == 0
                         let (result1, _) = applyEvents(ctx: "TryOffset",
                                                               bufferSize: tapEventSet.bufferSize,

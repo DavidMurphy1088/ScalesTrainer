@@ -238,7 +238,7 @@ struct HomeView: View {
 
                         VStack {
                             Spacer()
-                            TitleView(screenName: "").commonFrameStyle()
+                            TitleView(screenName: "").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                             ActivityModeView()
                             Spacer()
                         }

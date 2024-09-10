@@ -12,23 +12,20 @@ public struct PianoKeyboardView : View {
         self.scalesModel = scalesModel
         self.viewModel = viewModel
         self.keyColor = keyColor
-        style = ClassicStyle(hand: viewModel.hand, keyColor: keyColor)
+        style = ClassicStyle(hands: viewModel.hands, keyColor: keyColor)
     }
 
     public var body: some View {
         GeometryReader { geometry in
             VStack {
+                //Text("REPAINT::\(viewModel.keyboardNumber) \(viewModel.forceRepaint)")
                 ///🤚01 May - things work without a forced repaint here...
                 //Text("Repaint \(viewModel.forceRepaint1)")
                 ZStack(alignment: .top) {
                     //Warning - Anything added here screws up touch handling 😡
                     style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, geometry: geometry)
-                    //style.layout(viewModel: viewModel, geometry: geometry)
                     TouchesView(viewModel: viewModel)
-                        //.border(Color .purple, width: 3)
                 }
-                //.background(.black)
-                //.border(Color .black, width: 1)
             }
         }
     }

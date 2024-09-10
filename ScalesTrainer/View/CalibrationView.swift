@@ -3,7 +3,7 @@ import SwiftUI
 public struct CalibrationView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
-    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedRightHand
+    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared1
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilter:Double = 0
@@ -96,9 +96,9 @@ public struct CalibrationView: View {
                 }
             }
             Text(getScaleName()).padding()
-            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel, keyColor: .white)
-                .frame(height: UIScreen.main.bounds.size.height / 6)
-                .commonFrameStyle(backgroundColor: .clear).padding()
+//            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboardViewModel, keyColor: .white)
+//                .frame(height: UIScreen.main.bounds.size.height / 6)
+//                .commonFrameStyle(backgroundColor: .clear).padding()
 
             if let score = scalesModel.scores[0] {
                 ScoreView(score: score, widthPadding: false).padding()
@@ -207,7 +207,7 @@ public struct CalibrationView: View {
         .onAppear() {
 //            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
 //            setScale(octaves: octaves, hand: 0)
-            PianoKeyboardModel.sharedRightHand.resetKeysWerePlayedState()
+            PianoKeyboardModel.shared1.resetKeysWerePlayedState()
             self.amplitudeFilter = Settings.shared.amplitudeFilter
             self.requiredConsecutiveCount = Settings.shared.requiredConsecutiveCount
         }
@@ -215,7 +215,7 @@ public struct CalibrationView: View {
             self.audioManager.stopRecording()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.sharedRightHand)
+            TapDataView(keyboardModel: PianoKeyboardModel.shared1)
         }
     }
 }

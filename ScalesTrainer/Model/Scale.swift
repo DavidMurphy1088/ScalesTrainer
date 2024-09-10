@@ -95,12 +95,12 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
 }
 
 public enum ScaleMotion: CaseIterable, Comparable, Codable {
-    case parallelMotion
+    case similarMotion
     case contraryMotion
     var description: String {
         switch self {
-        case .parallelMotion:
-            return "Parallel Motion"
+        case .similarMotion:
+            return "Similar Motion"
         case .contraryMotion:
             return "Contrary Motion"
         }
@@ -140,7 +140,7 @@ public class Scale : Codable {
     private(set) var scaleNoteState:[[ScaleNoteState]]
     private var metronomeAscending = true
     var octaves:Int
-    let hand:Int
+    let hands:[Int]
     let minTempo:Int
     let dynamicType:DynamicType
     let articulationType:ArticulationType
@@ -148,7 +148,7 @@ public class Scale : Codable {
     var scaleMotion:ScaleMotion
     var scaleShapeForFingering:ScaleShape
 
-    public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hand:Int,
+    public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
                 minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
@@ -158,7 +158,7 @@ public class Scale : Codable {
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
         scaleNoteState = []
-        self.hand = hand
+        self.hands = hands
         
         ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
@@ -358,19 +358,19 @@ public class Scale : Codable {
             let lastNoteIndex = scaleNoteState[1].count-1
 
             scaleNoteState[1][lastNoteIndex].value = lastNoteValue
-            for handIndex in [0,1] {
-                setFingers(handIndex: handIndex)
-                setChromaticFingerBreaks(hand: handIndex)
+            for hand in self.hands {
+                setFingers(hand: hand)
+                setChromaticFingerBreaks(hand: hand)
             }
-            //debug112("chromatic")
+            
         }
         else {
-            for handIndex in [0,1] {
-                setFingers(handIndex: handIndex)
-                setFingerBreaks(handIndex: handIndex)
+            for hand in self.hands {
+                setFingers(hand: hand)
+                setFingerBreaks(hand: hand)
             }
         }
-        
+        //debug12("endOfInit")
         Scale.createCount += 1
     }
         
@@ -402,7 +402,7 @@ public class Scale : Codable {
     }
     
     func makeNewScale(offset:Int) -> Scale {
-        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hand: self.hand,
+        let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hands: self.hands,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
         for handIndex in [0,1] {
             for note in scale.scaleNoteState[handIndex] {
@@ -410,6 +410,15 @@ public class Scale : Codable {
             }
         }
         return scale
+    }
+    
+    func getKeyboardCount() -> Int {
+        if self.hands.count == 1 {
+            return 1
+        }
+        else {
+            return self.scaleMotion == .contraryMotion ? 2 : 1
+        }
     }
     
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
@@ -455,8 +464,12 @@ public class Scale : Codable {
         return scaleOffsets
     }
     
-    func debug12(_ msg:String)  {
-        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hand", self.hand, "octaves", self.octaves, self.id)
+    func needsTwoKeyboards() -> Bool {
+        return self.hands.count > 1 && self.scaleMotion != .contraryMotion
+    }
+    
+    func debug121(_ msg:String)  {
+        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands", self.hands, "octaves", self.octaves, self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
                 return "None"
@@ -465,7 +478,7 @@ public class Scale : Codable {
                 return String(format: "%.2f", value!)
             }
         }
-        for handIndex in [0,1] {
+        for handIndex in self.hands {
             var idx = 0
             for state in self.scaleNoteState[handIndex] {
                 print("Hand", handIndex, "idx:", idx, "\tMidi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
@@ -566,39 +579,39 @@ public class Scale : Codable {
 
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key
-    private func setFingerBreaks(handIndex:Int) {
-        for note in self.scaleNoteState[handIndex] {
+    private func setFingerBreaks(hand:Int) {
+        for note in self.scaleNoteState[hand] {
             note.fingerSequenceBreak = false
         }
 //        guard self.scaleShapeForFingering == .scale else {
 //            return
 //        }
-        let halfway = self.scaleNoteState[handIndex].count/2-1
-        if handIndex == 0 {
-            var lastFinger = self.scaleNoteState[handIndex][0].finger
+        let halfway = self.scaleNoteState[hand].count/2-1
+        if hand == 0 {
+            var lastFinger = self.scaleNoteState[hand][0].finger
             for i in 1...halfway {
-                let finger = self.scaleNoteState[handIndex][i].finger
+                let finger = self.scaleNoteState[hand][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[handIndex][i].fingerSequenceBreak = true
-                    self.scaleNoteState[handIndex][self.scaleNoteState[handIndex].count - i].fingerSequenceBreak = true
+                    self.scaleNoteState[hand][i].fingerSequenceBreak = true
+                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].fingerSequenceBreak = true
                 }
-                lastFinger = self.scaleNoteState[handIndex][i].finger
+                lastFinger = self.scaleNoteState[hand][i].finger
             }
         }
         else {
-            var lastFinger = self.scaleNoteState[handIndex][halfway].finger
+            var lastFinger = self.scaleNoteState[hand][halfway].finger
             for i in stride(from: halfway-1, to: 0, by: -1) {
-                let finger = self.scaleNoteState[handIndex][i].finger
+                let finger = self.scaleNoteState[hand][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[handIndex][i+1].fingerSequenceBreak = true
+                    self.scaleNoteState[hand][i+1].fingerSequenceBreak = true
                     let mirror = halfway + (halfway - i) + 2
-                    if mirror < self.scaleNoteState[handIndex].count - 1 {
-                        self.scaleNoteState[handIndex][mirror].fingerSequenceBreak = true
+                    if mirror < self.scaleNoteState[hand].count - 1 {
+                        self.scaleNoteState[hand][mirror].fingerSequenceBreak = true
                     }
                 }
-                lastFinger = self.scaleNoteState[handIndex][i].finger
+                lastFinger = self.scaleNoteState[hand][i].finger
             }
         }
     }
@@ -633,7 +646,7 @@ public class Scale : Codable {
     }
     
     ///Alfreds page 88. RH read left to right, LH read right to left. Use numbers in paren e.g. (3) instead of 3
-    func setFingers(handIndex:Int) {
+    func setFingers(hand:Int) {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
         
@@ -772,8 +785,8 @@ public class Scale : Codable {
         if scaleType == .chromatic {
             ///Note that for LH finger the given pattern goes from high to low notes (reversed)
             var whiteCount = 0
-            if handIndex == 0 {
-                if [0, 5].contains(scaleNoteState[handIndex][0].midi % 12) {
+            if hand == 0 {
+                if [0, 5].contains(scaleNoteState[hand][0].midi % 12) {
                     whiteCount += 1
                 }
             }
@@ -782,9 +795,9 @@ public class Scale : Codable {
 //                    whiteCount += 1
 //                }
             }
-            let midway = scaleNoteState[handIndex].count / 2
-            for i in 0..<scaleNoteState[handIndex].count {
-                let noteState = scaleNoteState[handIndex][i]
+            let midway = scaleNoteState[hand].count / 2
+            for i in 0..<scaleNoteState[hand].count {
+                let noteState = scaleNoteState[hand][i]
                 if noteState.isWhiteKey() {
                     noteState.finger = whiteCount == 0 ? 1 : 2
                     whiteCount += 1
@@ -800,11 +813,11 @@ public class Scale : Codable {
         }
         else {
             ///Apply the finger patterns for ascending and descending
-            let halfway = scaleNoteState[handIndex].count / 2
-            if handIndex == 0 {
+            let halfway = scaleNoteState[hand].count / 2
+            if hand == 0 {
                 var f = 0
                 for i in 0..<halfway {
-                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: i, fingers: fingers)
+                    scaleNoteState[hand][i].finger = stringIndexToInt(index: i, fingers: fingers)
                     f += 1
                 }
                 f -= 1
@@ -814,9 +827,9 @@ public class Scale : Codable {
                         highNoteFinger += 1
                     }
                 }
-                scaleNoteState[handIndex][halfway].finger = highNoteFinger
-                for i in (halfway+1..<scaleNoteState[handIndex].count) {
-                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                scaleNoteState[hand][halfway].finger = highNoteFinger
+                for i in (halfway+1..<scaleNoteState[hand].count) {
+                    scaleNoteState[hand][i].finger = stringIndexToInt(index: f, fingers: fingers)
                     f -= 1
                 }
             }
@@ -825,9 +838,9 @@ public class Scale : Codable {
                 ///For LH - start halfway in scale, count forwards through fingers and backwards onto scale
                 for i in stride(from: halfway, through: 0, by: -1) {
                     //for i in stride(from: halfway, to: 0, by: -1) {
-                    scaleNoteState[handIndex][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                    scaleNoteState[hand][i].finger = stringIndexToInt(index: f, fingers: fingers)
                     if ![.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
-                        scaleNoteState[handIndex][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
+                        scaleNoteState[hand][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
                     }
                     f += 1
                 }
@@ -840,7 +853,7 @@ public class Scale : Codable {
                     //                        edgeFinger += 1
                     //                    }
                     //                }
-                    scaleNoteState[handIndex][0].finger = nextToLastFinger + leftHandLastFingerJump
+                    scaleNoteState[hand][0].finger = nextToLastFinger + leftHandLastFingerJump
                 }
                 //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
             }
@@ -852,17 +865,17 @@ public class Scale : Codable {
         if scaleMotion == .contraryMotion {
             name += " " + scaleMotion.description
         }
-        else {
+        if self.hands.count == 1 {
             var handName = ""
             if handFull {
-                switch self.hand {
+                switch self.hands[0] {
                 case 0: handName = "Right Hand"
                 case 1: handName = "Left Hand"
                 default: handName = "Both Hands"
                 }
             }
             else {
-                switch self.hand {
+                switch self.hands[0] {
                 case 0: handName = "RH"
                 case 1: handName = "LH"
                 default: handName = "Both"
@@ -870,6 +883,10 @@ public class Scale : Codable {
             }
             name += ", " + handName
         }
+        if self.hands.count == 2 {
+            name += handFull ? " Both Hands" : " RH,LF"
+        }
+    
         if octaves {
             name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
         }

@@ -42,7 +42,7 @@ struct CellView: View {
         for row in practiceChart.cells {
             for chartCell in row {
                 if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
-                    if chartCell.scale.hand == scale.hand {
+                    if chartCell.scale.hands == scale.hands {
                         if chartCell.scale.scaleType == scale.scaleType {
                             chartCell.setEnabled(way: !chartCell.enabled)
                         }
@@ -166,16 +166,16 @@ struct PracticeChartView: View {
         let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
         let minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
         
-        ZStack {
-            Image(background)
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.top)
-                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+//        ZStack {
+//            Image(background)
+//                .resizable()
+//                .scaledToFill()
+//                .edgesIgnoringSafeArea(.top)
+//                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
 
             VStack {
                 VStack(spacing: 0) {
-                    TitleView(screenName: "Practice Chart")
+                    TitleView(screenName: "Practice Chart").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     HStack {
                         Spacer()
                         Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
@@ -207,7 +207,7 @@ struct PracticeChartView: View {
                         Spacer()
                     }
                 }
-                .commonFrameStyle()
+                .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
 
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
@@ -245,19 +245,20 @@ struct PracticeChartView: View {
                 .id(reloadTrigger)
                 
             }
-            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
-            ForEach(stars) { star in
-                Image(systemName: "star.fill")
-                //Circle()
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: star.size, height: star.size)
-                    .foregroundColor(.yellow)
-                    .position(x: star.xPosition, y: star.yPosition)
-                    .animation(.linear(duration: star.duration))
-            }
-        }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+            //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
+//            ForEach(stars) { star in
+//                Image(systemName: "star.fill")
+//                //Circle()
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: star.size, height: star.size)
+//                    .foregroundColor(.yellow)
+//                    .position(x: star.xPosition, y: star.yPosition)
+//                    .animation(.linear(duration: star.duration))
+//            }
+        //}
+        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         .onAppear() {
             practiceChart.getScales("View OnAppear")
         }

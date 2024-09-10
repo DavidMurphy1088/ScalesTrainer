@@ -111,8 +111,8 @@ struct SpinWheelView: View {
             self.selectedHand = index
 
             let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
-                              scaleType: getTypes()[self.selectedScaleType], scaleMotion: .parallelMotion,
-                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
+                              scaleType: getTypes()[self.selectedScaleType], scaleMotion: .similarMotion,
+                              octaves: Settings.shared.defaultOctaves, hands: hands,
                               minTempo: 90, dynamicType: .mf, articulationType: .legato)
             let _ = ScalesModel.shared.setScale(scale: scale)
         }

@@ -60,7 +60,7 @@ struct SettingsView: View {
                             .labelsHidden()
                         Spacer()
                     }
-                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
+                    //PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
                 }
             }
             .onAppear() {

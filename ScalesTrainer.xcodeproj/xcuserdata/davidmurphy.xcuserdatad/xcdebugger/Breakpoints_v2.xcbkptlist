@@ -7,47 +7,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "377D43AF-D252-44D5-9243-680936C8AC2D"
+            uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/MusicBoard.swift"
+            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "getScales()"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "metronomeStart()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "377D43AF-D252-44D5-9243-680936C8AC2D - 35df9849cc7c172f"
+                  uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686 - f5fed242a8f8a7a2"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MusicBoardGrade.getScales() -&gt; Swift.Array&lt;ScalesStar.Scale&gt;"
+                  symbolName = "ScalesStar.HearScalePlayer.metronomeStart() -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/MusicBoard.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/HearScalePlayer.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "54"
-                  endingLineNumber = "54"
-                  offsetFromSymbolStart = "832">
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "2636">
                </Location>
                <Location
-                  uuid = "377D43AF-D252-44D5-9243-680936C8AC2D - 35df9849cc7c172f"
+                  uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686 - f5fed242a8f8a7a2"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MusicBoardGrade.getScales() -&gt; Swift.Array&lt;ScalesStar.Scale&gt;"
+                  symbolName = "ScalesStar.HearScalePlayer.metronomeStart() -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/MusicBoard.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/HearScalePlayer.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "54"
-                  endingLineNumber = "54"
-                  offsetFromSymbolStart = "828">
+                  startingLineNumber = "48"
+                  endingLineNumber = "48"
+                  offsetFromSymbolStart = "2332">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -55,511 +55,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D8F8F2A2-6527-465E-86D8-7D4D47BE0A53"
+            uuid = "0D7D7FD3-212A-426B-82A0-2764DC53EBC0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
+            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
+            landmarkName = "metronomeStart()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E4EF03AC-128F-48B8-88C1-274F06E8A38C"
+            uuid = "D7A9C216-AEFF-45E1-B427-3635C2658BC1"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
+            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E4EF03AC-128F-48B8-88C1-274F06E8A38C - 7b7e16d1ea198020"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.init(scaleRoot: ScalesStar.ScaleRoot, scaleType: ScalesStar.ScaleType, scaleMotion: ScalesStar.ScaleMotion, octaves: Swift.Int, hand: Swift.Int, minTempo: Swift.Int, dynamicType: ScalesStar.DynamicType, articulationType: ScalesStar.ArticulationType) -&gt; ScalesStar.Scale"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "229"
-                  endingLineNumber = "229"
-                  offsetFromSymbolStart = "4672">
-               </Location>
-               <Location
-                  uuid = "E4EF03AC-128F-48B8-88C1-274F06E8A38C - 7b7e16d1ea198062"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.init(scaleRoot: ScalesStar.ScaleRoot, scaleType: ScalesStar.ScaleType, scaleMotion: ScalesStar.ScaleMotion, octaves: Swift.Int, hand: Swift.Int, minTempo: Swift.Int, dynamicType: ScalesStar.DynamicType, articulationType: ScalesStar.ArticulationType) -&gt; ScalesStar.Scale"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "227"
-                  endingLineNumber = "227"
-                  offsetFromSymbolStart = "5068">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2250CD76-0243-4177-A902-67CF177ED2AB"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "342"
-            endingLineNumber = "342"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2250CD76-0243-4177-A902-67CF177ED2AB - 7b7e16d1ea187157"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.init(scaleRoot: ScalesStar.ScaleRoot, scaleType: ScalesStar.ScaleType, scaleMotion: ScalesStar.ScaleMotion, octaves: Swift.Int, hand: Swift.Int, minTempo: Swift.Int, dynamicType: ScalesStar.DynamicType, articulationType: ScalesStar.ArticulationType) -&gt; ScalesStar.Scale"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "342"
-                  endingLineNumber = "342"
-                  offsetFromSymbolStart = "12296">
-               </Location>
-               <Location
-                  uuid = "2250CD76-0243-4177-A902-67CF177ED2AB - 7b7e16d1ea187157"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.init(scaleRoot: ScalesStar.ScaleRoot, scaleType: ScalesStar.ScaleType, scaleMotion: ScalesStar.ScaleMotion, octaves: Swift.Int, hand: Swift.Int, minTempo: Swift.Int, dynamicType: ScalesStar.DynamicType, articulationType: ScalesStar.ArticulationType) -&gt; ScalesStar.Scale"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "342"
-                  endingLineNumber = "342"
-                  offsetFromSymbolStart = "12224">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "67AA4A9E-83D8-4B1E-9478-C91BD2F5F9BA"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "343"
-            endingLineNumber = "343"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "metronomeStart()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B140E06F-55BD-4977-B379-84D8ED6A5D43"
+            uuid = "6965382C-01C6-42B2-9A1A-B4A5D5026A08"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
+            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "366"
-            endingLineNumber = "366"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E7F4F784-F959-425B-885E-8AACAB832ECE"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "configureKeyboardForScale(scale:handIndex:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "E7F4F784-F959-425B-885E-8AACAB832ECE - 2899c266eae7b466"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PianoKeyboardModel.configureKeyboardForScale(scale: ScalesStar.Scale, handIndex: Swift.Int) -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "628">
-               </Location>
-               <Location
-                  uuid = "E7F4F784-F959-425B-885E-8AACAB832ECE - 2899c266eae7b466"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PianoKeyboardModel.configureKeyboardForScale(scale: ScalesStar.Scale, handIndex: Swift.Int) -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "128"
-                  endingLineNumber = "128"
-                  offsetFromSymbolStart = "404">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A464ED16-9989-4719-AF29-9A156EC256E2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "788"
-            endingLineNumber = "788"
-            landmarkName = "setFingers(handIndex:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "67FA9B09-71C9-44D6-A6D8-565753A1BC16"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "576"
-            endingLineNumber = "576"
-            landmarkName = "setFingerBreaks(handIndex:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "96D1FDC1-169D-401F-A7FA-711413276725"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "364"
-            endingLineNumber = "364"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D8BEA574-0F25-4D7E-9557-47480902D5A2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "573"
-            endingLineNumber = "573"
-            landmarkName = "setFingerBreaks(handIndex:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FE534143-FF6D-4D88-9B69-C776E4EFEEF2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "365"
-            endingLineNumber = "365"
-            landmarkName = "init(scaleRoot:scaleType:scaleMotion:octaves:hand:minTempo:dynamicType:articulationType:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D936F629-03FD-4C03-A901-CBBD4FCEBC68"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
-            landmarkName = "setChromaticFingerBreaks(hand:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F8E4B19A-CDE0-4A25-9ABB-137265C3E9A3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Scale.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "391"
-            endingLineNumber = "391"
-            landmarkName = "setChromaticFingerBreaks(hand:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F8E4B19A-CDE0-4A25-9ABB-137265C3E9A3 - 44c8223ea9d29fde"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.setChromaticFingerBreaks(hand: Swift.Int) -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "391"
-                  endingLineNumber = "391"
-                  offsetFromSymbolStart = "1112">
-               </Location>
-               <Location
-                  uuid = "F8E4B19A-CDE0-4A25-9ABB-137265C3E9A3 - 44c8223ea9d29fde"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.Scale.setChromaticFingerBreaks(hand: Swift.Int) -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Scale.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "391"
-                  endingLineNumber = "391"
-                  offsetFromSymbolStart = "1116">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1EA83B59-3505-4B4F-9C39-2ACB9BDC3C19"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/PracticeChart.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "init(musicBoard:musicBoardGrade:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "1EA83B59-3505-4B4F-9C39-2ACB9BDC3C19 - 9be995c0f6a80d97"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.__allocating_init(musicBoard: ScalesStar.MusicBoard, musicBoardGrade: ScalesStar.MusicBoardGrade) -&gt; ScalesStar.PracticeChart"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "44">
-               </Location>
-               <Location
-                  uuid = "1EA83B59-3505-4B4F-9C39-2ACB9BDC3C19 - 44d59985d7a96e58"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.init(musicBoard: ScalesStar.MusicBoard, musicBoardGrade: ScalesStar.MusicBoardGrade) -&gt; ScalesStar.PracticeChart"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "74"
-                  endingLineNumber = "74"
-                  offsetFromSymbolStart = "148">
-               </Location>
-               <Location
-                  uuid = "1EA83B59-3505-4B4F-9C39-2ACB9BDC3C19 - 44d59985d7a96dbb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.init(musicBoard: ScalesStar.MusicBoard, musicBoardGrade: ScalesStar.MusicBoardGrade) -&gt; ScalesStar.PracticeChart"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75"
-                  offsetFromSymbolStart = "148">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "63F121E6-8382-42E3-B116-3077F19AEF56"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/PracticeChart.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
-            landmarkName = "init(musicBoard:musicBoardGrade:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "63F121E6-8382-42E3-B116-3077F19AEF56 - 44d59985d7a96dbb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.init(musicBoard: ScalesStar.MusicBoard, musicBoardGrade: ScalesStar.MusicBoardGrade) -&gt; ScalesStar.PracticeChart"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75"
-                  offsetFromSymbolStart = "212">
-               </Location>
-               <Location
-                  uuid = "63F121E6-8382-42E3-B116-3077F19AEF56 - 44d59985d7a96dbb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.init(musicBoard: ScalesStar.MusicBoard, musicBoardGrade: ScalesStar.MusicBoardGrade) -&gt; ScalesStar.PracticeChart"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75"
-                  offsetFromSymbolStart = "148">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9F28E8EE-A138-49E0-BE29-30F45F5F5712"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/PracticeChart.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
-            landmarkName = "getScales(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "ED35572A-3972-4C89-AF31-4BA9CDC56663"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Metronome.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
-            landmarkName = "setTicking(on:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C518CDEE-536A-4810-8DD8-3EE9C6C84D57"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/View/ScalesView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "SelectScaleParametersView()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5D97E09A-ECB2-4C73-8C30-D5D3A12E5DE9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Settings.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "getLeadInBeats()"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "metronomeStart()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -67,7 +67,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         self.lastMidi = midi
         
         let scale = scalesModel.scale
-        let hand = scalesModel.scale.hand == 2 ? 0 : scalesModel.scale.hand
+        let hand = scale.hands[0] //scalesModel.scale.hand == 2 ? 0 : scalesModel.scale.hand
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         //print("\n=====================IN ", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "MIDI", nextExpected.midi, "total", scale.scaleNoteState[hand].count)
