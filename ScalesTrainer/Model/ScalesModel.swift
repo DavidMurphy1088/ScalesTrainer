@@ -135,7 +135,8 @@ public class ScalesModel : ObservableObject {
         self.resultInternal = result
         DispatchQueue.main.async {
             self.resultPublished = result
-            PianoKeyboardModel.shared1.redraw()
+            PianoKeyboardModel.sharedRH.redraw()
+            PianoKeyboardModel.sharedLH.redraw()
         }
     }
     @Published private(set) var resultPublished:Result?
@@ -168,10 +169,10 @@ public class ScalesModel : ObservableObject {
     func setSelectedDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.shared1.linkScaleFingersToKeyboardKeys(scale: self.scale, handIndex: self.scale.hands[0], direction: index)
-            PianoKeyboardModel.shared1.redraw()
-//            PianoKeyboardModel.sharedLeftHand.linkScaleFingersToKeyboardKeys(scale: self.scale, handIndex: 1, direction: index)
-//            PianoKeyboardModel.sharedLeftHand.redraw()
+            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
+            PianoKeyboardModel.sharedRH.redraw()
+            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
+            PianoKeyboardModel.sharedLH.redraw()
         }
     }
     
@@ -290,9 +291,12 @@ public class ScalesModel : ObservableObject {
         }
         MetronomeModel.shared.isTiming = false
         
-        let keyboard = PianoKeyboardModel.shared1 //scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-        keyboard.clearAllFollowingKeyHilights(except: nil)
-        keyboard.redraw()
+        //let keyboard =  //scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+        PianoKeyboardModel.sharedRH.clearAllFollowingKeyHilights(except: nil)
+        PianoKeyboardModel.sharedRH.redraw()
+        PianoKeyboardModel.sharedLH.clearAllFollowingKeyHilights(except: nil)
+        PianoKeyboardModel.sharedLH.redraw()
+        
         let metronome = MetronomeModel.shared
         
         if [.followingScale].contains(setProcess)  {
@@ -359,7 +363,8 @@ public class ScalesModel : ObservableObject {
         }
         
         if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
-            keyboard.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
             self.setShowStaff(false)
@@ -368,7 +373,8 @@ public class ScalesModel : ObservableObject {
             self.setResultInternal(nil, "setRunningProcess::start record")
             setUserMessage(heading: nil, msg: nil)
             self.setProcessedEventSet(nil, publish: true)
-            keyboard.redraw()
+            PianoKeyboardModel.sharedRH.redraw()
+            PianoKeyboardModel.sharedLH.redraw()
             ///4096 has extra params to figure out automatic scale play end
             ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
             self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
@@ -413,16 +419,14 @@ public class ScalesModel : ObservableObject {
                 }
             }
             var keyboardSemaphores:[KeyboardSemaphore] = []
-            //if handIndex == 0 {
-            keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.shared1, semaphore: DispatchSemaphore(value: 0)))
-            //}
-//            if handIndex == 1 {
-//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 0)))
-//            }
-//            if handIndex == 2 {
-//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRightHand, semaphore: DispatchSemaphore(value: 0)))
-//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLeftHand, semaphore: DispatchSemaphore(value: 0)))
-//            }
+            if scale.hands.count == 1 {
+                let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: keyboard, semaphore: DispatchSemaphore(value: 0)))
+            }
+            else {
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRH, semaphore: DispatchSemaphore(value: 0)))
+                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLH, semaphore: DispatchSemaphore(value: 0)))
+            }
 
             var scaleIndex = 0
             var cancelled = false
@@ -433,16 +437,16 @@ public class ScalesModel : ObservableObject {
                     break
                 }
                 
-                var currentMidis:[Int] = []
+                var currentMidis1:[Int] = []
                 
                 ///Add a semaphore to detect when the expected keyboard key is played
                 for keyboardSemaphore in keyboardSemaphores {
-                    let note = self.scale.scaleNoteState[keyboardSemaphore.keyboard.hands[0]][scaleIndex]
+                    let note = self.scale.scaleNoteState[keyboardSemaphore.keyboard.keyboardNumber - 1][scaleIndex]
                     guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, direction:0) else {
                         scaleIndex += 1
                         continue
                     }
-                    currentMidis.append(note.midi)
+                    currentMidis1.append(note.midi)
                     let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
                     keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
                     pianoKey.hilightFollowingKey = true
@@ -484,8 +488,8 @@ public class ScalesModel : ObservableObject {
                 BadgeBank.shared.setTotalCorrect(BadgeBank.shared.totalCorrect + 1)
                 
                 ///Change direction to descending
-                let highest = self.scale.getMinMax(handIndex: keyboardSemaphores[0].keyboard.hands[0]).1
-                if currentMidis[0] == highest {
+                let highest = self.scale.getMinMax(handIndex: keyboardSemaphores[0].keyboard.keyboardNumber - 1).1
+                if currentMidis1[0] == highest {
                     self.setSelectedDirection(1)
                 }
                 if scaleIndex >= self.scale.scaleNoteState[0].count - 1 {
@@ -587,24 +591,21 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "setScale to:\(name)")
         let scoreRH = self.createScore(scale: scale, hand: 0)
         let scoreLH = self.createScore(scale: scale, hand: 1)
-        self.setScaleAndScore(scale: scale, scores: [scoreRH, scoreLH], ctx: "setScale")
+        self.buildScaleAndScore(scale: scale, scores: [scoreRH, scoreLH], ctx: "setScale")
     }
     
-    func setScaleAndScore(scale:Scale, scores:[Score], ctx:String) {
+    func buildScaleAndScore(scale:Scale, scores:[Score], ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
         ///Set the single RH or RH keyboard
-        PianoKeyboardModel.shared1.hands = scale.hands
-        PianoKeyboardModel.shared1.configureKeyboardForScale(scale: scale, handIndex: scale.hands[0])
-        
-        if scale.needsTwoKeyboards() {
-            PianoKeyboardModel.shared2.hands = scale.hands
-            PianoKeyboardModel.shared2.configureKeyboardForScale(scale: scale, handIndex: scale.hands[1])
-        }
+        ///Contrary motion has both hands on the first eyboard
+        PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, hand: 0)
+        PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, hand: 1)
 
         self.setSelectedDirection(0)
-        PianoKeyboardModel.shared1.redraw()
+        PianoKeyboardModel.sharedRH.redraw()
+        PianoKeyboardModel.sharedLH.redraw()
 
         DispatchQueue.main.async {
             ///Absolutely no idea why but if not here the score wont display 😡
@@ -613,165 +614,7 @@ public class ScalesModel : ObservableObject {
             }
         }
     }
-    
-//    func setKeyboard() {
-//        let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
-//        Logger.shared.log(self, "setScaleAndScore to:\(name))")
-//        let scale = self.scale
-//        scale.octaves = 4
-//        //scale.scaleType = .major
-//        self.scale = scale
-//        PianoKeyboardModel.shared1.configureKeyboardForScale(scale: scale, handIndex: 0)
-//        self.setSelectedDirection(0)
-//        PianoKeyboardModel.shared1.unmapScaleFingersToKeyboard()
-//        PianoKeyboardModel.shared1.redraw()
-//        
-////        PianoKeyboardModel.sharedLeftHand.configureKeyboardForScale(scale: scale, handIndex: 1)
-////        //self.setSelectedDirection(0)
-////        PianoKeyboardModel.sharedLeftHand.unmapScaleFingersToKeyboard()
-////        PianoKeyboardModel.sharedLeftHand.redraw()
-//
-//        DispatchQueue.main.async {
-//            ///Absolutely no idea why but if not here the score wont display 😡
-//            DispatchQueue.main.async {
-//                self.scores = self.scores
-//            }
-//        }
-//    }
-    
-//    func processTapEvents(fromProcess: RunningProcess, saveTapEventsToFile:Bool) -> TapStatusRecordSet? {
-//        var tapEventSets:[TapEventSet] = []
-//        for tapHandler in self.tapHandlers {
-//            tapEventSets.append(tapHandler.stopTappingProcess())
-//        }
-//        
-//        let analyser = TapsEventsAnalyser(scale: self.scale,
-//                                          recordedTapEventSets: tapEventSets,
-//                                          keyboard: PianoKeyboardModel.sharedRightHand,
-//                                          fromProcess: self.runningProcess)
-//        let (bestResult, bestEvents) = analyser.getBestResult()
-//        
-//        ///Save the taps to a file
-//        if saveTapEventsToFile {
-//            if let bestResult = bestResult {
-//                var tapEventSets:[TapEventSet] = []
-//                for tapHandler in self.tapHandlers {
-//                    tapEventSets.append(tapHandler.stopTappingProcess())
-//                }
-//                self.saveTapsToFile(tapSets: tapEventSets, result: bestResult)
-//            }
-//        }
-//                
-//        ///Replay the best fit scale to set the app's display state
-//        ///If there are too many errors just display the scale at the octaves it was shown as
-//        let bestScale:Scale = self.scale
-////            if bestResult == nil || bestResult!.getTotalErrors() > 3 {
-////                bestScale = self.scale.makeNewScale(offset: 0)
-////            }
-////            else {
-////                bestScale = self.scale.makeNewScale(offset: bestConfiguration.scaleOffset)
-////            }
-//        
-//        let scalesModel = ScalesModel.shared
-//        ///Score note status is updated during result build, keyboard key status is updated by tap processing
-//        let score = scalesModel.createScore(scale: bestScale)
-//        scalesModel.setScaleAndScore(scale: bestScale, score: score, ctx: "ScaleTapHandler:bestOffset")
-//            
-//        ///Ensure keyboard visible key statuses are updated during events apply
-//        var finalEventStatusSet:TapStatusRecordSet? = nil
-//        
-//        let keyboard = PianoKeyboardModel.sharedRightHand
-//        if let result = bestResult {
-//            if let eventSet = bestEvents {
-//                
-//                let (finalResult, finalSet) = analyser.applyEvents(ctx: "useBest",
-//                                                    bufferSize: result.bufferSize,
-//                                                    recordedTapEvents: result.tappedEventsSet.events,
-//                                                    offset: 0, scale: bestScale,
-//                                                    keyboard: keyboard,
-//                                                    amplitudeFilter:result.amplitudeFilter,
-//                                                    compressingFactor: result.compressingFactor,
-//                                                    octaveLenient: true,
-//                                                    score: score,
-//                                                    updateKeyboard: true)
-//                keyboard.redraw()
-//                Logger.shared.log(self, "=======> Applied best events. Offset:\(0) Result:\(result.getInfo())")
-//                scalesModel.setResultInternal(finalResult, "stop Tapping")
-//                finalEventStatusSet = finalSet
-//            }
-//        }
-//        self.tapHandlers = []
-//        return finalEventStatusSet
-//    }
 
-//    func stopRecordingScale(_ ctx:String) {
-//        let duration = self.audioManager.microphoneRecorder?.recordedDuration
-//        Logger.shared.log(self, "Stop recording scale, duration:\(String(describing: duration)), ctx:\(ctx)")
-//        audioManager.stopRecording()
-//        DispatchQueue.main.async { [self] in
-//            //self.recordingAvailable = true
-//            setRunningProcess(.none)
-//        }
-//        if let onDone = self.onRecordingDoneCallback {
-//            onDone()
-//        }
-//    }
-    ///Place either the given or the students scale into the score.
-    ///For the student score hilight notes that are not in the scale.
-//    func placeScaleInScore(useGiven:Bool = true) {
-//        guard let score = self.score else {
-//            return
-//        }
-//        score.clear()
-//        if useGiven {
-//            setScore()
-//            return
-//        }
-//
-//        let piano = PianoKeyboardModel.shared
-//        var noteCount = 0
-//
-//        for direction in [0,1] {
-//            piano.mapScaleFingersToKeyboard(direction: direction)
-//            var start:Int
-//            var end:Int
-//            if direction == 0 {
-//                start = 0
-//                end = piano.pianoKeyModel.count - 1
-//            }
-//            else {
-//                start = piano.pianoKeyModel.count - 2
-//                end = 0
-//            }
-//
-//            for i in stride(from: start, through: end, by: direction == 0 ? 1 : -1) {
-//                let key = piano.pianoKeyModel[i]
-//                if direction == 0 {
-//                    if key.keyClickedState.tappedTimeAscending == nil {
-//                        continue
-//                    }
-//                }
-//                if direction == 1 {
-//                    if key.keyClickedState.tappedTimeDescending == nil {
-//                        continue
-//                    }
-//                }
-//                if noteCount > 0 && noteCount % 8 == 0 {
-//                    score.addBarLine()
-//                }
-//                let ts = score.createTimeSlice()
-//                let note = Note(timeSlice: ts, num: key.midi, staffNum: 0)
-//                note.setValue(value: 0.5)
-//                ts.addNote(n: note)
-//                if key.scaleNoteState == nil {
-//                    ts.setStatusTag(.pitchError)
-//                }
-//                noteCount += 1
-//            }
-//        }
-//        piano.mapScaleFingersToKeyboard(direction: 0)
-//    }
-//
     func forceRepaint() {
         DispatchQueue.main.async {
             self.forcePublish += 1

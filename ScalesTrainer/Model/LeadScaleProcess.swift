@@ -70,9 +70,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         let hand = scale.hands[0] //scalesModel.scale.hand == 2 ? 0 : scalesModel.scale.hand
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
-        //print("\n=====================IN ", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "MIDI", nextExpected.midi, "total", scale.scaleNoteState[hand].count)
-        //print("\n=====================IN ", "MIDI", midi, "Cnt", notifyCount, status, "Next", nextExpected.midi, "Correct", badges.totalCorrect)
-
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
@@ -106,9 +103,8 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         }
         else {
             //print("========>>>>>>>>>>>>>>>>", "Cnt", notifyCount, self.nextExpectedScaleIndex, scale.scaleNoteState[hand].count)
-            //if self.nextExpectedScaleIndex >= scale.scaleNoteState[hand].count  {
-                scalesModel.setRunningProcess(.none)
-            //}
+            ///🙄a random harmonic may trigger a stop
+            //scalesModel.setRunningProcess(.none)
         }
 
         //print("=====================OUT", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "total", scale.scaleNoteState[hand].count)

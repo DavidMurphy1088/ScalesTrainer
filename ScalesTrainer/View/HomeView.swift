@@ -25,27 +25,29 @@ import SwiftUI
 
 struct TitleView: View {
     @ObservedObject var settingsPublished = SettingsPublished.shared
-    let screenName: String?
+    let screenName: String
     
     func getTitle() -> String {
-        let name = self.settingsPublished.firstName
-        var title = "Scales Academy"
-        if name.count > 0 {
-            title = name + "'s " + title
+        var name = self.settingsPublished.firstName
+        if self.settingsPublished.firstName.count > 0 {
+            name += "'s "
         }
-        return title
+        name += screenName
+        return name
     }
 
     var body: some View {
+        let grade = "Trinity, Grade 1"
         VStack {
             Text(getTitle()).font(.title)
-            if Settings.shared.musicBoard.name.count > 0 {
-                Text("\(settingsPublished.board), Grade \(settingsPublished.grade)").font(.title2)
-            }
-            if let screenName = screenName {
-                Text(screenName).font(.title2)
-            }
+            //if Settings.shared.musicBoard.name.count > 0 {
+                Text("\(grade)").font(.title2)
+            //}
+//            if let screenName = screenName {
+//                Text(screenName).font(.title2)
+//            }
         }
+        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
     }
 }
 
@@ -78,28 +80,21 @@ struct UnderstandingScalesView: View {
 
 struct FamousQuotesView: View {
     var body: some View {
-        ZStack {
-            Image(UIGlobals.shared.getBackground())
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.top)
-                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+        VStack {
+            let quotes = FamousQuotes.shared
+            let quote = quotes.getQuote()
             VStack {
-                let quotes = FamousQuotes.shared
-                let quote = quotes.getQuote()
+                Text("Famous Quotes").font(.title).padding()
                 VStack {
-                    Text("Famous Quotes").font(.title).padding()
-                    VStack {
-                        Text(quote.0).italic().padding()
-                        Text(quote.1).padding()
-                    }
-                    .padding()
-                    Spacer()
+                    Text(quote.0).italic().padding()
+                    Text(quote.1).padding()
                 }
+                .padding()
+                Spacer()
             }
-            .commonFrameStyle(backgroundColor: .white)
-            .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
         }
+        .commonFrameStyle(backgroundColor: .white)
+        .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
     }
 }
 
@@ -183,7 +178,7 @@ struct ActivityModeView: View {
             Spacer()
         }
         //.background()
-        .commonFrameStyle(backgroundColor:UIGlobals.shared.purple)
+        .commonFrameStyle(backgroundColor:UIGlobals.shared.backgroundColor)
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
                 HelpView(topic: topic)
@@ -209,14 +204,14 @@ struct ActivityModeView: View {
                                                     view: AnyView(SpinWheelView(board: Settings.shared.musicBoard, boardGrade: Settings.shared.musicBoardGrade)),
                                                     imageName: "home_scales_wheel_1"))
                 
-                if Settings.shared.developerModeOn {
+                //if Settings.shared.developerModeOn {
                     menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
                                                         view: AnyView(PickAnyScaleView()),
                                                         imageName: "home_pick_any_scale_1"))
-                }
+                //}
                 
                 //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
-                menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
+                //menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
             }
         }
     }
@@ -229,22 +224,13 @@ struct HomeView: View {
         GeometryReader { geometry in
             VStack {
                 NavigationView {
-//                    ZStack {
-//                        Image(UIGlobals.shared.getBackground())
-//                            .resizable()
-//                            .scaledToFill()
-//                            .edgesIgnoringSafeArea(.top)
-//                            .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-
-                        VStack {
-                            Spacer()
-                            TitleView(screenName: "").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                            ActivityModeView()
-                            Spacer()
-                        }
-                        //.frame(width: geometry.size.width * UIGlobals.shared.screenWidth, height: geometry.size.height)
+                    VStack {
+                        Spacer()
+                        TitleView(screenName: "Scales Academy")
+                        ActivityModeView()
+                        Spacer()
                     }
-                //}
+                }
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }

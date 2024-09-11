@@ -7,47 +7,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686"
+            uuid = "F675E58C-43E7-44D1-84DF-9E51F4150F63"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "metronomeStart()"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
+            landmarkName = "followScaleProcess(hands:onDone:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686 - f5fed242a8f8a7a2"
+                  uuid = "F675E58C-43E7-44D1-84DF-9E51F4150F63 - f15365886c451d99"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.HearScalePlayer.metronomeStart() -&gt; ()"
+                  symbolName = "closure #1 @Sendable () -&gt; () in ScalesStar.ScalesModel.followScaleProcess(hands: Swift.Array&lt;Swift.Int&gt;, onDone: Swift.Optional&lt;(Swift.Bool) -&gt; ()&gt;) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/HearScalePlayer.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "48"
-                  endingLineNumber = "48"
-                  offsetFromSymbolStart = "2636">
+                  startingLineNumber = "450"
+                  endingLineNumber = "450"
+                  offsetFromSymbolStart = "2448">
                </Location>
                <Location
-                  uuid = "8AB42FF9-9069-478C-B340-A7B97F97F686 - f5fed242a8f8a7a2"
+                  uuid = "F675E58C-43E7-44D1-84DF-9E51F4150F63 - f15365886c451d99"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.HearScalePlayer.metronomeStart() -&gt; ()"
+                  symbolName = "closure #1 @Sendable () -&gt; () in ScalesStar.ScalesModel.followScaleProcess(hands: Swift.Array&lt;Swift.Int&gt;, onDone: Swift.Optional&lt;(Swift.Bool) -&gt; ()&gt;) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/HearScalePlayer.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "48"
-                  endingLineNumber = "48"
-                  offsetFromSymbolStart = "2332">
+                  startingLineNumber = "450"
+                  endingLineNumber = "450"
+                  offsetFromSymbolStart = "2472">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -55,48 +55,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0D7D7FD3-212A-426B-82A0-2764DC53EBC0"
+            uuid = "FE67F8CE-CFA4-4B0C-903D-60863EF35D40"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
-            landmarkName = "metronomeStart()"
+            startingLineNumber = "422"
+            endingLineNumber = "422"
+            landmarkName = "followScaleProcess(hands:onDone:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D7A9C216-AEFF-45E1-B427-3635C2658BC1"
+            uuid = "90AE6DA5-C556-45D1-A34D-2B91609ADF66"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "metronomeStart()"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
+            landmarkName = "followScaleProcess(hands:onDone:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6965382C-01C6-42B2-9A1A-B4A5D5026A08"
-            shouldBeEnabled = "No"
+            uuid = "2262A188-F119-41E4-9191-E0575B133376"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/HearScalePlayer.swift"
+            filePath = "ScalesTrainer/Model/LeadScaleProcess.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "36"
-            endingLineNumber = "36"
-            landmarkName = "metronomeStart()"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "notify(midi:status:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

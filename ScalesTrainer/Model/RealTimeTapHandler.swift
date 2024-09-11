@@ -55,13 +55,14 @@ class RealTimeTapHandler : TapHandlerProtocol {
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         class PossibleKeyPlayed {
-            let hand:Int
+            let keyboard:PianoKeyboardModel
             let keyIndex: Int
             let inScale:Bool
-            init(hand:Int, keyIndex:Int, inScale:Bool) {
-                self.hand = hand
+            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
+                //self.hand = hand
                 self.keyIndex = keyIndex
                 self.inScale = inScale
+                self.keyboard = keyboard
             }
         }
         var tapStatus:TapEventStatus = .none
@@ -81,18 +82,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
         let aboveFilter =  self.amplitudeFilter == nil || amplitude > AUValue(self.amplitudeFilter!)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         
-//        if let lastPlayedKey = lastPlayedKey {
-//            let deltaTime = Date().timeIntervalSince(lastPlayedKey.time)
-//            if deltaTime > 0.5 {
-//                //print("Deleted ================", lastPlayedKey.midi, deltaTime)
-//                self.lastPlayedKey = nil
-//            }
-//            else {
-//                if abs(midi - lastPlayedKey.midi) > 4 {
-//                    //tapStatus = .outsideRange
-//                }
-//            }
-//        }
         if aboveFilter {
             if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
                 consecutiveCount = 0
@@ -114,34 +103,29 @@ class RealTimeTapHandler : TapHandlerProtocol {
         }
         else {
             tapStatus = .belowAmplitudeFilter
-            //consecutiveCount = 0
         }
         
         ///Determine if the midi represents a keyboard key.
         ///Hilight the keyboard key
         if tapStatus == .none {
             var keyboards:[PianoKeyboardModel] = []
-            keyboards.append(PianoKeyboardModel.shared1)
-            if self.scale.getKeyboardCount() > 1 {
+            if self.scale.getKeyboardCount() == 1 {
+                let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                keyboards.append(PianoKeyboardModel.sharedRH)
+            }
+            else {
+                keyboards.append(PianoKeyboardModel.sharedLH)
+                keyboards.append(PianoKeyboardModel.sharedRH)
             }
             
             ///A played MIDI may be in both the LH and RH keyboards.
             ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
-            for _ in 0..<keyboards.count {
-                let keyboard:PianoKeyboardModel = PianoKeyboardModel.shared1
-//                if keyboards.count == 1 {
-//                    keyboard = scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-//                }
-//                else {
-//                    keyboard = i == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
-//                }
+            for i in 0..<keyboards.count {
+                let keyboard = keyboards[i]
                 if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
-                    let inScale = scale.getStateForMidi(handIndex: keyboard.hands[0], midi: midi, direction: 0) != nil
-                    possibleKeysPlayed.append(PossibleKeyPlayed(hand: keyboard.hands[0], keyIndex: index, inScale: inScale))
-//                    if inScale {
-//                        lastPlayedKey = LastPlayedKey(midi: midi)
-//                    }
+                    let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, direction: 0) != nil
+                    possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
                 }
             }
             
@@ -163,16 +147,17 @@ class RealTimeTapHandler : TapHandlerProtocol {
                         ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
                         //let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
                         for possibleKey in possibleKeysPlayed {
-                            let keyboard = PianoKeyboardModel.shared1 //possibleKey.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboard = possibleKey.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                            print("====Played", midi, keyboard.keyboardNumber)
                         }
                         tapStatus = .inScale
                     }
                     else {
                         ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
                         if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
-                            let keyboard = PianoKeyboardModel.shared1 //outOfScale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
+                            let keyboard = outOfScale.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
                         }

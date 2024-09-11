@@ -58,8 +58,10 @@ struct ScalesView: View {
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
     
-    @ObservedObject private var pianoKeyboard1: PianoKeyboardModel
-    @ObservedObject private var pianoKeyboard2: PianoKeyboardModel
+    //@ObservedObject private var pianoKeyboard1: PianoKeyboardModel
+    //@ObservedObject private var pianoKeyboard2: PianoKeyboardModel
+    //@ObservedObject private var pianoKeyboard3: PianoKeyboardModel
+
     @ObservedObject private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
 
@@ -80,12 +82,11 @@ struct ScalesView: View {
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
-    
-    let backgroundImage = UIGlobals.shared.getBackground()
-    
+        
     init(initialRunProcess:RunningProcess? = nil) {
-        self.pianoKeyboard1 = PianoKeyboardModel.shared1
-        self.pianoKeyboard2 = PianoKeyboardModel.shared2
+        //self.pianoKeyboardRH = PianoKeyboardModel.shared1
+        //self.pianoKeyboard2 = PianoKeyboardModel.shared2
+        //self.pianoKeyboard3 = PianoKeyboardModel.shared3
         self.initialRunProcess = initialRunProcess
     }
     
@@ -486,24 +487,39 @@ struct ScalesView: View {
                             ViewSettingsView().padding(.vertical, 0)
                             Spacer()
                         }
-                        .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+                        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
                     }
                 }
                 
                 if scalesModel.showKeyboard {
-                    //let cornerRadius:CGFloat = 6
                     VStack {
-                        PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard1, keyColor: Settings.shared.getKeyColor())
-                            .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                        .commonFrameStyle()
-                    }
-                    if scalesModel.scale.needsTwoKeyboards() {
-                        VStack {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
+                        if scalesModel.scale.needsTwoKeyboards() {
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                                .commonFrameStyle()
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
+                        else {
+                            let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                        }
+                        
+                        if let keyboard = PianoKeyboardModel.shared3 {
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                        }
+                            
                     }
+                    .commonFrameStyle()
+//                    if scalesModel.scale.needsTwoKeyboards() {
+//                        VStack {
+//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
+//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+//                                .commonFrameStyle()
+//                        }
+//                    }
+                    
                     if scalesModel.showLegend {
                         LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
                             .commonFrameStyle()
@@ -551,7 +567,7 @@ struct ScalesView: View {
             ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
             ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
             //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
         //}
         
         .sheet(isPresented: $helpShowing) {
@@ -588,10 +604,8 @@ struct ScalesView: View {
         ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
-            PianoKeyboardModel.shared1.resetKeysWerePlayedState()
-            pianoKeyboard1.keyboardAudioManager = audioManager
-//            PianoKeyboardModel.shared2.resetKeysWerePlayedState()
-//            pianoKeyboardLeftHand.keyboardAudioManager = audioManager
+            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             
             self.directionIndex = 0
             if let process = initialRunProcess {
@@ -603,6 +617,8 @@ struct ScalesView: View {
             }
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
+            //PianoKeyboardModel.shared3 = PianoKeyboardModel.shared1.join()
+            //PianoKeyboardModel.shared3!.debug11("PPPPP")
         }
         
         .onDisappear {

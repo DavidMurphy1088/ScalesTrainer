@@ -39,7 +39,6 @@ struct SettingsView: View {
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
-    let background = UIGlobals.shared.getBackground()
     
     struct SetKeyboardColourView: View {
         @Binding var parentColor: Color
@@ -60,7 +59,7 @@ struct SettingsView: View {
                             .labelsHidden()
                         Spacer()
                     }
-                    //PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
+                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
                 }
             }
             .onAppear() {
@@ -83,7 +82,7 @@ struct SettingsView: View {
                         Settings.shared.setKeyColor(keyColor)
                     })
                     .hilighted(backgroundColor: .gray)
-                    //.frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
+                    .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
                     Spacer()
                 }
                 //.border(Color.red)
@@ -226,37 +225,30 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
+
+            VStack {
+                TitleView(screenName: "Settings").commonFrameStyle()
                 VStack {
-                    Image(background)
-                        .resizable()
-                        .scaledToFill()
-                        .edgesIgnoringSafeArea(.top)
-                        .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+                    DetailedCustomSettingsView()
                 }
-                VStack {
-                    TitleView(screenName: "Settings").commonFrameStyle()
-                    VStack {
-                        DetailedCustomSettingsView()
-                    }
-                    .commonFrameStyle()
-                    .padding()
-                }
-                
-                .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
-                .onAppear() {
-                    leadInBarCount = settings.scaleLeadInBearCountIndex
-                    self.defaultOctaves = settings.defaultOctaves
-                    self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
-                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
-                    self.keyColor = Settings.shared.getKeyColor()
-                    self.backingPresetNumber = settings.backingSamplerPreset
-                    self.metronomeOn = settings.metronomeOn1
-                    self.developerModeOn = settings.developerModeOn
-                    self.badgeStyleNumber = settings.badgeStyle
-                }
+                .commonFrameStyle()
+                .padding()
+            }
+            
+            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
+            .onAppear() {
+                leadInBarCount = settings.scaleLeadInBearCountIndex
+                self.defaultOctaves = settings.defaultOctaves
+                self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
+                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
+                self.keyColor = Settings.shared.getKeyColor()
+                self.backingPresetNumber = settings.backingSamplerPreset
+                self.metronomeOn = settings.metronomeOn1
+                self.developerModeOn = settings.developerModeOn
+                self.badgeStyleNumber = settings.badgeStyle
             }
         }
+        
     }
 }
 

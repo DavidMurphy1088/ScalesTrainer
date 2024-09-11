@@ -2,20 +2,22 @@ import SwiftUI
 
 struct SpinWheelView: View {
     @ObservedObject var scalesModel = ScalesModel.shared
+    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     let board:MusicBoard
     let boardGrade:MusicBoardGrade
 
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
     @State private var maxRotations: Double = 1 // Max rotations per second
-    @State private var wheelSize: CGFloat = 0.8 // Size as a percentage of screen width
-    @State private var width = 0.0 //DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
+    
+    //@State private var wheelSize: CGFloat = UIScreen.main.bounds.size.height * (DeviceOrientationObserver().orientation.isAnyLandscape ? 0.1 : 0.1)
+    @State private var wheelSize: CGFloat = 0
+    //0.5 // Size as a percentage of screen width
+    //@State private var width = 0.0 //DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
 
     @State private var selectedScaleType = 0
     @State private var selectedScaleRoot = 0
     @State private var selectedHand = 0
-
-    @State var background = UIGlobals.shared.getBackground()
 
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
@@ -119,103 +121,94 @@ struct SpinWheelView: View {
     }
 
     var body: some View {
-        ZStack {
-            Image(background)
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.top)
-                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
+        VStack {
+            TitleView(screenName: "Spin The Scales Wheel").commonFrameStyle()
             VStack {
-                TitleView(screenName: nil).commonFrameStyle()
-                VStack {
-                    ZStack {
-                        GeometryReader { geometry in
-                            let handSizeFactor = 0.25
-                            let rootSizeFactor = 0.40
-                            let arrowPos = geometry.size.width * 0.92
-                            ZStack {
-                                if true {
-                                    SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
-                                        .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
-                                        .position(x: geometry.size.width * 0.5, y: geometry.size.height * 0.5)
-                                    /// Fixed arrow
-                                    Arrow()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.purple)
-                                        .position(x: arrowPos, y: geometry.size.height * 0.5)
-                                }
-                                else {
-                                    ///Three independent wheels
-                                    ///Scale Types
-                                    SegmentedCircleView(elements: getTypeNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
-                                        .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
-                                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                                    /// Fixed arrow
-                                    Arrow()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.purple)
-                                        .position(x: arrowPos, y: geometry.size.height / 2)
-                                    
-                                    ///Scale Roots
-                                    SegmentedCircleView(elements: getRootNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width * rootSizeFactor)
-                                        .frame(width: wheelSize * geometry.size.width * rootSizeFactor, height: wheelSize * geometry.size.width * rootSizeFactor)
-                                        .position(x: geometry.size.width * 0.74, y: geometry.size.height * 0.25)
-                                    Arrow()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.purple)
-                                        .position(x: arrowPos, y: geometry.size.height * 0.25)
-                                    
-                                    ///Randomise which hand
-                                    SegmentedCircleView(elements: ["Left", "Right"], rotation: rotation, wheelSize: wheelSize * geometry.size.width * handSizeFactor)
-                                        .frame(width: wheelSize * geometry.size.width * handSizeFactor, height: wheelSize * geometry.size.width * handSizeFactor)
-                                        .position(x: geometry.size.width * 0.80, y: geometry.size.height * 0.75)
-                                    Arrow()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.purple)
-                                        .position(x: arrowPos, y: geometry.size.height * 0.75)
-                                }
-
+                ZStack {
+                    GeometryReader { geometry in
+                        let handSizeFactor = 0.25
+                        let rootSizeFactor = 0.40
+                        let arrowPos = geometry.size.width * 0.92
+                        ZStack {
+                            if true {
+                                SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
+                                    .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
+                                    .position(x: geometry.size.width * 0.5, y: geometry.size.height * 0.5)
+                                /// Fixed arrow
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height * 0.5)
+                            }
+                            else {
+                                ///Three independent wheels
+                                ///Scale Types
+                                SegmentedCircleView(elements: getTypeNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
+                                    .frame(width: wheelSize * geometry.size.width, height: wheelSize * geometry.size.width)
+                                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                                /// Fixed arrow
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height / 2)
+                                
+                                ///Scale Roots
+                                SegmentedCircleView(elements: getRootNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width * rootSizeFactor)
+                                    .frame(width: wheelSize * geometry.size.width * rootSizeFactor, height: wheelSize * geometry.size.width * rootSizeFactor)
+                                    .position(x: geometry.size.width * 0.74, y: geometry.size.height * 0.25)
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height * 0.25)
+                                
+                                ///Randomise which hand
+                                SegmentedCircleView(elements: ["Left", "Right"], rotation: rotation, wheelSize: wheelSize * geometry.size.width * handSizeFactor)
+                                    .frame(width: wheelSize * geometry.size.width * handSizeFactor, height: wheelSize * geometry.size.width * handSizeFactor)
+                                    .position(x: geometry.size.width * 0.80, y: geometry.size.height * 0.75)
+                                Arrow()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.purple)
+                                    .position(x: arrowPos, y: geometry.size.height * 0.75)
                             }
                         }
-                        .edgesIgnoringSafeArea(.all)
                     }
-
-                    if [SpinState.notStarted, SpinState.selectedBet].contains(scalesModel.spinState) {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Button(action: {
-                                    //startSpinning3Wheels(scaleTypes: self.getTypeNames(),scaleRoots: self.getRootNames(),hands: [1,0])
-                                    startSpinningWheel(scaleNames: getScaleNames())
-                                }) {
-                                    HStack {
-                                        Text(" Spin The Wheel ").padding().font(.title2).hilighted(backgroundColor: .blue)
-                                    }
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
-
-                    if scalesModel.spinState == SpinState.spunAndStopped {
-                        let scale = scalesModel.scale
-                        NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
-                            let name = scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:true, articulation:true)
-                            Text(" Go To Scale \(name) - Good Luck 😊").padding()
-                                .font(.title2)
-                                .hilighted(backgroundColor: .blue)
-                        }
-                    }
-                    Spacer()
+                    .edgesIgnoringSafeArea(.all)
                 }
-                .commonFrameStyle(backgroundColor: .white)
+
+                if [SpinState.notStarted, SpinState.selectedBet].contains(scalesModel.spinState) {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Button(action: {
+                                //startSpinning3Wheels(scaleTypes: self.getTypeNames(),scaleRoots: self.getRootNames(),hands: [1,0])
+                                startSpinningWheel(scaleNames: getScaleNames())
+                            }) {
+                                HStack {
+                                    Text(" Spin The Wheel ").padding().font(.title2).hilighted(backgroundColor: .blue)
+                                }
+                            }
+                        }
+                        Spacer()
+                    }
+                }
+
+                if scalesModel.spinState == SpinState.spunAndStopped {
+                    let scale = scalesModel.scale
+                    NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
+                        let name = scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
+                        Text(" Go To Scale \(name) - Good Luck 😊").padding()
+                            .font(.title2)
+                            .hilighted(backgroundColor: .blue)
+                    }
+                }
+                Spacer()
             }
-            .frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            //.frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
         }
         .onAppear() {
             scalesModel.setSpinState1(.notStarted)
-            background = UIGlobals.shared.getBackground()
-            width = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.45 : 0.9
+            self.wheelSize = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.55 : 0.9
         }
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)

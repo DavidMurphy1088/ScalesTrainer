@@ -96,12 +96,12 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
 
 public enum ScaleMotion: CaseIterable, Comparable, Codable {
     case similarMotion
-    case contraryMotion
+    case contraryMotion1
     var description: String {
         switch self {
         case .similarMotion:
             return "Similar Motion"
-        case .contraryMotion:
+        case .contraryMotion1:
             return "Contrary Motion"
         }
     }
@@ -336,7 +336,7 @@ public class Scale : Codable {
             scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
         }
         
-        if scaleMotion == .contraryMotion {
+        if scaleMotion == .contraryMotion1 {
             ///For the left hand interchange the two halves of the scale
             let middleIndex = (scaleNoteState[1].count / 2) + 1
             let firstPart = scaleNoteState[1].prefix(middleIndex)
@@ -417,7 +417,7 @@ public class Scale : Codable {
             return 1
         }
         else {
-            return self.scaleMotion == .contraryMotion ? 2 : 1
+            return self.scaleMotion == .contraryMotion1 ? 1 : 2
         }
     }
     
@@ -465,7 +465,7 @@ public class Scale : Codable {
     }
     
     func needsTwoKeyboards() -> Bool {
-        return self.hands.count > 1 && self.scaleMotion != .contraryMotion
+        return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
     func debug121(_ msg:String)  {
@@ -862,7 +862,7 @@ public class Scale : Codable {
 
     func getScaleName(handFull:Bool, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        if scaleMotion == .contraryMotion {
+        if scaleMotion == .contraryMotion1 {
             name += " " + scaleMotion.description
         }
         if self.hands.count == 1 {

@@ -22,9 +22,9 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyWasPlayedState:PianoKeyPlayedState
     
     /// The note in the scale to which the key currently maps. The mapping changes between ascending and descending
-    private(set) var scaleNoteState:ScaleNoteState?
-    //var scaleNoteState1:ScaleNoteState?
-    
+    //private(set) var scaleNoteState:ScaleNoteState?
+    public var scaleNoteState:ScaleNoteState?
+
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
@@ -50,7 +50,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.scaleNoteState = state
     }
     
-    public func setKeyPlaying(ascending:Int, hilight:Bool, scoreNumber:Int? = nil) {
+    public func setKeyPlaying(ascending:Int, hilight:Bool) {
         if hilight {
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
@@ -64,14 +64,12 @@ public class PianoKeyModel: Identifiable, Hashable {
             self.keyboardModel.redraw()
 
             ///Update the score if its showing
-            if let scoreNumber = scoreNumber {
-                if let score = scalesModel.scores[scoreNumber] {
-                    if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
-                        DispatchQueue.global(qos: .background).async {
-                            usleep(1000000 * UInt32(self.keySoundingSeconds))
-                            DispatchQueue.main.async {
-                                staffNote.setShowIsPlaying(false)
-                            }
+            if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
+                if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
+                    DispatchQueue.global(qos: .background).async {
+                        usleep(1000000 * UInt32(self.keySoundingSeconds))
+                        DispatchQueue.main.async {
+                            staffNote.setShowIsPlaying(false)
                         }
                     }
                 }

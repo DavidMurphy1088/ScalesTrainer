@@ -3,7 +3,7 @@ import SwiftUI
 public struct CalibrationView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
-    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.shared1
+    @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedRH
     
     let audioManager = AudioManager.shared
     @State private var amplitudeFilter:Double = 0
@@ -207,7 +207,7 @@ public struct CalibrationView: View {
         .onAppear() {
 //            let octaves = ScalesTrainerApp.runningInXcode() ? 1 : 2
 //            setScale(octaves: octaves, hand: 0)
-            PianoKeyboardModel.shared1.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             self.amplitudeFilter = Settings.shared.amplitudeFilter
             self.requiredConsecutiveCount = Settings.shared.requiredConsecutiveCount
         }
@@ -215,7 +215,7 @@ public struct CalibrationView: View {
             self.audioManager.stopRecording()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.shared1)
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedRH)
         }
     }
 }

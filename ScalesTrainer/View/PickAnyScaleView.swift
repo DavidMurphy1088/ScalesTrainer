@@ -20,7 +20,6 @@ struct PickAnyScaleView: View {
     @State var octaves:[String] = ["1", "2", "3","4"]
     @State var indexOctave:Int = 0
 
-    let backgroundImage = UIGlobals.shared.getBackground()
     init() {
     }
     
@@ -50,7 +49,7 @@ struct PickAnyScaleView: View {
             case 0:
                 scaleMotion = .similarMotion
             default:
-                scaleMotion = .contraryMotion
+                scaleMotion = .contraryMotion1
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: self.indexOctave+1, hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)
@@ -85,7 +84,7 @@ struct PickAnyScaleView: View {
             case 0:
                 scaleMotion = .similarMotion
             default:
-                scaleMotion = .contraryMotion
+                scaleMotion = .contraryMotion1
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
                           hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)
@@ -95,142 +94,132 @@ struct PickAnyScaleView: View {
     }
     
     var body: some View {
-        ZStack {
-            Image(backgroundImage)
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.top)
-                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-            
+        VStack {
+            TitleView(screenName: "Pick Any Scale").commonFrameStyle()
             VStack {
-                TitleView(screenName: "").commonFrameStyle()
+                VStack {
+                    Text("Major Scales").font(.title).padding()
+                    HStack {
+                        Text("Scale:").font(.title2).padding()
+                        Picker("Select Value", selection: $rootIndexMajor) {
+                            ForEach(rootsMajor.indices, id: \.self) { index in
+                                Text("\(rootsMajor[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+
+                        Text("Scale Type:").font(.title2).padding()
+                        Picker("Select Value", selection: $typeIndexMajor) {
+                            ForEach(typesMajor.indices, id: \.self) { index in
+                                Text("\(typesMajor[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        
+                        Text("Motion:").font(.title2).padding()
+                        Picker("Select Value", selection: $motionIndex) {
+                            ForEach(scaleMotions.indices, id: \.self) { index in
+                                Text("\(scaleMotions[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    
+                    HStack {
+                        Text("Hand:").font(.title2).padding()
+                        Picker("Select Value", selection: $indexHands) {
+                            ForEach(hands.indices, id: \.self) { index in
+                                Text("\(hands[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+
+                        Text("Octaves:").font(.title2).padding()
+                        Picker("Select Value", selection: $indexOctave) {
+                            ForEach(octaves.indices, id: \.self) { index in
+                                Text("\(octaves[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+
+                    let scale = setModelScale(major: true)
+                    NavigationLink(destination: ScalesView()) {
+                        HStack {
+                            let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                            Text("  \(name)  ").font(.title2).padding()
+                        }
+                        .hilighted(backgroundColor: .blue)
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        let _ = setModelScale(major: true)
+                    })
+                }
+                .commonFrameStyle()
+                .padding()
                 
                 VStack {
-                    VStack {
-                        Text("Major Scales").font(.title).padding()
-                        HStack {
-                            Text("Scale Root:").font(.title2).padding()
-                            Picker("Select Value", selection: $rootIndexMajor) {
-                                ForEach(rootsMajor.indices, id: \.self) { index in
-                                    Text("\(rootsMajor[index])")
-                                }
+                    Text("Minor Scales").font(.title).padding()
+                    HStack {
+                        Text("Scale:").font(.title2).padding()
+                        Picker("Select Value", selection: $rootIndexMinor) {
+                            ForEach(rootsMinor.indices, id: \.self) { index in
+                                Text("\(rootsMinor[index])")
                             }
-                            .pickerStyle(.menu)
-
-                            Text("Scale Type:").font(.title2).padding()
-                            Picker("Select Value", selection: $typeIndexMajor) {
-                                ForEach(typesMajor.indices, id: \.self) { index in
-                                    Text("\(typesMajor[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            
-                            Text("Motion:").font(.title2).padding()
-                            Picker("Select Value", selection: $motionIndex) {
-                                ForEach(scaleMotions.indices, id: \.self) { index in
-                                    Text("\(scaleMotions[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
                         }
+                        .pickerStyle(.menu)
+
+                        Text("Scale Type:").font(.title2).padding()
+                        Picker("Select Value", selection: $typeIndexMinor) {
+                            ForEach(typesMinor.indices, id: \.self) { index in
+                                Text("\(typesMinor[index])")
+                            }
+                        }
+                        .pickerStyle(.menu)
                         
-                        HStack {
-                            Text("Hand:").font(.title2).padding()
-                            Picker("Select Value", selection: $indexHands) {
-                                ForEach(hands.indices, id: \.self) { index in
-                                    Text("\(hands[index])")
-                                }
+                        Text("Motion:").font(.title2).padding()
+                        Picker("Select Value", selection: $motionIndex) {
+                            ForEach(scaleMotions.indices, id: \.self) { index in
+                                Text("\(scaleMotions[index])")
                             }
-                            .pickerStyle(.menu)
-
-                            Text("Octaves:").font(.title2).padding()
-                            Picker("Select Value", selection: $indexOctave) {
-                                ForEach(octaves.indices, id: \.self) { index in
-                                    Text("\(octaves[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
                         }
-
-                        let scale = setModelScale(major: true)
-                        NavigationLink(destination: ScalesView()) {
-                            HStack {
-                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
-                                Text("  \(name)  ").font(.title2).padding()
-                            }
-                            .hilighted(backgroundColor: .blue)
-                        }
-                        .simultaneousGesture(TapGesture().onEnded {
-                            let _ = setModelScale(major: true)
-                        })
+                        .pickerStyle(.menu)
                     }
-                    .commonFrameStyle()
-                    .padding()
-                    
-                    VStack {
-                        Text("Minor Scales").font(.title).padding()
-                        HStack {
-                            Text("Scale Root:").font(.title2).padding()
-                            Picker("Select Value", selection: $rootIndexMinor) {
-                                ForEach(rootsMinor.indices, id: \.self) { index in
-                                    Text("\(rootsMinor[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
 
-                            Text("Scale Type:").font(.title2).padding()
-                            Picker("Select Value", selection: $typeIndexMinor) {
-                                ForEach(typesMinor.indices, id: \.self) { index in
-                                    Text("\(typesMinor[index])")
-                                }
+                    HStack {
+                        Text("Hand:").font(.title2).padding()
+                        Picker("Select Value", selection: $indexHands) {
+                            ForEach(hands.indices, id: \.self) { index in
+                                Text("\(hands[index])")
                             }
-                            .pickerStyle(.menu)
-                            
-                            Text("Motion:").font(.title2).padding()
-                            Picker("Select Value", selection: $motionIndex) {
-                                ForEach(scaleMotions.indices, id: \.self) { index in
-                                    Text("\(scaleMotions[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
                         }
-
-                        HStack {
-                            Text("Hand:").font(.title2).padding()
-                            Picker("Select Value", selection: $indexHands) {
-                                ForEach(hands.indices, id: \.self) { index in
-                                    Text("\(hands[index])")
-                                }
+                        .pickerStyle(.menu)
+                        
+                        Text("Octaves:").font(.title2).padding()
+                        Picker("Select Value", selection: $indexOctave) {
+                            ForEach(octaves.indices, id: \.self) { index in
+                                Text("\(octaves[index])")
                             }
-                            .pickerStyle(.menu)
-                            
-                            Text("Octaves:").font(.title2).padding()
-                            Picker("Select Value", selection: $indexOctave) {
-                                ForEach(octaves.indices, id: \.self) { index in
-                                    Text("\(octaves[index])")
-                                }
-                            }
-                            .pickerStyle(.menu)
                         }
-
-                        let scale = setModelScale(major: false)
-                        NavigationLink(destination: ScalesView()) {
-                            HStack {
-                                let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
-                                Text(" \(name) ").font(.title2).padding()
-                            }
-                            .hilighted(backgroundColor: .blue)
-                        }
-                        .simultaneousGesture(TapGesture().onEnded {
-                            let _ = setModelScale(major: false)
-                        })
+                        .pickerStyle(.menu)
                     }
-                    .commonFrameStyle()
-                    .padding()
+
+                    let scale = setModelScale(major: false)
+                    NavigationLink(destination: ScalesView()) {
+                        HStack {
+                            let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                            Text(" \(name) ").font(.title2).padding()
+                        }
+                        .hilighted(backgroundColor: .blue)
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        let _ = setModelScale(major: false)
+                    })
                 }
-                .commonFrameStyle(backgroundColor: .white)
+                .commonFrameStyle()
+                .padding()
+                Spacer()
             }
-            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
             .onAppear() {
                 if self.typesMinor.count == 0 {
                     for scale in ScaleType.allCases {
@@ -248,6 +237,8 @@ struct PickAnyScaleView: View {
                 }
             }
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+        //.border(.red, width: 2)
+        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     }
 }

@@ -109,7 +109,6 @@ struct Star: Identifiable {
 struct PracticeChartView: View {
     @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
-    let background = UIGlobals.shared.getBackground()
     @State var minorTypeIndex:Int = 0
     @State private var reloadTrigger = false
     @State private var stars: [Star] = []
@@ -207,7 +206,7 @@ struct PracticeChartView: View {
                         Spacer()
                     }
                 }
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
 
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
@@ -245,7 +244,7 @@ struct PracticeChartView: View {
                 .id(reloadTrigger)
                 
             }
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.purple)
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
             //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
 //            ForEach(stars) { star in
 //                Image(systemName: "star.fill")

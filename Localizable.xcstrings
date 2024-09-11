@@ -37,16 +37,6 @@
     "%@" : {
 
     },
-    "%@, Grade %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, Grade %2$@"
-          }
-        }
-      }
-    },
     "%lld" : {
 
     },
@@ -305,10 +295,10 @@
     "Scale Lead in Count" : {
 
     },
-    "Scale Root:" : {
+    "Scale Type:" : {
 
     },
-    "Scale Type:" : {
+    "Scale:" : {
 
     },
     "Scales Academy" : {

@@ -146,7 +146,7 @@ struct DeveloperView: View {
             Spacer()
         }
         .sheet(isPresented: $showingTapData) {
-            TapDataView(keyboardModel: PianoKeyboardModel.shared1)
+            TapDataView(keyboardModel: PianoKeyboardModel.sharedRH)
         }
     }
 }
@@ -169,7 +169,7 @@ class TabSelectionManager: ObservableObject {
                     ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
                                                              scaleType: .major,
                                                              scaleMotion: .similarMotion,
-                                                             octaves: 1, hands: [0,1],
+                                                             octaves: 1, hands: [0],
                                                              minTempo: 70, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }

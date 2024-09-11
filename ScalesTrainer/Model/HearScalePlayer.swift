@@ -28,10 +28,10 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             
             let keyboard:PianoKeyboardModel
             if scaleHandIndex == 0 {
-                keyboard = PianoKeyboardModel.shared1
+                keyboard = PianoKeyboardModel.sharedRH
             }
             else {
-                keyboard = scale.needsTwoKeyboards() ? PianoKeyboardModel.shared2 : PianoKeyboardModel.shared1
+                keyboard = PianoKeyboardModel.sharedLH //scale.needsTwoKeyboards() ? PianoKeyboardModel.shared2 : PianoKeyboardModel.shared1
             }
             for i in 0..<scale.scaleNoteState[scaleHand].count {
                 let scaleNoteState = ScalesModel.shared.scale.scaleNoteState[scaleHand][i]
@@ -68,7 +68,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         for note in self.notesAndKeys {
             let (sequence, scaleNoteState, key, direction) = note
             if sequence == self.nextNote {
-                key.setKeyPlaying(ascending: direction, hilight: true, scoreNumber: key.keyboardModel.keyboardNumber)
+                key.setKeyPlaying(ascending: direction, hilight: true)
                 sampler?.play(noteNumber: UInt8(scaleNoteState.midi), velocity: 64, channel: 0)
                 waitBeats = Int(scaleNoteState.value) - 1
             }
