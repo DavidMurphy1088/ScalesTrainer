@@ -98,6 +98,9 @@ struct BadgeView: View {
     
     func imageName(imageSet:Int, n:Int) -> String {
         var name = ""
+        if n >= imageIds.count {
+            return ""
+        }
         if imageSet == 1 {
             switch imageIds[n]  {
             case 1: name = "pet_catface"
@@ -112,7 +115,6 @@ struct BadgeView: View {
             default: name = "bug_beetle"
             }
         }
-        print("========", "n", n, "image[n]", imageIds[n], imageIds, "name", name)
         return name
     }
     

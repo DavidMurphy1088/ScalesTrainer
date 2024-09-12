@@ -102,12 +102,9 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             nextExpectedScaleIndex += 1
         }
         else {
-            //print("========>>>>>>>>>>>>>>>>", "Cnt", notifyCount, self.nextExpectedScaleIndex, scale.scaleNoteState[hand].count)
             ///🙄a random harmonic may trigger a stop
             //scalesModel.setRunningProcess(.none)
         }
-
-        //print("=====================OUT", "Cnt", notifyCount, status, "Next", self.nextExpectedScaleIndex, "total", scale.scaleNoteState[hand].count)
         notifyCount += 1
     }
 }

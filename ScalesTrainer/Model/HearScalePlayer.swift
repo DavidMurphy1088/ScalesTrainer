@@ -22,26 +22,31 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
 
         ///Make the list of notes to play along with the correct keyboard key
         ///A two hand scale may be played in 1 or 2 keyboards (depending on the scale type)
-        for scaleHandIndex in 0..<scale.hands.count {
-            let scaleHand = scale.hands[scaleHandIndex]
+        for scaleHand in [0,1] {
+            //let scaleHand = scale.hands[scaleHandIndex]
             var direction = 0
-            
-            let keyboard:PianoKeyboardModel
-            if scaleHandIndex == 0 {
-                keyboard = PianoKeyboardModel.sharedRH
+            var keyboard:PianoKeyboardModel? = nil
+            if scaleHand == 0 {
+                if scale.hands.contains(scaleHand) {
+                    keyboard = PianoKeyboardModel.sharedRH
+                }
             }
             else {
-                keyboard = PianoKeyboardModel.sharedLH //scale.needsTwoKeyboards() ? PianoKeyboardModel.shared2 : PianoKeyboardModel.shared1
-            }
-            for i in 0..<scale.scaleNoteState[scaleHand].count {
-                let scaleNoteState = ScalesModel.shared.scale.scaleNoteState[scaleHand][i]
-                let keyIndex = keyboard.getKeyIndexForMidi(midi: scaleNoteState.midi, direction:direction)
-                if let keyIndex = keyIndex {
-                    let key=keyboard.pianoKeyModel[keyIndex]
-                    self.notesAndKeys.append((i, scaleNoteState, key, direction))
+                if scale.hands.contains(scaleHand) {
+                    keyboard = PianoKeyboardModel.sharedLH //scale.needsTwoKeyboards() ? PianoKeyboardModel.shared2 : PianoKeyboardModel.shared1
                 }
-                if i == ScalesModel.shared.scale.scaleNoteState[scaleHand].count / 2 {
-                    direction = 1
+            }
+            if let keyboard = keyboard {
+                for i in 0..<scale.scaleNoteState[scaleHand].count {
+                    let scaleNoteState = ScalesModel.shared.scale.scaleNoteState[scaleHand][i]
+                    let keyIndex = keyboard.getKeyIndexForMidi(midi: scaleNoteState.midi, direction:direction)
+                    if let keyIndex = keyIndex {
+                        let key=keyboard.pianoKeyModel[keyIndex]
+                        self.notesAndKeys.append((i, scaleNoteState, key, direction))
+                    }
+                    if i == ScalesModel.shared.scale.scaleNoteState[scaleHand].count / 2 {
+                        direction = 1
+                    }
                 }
             }
         }

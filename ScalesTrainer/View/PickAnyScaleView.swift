@@ -49,7 +49,7 @@ struct PickAnyScaleView: View {
             case 0:
                 scaleMotion = .similarMotion
             default:
-                scaleMotion = .contraryMotion1
+                scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: self.indexOctave+1, hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)
@@ -84,7 +84,7 @@ struct PickAnyScaleView: View {
             case 0:
                 scaleMotion = .similarMotion
             default:
-                scaleMotion = .contraryMotion1
+                scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
                           hands: [self.indexHands], minTempo: 90, dynamicType: .mf, articulationType: .legato)

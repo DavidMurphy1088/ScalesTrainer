@@ -23,7 +23,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     /// The note in the scale to which the key currently maps. The mapping changes between ascending and descending
     //private(set) var scaleNoteState:ScaleNoteState?
-    public var scaleNoteState:ScaleNoteState?
+    private(set) var scaleNoteState:ScaleNoteState?
 
     /// The key was just played and its note is sounding
     var keyIsSounding = false

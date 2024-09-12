@@ -111,7 +111,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
             var keyboards:[PianoKeyboardModel] = []
             if self.scale.getKeyboardCount() == 1 {
                 let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                keyboards.append(PianoKeyboardModel.sharedRH)
+                keyboards.append(keyboard)
             }
             else {
                 keyboards.append(PianoKeyboardModel.sharedLH)
@@ -150,7 +150,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
                             let keyboard = possibleKey.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
                             keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
-                            print("====Played", midi, keyboard.keyboardNumber)
                         }
                         tapStatus = .inScale
                     }

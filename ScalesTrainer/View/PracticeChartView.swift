@@ -1,4 +1,9 @@
 import SwiftUI
+import Foundation
+import Combine
+import Accelerate
+import AVFoundation
+import AudioKit
 
 struct CellView: View {
     let column:Int
@@ -98,20 +103,13 @@ struct CellView: View {
     }
 }
 
-struct Star: Identifiable {
-    var id: UUID
-    var xPosition: CGFloat
-    var yPosition: CGFloat
-    var size: CGFloat
-    var duration: Double
-}
 
 struct PracticeChartView: View {
     @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
     @State var minorTypeIndex:Int = 0
     @State private var reloadTrigger = false
-    @State private var stars: [Star] = []
+    @State private var redrawCounter = 0
     
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
@@ -130,29 +128,22 @@ struct PracticeChartView: View {
         return reorderedDayNames
     }
     
-    // Function to add a falling star
-    private func addFallingStar() {
-        let star = Star(
-            id: UUID(),
-            xPosition: CGFloat.random(in: 0...UIScreen.main.bounds.width),
-            yPosition: -50, // Start above the top of the view
-            size: CGFloat.random(in: 10...30),
-            duration: Double.random(in: 2...4) // Fall duration
-        )
+    func doShuffle() {
+//        var tickTimer:AnyCancellable?
+//        var delay = (60.0 / 60x) //* 1000000
+//        //DispatchQueue.global(qos: .background).async { [self] in
+//            tickTimer = Timer.publish(every: delay, on: .main, in: .common)
+//                .autoconnect()
+//                .sink { _ in
+//                    practiceChart.shuffle()
+//                    self.redrawCounter += 1
+//                }
+//        //}
         
-        stars.append(star)
-
-        // Move the star down the screen
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if let index = stars.firstIndex(where: { $0.id == star.id }) {
-                stars[index].yPosition = UIScreen.main.bounds.height + 50 // End below the bottom of the view
-            }
+        for i in 0..<16 {
+            practiceChart.shuffle()
         }
-        
-        // Remove the star after it has finished falling
-        DispatchQueue.main.asyncAfter(deadline: .now() + star.duration) {
-            stars.removeAll(where: { $0.id == star.id })
-        }
+        self.redrawCounter += 1
     }
     
     var body: some View {
@@ -165,19 +156,13 @@ struct PracticeChartView: View {
         let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
         let minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
         
-//        ZStack {
-//            Image(background)
-//                .resizable()
-//                .scaledToFill()
-//                .edgesIgnoringSafeArea(.top)
-//                .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-
             VStack {
                 VStack(spacing: 0) {
                     TitleView(screenName: "Practice Chart").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     HStack {
                         Spacer()
                         Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
+                        Text("\(self.redrawCounter)").opacity(0.0).padding(0)
                         Picker("Select Value", selection: $minorTypeIndex) {
                             ForEach(minorScaleTypes.indices, id: \.self) { index in
                                 Text("\(minorScaleTypes[index])")
@@ -191,15 +176,16 @@ struct PracticeChartView: View {
                             case 1:newType = .naturalMinor
                             default:newType = .melodicMinor
                             }
+                            practiceChart.minorScaleType = minorTypeIndex
                             practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
                             self.reloadTrigger = !self.reloadTrigger
+                            
                         })
                         Spacer()
                         Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
                         Button(action: {
-                            addFallingStar()
-                            practiceChart.shuffle()
-                        }) {
+                            doShuffle()
+                       }) {
                             Text("Shuffle Practice Chart")
                         }
                         .padding()
@@ -208,57 +194,46 @@ struct PracticeChartView: View {
                 }
                 .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
 
-                ScrollView(.vertical) {
-                    VStack(spacing: 0) {
-                        
-                        // Column Headers
-                        HStack(spacing: 0) {
-                            ForEach(0..<practiceChart.columns, id: \.self) { index in
-                                VStack {
-                                    Text(self.daysOfWeek[index])
-                                }
-                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                .background(Color.gray)
-                                .foregroundColor(.white).bold()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 3)
-                                )
-                                .padding(cellPadding)
-                            }
-                        }
-                        
-                        ///Rows
-                        ForEach(0..<practiceChart.rows, id: \.self) { row in
+                    ScrollView(.vertical) {
+                        VStack(spacing: 0) {
+                            
+                            // Column Headers
                             HStack(spacing: 0) {
-                                ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
-                                             cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
+                                ForEach(0..<practiceChart.columns, id: \.self) { index in
+                                    VStack {
+                                        Text(self.daysOfWeek[index])
+                                    }
+                                    .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
+                                    .background(Color.gray)
+                                    .foregroundColor(.white).bold()
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.white, lineWidth: 3)
+                                    )
                                     .padding(cellPadding)
                                 }
                             }
+                            
+                            ///Rows
+                            ForEach(0..<practiceChart.rows, id: \.self) { row in
+                                HStack(spacing: 0) {
+                                    ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                        CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
+                                                 cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
+                                        .padding(cellPadding)
+                                    }
+                                }
+                            }
                         }
-                    }
+                    .id(reloadTrigger)
                 }
-                .id(reloadTrigger)
                 
             }
             .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
-            //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
-//            ForEach(stars) { star in
-//                Image(systemName: "star.fill")
-//                //Circle()
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: star.size, height: star.size)
-//                    .foregroundColor(.yellow)
-//                    .position(x: star.xPosition, y: star.yPosition)
-//                    .animation(.linear(duration: star.duration))
-//            }
-        //}
-        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        
         .onAppear() {
+            minorTypeIndex = practiceChart.minorScaleType
             practiceChart.getScales("View OnAppear")
         }
         .onDisappear() {

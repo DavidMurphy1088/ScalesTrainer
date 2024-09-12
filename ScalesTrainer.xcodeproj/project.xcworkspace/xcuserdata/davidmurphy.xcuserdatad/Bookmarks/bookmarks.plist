@@ -63,7 +63,7 @@
 					<key>StartingLineNumber</key>
 					<string>253</string>
 					<key>Timestamp</key>
-					<string>747741223.057887</string>
+					<string>747815357.689396</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -86,9 +86,9 @@
     
 </string>
 				<key>trailing</key>
-				<string>        
-        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
+				<string>        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
+            self.audioManager.stopRecording()
 </string>
 			</dict>
 			<key>type</key>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>408</string>
+					<string>407</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>407</string>
+					<string>406</string>
 					<key>Timestamp</key>
-					<string>747741441.943877</string>
+					<string>747815357.689384</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>597</string>
+					<string>595</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>596</string>
+					<string>594</string>
 					<key>Timestamp</key>
-					<string>747742030.2058769</string>
+					<string>747820738.480762</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

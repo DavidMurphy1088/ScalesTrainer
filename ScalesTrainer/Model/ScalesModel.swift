@@ -171,7 +171,7 @@ public class ScalesModel : ObservableObject {
             self.selectedDirection = index
             PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
             PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
+            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 1)
             PianoKeyboardModel.sharedLH.redraw()
         }
     }
@@ -242,8 +242,8 @@ public class ScalesModel : ObservableObject {
     
     //init(musicBoardGrade:MusicBoardGrade) {
     init() {
-        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [1],
-                           minTempo: 90, dynamicType: .mf, articulationType: .legato)
+        self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
+                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
             //PianoKeyboardModel.shared1.configureKeyboardForScale(scale: self.scale, handIndex: self.scale.hands[0])
@@ -252,7 +252,6 @@ public class ScalesModel : ObservableObject {
     }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
-        
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopRecording()
@@ -451,7 +450,6 @@ public class ScalesModel : ObservableObject {
                     keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
                     pianoKey.hilightFollowingKey = true
                     keyboardSemaphore.keyboard.redraw()
-                    //print("============added semaphore for hand", keyboardSemaphore.keyboard.hand, note.midi)
                     ///Listen for piano key pressed
                     pianoKey.wasPlayedCallback = {
                         keyboardSemaphore.semaphore.signal()
@@ -598,11 +596,11 @@ public class ScalesModel : ObservableObject {
         let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
         Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
-        ///Set the single RH or RH keyboard
+        ///Set the single RH and RH keyboard
         ///Contrary motion has both hands on the first eyboard
         PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, hand: 0)
         PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, hand: 1)
-
+        
         self.setSelectedDirection(0)
         PianoKeyboardModel.sharedRH.redraw()
         PianoKeyboardModel.sharedLH.redraw()

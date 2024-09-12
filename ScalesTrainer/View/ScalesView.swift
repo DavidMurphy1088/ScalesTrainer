@@ -127,7 +127,7 @@ struct ScalesView: View {
             }
             .padding()
             
-            Text(LocalizedStringResource("Tempo")).padding(.horizontal, 0)
+            Text("Tempo  \u{2669} =").padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
                     Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
@@ -505,10 +505,10 @@ struct ScalesView: View {
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                         
-                        if let keyboard = PianoKeyboardModel.shared3 {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                        }
+//                        if let keyboard = PianoKeyboardModel.shared3 {
+//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+//                        }
                             
                     }
                     .commonFrameStyle()

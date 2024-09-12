@@ -96,12 +96,12 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
 
 public enum ScaleMotion: CaseIterable, Comparable, Codable {
     case similarMotion
-    case contraryMotion1
+    case contraryMotion
     var description: String {
         switch self {
         case .similarMotion:
             return "Similar Motion"
-        case .contraryMotion1:
+        case .contraryMotion:
             return "Contrary Motion"
         }
     }
@@ -147,6 +147,19 @@ public class Scale : Codable {
     var scaleType:ScaleType
     var scaleMotion:ScaleMotion
     var scaleShapeForFingering:ScaleShape
+    
+    public init() {
+        self.scaleRoot = ScaleRoot(name: "")
+        self.scaleNoteState = []
+        octaves = 0
+        hands = []
+        minTempo = 0
+        dynamicType = .mf
+        articulationType = .legato
+        scaleType = .major
+        scaleMotion = .similarMotion
+        scaleShapeForFingering = .scale
+    }
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
                 minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType) {
@@ -239,12 +252,7 @@ public class Scale : Codable {
             var sequence = 0
             var nextMidi = firstMidi
             let scaleOffsetsForHand:[Int]
-//            if scaleType == .contraryMotion && handIndex == 1 {
-//                scaleOffsetsForHand = scaleOffsets.reversed()
-//            }
-//            else {
-                scaleOffsetsForHand = scaleOffsets
-//            }
+            scaleOffsetsForHand = scaleOffsets
 
             if handIndex == 1 {
                 nextMidi -= 12
@@ -336,7 +344,7 @@ public class Scale : Codable {
             scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
         }
         
-        if scaleMotion == .contraryMotion1 {
+        if scaleMotion == .contraryMotion {
             ///For the left hand interchange the two halves of the scale
             let middleIndex = (scaleNoteState[1].count / 2) + 1
             let firstPart = scaleNoteState[1].prefix(middleIndex)
@@ -358,19 +366,22 @@ public class Scale : Codable {
             let lastNoteIndex = scaleNoteState[1].count-1
 
             scaleNoteState[1][lastNoteIndex].value = lastNoteValue
-            for hand in self.hands {
-                setFingers(hand: hand)
-                setChromaticFingerBreaks(hand: hand)
-            }
-            
+//            for hand in self.hands {
+//                setFingers(hand: hand)
+//                //setChromaticFingerBreaks(hand: hand)
+//            }
+//            //if hand == 1 {
+//                self.debug121("Contrary")
+//            //}
         }
-        else {
-            for hand in self.hands {
-                setFingers(hand: hand)
-                setFingerBreaks(hand: hand)
-            }
+        
+        for hand in self.hands {
+            setFingers(hand: hand)
+            setFingerBreaks(hand: hand)
         }
-        //debug12("endOfInit")
+        //if self.hands.count > 1 {
+        debug121("endOfInit")
+        //}
         Scale.createCount += 1
     }
         
@@ -417,7 +428,7 @@ public class Scale : Codable {
             return 1
         }
         else {
-            return self.scaleMotion == .contraryMotion1 ? 1 : 2
+            return 2 //self.scaleMotion .contraryMotion1 ? 1 : 2
         }
     }
     
@@ -478,10 +489,12 @@ public class Scale : Codable {
                 return String(format: "%.2f", value!)
             }
         }
-        for handIndex in self.hands {
+        for handIndex in [0,1]{
             var idx = 0
             for state in self.scaleNoteState[handIndex] {
-                print("Hand", handIndex, "idx:", idx, "\tMidi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
+                let xxx = state.id.uuidString
+                let stateid = String(xxx.suffix(4))
+                print("Hand", handIndex, "idx:", stateid, "\tMidi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
                       "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
                       "valueNormalized:", getValue(state.valueNormalized))
                 idx += 1
@@ -649,7 +662,7 @@ public class Scale : Codable {
     func setFingers(hand:Int) {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
-        
+
         ///Regular scale
         
         if scaleShapeForFingering == .scale {
@@ -854,15 +867,15 @@ public class Scale : Codable {
                     //                    }
                     //                }
                     scaleNoteState[hand][0].finger = nextToLastFinger + leftHandLastFingerJump
+                    scaleNoteState[hand][scaleNoteState[hand].count - 1].finger = nextToLastFinger + leftHandLastFingerJump
                 }
-                //scaleNoteState[scaleNoteState.count-1].finger = edgeFinger
             }
         }
     }
 
     func getScaleName(handFull:Bool, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        if scaleMotion == .contraryMotion1 {
+        if scaleMotion == .contraryMotion {
             name += " " + scaleMotion.description
         }
         if self.hands.count == 1 {

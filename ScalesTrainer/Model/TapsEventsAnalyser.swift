@@ -366,9 +366,6 @@ class TapsEventsAnalyser {
                 }
             }
         }
-
-//        print ("  ============>>> ", self.eventNumber, "Use", midi, "Tapped:", tapMidi, "expected", expectedMidi, "diff:", bestDiff ?? "None",
-//               "atTop", atTop, "ascending", ascending)
         
         ///Same as last note?
         if midi == lastMatchedMidi {

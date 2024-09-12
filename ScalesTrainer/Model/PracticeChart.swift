@@ -1,23 +1,6 @@
 import SwiftUI
 import Foundation
 
-class PracticeChartCellOld : ObservableObject, Codable {
-    var scale:Scale
-    var row:Int
-    var enabled:Bool = false
-    
-    init(scale:Scale, row:Int) {
-        self.scale = scale
-        self.row = row
-    }
-    
-    func setEnabled(way:Bool) {
-        DispatchQueue.main.async {
-            self.enabled = way
-        }
-    }
-}
-
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
     var scale: Scale
@@ -63,15 +46,16 @@ class PracticeChartCell: ObservableObject, Codable {
 }
 
 class PracticeChart: Codable {
-    static var shared:PracticeChart = PracticeChart(musicBoard: MusicBoard(name: ""), musicBoardGrade:MusicBoardGrade(grade: "0"))
+    static var shared:PracticeChart = PracticeChart(musicBoard: MusicBoard(name: ""), musicBoardGrade:MusicBoardGrade(grade: "0"), minorScaleType: 0)
     static let fileName = "practice_chart.json"
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
     var rows: Int
     var columns: Int
     var cells: [[PracticeChartCell]]
+    var minorScaleType: Int
     
-    init(musicBoard:MusicBoard, musicBoardGrade:MusicBoardGrade) {
+    init(musicBoard:MusicBoard, musicBoardGrade:MusicBoardGrade, minorScaleType:Int) {
         self.musicBoard = musicBoard
         self.musicBoardGrade = musicBoardGrade
         self.columns = 3
@@ -79,6 +63,7 @@ class PracticeChart: Codable {
         self.cells = []
         let scales = musicBoardGrade.getScales()
         var scaleCtr = 0
+        self.minorScaleType = minorScaleType
         
         for _ in 0..<rows {
             var rowCells:[PracticeChartCell]=[]
@@ -95,7 +80,23 @@ class PracticeChart: Codable {
     }
     
     func shuffle() {
-        
+        let rows = self.cells.count
+        let cells = self.cells[0].count
+        let srcRow = (Int.random(in: 0..<rows))
+        let srcCol = (Int.random(in: 0..<cells))
+        let tarRow = (Int.random(in: 0..<rows))
+        let tarCol = (Int.random(in: 0..<cells))
+        let cell:PracticeChartCell = self.cells[srcRow][srcCol]
+        self.cells[srcRow][srcCol] = self.cells[tarRow][tarCol]
+        self.cells[tarRow][tarCol] = cell
+        let secs = Double.random(in: 0..<0.75)
+        DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
+            cell.isActive = !cell.isActive
+            let secs = Double.random(in: 0..<0.75)
+            DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
+                cell.isActive = !cell.isActive
+            }
+        }
     }
     
     func getScales(_ ctx:String) -> [Scale] {
@@ -128,6 +129,7 @@ class PracticeChart: Codable {
 
         do {
             let data = try encoder.encode(chart)  // Encode the PracticeChart object
+            
             let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             try data.write(to: url)  // Write the data to the file
@@ -148,7 +150,7 @@ extension PracticeChart {
             let chart = try decoder.decode(PracticeChart.self, from: data)  // Decode the data
             return chart
         } catch {
-            print("Failed to load PracticeChart: \(error)")
+            Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
             return nil
         }
     }

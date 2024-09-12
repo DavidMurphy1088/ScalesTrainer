@@ -129,7 +129,7 @@ struct ActivityModeView: View {
                         Text(activityMode.name)
                             .font(.title2)
                     }
-                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
                     //.padding(.vertical, 0)
                     .padding()
                 }
@@ -149,7 +149,7 @@ struct ActivityModeView: View {
                         Text(activityMode.name)
                             .font(.title2)
                     }
-                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
                     //.padding(.vertical, 0)
                     .padding()
                 }
@@ -170,7 +170,7 @@ struct ActivityModeView: View {
                         Text(activityMode.name)
                             .font(.title2)
                     }
-                    .listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
                     //.padding(.vertical, 0)
                     .padding()
                 }
@@ -190,10 +190,9 @@ struct ActivityModeView: View {
                 var practiceChart:PracticeChart
                 if let savedChart = PracticeChart.loadPracticeChartFromFile() {
                     PracticeChart.shared = savedChart
-                    print("Loaded PracticeChart with \(savedChart.rows) rows and \(savedChart.columns) columns.")
                 }
                 else {
-                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade)
+                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
                 }
                 practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
@@ -205,7 +204,7 @@ struct ActivityModeView: View {
                                                     imageName: "home_scales_wheel_1"))
                 
                 //if Settings.shared.developerModeOn {
-                    menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
+                menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
                                                         view: AnyView(PickAnyScaleView()),
                                                         imageName: "home_pick_any_scale_1"))
                 //}
