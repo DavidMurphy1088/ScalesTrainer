@@ -52,15 +52,9 @@ struct LegendView: View {
         return .black
     }
         
-    func fingerChangeName(keyboardHand:Int) -> String {
+    func fingerChangeName(keyboardHand:Int, scaleMotion:ScaleMotion) -> String {
         var result:String
-        let hand:Int
-//        if keyboardHand == 1 && scale.scaleMotion ==  .contraryMotion {
-//            hand = 0
-//        }
-//        else {
-            hand = keyboardHand
-//        }
+        let hand = keyboardHand
         if hand == 0 {
             if scalesModel.selectedDirection == 0 {
                 result = "Thumb Under"
@@ -70,11 +64,11 @@ struct LegendView: View {
             }
         }
         else {
-            if scalesModel.selectedDirection == 0 {
-                result = "Finger Over"
+            if scaleMotion == .contraryMotion {
+                result = scalesModel.selectedDirection == 0 ? "Thumb Under" :  "Finger Over"
             }
             else {
-                result = "Thumb Under"
+                result = scalesModel.selectedDirection == 0 ? "Finger Over" :  "Thumb Under"
             }
         }
         return result
@@ -116,7 +110,7 @@ struct LegendView: View {
                         Spacer()
                         //Text("1").foregroundColor(.orange).font(.title2).bold()
                         Text("●").foregroundColor(.orange).font(.title2).bold()
-                        Text(fingerChangeName(keyboardHand: hand))
+                        Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion))
                         Spacer()
                     }
                 }

@@ -75,13 +75,13 @@ class MusicBoardGrade: Codable {
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
         scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
 
         ///Row 6
         scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
         scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                             minTempo: minTempo, dynamicType: .mf, articulationType: .legato))

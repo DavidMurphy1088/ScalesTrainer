@@ -8,7 +8,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
 public class PianoKeyboardModel: ObservableObject {
     public static var sharedRH = PianoKeyboardModel(keyboardNumber: 1)
     public static var sharedLH = PianoKeyboardModel(keyboardNumber: 2)
-    public static var shared3:PianoKeyboardModel?
+    public static var sharedCombined:PianoKeyboardModel?
     
     public static var sharedForSettings = PianoKeyboardModel(keyboardNumber: 2)
 
@@ -37,24 +37,63 @@ public class PianoKeyboardModel: ObservableObject {
         self.keyboardAudioManager = AudioManager.shared
     }
     
-    //public func join(fromKeyboard:PianoKeyboardModel) -> PianoKeyboardModel {
-    public func join1() -> PianoKeyboardModel {
-        var merged = PianoKeyboardModel(keyboardNumber: self.keyboardNumber + 10)
-        //merged.keyboardNumber =
-        for model in self.pianoKeyModel {
-            var newModel = PianoKeyModel(keyboardModel: merged, keyIndex: model.keyOffsetFromLowestKey, midi: model.midi)
-            newModel.setState(state: model.scaleNoteState) 
-            //newModel
-            merged.pianoKeyModel.append(newModel)
+    public func join(fromKeyboard:PianoKeyboardModel, scale:Scale) -> PianoKeyboardModel {
+        let merged = PianoKeyboardModel(keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
+        var offset = 0
+        //var keyedMidis:[Int] = []
+        var keyCount = 0
+        var lowestRHInScaleKey:PianoKeyModel? = nil
+        for key in fromKeyboard.pianoKeyModel {
+            if key.scaleNoteState != nil {
+                lowestRHInScaleKey = key
+                break
+            }
         }
-//        for model in fromKeyboard.pianoKeyModel {
-//            var newModel = PianoKeyModel(keyboardModel: merged, keyIndex: model.keyOffsetFromLowestKey, midi: model.midi)
-//            newModel.scaleNoteState = model.scaleNoteState
-//            //newModel
-//            merged.pianoKeyModel.append(newModel)
-//        }
-        merged.numberOfKeys = self.numberOfKeys //+ fromKeyboard.numberOfKeys
+        guard let lowestRHInScaleKey = lowestRHInScaleKey else {
+            return self
+        }
+        
+        for key in self.pianoKeyModel {
+            if key.midi >= lowestRHInScaleKey.midi {
+                break
+            }
+            let newModel = PianoKeyModel(keyboardModel: merged, keyIndex: offset, midi: key.midi)
+            newModel.hand = 1
+            offset += 1
+            newModel.setState(state: key.scaleNoteState)
+            merged.pianoKeyModel.append(newModel)
+            //keyedMidis.append(key.midi)
+            keyCount += 1
+        }
+        //keyedMidis.removeLast()
+        //var firstInScaleFound = false
+        
+        for key in fromKeyboard.pianoKeyModel {
+//            if !firstInScaleFound {
+//                if key.scaleNoteState != nil {
+//                    firstInScaleFound = true
+//                }
+//            }
+            if key.midi < lowestRHInScaleKey.midi {
+                continue
+            }
+            let newModel = PianoKeyModel(keyboardModel: merged, keyIndex: offset, midi: key.midi)
+            newModel.hand = 0
+            offset += 1
+            newModel.setState(state: key.scaleNoteState)
+            merged.pianoKeyModel.append(newModel)
+            keyCount += 1
+        }
+        merged.numberOfKeys = keyCount //self.numberOfKeys + fromKeyboard.numberOfKeys
         for rect in self.keyRects {
+            let newRect = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
+            merged.keyRects.append(newRect)
+        }
+        for rect in fromKeyboard.keyRects {
+//            if keyedMidis.contains(key.midi) {
+//                continue
+//            }
+
             let newRect = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
             merged.keyRects.append(newRect)
         }
@@ -63,8 +102,9 @@ public class PianoKeyboardModel: ObservableObject {
 //            merged.touches.append(newTouch)
 //        }
 
-        merged.firstKeyMidi = self.firstKeyMidi //fromKeyboard.firstKeyMidi < self.firstKeyMidi ? fromKeyboard.firstKeyMidi : self.firstKeyMidi
+        merged.firstKeyMidi = self.firstKeyMidi
         merged.keyboardAudioManager = AudioManager.shared
+        //merged.debug11("merged")
         return merged
     }
     
@@ -214,7 +254,7 @@ public class PianoKeyboardModel: ObservableObject {
         if self.pianoKeyModel.count > 0 {
             for i in 0..<numberOfKeys {
                 let key = self.pianoKeyModel[i]
-                print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "midi:", key.midi, terminator: "")
+                print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.hand, "midi:", key.midi, terminator: "")
                 print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
                     print("  finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")

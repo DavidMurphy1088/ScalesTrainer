@@ -23,17 +23,21 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         ///Make the list of notes to play along with the correct keyboard key
         ///A two hand scale may be played in 1 or 2 keyboards (depending on the scale type)
         for scaleHand in [0,1] {
-            //let scaleHand = scale.hands[scaleHandIndex]
             var direction = 0
             var keyboard:PianoKeyboardModel? = nil
-            if scaleHand == 0 {
-                if scale.hands.contains(scaleHand) {
-                    keyboard = PianoKeyboardModel.sharedRH
-                }
+            if scale.scaleMotion == .contraryMotion {
+                keyboard = PianoKeyboardModel.sharedCombined
             }
             else {
-                if scale.hands.contains(scaleHand) {
-                    keyboard = PianoKeyboardModel.sharedLH //scale.needsTwoKeyboards() ? PianoKeyboardModel.shared2 : PianoKeyboardModel.shared1
+                if scaleHand == 0 {
+                    if scale.hands.contains(scaleHand) {
+                        keyboard = PianoKeyboardModel.sharedRH
+                    }
+                }
+                else {
+                    if scale.hands.contains(scaleHand) {
+                        keyboard = PianoKeyboardModel.sharedLH
+                    }
                 }
             }
             if let keyboard = keyboard {

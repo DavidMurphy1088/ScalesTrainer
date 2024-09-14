@@ -38,12 +38,15 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     public var touchDown = false
     public var latched = false
+    ///A keyboard may have keys played by both LH and RH - e.g. a contray motion keyboard
+    var hand:Int
 
     init(keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int) {
         self.keyboardModel = keyboardModel
         self.keyOffsetFromLowestKey = keyIndex
         self.keyWasPlayedState = PianoKeyPlayedState()
         self.midi = midi
+        self.hand = keyboardModel.keyboardNumber - 1
     }
     
     public func setState(state: ScaleNoteState?) {
@@ -64,7 +67,8 @@ public class PianoKeyModel: Identifiable, Hashable {
             self.keyboardModel.redraw()
 
             ///Update the score if its showing
-            if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
+            //if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
+            if let score = scalesModel.scores[self.hand] {
                 if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
                     DispatchQueue.global(qos: .background).async {
                         usleep(1000000 * UInt32(self.keySoundingSeconds))

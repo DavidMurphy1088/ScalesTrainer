@@ -169,10 +169,17 @@ public class ScalesModel : ObservableObject {
     func setSelectedDirection(_ index:Int) {
         DispatchQueue.main.async {
             self.selectedDirection = index
-            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
-            PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 1)
-            PianoKeyboardModel.sharedLH.redraw()
+            if let combined = PianoKeyboardModel.sharedCombined {
+                combined.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
+                combined.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 1)
+                combined.redraw()
+            }
+            else {
+                PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 0)
+                PianoKeyboardModel.sharedRH.redraw()
+                PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, direction: index, hand: 1)
+                PianoKeyboardModel.sharedLH.redraw()
+            }
         }
     }
     

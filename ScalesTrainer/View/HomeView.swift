@@ -188,11 +188,16 @@ struct ActivityModeView: View {
         .onAppear() {
             if menuOptionsLeft.count == 0 {
                 var practiceChart:PracticeChart
-                if let savedChart = PracticeChart.loadPracticeChartFromFile() {
-                    PracticeChart.shared = savedChart
+                if Settings.shared.developerModeOn {
+                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
                 }
                 else {
-                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
+                    if let savedChart = PracticeChart.loadPracticeChartFromFile()  {
+                        PracticeChart.shared = savedChart
+                    }
+                    else {
+                        PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
+                    }
                 }
                 practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",

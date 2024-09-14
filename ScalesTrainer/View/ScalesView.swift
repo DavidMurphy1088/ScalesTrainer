@@ -57,10 +57,6 @@ struct ScalesView: View {
     
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
-    
-    //@ObservedObject private var pianoKeyboard1: PianoKeyboardModel
-    //@ObservedObject private var pianoKeyboard2: PianoKeyboardModel
-    //@ObservedObject private var pianoKeyboard3: PianoKeyboardModel
 
     @ObservedObject private var metronome = MetronomeModel.shared
     private let audioManager = AudioManager.shared
@@ -493,16 +489,28 @@ struct ScalesView: View {
                 
                 if scalesModel.showKeyboard {
                     VStack {
-                        if scalesModel.scale.needsTwoKeyboards() {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                        if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                            ///Scale is contrary with LH and RH joined on one keyboard
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+
                         }
                         else {
-                            let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            if scalesModel.scale.needsTwoKeyboards() {
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            }
+                            else {
+                                let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            }
                         }
                         
 //                        if let keyboard = PianoKeyboardModel.shared3 {
@@ -586,7 +594,7 @@ struct ScalesView: View {
 //                    let fileManager = FileManager.default
 //                    if let url = scalesModel.recordedTapsFileURL {
 //                        do {
-//                            try fileManager.removeItem(at: url)
+//                            try fileManager.removeItem(at: urlif hand == 0 || scaleMotion == .contraryMotion {View )if hand == 0 || scaleMotion == .contraryMotion {iewing
 //                            Logger.shared.log(scalesModel, "Taps file deleted successfully \(url)")
 //                        }
 //                        catch {
@@ -604,9 +612,15 @@ struct ScalesView: View {
         ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
+            if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
+                PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale)
+            }
+            else {
+                PianoKeyboardModel.sharedCombined = nil
+            }
+
             PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
-            
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
@@ -617,8 +631,6 @@ struct ScalesView: View {
             }
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
-            //PianoKeyboardModel.shared3 = PianoKeyboardModel.shared1.join()
-            //PianoKeyboardModel.shared3!.debug11("PPPPP")
         }
         
         .onDisappear {

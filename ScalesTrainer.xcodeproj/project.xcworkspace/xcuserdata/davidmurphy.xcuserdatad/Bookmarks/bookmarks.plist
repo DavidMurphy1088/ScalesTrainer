@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>349</string>
+					<string>345</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>348</string>
+					<string>344</string>
 					<key>Timestamp</key>
-					<string>747737240.448771</string>
+					<string>747869737.6538841</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>254</string>
+					<string>261</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>253</string>
+					<string>260</string>
 					<key>Timestamp</key>
-					<string>747815357.689396</string>
+					<string>747961906.092708</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>407</string>
+					<string>414</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>406</string>
+					<string>413</string>
 					<key>Timestamp</key>
-					<string>747815357.689384</string>
+					<string>747966785.7355289</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>595</string>
+					<string>602</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>594</string>
+					<string>601</string>
 					<key>Timestamp</key>
-					<string>747820738.480762</string>
+					<string>747966785.735448</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -237,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>494</string>
+					<string>490</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>493</string>
+					<string>489</string>
 					<key>Timestamp</key>
-					<string>747737240.448893</string>
+					<string>747869737.653916</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -267,8 +267,97 @@
 </string>
 				<key>trailing</key>
 				<string>                    VStack {
-                        if scalesModel.scale.needsTwoKeyboards() {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                        if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                            ///Scale is contrary with LH and RH joined on one keyboard
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>723</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>722</string>
+					<key>Timestamp</key>
+					<string>747964510.6426229</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/Scale.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    func setFingers(hand:Int) {
+</string>
+				<key>leading</key>
+				<string>    
+    ///Alfreds page 88. RH read left to right, LH read right to left. Use numbers in paren e.g. (3) instead of 3
+</string>
+				<key>trailing</key>
+				<string>        var fingers = ""
+        var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
+
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>46</string>
+					<key>EndingLineNumber</key>
+					<string>238</string>
+					<key>StartingColumnNumber</key>
+					<string>16</string>
+					<key>StartingLineNumber</key>
+					<string>238</string>
+					<key>Timestamp</key>
+					<string>747966293.8530771</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/PianoKeyboard/Piano/Model/PianoKeyboardModel.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>linkScaleFingersToKeyboardKeys</string>
+				<key>leading</key>
+				<string>    ///Create the link for each piano key to a scale note, if there is one.
+    ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
+    public func </string>
+				<key>trailing</key>
+				<string>(scale:Scale, direction:Int, hand:Int) {
+        for i in 0..&lt;numberOfKeys {
+            if i &lt; self.pianoKeyModel.count {
 </string>
 			</dict>
 			<key>type</key>
