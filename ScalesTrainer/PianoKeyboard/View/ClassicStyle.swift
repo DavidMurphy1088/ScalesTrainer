@@ -64,9 +64,9 @@ public struct ClassicStyle {
         let halfOpacity = 0.4
         let scalesModel = ScalesModel.shared
         var color:Color = Color.clear
-        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, direction: 0) != nil {
+        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, scaleSegment: scalesModel.selectedScaleSegment) != nil {
             ///Key is in the scale
-            if scalesModel.selectedDirection == 0 {
+            if scalesModel.selectedScaleSegment == 0 {
                 color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
             }
             else {
@@ -75,7 +75,7 @@ public struct ClassicStyle {
         }
         else {
             ///Key was not in the scale
-            if scalesModel.selectedDirection == 0 {
+            if scalesModel.selectedScaleSegment == 0 {
                 color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
             }
             else {
@@ -145,22 +145,9 @@ public struct ClassicStyle {
                     )
                 }
                 
-                /// ----------- Note name ----------
+                /// ----------- Middle C Note name ----------
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {
-                        ///Hilite Middle C
-//                        if keyModel.midi == 60 { //}|| keyModel.midi == 64 {
-//                            //let w = playingMidiRadius + 7.0
-//                            //let frame = CGRect(x: rect.midX, y: 12, width: w/2, height: w/2)
-//                            let circleRadius = 15
-//                            let circle = CGRect(x: Int(rect.midX) - circleRadius,
-//                                                y: 6,
-//                                                width: circleRadius * 2,
-//                                                height: circleRadius * 2)
-//                            context.fill(Path(ellipseIn: circle), with: .color(.white))
-//                            context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
-//                        }
-
                         if key.midi != 60 {
                             context.draw(
                                 Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),

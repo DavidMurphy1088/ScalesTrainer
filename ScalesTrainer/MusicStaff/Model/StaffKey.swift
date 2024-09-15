@@ -194,13 +194,13 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
         return keyTag
     }
     
-    public func makeTriadAt(timeSlice:TimeSlice, rootMidi:Int, value:Double, staffNum:Int) -> [StaffNote] {
-        var result:[StaffNote] = []
-        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi, value: value, staffNum: staffNum))
-        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 4, value: value, staffNum: staffNum))
-        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 7, value: value, staffNum: staffNum))
-        return result
-    }
+//    public func makeTriadAt(timeSlice:TimeSlice, rootMidi:Int, value:Double, staffNum:Int) -> [StaffNote] {
+//        var result:[StaffNote] = []
+//        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi, value: value, staffNum: staffNum))
+//        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 4, value: value, staffNum: staffNum))
+//        result.append(StaffNote(timeSlice:timeSlice, num: rootMidi + 7, value: value, staffNum: staffNum))
+//        return result
+//    }
     
     ///Get the notes names for the given triad symbol
     func getTriadNoteNames(triadSymbol:String) -> String {

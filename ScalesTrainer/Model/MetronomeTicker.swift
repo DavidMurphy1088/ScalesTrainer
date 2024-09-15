@@ -22,15 +22,15 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        //if Settings.shared.metronomeOn {
-        if timerTickerNumber % 4 == 0 {
-            metronomeAudioPlayerHigh!.play()
-        }
-        else {
-            metronomeAudioPlayerLow!.play()
+        if !Settings.shared.metronomeSilent {
+            if timerTickerNumber % 4 == 0 {
+                metronomeAudioPlayerHigh!.play()
+            }
+            else {
+                metronomeAudioPlayerLow!.play()
+            }
         }
         MetronomeModel.shared.setTimerTickerCountPublished(count: timerTickerNumber)
-        //}
         return false
     }
     

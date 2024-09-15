@@ -170,7 +170,7 @@ class TabSelectionManager: ObservableObject {
                                                              scaleType: .brokenChordMajor,
                                                              scaleMotion: .similarMotion,
                                                              octaves: 1, hands: [0],
-                                                             minTempo: 70, dynamicType: .mf, articulationType: .legato))
+                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }
                 else {

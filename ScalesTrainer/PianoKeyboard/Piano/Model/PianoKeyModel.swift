@@ -53,7 +53,8 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.scaleNoteState = state
     }
     
-    public func setKeyPlaying(ascending:Int, hilight:Bool) {
+    //public func setKeyPlaying(ascending:Int, hilight:Bool) {
+    public func setKeyPlaying(hilight:Bool) {
         if hilight {
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
@@ -69,11 +70,14 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///Update the score if its showing
             //if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
             if let score = scalesModel.scores[self.hand] {
-                if let staffNote = score.setScoreNotePlayed(midi: self.midi, direction: ascending) {
-                    DispatchQueue.global(qos: .background).async {
-                        usleep(1000000 * UInt32(self.keySoundingSeconds))
-                        DispatchQueue.main.async {
-                            staffNote.setShowIsPlaying(false)
+                let segment = self.scaleNoteState?.segment
+                if let segment = segment {
+                    if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
+                        DispatchQueue.global(qos: .background).async {
+                            usleep(1000000 * UInt32(self.keySoundingSeconds))
+                            DispatchQueue.main.async {
+                                staffNote.setShowIsPlaying(false)
+                            }
                         }
                     }
                 }

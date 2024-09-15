@@ -114,17 +114,22 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 keyboards.append(keyboard)
             }
             else {
-                keyboards.append(PianoKeyboardModel.sharedLH)
-                keyboards.append(PianoKeyboardModel.sharedRH)
+                if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
+                    keyboards.append(combinedKeyboard)
+                }
+                else {
+                    keyboards.append(PianoKeyboardModel.sharedLH)
+                    keyboards.append(PianoKeyboardModel.sharedRH)
+                }
             }
             
-            ///A played MIDI may be in both the LH and RH keyboards.
+            ///A MIDI heard may be in both the LH and RH keyboards.
             ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
             for i in 0..<keyboards.count {
                 let keyboard = keyboards[i]
-                if let index = keyboard.getKeyIndexForMidi(midi: midi, direction: scalesModel.selectedDirection) {
-                    let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, direction: 0) != nil
+                if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: scalesModel.selectedScaleSegment) {
+                    let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
                     possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
                 }
             }
@@ -133,7 +138,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 if keyboards.count == 1 {
                     let keyboard = keyboards[0]
                     let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
-                    keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                    keyboardKey.setKeyPlaying(hilight: true)
                     if possibleKeysPlayed[0].inScale {
                         tapStatus = .inScale
                     }
@@ -142,25 +147,24 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     }
                 }
                 else {
-                    if let inScale = possibleKeysPlayed.first(where: { $0.inScale == true}) {
-                        ///New option for scale Leacd in? - For all keys played show the played status only on one keyboard - RH or LH, not both
-                        ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
-                        //let possibleKeyCount = possibleKeysPlayed.filter { $0.inScale == true }.count
-                        for possibleKey in possibleKeysPlayed {
-                            let keyboard = possibleKey.keyboard
-                            let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
-                            keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
-                        }
-                        tapStatus = .inScale
-                    }
-                    else {
+                    if possibleKeysPlayed.first(where: { $0.inScale == true})  == nil {
                         ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
                         if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
                             let keyboard = outOfScale.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
-                            keyboardKey.setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                            keyboardKey.setKeyPlaying(hilight: true)
                         }
                         tapStatus = .outOfScale
+                    }
+                    else {
+                        ///New option for scale Leacd in? - For all keys played show the played status only on one keyboard - RH or LH, not both
+                        ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
+                        for possibleKey in possibleKeysPlayed {
+                            let keyboard = possibleKey.keyboard
+                            let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
+                            keyboardKey.setKeyPlaying(hilight: true)
+                        }
+                        tapStatus = .inScale
                     }
                 }
             }

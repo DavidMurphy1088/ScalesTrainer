@@ -8,52 +8,47 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     
     let scalesModel = ScalesModel.shared
-    var notesAndKeys:[(Int, ScaleNoteState, PianoKeyModel, Int)] = []
-    var nextNote = 0
+    //var notesAndKeys:[(Int, ScaleNoteState, PianoKeyModel)] = []
+    //var notesAndKeys:[(Int, ScaleNoteState)] = []
+    var nextNoteIndex = 0
     var beatCount = 0
     var leadInShown = false
+    var currentSegment = 0
+    let scale = ScalesModel.shared.scale
     
     init(hands:[Int]) {
     }
     
+    func getKeyboard(hand:Int) -> PianoKeyboardModel {
+        if let combined = PianoKeyboardModel.sharedCombined {
+            return combined
+        }
+        else {
+            return hand == 0 ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
+        }
+    }
+    
     func metronomeStart() {
         beatCount = 0
-        let scale = ScalesModel.shared.scale
 
         ///Make the list of notes to play along with the correct keyboard key
         ///A two hand scale may be played in 1 or 2 keyboards (depending on the scale type)
-        for scaleHand in [0,1] {
-            var direction = 0
-            var keyboard:PianoKeyboardModel? = nil
-            if scale.scaleMotion == .contraryMotion {
-                keyboard = PianoKeyboardModel.sharedCombined
-            }
-            else {
-                if scaleHand == 0 {
-                    if scale.hands.contains(scaleHand) {
-                        keyboard = PianoKeyboardModel.sharedRH
-                    }
-                }
-                else {
-                    if scale.hands.contains(scaleHand) {
-                        keyboard = PianoKeyboardModel.sharedLH
-                    }
-                }
-            }
-            if let keyboard = keyboard {
-                for i in 0..<scale.scaleNoteState[scaleHand].count {
-                    let scaleNoteState = ScalesModel.shared.scale.scaleNoteState[scaleHand][i]
-                    let keyIndex = keyboard.getKeyIndexForMidi(midi: scaleNoteState.midi, direction:direction)
-                    if let keyIndex = keyIndex {
-                        let key=keyboard.pianoKeyModel[keyIndex]
-                        self.notesAndKeys.append((i, scaleNoteState, key, direction))
-                    }
-                    if i == ScalesModel.shared.scale.scaleNoteState[scaleHand].count / 2 {
-                        direction = 1
-                    }
-                }
-            }
-        }
+//        for scaleHand in [0,1] {
+//
+//            //if let keyboard = keyboard {
+//                for i in 0..<scale.scaleNoteState[scaleHand].count {
+//                    let scaleNoteState = ScalesModel.shared.scale.scaleNoteState[scaleHand][i]
+//                    //let keyIndex = keyboard.getKeyIndexForMidi(midi: scaleNoteState.midi, direction:direction)
+//                    //if let keyIndex = keyIndex {
+//                        //let key=keyboard.pianoKeyModel[keyIndex]
+//                        self.notesAndKeys.append((i, scaleNoteState))
+//                    //}
+////                    if i == ScalesModel.shared.scale.scaleNoteState[scaleHand].count / 2 {
+////                        direction = 1
+////                    }
+//                }
+//            //}
+//        }
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
@@ -73,26 +68,37 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             waitBeats -= 1
             return false
         }
-        
-        for note in self.notesAndKeys {
-            let (sequence, scaleNoteState, key, direction) = note
-            if sequence == self.nextNote {
-                key.setKeyPlaying(ascending: direction, hilight: true)
-                sampler?.play(noteNumber: UInt8(scaleNoteState.midi), velocity: 64, channel: 0)
-                waitBeats = Int(scaleNoteState.value) - 1
+        for hand in scale.hands {
+            let note = scale.scaleNoteState[hand][nextNoteIndex]
+            let keyboard = getKeyboard(hand: hand)
+            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segment)
+            if let keyIndex = keyIndex {
+                let key=keyboard.pianoKeyModel[keyIndex]
+
+                key.setKeyPlaying(hilight: true)
+                sampler?.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
             }
         }
+        let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
+        waitBeats = Int(scaleNoteState.value) - 1
 
-        if nextNote < self.scalesModel.scale.scaleNoteState[0].count - 1 {
-            self.nextNote += 1
+        if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
+            self.nextNoteIndex += 1
+            let nextNote = scale.scaleNoteState[0][nextNoteIndex]
+            if nextNote.segment != self.currentSegment {
+                scalesModel.setSelectedScaleSegment(nextNote.segment)
+                self.currentSegment = nextNote.segment
+            }
         }
         else {
-            self.nextNote = 0
+            scalesModel.setSelectedScaleSegment(0)
+            self.nextNoteIndex = 0
         }
+
         return false
     }
     
     func metronomeStop() {
-        ScalesModel.shared.setSelectedDirection(0)
+        ScalesModel.shared.setSelectedScaleSegment(0)
     }
 }

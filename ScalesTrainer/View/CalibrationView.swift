@@ -169,7 +169,7 @@ public struct CalibrationView: View {
                     Button(action: {
                         Settings.shared.amplitudeFilter = self.amplitudeFilter
                         Settings.shared.save()
-                        tabSelectionManager.selectedTab = 1
+                        //tabSelectionManager.selectedTab = 1
                     }) {
                         HStack {
                             Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)

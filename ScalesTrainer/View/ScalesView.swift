@@ -119,7 +119,6 @@ struct ScalesView: View {
                 metronome.setTicking(on: !metronome.isTiming)
             }) {
                 MetronomeView()
-                    
             }
             .padding()
             
@@ -139,14 +138,14 @@ struct ScalesView: View {
             Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
                 ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
-                    if scalesModel.selectedDirection >= 0 {
+                    if scalesModel.selectedScaleSegment >= 0 {
                         Text("\(scalesModel.directionTypes[index])")
                     }
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: directionIndex, {
-                scalesModel.setSelectedDirection(self.directionIndex)
+                scalesModel.setSelectedScaleSegment(self.directionIndex)
             })
             
             //Spacer()
@@ -180,7 +179,6 @@ struct ScalesView: View {
         VStack {
             
             if scalesModel.runningProcessPublished == .followingScale {
-                //RecordingIsUnderwayView()
                 VStack {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -192,10 +190,8 @@ struct ScalesView: View {
                         
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //if Settings.shared.metronomeOn {
-                        MetronomeView()
-                    //}
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Playing"
+                    MetronomeView()
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Playing Along"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -207,12 +203,10 @@ struct ScalesView: View {
 
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //if Settings.shared.metronomeOn {
-                        //if metronome.isLeadingIn {
-                            MetronomeView()
-                        //}
-                    //}
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading"
+                    if !MetronomeModel.shared.makeSilent && Settings.shared.getLeadInBeats() > 0 {
+                        MetronomeView()
+                    }
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -227,7 +221,7 @@ struct ScalesView: View {
                     //if Settings.shared.metronomeOn {
                         MetronomeView()
                     //}
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording"
+                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {

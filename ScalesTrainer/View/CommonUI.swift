@@ -21,7 +21,6 @@ class UIGlobals {
         shade = shade * 0.60
         //purpleDark = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
         purpleDark = Color(red: 195.0 / 255.0, green: 152.0 / 255.0, blue: 188.0 / 255.0)
-
     }
 }
 

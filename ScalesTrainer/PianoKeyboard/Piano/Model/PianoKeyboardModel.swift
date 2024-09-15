@@ -207,7 +207,7 @@ public class PianoKeyboardModel: ObservableObject {
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
         }
-        self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection, hand: hand)
+        self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, hand: hand)
 //        if hand == 1 {
 //            self.debug1("LH - After linked to Scale")
 //        }
@@ -221,7 +221,7 @@ public class PianoKeyboardModel: ObservableObject {
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
             if pianoKeyModel.midi == scaleStartMidi {
-                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1)
+                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1, segment: 0)
                 ///Mark the start of scale
                 keyState.finger = 9
 
@@ -236,19 +236,22 @@ public class PianoKeyboardModel: ObservableObject {
 
     ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
-    public func linkScaleFingersToKeyboardKeys(scale:Scale, direction:Int, hand:Int) {
+    public func linkScaleFingersToKeyboardKeys(scale:Scale, scaleSegment:Int, hand:Int) {
         for i in 0..<numberOfKeys {
             if i < self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
-                let state = scale.getStateForMidi(handIndex: hand, midi: key.midi, direction: direction)
+                let state = scale.getStateForMidi(handIndex: hand, midi: key.midi, scaleSegment: scaleSegment)
                 if let state = state {
                     key.setState(state: state)
+                }
+                else {
+                    key.setState(state: nil)
                 }
             }
         }
     }
     
-    func debug11(_ ctx:String) {
+    func debug1(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {
@@ -257,7 +260,7 @@ public class PianoKeyboardModel: ObservableObject {
                 print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.hand, "midi:", key.midi, terminator: "")
                 print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
-                    print("  finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
+                    print("  Segment", state.segment, "finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
                 }
                 else {
                     print("  No scale state", terminator: "")
@@ -303,7 +306,7 @@ public class PianoKeyboardModel: ObservableObject {
                         keyboardAudioManager?.pianoKeyUp(noteNumber)
                     }
                     pianoKeyModel[index].touchDown = keyDownAt[index]
-                    pianoKeyModel[index].setKeyPlaying(ascending: scalesModel.selectedDirection, hilight: true)
+                    pianoKeyModel[index].setKeyPlaying(hilight: true)
                 }
             } else {
                 if pianoKeyModel[index].touchDown && keyDownAt[index] && pianoKeyModel[index].latched {
@@ -364,8 +367,9 @@ public class PianoKeyboardModel: ObservableObject {
     ///Get the offset in the keyboard for the given midi
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
-    public func getKeyIndexForMidi(midi:Int, direction:Int) -> Int? {
-        let x = self.pianoKeyModel.first(where: { $0.midi == midi })
+    public func getKeyIndexForMidi(midi:Int, segment:Int) -> Int? {
+        //let x = self.pianoKeyModel.first(where: { $0.midi == midi })
+        let x = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
         return x == nil ? nil : x?.keyOffsetFromLowestKey
     }
 }

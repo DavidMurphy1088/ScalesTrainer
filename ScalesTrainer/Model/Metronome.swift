@@ -23,6 +23,7 @@ class MetronomeModel:ObservableObject {
     private let audioManager = AudioManager.shared
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     let ticker:MetronomeTicker
+    var makeSilent = false
     
     init() {
         self.ticker = MetronomeTicker()
@@ -47,6 +48,7 @@ class MetronomeModel:ObservableObject {
     
     func setTicking(on:Bool) {
         if on {
+            self.makeSilent = false
             self.startTimerThread()
             self.isTiming = true
         }
@@ -114,7 +116,9 @@ class MetronomeModel:ObservableObject {
                             for toNotify in self.processesToNotify {
                                 _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
                             }
-                            _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                            if !self.makeSilent {
+                                _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                            }
                             let stop = false //notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
                             if stop {
                                 self.isTiming = false

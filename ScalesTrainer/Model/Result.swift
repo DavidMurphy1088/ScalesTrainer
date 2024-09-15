@@ -81,7 +81,7 @@ class Result : Equatable {
         for direction in [0,1] {
             for key in self.keyboard.pianoKeyModel {
                 if let matchedTime = direction == 0 ? key.keyWasPlayedState.tappedTimeAscending : key.keyWasPlayedState.tappedTimeDescending {
-                    if let scaleNote = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, direction: direction) {
+                    if let scaleNote = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, scaleSegment: 0) {
                         if direction == 0 {
                             scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeAscending
                         }

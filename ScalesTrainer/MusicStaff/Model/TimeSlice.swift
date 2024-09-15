@@ -100,17 +100,17 @@ public class TimeSlice : ScoreEntry {
         return lhs.id == rhs.id
     }
         
-    func addTriadAt(timeSlice:TimeSlice, rootNoteMidi:Int, value: Double, staffNum:Int) {
-        if getTimeSliceEntries().count == 0 {
-            return
-        }
-        //if let score = score {
-            let triad = score.key.makeTriadAt(timeSlice:timeSlice, rootMidi: rootNoteMidi, value: value, staffNum: staffNum)
-            for note in triad {
-                addNote(n: note)
-            }
-        //}
-    }
+//    func addTriadAt(timeSlice:TimeSlice, rootNoteMidi:Int, value: Double, staffNum:Int) {
+//        if getTimeSliceEntries().count == 0 {
+//            return
+//        }
+//        //if let score = score {
+//            let triad = score.key.makeTriadAt(timeSlice:timeSlice, rootMidi: rootNoteMidi, value: value, staffNum: staffNum)
+//            for note in triad {
+//                addNote(n: note)
+//            }
+//        //}
+//    }
     
     public func anyNotesRotated() -> Bool {
         for n in entries {

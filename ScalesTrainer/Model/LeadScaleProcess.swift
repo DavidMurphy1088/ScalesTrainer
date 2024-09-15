@@ -10,7 +10,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     let badges = BadgeBank.shared
     var lastMidi:Int? = nil
     var notifyCount = 0
-    var beatCount = 0
     var leadInShowing = false
     let metronome:MetronomeModel
     
@@ -21,6 +20,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
+        MetronomeModel.shared.makeSilent = false
     }
     
     func metronomeStop() {
@@ -28,17 +28,18 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         if Settings.shared.getLeadInBeats() > 0 {
-            if beatCount < Settings.shared.getLeadInBeats() {
+            if timerTickerNumber < Settings.shared.getLeadInBeats() {
                 MetronomeModel.shared.setLeadingIn(way: true)
                 leadInShowing = true
-                beatCount += 1
                 return false
             }
         }
+        MetronomeModel.shared.makeSilent = true
         if leadInShowing {
             MetronomeModel.shared.setLeadingIn(way: false)
             leadInShowing = false
         }
+
         return false
     }
     
@@ -67,7 +68,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         self.lastMidi = midi
         
         let scale = scalesModel.scale
-        let hand = scale.hands[0] //scalesModel.scale.hand == 2 ? 0 : scalesModel.scale.hand
+        let hand = scale.hands[0]
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
 
@@ -100,11 +101,20 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         
         if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
             nextExpectedScaleIndex += 1
+            let nextNote = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+            scalesModel.setSelectedScaleSegment(nextNote.segment)
         }
         else {
             ///🙄a random harmonic may trigger a stop
             //scalesModel.setRunningProcess(.none)
+            scalesModel.setSelectedScaleSegment(0)
         }
+//        if let lastSegment = lastSegment {
+//            if nextExpected.segment != lastSegment {
+//                
+//            }
+//        }
+//        lastSegment = nextExpected.segment
         notifyCount += 1
     }
 }

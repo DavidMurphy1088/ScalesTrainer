@@ -114,8 +114,6 @@ public class Score : ObservableObject {
     public var studentFeedback:StudentFeedback? = nil
     public var tempo:Int?
     
-    //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 10.0 : 8.0
-    //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 10.0 : 15.0
     public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 6.0 : 10.0
     //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 10.0
     
@@ -136,30 +134,31 @@ public class Score : ObservableObject {
         self.heightPaddingEnabled = heightPaddingEnabled
     }
     
-    public func setScoreNotePlayed(midi: Int, direction: Int) -> TimeSlice? {
+    public func setScoreNotePlayed(midi: Int, segment: Int) -> TimeSlice? {
         let timeSlices = getAllTimeSlices()
-        var nearestDist = Int(Int64.max)
-        let startIndex = direction == 0 ? 0 : timeSlices.count-1
-        let endIndex = direction == 0 ? timeSlices.count-1 :0
+        //var nearestDist = Int(Int64.max)
+//        let startIndex = segment == 0 ? 0 : timeSlices.count-1
+//        let endIndex = segment == 0 ? timeSlices.count-1 :0
         var noteFound:TimeSlice?
 
-        for i in stride(from: startIndex, through: endIndex, by: direction == 0 ? 1 : -1) {
+        //for i in stride(from: startIndex, through: endIndex, by: segment == 0 ? 1 : -1) {
+        for i in 0..<timeSlices.count {
             let ts = timeSlices[i]
             let entry = ts.entries[0]
             let staffNote = entry as! StaffNote
-            if staffNote.midiNumber == midi {
-                ts.setShowIsPlaying(true) //setStatus(status: .playedCorrectly)
+            if staffNote.midiNumber == midi && staffNote.segment == segment {
+                ts.setShowIsPlaying(true)
                 noteFound = ts
                 break
             }
-            else {
-                let dist = abs(staffNote.midiNumber - midi)
-                if dist < nearestDist {
-                    nearestDist = dist
-                    //nearestIndex = i
-                    //nearestNote = note
-                }
-            }
+//            else {
+//                let dist = abs(staffNote.midiNumber - midi)
+//                if dist < nearestDist {
+//                    nearestDist = dist
+//                    //nearestIndex = i
+//                    //nearestNote = note
+//                }
+//            }
         }
         if let noteFound = noteFound {
             return noteFound
@@ -253,7 +252,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore21(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debugScore2(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -273,6 +272,7 @@ public class Score : ObservableObject {
                               "midi:", note.midiNumber,
                               "beat:", t.beatNumber,
                               "value:", t.getValue() ,
+                              "segment:", note.segment,
                               "duration:", t.tapDurationNormalised ?? "_",
                               "stemDirection", note.stemDirection,
                               "stemLength", note.stemLength,
@@ -282,11 +282,12 @@ public class Score : ObservableObject {
                               "]")
                     }
                     else {
-                        print(" Seq", t.sequence, terminator: "")
+                        print(" Seq", String(format: "%2d", t.sequence), terminator: "")
                         print(" [type:", type(of: t.entries[0]), "]", terminator: "")
                         print(" [midi:",note.midiNumber, "]", terminator: "")
                         print(" [TapDuration Seconds:",String(format: "%.4f", t.tapDurationNormalised ?? 0),"]", t.sequence, terminator: "")
                         print(" [Note Value:", note.getValue(),"]", t.sequence, terminator: "")
+                        print(" [Segment:", note.segment,"]", t.sequence, terminator: "")
                         print(" [status]",t.statusTag, terminator: "")
                         print(" [beat]",t.beatNumber, t.sequence, terminator: "")
                         //print(" [writtenAccidental:",note.writtenAccidental ?? "","]", t.sequence, terminator: "")

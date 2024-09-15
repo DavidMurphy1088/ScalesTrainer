@@ -56,7 +56,7 @@ struct LegendView: View {
         var result:String
         let hand = keyboardHand
         if hand == 0 {
-            if scalesModel.selectedDirection == 0 {
+            if scalesModel.selectedScaleSegment == 0 {
                 result = "Thumb Under"
             }
             else {
@@ -65,10 +65,10 @@ struct LegendView: View {
         }
         else {
             if scaleMotion == .contraryMotion {
-                result = scalesModel.selectedDirection == 0 ? "Thumb Under" :  "Finger Over"
+                result = scalesModel.selectedScaleSegment == 0 ? "Thumb Under" :  "Finger Over"
             }
             else {
-                result = scalesModel.selectedDirection == 0 ? "Finger Over" :  "Thumb Under"
+                result = scalesModel.selectedScaleSegment == 0 ? "Finger Over" :  "Thumb Under"
             }
         }
         return result

@@ -8,12 +8,12 @@ public class Tie : ScoreEntry {
 }
 
 public class Rest : TimeSliceEntry {
-    public override init(timeSlice:TimeSlice, value:Double, staffNum:Int) {
-        super.init(timeSlice:timeSlice, value: value, staffNum: staffNum)
+    public override init(timeSlice:TimeSlice, value:Double, segment:Int, staffNum:Int) {
+        super.init(timeSlice:timeSlice, value: value, segment: segment, staffNum: staffNum)
     }
     
     public init(r:Rest) {
-        super.init(timeSlice: r.timeSlice, value: r.getValue(), staffNum: r.staffNum)
+        super.init(timeSlice: r.timeSlice, value: r.getValue(), segment: r.segment, staffNum: r.staffNum)
     }
 }
 
@@ -87,15 +87,15 @@ public class StaffNote : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, num:Int, value:Double, staffNum:Int, writtenAccidental:Int?=nil) {
-        self.midiNumber = num
-        super.init(timeSlice:timeSlice, value: value, staffNum: staffNum)
+    public init(timeSlice:TimeSlice, midi:Int, value:Double, segment:Int, staffNum:Int, writtenAccidental:Int?=nil) {
+        self.midiNumber = midi
+        super.init(timeSlice:timeSlice, value: value, segment: segment, staffNum: staffNum)
         self.writtenAccidental = writtenAccidental
     }
     
     public init(note:StaffNote) {
         self.midiNumber = note.midiNumber
-        super.init(timeSlice:note.timeSlice, value: note.getValue(), staffNum: note.staffNum)
+        super.init(timeSlice:note.timeSlice, value: note.getValue(), segment: note.segment, staffNum: note.staffNum)
         self.timeSlice.sequence = note.timeSlice.sequence
         self.writtenAccidental = note.writtenAccidental
         self.isOnlyRhythmNote = note.isOnlyRhythmNote

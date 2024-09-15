@@ -32,13 +32,14 @@ struct SettingsView: View {
     @State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
-    @State var metronomeOn = false
     @State var developerModeOn = false
+    @State var metronomeSilent = false
 
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
+    @StateObject private var orientationObserver = DeviceOrientationObserver()
     
     struct SetKeyboardColourView: View {
         @Binding var parentColor: Color
@@ -46,22 +47,22 @@ struct SettingsView: View {
         
         var body: some View {
             VStack {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Text("Choose your keyboard colour ")
-                        ColorPicker("Choose your keyboard colour", selection: $selectedColor)
-                            .padding()
-                            .onChange(of: selectedColor) { oldColor, newColor in
-                                PianoKeyboardModel.sharedForSettings.redraw()
-                                parentColor = newColor
-                            }
-                            .labelsHidden()
-                        Spacer()
-                    }
-                    PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
+                HStack {
+                    Spacer()
+                    Text("Choose your keyboard colour ")
+                    ColorPicker("Choose your keyboard colour", selection: $selectedColor)
+                        .padding()
+                        .onChange(of: selectedColor) { oldColor, newColor in
+                            PianoKeyboardModel.sharedForSettings.redraw()
+                            parentColor = newColor
+                        }
+                        .labelsHidden()
+                        
+                    Spacer()
                 }
+                PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
             }
+            .background(UIGlobals.shared.backgroundColor)
             .onAppear() {
                 self.selectedColor = parentColor
             }
@@ -71,22 +72,23 @@ struct SettingsView: View {
     func DetailedCustomSettingsView() -> some View {
         VStack {
             Spacer()
-            GeometryReader { geometry in
+            //GeometryReader { geometry in
                 HStack {
                     Spacer()
                     VStack {
                         SetKeyboardColourView(parentColor: $keyColor)
                     }
-                    .padding()
+                    //.padding()
                     .onChange(of: keyColor, {
                         Settings.shared.setKeyColor(keyColor)
                     })
                     .hilighted(backgroundColor: .gray)
-                    .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.6)
-                    Spacer()
+                    .frame(width: UIScreen.main.bounds.size.width * 0.9,
+                           height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                    //Spacer()
                 }
                 //.border(Color.red)
-            }
+            //}
             
 //            ///Metronome on
 //            Spacer()
@@ -179,6 +181,21 @@ struct SettingsView: View {
             }
             .frame(width: UIScreen.main.bounds.width * 0.30)
             
+            if Settings.shared.developerModeOn {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $metronomeSilent) {
+                        Text("Metronome Silent").font(.title2).padding(0)
+                    }
+                    .onChange(of: metronomeSilent, {
+                        settings.metronomeSilent = metronomeSilent
+                    })
+                    Spacer()
+                }
+                .frame(width: UIScreen.main.bounds.width * 0.30)
+            }
+
             Spacer()
             HStack {
                 Spacer()
@@ -215,8 +232,8 @@ struct SettingsView: View {
     func badgeStyle(_ n:Int) -> String {
         var str:String
         switch n {
-        case 1: str = "Cute Pets"
-        case 2: str = "Cute Bugs"
+        case 1: str = "Pets"
+        case 2: str = "Bugs"
         default:
             str = "Star"
         }
@@ -243,7 +260,7 @@ struct SettingsView: View {
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
                 self.keyColor = Settings.shared.getKeyColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
-                self.metronomeOn = settings.metronomeOn1
+                self.metronomeSilent = settings.metronomeSilent
                 self.developerModeOn = settings.developerModeOn
                 self.badgeStyleNumber = settings.badgeStyle
             }

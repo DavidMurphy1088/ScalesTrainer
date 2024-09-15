@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>345</string>
+					<string>339</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>344</string>
+					<string>338</string>
 					<key>Timestamp</key>
-					<string>747869737.6538841</string>
+					<string>748089928.020421</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>261</string>
+					<string>265</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>260</string>
+					<string>264</string>
 					<key>Timestamp</key>
-					<string>747961906.092708</string>
+					<string>748087287.3167191</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -102,58 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>85</string>
+					<string>611</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>84</string>
+					<string>610</string>
 					<key>Timestamp</key>
-					<string>747027410.838607</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Model/AudioManager.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>    func resetAudioKit() {
-</string>
-				<key>leading</key>
-				<string>    }
-    
-</string>
-				<key>trailing</key>
-				<string>        if let sampler = self.keyboardMidiSampler {
-            sampler.stop()
-        }
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>414</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>413</string>
-					<key>Timestamp</key>
-					<string>747966785.7355289</string>
+					<string>748091559.777079</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -169,52 +124,7 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    
-</string>
-				<key>leading</key>
-				<string>        }
-    }
-</string>
-				<key>trailing</key>
-				<string>    ///Allow user to follow notes hilighted on the keyboard.
-    ///Wait till user hits correct key before moving to and highlighting the next note
-    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
-					<string>602</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>601</string>
-					<key>Timestamp</key>
-					<string>747966785.735448</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Model/ScalesModel.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>    func buildScaleAndScore(scale:Scale, scores:[Score], ctx:String) {
+				<string>    func configureKeyboards(scale:Scale, ctx:String) {
 </string>
 				<key>leading</key>
 				<string>    }
@@ -237,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>490</string>
+					<string>484</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>489</string>
+					<string>483</string>
 					<key>Timestamp</key>
-					<string>747869737.653916</string>
+					<string>748089928.0203919</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -282,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>723</string>
+					<string>755</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>722</string>
+					<string>754</string>
 					<key>Timestamp</key>
-					<string>747964510.6426229</string>
+					<string>748076961.562968</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -355,7 +265,7 @@
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
     public func </string>
 				<key>trailing</key>
-				<string>(scale:Scale, direction:Int, hand:Int) {
+				<string>(scale:Scale, scaleSegment:Int, hand:Int) {
         for i in 0..&lt;numberOfKeys {
             if i &lt; self.pianoKeyModel.count {
 </string>
