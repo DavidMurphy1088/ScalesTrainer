@@ -12,6 +12,7 @@ struct CellView: View {
     var cellWidth: CGFloat
     var cellHeight: CGFloat
     var cellPadding: CGFloat
+    @Binding var opacityValue: Double
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScales = false
@@ -36,7 +37,7 @@ struct CellView: View {
     
     func getDescr() -> String {
         //return self.practiceCell.scale.scaleRoot.name + " " + self.practiceCell.scaleType.description
-        return self.practiceCell.scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic: false, articulation: false)
+        return self.practiceCell.scale.getScaleName(handFull: true)
     }
     
     func determineNumberOfBadges() -> Int {
@@ -60,13 +61,15 @@ struct CellView: View {
     var body: some View {
         VStack {
             Button(action: {
-                ScalesModel.shared.setScale(scale:  practiceCell.scale)
+                //ScalesModel.shared.setScale(scale:  practiceCell.scale)
+                ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType, scaleMotion: practiceCell.scale.scaleMotion, octaves: practiceCell.scale.octaves, hands: practiceCell.scale.hands, ctx: "PracticeChart")
                 navigateToScales = true
             }) {
-                let label = practiceCell.scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
+                let label = practiceCell.scale.getScaleName(handFull: true)
                 Text(label)
                     .font(.title2)
                     .foregroundColor(.blue)
+                    .opacity(opacityValue)
             }
             .padding(self.padding)
             Spacer()
@@ -110,6 +113,8 @@ struct PracticeChartView: View {
     @State var minorTypeIndex:Int = 0
     @State private var reloadTrigger = false
     @State private var redrawCounter = 0
+    @State private var helpShowing = false
+    @State private var cellOpacityValue: Double = 1.0
     
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
@@ -128,19 +133,8 @@ struct PracticeChartView: View {
         return reorderedDayNames
     }
     
-    func doShuffle() {
-//        var tickTimer:AnyCancellable?
-//        var delay = (60.0 / 60x) //* 1000000
-//        //DispatchQueue.global(qos: .background).async { [self] in
-//            tickTimer = Timer.publish(every: delay, on: .main, in: .common)
-//                .autoconnect()
-//                .sink { _ in
-//                    practiceChart.shuffle()
-//                    self.redrawCounter += 1
-//                }
-//        //}
-        
-        for i in 0..<16 {
+    func doShuffle(update:Bool) {
+        for i in 0..<24 {
             practiceChart.shuffle()
         }
         self.redrawCounter += 1
@@ -161,6 +155,15 @@ struct PracticeChartView: View {
                     TitleView(screenName: "Practice Chart").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     HStack {
                         Spacer()
+                        Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
+                        Button(action: {
+                            helpShowing = true
+                       }) {
+                            Text("Instructions")
+                        }
+                        .padding()
+
+                        Spacer()
                         Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
                         Text("\(self.redrawCounter)").opacity(0.0).padding(0)
                         Picker("Select Value", selection: $minorTypeIndex) {
@@ -179,53 +182,61 @@ struct PracticeChartView: View {
                             practiceChart.minorScaleType = minorTypeIndex
                             practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
                             self.reloadTrigger = !self.reloadTrigger
-                            
                         })
+                        
                         Spacer()
                         Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
                         Button(action: {
-                            doShuffle()
+                            cellOpacityValue = 0.1
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                sleep(1)
+                                doShuffle(update: true)
+                                withAnimation(.linear(duration: 1.0)) {
+                                    cellOpacityValue = 1.0
+                                }
+                            }
                        }) {
                             Text("Shuffle Practice Chart")
                         }
                         .padding()
+                        
                         Spacer()
                     }
                 }
                 .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
 
-                    ScrollView(.vertical) {
-                        VStack(spacing: 0) {
-                            
-                            // Column Headers
+                ScrollView(.vertical) {
+                    VStack(spacing: 0) {
+                        
+                        // Column Headers
+                        HStack(spacing: 0) {
+                            ForEach(0..<practiceChart.columns, id: \.self) { index in
+                                VStack {
+                                    Text(self.daysOfWeek[index])
+                                }
+                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
+                                .background(Color.gray)
+                                .foregroundColor(.white).bold()
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.white, lineWidth: 3)
+                                )
+                                .padding(cellPadding)
+                            }
+                        }
+                        
+                        ///Rows
+                        ForEach(0..<practiceChart.rows, id: \.self) { row in
                             HStack(spacing: 0) {
-                                ForEach(0..<practiceChart.columns, id: \.self) { index in
-                                    VStack {
-                                        Text(self.daysOfWeek[index])
-                                    }
-                                    .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                    .background(Color.gray)
-                                    .foregroundColor(.white).bold()
-                                    .cornerRadius(10)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.white, lineWidth: 3)
-                                    )
+                                ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                    CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
+                                             cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue)
                                     .padding(cellPadding)
                                 }
                             }
-                            
-                            ///Rows
-                            ForEach(0..<practiceChart.rows, id: \.self) { row in
-                                HStack(spacing: 0) {
-                                    ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                        CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
-                                                 cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding)
-                                        .padding(cellPadding)
-                                    }
-                                }
-                            }
                         }
+                    }
                     .id(reloadTrigger)
                 }
                 
@@ -239,6 +250,10 @@ struct PracticeChartView: View {
         .onDisappear() {
             practiceChart.savePracticeChartToFile(chart: practiceChart)
         }
+        .sheet(isPresented: $helpShowing) {
+            HelpView(topic: "PracticeChart")
+        }
+
     }
 }
 

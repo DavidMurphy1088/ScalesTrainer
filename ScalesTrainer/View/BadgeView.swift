@@ -121,7 +121,7 @@ struct BadgeView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("\(scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic: false, articulation: false))").font(.title)
+                Text("\(scale.getScaleName(handFull: true))").font(.title)
                 Text("Correct:\(bank.totalCorrect)")
                 //Text("Correct:\(String(bank.matches))")
                 if Settings.shared.developerModeOn {

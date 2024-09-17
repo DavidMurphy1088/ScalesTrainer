@@ -63,6 +63,6 @@ class HelpMessages {
         
         m = "Listen to your recording synchronised to the scale."
         messages["Sync The Scale"] = m
-
+        messages["PracticeChart"] = "Practice Chart, Grade 1 scale instructions"
     }
 }

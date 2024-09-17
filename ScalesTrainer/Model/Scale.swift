@@ -368,6 +368,7 @@ public class Scale : Codable {
             }
         }
         
+        ///Downwards direction, contrary
         if scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
@@ -378,12 +379,12 @@ public class Scale : Codable {
             var seq = 0
             for state in secondPart {
                 ///Need deep copy
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value, segment: 1))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value, segment: 0))
                 //segmentCounter += 1
             }
             seq = 0
             for i in 1..<firstPart.count {
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value, segment: 0))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value, segment: 1))
             }
             ///The last note value is now in the middle of the scale ... so exchange it
             let lastNoteValue = scaleNoteState[1][middleIndex - 1].value
@@ -404,7 +405,7 @@ public class Scale : Codable {
                 setFingerBreaks(hand: hand)
             }
         }
-        debug1("endOfInit")
+        debug1("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -1002,7 +1003,7 @@ public class Scale : Codable {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 3 : 4
     }
     
-    func getScaleName(handFull:Bool, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool) -> String {
+    func getScaleName(handFull:Bool, octaves:Bool? = nil) -> String { //}, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool)  {
         var name = scaleRoot.name + " " + scaleType.description
         if scaleMotion == .contraryMotion {
             name += ", " + scaleMotion.description
@@ -1028,22 +1029,38 @@ public class Scale : Codable {
         if self.hands.count == 2 {
             name += handFull ? ", Both Hands" : " RH,LF"
         }
-    
-        if octaves {
-            name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+//    
+        if let octaves = octaves {
+            if octaves {
+                name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+            }
         }
-        if tempo {
-            name += ", \(self.minTempo) BPM"
-        }
-        if dynamic {
-            name += ", \(self.dynamicType.description)"
-        }
-        if articulation {
-            name += ", \(self.articulationType.description)"
-        }
+//        if tempo {
+//            name += ", \(self.minTempo) BPM"
+//        }
+//        if dynamic {
+//            name += ", \(self.dynamicType.description)"
+//        }
+//        if articulation {
+//            name += ", \(self.articulationType.description)"
+//        }
         return name
     }
     
+    func getScaleAttributes(showTempo:Bool) -> String {
+        var name = ""
+        if showTempo {
+            name += "\(self.minTempo) BPM, "
+        }
+
+        name += "\(self.dynamicType.description)"
+        name += ", \(self.articulationType.description)"
+        if self.scaleMotion == .contraryMotion {
+            name += ", Contrary Motion"
+        }
+        return name
+    }
+
 //    static func getTypeName(type:ScaleType) -> String {
 //        var name = ""
 //        switch type {

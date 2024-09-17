@@ -9,7 +9,7 @@ struct ViewSettingsView: View {
             Button(action: {
                 scalesModel.setShowKeyboard(!scalesModel.showKeyboard)
             }) {
-                Text(scalesModel.showKeyboard ? "Hide Keyboard" : "Show Keyboard")
+                Text(scalesModel.showKeyboard ? NSLocalizedString("Hide Keyboard", comment: "LegendView") : "Show Keyboard")
             }
             .padding()
             
@@ -18,7 +18,7 @@ struct ViewSettingsView: View {
                 Button(action: {
                     scalesModel.setShowFingers(!scalesModel.showFingers)
                 }) {
-                    Text(scalesModel.showFingers ? "Hide Fingers" : "Show Fingers")
+                    Text(scalesModel.showFingers ? NSLocalizedString("Hide Fingers", comment: "LegendView") : "Show Fingers")
                 }
                 .padding()
             }
@@ -27,7 +27,7 @@ struct ViewSettingsView: View {
             Button(action: {
                 scalesModel.setShowStaff(!scalesModel.showStaff)
             }) {
-                Text(scalesModel.showStaff ? "Hide Staff" : "Show Staff")
+                Text(scalesModel.showStaff ? NSLocalizedString("Hide Staff", comment: "LegendView") : "Show Staff")
             }
             .padding()
             
@@ -57,7 +57,7 @@ struct LegendView: View {
         let hand = keyboardHand
         if hand == 0 {
             if scalesModel.selectedScaleSegment == 0 {
-                result = "Thumb Under"
+                result = NSLocalizedString("Thumb Under", comment: "Menu")
             }
             else {
                 result = "Finger Over"
@@ -65,10 +65,10 @@ struct LegendView: View {
         }
         else {
             if scaleMotion == .contraryMotion {
-                result = scalesModel.selectedScaleSegment == 0 ? "Thumb Under" :  "Finger Over"
+                result = scalesModel.selectedScaleSegment == 0 ? NSLocalizedString("Thumb Under", comment: "Menu") :  "Finger Over"
             }
             else {
-                result = scalesModel.selectedScaleSegment == 0 ? "Finger Over" :  "Thumb Under"
+                result = scalesModel.selectedScaleSegment == 0 ? "Finger Over" :  NSLocalizedString("Thumb Under", comment: "Menu")
             }
         }
         return result
@@ -82,8 +82,8 @@ struct LegendView: View {
         if !scalesModel.showKeyboard {
             return ""
         }
-        var title = hand == 0 ? "Right Hand" : "Left Hand"
-        title += " Fingers"
+        var title = hand == 0 ? NSLocalizedString("Right Hand", comment: "Menu") : NSLocalizedString("Left Hand", comment: "Menu")
+        title += " " + NSLocalizedString("Fingers", comment: "Menu")
         if scalesModel.runningProcess == .leadingTheScale  {
             title = "Practice"
         }
@@ -105,7 +105,7 @@ struct LegendView: View {
                     if scalesModel.showFingers {
                         Spacer()
                         Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                        Text("Finger Number")
+                        Text(NSLocalizedString("Finger Number", comment: "LegendView"))
                         
                         Spacer()
                         //Text("1").foregroundColor(.orange).font(.title2).bold()

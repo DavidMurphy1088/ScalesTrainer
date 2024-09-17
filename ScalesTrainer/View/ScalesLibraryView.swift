@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct PickAnyScaleView: View {
+struct ScalesLibraryView: View {
     @State var typeIndexMajor:Int = 0
     @State var rootIndexMajor:Int = 0
     @State var motionIndex:Int = 0
@@ -104,7 +104,10 @@ struct PickAnyScaleView: View {
     
     var body: some View {
         VStack {
-            TitleView(screenName: "Pick Any Scale").commonFrameStyle()
+            //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
+            Text("Scales Library")
+                .font(.title2)
+                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
             VStack {
                 VStack {
                     Text("Major Scales").font(.title).padding()
@@ -155,7 +158,7 @@ struct PickAnyScaleView: View {
                     let scale = setModelScale(major: true)
                     NavigationLink(destination: ScalesView()) {
                         HStack {
-                            let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                            let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
                             Text("  \(name)  ").font(.title2).padding()
                         }
                         .hilighted(backgroundColor: .blue)
@@ -216,7 +219,8 @@ struct PickAnyScaleView: View {
                     let scale = setModelScale(major: false)
                     NavigationLink(destination: ScalesView()) {
                         HStack {
-                            let name = scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:false, articulation:false)
+                            //let name = scale.getScaleName(handFull: true, octaves: true)
+                            let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
                             Text(" \(name) ").font(.title2).padding()
                         }
                         .hilighted(backgroundColor: .blue)
@@ -229,6 +233,7 @@ struct PickAnyScaleView: View {
                 .padding()
                 Spacer()
             }
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
             .onAppear() {
                 if self.typesMinor.count == 0 {
                     for scale in ScaleType.allCases {

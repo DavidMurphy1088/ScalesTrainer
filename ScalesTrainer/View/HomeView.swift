@@ -209,8 +209,8 @@ struct ActivityModeView: View {
                                                     imageName: "home_scales_wheel_1"))
                 
                 //if Settings.shared.developerModeOn {
-                menuOptionsLeft.append(ActivityMode(name: "Pick Any Scale",
-                                                        view: AnyView(PickAnyScaleView()),
+                menuOptionsLeft.append(ActivityMode(name: "Scales Library",
+                                                        view: AnyView(ScalesLibraryView()),
                                                         imageName: "home_pick_any_scale_1"))
                 //}
                 

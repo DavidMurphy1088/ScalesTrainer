@@ -166,11 +166,11 @@ class TabSelectionManager: ObservableObject {
 //                                                             scaleType: .contraryMotion,
 //                                                             octaves: 1, hand: 2,
 //                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
-                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"),
-                                                             scaleType: .brokenChordMajor,
-                                                             scaleMotion: .similarMotion,
-                                                             octaves: 1, hands: [0],
-                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
+                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
+                                                             scaleType: .major,
+                                                             scaleMotion: .contraryMotion,
+                                                             octaves: 1, hands: [0,1],
+                                                             minTempo: 100, dynamicType: .mf, articulationType: .legato))
                     selectedTab = 0
                 }
                 else {
@@ -251,19 +251,19 @@ struct ScalesTrainerApp: App {
             
             HomeView()
                 .tabItem {
-                    Label("Home", systemImage: "house")
+                    Label(NSLocalizedString("Home", comment: "Menu"), systemImage: "house")
                 }
                 .tag(1)
             GradeAndBoard()
                 .tabItem {
                     //Label("Board and Grade", systemImage: "arrowshape.forward.circle")
-                    Label("Grade", systemImage: "arrowshape.forward.circle")
+                    Label(NSLocalizedString("Grade", comment: "Menu"), systemImage: "arrowshape.forward.circle")
                 }
                 .tag(2)
                 .environmentObject(tabSelectionManager)
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
                 }
                 .tag(3)
                 .environmentObject(tabSelectionManager)
@@ -279,9 +279,9 @@ struct ScalesTrainerApp: App {
             
             if Settings.shared.developerModeOn  {
                 // DeveloperView().commonFrameStyle()
-                PickAnyScaleView()
+                ScalesLibraryView()
                     .tabItem {
-                        Label("PickScale", systemImage: "book.pages")
+                        Label("ScaleLibrary", systemImage: "book.pages")
                     }
                     .tag(5)
                     .environmentObject(tabSelectionManager)

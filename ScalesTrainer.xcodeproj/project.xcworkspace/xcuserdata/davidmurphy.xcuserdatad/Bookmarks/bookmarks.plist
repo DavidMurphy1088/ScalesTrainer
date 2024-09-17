@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>339</string>
+					<string>340</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>338</string>
+					<string>339</string>
 					<key>Timestamp</key>
-					<string>748089928.020421</string>
+					<string>748161020.047564</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -41,7 +41,7 @@
             Spacer()
 </string>
 				<key>trailing</key>
-				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
+				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record The Scale", comment: "Menu")) {
                     if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
 </string>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>265</string>
+					<string>275</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>264</string>
+					<string>274</string>
 					<key>Timestamp</key>
-					<string>748087287.3167191</string>
+					<string>748258721.797343</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -86,9 +86,9 @@
     
 </string>
 				<key>trailing</key>
-				<string>        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
-        if setProcess == .none {
-            self.audioManager.stopRecording()
+				<string>        if setProcess == self.runningProcess {
+            return
+        }
 </string>
 			</dict>
 			<key>type</key>
@@ -102,13 +102,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>611</string>
+					<string>621</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>610</string>
+					<string>620</string>
 					<key>Timestamp</key>
-					<string>748091559.777079</string>
+					<string>748258721.797316</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -131,7 +131,7 @@
     
 </string>
 				<key>trailing</key>
-				<string>        let name = scale.getScaleName(handFull: true, octaves: false, tempo: false, dynamic:false, articulation:false)
+				<string>        let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
 </string>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>484</string>
+					<string>490</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>483</string>
+					<string>489</string>
 					<key>Timestamp</key>
-					<string>748089928.0203919</string>
+					<string>748176071.03898</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>755</string>
+					<string>756</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>754</string>
+					<string>755</string>
 					<key>Timestamp</key>
-					<string>748076961.562968</string>
+					<string>748240183.306296</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -235,15 +235,15 @@
 				<key>location-parameters</key>
 				<dict>
 					<key>EndingColumnNumber</key>
-					<string>46</string>
+					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>238</string>
+					<string>247</string>
 					<key>StartingColumnNumber</key>
-					<string>16</string>
+					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>238</string>
+					<string>246</string>
 					<key>Timestamp</key>
-					<string>747966293.8530771</string>
+					<string>748256696.161955</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -259,15 +259,61 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>linkScaleFingersToKeyboardKeys</string>
+				<string>    public func linkScaleFingersToKeyboardKeys(scale:Scale, scaleSegment:Int, hand:Int) {
+</string>
 				<key>leading</key>
 				<string>    ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
-    public func </string>
+</string>
 				<key>trailing</key>
-				<string>(scale:Scale, scaleSegment:Int, hand:Int) {
-        for i in 0..&lt;numberOfKeys {
+				<string>        for i in 0..&lt;numberOfKeys {
             if i &lt; self.pianoKeyModel.count {
+                let key = self.pianoKeyModel[i]
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>435</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>434</string>
+					<key>Timestamp</key>
+					<string>748258721.797358</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/ScalesModel.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
+</string>
+				<key>leading</key>
+				<string>    ///Allow user to follow notes hilighted on the keyboard.
+    ///Wait till user hits correct key before moving to and highlighting the next note
+</string>
+				<key>trailing</key>
+				<string>        
+        DispatchQueue.global(qos: .background).async { [self] in
+            class KeyboardSemaphore {
 </string>
 			</dict>
 			<key>type</key>

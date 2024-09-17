@@ -312,6 +312,8 @@ class AudioManager {
     private func loadSampler(num:Int, preset:Int) -> MIDISampler? {
         do {
             let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
+            //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
+            
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
             //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")

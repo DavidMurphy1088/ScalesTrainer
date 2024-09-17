@@ -233,7 +233,15 @@ public class PianoKeyboardModel: ObservableObject {
         //key[10].scaleNoteState = ScaleNoteState()
         //self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection)
     }
-
+    
+    public func resetLinkScaleFingersToKeyboardKeys() {
+        for i in 0..<numberOfKeys {
+            if i < self.pianoKeyModel.count {
+                let key = self.pianoKeyModel[i]
+                key.setState(state: nil)
+            }
+        }
+    }
     ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
     public func linkScaleFingersToKeyboardKeys(scale:Scale, scaleSegment:Int, hand:Int) {
@@ -244,14 +252,11 @@ public class PianoKeyboardModel: ObservableObject {
                 if let state = state {
                     key.setState(state: state)
                 }
-                else {
-                    key.setState(state: nil)
-                }
             }
         }
     }
     
-    func debug1(_ ctx:String) {
+    func debug22(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {

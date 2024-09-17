@@ -23,7 +23,14 @@
 
     },
     " Go To Scale %@ - Good Luck 😊" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xcv"
+          }
+        }
+      }
     },
     " Spin The Wheel " : {
 
@@ -35,6 +42,9 @@
 
     },
     "%@" : {
+
+    },
+    "%@  ♩ =" : {
 
     },
     "%lld" : {
@@ -76,11 +86,16 @@
     "Back %@" : {
 
     },
-    "Backing Off" : {
-
-    },
     "Backing On" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伴奏开启"
+          }
+        }
+      }
     },
     "Backing Sound" : {
 
@@ -135,13 +150,40 @@
 
     },
     "Finger Number" : {
-
+      "comment" : "LegendView",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指法编号"
+          }
+        }
+      }
+    },
+    "Fingers" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手指"
+          }
+        }
+      }
     },
     "First name" : {
 
     },
     "Follow The Scale" : {
-
+      "comment" : "ProcessMenu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随音阶"
+          }
+        }
+      }
     },
     "Go to Screen B" : {
 
@@ -150,7 +192,15 @@
 
     },
     "Grade" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等级"
+          }
+        }
+      }
     },
     "Grade %lld Piano" : {
 
@@ -162,18 +212,53 @@
 
     },
     "Hide Fingers" : {
-
+      "comment" : "LegendView",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏手指"
+          }
+        }
+      }
     },
     "Hide Keyboard" : {
-
+      "comment" : "LegendView",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏键盘"
+          }
+        }
+      }
     },
     "Hide Staff" : {
-
+      "comment" : "LegendView",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏五线谱"
+          }
+        }
+      }
     },
     "Home" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主页"
+          }
+        }
+      }
     },
     "Initial" : {
+
+    },
+    "Instructions" : {
 
     },
     "Key" : {
@@ -196,8 +281,36 @@
     "Key 1" : {
       "extractionState" : "manual"
     },
+    "Key 2" : {
+      "extractionState" : "manual"
+    },
+    "Key 3" : {
+      "extractionState" : "manual"
+    },
+    "Key 4" : {
+      "extractionState" : "manual"
+    },
     "Lead the Scale" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引导音阶"
+          }
+        }
+      }
+    },
+    "Left Hand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左手"
+          }
+        }
+      }
     },
     "Log" : {
 
@@ -248,11 +361,16 @@
     "Piano Calibration" : {
 
     },
-    "PickScale" : {
-
-    },
     "Play Along" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟着演奏"
+          }
+        }
+      }
     },
     "Play Recording" : {
 
@@ -264,13 +382,32 @@
 
     },
     "Record The Scale" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "录制音阶"
+          }
+        }
+      }
     },
     "Recording %@" : {
 
     },
     "Required Consecutive Count" : {
 
+    },
+    "Right Hand" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右手"
+          }
+        }
+      }
     },
     "Save Configuration" : {
 
@@ -304,7 +441,24 @@
     "Scale:" : {
 
     },
+    "ScaleLibrary" : {
+
+    },
+    "ScaleName" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C大调音阶，对向运动，双手，一个八度"
+          }
+        }
+      }
+    },
     "Scales Academy" : {
+
+    },
+    "Scales Library" : {
 
     },
     "Screen A" : {
@@ -326,21 +480,20 @@
 
     },
     "Settings" : {
-
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
+          }
+        }
+      }
     },
     "Show Alert" : {
 
     },
-    "Show Fingers" : {
-
-    },
-    "Show Keyboard" : {
-
-    },
     "Show MIDI" : {
-
-    },
-    "Show Staff" : {
 
     },
     "Show Tap Data" : {
@@ -373,9 +526,6 @@
     "Stop Hearing" : {
 
     },
-    "Stop Leading" : {
-
-    },
     "Stop Playback" : {
 
     },
@@ -383,7 +533,15 @@
 
     },
     "Stop Playing Along" : {
-
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止一起演奏"
+          }
+        }
+      }
     },
     "Stop Recording" : {
 
@@ -401,8 +559,45 @@
         }
       }
     },
-    "Tempo  ♩ =" : {
-
+    "Tempo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "节奏"
+          }
+        }
+      }
+    },
+    "test" : {
+      "comment" : "comment",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "testE"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大调，右手，连奏"
+          }
+        }
+      }
+    },
+    "Thumb Under" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拇指穿过"
+          }
+        }
+      }
     },
     "Trinity" : {
 

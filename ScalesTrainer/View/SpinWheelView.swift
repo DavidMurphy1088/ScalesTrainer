@@ -40,7 +40,7 @@ struct SpinWheelView: View {
         var res:[String] = []
         //for scale in boardGrade.getScales() {
         for scale in PracticeChart.shared.getScales("Spin") {
-            let name = scale.getScaleName(handFull: false, octaves: false, tempo: false, dynamic:false, articulation:false)
+            let name = scale.getScaleName(handFull: false)
             //let name = scale.getScaleName(handFull: false, octaves: false)
             res.append(name)
         }
@@ -195,7 +195,7 @@ struct SpinWheelView: View {
                 if scalesModel.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
-                        let name = scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
+                        let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()
                             .font(.title2)
                             .hilighted(backgroundColor: .blue)

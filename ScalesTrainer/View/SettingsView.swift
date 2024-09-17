@@ -62,7 +62,7 @@ struct SettingsView: View {
                 }
                 PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
             }
-            .background(UIGlobals.shared.backgroundColor)
+            .background(UIGlobals.shared.purpleDark)
             .onAppear() {
                 self.selectedColor = parentColor
             }

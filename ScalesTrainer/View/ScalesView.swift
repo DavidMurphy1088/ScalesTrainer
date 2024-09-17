@@ -122,7 +122,7 @@ struct ScalesView: View {
             }
             .padding()
             
-            Text("Tempo  \u{2669} =").padding(.horizontal, 0)
+            Text("\(NSLocalizedString("Tempo", comment: "MenuView"))  \u{2669} =").padding(.horizontal, 0)
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
                     Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
@@ -191,7 +191,7 @@ struct ScalesView: View {
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     MetronomeView()
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Playing Along"
+                    let text = metronome.isLeadingIn ? "  Leading In  " : NSLocalizedString("Stop Playing Along", comment: "Menu")
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -234,7 +234,8 @@ struct ScalesView: View {
             if [.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
                 Spacer()
                 VStack {
-                    let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                    //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+                    let name = scalesModel.scale.getScaleName(handFull: true, octaves: true)
                     Text("Recording \(name)").font(.title).padding()
                     //ScaleStartView()
                     RecordingIsUnderwayView()
@@ -275,7 +276,7 @@ struct ScalesView: View {
         HStack(alignment: .top) {
             Spacer()
             HStack()  {
-                Button("Follow The Scale") {
+                Button(NSLocalizedString("Follow The Scale", comment: "ProcessMenu")) {
                     scalesModel.setRunningProcess(.followingScale)
                     scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                 }
@@ -294,7 +295,7 @@ struct ScalesView: View {
             
             Spacer()
             HStack() {
-                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : "Lead the Scale") {
+                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : NSLocalizedString("Lead the Scale", comment: "Menu") ) {
                     if scalesModel.runningProcessPublished == .leadingTheScale {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -318,7 +319,7 @@ struct ScalesView: View {
             
             Spacer()
             HStack {
-                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : "Play Along") {
+                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : NSLocalizedString("Play Along", comment: "Menu")) {
                     scalesModel.setRunningProcess(.playingAlongWithScale)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
@@ -337,7 +338,7 @@ struct ScalesView: View {
             
             Spacer()
             HStack {
-                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : "Record The Scale") {
+                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record The Scale", comment: "Menu")) {
                     if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -401,7 +402,7 @@ struct ScalesView: View {
 
             Spacer()
             HStack {
-                Button(hearingBacking ? "Backing Off" : "Backing On") {
+                Button(hearingBacking ? "Backing Off" : NSLocalizedString("Backing On", comment: "Menu")) {
                     hearingBacking.toggle()
                     if hearingBacking {
                         scalesModel.setBacking(true)
@@ -464,10 +465,15 @@ struct ScalesView: View {
                 if scalesModel.showParameters {
                     VStack(spacing: 0) {
                         //HStack {
-                            let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: false, dynamic:false, articulation:false)
-                            Text(name).font(.title)//.padding()
-                                .padding(.vertical, 0)
-                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true) + ", " + scalesModel.scale.getScaleAttributes(showTempo: false)
+                        //let name = NSLocalizedString("ScaleName", comment: "comment")
+                        Text(name).font(.title)//.padding()
+                        .padding(.vertical, 0)
+                        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+//                            let attr = scalesModel.scale.getScaleAttributes()
+//                            Text(attr)
+//                                .padding(.vertical, 0)
+//                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                         //}
                         HStack {
                             Spacer()
@@ -625,6 +631,7 @@ struct ScalesView: View {
             }
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
+            scalesModel.setRecordedAudioFile(nil)
         }
         
         .onDisappear {
