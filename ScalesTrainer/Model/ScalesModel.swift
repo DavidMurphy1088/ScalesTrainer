@@ -588,10 +588,15 @@ public class ScalesModel : ObservableObject {
             inBarTotalValue += noteState.value
         }
 
-        Logger.shared.log(self, "Created score type:\(staffType)")
+        //Logger.shared.log(self, "Created score type:\(staffType)")
         return score
     }
     
+    func setScale(scale:Scale) {
+        ///Deep copy that resets the scale segments
+        self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
+    }
+
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, octaves:Int, hands:[Int], ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
@@ -601,10 +606,11 @@ public class ScalesModel : ObservableObject {
                            octaves: octaves,
                            hands: hands,
                           minTempo: 90, dynamicType: .mf, articulationType: .legato)
-        setScale(scale: scale)
+        setScaleKeyboardAndScore(scale: scale)
     }
 
-    func setScale(scale:Scale) {
+    private func setScaleKeyboardAndScore(scale:Scale) {
+        ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScale to:\(name)")
         let scoreRH = self.createScore(scale: scale, hand: 0)

@@ -179,7 +179,7 @@ public class Scale : Codable {
         self.scaleMotion = scaleMotion
         scaleNoteState = []
         self.hands = hands
-        print("============= StartScale", self.scaleRoot.name, self.scaleMotion, self.hands)
+        //print("============= StartScale", self.scaleRoot.name, self.scaleMotion, self.hands)
         ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
         ///
@@ -405,7 +405,7 @@ public class Scale : Codable {
                 setFingerBreaks(hand: hand)
             }
         }
-        debug1("------------- End Init")
+        //debug1("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -566,7 +566,7 @@ public class Scale : Codable {
         return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
-    func debug1(_ msg:String)  {
+    func debug11(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

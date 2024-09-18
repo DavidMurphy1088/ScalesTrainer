@@ -98,161 +98,164 @@ struct ScalesLibraryView: View {
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
                           hands: hands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
-        ScalesModel.shared.setScale(scale: scale)
+        ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
         return scale
     }
     
     var body: some View {
-        VStack {
-            //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
-            Text("Scales Library")
-                .font(.title2)
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+        NavigationView {
             VStack {
+                //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
+                Text("Scales Library")
+                    .font(.title2)
+                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                 VStack {
-                    Text("Major Scales").font(.title).padding()
-                    HStack {
-                        Text("Scale:").font(.title2).padding()
-                        Picker("Select Value", selection: $rootIndexMajor) {
-                            ForEach(rootsMajor.indices, id: \.self) { index in
-                                Text("\(rootsMajor[index])")
+                    VStack {
+                        Text("Major Scales").font(.title).padding()
+                        HStack {
+                            Text("Scale:").font(.title2).padding()
+                            Picker("Select Value", selection: $rootIndexMajor) {
+                                ForEach(rootsMajor.indices, id: \.self) { index in
+                                    Text("\(rootsMajor[index])")
+                                }
                             }
-                        }
-                        .pickerStyle(.menu)
-
-                        Text("Scale Type:").font(.title2).padding()
-                        Picker("Select Value", selection: $typeIndexMajor) {
-                            ForEach(typesMajor.indices, id: \.self) { index in
-                                Text("\(typesMajor[index])")
+                            .pickerStyle(.menu)
+                            
+                            Text("Scale Type:").font(.title2).padding()
+                            Picker("Select Value", selection: $typeIndexMajor) {
+                                ForEach(typesMajor.indices, id: \.self) { index in
+                                    Text("\(typesMajor[index])")
+                                }
                             }
+                            .pickerStyle(.menu)
+                            
+                            Text("Motion:").font(.title2).padding()
+                            Picker("Select Value", selection: $motionIndex) {
+                                ForEach(scaleMotions.indices, id: \.self) { index in
+                                    Text("\(scaleMotions[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.menu)
                         
-                        Text("Motion:").font(.title2).padding()
-                        Picker("Select Value", selection: $motionIndex) {
-                            ForEach(scaleMotions.indices, id: \.self) { index in
-                                Text("\(scaleMotions[index])")
+                        HStack {
+                            Text("Hand:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexHands) {
+                                ForEach(hands.indices, id: \.self) { index in
+                                    Text("\(hands[index])")
+                                }
                             }
+                            .pickerStyle(.menu)
+                            
+                            Text("Octaves:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexOctave) {
+                                ForEach(octaves.indices, id: \.self) { index in
+                                    Text("\(octaves[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.menu)
+                        
+                        let scale = setModelScale(major: true)
+                        NavigationLink(destination: ScalesView()) {
+                            HStack {
+                                let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
+                                Text("  \(name)  ").font(.title2).padding()
+                            }
+                            .hilighted(backgroundColor: .blue)
+                        }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            let _ = setModelScale(major: true)
+                        })
                     }
+                    .commonFrameStyle()
+                    .padding()
                     
-                    HStack {
-                        Text("Hand:").font(.title2).padding()
-                        Picker("Select Value", selection: $indexHands) {
-                            ForEach(hands.indices, id: \.self) { index in
-                                Text("\(hands[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-
-                        Text("Octaves:").font(.title2).padding()
-                        Picker("Select Value", selection: $indexOctave) {
-                            ForEach(octaves.indices, id: \.self) { index in
-                                Text("\(octaves[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-
-                    let scale = setModelScale(major: true)
-                    NavigationLink(destination: ScalesView()) {
+                    VStack {
+                        Text("Minor Scales").font(.title).padding()
                         HStack {
-                            let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
-                            Text("  \(name)  ").font(.title2).padding()
-                        }
-                        .hilighted(backgroundColor: .blue)
-                    }
-                    .simultaneousGesture(TapGesture().onEnded {
-                        let _ = setModelScale(major: true)
-                    })
-                }
-                .commonFrameStyle()
-                .padding()
-                
-                VStack {
-                    Text("Minor Scales").font(.title).padding()
-                    HStack {
-                        Text("Scale:").font(.title2).padding()
-                        Picker("Select Value", selection: $rootIndexMinor) {
-                            ForEach(rootsMinor.indices, id: \.self) { index in
-                                Text("\(rootsMinor[index])")
+                            Text("Scale:").font(.title2).padding()
+                            Picker("Select Value", selection: $rootIndexMinor) {
+                                ForEach(rootsMinor.indices, id: \.self) { index in
+                                    Text("\(rootsMinor[index])")
+                                }
                             }
-                        }
-                        .pickerStyle(.menu)
-
-                        Text("Scale Type:").font(.title2).padding()
-                        Picker("Select Value", selection: $typeIndexMinor) {
-                            ForEach(typesMinor.indices, id: \.self) { index in
-                                Text("\(typesMinor[index])")
+                            .pickerStyle(.menu)
+                            
+                            Text("Scale Type:").font(.title2).padding()
+                            Picker("Select Value", selection: $typeIndexMinor) {
+                                ForEach(typesMinor.indices, id: \.self) { index in
+                                    Text("\(typesMinor[index])")
+                                }
                             }
+                            .pickerStyle(.menu)
+                            
+                            Text("Motion:").font(.title2).padding()
+                            Picker("Select Value", selection: $motionIndex) {
+                                ForEach(scaleMotions.indices, id: \.self) { index in
+                                    Text("\(scaleMotions[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.menu)
                         
-                        Text("Motion:").font(.title2).padding()
-                        Picker("Select Value", selection: $motionIndex) {
-                            ForEach(scaleMotions.indices, id: \.self) { index in
-                                Text("\(scaleMotions[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-
-                    HStack {
-                        Text("Hand:").font(.title2).padding()
-                        Picker("Select Value", selection: $indexHands) {
-                            ForEach(hands.indices, id: \.self) { index in
-                                Text("\(hands[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        
-                        Text("Octaves:").font(.title2).padding()
-                        Picker("Select Value", selection: $indexOctave) {
-                            ForEach(octaves.indices, id: \.self) { index in
-                                Text("\(octaves[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-
-                    let scale = setModelScale(major: false)
-                    NavigationLink(destination: ScalesView()) {
                         HStack {
-                            //let name = scale.getScaleName(handFull: true, octaves: true)
-                            let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
-                            Text(" \(name) ").font(.title2).padding()
+                            Text("Hand:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexHands) {
+                                ForEach(hands.indices, id: \.self) { index in
+                                    Text("\(hands[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            
+                            Text("Octaves:").font(.title2).padding()
+                            Picker("Select Value", selection: $indexOctave) {
+                                ForEach(octaves.indices, id: \.self) { index in
+                                    Text("\(octaves[index])")
+                                }
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .hilighted(backgroundColor: .blue)
+                        
+                        let scale = setModelScale(major: false)
+                        NavigationLink(destination: ScalesView()) {
+                            HStack {
+                                //let name = scale.getScaleName(handFull: true, octaves: true)
+                                let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
+                                Text(" \(name) ").font(.title2).padding()
+                            }
+                            .hilighted(backgroundColor: .blue)
+                        }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            let _ = setModelScale(major: false)
+                        })
                     }
-                    .simultaneousGesture(TapGesture().onEnded {
-                        let _ = setModelScale(major: false)
-                    })
+                    .commonFrameStyle()
+                    .padding()
+                    Spacer()
                 }
-                .commonFrameStyle()
-                .padding()
-                Spacer()
+                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                .onAppear() {
+                    if self.typesMinor.count == 0 {
+                        for scale in ScaleType.allCases {
+                            if scale.isMajor() {
+                                self.typesMajor.append(scale.description)
+                            }
+                            else {
+                                self.typesMinor.append(scale.description)
+                            }
+                        }
+                        for scale in ScaleMotion.allCases {
+                            self.scaleMotions.append(scale.description)
+                        }
+                        
+                    }
+                }
             }
             .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
-            .onAppear() {
-                if self.typesMinor.count == 0 {
-                    for scale in ScaleType.allCases {
-                        if scale.isMajor() {
-                            self.typesMajor.append(scale.description)
-                        }
-                        else {
-                            self.typesMinor.append(scale.description)
-                        }
-                    }
-                    for scale in ScaleMotion.allCases {
-                        self.scaleMotions.append(scale.description)
-                    }
-
-                }
-            }
+            //.border(.red, width: 2)
+            //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
-        //.border(.red, width: 2)
-        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

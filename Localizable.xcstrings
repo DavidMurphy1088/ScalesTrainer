@@ -442,7 +442,7 @@
 
     },
     "ScaleLibrary" : {
-
+      "comment" : "Menu"
     },
     "ScaleName" : {
       "extractionState" : "manual",

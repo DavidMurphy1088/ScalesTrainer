@@ -38,8 +38,8 @@ struct SpinWheelView: View {
     
     func getScaleNames() -> [String] {
         var res:[String] = []
-        //for scale in boardGrade.getScales() {
-        for scale in PracticeChart.shared.getScales("Spin") {
+
+        for scale in boardGrade.getScales() {
             let name = scale.getScaleName(handFull: false)
             //let name = scale.getScaleName(handFull: false, octaves: false)
             res.append(name)
@@ -69,9 +69,16 @@ struct SpinWheelView: View {
             scalesModel.setSpinState1(.spunAndStopped)
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
+            
+            // Determine which segment is at the top
+            //let segments = 360.0 / Double(scaleNames.count)
+            //let index = (Int((360 - rotation) / segments) + 12) % scaleNames.count
+            //let index = (Int(rotation / segments) + 12) % scaleNames.count
+            
             // Determine which segment is at the top
             let segments = 360.0 / Double(scaleNames.count)
             let index = Int((360 - rotation) / segments) % scaleNames.count
+            
             self.selectedScaleType = index
 //            segments = 360.0 / Double(scaleRoots.count)
 //            index = Int((360 - rotation) / segments) % scaleRoots.count
@@ -85,6 +92,7 @@ struct SpinWheelView: View {
 //                              scaleType: getTypes()[self.selectedScaleType],
 //                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
 //                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
+            print("============", "scales:", scaleNames.count, rotation, "segs", segments, "rot", rotation, index)
             let _ = ScalesModel.shared.setScale(scale: boardGrade.getScales()[index])
         }
     }

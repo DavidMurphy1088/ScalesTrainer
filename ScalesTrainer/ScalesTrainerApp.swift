@@ -161,16 +161,8 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if ScalesTrainerApp.runningInXcode() {
-                    //ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioDiminishedSeventh, octaves: 2, hand: 0))
-//                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
-//                                                             scaleType: .contraryMotion,
-//                                                             octaves: 1, hand: 2,
-//                                                             minTempo: 60, dynamicType: .mf, articulationType: .legato))
-                    ScalesModel.shared.setScale(scale: Scale(scaleRoot: ScaleRoot(name: "C"),
-                                                             scaleType: .major,
-                                                             scaleMotion: .contraryMotion,
-                                                             octaves: 1, hands: [0,1],
-                                                             minTempo: 100, dynamicType: .mf, articulationType: .legato))
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: 1, 
+                                                             hands: [0,1], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -268,12 +260,19 @@ struct ScalesTrainerApp: App {
                 .tag(3)
                 .environmentObject(tabSelectionManager)
             
+            ScalesLibraryView()
+                .tabItem {
+                    Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
+                }
+                .tag(4)
+                .environmentObject(tabSelectionManager)
+
             if Settings.shared.developerModeOn {
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
-                    .tag(4)
+                    .tag(5)
                     .environmentObject(tabSelectionManager)
             }
             
@@ -283,20 +282,20 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("ScaleLibrary", systemImage: "book.pages")
                     }
-                    .tag(5)
+                    .tag(6)
                     .environmentObject(tabSelectionManager)
 
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")
                     }
-                    .tag(6)
+                    .tag(7)
                     .environmentObject(tabSelectionManager)
                 DeveloperView()
                     .tabItem {
                         Label("Dev", systemImage: "book.pages")
                     }
-                    .tag(7)
+                    .tag(8)
                     .environmentObject(tabSelectionManager)
             }
         }

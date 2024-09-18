@@ -112,8 +112,9 @@ struct ActivityModeView: View {
         VStack {
             let overlay = Circle().stroke(Color.black, lineWidth: 2)
             //List(menuOptionsLeft) { activityMode in
+            Spacer()
             if menuOptionsLeft.count > 0 {
-                //Spacer()
+               
                 let activityMode = menuOptionsLeft[0]
                 NavigationLink(destination: getView(activityMode: activityMode)) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
@@ -134,6 +135,7 @@ struct ActivityModeView: View {
                     .padding()
                 }
             }
+            Spacer()
             if menuOptionsLeft.count > 1 {
                 let activityMode = menuOptionsLeft[1]
                 NavigationLink(destination: getView(activityMode: activityMode)) {
@@ -154,27 +156,27 @@ struct ActivityModeView: View {
                     .padding()
                 }
             }
-            if menuOptionsLeft.count > 2 {
-                let activityMode = menuOptionsLeft[2]
-                NavigationLink(destination: getView(activityMode: activityMode)) {
-                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        Image(activityMode.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
-                            
-                            .clipShape(Circle())  // Clips the image to a circular shape
-                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
-                            .overlay(overlay)
-                            //.border(.red)
-                        Text(activityMode.name)
-                            .font(.title2)
-                    }
-                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
-                    //.padding(.vertical, 0)
-                    .padding()
-                }
-            }
+//            if menuOptionsLeft.count > 2 {
+//                let activityMode = menuOptionsLeft[2]
+//                NavigationLink(destination: getView(activityMode: activityMode)) {
+//                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+//                        Image(activityMode.imageName)
+//                            .resizable()
+//                            .scaledToFit()
+//                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
+//                            
+//                            .clipShape(Circle())  // Clips the image to a circular shape
+//                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+//                            .overlay(overlay)
+//                            //.border(.red)
+//                        Text(activityMode.name)
+//                            .font(.title2)
+//                    }
+//                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
+//                    //.padding(.vertical, 0)
+//                    .padding()
+//                }
+//            }
             Spacer()
         }
         //.background()
@@ -209,9 +211,9 @@ struct ActivityModeView: View {
                                                     imageName: "home_scales_wheel_1"))
                 
                 //if Settings.shared.developerModeOn {
-                menuOptionsLeft.append(ActivityMode(name: "Scales Library",
-                                                        view: AnyView(ScalesLibraryView()),
-                                                        imageName: "home_pick_any_scale_1"))
+//                menuOptionsLeft.append(ActivityMode(name: "Scales Library",
+//                                                        view: AnyView(ScalesLibraryView()),
+//                                                        imageName: "home_pick_any_scale_1"))
                 //}
                 
                 //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))

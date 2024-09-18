@@ -30,7 +30,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     
     func metronomeStart() {
         beatCount = 0
-        scalesModel.scale.debug1("Hear")
+        //scalesModel.scale.debug1("Hear")
         PianoKeyboardModel.sharedCombined?.debug22("Hear")
         nextNoteIndex = 0
     }
