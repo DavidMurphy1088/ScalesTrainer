@@ -56,7 +56,7 @@ struct LegendView: View {
         var result:String
         let hand = keyboardHand
         if hand == 0 {
-            if scalesModel.selectedScaleSegment == 0 {
+            if scalesModel.selectedScaleSegmentPublished == 0 {
                 result = NSLocalizedString("Thumb Under", comment: "Menu")
             }
             else {

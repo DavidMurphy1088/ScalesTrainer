@@ -229,9 +229,6 @@ class AudioManager {
         do {
             ///As per the order in Cookbook Recorder example
             try engine.start()
-//            if recordAudio {
-//                try recorder?.record()
-//            }
         }
         catch {
             Logger.shared.reportError(self, "Error starting engine: \(error)")

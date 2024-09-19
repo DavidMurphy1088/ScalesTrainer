@@ -57,6 +57,11 @@ class MetronomeModel:ObservableObject {
         }
     }
     
+    func DontUse() {
+        self.startTimerThread()
+        self.isTiming = true
+    }
+    
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
         if self.processesToNotify.count == 0 {
             self.startTimerThread()

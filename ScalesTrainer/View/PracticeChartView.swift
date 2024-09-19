@@ -62,7 +62,10 @@ struct CellView: View {
         VStack {
             Button(action: {
                 //ScalesModel.shared.setScale(scale:  practiceCell.scale)
-                ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType, scaleMotion: practiceCell.scale.scaleMotion, octaves: practiceCell.scale.octaves, hands: practiceCell.scale.hands, ctx: "PracticeChart")
+                ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType, 
+                                                         scaleMotion: practiceCell.scale.scaleMotion,
+                                                         minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
+                                                         hands: practiceCell.scale.hands, ctx: "PracticeChart")
                 navigateToScales = true
             }) {
                 let label = practiceCell.scale.getScaleName(handFull: true)

@@ -256,7 +256,7 @@ public class PianoKeyboardModel: ObservableObject {
         }
     }
     
-    func debug22(_ ctx:String) {
+    func debug2(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {
@@ -372,9 +372,22 @@ public class PianoKeyboardModel: ObservableObject {
     ///Get the offset in the keyboard for the given midi
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
-    public func getKeyIndexForMidi(midi:Int, segment:Int) -> Int? {
+    public func getKeyIndexForMidi(midi:Int, segment:Int?) -> Int? {
+        var keyNumber:PianoKeyModel?
+        if false { //} let segment = segment{
+            keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
+        }
+        else {
+            keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi })
+        }
         //let x = self.pianoKeyModel.first(where: { $0.midi == midi })
-        let x = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
-        return x == nil ? nil : x?.keyOffsetFromLowestKey
+        //let x = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
+        return keyNumber == nil ? nil : keyNumber?.keyOffsetFromLowestKey
     }
+//    public func getKeyIndexForMidi(midi:Int) -> Int? {
+//        //let x = self.pianoKeyModel.first(where: { $0.midi == midi })
+//        let x = self.pianoKeyModel.first(where: { $0.midi == midi})
+//        return x == nil ? nil : x?.keyOffsetFromLowestKey
+//    }
+
 }

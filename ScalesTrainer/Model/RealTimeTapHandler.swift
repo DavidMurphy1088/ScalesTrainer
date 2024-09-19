@@ -122,7 +122,12 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     keyboards.append(PianoKeyboardModel.sharedRH)
                 }
             }
-            
+            if midi == 66 {
+                scalesModel.scale.debug11("66")
+                keyboards[0].debug2("66")
+                print("==============", scalesModel.selectedScaleSegment)
+            }
+
             ///A MIDI heard may be in both the LH and RH keyboards.
             ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []

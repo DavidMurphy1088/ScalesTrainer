@@ -98,7 +98,8 @@ struct ScalesLibraryView: View {
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
                           hands: hands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
         }
-        ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
+        ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
+                                                 scaleMotion: scale.scaleMotion, minTempo: 90, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
         return scale
     }
     

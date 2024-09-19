@@ -46,11 +46,26 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     func start() {
         badges.clearMatches()
         scalesModel.scale.resetMatchedData()
-        let tapHandler = scalesModel.tapHandlers[0] as! RealTimeTapHandler
-        tapHandler.notifyFunction = self.notify
+        if scalesModel.tapHandlers.count > 0 {
+            let tapHandler = scalesModel.tapHandlers[0] as! RealTimeTapHandler
+            tapHandler.notifyFunction = self.notify
+        }
+        
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
         notifyCount = 0
+        //DispatchQueue.main.async {
+//        DispatchQueue.global(qos: .background).async {
+//            if let sampler = AudioManager.shared.keyboardMidiSampler {
+//                sleep(1)
+//                sampler.play(noteNumber: UInt8(65), velocity: 65, channel: 0)
+//                sleep(1)
+//                sampler.play(noteNumber: UInt8(67), velocity: 67, channel: 0)
+//                sleep(1)
+//                sampler.play(noteNumber: UInt8(67), velocity: 69, channel: 0)
+//
+//            }
+//        }
     }
     
     func notify(midi:Int, status:TapEventStatus) {
@@ -83,6 +98,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             if status == .outOfScale {
                 nextExpected.matchedTime = Date()
                 badges.setTotalIncorrect(badges.totalIncorrect + 1)
+                //let key = 
             }
             else {
                 ///Look for a matching scale note that has not been played yet
@@ -117,4 +133,34 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 //        lastSegment = nextExpected.segment
         notifyCount += 1
     }
+    
+    func playDemo() {
+        DispatchQueue.global(qos: .background).async {
+            let metronome = MetronomeModel.shared
+            metronome.DontUse()
+            let rh = false
+            let keyboard = rh ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
+            //let midis =   [65, 67, 69, 70, 72, 74, 76, 77, 76, 74, 72, 70, 69, 67, 65] FMAj RH
+            let midis =     [38, 40, 41, 43, 45, 46, 49, 50, 49, 46, 45, 43, 41, 40, 38]
+            if let sampler = AudioManager.shared.keyboardMidiSampler {
+                sleep(4)
+                metronome.makeSilent = true
+                MetronomeModel.shared.setLeadingIn(way: false)
+                sleep(1)
+                for midi in midis {
+                    if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
+                        let key=keyboard.pianoKeyModel[keyIndex]
+                        key.setKeyPlaying(hilight: true)
+                    }
+                    sampler.play(noteNumber: UInt8(midi), velocity: 65, channel: 0)
+                    self.notify(midi: midi, status: .inScale)
+                    let tempo = 70
+                    let sleep = 1000000 * 1.0 * (Double(60)/Double(tempo))
+                    usleep(UInt32(sleep))
+                }
+                ScalesModel.shared.setRunningProcess(.none)
+            }
+        }
+    }
+
 }

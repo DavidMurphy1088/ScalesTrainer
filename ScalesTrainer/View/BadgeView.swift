@@ -123,10 +123,9 @@ struct BadgeView: View {
             HStack {
                 Text("\(scale.getScaleName(handFull: true))").font(.title)
                 Text("Correct:\(bank.totalCorrect)")
-                //Text("Correct:\(String(bank.matches))")
-                if Settings.shared.developerModeOn {
-                    Text(bank.matches.map { String($0) }.joined(separator: ", "))
-                }
+//                if Settings.shared.developerModeOn {
+//                    Text(bank.matches.map { String($0) }.joined(separator: ", "))
+//                }
 
                 //Text("Incorrect:\(bank.totalIncorrect)")
                 Button(action: {

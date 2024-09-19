@@ -167,12 +167,16 @@ public class ScalesModel : ObservableObject {
     
     //@Published Cant use it. Published needs main thread update but some processes cant wait for tjhe main thread to update it.
     var selectedScaleSegment = 0
+    @Published var selectedScaleSegmentPublished = 0
     func setSelectedScaleSegment(_ segment:Int) {
         if segment == self.selectedScaleSegment {
             return
         }
-        //DispatchQueue.main.async, @Published Cant use it
+        
         self.selectedScaleSegment = segment
+        DispatchQueue.main.async { 
+            self.selectedScaleSegmentPublished = segment
+        }
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 0)
             combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 1)
@@ -365,12 +369,18 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setShow(true)
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
+
             metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-            leadProcess.start()
-            metronome.addProcessesToNotify(process: leadProcess)
-            self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+            if Settings.shared.developerModeOn {
+                leadProcess.playDemo()
+            }
+            else {
+                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+                leadProcess.start()
+                metronome.addProcessesToNotify(process: leadProcess)
+                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
@@ -594,10 +604,11 @@ public class ScalesModel : ObservableObject {
     
     func setScale(scale:Scale) {
         ///Deep copy that resets the scale segments
-        self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
+        self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion,
+                                   minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, octaves:Int, hands:[Int], ctx:String) {
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
                           //ctx:\(ctx) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
@@ -605,7 +616,7 @@ public class ScalesModel : ObservableObject {
                           scaleType: scaleType, scaleMotion: scaleMotion,
                            octaves: octaves,
                            hands: hands,
-                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          minTempo: minTempo, dynamicType: .mf, articulationType: .legato)
         setScaleKeyboardAndScore(scale: scale)
     }
 
