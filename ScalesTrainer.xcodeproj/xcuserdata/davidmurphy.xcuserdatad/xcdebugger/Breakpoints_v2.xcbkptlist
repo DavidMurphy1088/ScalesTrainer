@@ -7,64 +7,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "303AAEFA-02FB-46A3-92E5-F92D84A0761F"
+            uuid = "9D59F403-C5F7-4058-9368-9EAF31F01A2E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "layout(repaint:viewModel:geometry:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "248293A8-52AB-4AB6-A50C-F22C8BA571DE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/PianoKeyboard/View/ClassicStyle.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "layout(repaint:viewModel:geometry:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9498D7FD-1485-4380-82B0-B34CE2651002"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/LeadScaleProcess.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "start()"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "playDemo()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "303AAEFA-02FB-46A3-92E5-F92D84A0761F - 742295cf57b22711"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in ScalesStar.LeadScaleProcess.start() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/LeadScaleProcess.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "56"
-                  endingLineNumber = "56"
-                  offsetFromSymbolStart = "128">
-               </Location>
-               <Location
-                  uuid = "303AAEFA-02FB-46A3-92E5-F92D84A0761F - 41a4780f02c9cabf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable () -&gt; () in ScalesStar.LeadScaleProcess.start() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/LeadScaleProcess.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "56"
-                  endingLineNumber = "56"
-                  offsetFromSymbolStart = "20">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "288C0341-6880-4857-A558-CD73890D1A11"
+            uuid = "1F6DBA9D-D31A-4ACE-ACCC-1423D50CA676"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Metronome.swift"
+            filePath = "ScalesTrainer/Model/LeadScaleProcess.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
-            landmarkName = "startTimerThread()"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "start()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

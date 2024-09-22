@@ -5,7 +5,8 @@ public protocol PianoKeyboardDelegate: AnyObject {
     func pianoKeyDown(_ keyNumber: Int)
 }
 
-public class PianoKeyboardModel: ObservableObject {
+public class PianoKeyboardModel: ObservableObject, Equatable {
+    
     public static var sharedRH = PianoKeyboardModel(keyboardNumber: 1)
     public static var sharedLH = PianoKeyboardModel(keyboardNumber: 2)
     public static var sharedCombined:PianoKeyboardModel?
@@ -37,6 +38,10 @@ public class PianoKeyboardModel: ObservableObject {
         self.keyboardAudioManager = AudioManager.shared
     }
     
+    public static func == (lhs: PianoKeyboardModel, rhs: PianoKeyboardModel) -> Bool {
+        return lhs.keyboardNumber == rhs.keyboardNumber
+    }
+
     public func join(fromKeyboard:PianoKeyboardModel, scale:Scale) -> PianoKeyboardModel {
         let merged = PianoKeyboardModel(keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
         var offset = 0
@@ -238,6 +243,7 @@ public class PianoKeyboardModel: ObservableObject {
         for i in 0..<numberOfKeys {
             if i < self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
+                key.keyIsSounding = false
                 key.setState(state: nil)
             }
         }
@@ -263,13 +269,16 @@ public class PianoKeyboardModel: ObservableObject {
             for i in 0..<numberOfKeys {
                 let key = self.pianoKeyModel[i]
                 print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.hand, "midi:", key.midi, terminator: "")
-                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
+
+//                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
                     print("  Segment", state.segment, "finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
                 }
                 else {
                     print("  No scale state", terminator: "")
                 }
+                print(" isSounding:", key.keyIsSounding, key.midi, terminator: "")
+
                 print("")
             }
         }

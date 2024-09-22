@@ -183,6 +183,11 @@ public class ScalesModel : ObservableObject {
             combined.redraw()
         }
         else {
+            PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
+            PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
+            //PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
+            //PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
+            
             PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 0)
             PianoKeyboardModel.sharedRH.redraw()
             PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 1)
@@ -372,7 +377,7 @@ public class ScalesModel : ObservableObject {
 
             metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            if Settings.shared.developerModeOn {
+            if true || Settings.shared.developerModeOn {
                 leadProcess.playDemo()
             }
             else {
@@ -557,19 +562,7 @@ public class ScalesModel : ObservableObject {
     
     func createScore(scale:Scale, hand:Int) -> Score {
         let staffType:StaffType
-        
-//        if scale.scaleNoteState.count > 0 {
-//            ///52 = Max is E below middle C which requires 3 ledger in treble clef
-//            //staffType = scale.scaleNoteState[handIndex][0].midi >= 52 ? .treble : .bass
-//            if scale.hand == 2 {
-//                staffType = .treble
-//            }
-//            else {
-//                staffType = scale.hand == 0 ? .treble : .basscreateScore
-//        }
-//        else {
-//            staffType = .treble
-//        }
+
         staffType = hand == 0 ? .treble : .bass
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
@@ -580,8 +573,6 @@ public class ScalesModel : ObservableObject {
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
         var inBarTotalValue = 0.0
-        //let handIndex = scale.hand == 1 ? 1 : 0
-        //var lastNote:StaffNote?
         
         for i in 0..<scale.scaleNoteState[hand].count {
             if Int(inBarTotalValue) >= timeSigTop {
@@ -589,13 +580,14 @@ public class ScalesModel : ObservableObject {
                 inBarTotalValue = 0.0
             }
 
-            let noteState = scale.scaleNoteState[hand][i]
+            var noteState = scale.scaleNoteState[hand][i]
+            let value = noteState.value / Double(MetronomeModel.shared.notesPerClick)
             let ts = score.createTimeSlice()
             
-            let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, segment: noteState.segment, staffNum: 0)
-            note.setValue(value: noteState.value)
+            let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: value, segment: noteState.segment, staffNum: 0)
+            note.setValue(value: value)
             ts.addNote(n: note)
-            inBarTotalValue += noteState.value
+            inBarTotalValue += value
         }
 
         //Logger.shared.log(self, "Created score type:\(staffType)")

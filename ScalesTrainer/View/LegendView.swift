@@ -83,7 +83,7 @@ struct LegendView: View {
             return ""
         }
         var title = hand == 0 ? NSLocalizedString("Right Hand", comment: "Menu") : NSLocalizedString("Left Hand", comment: "Menu")
-        title += " " + NSLocalizedString("Fingers", comment: "Menu")
+        //title += " " + NSLocalizedString("Fingers", comment: "Menu")
         if scalesModel.runningProcess == .leadingTheScale  {
             title = "Practice"
         }

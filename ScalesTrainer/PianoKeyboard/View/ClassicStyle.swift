@@ -59,31 +59,31 @@ public struct ClassicStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
     
-    private func getKeyStatusColor(key:PianoKeyModel) -> Color {
-        let fullOpacity = 0.4
-        let halfOpacity = 0.4
-        let scalesModel = ScalesModel.shared
-        var color:Color = Color.clear
-        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, scaleSegment: scalesModel.selectedScaleSegment) != nil {
-            ///Key is in the scale
-            if scalesModel.selectedScaleSegment == 0 {
-                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-            }
-            else {
-                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-            }
-        }
-        else {
-            ///Key was not in the scale
-            if scalesModel.selectedScaleSegment == 0 {
-                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-            else {
-                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-            }
-        }
-        return color
-    }
+//    private func getKeyStatusColor(key:PianoKeyModel) -> Color {
+//        let fullOpacity = 0.4
+//        let halfOpacity = 0.4
+//        let scalesModel = ScalesModel.shared
+//        var color:Color = Color.clear
+//        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, scaleSegment: scalesModel.selectedScaleSegment) != nil {
+//            ///Key is in the scale
+//            if scalesModel.selectedScaleSegment == 0 {
+//                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//            else {
+//                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
+//            }
+//        }
+//        else {
+//            ///Key was not in the scale
+//            if scalesModel.selectedScaleSegment == 0 {
+//                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//            else {
+//                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
+//            }
+//        }
+//        return color
+//    }
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
@@ -125,11 +125,20 @@ public struct ClassicStyle {
                     Color(red: 1, green: 1, blue: 1),
                 ])
                 
-                context.fill(path, with: .linearGradient(
-                    gradient,
-                    startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
-                    endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
-                ))
+                ///White keys
+                if Settings.shared.isCustomColor() {
+                    context.fill(
+                        path,
+                        with: .color(Settings.shared.getKeyColor())
+                    )
+                }
+                else {
+                    context.fill(path, with: .linearGradient(
+                        gradient,
+                        startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
+                        endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
+                    ))
+                }
                 
                 if key.midi == 60 {
                     let circleRadius = 15
@@ -161,8 +170,6 @@ public struct ClassicStyle {
                 /// ----------- Playing the note ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
-                    //let w = playingMidiRadius + 7.0
-                    //let w1 = playingMidiRadius * 1.6
                     let w = playingMidiRadius * 1.0
                     let color:Color
                     if keyModel.scaleNoteState != nil {
@@ -182,15 +189,15 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note status -----------
-                if scalesModel.resultPublished != nil {
-                    let width = playingMidiRadius * 1.1
-                    let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
-                    let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
-                    
-                    let color = getKeyStatusColor(key: key)
-                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
-                }
+//                if scalesModel.resultPublished != nil {
+//                    let width = playingMidiRadius * 1.1
+//                    let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
+//                    let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
+//                    
+//                    let color = getKeyStatusColor(key: key)
+//                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
+//                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
+//                }
             
                 ///----------- Finger number
                 if scalesModel.showFingers {
@@ -248,6 +255,7 @@ public struct ClassicStyle {
                     sharpFlatColor(key.touchDown),
                 ])
                 
+                ///Black keys
                 context.fill(pathInset, with: .linearGradient(
                     gradientInset,
                     startPoint: CGPoint(x: rect.width / 2.0, y: 0),
@@ -283,7 +291,6 @@ public struct ClassicStyle {
                 /// ----------- The note from the key touch is playiong ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
-                    //let w = playingMidiRadius + 7.0
                     let w = playingMidiRadius * 1.0
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
                                        width: w, height: w)
@@ -301,15 +308,15 @@ public struct ClassicStyle {
                 }
                 
                 ///----------- Note Status-----------
-                if scalesModel.resultPublished != nil {
-                    let width = playingMidiRadius * 1.0
-                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
-                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
-
-                    let color = getKeyStatusColor(key: key) //getKeyStatusColor(key)
-                    let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
-                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
-                }
+//                if scalesModel.resultPublished != nil {
+//                    let width = playingMidiRadius * 1.0
+//                    let x = rect.origin.x + rect.width / 2.0 - (width/CGFloat(2) * 1.0 )
+//                    let y = rect.origin.y + rect.height * 0.80 - width/CGFloat(2)
+//
+//                    let color = getKeyStatusColor(key: key) //getKeyStatusColor(key)
+//                    let backgroundRect = CGRect(x: x, y: y, width: playingMidiRadius, height: playingMidiRadius)
+//                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
+//                }
                 
                 ///----------- Finger number
                 if scalesModel.showFingers {

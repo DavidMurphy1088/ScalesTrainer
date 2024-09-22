@@ -27,6 +27,8 @@ struct ScalesLibraryView: View {
         let scale:Scale
         let scaleType:ScaleType
         let hands:[Int]
+        let tempo = 120
+        
         if self.indexHands == 2 {
             hands = [0,1]
         }
@@ -61,7 +63,7 @@ struct ScalesLibraryView: View {
             }
             
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
-                          octaves: self.indexOctave+1, hands: hands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          octaves: self.indexOctave+1, hands: hands, minTempo: tempo, dynamicType: .mf, articulationType: .legato)
         }
         else {
             switch typeIndexMinor {
@@ -96,10 +98,10 @@ struct ScalesLibraryView: View {
                 scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
-                          hands: hands, minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          hands: hands, minTempo: tempo, dynamicType: .mf, articulationType: .legato)
         }
         ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
-                                                 scaleMotion: scale.scaleMotion, minTempo: 90, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
+                                                 scaleMotion: scale.scaleMotion, minTempo: tempo, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
         return scale
     }
     

@@ -123,7 +123,7 @@ struct ActivityModeView: View {
                             .scaledToFit()
                             //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
                             .clipShape(Circle())  // Clips the image to a circular shape
-                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+                            .frame(width: UIScreen.main.bounds.size.width * 0.35)
                             .overlay(overlay)
                             //.border(.red)
                             
@@ -143,9 +143,8 @@ struct ActivityModeView: View {
                         Image(activityMode.imageName)
                             .resizable()
                             .scaledToFit()
-                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
                             .clipShape(Circle())
-                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
+                            .frame(width: UIScreen.main.bounds.size.width * 0.35)
                             .overlay(overlay)
                             //.border(.red)
                         Text(activityMode.name)

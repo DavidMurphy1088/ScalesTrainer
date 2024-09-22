@@ -53,12 +53,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         for hand in scale.hands {
             let note = scale.scaleNoteState[hand][nextNoteIndex]
             let keyboard = getKeyboard(hand: hand)
-            //keyboard.debug1("Hear")
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segment)
             if let keyIndex = keyIndex {
                 let key=keyboard.pianoKeyModel[keyIndex]
                 key.setKeyPlaying(hilight: true)
-                sampler?.play(noteNumber: UInt8(key.midi), velocity: 64, channel: 0)
+                let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
+                sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
             }
         }
         let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]

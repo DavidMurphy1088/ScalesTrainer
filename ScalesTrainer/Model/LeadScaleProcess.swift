@@ -54,18 +54,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
         notifyCount = 0
-        //DispatchQueue.main.async {
-//        DispatchQueue.global(qos: .background).async {
-//            if let sampler = AudioManager.shared.keyboardMidiSampler {
-//                sleep(1)
-//                sampler.play(noteNumber: UInt8(65), velocity: 65, channel: 0)
-//                sleep(1)
-//                sampler.play(noteNumber: UInt8(67), velocity: 67, channel: 0)
-//                sleep(1)
-//                sampler.play(noteNumber: UInt8(67), velocity: 69, channel: 0)
-//
-//            }
-//        }
+        ScalesModel.shared.scale.debug11("START")
     }
     
     func notify(midi:Int, status:TapEventStatus) {
@@ -86,6 +75,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         let hand = scale.hands[0]
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+        scalesModel.setSelectedScaleSegment(nextExpected.segment)
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
@@ -98,7 +88,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             if status == .outOfScale {
                 nextExpected.matchedTime = Date()
                 badges.setTotalIncorrect(badges.totalIncorrect + 1)
-                //let key = 
             }
             else {
                 ///Look for a matching scale note that has not been played yet
@@ -117,46 +106,58 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         
         if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
             nextExpectedScaleIndex += 1
-            let nextNote = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
-            scalesModel.setSelectedScaleSegment(nextNote.segment)
         }
         else {
             ///🙄a random harmonic may trigger a stop
             //scalesModel.setRunningProcess(.none)
-            scalesModel.setSelectedScaleSegment(0)
+            ///Leave the last segment fingering showing
+            scalesModel.setSelectedScaleSegment(scalesModel.scale.getHighestSegment())
         }
-//        if let lastSegment = lastSegment {
-//            if nextExpected.segment != lastSegment {
-//                
-//            }
-//        }
-//        lastSegment = nextExpected.segment
         notifyCount += 1
     }
     
     func playDemo() {
+        self.start()
         DispatchQueue.global(qos: .background).async {
             let metronome = MetronomeModel.shared
+            var lastSegment:Int? = nil
             metronome.DontUse()
-            let rh = false
-            let keyboard = rh ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
+            let hand = 0
+            let keyboard = hand == 0 ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
             //let midis =   [65, 67, 69, 70, 72, 74, 76, 77, 76, 74, 72, 70, 69, 67, 65] FMAj RH
-            let midis =     [38, 40, 41, 43, 45, 46, 49, 50, 49, 46, 45, 43, 41, 40, 38]
+            //let midis =   [38, 40, 41, 43, 45, 46, 49, 50, 49, 46, 45, 43, 41, 40, 38] Dmin Harm
+            let midis =     [67, 71, 74, 71, 74, 79, 74, 79, 83, 79, 83, 79, 74, 79, 74, 71, 74, 71, 67, 74] //G maj broekn
+            let notes = self.scalesModel.scale.getStatesInScale(handIndex: hand)
+            
             if let sampler = AudioManager.shared.keyboardMidiSampler {
-                sleep(4)
+                let leadin:UInt32 = ScalesModel.shared.scale.scaleType == .brokenChordMajor ? 3 : 4
+                sleep(leadin)
                 metronome.makeSilent = true
                 MetronomeModel.shared.setLeadingIn(way: false)
                 sleep(1)
+                var ctr = 0
                 for midi in midis {
+                    
                     if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
                         let key=keyboard.pianoKeyModel[keyIndex]
+                        //print("=========== ", key.midi, ScalesModel.shared.selectedScaleSegment, ScalesModel.shared.selectedScaleSegmentPublished)
+                        let segment = notes[ctr].segment
+                        if let lastSegment = lastSegment {
+                            self.scalesModel.setSelectedScaleSegment(segment)
+                        }
+                        lastSegment = segment
+                        
                         key.setKeyPlaying(hilight: true)
+
                     }
                     sampler.play(noteNumber: UInt8(midi), velocity: 65, channel: 0)
                     self.notify(midi: midi, status: .inScale)
-                    let tempo = 70
-                    let sleep = 1000000 * 1.0 * (Double(60)/Double(tempo))
+                    
+                    var tempo:Double = [9, 19].contains(ctr) ? 70/3 : 70
+                    //tempo *= 0.5
+                    let sleep = 1000000 * 1.0 * (Double(60)/tempo)
                     usleep(UInt32(sleep))
+                    ctr += 1
                 }
                 ScalesModel.shared.setRunningProcess(.none)
             }

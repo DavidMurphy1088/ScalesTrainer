@@ -24,6 +24,7 @@ class MetronomeModel:ObservableObject {
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     let ticker:MetronomeTicker
     var makeSilent = false
+    let notesPerClick = 1 //1.0 = 1/4 notes, 2 = 1/8 notes
     
     init() {
         self.ticker = MetronomeTicker()
@@ -103,10 +104,10 @@ class MetronomeModel:ObservableObject {
     ///
     func startTimerThread() {
         timerTickerCount = 0
-        var delay = (60.0 / Double(scalesModel.getTempo())) //* 1000000
+        var delay = (60.0 / Double(scalesModel.getTempo())) / Double(MetronomeModel.shared.notesPerClick)
         delay = delay * Settings.shared.getSettingsNoteValueFactor()
         Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo())")
-
+        var ctr = 0
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if true {
             DispatchQueue.global(qos: .background).async { [self] in
@@ -122,7 +123,9 @@ class MetronomeModel:ObservableObject {
                                 _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
                             }
                             if !self.makeSilent {
-                                _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                                if ctr % MetronomeModel.shared.notesPerClick == 0 {
+                                    _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+                                }
                             }
                             let stop = false //notified.metronomeTicked(timerTickerNumber: self.timerTickerNumber)
                             if stop {
@@ -131,6 +134,7 @@ class MetronomeModel:ObservableObject {
                             else {
                                 self.timerTickerCount += 1
                             }
+                            ctr += 1
                         }
                     }
             }

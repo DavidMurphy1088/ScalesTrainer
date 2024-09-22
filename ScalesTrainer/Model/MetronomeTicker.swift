@@ -30,7 +30,7 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
                 metronomeAudioPlayerLow!.play()
             }
         }
-        MetronomeModel.shared.setTimerTickerCountPublished(count: timerTickerNumber)
+        MetronomeModel.shared.setTimerTickerCountPublished(count: timerTickerNumber / MetronomeModel.shared.notesPerClick)
         return false
     }
     

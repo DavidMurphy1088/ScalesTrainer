@@ -28,7 +28,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
-    let keySoundingSeconds = 1.0
+    let keySoundingSeconds:Double = MetronomeModel.shared.notesPerClick == 1 ? 1.0 : 0.5
     
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
@@ -48,7 +48,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.midi = midi
         self.hand = keyboardModel.keyboardNumber - 1
     }
-    
+
     public func setState(state: ScaleNoteState?) {
         self.scaleNoteState = state
     }
@@ -58,7 +58,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         if hilight {
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
-                usleep(1000000 * UInt32(self.keySoundingSeconds))
+                usleep(UInt32(1000000 * self.keySoundingSeconds))
                 DispatchQueue.main.async {
                     self.keyIsSounding = false
                     self.keyboardModel.redraw()
@@ -74,7 +74,7 @@ public class PianoKeyModel: Identifiable, Hashable {
                 if let segment = segment {
                     if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
                         DispatchQueue.global(qos: .background).async {
-                            usleep(1000000 * UInt32(self.keySoundingSeconds))
+                            usleep(UInt32(1000000 * self.keySoundingSeconds))
                             DispatchQueue.main.async {
                                 staffNote.setShowIsPlaying(false)
                             }

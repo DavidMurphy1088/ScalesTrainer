@@ -106,14 +106,6 @@ public class Settings : Codable  {
         self.wasLoaded = true
     }
     
-//    func getMusicBoardAndGrade() -> MusicBoardGrade? {
-//        if let board = MusicBoard.options.first(where: { $0.name == self.board}) {
-//            let board = MusicBoard(name: board.name, fullName: board.fullName, imageName: board.imageName)
-//            return MusicBoardGrade(grade: self.grade)
-//        }
-//        return nil
-//    }
-
     func getName() -> String {
         let name = firstName
         let name1 = name + (name.count>0 ? "'s" : "")
@@ -166,14 +158,15 @@ public class Settings : Codable  {
     }
     
     func getKeyColor() -> Color {
-//        guard array.count == 4 else {
-//            return Color.black
-//        }
         let red = CGFloat(self.keyColor[0])
         let green = CGFloat(self.keyColor[1])
         let blue = CGFloat(self.keyColor[2])
         let alpha = CGFloat(self.keyColor[3])
         let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
         return Color(uiColor)
+    }
+    
+    func isCustomColor() -> Bool {
+        return keyColor.contains{ $0 != 1.0 }
     }
 }

@@ -501,6 +501,16 @@ public class Scale : Codable {
 //        }
 //    }
     
+    func getHighestSegment() -> Int {
+        var max = 0
+        for state in self.scaleNoteState[0] {
+            if state.segment > max {
+                max = state.segment
+            }
+        }
+        return max
+    }
+    
     func makeNewScale(offset:Int) -> Scale {
         let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hands: self.hands,
                           minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
@@ -736,6 +746,14 @@ public class Scale : Codable {
         return notes
     }
     
+    func getStatesInScale(handIndex:Int) -> [ScaleNoteState] {
+        var states:[ScaleNoteState] = []
+        for note in self.scaleNoteState[handIndex] {
+            states.append(note)
+        }
+        return states
+    }
+
     func stringIndexToInt(index:Int, fingers:String) -> Int {
         if fingers.count == 0 {
             return 0

@@ -31,10 +31,6 @@ struct CellView: View {
         }
     }
     
-    func getHandStr(hand:Int) -> String {
-        return hand == 0 ? "Right Hand" : "Left Hand"
-    }
-    
     func getDescr() -> String {
         //return self.practiceCell.scale.scaleRoot.name + " " + self.practiceCell.scaleType.description
         return self.practiceCell.scale.getScaleName(handFull: true)
