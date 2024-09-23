@@ -179,7 +179,6 @@ public class Scale : Codable {
         self.scaleMotion = scaleMotion
         scaleNoteState = []
         self.hands = hands
-        //print("============= StartScale", self.scaleRoot.name, self.scaleMotion, self.hands)
         ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
         ///
@@ -1026,28 +1025,30 @@ public class Scale : Codable {
         if scaleMotion == .contraryMotion {
             name += ", " + scaleMotion.description
         }
-        if self.hands.count == 1 {
-            var handName = ""
-            if handFull {
-                switch self.hands[0] {
-                case 0: handName = "Right Hand"
-                case 1: handName = "Left Hand"
-                default: handName = "Both Hands"
+        if self.scaleMotion != .contraryMotion {
+            if self.hands.count == 1 {
+                var handName = ""
+                if handFull {
+                    switch self.hands[0] {
+                    case 0: handName = "Right Hand"
+                    case 1: handName = "Left Hand"
+                    default: handName = "Both Hands"
+                    }
                 }
-            }
-            else {
-                switch self.hands[0] {
-                case 0: handName = "RH"
-                case 1: handName = "LH"
-                default: handName = "Both"
+                else {
+                    switch self.hands[0] {
+                    case 0: handName = "RH"
+                    case 1: handName = "LH"
+                    default: handName = "Both"
+                    }
                 }
+                name += ", " + handName
             }
-            name += ", " + handName
+            if self.hands.count == 2 {
+                name += handFull ? ", Both Hands" : " RH,LF"
+            }
         }
-        if self.hands.count == 2 {
-            name += handFull ? ", Both Hands" : " RH,LF"
-        }
-//    
+//
         if let octaves = octaves {
             if octaves {
                 name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
@@ -1073,9 +1074,9 @@ public class Scale : Codable {
 
         name += "\(self.dynamicType.description)"
         name += ", \(self.articulationType.description)"
-        if self.scaleMotion == .contraryMotion {
-            name += ", Contrary Motion"
-        }
+//        if self.scaleMotion == .contraryMotion {
+//            name += ", Contrary Motion"
+//        }
         return name
     }
 

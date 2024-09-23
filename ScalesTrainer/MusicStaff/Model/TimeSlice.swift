@@ -66,7 +66,6 @@ public class TimeSlice : ScoreEntry {
         n.timeSlice = self
         //DispatchQueue.main.async {
             self.entries.append(n)
-            
             for i in 0..<self.score.staffs.count {
                 n.setNotePlacementAndAccidental(score:self.score, staff: self.score.staffs[i])
             }

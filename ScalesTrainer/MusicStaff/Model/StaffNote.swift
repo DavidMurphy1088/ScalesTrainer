@@ -42,13 +42,10 @@ public enum StemDirection {
 public class NoteStaffPlacement {
     public var offsetFromStaffMidline:Int
     public var accidental: Int?
-    //public var showOctaveOverlay:Bool
     
     init(noteValue:Int, offsetFroMidLine:Int, accidental:Int?=nil) {
-
         self.offsetFromStaffMidline = offsetFroMidLine
         self.accidental = accidental
-        //self.showOctaveOverlay = octaveOverlay
     }
 }
 
@@ -245,7 +242,6 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-
         let barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline

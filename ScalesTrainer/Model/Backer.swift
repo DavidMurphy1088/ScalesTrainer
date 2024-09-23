@@ -26,7 +26,7 @@ class Backer :MetronomeTimerNotificationProtocol {
         }
         if useMajor(scale) {
             chordRoots.append(root)
-            chordRoots.append(root - 3) //ii minoir
+            chordRoots.append(root - 3) //ii minor
             chordRoots.append(root - 7) //IV
             chordRoots.append(root - 5) //V
         }

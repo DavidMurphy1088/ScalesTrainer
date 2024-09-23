@@ -140,7 +140,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                     
                     if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
                         let key=keyboard.pianoKeyModel[keyIndex]
-                        //print("=========== ", key.midi, ScalesModel.shared.selectedScaleSegment, ScalesModel.shared.selectedScaleSegmentPublished)
                         let segment = notes[ctr].segment
                         if let lastSegment = lastSegment {
                             self.scalesModel.setSelectedScaleSegment(segment)

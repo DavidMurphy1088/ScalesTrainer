@@ -128,7 +128,8 @@ struct ActivityModeView: View {
                             //.border(.red)
                             
                         Text(activityMode.name)
-                            .font(.title2)
+                            .font(.custom("Noteworthy-Bold", size: 32)).padding()
+                            //.font(.title2)
                     }
                     //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
                     //.padding(.vertical, 0)
@@ -148,7 +149,8 @@ struct ActivityModeView: View {
                             .overlay(overlay)
                             //.border(.red)
                         Text(activityMode.name)
-                            .font(.title2)
+                            .font(.custom("Noteworthy-Bold", size: 32)).padding()
+                            //.font(.title2)
                     }
                     //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
                     //.padding(.vertical, 0)

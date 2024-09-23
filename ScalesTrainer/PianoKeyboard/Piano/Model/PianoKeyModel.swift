@@ -93,10 +93,31 @@ public class PianoKeyModel: Identifiable, Hashable {
     }
 
     public var name: String {
-        //NoteName.name(for: noteMidiNumber, showSharps: !(scalesModel.scale.scaleRoot.flats > 0))
-        let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh].contains(scale.scaleType)
+        ///Use the keysignature to determine whether the black notes are shown as sharps or flats
+        ///Chromatic - use the above rule - e.g. D chromatic shows black notes as sharps (since D Maj KeySig has sharps), F chromatic shows black notes as flats
+        let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh, .brokenChordMajor].contains(scale.scaleType)
         let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor) //KeySignature(scalesModel.scale.scaleType.)
-        let showSharps = ks.accidentalType == .sharp
+        var showSharps = ks.accidentalType == .sharp
+        if [.melodicMinor, .harmonicMinor].contains(scale.scaleType) {
+
+            ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
+            if ScalesModel.shared.scores.count > 0 {
+                let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
+                if let score = ScalesModel.shared.scores[scoreIndex] {
+                    if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
+                        let note:StaffNote = ts.entries[0] as! StaffNote
+                        if note.noteStaffPlacements.count > 0 {
+                            let notePlacement = note.noteStaffPlacements[0]
+                            if let notePlacement = notePlacement {
+                                if notePlacement.accidental == 1 {
+                                    showSharps = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
     }
     

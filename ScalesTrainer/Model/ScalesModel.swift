@@ -251,16 +251,14 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var backingOn:Bool = false
     func setBacking(_ way:Bool) {
         let metronome = MetronomeModel.shared
+        self.backer?.callNum = 0
         if way {
             if self.backer == nil {
                 self.backer = Backer()
             }
             metronome.addProcessesToNotify(process: self.backer!)
-//            metronome.startTimer(notified: Backer(), onDone: {
-//            })
         }
         else {
-            //metronome.stop()
             if let backer = self.backer {
                 metronome.removeProcessesToNotify(process: backer)
             }
@@ -377,15 +375,15 @@ public class ScalesModel : ObservableObject {
 
             metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            if true || Settings.shared.developerModeOn {
-                leadProcess.playDemo()
-            }
-            else {
+//            if true || Settings.shared.developerModeOn {
+//                leadProcess.playDemo()
+//            }
+//            else {
                 self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
                 leadProcess.start()
                 metronome.addProcessesToNotify(process: leadProcess)
                 self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-            }
+//            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
@@ -595,7 +593,7 @@ public class ScalesModel : ObservableObject {
     }
     
     func setScale(scale:Scale) {
-        ///Deep copy that resets the scale segments
+        ///Deep copy to ensure reset of the scale segments
         self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion,
                                    minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
     }

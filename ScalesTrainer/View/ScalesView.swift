@@ -464,10 +464,13 @@ struct ScalesView: View {
             VStack {
                 if scalesModel.showParameters {
                     VStack(spacing: 0) {
-                        //HStack {
-                        let name = scalesModel.scale.getScaleName(handFull: true, octaves: true) + ", " + scalesModel.scale.getScaleAttributes(showTempo: false)
-                        //let name = NSLocalizedString("ScaleName", comment: "comment")
-                        Text(name).font(.title)//.padding()
+                        HStack {
+                            let name = scalesModel.scale.getScaleName(handFull: true, octaves: true)
+                            let attr = scalesModel.scale.getScaleAttributes(showTempo: false)
+                            //let name = NSLocalizedString("ScaleName", comment: "comment")
+                            Text(name).font(.title)//.padding()
+                            Text(attr).font(.title)//.padding()
+                        }
                         .padding(.vertical, 0)
                         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
 //                            let attr = scalesModel.scale.getScaleAttributes()
@@ -612,6 +615,8 @@ struct ScalesView: View {
         ///Whoever calls up this view has set the scale already
         .onAppear {
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
+            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
+            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
                 PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale)
             }
@@ -619,8 +624,6 @@ struct ScalesView: View {
                 PianoKeyboardModel.sharedCombined = nil
             }
 
-            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
-            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
@@ -637,6 +640,7 @@ struct ScalesView: View {
         .onDisappear {
             metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
+            PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
             ///Clean up any recorded files
             if Settings.shared.developerModeOn  {
                 let fileManager = FileManager.default

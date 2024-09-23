@@ -92,7 +92,6 @@ struct SpinWheelView: View {
 //                              scaleType: getTypes()[self.selectedScaleType],
 //                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
 //                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
-            print("============", "scales:", scaleNames.count, rotation, "segs", segments, "rot", rotation, index)
             let _ = ScalesModel.shared.setScale(scale: boardGrade.getScales()[index])
         }
     }

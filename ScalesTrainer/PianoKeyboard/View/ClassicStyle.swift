@@ -59,32 +59,6 @@ public struct ClassicStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
     
-//    private func getKeyStatusColor(key:PianoKeyModel) -> Color {
-//        let fullOpacity = 0.4
-//        let halfOpacity = 0.4
-//        let scalesModel = ScalesModel.shared
-//        var color:Color = Color.clear
-//        if key.scale.getStateForMidi(handIndex: hand, midi: key.midi, scaleSegment: scalesModel.selectedScaleSegment) != nil {
-//            ///Key is in the scale
-//            if scalesModel.selectedScaleSegment == 0 {
-//                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.yellow.opacity(fullOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//            else {
-//                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.yellow.opacity(halfOpacity) :  Color.green.opacity(halfOpacity)
-//            }
-//        }
-//        else {
-//            ///Key was not in the scale
-//            if scalesModel.selectedScaleSegment == 0 {
-//                color = key.keyWasPlayedState.tappedTimeAscending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//            else {
-//                color = key.keyWasPlayedState.tappedTimeDescending == nil ? Color.clear.opacity(halfOpacity) :  Color.red.opacity(halfOpacity)
-//            }
-//        }
-//        return color
-//    }
-    
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let scalesModel = ScalesModel.shared
@@ -140,6 +114,7 @@ public struct ClassicStyle {
                     ))
                 }
                 
+                /// ----------- Middle C Note name ----------
                 if key.midi == 60 {
                     let circleRadius = 15
                     let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
@@ -154,7 +129,7 @@ public struct ClassicStyle {
                     )
                 }
                 
-                /// ----------- Middle C Note name ----------
+                /// ----------- Note name ----------
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {
                         if key.midi != 60 {

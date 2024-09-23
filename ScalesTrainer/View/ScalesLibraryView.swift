@@ -124,7 +124,7 @@ struct ScalesLibraryView: View {
                             }
                             .pickerStyle(.menu)
                             
-                            Text("Scale Type:").font(.title2).padding()
+                            Text("Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMajor) {
                                 ForEach(typesMajor.indices, id: \.self) { index in
                                     Text("\(typesMajor[index])")
@@ -185,7 +185,7 @@ struct ScalesLibraryView: View {
                             }
                             .pickerStyle(.menu)
                             
-                            Text("Scale Type:").font(.title2).padding()
+                            Text("Type:").font(.title2).padding()
                             Picker("Select Value", selection: $typeIndexMinor) {
                                 ForEach(typesMinor.indices, id: \.self) { index in
                                     Text("\(typesMinor[index])")

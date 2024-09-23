@@ -8,13 +8,11 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     
     let scalesModel = ScalesModel.shared
-    //var notesAndKeys:[(Int, ScaleNoteState, PianoKeyModel)] = []
-    //var notesAndKeys:[(Int, ScaleNoteState)] = []
     var nextNoteIndex = 0
     var beatCount = 0
     var leadInShown = false
-    //var currentSegment = 0
     let scale = ScalesModel.shared.scale
+    var backingWasOn = false
     
     init(hands:[Int]) {
     }
@@ -31,10 +29,15 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
         beatCount = 0
         nextNoteIndex = 0
+        backingWasOn = scalesModel.backingOn
+        //scalesModel.setBacking(false)
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         if Settings.shared.getLeadInBeats() > 0 {
+//            if backingWasOn {
+//                scalesModel.setBacking(false)
+//            }
             if beatCount < Settings.shared.getLeadInBeats() {
                 MetronomeModel.shared.setLeadingIn(way: true)
                 leadInShown = true
@@ -44,6 +47,11 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
         if leadInShown {
             MetronomeModel.shared.setLeadingIn(way: false)
+        }
+        if timerTickerNumber == 0 {
+            if backingWasOn {
+                scalesModel.backer?.callNum = 0
+            }
         }
         let sampler = audioManager.keyboardMidiSampler
         if waitBeats > 0 {

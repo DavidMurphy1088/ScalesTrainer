@@ -109,7 +109,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
         merged.firstKeyMidi = self.firstKeyMidi
         merged.keyboardAudioManager = AudioManager.shared
-        //merged.debug11("merged")
         return merged
     }
     
@@ -262,7 +261,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func debug2(_ ctx:String) {
+    func debug22(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {

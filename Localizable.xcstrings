@@ -435,9 +435,6 @@
     "Scale Lead in Count" : {
 
     },
-    "Scale Type:" : {
-
-    },
     "Scale:" : {
 
     },
@@ -600,6 +597,9 @@
       }
     },
     "Trinity" : {
+
+    },
+    "Type:" : {
 
     },
     "Under Construction" : {
