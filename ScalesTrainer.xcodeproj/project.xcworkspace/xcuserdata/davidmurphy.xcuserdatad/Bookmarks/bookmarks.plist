@@ -63,7 +63,7 @@
 					<key>StartingLineNumber</key>
 					<string>281</string>
 					<key>Timestamp</key>
-					<string>748773987.755583</string>
+					<string>748859820.050086</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -108,7 +108,7 @@
 					<key>StartingLineNumber</key>
 					<string>627</string>
 					<key>Timestamp</key>
-					<string>748773987.755573</string>
+					<string>748859820.050071</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -131,8 +131,8 @@
     
 </string>
 				<key>trailing</key>
-				<string>        let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
+				<string>        let name1 = scale.getScaleName(handFull: true, octaves: true)
+        Logger.shared.log(self, "setScaleAndScore to:\(name1) ctx:\(ctx)")
         self.scale = scale
 </string>
 			</dict>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>493</string>
+					<string>487</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>492</string>
+					<string>486</string>
 					<key>Timestamp</key>
-					<string>748760841.01166</string>
+					<string>748823128.088047</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -288,7 +288,7 @@
 					<key>StartingLineNumber</key>
 					<string>447</string>
 					<key>Timestamp</key>
-					<string>748773987.75555</string>
+					<string>748859820.0500931</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

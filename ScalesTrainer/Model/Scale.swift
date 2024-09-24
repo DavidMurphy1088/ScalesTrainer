@@ -1019,7 +1019,8 @@ public class Scale : Codable {
     func getBeatsPerBar() -> Int {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 3 : 4
     }
-    
+
+
     func getScaleName(handFull:Bool, octaves:Bool? = nil) -> String { //}, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool)  {
         var name = scaleRoot.name + " " + scaleType.description
         if scaleMotion == .contraryMotion {

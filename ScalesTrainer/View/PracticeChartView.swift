@@ -31,10 +31,10 @@ struct CellView: View {
         }
     }
     
-    func getDescr() -> String {
-        //return self.practiceCell.scale.scaleRoot.name + " " + self.practiceCell.scaleType.description
-        return self.practiceCell.scale.getScaleName(handFull: true)
-    }
+//    func getDescr() -> String {
+//        //return self.practiceCell.scale.scaleRoot.name + " " + self.practiceCell.scaleType.description
+//        return self.practiceCell.scale.getScaleName(handFull: true)
+//    }
     
     func determineNumberOfBadges() -> Int {
         return Int.random(in: 0..<3)
@@ -244,13 +244,13 @@ struct PracticeChartView: View {
         
         .onAppear() {
             minorTypeIndex = practiceChart.minorScaleType
-            practiceChart.getScales("View OnAppear")
+            //practiceChart.getScales()
         }
         .onDisappear() {
             practiceChart.savePracticeChartToFile(chart: practiceChart)
         }
         .sheet(isPresented: $helpShowing) {
-            HelpView(topic: "PracticeChart")
+            HelpView(topic: "Practice Chart")
         }
 
     }

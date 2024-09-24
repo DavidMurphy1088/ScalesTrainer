@@ -90,7 +90,6 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    //let calibrationTapHandler:ScaleTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let calibrationTapHandler:RealTimeTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = Logger.shared
@@ -115,12 +114,13 @@ public class ScalesModel : ObservableObject {
         self.tapEventSet = value
     }
 
-    //@Published
+    @Published private(set) var spinStatePublished:SpinState = .notStarted
     private(set) var spinState:SpinState = .notStarted
-    func setSpinState1(_ value:SpinState) {
-        //DispatchQueue.main.async {
-            self.spinState = value
-        //}
+    func setSpinState(_ value:SpinState) {
+        self.spinState = value
+        DispatchQueue.main.async {
+            self.spinStatePublished = value
+        }
     }
 
     ///Speech
@@ -183,8 +183,8 @@ public class ScalesModel : ObservableObject {
             combined.redraw()
         }
         else {
-            PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
-            PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
+            //PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
+            //PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
             //PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
             //PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
             
@@ -626,8 +626,8 @@ public class ScalesModel : ObservableObject {
     }
     
     func configureKeyboards(scale:Scale, ctx:String) {
-        let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
+        let name1 = scale.getScaleName(handFull: true, octaves: true)
+        Logger.shared.log(self, "setScaleAndScore to:\(name1) ctx:\(ctx)")
         self.scale = scale
         
         if let combinedKeyboard = PianoKeyboardModel.sharedCombined {

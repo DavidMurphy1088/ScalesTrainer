@@ -464,13 +464,7 @@ struct ScalesView: View {
             VStack {
                 if scalesModel.showParameters {
                     VStack(spacing: 0) {
-                        HStack {
-                            let name = scalesModel.scale.getScaleName(handFull: true, octaves: true)
-                            let attr = scalesModel.scale.getScaleAttributes(showTempo: false)
-                            //let name = NSLocalizedString("ScaleName", comment: "comment")
-                            Text(name).font(.title)//.padding()
-                            Text(attr).font(.title)//.padding()
-                        }
+                        ScaleTitleView(scale: scalesModel.scale)
                         .padding(.vertical, 0)
                         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
 //                            let attr = scalesModel.scale.getScaleAttributes()

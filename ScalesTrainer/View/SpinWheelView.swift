@@ -2,10 +2,10 @@ import SwiftUI
 
 struct SpinWheelView: View {
     @ObservedObject var scalesModel = ScalesModel.shared
-    //@StateObject private var orientationObserver = DeviceOrientationObserver()
-    let board:MusicBoard
-    let boardGrade:MusicBoardGrade
-
+    //let board:MusicBoard
+    //let boardGrade:MusicBoardGrade
+    let practiceChart = PracticeChart.shared
+    
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
     @State private var maxRotations: Double = 1 // Max rotations per second
@@ -21,7 +21,7 @@ struct SpinWheelView: View {
 
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
-        for scale in boardGrade.getScales() {
+        for scale in practiceChart.getScales() {
             scaleRoots.insert(scale.scaleRoot.name)
         }
         return Array(scaleRoots).sorted()
@@ -29,7 +29,7 @@ struct SpinWheelView: View {
     
     func getTypes() -> [ScaleType] {
         var scaleTypes:Set<ScaleType> = []
-        for scale in boardGrade.getScales() {
+        for scale in practiceChart.getScales() {
             scaleTypes.insert(scale.scaleType)
         }
 
@@ -39,7 +39,7 @@ struct SpinWheelView: View {
     func getScaleNames() -> [String] {
         var res:[String] = []
 
-        for scale in boardGrade.getScales() {
+        for scale in practiceChart.getScales() {
             let name = scale.getScaleName(handFull: false)
             //let name = scale.getScaleName(handFull: false, octaves: false)
             res.append(name)
@@ -66,7 +66,7 @@ struct SpinWheelView: View {
             rotation += totalRotations + randomAngle
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState1(.spunAndStopped)
+            scalesModel.setSpinState(.spunAndStopped)
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             
@@ -92,7 +92,7 @@ struct SpinWheelView: View {
 //                              scaleType: getTypes()[self.selectedScaleType],
 //                              octaves: Settings.shared.defaultOctaves, hand: hands[self.selectedHand],
 //                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
-            let _ = ScalesModel.shared.setScale(scale: boardGrade.getScales()[index])
+            let _ = ScalesModel.shared.setScale(scale: practiceChart.getScales()[index])
         }
     }
 
@@ -103,7 +103,7 @@ struct SpinWheelView: View {
             rotation += totalRotations + randomAngle
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState1(.spunAndStopped)
+            scalesModel.setSpinState(.spunAndStopped)
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             // Determine which segment is at the top
@@ -199,7 +199,7 @@ struct SpinWheelView: View {
                     }
                 }
 
-                if scalesModel.spinState == SpinState.spunAndStopped {
+                if scalesModel.spinStatePublished == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     NavigationLink(destination: ScalesView(initialRunProcess: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
@@ -214,9 +214,10 @@ struct SpinWheelView: View {
             //.frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
         }
         .onAppear() {
-            scalesModel.setSpinState1(.notStarted)
+            scalesModel.setSpinState(.notStarted)
             self.wheelSize = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.55 : 0.9
         }
+
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }

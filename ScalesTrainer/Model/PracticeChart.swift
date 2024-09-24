@@ -99,7 +99,7 @@ class PracticeChart: Codable {
         }
     }
     
-    func getScales(_ ctx:String) -> [Scale] {
+    func getScales() -> [Scale] {
         var result:[Scale] = []
         for row in cells {
             for col in row {

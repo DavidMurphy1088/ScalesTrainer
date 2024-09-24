@@ -208,7 +208,7 @@ struct ActivityModeView: View {
                                                     imageName: "home_practice_chart_1"))
                 
                 menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
-                                                    view: AnyView(SpinWheelView(board: Settings.shared.musicBoard, boardGrade: Settings.shared.musicBoardGrade)),
+                                                    view: AnyView(SpinWheelView()),
                                                     imageName: "home_scales_wheel_1"))
                 
                 //if Settings.shared.developerModeOn {

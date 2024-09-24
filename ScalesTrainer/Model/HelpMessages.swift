@@ -63,6 +63,13 @@ class HelpMessages {
         
         m = "Listen to your recording synchronised to the scale."
         messages["Sync The Scale"] = m
-        messages["PracticeChart"] = "Practice Chart, Grade 1 scale instructions"
+        
+        m = "Use the Practice Chart to regularly cover all of your Grade 1 Technical Work."
+        m += "\n\nThe days of the week will automatically update themselves."
+        m += "\n\nDon’t forget to choose your minor scale preference."
+        m += "\n\nYou can fill in a star if your teacher has covered the scale or broken chord with you."
+        m += "\n\nWhen you know all of your technical work, you can shuffle the practice chart to give you a new order. At this stage you can also spin the wheel to choose your technical work at random."
+        
+        messages["Practice Chart"] = m
     }
 }
