@@ -208,40 +208,28 @@ struct ScoreEntriesView: View {
                                     ///Record and store the note's postion so we can later draw its stems which maybe dependent on the note being in a quaver group with a quaver beam
                                     Color.clear
                                         .onAppear {
-                                            //if timeSlice.statusTag != .rhythmError {
-                                                if staff.staffNum == 0 {
-                                                    noteLayoutPositions.storePosition(onAppear: true, notes: entries.getTimeSliceNotes(),rect: geometry.frame(in: .named("HStack")))
-                                                }
-                                            //}
+                                            if staff.staffNum == 0 {
+                                                noteLayoutPositions.storePosition(onAppear: true, notes: entries.getTimeSliceNotes(),
+                                                                                  rect: geometry.frame(in: .named("HStack")))
+                                            }
                                         }
                                         .onChange(of: score.lineSpacing) { oldValue, newValue in
                                             if staff.staffNum == 0 {
-                                                noteLayoutPositions.storePosition(onAppear: false, notes: entries.getTimeSliceNotes(),rect: geometry.frame(in: .named("HStack")))
+                                                noteLayoutPositions.storePosition(onAppear: false, notes: entries.getTimeSliceNotes(),
+                                                                                  rect: geometry.frame(in: .named("HStack")))
                                             }
                                         }
                                 })
                                 
-                                //if timeSlice.statusTag != .rhythmError  {
-                                    StemView(score:score,
-                                             staff:staff,
-                                             notePositionLayout: noteLayoutPositions,
-                                             notes: entries.getTimeSliceNotes())
-                                //}
+                                StemView(score:score,
+                                         staff:staff,
+                                         notePositionLayout: noteLayoutPositions,
+                                         notes: entries.getTimeSliceNotes())
 
                              }
                             //.border(Color.red)
-//                            .overlay(
-//                                HStack {
-//                                    TimeSliceLabelView(score:score, staff:staff, timeSlice: entry as! TimeSlice)
-//                                        //.frame(height: score.getStaffHeight())
-//                                        .frame(height: Double(staff.linesInStaff) * score.lineSpacing * 2.3)
-//                                }
-//                                
-//                                //.border(Color.red)
-//                                ///Must be enough width for 2 chars (as of the current version...)
-//                                .frame(width: score.lineSpacing * 5)
-//                            )
                         }
+                        
                         if entry is BarLine {
                             GeometryReader { geometry in
                                 BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)

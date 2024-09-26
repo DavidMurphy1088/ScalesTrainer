@@ -28,7 +28,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
-    let keySoundingSeconds:Double = MetronomeModel.shared.notesPerClick == 1 ? 1.0 : 0.5
+    let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 : 
     
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
@@ -70,7 +70,7 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///Update the score if its showing
             //if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
             if let score = scalesModel.scores[self.hand] {
-                let segment = self.scaleNoteState?.segment
+                let segment = self.scaleNoteState?.segments[0]
                 if let segment = segment {
                     if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
                         DispatchQueue.global(qos: .background).async {

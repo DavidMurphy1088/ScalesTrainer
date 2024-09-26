@@ -19,6 +19,9 @@
     " %lld" : {
 
     },
+    " =" : {
+
+    },
     " C" : {
 
     },
@@ -50,13 +53,16 @@
     "%@" : {
 
     },
-    "%@  ♩ =" : {
+    "%@, " : {
 
     },
     "%lld" : {
 
     },
     "© 2024 Musicmaster Education LLC." : {
+
+    },
+    "=%lld" : {
 
     },
     "⊙" : {
@@ -296,6 +302,9 @@
     "Key 4" : {
       "extractionState" : "manual"
     },
+    "Lead in Count" : {
+
+    },
     "Lead the Scale" : {
       "comment" : "Menu",
       "localizations" : {
@@ -437,9 +446,6 @@
           }
         }
       }
-    },
-    "Scale Lead in Count" : {
-
     },
     "Scale:" : {
 

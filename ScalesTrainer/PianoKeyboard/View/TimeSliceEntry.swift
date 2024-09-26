@@ -12,13 +12,13 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
 
     private var value:Double = StaffNote.VALUE_QUARTER
     public var valueNormalized:Double? = nil
-    let segment:Int
+    let segments:[Int]
     
-    init(timeSlice:TimeSlice, value:Double, segment:Int, staffNum: Int = 0) {
+    init(timeSlice:TimeSlice, value:Double, segments:[Int], staffNum: Int = 0) {
         self.value = value
         self.staffNum = staffNum
         self.timeSlice = timeSlice
-        self.segment = segment
+        self.segments = segments
     }
     
     public static func == (lhs: TimeSliceEntry, rhs: TimeSliceEntry) -> Bool {

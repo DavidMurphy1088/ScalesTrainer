@@ -379,12 +379,12 @@
 				794A9FC42C2B73770001297E /* ScaleIntervals.swift */,
 				79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
+				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
 				793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */,
 				799381782C75D1A400734FDE /* SettingsView.swift */,
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
-				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

@@ -10,8 +10,10 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     var callNum = 0
     var metronomeAudioPlayerLow:AVAudioPlayer?
     var metronomeAudioPlayerHigh:AVAudioPlayer?
+    let scale:Scale
     
-    init() {
+    init(scale:Scale) {
+        self.scale = scale
     }
     
     func metronomeStart() {
@@ -23,14 +25,13 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         if !Settings.shared.metronomeSilent {
-            if timerTickerNumber % 4 == 0 {
+            if timerTickerNumber % self.scale.timeSignature.top == 0 {
                 metronomeAudioPlayerHigh!.play()
             }
             else {
                 metronomeAudioPlayerLow!.play()
             }
         }
-        MetronomeModel.shared.setTimerTickerCountPublished(count: timerTickerNumber / MetronomeModel.shared.notesPerClick)
         return false
     }
     

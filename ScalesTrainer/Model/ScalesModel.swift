@@ -183,10 +183,10 @@ public class ScalesModel : ObservableObject {
             combined.redraw()
         }
         else {
-            //PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
-            //PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
-            //PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
-            //PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
+            PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
+            PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
+            PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
+            PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
             
             PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 0)
             PianoKeyboardModel.sharedRH.redraw()
@@ -292,6 +292,8 @@ public class ScalesModel : ObservableObject {
                 }
             }
             MetronomeModel.shared.removeAllProcesses()
+            PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = true
+            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = true
             if self.tapHandlers.count > 0 {
                 self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
             }
@@ -320,7 +322,7 @@ public class ScalesModel : ObservableObject {
         if resultInternal != nil {
             self.setShowStaff(true)
         }
-        MetronomeModel.shared.isTiming = false
+        //MetronomeModel.shared.isTiming = false
         
         //let keyboard =  //scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
         PianoKeyboardModel.sharedRH.clearAllFollowingKeyHilights(except: nil)
@@ -373,7 +375,7 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
 
-            metronome.isTiming = true
+            //metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
 //            if true || Settings.shared.developerModeOn {
 //                leadProcess.playDemo()
@@ -381,20 +383,20 @@ public class ScalesModel : ObservableObject {
 //            else {
                 self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
                 leadProcess.start()
-                metronome.addProcessesToNotify(process: leadProcess)
+                //metronome.addProcessesToNotify(process: leadProcess)
                 self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
 //            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
-            metronome.isTiming = true
+            //metronome.isTiming = true
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands))
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.startRecordingMicToRecord()
             let metronome = MetronomeModel.shared
-            metronome.isTiming = true
+            //metronome.isTiming = true
             let process = RecordScaleProcess()
             metronome.addProcessesToNotify(process: process)
         }
@@ -493,7 +495,7 @@ public class ScalesModel : ObservableObject {
                 ///Add a semaphore to detect when the expected keyboard key is played
                 for keyboardSemaphore in keyboardSemaphores {
                     let note = self.scale.scaleNoteState[keyboardSemaphore.keyboard.keyboardNumber - 1][scaleIndex]
-                    guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, segment:note.segment) else {
+                    guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, segment:note.segments[0]) else {
                         scaleIndex += 1
                         continue
                     }
@@ -529,7 +531,7 @@ public class ScalesModel : ObservableObject {
                 else {
                     scaleIndex += 1
                     let nextNote = self.scale.scaleNoteState[0][scaleIndex]
-                    self.setSelectedScaleSegment(nextNote.segment)
+                    self.setSelectedScaleSegment(nextNote.segments[0])
                 }
             }
             self.audioManager.stopRecording()
@@ -560,34 +562,38 @@ public class ScalesModel : ObservableObject {
     
     func createScore(scale:Scale, hand:Int) -> Score {
         let staffType:StaffType
-
+        let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
+        
         staffType = hand == 0 ? .treble : .bass
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
-        let timeSigTop = scale.getBeatsPerBar()
-        let score = Score(key: staffKey, timeSignature: TimeSignature(top: timeSigTop, bottom: 4), linesPerStaff: 5)
+
+        let timeSigVisible = isBrokenChord ? false : true
+        let timeSig = scale.timeSignature
+        let score = Score(scale: scale, key: staffKey, timeSignature: TimeSignature(top: timeSig.top, bottom: timeSig.bottom, visible: timeSigVisible), linesPerStaff: 5)
 
         let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
         score.addStaff(num: 0, staff: staff)
-        var inBarTotalValue = 0.0
+        var totalBarValue = 0.0
+        let mult = timeSig.bottom == 8 ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
+        let maxBarValue:Double = Double(timeSig.top) * mult
         
         for i in 0..<scale.scaleNoteState[hand].count {
-            if Int(inBarTotalValue) >= timeSigTop {
-                score.addBarLine()
-                inBarTotalValue = 0.0
+            if totalBarValue >= maxBarValue {
+                score.addBarLine(visible: !isBrokenChord)
+                totalBarValue = 0.0
             }
 
-            var noteState = scale.scaleNoteState[hand][i]
-            let value = noteState.value / Double(MetronomeModel.shared.notesPerClick)
+            let noteState = scale.scaleNoteState[hand][i]
             let ts = score.createTimeSlice()
             
-            let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: value, segment: noteState.segment, staffNum: 0)
-            note.setValue(value: value)
+            let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, segments: noteState.segments, staffNum: 0)
+            note.setValue(value: noteState.value)
             ts.addNote(n: note)
-            inBarTotalValue += value
+            totalBarValue += noteState.value
         }
-
+        //score.debugScore2("Broken", withBeam: true, toleranceLevel: 0)
         //Logger.shared.log(self, "Created score type:\(staffType)")
         return score
     }

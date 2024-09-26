@@ -103,6 +103,7 @@ public class StudentFeedback : ObservableObject {
 public class Score : ObservableObject {
     let id:UUID
     
+    private let scale:Scale
     public var timeSignature:TimeSignature
     public var key:StaffKey
     @Published public var barLayoutPositions:BarLayoutPositions
@@ -125,8 +126,9 @@ public class Score : ObservableObject {
     public var heightPaddingEnabled:Bool
     let showTempoVariation:Bool = false
     
-    public init(key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
+    public init(scale:Scale, key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
         self.id = UUID()
+        self.scale = scale
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
@@ -146,7 +148,7 @@ public class Score : ObservableObject {
             let ts = timeSlices[i]
             let entry = ts.entries[0]
             let staffNote = entry as! StaffNote
-            if staffNote.midiNumber == midi && staffNote.segment == segment {
+            if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
                 ts.setShowIsPlaying(true)
                 noteFound = ts
                 break
@@ -252,7 +254,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debugScore2(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug11(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -270,9 +272,9 @@ public class Score : ObservableObject {
                         print("  Seq", t.sequence, 
                               "type:", type(of: t.entries[0]),
                               "midi:", note.midiNumber,
-                              "beat:", t.beatNumber,
-                              "value:", t.getValue() ,
-                              "segment:", note.segment,
+                              "valuePoint:", String(format: "%.2f", t.valuePoint),
+                              "value:", String(format: "%.2f", t.getValue()),
+                              "segments:", note.segments,
                               "duration:", t.tapDurationNormalised ?? "_",
                               "stemDirection", note.stemDirection,
                               "stemLength", note.stemLength,
@@ -286,10 +288,10 @@ public class Score : ObservableObject {
                         print(" [type:", type(of: t.entries[0]), "]", terminator: "")
                         print(" [midi:",note.midiNumber, "]", terminator: "")
                         print(" [TapDuration Seconds:",String(format: "%.4f", t.tapDurationNormalised ?? 0),"]", t.sequence, terminator: "")
-                        print(" [Note Value:", note.getValue(),"]", t.sequence, terminator: "")
-                        print(" [Segment:", note.segment,"]", t.sequence, terminator: "")
+                        print(" [Note Value:", String(format: "%.2f", note.getValue()),"]", t.sequence, terminator: "")
+                        print(" [Segments:", note.segments,"]", t.sequence, terminator: "")
                         print(" [status]",t.statusTag, terminator: "")
-                        print(" [beat]",t.beatNumber, t.sequence, terminator: "")
+                        print(" [beat]",t.valuePoint, t.sequence, terminator: "")
                         //print(" [writtenAccidental:",note.writtenAccidental ?? "","]", t.sequence, terminator: "")
                         let note = t.getTimeSliceNotes()[0]
                         print(" offset:", note.noteStaffPlacements[0]?.offsetFromStaffMidline ?? " ", terminator: "")
@@ -306,7 +308,7 @@ public class Score : ObservableObject {
                       "[TapDuration Seconds:",String(format: "%.4f", t.tapDurationNormalised ?? 0),"]",
                       "[Note Value:", t.getValue(),"]",
                       "[status]",t.statusTag,
-                      "[beat]",t.beatNumber,
+                      "[beat]",t.valuePoint,
                       "[writtenAccidental:","_","]",
                       "[Staff:","_","]"
                     )
@@ -366,8 +368,8 @@ public class Score : ObservableObject {
         }
     }
     
-    public func addBarLine() {
-        let barLine = BarLine()
+    public func addBarLine(visible:Bool) {
+        let barLine = BarLine(visible: visible)
         barLine.sequence = self.scoreEntries.count
         self.scoreEntries.append(barLine)
     }
@@ -413,23 +415,31 @@ public class Score : ObservableObject {
         if timeSlice.entries.count == 0 {
             return
         }
-        addBeatValues()
+        setTimesliceStartAtValues()
         if timeSlice.entries[0] is StaffNote {
             addStemCharaceteristics()
         }
     }
     
     ///For each time slice calculate its beat number in its bar
-    func addBeatValues() {
-        var beatCtr = 0.0
+    func setTimesliceStartAtValues() {
+        var totalValue = 0.0
+        ///For broken chords its 3 1/8 notes per quaver group
+        let maxGroupValue = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 1.0 : 4.0
+        let rangeMin  = maxGroupValue * 0.99
+        let rangeMax  = maxGroupValue * 1.01
+        
         for i in 0..<self.scoreEntries.count {
             if self.scoreEntries[i] is BarLine {
-                beatCtr = 0
+                //beatCtr = 0
                 continue
             }
+            if totalValue >= rangeMin && totalValue <= rangeMax {
+                totalValue = 0
+            }
             if let timeSlice = self.scoreEntries[i] as? TimeSlice {
-                timeSlice.beatNumber = beatCtr
-                beatCtr += timeSlice.getValue()
+                timeSlice.valuePoint = totalValue
+                totalValue += timeSlice.getValue()
             }
         }
     }
@@ -511,7 +521,7 @@ public class Score : ObservableObject {
             }
         }
         
-        func saveBeam(timeSlicesUnderBeam:[TimeSlice], linesForFullStemLength:Double) -> [TimeSlice] {
+        func setNotesUnderBeam(timeSlicesUnderBeam:[TimeSlice], linesForFullStemLength:Double) -> [TimeSlice] {
             if timeSlicesUnderBeam.count == 0 {
                 return []
             }
@@ -544,28 +554,26 @@ public class Score : ObservableObject {
         var timeSlicesUnderBeam:[TimeSlice] = []
         let linesForFullStemLength = 3.5
         
-        ///Make quaver beams onto the main beats
-        
+        ///Group quavers under quaver beams
         for scoreEntry in self.scoreEntries {
             guard scoreEntry is TimeSlice else {
-                timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             let timeSlice = scoreEntry as! TimeSlice
             if timeSlice.getTimeSliceNotes().count == 0 {
-                timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             let note = timeSlice.getTimeSliceNotes()[0]
-            if note.getValue() != StaffNote.VALUE_QUAVER {
+            if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
-                timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
 
-            let mainBeat = Int(timeSlice.beatNumber)
-            if timeSlice.beatNumber == Double(mainBeat) {
-                timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+            if timeSlice.valuePoint == 0 {
+                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam.append(timeSlice)
             }
             else {
@@ -577,10 +585,9 @@ public class Score : ObservableObject {
                 }
             }
         }
-        timeSlicesUnderBeam = saveBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+        timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
         
         ///Join up adjoining beams where possible. Existing beams only span one main beat and can be joined in some cases
-
         var lastNote:StaffNote? = nil
         for scoreEntry in self.scoreEntries {
             guard let timeSlice = scoreEntry as? TimeSlice else {
@@ -596,19 +603,21 @@ public class Score : ObservableObject {
                 lastNote = nil
                 continue
             }
-            if note.beamType == .start {
-                if let lastNote = lastNote {
-                    if lastNote.beamType == .end {
-                        var timeSigAllowsJoin = true
-                        if timeSignature.top == 4 {
-                            /// 4/4 beats after 2nd cannot join to earlier beats
-                            let beat = Int(note.timeSlice.beatNumber)
-                            let startBeat = Int(lastNote.timeSlice.beatNumber)
-                            timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
-                        }
-                        if timeSigAllowsJoin {
-                            lastNote.beamType = .middle
-                            note.beamType = .middle
+            if false {
+                if note.beamType == .start {
+                    if let lastNote = lastNote {
+                        if lastNote.beamType == .end {
+                            var timeSigAllowsJoin = true
+                            if timeSignature.top == 4 {
+                                /// 4/4 beats after 2nd cannot join to earlier beats
+                                let beat = Int(note.timeSlice.valuePoint)
+                                let startBeat = Int(lastNote.timeSlice.valuePoint)
+                                timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
+                            }
+                            if timeSigAllowsJoin {
+                                lastNote.beamType = .middle
+                                note.beamType = .middle
+                            }
                         }
                     }
                 }

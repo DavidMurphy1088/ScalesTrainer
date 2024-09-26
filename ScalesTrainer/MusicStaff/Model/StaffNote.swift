@@ -2,18 +2,22 @@ import Foundation
 import SwiftUI
 
 public class BarLine : ScoreEntry {
+    let visible:Bool
+    init(visible:Bool) {
+        self.visible = visible
+    }
 }
 
 public class Tie : ScoreEntry {
 }
 
 public class Rest : TimeSliceEntry {
-    public override init(timeSlice:TimeSlice, value:Double, segment:Int, staffNum:Int) {
-        super.init(timeSlice:timeSlice, value: value, segment: segment, staffNum: staffNum)
+    public override init(timeSlice:TimeSlice, value:Double, segments:[Int], staffNum:Int) {
+        super.init(timeSlice:timeSlice, value: value, segments: segments, staffNum: staffNum)
     }
     
     public init(r:Rest) {
-        super.init(timeSlice: r.timeSlice, value: r.getValue(), segment: r.segment, staffNum: r.staffNum)
+        super.init(timeSlice: r.timeSlice, value: r.getValue(), segments: r.segments, staffNum: r.staffNum)
     }
 }
 
@@ -53,7 +57,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
     static let MIDDLE_C = 60 //Midi pitch for C4
     static let OCTAVE = 12
     
+    ///Defined as the number of notes in a single metronome click
     public static let VALUE_SEMIQUAVER = 0.25
+    public static let VALUE_TRIPLET = 0.333333333333333333333
     public static let VALUE_QUAVER = 0.5
     public static let VALUE_QUARTER = 1.0
     public static let VALUE_HALF = 2.0
@@ -84,15 +90,15 @@ public class StaffNote : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, midi:Int, value:Double, segment:Int, staffNum:Int, writtenAccidental:Int?=nil) {
+    public init(timeSlice:TimeSlice, midi:Int, value:Double, segments:[Int], staffNum:Int, writtenAccidental:Int?=nil) {
         self.midiNumber = midi
-        super.init(timeSlice:timeSlice, value: value, segment: segment, staffNum: staffNum)
+        super.init(timeSlice:timeSlice, value: value, segments: segments, staffNum: staffNum)
         self.writtenAccidental = writtenAccidental
     }
     
     public init(note:StaffNote) {
         self.midiNumber = note.midiNumber
-        super.init(timeSlice:note.timeSlice, value: note.getValue(), segment: note.segment, staffNum: note.staffNum)
+        super.init(timeSlice:note.timeSlice, value: note.getValue(), segments: note.segments, staffNum: note.staffNum)
         self.timeSlice.sequence = note.timeSlice.sequence
         self.writtenAccidental = note.writtenAccidental
         self.isOnlyRhythmNote = note.isOnlyRhythmNote
@@ -202,7 +208,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
                                 break
                             }
                             else {
-                                if note.getValue() == StaffNote.VALUE_QUAVER {
+                                if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue()) {
                                     if note.beamType == .end {
                                         break
                                     }

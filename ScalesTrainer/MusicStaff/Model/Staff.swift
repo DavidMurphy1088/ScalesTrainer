@@ -43,7 +43,7 @@ public class NoteLayoutPositions {//}: ObservableObject {
 
     public func storePosition(onAppear:Bool, notes: [StaffNote], rect: CGRect) {
         if notes.count > 0 {
-            if notes[0].getValue() == StaffNote.VALUE_QUAVER {
+            if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
                 let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
                 //DispatchQueue.main.async {
                     ///Make sure this fires after all other UI is rendered

@@ -59,6 +59,25 @@ public struct ClassicStyle {
         (width - (space * CGFloat(naturalKeyCount - 1))) / CGFloat(naturalKeyCount)
     }
     
+    private func getFingerColor(scaleNote:ScaleNoteState) -> Color {
+        if scaleNote.keyboardColourType == .bySegment {
+            let seg = scaleNote.segments[0]  % 4
+            let color:Color
+            switch seg {
+//            case 1 :
+//                color = Color.mint
+//            case 2:
+//                color = Color.orange
+//            case 3:
+//                color = Color.yellow
+            default:
+                color = Color.blue
+            }
+            return color
+        }
+        return scaleNote.keyboardColourType == .fingerSequenceBreak ? Color.orange : Color.blue
+    }
+    
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             let scalesModel = ScalesModel.shared
@@ -151,7 +170,7 @@ public struct ClassicStyle {
                         color = .green
                     }
                     else {
-                        color = .red
+                        color = viewModel.hilightNotesOutsideScale ? .red : .clear
                     }
                     
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2,
@@ -160,20 +179,10 @@ public struct ClassicStyle {
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
+                        //lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
+                        lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
                 }
-                
-                ///----------- Note status -----------
-//                if scalesModel.resultPublished != nil {
-//                    let width = playingMidiRadius * 1.1
-//                    let x = rect.origin.x + rect.width / 2.0 - width/CGFloat(2)
-//                    let y = rect.origin.y + rect.height * 0.805 - width/CGFloat(2)
-//                    
-//                    let color = getKeyStatusColor(key: key)
-//                    let backgroundRect = CGRect(x: x, y: y, width: width, height: width)
-//                    context.fill(Path(ellipseIn: backgroundRect), with: .color(color))
-//                }
-            
+                            
                 ///----------- Finger number
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
@@ -181,7 +190,7 @@ public struct ClassicStyle {
                         let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
 
                         context.draw(
-                            Text(finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
+                            Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
                                 .font(.title).bold(),
                             at: point
                         )
@@ -263,7 +272,7 @@ public struct ClassicStyle {
 //                    )
 //                }
 
-                /// ----------- The note from the key touch is playiong ----------
+                /// ----------- The note from the key touch is playing ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
                     let w = playingMidiRadius * 1.0
@@ -274,12 +283,13 @@ public struct ClassicStyle {
                         color = .green
                     }
                     else {
-                        color = .red
+                        color = viewModel.hilightNotesOutsideScale ? .red : .clear
                     }
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
+                        //lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
+                        lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
                 }
                 
                 ///----------- Note Status-----------
@@ -298,42 +308,23 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
-                        //if !scalesModel.showStaff {
-                            if false {
-                                ///White background for finger number on a black key
-                                ///23May dropped and instead make black keys less black
-                                if key.scaleNoteState == nil {
-                                    let edge = rect.width * 0.05
-                                    let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
-                                    let width = rect.width - 2 * edge
-                                    let backgroundRect = CGRect(x: rect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
-                                    context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
-                                }
+                        if false {
+                            ///White background for finger number on a black key
+                            ///23May dropped and instead make black keys less black
+                            if key.scaleNoteState == nil {
+                                let edge = rect.width * 0.05
+                                let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
+                                let width = rect.width - 2 * edge
+                                let backgroundRect = CGRect(x: rect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
+                                context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                             }
-                            context.draw(
-                                Text(finger).foregroundColor(scaleNote.fingerSequenceBreak ? Color.orange : Color.blue)
-                                    .font(.title).bold(),
-                                at: point
-                            )
-                        //}
-                        ///Draw a midline thru the finger number to indicate a finger break
-//                        if scaleNote.fingerSequenceBreak {
-//                            let width = rect.width * 0.2
-//                            for w in [width, 0 - width] {
-//                                let point1 = CGPoint(x: point.x + CGFloat(w), y: point.y)
-//                                let point2 = CGPoint(x: point.x + CGFloat(2*w), y: point.y)
-//                                    context.stroke(
-//                                        Path { path in
-//                                            path.move(to: point1)
-//                                            path.addLine(to: point2)
-//                                        },
-//                                        with: .color(.blue),
-//                                        lineWidth: 2
-//                                   )
-//                            }
-//                        }
+                        }
+                        context.draw(
+                            Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
+                                .font(.title).bold(),
+                            at: point
+                        )
                     }
-
                 }
                 
                 viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)

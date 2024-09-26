@@ -29,7 +29,7 @@ struct SettingsView: View {
     @State var recordDataMode = Settings.shared.developerModeOn 
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
-    @State var scaleNoteValue = 0
+    //@State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerModeOn = false
@@ -107,7 +107,7 @@ struct SettingsView: View {
             ///Lead in count
             Spacer()
             HStack {
-                Text(LocalizedStringResource("Scale Lead in Count")).font(.title2).padding(0)
+                Text(LocalizedStringResource("Lead in Count")).font(.title2).padding(0)
                 Picker("Select Value", selection: $leadInBarCount) {
                     ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
                         Text("\(scalesModel.scaleLeadInCounts[index])")
@@ -256,7 +256,7 @@ struct SettingsView: View {
             .onAppear() {
                 leadInBarCount = settings.scaleLeadInBearCountIndex
                 self.defaultOctaves = settings.defaultOctaves
-                self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
+                //self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
                 self.keyColor = Settings.shared.getKeyColor()
                 self.backingPresetNumber = settings.backingSamplerPreset

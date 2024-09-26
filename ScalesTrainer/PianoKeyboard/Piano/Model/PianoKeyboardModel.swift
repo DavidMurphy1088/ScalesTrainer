@@ -21,6 +21,8 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public var firstKeyMidi = 60
     private var nextKeyToPlayIndex:Int?
     private var ascending = true
+    public var hilightNotesOutsideScale = true
+    
     var keyboardNumber:Int ////😡 the lowest value is 1. If changed to 0 remove all the ' -1' in the code that uses it
     
     @Published public var latch = false {
@@ -225,12 +227,10 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             let pianoKeyModel = PianoKeyModel(keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
             self.pianoKeyModel.append(pianoKeyModel)
             if pianoKeyModel.midi == scaleStartMidi {
-                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1, segment: 0)
+                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1, segment: [0])
                 ///Mark the start of scale
                 keyState.finger = 9
-
                 pianoKeyModel.setState(state: keyState)
-
             }
         }
         //let key = self.pianoKeyModel[i]
@@ -242,7 +242,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         for i in 0..<numberOfKeys {
             if i < self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
-                key.keyIsSounding = false
+                //key.keyIsSounding = false
                 key.setState(state: nil)
             }
         }
@@ -261,7 +261,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func debug22(_ ctx:String) {
+    func debug2(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {
@@ -271,7 +271,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
 //                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
-                    print("  Segment", state.segment, "finger:", state.finger, "fingerBreak:", state.fingerSequenceBreak, terminator: "")
+                    print("  Segment", state.segments, "finger:", state.finger, "fingerBreak:", state.keyboardColourType, terminator: "")
                 }
                 else {
                     print("  No scale state", terminator: "")
@@ -382,8 +382,8 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     ///For descending C 1-octave returns same 8 notes
     public func getKeyIndexForMidi(midi:Int, segment:Int?) -> Int? {
         var keyNumber:PianoKeyModel?
-        if false { //} let segment = segment{
-            keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
+        if false {
+            //keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
         }
         else {
             keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi })

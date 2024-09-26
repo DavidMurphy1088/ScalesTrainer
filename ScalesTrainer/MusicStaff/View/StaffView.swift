@@ -262,10 +262,12 @@ public struct StaffView: View {
                             .frame(height: score.getStaffHeight())
                     }
                 }
-
-                TimeSignatureView(staff: staff, timeSignature: score.timeSignature, lineSpacing: score.lineSpacing, clefWidth: clefWidth()/1.0)
-                    .frame(height: score.getStaffHeight())
-                //    .border(Color.red)
+                
+                if score.timeSignature.visible {
+                    TimeSignatureView(staff: staff, timeSignature: score.timeSignature, lineSpacing: score.lineSpacing, clefWidth: clefWidth()/1.0)
+                        .frame(height: score.getStaffHeight())
+                    //    .border(Color.red)
+                }
 
                 ScoreEntriesView(score: score, staff: staff)
                     .frame(height: score.getStaffHeight())

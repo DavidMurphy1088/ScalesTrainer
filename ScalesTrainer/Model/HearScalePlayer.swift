@@ -30,38 +30,46 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         beatCount = 0
         nextNoteIndex = 0
         backingWasOn = scalesModel.backingOn
+        if let combined = PianoKeyboardModel.sharedCombined {
+            combined.hilightNotesOutsideScale = false
+        }
+        else {
+            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
+            PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
+        }
         //scalesModel.setBacking(false)
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        if Settings.shared.getLeadInBeats() > 0 {
-//            if backingWasOn {
-//                scalesModel.setBacking(false)
+//        if Settings.shared.getLeadInBeats() > 0 {
+////            if backingWasOn {
+////                scalesModel.setBacking(false)
+////            }
+//            if beatCount < Settings.shared.getLeadInBeats() {
+//                MetronomeModel.shared.setLeadingIn(way: true)
+//                leadInShown = true
+//                beatCount += 1
+//                return false
 //            }
-            if beatCount < Settings.shared.getLeadInBeats() {
-                MetronomeModel.shared.setLeadingIn(way: true)
-                leadInShown = true
-                beatCount += 1
-                return false
-            }
-        }
-        if leadInShown {
-            MetronomeModel.shared.setLeadingIn(way: false)
-        }
-        if timerTickerNumber == 0 {
-            if backingWasOn {
-                scalesModel.backer?.callNum = 0
-            }
-        }
-        let sampler = audioManager.keyboardMidiSampler
+//        }
+//        if leadInShown {
+//            MetronomeModel.shared.setLeadingIn(way: false)
+//        }
+//        if timerTickerNumber == 0 {
+//            if backingWasOn {
+//                scalesModel.backer?.callNum = 0
+//            }
+//        }
+//
         if waitBeats > 0 {
             waitBeats -= 1
             return false
         }
+        let sampler = audioManager.keyboardMidiSampler
         for hand in scale.hands {
             let note = scale.scaleNoteState[hand][nextNoteIndex]
             let keyboard = getKeyboard(hand: hand)
-            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segment)
+            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
             if let keyIndex = keyIndex {
                 let key=keyboard.pianoKeyModel[keyIndex]
                 key.setKeyPlaying(hilight: true)
@@ -70,12 +78,13 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             }
         }
         let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
-        waitBeats = Int(scaleNoteState.value) - 1
+        let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 1.0
+        waitBeats = Int(scaleNoteState.value * notesPerBeat) - 1
 
         if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
             self.nextNoteIndex += 1
             let nextNote = scale.scaleNoteState[0][nextNoteIndex]
-            scalesModel.setSelectedScaleSegment(nextNote.segment)
+            scalesModel.setSelectedScaleSegment(nextNote.segments[0])
         }
         else {
             scalesModel.setSelectedScaleSegment(0)

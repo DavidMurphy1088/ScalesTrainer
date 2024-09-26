@@ -107,27 +107,44 @@ public enum ScaleMotion: CaseIterable, Comparable, Codable {
     }
 }
 
+public enum KeyboardColourType: CaseIterable, Comparable, Codable {
+    case none
+    case fingerSequenceBreak
+    case bySegment
+    var description: String {
+        switch self {
+        case .fingerSequenceBreak:
+            return "Finger"
+        case .bySegment:
+            return "Segment"
+        default:
+            return "None"
+        }
+    }
+}
+
 public class ScaleNoteState : Codable {
     var id = UUID()
     let sequence:Int
     var midi:Int
     var value:Double
     var finger:Int = 0
-    var fingerSequenceBreak = false
+    var keyboardColourType:KeyboardColourType = .none
     var matchedTime:Date? = nil
     ///The time the note was flagged as missed in the scale playing
     var unmatchedTime:Date? = nil
     var matchedAmplitude:Double? = nil
     ///The tempo adjusted normalized duration (value) of the note
     var valueNormalized:Double? = nil
-    ///The segment e.g. upwards or downwards in the scale. For broken chords the 3 notes in the arpeggio.
-    var segment:Int
+    ///The segment of the scale to show on the keyboard e.g. upwards or downwards in the scale. For broken chords the 3 notes in the arpeggio.
+    ///Most notes have one segment. The top of the scale has the up and down segment.
+    var segments:[Int]
     
-    init(sequence: Int, midi:Int, value:Double, segment:Int) {
+    init(sequence: Int, midi:Int, value:Double, segment:[Int]) {
         self.sequence = sequence
         self.midi = midi
         self.value = value
-        self.segment = segment
+        self.segments = segment
     }
     
     func isWhiteKey() -> Bool {
@@ -153,7 +170,8 @@ public class Scale : Codable {
     ///A segment is the number of beats that can be rendered before the keyboard needs to be refreshed
     ///e.g. a maj scale is octaves * 8 beats. A broken chord has 3 beats since the keyboard fingering needs to be refreshed for each new inverted chord arpeggio
     var notesPerSegment:Int
-    
+    let timeSignature:TimeSignature
+
     public init() {
         self.scaleRoot = ScaleRoot(name: "")
         self.scaleNoteState = []
@@ -166,6 +184,12 @@ public class Scale : Codable {
         scaleMotion = .similarMotion
         scaleShapeForFingering = .scale
         notesPerSegment = 0
+        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+            self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
+        }
+        else {
+            self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
+        }
     }
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
@@ -179,6 +203,13 @@ public class Scale : Codable {
         self.scaleMotion = scaleMotion
         scaleNoteState = []
         self.hands = hands
+        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+            self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
+        }
+        else {
+            self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
+        }
+
         ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
         ///
@@ -259,6 +290,17 @@ public class Scale : Codable {
         ///Set midi values in scale
         
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
+        let scaleNoteValue = [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
+
+        func getSegment(hand:Int) -> Int {
+            let totalValue = getTotalNoteValueInScale(handIndex: hand)
+            var seg = (totalValue / scaleNoteValue) / Double(self.notesPerSegment)
+            if scaleNoteValue != Double(Int(scaleNoteValue)) {
+                ///truncating Int...total value 4.9999999 should be segment 5, not 4
+                seg += 0.0001
+            }
+            return Int(seg)
+        }
         
         for handIndex in [0,1] {
             var sequence = 0
@@ -292,30 +334,34 @@ public class Scale : Codable {
             for oct in 0..<octaves {
                 
                 for i in 0..<scaleOffsetsForHand.count {
-                    var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                    var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
                         noteValue *= 3
                     }
                     if oct == 0 {
+                        let segment = getSegment(hand: handIndex)
                         scaleNoteState[handIndex].append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue,
-                                                                        segment: getBeatsInScale(handIndex: handIndex) / self.notesPerSegment))
+                                                                        segment: [segment]))
                         let deltaDirection = 1 //(scaleType == .contraryMotion && handIndex==1) ? -1 : 1
                         nextMidi += scaleOffsetsForHand[i] * deltaDirection
                     }
                     else {
+                        let segment = getSegment(hand: handIndex)
                         scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][i % 8].midi + (oct * 12),
-                                                                         value: noteValue, segment: getBeatsInScale(handIndex: handIndex) / self.notesPerSegment))
+                                                                         value: noteValue, segment: [segment]))
                     }
                     sequence += 1
                 }
                 ///Add top note
                 if oct == octaves - 1 {
-                    var noteValue = Settings.shared.getSettingsNoteValueFactor()
+                    var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
                         noteValue *= 3
                     }
+                    let segment = getSegment(hand: handIndex)
+                    ///The top note is in the upward and downward segment. i.e. it should show on both segments
                     scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][0].midi + (octaves) * 12,
-                                                                     value: noteValue, segment: getBeatsInScale(handIndex: handIndex) / self.notesPerSegment))
+                                                                     value: noteValue, segment: [segment, segment+1]))
                     sequence += 1
                 }
             }
@@ -325,7 +371,7 @@ public class Scale : Codable {
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
-        
+
         for handIndex in [0,1] {
             var segmentCounter = 0
             var sequence = 0
@@ -343,7 +389,8 @@ public class Scale : Codable {
                         }
                     }
                 }
-                let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi, value: downValue, segment: getBeatsInScale(handIndex: handIndex) / self.notesPerSegment)
+                let segment = getSegment(hand: handIndex)
+                let descendingNote = ScaleNoteState(sequence: sequence, midi: downMidi, value: downValue, segment:[segment])
                 scaleNoteState[handIndex].append(descendingNote)
                 segmentCounter += 1
                 lastMidi = downMidi
@@ -351,8 +398,9 @@ public class Scale : Codable {
                 sequence += 1
             }
             if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-                let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: Settings.shared.getSettingsNoteValueFactor() * 3,
-                                              segment: getBeatsInScale(handIndex: handIndex) / self.notesPerSegment)
+                let segment = getSegment(hand: handIndex)
+                let lastNote = ScaleNoteState(sequence: sequence, midi: lastMidi + 7, value: scaleNoteValue * 3,
+                                              segment: [segment])
                 scaleNoteState[handIndex].append(lastNote)
             }
             else {
@@ -361,8 +409,8 @@ public class Scale : Codable {
                 for note in scaleNoteState[handIndex] {
                     totalValue += note.value
                 }
-                let lastBarValue = Int(totalValue) % self.getBeatsPerBar()
-                let lastNoteValue = self.getBeatsPerBar() - lastBarValue + 1
+                let lastBarValue = Int(totalValue) % self.getRequiredValuePerBar()
+                let lastNoteValue = self.getRequiredValuePerBar() - lastBarValue + 1
                 scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
             }
         }
@@ -378,12 +426,12 @@ public class Scale : Codable {
             var seq = 0
             for state in secondPart {
                 ///Need deep copy
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value, segment: 0))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value, segment: [0]))
                 //segmentCounter += 1
             }
             seq = 0
             for i in 1..<firstPart.count {
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value, segment: 1))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value, segment: [1]))
             }
             ///The last note value is now in the middle of the scale ... so exchange it
             let lastNoteValue = scaleNoteState[1][middleIndex - 1].value
@@ -401,7 +449,17 @@ public class Scale : Codable {
                 setChromaticFingerBreaks(hand: hand)
             }
             else {
-                setFingerBreaks(hand: hand)
+                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+                    ///Broken chords color the chord arpeggios
+                    for hand in self.scaleNoteState {
+                        for state in hand {
+                            state.keyboardColourType = .bySegment
+                        }
+                    }
+                }
+                else {
+                    setFingerBreaks(hand: hand)
+                }
             }
         }
         //debug1("------------- End Init")
@@ -414,32 +472,38 @@ public class Scale : Codable {
             let scaleNote = self.scaleNoteState[hand][i]
             if hand == 0 {
                 if scaleNote.isWhiteKey() {
-                    scaleNote.fingerSequenceBreak = [0, 5].contains(scaleNote.midi % 12) ? false : true
-                }
+                    //scaleNote.fingerSequenceBreak = [0, 5].contains(scaleNote.midi % 12) ? false : true
+                    scaleNote.keyboardColourType = [0, 5].contains(scaleNote.midi % 12) ? .none : .fingerSequenceBreak
+                    }
             }
             if hand == 1 {
                 if scaleMotion == .contraryMotion {
                     if scaleNote.isWhiteKey() {
-                        scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
+                        //scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
+                        scaleNote.keyboardColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingerSequenceBreak
                     }
                 }
                 else {
-                    scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                    //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                    scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingerSequenceBreak
                 }
             }
         }
         for i in midway+1..<self.scaleNoteState[hand].count {
             let scaleNote = self.scaleNoteState[hand][i]
             if hand == 0 {
-                scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingerSequenceBreak
             }
             if hand == 1 {
                 if scaleMotion == .contraryMotion {
-                    scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                    //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
+                    scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingerSequenceBreak
                 }
                 else {
                     if scaleNote.isWhiteKey() {
-                        scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
+                        //scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
+                        scaleNote.keyboardColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingerSequenceBreak
                     }
                 }
             }
@@ -503,8 +567,11 @@ public class Scale : Codable {
     func getHighestSegment() -> Int {
         var max = 0
         for state in self.scaleNoteState[0] {
-            if state.segment > max {
-                max = state.segment
+            let maxForState = state.segments.max()
+            if let maxForState = maxForState {
+                if maxForState > max {
+                    max = maxForState
+                }
             }
         }
         return max
@@ -575,7 +642,7 @@ public class Scale : Codable {
         return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
-    func debug11(_ msg:String)  {
+    func debug2(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
@@ -590,9 +657,10 @@ public class Scale : Codable {
             for state in self.scaleNoteState[handIndex] {
 //                let xxx = state.id.uuidString
 //                let stateid = String(xxx.suffix(4))
-                print("Hand", handIndex, "idx:", String(format: "%2d", idx), "seg:", String(format: "%2d", state.segment), "\tMidi:", state.midi,  "value:", state.value, "finger:", state.finger, "break:", state.fingerSequenceBreak,
-                      "matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
-                      "valueNormalized:", getValue(state.valueNormalized))
+                print("Hand", handIndex, "idx:", String(format: "%2d", idx), "seg:", state.segments, "\tMidi:", state.midi,  "value:", String(format: "%.2f", state.value), "finger:", state.finger, "break:", state.keyboardColourType
+                      //"matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
+                      //"valueNormalized:", getValue(state.valueNormalized)
+                )
                 idx += 1
             }
         }
@@ -677,27 +745,29 @@ public class Scale : Codable {
     
     func getStateForMidi(handIndex:Int, midi:Int, scaleSegment:Int) -> ScaleNoteState? {
         for state in self.scaleNoteState[handIndex] {
-            if state.segment == scaleSegment {
-                if state.midi == midi {
-                    return state
+            for i in 0..<state.segments.count {
+                if state.segments[i] == scaleSegment {
+                    if state.midi == midi {
+                        return state
+                    }
                 }
             }
         }
         return nil
     }
-    func getBeatsInScale(handIndex:Int) -> Int {
+    func getTotalNoteValueInScale(handIndex:Int) -> Double {
         var total = 0.0
         for state in self.scaleNoteState[handIndex] {
             total += state.value
         }
-        return Int(total)
+        return total
     }
     
     ///Calculate finger sequence breaks
     ///Set descending as key one below ascending break key
     private func setFingerBreaks(hand:Int) {
         for note in self.scaleNoteState[hand] {
-            note.fingerSequenceBreak = false
+            note.keyboardColourType = .none
         }
 //        guard self.scaleShapeForFingering == .scale else {
 //            return
@@ -709,8 +779,8 @@ public class Scale : Codable {
                 let finger = self.scaleNoteState[hand][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[hand][i].fingerSequenceBreak = true
-                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].fingerSequenceBreak = true
+                    self.scaleNoteState[hand][i].keyboardColourType = .fingerSequenceBreak
+                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardColourType = .fingerSequenceBreak
                 }
                 lastFinger = self.scaleNoteState[hand][i].finger
             }
@@ -721,10 +791,10 @@ public class Scale : Codable {
                 let finger = self.scaleNoteState[hand][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[hand][i+1].fingerSequenceBreak = true
+                    self.scaleNoteState[hand][i+1].keyboardColourType = .fingerSequenceBreak
                     let mirror = halfway + (halfway - i) + 2
                     if mirror < self.scaleNoteState[hand].count - 1 {
-                        self.scaleNoteState[hand][mirror].fingerSequenceBreak = true
+                        self.scaleNoteState[hand][mirror].keyboardColourType = .fingerSequenceBreak
                     }
                 }
                 lastFinger = self.scaleNoteState[hand][i].finger
@@ -910,7 +980,7 @@ public class Scale : Codable {
             fingers = hand == 0 ? "135" : "531"
         }
         
-        /// ========== Set fingering now given the finger sequence ==========
+        /// Set fingering now given the finger sequence 
         
         var handled = false
         if scaleType == .chromatic {
@@ -1016,10 +1086,10 @@ public class Scale : Codable {
         }
     }
     
-    func getBeatsPerBar() -> Int {
+    func getRequiredValuePerBar() -> Int {
+        //return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 24 : 4
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 3 : 4
     }
-
 
     func getScaleName(handFull:Bool, octaves:Bool? = nil) -> String { //}, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool)  {
         var name = scaleRoot.name + " " + scaleType.description
@@ -1049,21 +1119,11 @@ public class Scale : Codable {
                 name += handFull ? ", Both Hands" : " RH,LF"
             }
         }
-//
         if let octaves = octaves {
             if octaves {
                 name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
             }
         }
-//        if tempo {
-//            name += ", \(self.minTempo) BPM"
-//        }
-//        if dynamic {
-//            name += ", \(self.dynamicType.description)"
-//        }
-//        if articulation {
-//            name += ", \(self.articulationType.description)"
-//        }
         return name
     }
     

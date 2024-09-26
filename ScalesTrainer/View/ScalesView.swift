@@ -115,14 +115,23 @@ struct ScalesView: View {
 //                setState(octaves: self.numberOfOctaves, hand: handIndex)
 //            })
 
-            Button(action: {
-                metronome.setTicking(on: !metronome.isTiming)
-            }) {
+//            Button(action: {
+//                metronome.setTicking(on: !metronome.isTiming)
+//            }) {
                 MetronomeView()
-            }
-            .padding()
+//            }
+//            .padding()
             
-            Text("\(NSLocalizedString("Tempo", comment: "MenuView"))  \u{2669} =").padding(.horizontal, 0)
+            HStack(spacing: 0) {
+                //let unicodeCrotchet = "\u{2669}\u{00B7}"
+                let compoundTime = scalesModel.scale.timeSignature.top % 3 == 0
+                //Text("\(NSLocalizedString("Tempo", comment: "MenuView"))").padding(.horizontal, 0)
+                Image(compoundTime ? "crotchetDotted" : "crotchet")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+                Text(" =").padding(.horizontal, 0)
+            }
             Picker("Select Value", selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
                     Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
@@ -203,7 +212,8 @@ struct ScalesView: View {
 
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    if !MetronomeModel.shared.makeSilent && Settings.shared.getLeadInBeats() > 0 {
+                    //if !MetronomeModel.shared.makeSilent && 
+                    if Settings.shared.getLeadInBeats() > 0 {
                         MetronomeView()
                     }
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
@@ -525,9 +535,11 @@ struct ScalesView: View {
 //                        }
 //                    }
                     
-                    if scalesModel.showLegend {
-                        LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                            .commonFrameStyle()
+                    if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+                        if scalesModel.showLegend {
+                            LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                                .commonFrameStyle()
+                        }
                     }
                 }
                     

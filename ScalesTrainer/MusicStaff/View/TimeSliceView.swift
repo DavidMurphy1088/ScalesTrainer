@@ -7,18 +7,25 @@ public struct BarLineView: View {
     var score:Score
     var entry:ScoreEntry
     var staff:Staff
+    let visible:Bool
     
     public init(score:Score, entry:ScoreEntry, staff: Staff) {
         self.score = score
         self.entry = entry
         self.staff = staff
+        if let barLine = entry as? BarLine {
+            self.visible = barLine.visible
+        }
+        else {
+            self.visible = true
+        }
     }
     
     public var body: some View {
         ///For some unfathomable reason the bar line does not show if its not in a gemetry reader (-:
         GeometryReader { geometry in
             Rectangle()
-                .fill(Color.black)
+                .fill(visible ? Color.black : Color.clear)
                 .frame(width: 1.0, height: 4.0 * Double(score.lineSpacing))
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
@@ -252,7 +259,7 @@ public struct TimeSliceView: View {
                         .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
                     
                 }
-                if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER].contains(noteValueUnDotted )  {
+                if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted )  {
                     Ellipse()
                     //Closed ellipse
                         .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff, adjustFor: true))
@@ -362,9 +369,7 @@ public struct TimeSliceView: View {
                             //.border(Color.green)
                         }
                         if entry is Rest {
-                            //Spacer()
                             RestView(staff: staff, entry: entry, lineSpacing: lineSpacing, geometry: geometry)
-                            //Spacer()
                                 .position(x: geometry.size.width / 2.0, y: geometry.size.height / 2.0)
                             //.border(Color.blue)
                         }
@@ -392,7 +397,6 @@ public struct TimeSliceView: View {
                                         .fill(Color.green.opacity(0.4))
                                         .frame(width: statusWidth())
                                 }
-
                             }
                         }
                         else {

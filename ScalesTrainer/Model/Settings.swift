@@ -33,7 +33,7 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBearCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
-    var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
+    //var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
     var metronomeSilent:Bool = false
@@ -89,7 +89,6 @@ public class Settings : Codable  {
         str += " Board:\(self.musicBoard)"
         str += " Grade:\(self.musicBoardGrade)"
         str += " Octaves:\(self.defaultOctaves)"
-        str += " ScaleNoteValue:\(self.scaleNoteValue)"
         str += " KeyColor:\(self.keyColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
         str += " RequiredConsecutiveCount:\(requiredConsecutiveCount)"
@@ -112,9 +111,9 @@ public class Settings : Codable  {
         return name1
     }
     
-    func getSettingsNoteValueFactor() -> Double {
-        return self.scaleNoteValue == 4 ? 1.0 : 0.5
-    }
+//    func getSettingsNoteValueFactor() -> Double {
+//        return self.scaleNoteValue == 4 ? 1.0 : 0.5
+//    }
     
     func load() {
         if let jsonData = UserDefaults.standard.string(forKey: "settings") {
@@ -131,7 +130,6 @@ public class Settings : Codable  {
                     self.metronomeSilent = loaded.metronomeSilent
                     self.scaleLeadInBearCountIndex = loaded.scaleLeadInBearCountIndex
                     self.defaultOctaves = loaded.defaultOctaves
-                    self.scaleNoteValue = loaded.scaleNoteValue
                     self.keyColor = loaded.keyColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset
                     self.requiredConsecutiveCount = loaded.requiredConsecutiveCount

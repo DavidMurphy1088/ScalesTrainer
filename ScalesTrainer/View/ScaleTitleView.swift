@@ -34,14 +34,19 @@ struct ScaleTitleView: View {
         else {
             title += ", 1 Octave"
         }
-        var tempo = "♩=\(scale.minTempo)"
-        title += ", " + tempo
+
         return title
     }
     
     var body: some View {
+        let compoundTime = scale.timeSignature.top % 3 == 0
         HStack(spacing: 0) {
-            Text(getTitle()).font(.title).padding(.horizontal, 0)
+            Text("\(getTitle()), ").font(.title).padding(.horizontal, 0)
+            Image(compoundTime ? "crotchetDotted" : "crotchet")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+            Text("=\(scale.minTempo)").font(.title).padding(.horizontal, 0)
             Text(", mf").italic().font(.title).padding(.horizontal, 0)
             Text(", legato").font(.title).padding(.horizontal, 0)
         }
