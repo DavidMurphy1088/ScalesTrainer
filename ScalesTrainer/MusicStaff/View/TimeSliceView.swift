@@ -228,7 +228,9 @@ public struct TimeSliceView: View {
             let accidental = placement.accidental
 
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
-            let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
+            //let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
+            let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
+            
 //            if placement.showOctaveOverlay {
 //                VStack {
 //                    Text("...")
@@ -305,16 +307,6 @@ public struct TimeSliceView: View {
                     }
                 //}
             }
-//            if let valueNormalized = note.valueNormalized {
-//                VStack {
-//                    Spacer()
-//                    Rectangle()
-//                    .fill(getTempoGradient(valueNormalized: valueNormalized))
-//                    .frame(height: geometry.size.height / 10.0)
-//                    //.border(Color.gray, width: 1)
-//                    //.opacity(0.6)
-//                }
-//            }
         }
     }
     
@@ -354,6 +346,7 @@ public struct TimeSliceView: View {
             endPoint: .trailing
         )
     }
+    
     func statusWidth() -> CGFloat {
         return CGFloat(UIScreen.main.bounds.size.width / 50)
     }
@@ -373,7 +366,6 @@ public struct TimeSliceView: View {
                                 .position(x: geometry.size.width / 2.0, y: geometry.size.height / 2.0)
                             //.border(Color.blue)
                         }
-                        
                     }
                 }
                 
@@ -414,9 +406,7 @@ public struct TimeSliceView: View {
                     }
                 }
             }
-            .onAppear() {
-                //ScalesModel.shared.score?.debugScore111("__CUCK", withBeam: false, toleranceLevel: 0)
-            }
+
         }
     }
 }

@@ -26,6 +26,9 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
     }
     
     public func isDotted() -> Bool {
+        if ScalesModel.shared.scale.timeSignature.bottom == 8 {
+            return [1.0].contains(value)
+        }
         return [0.75, 1.5, 3.0].contains(value)
     }
     

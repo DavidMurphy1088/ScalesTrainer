@@ -103,7 +103,7 @@ class MetronomeModel:ObservableObject {
     func startTimerThread() {
         timerTickerCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
-        let notesPerClick = scalesModel.scale.timeSignature.top % 3 == 0 ? 3 : 1
+        let notesPerClick = scalesModel.scale.timeSignature.top % 3 == 0 ? 3 : 2
         var delay = (60.0 / Double(scalesModel.getTempo())) / Double(notesPerClick)
         //delay = delay * 3
         Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo())")

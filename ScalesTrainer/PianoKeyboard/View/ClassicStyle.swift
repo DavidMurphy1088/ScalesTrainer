@@ -110,29 +110,19 @@ public struct ClassicStyle {
                 let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
                     .path(in: rect)
                 
+                ///White keys colour
                 ///Hilight the key if in following keys mode
-                let gradient = Gradient(colors: [
-                    keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
-                    //Color(red: middle * 0.6, green: middle, blue: middle),
+                let gradientWhiteKey:Gradient = Gradient(colors: [
+                    keyModel.hilightKeyToFollow ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     keyColor,
-                    Color(red: 1, green: 1, blue: 1),
+                    Settings.shared.isCustomColor() ? Settings.shared.getKeyColor() : Color(red: 1, green: 1, blue: 1),
                 ])
-                
-                ///White keys
-                if Settings.shared.isCustomColor() {
-                    context.fill(
-                        path,
-                        with: .color(Settings.shared.getKeyColor())
-                    )
-                }
-                else {
-                    context.fill(path, with: .linearGradient(
-                        gradient,
-                        startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
-                        endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
-                    ))
-                }
-                
+                context.fill(path, with: .linearGradient(
+                    gradientWhiteKey,
+                    startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
+                    endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
+                ))
+
                 /// ----------- Middle C Note name ----------
                 if key.midi == 60 {
                     let circleRadius = 15
@@ -232,20 +222,19 @@ public struct ClassicStyle {
 
                 let pathInset = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius / 2.0)
                     .path(in: insetRect)
-
-                let gradientInset = Gradient(colors: [
-                    keyModel.hilightFollowingKey ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+               
+                ///Black keys colour
+                let gradientBlackKey = Gradient(colors: [
+                    keyModel.hilightKeyToFollow ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
                     sharpFlatColor(key.touchDown),
                     sharpFlatColor(key.touchDown),
                 ])
-                
-                ///Black keys
                 context.fill(pathInset, with: .linearGradient(
-                    gradientInset,
+                    gradientBlackKey,
                     startPoint: CGPoint(x: rect.width / 2.0, y: 0),
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
                 ))
-
+                
                 ///------------- Note name -----
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {

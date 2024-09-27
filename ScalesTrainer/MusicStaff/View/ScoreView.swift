@@ -12,6 +12,7 @@ public struct ScoreView: View {
     public init(score:Score, widthPadding:Bool) {
         self.score = score
         self.widthPadding = widthPadding
+        //score.debug1("OnAppear", withBeam: true, toleranceLevel: 0)
     }
     
     public var body: some View {

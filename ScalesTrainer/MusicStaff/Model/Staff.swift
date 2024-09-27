@@ -9,8 +9,8 @@ import AVFoundation
 ///Have now made postions not published and NoteLayoutPostions not observable.
 ///This assumes that all notes will be drawn and completed (and their postions recorded) by the time the quaver beam is drawn furhter down in ScoreEntriesView but this assumption seems to hold.
 ///This approach makes the whole drawing of quaver beams much simpler - as long as the assumption holds always.
-public class NoteLayoutPositions {//}: ObservableObject {
-    //@Published public
+public class NoteLayoutPositions { //}: ObservableObject {
+    //@Published
     public var positions:[StaffNote: CGRect] = [:]
 
     var id:Int
@@ -20,7 +20,7 @@ public class NoteLayoutPositions {//}: ObservableObject {
         self.id = id
     }
 
-    public func getPositions() -> [(StaffNote, CGRect)] {
+    public func getPositions1() -> [(StaffNote, CGRect)] {
         //noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence })
         var result:[(StaffNote, CGRect)] = []
         let notes = positions.keys.sorted(by: { $0.timeSlice.sequence < $1.timeSlice.sequence })
@@ -164,8 +164,9 @@ public class NoteOffsetsInStaffByKey {
 public class Staff : ObservableObject, Identifiable {
     public let id = UUID()
     @Published var publishUpdate = 0
-    @Published public var noteLayoutPositions:NoteLayoutPositions
-
+    @Published public var noteLayoutPositions1:NoteLayoutPositions
+    @Published var beamUpdates = 0
+    
     let score:Score
     public var type:StaffType
     public var staffNum:Int
@@ -186,7 +187,7 @@ public class Staff : ObservableObject, Identifiable {
         lowestNoteValue = 20 //MIDI C0
         highestNoteValue = 107 //MIDI B7
         middleNoteValue = type == StaffType.treble ? 71 : StaffNote.MIDDLE_C - StaffNote.OCTAVE + 2
-        noteLayoutPositions = NoteLayoutPositions(id: 0)
+        noteLayoutPositions1 = NoteLayoutPositions(id: 0)
 
         //Determine the staff placement for each note pitch
 

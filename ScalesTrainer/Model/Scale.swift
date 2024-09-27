@@ -290,7 +290,7 @@ public class Scale : Codable {
         ///Set midi values in scale
         
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
-        let scaleNoteValue = [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
+        let scaleNoteValue = [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUAVER
 
         func getSegment(hand:Int) -> Int {
             let totalValue = getTotalNoteValueInScale(handIndex: hand)
@@ -299,7 +299,12 @@ public class Scale : Codable {
                 ///truncating Int...total value 4.9999999 should be segment 5, not 4
                 seg += 0.0001
             }
-            return Int(seg)
+            if seg.isNaN || seg.isInfinite {
+                return 0
+            }
+            else {
+                return Int(seg)
+            }
         }
         
         for handIndex in [0,1] {
@@ -367,7 +372,7 @@ public class Scale : Codable {
             }
         }
 
-        ///Downwards direction - Mirror notes with midis for the downwards direction
+        ///Set MIDIS for downwards direction - Mirror notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
@@ -403,19 +408,9 @@ public class Scale : Codable {
                                               segment: [segment])
                 scaleNoteState[handIndex].append(lastNote)
             }
-            else {
-                ///Set last note value to fill all of last bar
-                var totalValue = 0.0
-                for note in scaleNoteState[handIndex] {
-                    totalValue += note.value
-                }
-                let lastBarValue = Int(totalValue) % self.getRequiredValuePerBar()
-                let lastNoteValue = self.getRequiredValuePerBar() - lastBarValue + 1
-                scaleNoteState[handIndex][scaleNoteState[handIndex].count-1].value = Double(lastNoteValue)
-            }
         }
         
-        ///Downwards direction, contrary
+        ///Set MIDIs - downwards direction, contrary
         if scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
@@ -438,10 +433,30 @@ public class Scale : Codable {
             let firstNoteValue = scaleNoteState[1][0].value
             scaleNoteState[1][middleIndex - 1].value = firstNoteValue
             let lastNoteIndex = scaleNoteState[1].count-1
-
             scaleNoteState[1][lastNoteIndex].value = lastNoteValue
         }
         
+        ///Set ast note value
+        for handIndex in [0,1] {
+            var barValue = 0.0
+            var lastNote:ScaleNoteState?
+            for note in scaleNoteState[handIndex] {
+                barValue += note.value + 0.0001
+                let x = Int(barValue)
+                //print("========BarVal", barValue, x, self.getRequiredValuePerBar(), note.midi)
+                if Int(barValue) >= self.getRequiredValuePerBar() {
+                    barValue = 0
+                }
+                lastNote = note
+            }
+            if let lastNote = lastNote {
+                let lastBarTotal = barValue - lastNote.value
+                let lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
+                lastNote.value = Double(lastNoteValue)
+            }
+        }
+        
+        ///Fingering
         for hand in [0,1] {
             setFingers(hand: hand)
             if self.scaleType == .chromatic {
@@ -977,7 +992,7 @@ public class Scale : Codable {
         }
         
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-            fingers = hand == 0 ? "135" : "531"
+            fingers = hand == 0 ? "135125135" : "531531521"
         }
         
         /// Set fingering now given the finger sequence 
@@ -1088,7 +1103,7 @@ public class Scale : Codable {
     
     func getRequiredValuePerBar() -> Int {
         //return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 24 : 4
-        return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 3 : 4
+        return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
 
     func getScaleName(handFull:Bool, octaves:Bool? = nil) -> String { //}, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool)  {

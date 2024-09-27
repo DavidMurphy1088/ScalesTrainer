@@ -322,9 +322,7 @@ public class ScalesModel : ObservableObject {
         if resultInternal != nil {
             self.setShowStaff(true)
         }
-        //MetronomeModel.shared.isTiming = false
         
-        //let keyboard =  //scale.hand == 0 ? PianoKeyboardModel.sharedRightHand : PianoKeyboardModel.sharedLeftHand
         PianoKeyboardModel.sharedRH.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.sharedRH.redraw()
         PianoKeyboardModel.sharedLH.clearAllFollowingKeyHilights(except: nil)
@@ -337,66 +335,44 @@ public class ScalesModel : ObservableObject {
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             BadgeBank.shared.setTotalCorrect(0)
             
-            if setProcess == .followingScale {
-                setShowKeyboard(true)
-                ///Play first note to start then wait some time.
-                ///Wait for note to die down otherwise it triggers the first note detection
-                if self.scale.scaleNoteState.count > 0 {
-                    if let sampler = self.audioManager.keyboardMidiSampler {
-//                        var hands:[Int] = []
-//                        if scale.hand < 2 {
-//                            hands.append(scale.hand)
-//                        }
-//                        else {
-//                            hands.append(0)
-//                            hands.append(1)
-//                        }
-                        for hand in scale.hands {
-                            let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
-                            sampler.play(noteNumber: midi, velocity: 64, channel: 0)
-                        }
-                        ///Need delay to avoid the first note being 'heard' from this sampler playing note
-                        usleep(1000000 * UInt32(2.0))
+            setShowKeyboard(true)
+            ///Play first note to start then wait some time.
+            ///Wait for note to die down otherwise it triggers the first note detection
+            if self.scale.scaleNoteState.count > 0 {
+                if let sampler = self.audioManager.keyboardMidiSampler {
+                    for hand in scale.hands {
+                        let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
+                        sampler.play(noteNumber: midi, velocity: 64, channel: 0)
                     }
+                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
+                    usleep(1000000 * UInt32(2.0))
                 }
             }
             
             self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-            if setProcess == .followingScale {
-                BadgeBank.shared.setShow(true)
-                self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
-                    self.setRunningProcess(.none)
-                })
-            }
+            BadgeBank.shared.setShow(true)
+            self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
+                self.setRunningProcess(.none)
+            })
         }
         
         if [.leadingTheScale].contains(setProcess) {
             BadgeBank.shared.setShow(true)
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
-
-            //metronome.isTiming = true
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-//            if true || Settings.shared.developerModeOn {
-//                leadProcess.playDemo()
-//            }
-//            else {
-                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-                leadProcess.start()
-                //metronome.addProcessesToNotify(process: leadProcess)
-                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-//            }
+            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            leadProcess.start()
+            self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
-            //metronome.isTiming = true
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands))
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.startRecordingMicToRecord()
             let metronome = MetronomeModel.shared
-            //metronome.isTiming = true
             let process = RecordScaleProcess()
             metronome.addProcessesToNotify(process: process)
         }
@@ -469,9 +445,10 @@ public class ScalesModel : ObservableObject {
             }
             
             var cancelled = false
+            
+            ///Listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
+            ///appmode is None at start since its set (for publish)  in main thread
             DispatchQueue.global(qos: .background).async {
-                ///Listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
-                ///appmode is None at start since its set (for publish)  in main thread
                 while true {
                     sleep(1)
                     if self.runningProcess != .followingScale {
@@ -502,7 +479,7 @@ public class ScalesModel : ObservableObject {
                     //currentMidis.append(note.midi)
                     let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
                     keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
-                    pianoKey.hilightFollowingKey = true
+                    pianoKey.hilightKeyToFollow = true
                     keyboardSemaphore.keyboard.redraw()
                     ///Listen for piano key pressed
                     pianoKey.wasPlayedCallback = {
@@ -538,12 +515,10 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
 
             if inScaleCount > 2 {
-                //if let eventSet = self.self.tapEventSet {
-                    var msg = "😊 Good job following the scale"
-                    msg += "\nYou played \(inScaleCount) notes in the scale"
-                    //msg += "\nYou played \(xxx) notes out of the scale"
-                    ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
-                //}
+                var msg = "😊 Good job following the scale"
+                msg += "\nYou played \(inScaleCount) notes in the scale"
+                //msg += "\nYou played \(xxx) notes out of the scale"
+                ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
             }
 
             if let onDone = onDone {
@@ -569,7 +544,7 @@ public class ScalesModel : ObservableObject {
         let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
 
-        let timeSigVisible = isBrokenChord ? false : true
+        let timeSigVisible = false //isBrokenChord ? false : true
         let timeSig = scale.timeSignature
         let score = Score(scale: scale, key: staffKey, timeSignature: TimeSignature(top: timeSig.top, bottom: timeSig.bottom, visible: timeSigVisible), linesPerStaff: 5)
 
@@ -581,18 +556,28 @@ public class ScalesModel : ObservableObject {
         
         for i in 0..<scale.scaleNoteState[hand].count {
             if totalBarValue >= maxBarValue {
-                score.addBarLine(visible: !isBrokenChord)
+                if isBrokenChord {
+                    ///Add spacing around longer notes
+                    score.addBarLine(visible: false)  //!isBrokenChord)
+                }
                 totalBarValue = 0.0
             }
-
             let noteState = scale.scaleNoteState[hand][i]
             let ts = score.createTimeSlice()
-            
+            let value:Double
             let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, segments: noteState.segments, staffNum: 0)
             note.setValue(value: noteState.value)
             ts.addNote(n: note)
             totalBarValue += noteState.value
         }
+        
+//        if isBrokenChord {
+//            value = noteState.value == StaffNote.VALUE_TRIPLET ? noteState.value : StaffNote.VALUE_QUARTER + StaffNote.VALUE_QUAVER
+//        }
+//        else {
+//            value = noteState.value
+//        }
+
         //score.debugScore2("Broken", withBeam: true, toleranceLevel: 0)
         //Logger.shared.log(self, "Created score type:\(staffType)")
         return score

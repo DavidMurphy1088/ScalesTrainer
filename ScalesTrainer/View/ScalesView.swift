@@ -412,7 +412,7 @@ struct ScalesView: View {
 
             Spacer()
             HStack {
-                Button(hearingBacking ? "Backing Off" : NSLocalizedString("Backing On", comment: "Menu")) {
+                Button(hearingBacking ? "Backing Track Off" : NSLocalizedString("Backing Track On", comment: "Menu")) {
                     hearingBacking.toggle()
                     if hearingBacking {
                         scalesModel.setBacking(true)

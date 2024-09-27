@@ -27,7 +27,7 @@ struct ScalesLibraryView: View {
         let scale:Scale
         let scaleType:ScaleType
         let hands:[Int]
-        let tempo = 120
+        let tempo = 90
         
         if self.indexHands == 2 {
             hands = [0,1]

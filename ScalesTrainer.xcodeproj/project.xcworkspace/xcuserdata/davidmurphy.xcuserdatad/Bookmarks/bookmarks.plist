@@ -102,51 +102,6 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>634</string>
-					<key>StartingColumnNumber</key>
-					<string>0</string>
-					<key>StartingLineNumber</key>
-					<string>633</string>
-					<key>Timestamp</key>
-					<string>749043572.778572</string>
-				</dict>
-				<key>rebasable-url</key>
-				<dict>
-					<key>base</key>
-					<string>workspace</string>
-					<key>payload</key>
-					<dict>
-						<key>relative-path</key>
-						<string>ScalesTrainer/Model/ScalesModel.swift</string>
-					</dict>
-				</dict>
-			</dict>
-			<key>text-context</key>
-			<dict>
-				<key>focused</key>
-				<string>    func configureKeyboards(scale:Scale, ctx:String) {
-</string>
-				<key>leading</key>
-				<string>    }
-    
-</string>
-				<key>trailing</key>
-				<string>        let name1 = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleAndScore to:\(name1) ctx:\(ctx)")
-        self.scale = scale
-</string>
-			</dict>
-			<key>type</key>
-			<string>bookmark</string>
-		</dict>
-		<dict>
-			<key>destination</key>
-			<dict>
-				<key>location-parameters</key>
-				<dict>
-					<key>EndingColumnNumber</key>
-					<string>0</string>
-					<key>EndingLineNumber</key>
 					<string>497</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
@@ -192,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>843</string>
+					<string>858</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>842</string>
+					<string>857</string>
 					<key>Timestamp</key>
-					<string>749043588.700209</string>
+					<string>749122744.1238509</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -282,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>450</string>
+					<string>538</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>449</string>
+					<string>537</string>
 					<key>Timestamp</key>
-					<string>749043510.033671</string>
+					<string>749120122.805523</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -304,16 +259,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
+				<string>    func createScore(scale:Scale, hand:Int) -&gt; Score {
 </string>
 				<key>leading</key>
-				<string>    ///Allow user to follow notes hilighted on the keyboard.
-    ///Wait till user hits correct key before moving to and highlighting the next note
+				<string>    }
+    
 </string>
 				<key>trailing</key>
-				<string>        
-        DispatchQueue.global(qos: .background).async { [self] in
-            class KeyboardSemaphore {
+				<string>        let staffType:StaffType
+        let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
+        
 </string>
 			</dict>
 			<key>type</key>

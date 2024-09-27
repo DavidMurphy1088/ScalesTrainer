@@ -66,7 +66,7 @@ struct ScoreEntriesView: View {
     init(score:Score, staff:Staff) {
         self.score = score
         self.staff = staff
-        self.noteLayoutPositions = staff.noteLayoutPositions
+        self.noteLayoutPositions = staff.noteLayoutPositions1
         self.barLayoutPositions = score.barLayoutPositions
         ScoreEntriesView.viewNum += 1
         self.viewNum = ScoreEntriesView.viewNum
@@ -211,12 +211,20 @@ struct ScoreEntriesView: View {
                                             if staff.staffNum == 0 {
                                                 noteLayoutPositions.storePosition(onAppear: true, notes: entries.getTimeSliceNotes(),
                                                                                   rect: geometry.frame(in: .named("HStack")))
+                                                DispatchQueue.main.async {
+                                                    ///Ensure note layout updates are published for subsequent drawing of quaver beams
+                                                    staff.beamUpdates += 1
+                                                }
                                             }
                                         }
                                         .onChange(of: score.lineSpacing) { oldValue, newValue in
                                             if staff.staffNum == 0 {
                                                 noteLayoutPositions.storePosition(onAppear: false, notes: entries.getTimeSliceNotes(),
                                                                                   rect: geometry.frame(in: .named("HStack")))
+                                                DispatchQueue.main.async {
+                                                    ///Ensure note layout updates are published for subsequent drawing of quaver beams
+                                                    staff.beamUpdates += 1
+                                                }
                                             }
                                         }
                                 })
@@ -265,14 +273,10 @@ struct ScoreEntriesView: View {
             ///noteLayoutPositions has recorded the position of each note to enable drawing the quaver beam
             
             if staff.staffNum == 0 {
-                //let l = log(score:score, pos:noteLayoutPositions, noteLayoutPositions.getPositions())
-//                let s = noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence })
-//                let x = log(score:score, pos:noteLayoutPositions, s)
                 GeometryReader { geo in
                     ZStack {
                         ZStack {
                             ForEach(noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence }), id: \.key.id) {
-                            //ForEach(noteLayoutPositions.getPositions(), id: \.0.id) {
                                 endNote, endNotePos in
                                 if endNote.beamType == .end || endNote.beamType == .none {
                                     let startNote = endNote.getBeamStartNote(score: score, np:noteLayoutPositions)
@@ -286,15 +290,18 @@ struct ScoreEntriesView: View {
                         }
                         .padding(.horizontal, 0)
                     }
-                    //.border(Color .orange)
                     .padding(.horizontal, 0)
+                    .onAppear() {
+                        //_ = log(ctx: "BeamView OnAppear")
+                    }
                 }
                 .padding(.horizontal, 0)
-                //.border(Color .green)
             }
         }
         .coordinateSpace(name: "ZStack0")
-    }  
+        .onAppear() {
+        }
+    }
     
 }
 

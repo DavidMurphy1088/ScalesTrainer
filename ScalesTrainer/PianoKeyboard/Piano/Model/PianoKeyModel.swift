@@ -33,7 +33,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
     
-    var hilightFollowingKey = false
+    var hilightKeyToFollow = false
     var wasPlayedCallback:(()->Void)?
     
     public var touchDown = false

@@ -21,8 +21,6 @@ struct CustomBackButton: View {
     }
 }
 
-import SwiftUI
-
 struct TitleView: View {
     @ObservedObject var settingsPublished = SettingsPublished.shared
     let screenName: String
@@ -71,13 +69,6 @@ struct UnderConstructionView: View {
     }
 }
 
-struct UnderstandingScalesView: View {
-    var body: some View {
-        ZStack {
-        }
-    }
-}
-
 struct FamousQuotesView: View {
     var body: some View {
         VStack {
@@ -111,17 +102,15 @@ struct ActivityModeView: View {
     var body: some View {
         VStack {
             let overlay = Circle().stroke(Color.black, lineWidth: 2)
-            //List(menuOptionsLeft) { activityMode in
+            
             Spacer()
             if menuOptionsLeft.count > 0 {
-               
                 let activityMode = menuOptionsLeft[0]
                 NavigationLink(destination: getView(activityMode: activityMode)) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
                         Image(menuOptionsLeft[0].imageName)
                             .resizable()
                             .scaledToFit()
-                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
                             .clipShape(Circle())  // Clips the image to a circular shape
                             .frame(width: UIScreen.main.bounds.size.width * 0.35)
                             .overlay(overlay)
@@ -129,13 +118,11 @@ struct ActivityModeView: View {
                             
                         Text(activityMode.name)
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
-                            //.font(.title2)
                     }
-                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
-                    //.padding(.vertical, 0)
                     .padding()
                 }
             }
+            
             Spacer()
             if menuOptionsLeft.count > 1 {
                 let activityMode = menuOptionsLeft[1]
@@ -150,34 +137,11 @@ struct ActivityModeView: View {
                             //.border(.red)
                         Text(activityMode.name)
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
-                            //.font(.title2)
                     }
-                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
-                    //.padding(.vertical, 0)
                     .padding()
                 }
             }
-//            if menuOptionsLeft.count > 2 {
-//                let activityMode = menuOptionsLeft[2]
-//                NavigationLink(destination: getView(activityMode: activityMode)) {
-//                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-//                        Image(activityMode.imageName)
-//                            .resizable()
-//                            .scaledToFit()
-//                            //.frame(width: geo.size.width * 0.50, height: geo.size.height * 0.25)
-//                            
-//                            .clipShape(Circle())  // Clips the image to a circular shape
-//                            .frame(width: UIScreen.main.bounds.size.width * 0.2)
-//                            .overlay(overlay)
-//                            //.border(.red)
-//                        Text(activityMode.name)
-//                            .font(.title2)
-//                    }
-//                    //.listRowInsets(EdgeInsets())  // Remove any default padding in the List row
-//                    //.padding(.vertical, 0)
-//                    .padding()
-//                }
-//            }
+
             Spacer()
         }
         //.background()
@@ -228,7 +192,7 @@ struct HomeView: View {
     @State var scaleGroupsSheet = false
     
     var body: some View {
-        GeometryReader { geometry in
+        //GeometryReader { geometry in
             VStack {
                 NavigationView {
                     VStack {
@@ -240,7 +204,7 @@ struct HomeView: View {
                 }
             }
             .navigationViewStyle(StackNavigationViewStyle())
-        }
+        //}
     }
     
 }

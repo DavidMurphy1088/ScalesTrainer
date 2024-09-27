@@ -254,7 +254,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug11(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug1(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.keySig.accidentalCount, 
               //"StaffCount", self.staffs.count,
@@ -425,7 +425,7 @@ public class Score : ObservableObject {
     func setTimesliceStartAtValues() {
         var totalValue = 0.0
         ///For broken chords its 3 1/8 notes per quaver group
-        let maxGroupValue = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 1.0 : 4.0
+        let maxGroupValue = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 1.0 : 2.0
         let rangeMin  = maxGroupValue * 0.99
         let rangeMax  = maxGroupValue * 1.01
         

@@ -38,6 +38,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
         }
         //scalesModel.setBacking(false)
+        self.scalesModel.scale.debug2("HearScale")
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
@@ -78,8 +79,9 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             }
         }
         let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
-        let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 1.0
+        let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
         waitBeats = Int(scaleNoteState.value * notesPerBeat) - 1
+        //print("=========", scaleNoteState.midi, waitBeats)
 
         if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
             self.nextNoteIndex += 1
