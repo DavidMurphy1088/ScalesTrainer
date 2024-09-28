@@ -479,7 +479,7 @@ public class ScalesModel : ObservableObject {
                     //currentMidis.append(note.midi)
                     let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
                     keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
-                    pianoKey.hilightKeyToFollow = true
+                    pianoKey.hilightKeyToFollow = .followThisNote
                     keyboardSemaphore.keyboard.redraw()
                     ///Listen for piano key pressed
                     pianoKey.wasPlayedCallback = {
@@ -541,7 +541,13 @@ public class ScalesModel : ObservableObject {
         
         staffType = hand == 0 ? .treble : .bass
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
-        let keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
+        let keySignature:KeySignature
+        if [.chromatic].contains(scale.scaleType) {
+            keySignature = KeySignature(keyName: "C", keyType: .major)
+        }
+        else {
+            keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
+        }
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
 
         let timeSigVisible = false //isBrokenChord ? false : true
@@ -625,6 +631,8 @@ public class ScalesModel : ObservableObject {
             combinedKeyboard.resetLinkScaleFingersToKeyboardKeys()
             combinedKeyboard.configureKeyboardForScale(scale: scale, hand: 0)
             self.setSelectedScaleSegment(0)
+            let middleKey = combinedKeyboard.pianoKeyModel.count / 2
+            combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying(hilight: true)
             combinedKeyboard.redraw()
         }
         else {

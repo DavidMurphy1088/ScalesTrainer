@@ -227,7 +227,7 @@ public class TapStatusRecordSet {
         return "[Correct-MaxA:\(String(format: "%.4f", max)) midi:\(maxMidi)] [MinA:\(String(format: "%.4f", min)) midi:\(minMidi)]"
     }
     
-    func debug21(_ ctx:String) {
+    func debug1(_ ctx:String) {
         print(" TapEventSet", ctx)
         for event in self.events {
             print(event.tapData())

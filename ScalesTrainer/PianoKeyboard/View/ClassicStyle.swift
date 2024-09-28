@@ -112,8 +112,20 @@ public struct ClassicStyle {
                 
                 ///White keys colour
                 ///Hilight the key if in following keys mode
+                let hilightColor:Color
+                if keyModel.hilightKeyToFollow == .followThisNote {
+                    hilightColor = hiliteKeyColor(key.touchDown)
+                }
+                else {
+                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
+                        hilightColor = Color(.green)
+                    }
+                    else {
+                        hilightColor = naturalColor(key.touchDown)
+                    }
+                }
                 let gradientWhiteKey:Gradient = Gradient(colors: [
-                    keyModel.hilightKeyToFollow ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    hilightColor,
                     keyColor,
                     Settings.shared.isCustomColor() ? Settings.shared.getKeyColor() : Color(red: 1, green: 1, blue: 1),
                 ])
@@ -176,14 +188,16 @@ public struct ClassicStyle {
                 ///----------- Finger number
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
-                        let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-                        let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
-
-                        context.draw(
-                            Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
-                                .font(.title).bold(),
-                            at: point
-                        )
+                        if scaleNote.finger > 0 {
+                            let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+                            let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
+                            
+                            context.draw(
+                                Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
+                                    .font(.title).bold(),
+                                at: point
+                            )
+                        }
                     }
                 }
                 xpos += naturalXIncr
@@ -224,8 +238,20 @@ public struct ClassicStyle {
                     .path(in: insetRect)
                
                 ///Black keys colour
+                let hilightColor:Color
+                if keyModel.hilightKeyToFollow == .followThisNote {
+                    hilightColor = hiliteKeyColor(key.touchDown)
+                }
+                else {
+                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
+                        hilightColor = Color(.green)
+                    }
+                    else {
+                        hilightColor = naturalColor(key.touchDown)
+                    }
+                }
                 let gradientBlackKey = Gradient(colors: [
-                    keyModel.hilightKeyToFollow ? hiliteKeyColor(key.touchDown) : naturalColor(key.touchDown),
+                    hilightColor,
                     sharpFlatColor(key.touchDown),
                     sharpFlatColor(key.touchDown),
                 ])

@@ -13,7 +13,6 @@ public struct PianoKeyboardView : View {
         self.viewModel = viewModel
         self.keyColor = keyColor
         style = ClassicStyle(hand: viewModel.keyboardNumber - 1, keyColor: keyColor)
-        scalesModel.scale.debug2("PianoKeyboardView")
     }
 
     public var body: some View {

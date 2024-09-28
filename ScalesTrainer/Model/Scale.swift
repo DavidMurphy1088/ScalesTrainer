@@ -437,22 +437,28 @@ public class Scale : Codable {
         }
         
         ///Set ast note value
+
         for handIndex in [0,1] {
             var barValue = 0.0
             var lastNote:ScaleNoteState?
             for note in scaleNoteState[handIndex] {
                 barValue += note.value + 0.0001
                 let x = Int(barValue)
-                //print("========BarVal", barValue, x, self.getRequiredValuePerBar(), note.midi)
                 if Int(barValue) >= self.getRequiredValuePerBar() {
                     barValue = 0
                 }
                 lastNote = note
             }
             if let lastNote = lastNote {
-                let lastBarTotal = barValue - lastNote.value
-                let lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
-                lastNote.value = Double(lastNoteValue)
+                if self.scaleType == .chromatic {
+                    ///Only required to match Trinity ??
+                    lastNote.value = 1.0
+                }
+                else {
+                    let lastBarTotal = barValue - lastNote.value
+                    let lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
+                    lastNote.value = Double(lastNoteValue)
+                }
             }
         }
         
@@ -657,7 +663,7 @@ public class Scale : Codable {
         return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
-    func debug2(_ msg:String)  {
+    func debug22(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {
@@ -1024,10 +1030,20 @@ public class Scale : Codable {
             }
         }
         
+        func setFinger(hand:Int, index:Int, finger:Int) {
+            //if [1, 4].contains(finger) {
+                scaleNoteState[hand][index].finger = finger
+            //}
+        }
+        
         func applyFingerPatternToScaleStart(halfway:Int) {
             var f = 0
             for i in 0..<halfway {
-                scaleNoteState[hand][i].finger = stringIndexToInt(index: i, fingers: fingers)
+                let finger = stringIndexToInt(index: i, fingers: fingers)
+                //if [1, 4].contains(finger) {
+                    //scaleNoteState[hand][i].finger = finger
+                //}
+                setFinger(hand: hand, index: i, finger: finger)
                 f += 1
             }
             f -= 1
@@ -1038,8 +1054,10 @@ public class Scale : Codable {
                 }
             }
             scaleNoteState[hand][halfway].finger = highNoteFinger
+            setFinger(hand: hand, index: halfway, finger: highNoteFinger)
             for i in (halfway+1..<scaleNoteState[hand].count) {
-                scaleNoteState[hand][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                //scaleNoteState[hand][i].finger = stringIndexToInt(index: f, fingers: fingers)
+                setFinger(hand: hand, index: i, finger: stringIndexToInt(index: f, fingers: fingers))
                 f -= 1
             }
         }

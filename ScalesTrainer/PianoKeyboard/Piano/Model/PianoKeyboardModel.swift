@@ -261,7 +261,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func debug2(_ ctx:String) {
+    func debug1(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {
@@ -365,7 +365,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public func clearAllFollowingKeyHilights(except:Int?) {
         for i in 0..<numberOfKeys {
             if except == nil || i != except {
-                pianoKeyModel[i].hilightKeyToFollow = false
+                pianoKeyModel[i].hilightKeyToFollow = .none
             }
         }
     }

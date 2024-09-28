@@ -11,6 +11,12 @@ public class PianoKeyPlayedState {
     }
 }
 
+public enum PianoKeyHilightType {
+    case none
+    case followThisNote
+    case middleOfKeyboard
+}
+
 public class PianoKeyModel: Identifiable, Hashable {
     public let id = UUID()
     ///ObservableObject - no point since the drawing of all keys is done by a single context struct that cannot listen to @Published
@@ -33,7 +39,8 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
     
-    var hilightKeyToFollow = false
+    var hilightKeyToFollow:PianoKeyHilightType = .none
+    
     var wasPlayedCallback:(()->Void)?
     
     public var touchDown = false
@@ -67,16 +74,19 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
 
-            ///Update the score if its showing
-            //if let score = scalesModel.scores[keyboardModel.keyboardNumber-1] {
-            if let score = scalesModel.scores[self.hand] {
-                let segment = self.scaleNoteState?.segments[0]
-                if let segment = segment {
-                    if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
-                        DispatchQueue.global(qos: .background).async {
-                            usleep(UInt32(1000000 * self.keySoundingSeconds))
-                            DispatchQueue.main.async {
-                                staffNote.setShowIsPlaying(false)
+            ///Update the stave(s) if its showing
+            ///The MIDI might be in both staves. e.g. first note of a contrary scale.
+            for i in 0..<scalesModel.scores.count {
+                //if let score = scalesModel.scores[self.hand] {
+                if let score = scalesModel.scores[i] {
+                    let segment = self.scaleNoteState?.segments[0]
+                    if let segment = segment {
+                        if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
+                            DispatchQueue.global(qos: .background).async {
+                                usleep(UInt32(1000000 * self.keySoundingSeconds))
+                                DispatchQueue.main.async {
+                                    staffNote.setShowIsPlaying(false)
+                                }
                             }
                         }
                     }
