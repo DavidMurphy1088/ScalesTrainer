@@ -84,7 +84,8 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    var tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130", "140", "150", "160"]
+    var tempoSettings:[String] = []
+    @Published var tempoChangePublished = false
     var selectedTempoIndex = 5 //60=2
         
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
@@ -340,9 +341,20 @@ public class ScalesModel : ObservableObject {
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.scaleNoteState.count > 0 {
                 if let sampler = self.audioManager.keyboardMidiSampler {
+                    let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                     for hand in scale.hands {
-                        let midi = UInt8(self.scale.scaleNoteState[hand][0].midi)
-                        sampler.play(noteNumber: midi, velocity: 64, channel: 0)
+                        let midi = self.scale.scaleNoteState[hand][0].midi
+                        if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
+                            let key = keyboard.pianoKeyModel[keyIndex]
+                            //key.hilightCallback = {
+                                //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                            //}
+                            key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
+                            keyboard.redraw1()
+                        }
+                        //DispatchQueue.main.async {
+                            sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                        //}
                     }
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
                     usleep(1000000 * UInt32(2.0))
@@ -611,12 +623,21 @@ public class ScalesModel : ObservableObject {
         ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScale to:\(name)")
+        
         let scoreRH = self.createScore(scale: scale, hand: 0)
         let scoreLH = self.createScore(scale: scale, hand: 1)
+        if scale.timeSignature.top == 3 {
+            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
+        }
+        else {
+            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
+        }
+
         self.configureKeyboards(scale: scale, ctx: "setScale")
         DispatchQueue.main.async {
             ///Scores are @Published so set them here
             DispatchQueue.main.async {
+                self.tempoChangePublished = !self.tempoChangePublished
                 self.scores = [scoreRH, scoreLH]
             }
         }

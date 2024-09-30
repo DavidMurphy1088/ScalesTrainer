@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>350</string>
+					<string>336</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>349</string>
+					<string>335</string>
 					<key>Timestamp</key>
-					<string>749033624.820401</string>
+					<string>749378259.43914</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>282</string>
+					<string>283</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>281</string>
+					<string>282</string>
 					<key>Timestamp</key>
-					<string>749043510.0336829</string>
+					<string>749376351.245205</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>538</string>
+					<string>550</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>537</string>
+					<string>549</string>
 					<key>Timestamp</key>
-					<string>749120122.805523</string>
+					<string>749383456.405092</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>610</string>
+					<string>622</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>609</string>
+					<string>621</string>
 					<key>Timestamp</key>
-					<string>749204918.901274</string>
+					<string>749383456.405105</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -237,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>497</string>
+					<string>484</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>496</string>
+					<string>483</string>
 					<key>Timestamp</key>
-					<string>749033624.820384</string>
+					<string>749385704.282355</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -259,16 +259,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>                if scalesModel.showKeyboard {
+				<string>if scalesModel.showKeyboard {
 </string>
 				<key>leading</key>
-				<string>                }
-                
-</string>
+				<string>            }
+            
+            </string>
 				<key>trailing</key>
-				<string>                    VStack {
-                        if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
-                            ///Scale is contrary with LH and RH joined on one keyboard
+				<string>                VStack {
+                    if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                        ///Scale is contrary with LH and RH joined on one keyboard
 </string>
 			</dict>
 			<key>type</key>
@@ -282,13 +282,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>252</string>
+					<string>258</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>251</string>
+					<string>257</string>
 					<key>Timestamp</key>
-					<string>749037016.420208</string>
+					<string>749384746.099292</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>

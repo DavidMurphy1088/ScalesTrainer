@@ -35,6 +35,7 @@ public class Settings : Codable  {
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     //var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
     private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
+    private var backgroundColor:[Double] = [1.0, 1.0, 1.0, 1.0]
     var backingSamplerPreset:Int = 0
     var metronomeSilent:Bool = false
     var requiredConsecutiveCount = 2
@@ -160,6 +161,25 @@ public class Settings : Codable  {
         let green = CGFloat(self.keyColor[1])
         let blue = CGFloat(self.keyColor[2])
         let alpha = CGFloat(self.keyColor[3])
+        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+        return Color(uiColor)
+    }
+    
+    func setBackgroundColor(_ color: Color) {
+        let uiColor = UIColor(color)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        self.backgroundColor = [Double(red), Double(green), Double(blue), Double(alpha)]
+    }
+
+    func getBackgroundColor() -> Color {
+        let red = CGFloat(self.backgroundColor[0])
+        let green = CGFloat(self.backgroundColor[1])
+        let blue = CGFloat(self.backgroundColor[2])
+        let alpha = CGFloat(self.backgroundColor[3])
         let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
         return Color(uiColor)
     }

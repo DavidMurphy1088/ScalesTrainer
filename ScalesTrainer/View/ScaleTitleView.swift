@@ -46,6 +46,8 @@ struct ScaleTitleView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+                ///Center it
+                .padding(.bottom, 8)
             Text("=\(scale.minTempo)").font(.title).padding(.horizontal, 0)
             Text(", mf").italic().font(.title).padding(.horizontal, 0)
             Text(", legato").font(.title).padding(.horizontal, 0)

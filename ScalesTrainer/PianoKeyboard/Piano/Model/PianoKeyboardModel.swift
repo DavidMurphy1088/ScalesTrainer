@@ -32,6 +32,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public var keyRects: [CGRect] = []
 
     weak var keyboardAudioManager: AudioManager?
+    public var view:ClassicStyle? = nil
     
     private init(keyboardNumber:Int) {
         self.pianoKeyModel = []
@@ -132,7 +133,12 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             self.forceRepaint += 1
         }
     }
-    
+    func redraw1() {
+        //DispatchQueue.main.async {
+            self.forceRepaint += 1
+        //}
+    }
+
     public var numberOfKeys = 18
     
     public var naturalKeyCount: Int {
@@ -392,10 +398,5 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         //let x = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
         return keyNumber == nil ? nil : keyNumber?.keyOffsetFromLowestKey
     }
-//    public func getKeyIndexForMidi(midi:Int) -> Int? {
-//        //let x = self.pianoKeyModel.first(where: { $0.midi == midi })
-//        let x = self.pianoKeyModel.first(where: { $0.midi == midi})
-//        return x == nil ? nil : x?.keyOffsetFromLowestKey
-//    }
 
 }

@@ -471,7 +471,7 @@ public class Scale : Codable {
             }
             else {
                 if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-                    ///Broken chords color the chord arpeggios
+                    ///Set segments for Broken Chords. Broken chords color the chord arpeggios by segment
                     for hand in self.scaleNoteState {
                         for state in hand {
                             state.keyboardColourType = .bySegment
@@ -483,7 +483,7 @@ public class Scale : Codable {
                 }
             }
         }
-        //debug1("------------- End Init")
+        debug22("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -1109,7 +1109,8 @@ public class Scale : Codable {
             for i in 0..<halfway {
                 scaleNoteState[hand][i].finger = stringIndexToInt(index: i, fingers: fingers)
             }
-            scaleNoteState[hand][halfway].finger = 3
+            let longNoteFinger = stringIndexToInt(index: halfway-2, fingers: fingers)
+            scaleNoteState[hand][halfway].finger = longNoteFinger
             let fingersReversed = String(fingers.reversed())
             var ctr = 0
             for i in halfway+1..<scaleNoteState[hand].count {

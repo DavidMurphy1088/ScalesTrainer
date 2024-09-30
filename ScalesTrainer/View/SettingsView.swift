@@ -29,7 +29,6 @@ struct SettingsView: View {
     @State var recordDataMode = Settings.shared.developerModeOn 
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
-    //@State var scaleNoteValue = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerModeOn = false
@@ -40,6 +39,8 @@ struct SettingsView: View {
     @State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
     @StateObject private var orientationObserver = DeviceOrientationObserver()
+    @State private var selectedBackgroundColor: Color = .white
+    @State var backgroundChange = 0
     
     struct SetKeyboardColourView: View {
         @Binding var parentColor: Color
@@ -70,25 +71,47 @@ struct SettingsView: View {
     }
     
     func DetailedCustomSettingsView() -> some View {
+        
         VStack {
             Spacer()
-            //GeometryReader { geometry in
-                HStack {
-                    Spacer()
-                    VStack {
-                        SetKeyboardColourView(parentColor: $keyColor)
-                    }
-                    //.padding()
-                    .onChange(of: keyColor, {
-                        Settings.shared.setKeyColor(keyColor)
-                    })
-                    .hilighted(backgroundColor: .gray)
-                    .frame(width: UIScreen.main.bounds.size.width * 0.9,
-                           height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
-                    //Spacer()
+            ZStack {
+                if self.backgroundChange >= 0 {
+                    Settings.shared.getBackgroundColor()
                 }
-                //.border(Color.red)
-            //}
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("Choose your background colour ").font(.title2).padding(0)
+                        ColorPicker("Choose your keyboard colour", selection: $selectedBackgroundColor)
+                            .padding()
+                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
+                                //PianoKeyboardModel.sharedForSettings.redraw()
+                                //parentColor = newColor
+                                Settings.shared.setBackgroundColor(newColor)
+                                self.backgroundChange += 1
+                                //UIGlobals.shared.backgroundColor = newColor
+                            }
+                            .labelsHidden()
+                            
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        VStack {
+                            SetKeyboardColourView(parentColor: $keyColor)
+                        }
+                        //.padding()
+                        .onChange(of: keyColor, {
+                            Settings.shared.setKeyColor(keyColor)
+                        })
+                        .hilighted(backgroundColor: .gray)
+                        .frame(width: UIScreen.main.bounds.size.width * 0.9,
+                               height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                        //Spacer()
+                    }
+                }
+            }
+            
             
 //            ///Metronome on
 //            Spacer()
@@ -116,6 +139,7 @@ struct SettingsView: View {
                 //.disabled(!self.metronomeOn)
                 .pickerStyle(.menu)
                 .onChange(of: leadInBarCount, {
+                    
                     settings.scaleLeadInBearCountIndex = leadInBarCount
                 })
             }
@@ -168,18 +192,20 @@ struct SettingsView: View {
 //            }
             
             ///Developer
-            Spacer()
-            HStack {
+            if ScalesTrainerApp.runningInXcode() {
                 Spacer()
-                Toggle(isOn: $developerModeOn) {
-                    Text("Developer Mode On").font(.title2).padding(0)
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $developerModeOn) {
+                        Text("Developer Mode On").font(.title2).padding(0)
+                    }
+                    .onChange(of: developerModeOn, {
+                        settings.developerModeOn = developerModeOn
+                    })
+                    Spacer()
                 }
-                .onChange(of: developerModeOn, {
-                    settings.developerModeOn = developerModeOn
-                })
-                Spacer()
+                .frame(width: UIScreen.main.bounds.width * 0.30)
             }
-            .frame(width: UIScreen.main.bounds.width * 0.30)
             
             if Settings.shared.developerModeOn {
                 Spacer()
@@ -242,12 +268,13 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-
+            
             VStack {
                 TitleView(screenName: "Settings").commonFrameStyle()
-                VStack {
+                //ZStack {
+                    //Color.blue
                     DetailedCustomSettingsView()
-                }
+                //}
                 .commonFrameStyle()
                 .padding()
             }

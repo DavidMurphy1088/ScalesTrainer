@@ -29,26 +29,6 @@ struct MetronomeView: View {
     }
 }
 
-//struct ScaleStartView: View {
-//    func showScaleStart() {
-//        PianoKeyboardModel.shared1.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 52, scaleStartMidi: ScalesModel.shared.scale.getMinMax().0)
-//        PianoKeyboardModel.shared1.redraw()
-//    }
-//    
-//    var body: some View {
-//        VStack {
-//            Text("Scale Start")
-//            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.shared1, keyColor: .white)
-//                .frame(height: 120)
-//                .border(Color.gray)
-//                .padding()
-//        }
-//        .onAppear() {
-//            showScaleStart()
-//        }
-//    }
-//}
-
 struct ScalesView: View {
     let initialRunProcess:RunningProcess?
         
@@ -78,7 +58,7 @@ struct ScalesView: View {
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
-        
+    
     init(initialRunProcess:RunningProcess? = nil) {
         //self.pianoKeyboardRH = PianoKeyboardModel.shared1
         //self.pianoKeyboard2 = PianoKeyboardModel.shared2
@@ -130,9 +110,11 @@ struct ScalesView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+                    ///Center it
+                    .padding(.bottom, 8)
                 Text(" =").padding(.horizontal, 0)
             }
-            Picker("Select Value", selection: $tempoIndex) {
+            Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
                     Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
                 }
@@ -285,47 +267,51 @@ struct ScalesView: View {
     func SelectActionView() -> some View {
         HStack(alignment: .top) {
             Spacer()
-            HStack()  {
-                Button(NSLocalizedString("Follow The Scale", comment: "ProcessMenu")) {
-                    scalesModel.setRunningProcess(.followingScale)
-                    scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                }
-                Button(action: {
-                    showHelp("Follow The Scale")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)//.bold()
-                            .foregroundColor(.green)
+            if scalesModel.scale.scaleMotion != .contraryMotion {
+                HStack()  {
+                    Button(NSLocalizedString("Follow The Scale", comment: "ProcessMenu")) {
+                        scalesModel.setRunningProcess(.followingScale)
+                        scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                    }
+                    Button(action: {
+                        showHelp("Follow The Scale")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)//.bold()
+                                .foregroundColor(.green)
+                        }
                     }
                 }
+                .padding()
             }
-            .padding()
             
-            Spacer()
-            HStack() {
-                Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : NSLocalizedString("Lead the Scale", comment: "Menu") ) {
-                    if scalesModel.runningProcessPublished == .leadingTheScale {
-                        scalesModel.setRunningProcess(.none)
+            if scalesModel.scale.scaleMotion != .contraryMotion {
+                Spacer()
+                HStack() {
+                    Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : NSLocalizedString("Lead the Scale", comment: "Menu") ) {
+                        if scalesModel.runningProcessPublished == .leadingTheScale {
+                            scalesModel.setRunningProcess(.none)
+                        }
+                        else {
+                            scalesModel.setRunningProcess(.leadingTheScale)
+                            scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                        }
                     }
-                    else {
-                        scalesModel.setRunningProcess(.leadingTheScale)
-                        scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                    Button(action: {
+                        showHelp("LeadTheScale")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)//.bold()
+                                .foregroundColor(.green)
+                        }
                     }
                 }
-                Button(action: {
-                    showHelp("LeadTheScale")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)//.bold()
-                            .foregroundColor(.green)
-                    }
-                }
+                .padding()
             }
-            .padding()
             
             Spacer()
             HStack {
@@ -471,120 +457,114 @@ struct ScalesView: View {
 //                    .edgesIgnoringSafeArea(.top)
 //                    .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
 //            }
-            VStack {
-                if scalesModel.showParameters {
-                    VStack(spacing: 0) {
-                        ScaleTitleView(scale: scalesModel.scale)
+
+        VStack {
+            if scalesModel.showParameters {
+                VStack(spacing: 0) {
+                    ScaleTitleView(scale: scalesModel.scale)
                         .padding(.vertical, 0)
                         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-//                            let attr = scalesModel.scale.getScaleAttributes()
-//                            Text(attr)
-//                                .padding(.vertical, 0)
-//                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                        //}
-                        HStack {
-                            Spacer()
-                            if scalesModel.runningProcessPublished == .none {
-                                SelectScaleParametersView().padding(.vertical, 0)
-                            }
-                            ViewSettingsView().padding(.vertical, 0)
-                            Spacer()
+                    //                            let attr = scalesModel.scale.getScaleAttributes()
+                    //                            Text(attr)
+                    //                                .padding(.vertical, 0)
+                    //                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                    //}
+                    HStack {
+                        Spacer()
+                        if scalesModel.runningProcessPublished == .none {
+                            SelectScaleParametersView().padding(.vertical, 0)
                         }
-                        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                        ViewSettingsView().padding(.vertical, 0)
+                        Spacer()
                     }
+                    .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
                 }
-                
-                if scalesModel.showKeyboard {
-                    VStack {
-                        if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
-                            ///Scale is contrary with LH and RH joined on one keyboard
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyColor())
-                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
-//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
-//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-
-                        }
-                        else {
-                            if scalesModel.scale.needsTwoKeyboards() {
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            }
-                            else {
-                                let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                                PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            }
-                        }
-                        
-//                        if let keyboard = PianoKeyboardModel.shared3 {
-//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
-//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-//                        }
-                            
-                    }
-                    .commonFrameStyle()
-//                    if scalesModel.scale.needsTwoKeyboards() {
-//                        VStack {
-//                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
-//                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-//                                .commonFrameStyle()
-//                        }
-//                    }
-                    
-                    if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
-                        if scalesModel.showLegend {
-                            LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                                .commonFrameStyle()
-                        }
-                    }
-                }
-                    
-                if scalesModel.showStaff {
-                    if scalesModel.scale.hands.count < 2 {
-                        if let score = scalesModel.scores[scalesModel.scale.hands[0]] {
-                            VStack {
-                                ScoreView(score: score, widthPadding: false)
-                            }
-                            .commonFrameStyle()
-                        }
+            }
+            
+            if scalesModel.showKeyboard {
+                VStack {
+                    if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                        ///Scale is contrary with LH and RH joined on one keyboard
+                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyColor())
+                            .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                        //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                        //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                        //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+                        //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                     }
                     else {
-                        if let scoreRH = scalesModel.scores[0] {
-                            VStack {
-                                ScoreView(score: scoreRH, widthPadding: false)
-                            }
-                            .commonFrameStyle()
+                        if scalesModel.scale.needsTwoKeyboards() {
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
-                        if let scoreLH = scalesModel.scores[1] {
-                            VStack {
-                                ScoreView(score: scoreLH, widthPadding: false)
-                            }
-                            .commonFrameStyle()
+                        else {
+                            let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                     }
                 }
+                .commonFrameStyle()
+                //                    if scalesModel.scale.needsTwoKeyboards() {
+                //                        VStack {
+                //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
+                //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                //                                .commonFrameStyle()
+                //                        }
+                //                    }
                 
-                if badgeBank.show {
-                    BadgeView(scale: scalesModel.scale).commonFrameStyle()
+                if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+                    if scalesModel.showLegend {
+                        LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                            .commonFrameStyle()
+                    }
                 }
-                
-                if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
-                    StopProcessView()
+            }
+            
+            if scalesModel.showStaff {
+                if scalesModel.scale.hands.count < 2 {
+                    if let score = scalesModel.scores[scalesModel.scale.hands[0]] {
+                        VStack {
+                            ScoreView(score: score, widthPadding: false)
+                        }
+                        .commonFrameStyle()
+                    }
                 }
                 else {
-                    SelectActionView().commonFrameStyle()
+                    if let scoreRH = scalesModel.scores[0] {
+                        VStack {
+                            ScoreView(score: scoreRH, widthPadding: false)
+                        }
+                        .commonFrameStyle()
+                    }
+                    if let scoreLH = scalesModel.scores[1] {
+                        VStack {
+                            ScoreView(score: scoreLH, widthPadding: false)
+                        }
+                        .commonFrameStyle()
+                    }
                 }
-                
-                Spacer()
             }
-            ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
-            ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
-            //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            
+            if badgeBank.show {
+                BadgeView(scale: scalesModel.scale).commonFrameStyle()
+            }
+            
+            if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
+                StopProcessView()
+            }
+            else {
+                SelectActionView().commonFrameStyle()
+            }
+            
+            Spacer()
+        }
+        ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
+        ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
+        //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
+        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
         //}
         
         .sheet(isPresented: $helpShowing) {
@@ -592,30 +572,6 @@ struct ScalesView: View {
                 HelpView(topic: topic)
             }
         }
-    
-//        .alert(isPresented: $askKeepTapsFile) {
-//            Alert(
-//                title: Text("Keep Recording File?"),
-//                message: Text("Keep Recording File?"),
-//                primaryButton: .default(Text("Yes")) {
-//                },
-//                secondaryButton: .cancel(Text("No")) {
-//                    let fileManager = FileManager.default
-//                    if let url = scalesModel.recordedTapsFileURL {
-//                        do {
-//                            try fileManager.removeItem(at: urlif hand == 0 || scaleMotion == .contraryMotion {View )if hand == 0 || scaleMotion == .contraryMotion {iewing
-//                            Logger.shared.log(scalesModel, "Taps file deleted successfully \(url)")
-//                        }
-//                        catch {
-//                            Logger.shared.reportError(scalesModel, "Failed to delete file: \(error) \(url)")
-//                        }
-//                    }
-//                    else {
-//                        Logger.shared.reportError(scalesModel, "No taps file to delete")
-//                    }
-//                }
-//            )
-//        }
         
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
@@ -635,7 +591,7 @@ struct ScalesView: View {
             else {
                 PianoKeyboardModel.sharedCombined = nil
             }
-
+            
             self.directionIndex = 0
             if let process = initialRunProcess {
                 scalesModel.setRunningProcess(process)
@@ -673,7 +629,7 @@ struct ScalesView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-
+        
         .alert(isPresented: $scalesModel.showUserMessage) {
             Alert(title: Text("Good job 😊"), message: Text(scalesModel.userMessage ?? ""), dismissButton: .default(Text("OK")))
         }
@@ -693,7 +649,6 @@ struct ScalesView: View {
                     }
                 }
             }
-
         }
     }
 }

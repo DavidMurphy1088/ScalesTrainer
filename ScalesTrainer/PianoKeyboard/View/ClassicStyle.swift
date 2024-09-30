@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftUI
 
 public struct ClassicStyle {
+    
     let sfKeyWidthMultiplier: CGFloat
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
@@ -115,6 +116,7 @@ public struct ClassicStyle {
                 let hilightColor:Color
                 if keyModel.hilightKeyToFollow == .followThisNote {
                     hilightColor = hiliteKeyColor(key.touchDown)
+                    //key.hilightCallback()
                 }
                 else {
                     if keyModel.hilightKeyToFollow == .middleOfKeyboard {

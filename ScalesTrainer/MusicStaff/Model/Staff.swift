@@ -100,7 +100,8 @@ public class NoteOffsetsInStaffByKey {
             noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
             noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
             noteOffsetByKey.append("4     4,1  4    4    4    4    4     4     4    4,1  4    4")    //G
-            noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭
+            //noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭
+            noteOffsetByKey.append("4,1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭ //Trinity needs G# not A ♭
             noteOffsetByKey.append("5     5,1  5    5,1  5    5    5     5     5,1  5    5    5")    //A
             noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    6,-1  6,-1  6    6,0  6    5,1")  //A#, B♭
             noteOffsetByKey.append("6     6,1  6    6,1  6    6,1  6     6     6,1  6    6,1  6")    //B

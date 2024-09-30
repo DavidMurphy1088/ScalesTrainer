@@ -26,7 +26,7 @@ class MetronomeModel:ObservableObject {
     //var makeSilent = false
     
     init() {
-        self.ticker = MetronomeTicker(scale: scalesModel.scale)
+        self.ticker = MetronomeTicker()
         self.ticker.metronomeStart()
     }
     

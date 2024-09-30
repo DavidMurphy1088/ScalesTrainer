@@ -22,7 +22,7 @@ struct BoardGradesView: View {
             List {
                 ForEach(0..<grades.count, id: \.self) { i in
                     HStack {
-                        Text(i == 0 ? "Initial" : "Grade \(i) Piano").background(Color.clear).padding()
+                        Text(i == 0 ? "Initial Piano" : "Grade \(i) Piano").background(Color.clear).padding()
                         Spacer()
                         Toggle("", isOn: $isOn[i])
                             .onChange(of: isOn[i]) { old, value in

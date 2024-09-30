@@ -40,7 +40,8 @@ public class PianoKeyModel: Identifiable, Hashable {
     var midi: Int
     
     var hilightKeyToFollow:PianoKeyHilightType = .none
-    
+    var hilightCallbackNotUSed: () -> Void = {}
+
     var wasPlayedCallback:(()->Void)?
     
     public var touchDown = false
