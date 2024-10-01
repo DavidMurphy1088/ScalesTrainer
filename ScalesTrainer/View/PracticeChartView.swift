@@ -151,7 +151,7 @@ struct PracticeChartView: View {
         
             VStack {
                 VStack(spacing: 0) {
-                    TitleView(screenName: "Practice Chart").commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                    TitleView(screenName: "Practice Chart").commonFrameStyle()
                     HStack {
                         Spacer()
                         Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
@@ -202,7 +202,7 @@ struct PracticeChartView: View {
                         Spacer()
                     }
                 }
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                .commonFrameStyle()
 
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
@@ -240,7 +240,7 @@ struct PracticeChartView: View {
                 }
                 
             }
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            .commonFrameStyle()
         
         .onAppear() {
             minorTypeIndex = practiceChart.minorScaleType

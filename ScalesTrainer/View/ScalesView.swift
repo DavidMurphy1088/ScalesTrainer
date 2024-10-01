@@ -459,16 +459,13 @@ struct ScalesView: View {
 //            }
 
         VStack {
-            if scalesModel.showParameters {
+            //if scalesModel.showParameters {
                 VStack(spacing: 0) {
                     ScaleTitleView(scale: scalesModel.scale)
-                        .padding(.vertical, 0)
                         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                    //                            let attr = scalesModel.scale.getScaleAttributes()
-                    //                            Text(attr)
-                    //                                .padding(.vertical, 0)
-                    //                                .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                    //}
+                        .padding(.vertical)
+                        .padding(.horizontal, 0)
+
                     HStack {
                         Spacer()
                         if scalesModel.runningProcessPublished == .none {
@@ -477,15 +474,15 @@ struct ScalesView: View {
                         ViewSettingsView().padding(.vertical, 0)
                         Spacer()
                     }
-                    .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                    .commonFrameStyle(backgroundColor: Color.white)
                 }
-            }
+            //}
             
             if scalesModel.showKeyboard {
                 VStack {
                     if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                         ///Scale is contrary with LH and RH joined on one keyboard
-                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyColor())
+                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyboardColor1())
                             .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
                         //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
@@ -494,14 +491,14 @@ struct ScalesView: View {
                     }
                     else {
                         if scalesModel.scale.needsTwoKeyboards() {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyboardColor1())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyboardColor1())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                         else {
                             let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyColor())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyboardColor1())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                     }
@@ -518,7 +515,7 @@ struct ScalesView: View {
                 if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
                     if scalesModel.showLegend {
                         LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                            .commonFrameStyle()
+                            .commonFrameStyle(backgroundColor: Color.white)
                     }
                 }
             }
@@ -529,7 +526,7 @@ struct ScalesView: View {
                         VStack {
                             ScoreView(score: score, widthPadding: false)
                         }
-                        .commonFrameStyle()
+                        .commonFrameStyle(backgroundColor: Color.white)
                     }
                 }
                 else {
@@ -537,26 +534,26 @@ struct ScalesView: View {
                         VStack {
                             ScoreView(score: scoreRH, widthPadding: false)
                         }
-                        .commonFrameStyle()
+                        .commonFrameStyle(backgroundColor: Color.white)
                     }
                     if let scoreLH = scalesModel.scores[1] {
                         VStack {
                             ScoreView(score: scoreLH, widthPadding: false)
                         }
-                        .commonFrameStyle()
+                        .commonFrameStyle(backgroundColor: Color.white)
                     }
                 }
             }
             
             if badgeBank.show {
-                BadgeView(scale: scalesModel.scale).commonFrameStyle()
+                BadgeView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
             }
             
             if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
                 StopProcessView()
             }
             else {
-                SelectActionView().commonFrameStyle()
+                SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
             Spacer()
@@ -564,7 +561,7 @@ struct ScalesView: View {
         ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
         ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
         //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+        .commonFrameStyle()
         //}
         
         .sheet(isPresented: $helpShowing) {

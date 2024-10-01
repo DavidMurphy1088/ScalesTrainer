@@ -30,8 +30,6 @@ struct ViewSettingsView: View {
                 Text(scalesModel.showStaff ? NSLocalizedString("Hide Staff", comment: "LegendView") : "Show Staff")
             }
             .padding()
-            
-            //Spacer()
         }
     }
 }

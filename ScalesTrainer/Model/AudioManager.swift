@@ -83,10 +83,13 @@ class AudioManager {
     }
     
     func resetAudioKit() {
+//        if self.engine != nil {
+//            return
+//        }
         if let sampler = self.keyboardMidiSampler {
             sampler.stop()
         }
-
+        
         setSession()
         if self.engine == nil {
             ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
@@ -100,8 +103,11 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
-        self.keyboardMidiSampler = loadSampler(num: 0, preset: 0)
-        let preset:Int
+        
+        var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+        self.keyboardMidiSampler = loadSampler(num: 0, preset: preset)
+
+        //let preset:Int
         switch Settings.shared.backingSamplerPreset {
         case 1: preset = 28
         case 2: preset = 37
@@ -306,11 +312,26 @@ class AudioManager {
         }
     }
     
+//    private func loadSampler() -> MIDISampler? {
+//        do {
+//            let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
+//            let sampler = MIDISampler()
+//            let preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpinao = 0
+//            try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
+//            //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+//            //showPresets()
+//            return sampler
+//        }
+//        catch {
+//            Logger.shared.reportError(self, "loadSampler:"+error.localizedDescription)
+//            return nil
+//        }
+//    }
+    
     private func loadSampler(num:Int, preset:Int) -> MIDISampler? {
         do {
             let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
             //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
-            
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
             //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
@@ -319,6 +340,22 @@ class AudioManager {
         catch {
             Logger.shared.reportError(self, error.localizedDescription)
             return nil
+        }
+    }
+    
+    func showPresets() {
+        let presetRange = 0..<128
+        for preset in presetRange {
+            do {
+                let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
+                let sampler = MIDISampler()
+                try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
+                // Log the successfully loaded preset number
+                print("Loaded preset: \(preset) from sound font \(samplerFileName)")
+            } catch {
+                // If the preset can't be loaded, skip and continue
+                print("Preset \(preset) not found or failed to load.")
+            }
         }
     }
     

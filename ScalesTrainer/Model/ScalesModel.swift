@@ -214,12 +214,12 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    @Published private(set) var showParameters:Bool = true
-    func setShowParameters(_ newValue: Bool) {
-        DispatchQueue.main.async {
-            self.showParameters = newValue
-        }
-    }
+//    @Published private(set) var showParameters:Bool = true
+//    func setShowParameters(_ newValue: Bool) {
+//        DispatchQueue.main.async {
+//            self.showParameters = newValue
+//        }
+//    }
     
     @Published private(set) var showLegend:Bool = true
     func setShowLegend(_ newValue: Bool) {
@@ -261,7 +261,8 @@ public class ScalesModel : ObservableObject {
         }
         else {
             if let backer = self.backer {
-                metronome.removeProcessesToNotify(process: backer)
+                //metronome.removeProcessesToNotify(process: backer)
+                metronome.removeAllProcesses()
             }
         }
         DispatchQueue.main.async {
@@ -311,12 +312,12 @@ public class ScalesModel : ObservableObject {
             self.runningProcessPublished = self.runningProcess
         }
 
-        ///For some unknwon reason the 1st call does not silence some residue sound from the sampler. The 2nd does appear to.
+        ///For some unknown reason the 1st call does not silence some residue sound from the sampler. The 2nd does appear to.
         self.audioManager.resetAudioKit()
         self.audioManager.resetAudioKit()
 
         self.setShowKeyboard(true)
-        self.setShowParameters(true)
+        //self.setShowParameters(true)
         self.setShowLegend(true)
         self.setSelectedScaleSegment(0)
         self.setProcessInstructions(nil)
@@ -352,9 +353,7 @@ public class ScalesModel : ObservableObject {
                             key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
                             keyboard.redraw1()
                         }
-                        //DispatchQueue.main.async {
-                            sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                        //}
+                        sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
                     }
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
                     usleep(1000000 * UInt32(2.0))
@@ -395,7 +394,7 @@ public class ScalesModel : ObservableObject {
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
             self.setShowStaff(false)
-            self.setShowParameters(false)
+            //self.setShowParameters(false)
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
             setUserMessage(heading: nil, msg: nil)

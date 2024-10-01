@@ -17,13 +17,11 @@ class MetronomeModel:ObservableObject {
     private var timerTickerCount = 0
     
     public static let shared = MetronomeModel()
-    //var isTiming = false
     private let scalesModel = ScalesModel.shared
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     let ticker:MetronomeTicker
-    //var makeSilent = false
     
     init() {
         self.ticker = MetronomeTicker()
@@ -63,30 +61,32 @@ class MetronomeModel:ObservableObject {
     }
     
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
-        process.metronomeStart()
+        for i in 0..<self.processesToNotify.count {
+            self.processesToNotify[i].metronomeStop()
+        }
         self.processesToNotify.append(process)
-        //if self.processesToNotify.count == 0 {
+        for i in 0..<self.processesToNotify.count {
+            self.processesToNotify[i].metronomeStart()
+        }
+        //print("Ticker =============== Metronome addProcessesTo", process, self.processesToNotify.count)
+        self.ticker.metronomeStart()
         self.startTimerThread()
-            //self.isTiming = true
-        //}
     }
     
-    func removeProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
+    func removeAllProcesses() {
+        for process in self.processesToNotify {
+            process.metronomeStop()
+            self.removeProcessesToNotify(process: process)
+        }
+    }
+    
+    private func removeProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
         process.metronomeStop()
         for i in 0..<self.processesToNotify.count {
             if self.processesToNotify[i] === process {
                 self.processesToNotify.remove(at: i)
                 break
             }
-        }
-//        if self.processesToNotify.count == 0 {
-//            self.isTiming = false
-//        }
-    }
-    
-    func removeAllProcesses() {
-        for  proc in self.processesToNotify {
-            self.removeProcessesToNotify(process: proc)
         }
     }
 
@@ -101,14 +101,18 @@ class MetronomeModel:ObservableObject {
         
     ///notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?
     func startTimerThread() {
+        if self.tickTimer != nil {
+            //Logger.shared.reportError(self, "Attempt to start >1 ticker")
+            return
+        }
         timerTickerCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
         let notesPerClick = scalesModel.scale.timeSignature.top % 3 == 0 ? 3 : 2
-        var delay = (60.0 / Double(scalesModel.getTempo())) / Double(notesPerClick)
+        let delay = (60.0 / Double(scalesModel.getTempo())) / Double(notesPerClick)
         //delay = delay * 3
         Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo())")
         var ctr = 0
-        var leadInTicks = Settings.shared.getLeadInBeats() * notesPerClick
+        let leadInTicks = Settings.shared.getLeadInBeats() * notesPerClick
         var leadingIn = false
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
@@ -117,10 +121,10 @@ class MetronomeModel:ObservableObject {
                 tickTimer = Timer.publish(every: delay, on: .main, in: .common)
                     .autoconnect()
                     .sink { _ in
-                        //if !self.isTiming {
                         if self.processesToNotify.count == 0 {
                             self.tickTimer?.cancel()
                             Logger.shared.log(self, "Metronome thread ended count:\(self.timerTickerCount)")
+                            self.tickTimer = nil
                             return
                         }
 

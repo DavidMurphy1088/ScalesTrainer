@@ -16,7 +16,7 @@ struct BoardGradesView: View {
                 //Text("\(self.board), Select Your Grade").font(.title)//.foregroundColor(.blue)
                 Text("Trinity").font(.title)//.foregroundColor(.blue)
             }
-            .commonFrameStyle()
+            .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
             .padding()
             Spacer()
             List {
@@ -37,7 +37,7 @@ struct BoardGradesView: View {
                     }
                 }
             }
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            .commonFrameStyle()
             .padding()
 
             .onAppear() {
@@ -49,7 +49,7 @@ struct BoardGradesView: View {
                 }
             }
         }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+        .commonFrameStyle()
     }
 }
 
@@ -85,7 +85,7 @@ struct SelectMusicBoardView: View {
                         }
                     }
                 }
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                .commonFrameStyle()
                 .padding()
             //}
             //.frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)

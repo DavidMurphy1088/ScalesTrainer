@@ -24,7 +24,7 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        print("====== TICVK", ScalesModel.shared.scale.timeSignature.top, tickNum % ScalesModel.shared.scale.timeSignature.top, tickNum)
+        //print("    Ticker ========", "TickNum", tickNum , tickNum % ScalesModel.shared.scale.timeSignature.top, ScalesModel.shared.scale.timeSignature.top)
         if !Settings.shared.metronomeSilent {
             if tickNum % ScalesModel.shared.scale.timeSignature.top == 0 {
                 metronomeAudioPlayerHigh!.play()

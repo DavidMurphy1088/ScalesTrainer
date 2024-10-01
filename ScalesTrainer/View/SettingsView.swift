@@ -36,7 +36,8 @@ struct SettingsView: View {
 
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
-    @State private var keyColor: Color = .white
+    @State private var keyboardColor: Color = .white
+    @State private var backgroundColor: Color = .white
     @State private var navigateToSelectBoard = false
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     @State private var selectedBackgroundColor: Color = .white
@@ -71,38 +72,35 @@ struct SettingsView: View {
     }
     
     func DetailedCustomSettingsView() -> some View {
-        
         VStack {
-            Spacer()
-            ZStack {
-                if self.backgroundChange >= 0 {
-                    Settings.shared.getBackgroundColor()
-                }
+            //ZStack {
+//                if self.backgroundChange >= 0 {
+//                    VStack {
+//                        Settings.shared.getBackgroundColor()
+//                    }
+//                }
                 VStack {
                     HStack {
-                        Spacer()
+                        //Spacer()
                         Text("Choose your background colour ").font(.title2).padding(0)
-                        ColorPicker("Choose your keyboard colour", selection: $selectedBackgroundColor)
+                        ///Force a repaint on color change with published self.backgroundChange
+                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
                             .padding()
                             .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                                //PianoKeyboardModel.sharedForSettings.redraw()
-                                //parentColor = newColor
                                 Settings.shared.setBackgroundColor(newColor)
                                 self.backgroundChange += 1
-                                //UIGlobals.shared.backgroundColor = newColor
                             }
                             .labelsHidden()
-                            
-                        Spacer()
+                        //Spacer()
                     }
                     HStack {
-                        Spacer()
+                        //Spacer()
                         VStack {
-                            SetKeyboardColourView(parentColor: $keyColor)
+                            SetKeyboardColourView(parentColor: $keyboardColor)
                         }
                         //.padding()
-                        .onChange(of: keyColor, {
-                            Settings.shared.setKeyColor(keyColor)
+                        .onChange(of: keyboardColor, {
+                            Settings.shared.setKeyboardColor(keyboardColor)
                         })
                         .hilighted(backgroundColor: .gray)
                         .frame(width: UIScreen.main.bounds.size.width * 0.9,
@@ -110,8 +108,11 @@ struct SettingsView: View {
                         //Spacer()
                     }
                 }
-            }
-            
+                .padding(.vertical, 0)
+                .border(Color.green, width: 3)
+            //}
+            .padding(.vertical, 0)
+            .border(Color.red)
             
 //            ///Metronome on
 //            Spacer()
@@ -222,18 +223,18 @@ struct SettingsView: View {
                 .frame(width: UIScreen.main.bounds.width * 0.30)
             }
 
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    settings.save()
-                }) {
-                    HStack {
-                        Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-                    }
-                }
-                Spacer()
-            }
+//            Spacer()
+//            HStack {
+//                Spacer()
+//                Button(action: {
+//                    settings.save()
+//                }) {
+//                    HStack {
+//                        Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                    }
+//                }
+//                Spacer()
+//            }
             Spacer()
         }
     }
@@ -271,12 +272,9 @@ struct SettingsView: View {
             
             VStack {
                 TitleView(screenName: "Settings").commonFrameStyle()
-                //ZStack {
-                    //Color.blue
-                    DetailedCustomSettingsView()
-                //}
-                .commonFrameStyle()
-                .padding()
+                DetailedCustomSettingsView()
+                    .commonFrameStyle()
+                    .padding()
             }
             
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
@@ -285,11 +283,15 @@ struct SettingsView: View {
                 self.defaultOctaves = settings.defaultOctaves
                 //self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
-                self.keyColor = Settings.shared.getKeyColor()
+                self.keyboardColor = Settings.shared.getKeyboardColor1()
+                self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.metronomeSilent = settings.metronomeSilent
                 self.developerModeOn = settings.developerModeOn
                 self.badgeStyleNumber = settings.badgeStyle
+            }
+            .onDisappear() {
+                settings.save()
             }
         }
         

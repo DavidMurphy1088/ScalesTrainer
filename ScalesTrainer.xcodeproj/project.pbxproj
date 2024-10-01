@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
-		790974C32C37B0E900B9AFFC /* RecordedTapData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 790974C22C37B0E900B9AFFC /* RecordedTapData.txt */; };
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
@@ -110,7 +109,6 @@
 /* Begin PBXFileReference section */
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
-		790974C22C37B0E900B9AFFC /* RecordedTapData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordedTapData.txt; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
@@ -284,7 +282,6 @@
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				790974C22C37B0E900B9AFFC /* RecordedTapData.txt */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -511,7 +508,6 @@
 			files = (
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
-				790974C32C37B0E900B9AFFC /* RecordedTapData.txt in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,

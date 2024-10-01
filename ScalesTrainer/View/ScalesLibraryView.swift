@@ -171,7 +171,7 @@ struct ScalesLibraryView: View {
                             let _ = setModelScale(major: true)
                         })
                     }
-                    .commonFrameStyle()
+                    .commonFrameStyle(backgroundColor: Color.white)
                     .padding()
                     
                     VStack {
@@ -233,11 +233,11 @@ struct ScalesLibraryView: View {
                             let _ = setModelScale(major: false)
                         })
                     }
-                    .commonFrameStyle()
+                    .commonFrameStyle(backgroundColor: Color.white)
                     .padding()
                     Spacer()
                 }
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                .commonFrameStyle()
                 .onAppear() {
                     if self.typesMinor.count == 0 {
                         for scale in ScaleType.allCases {
@@ -255,7 +255,7 @@ struct ScalesLibraryView: View {
                     }
                 }
             }
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            .commonFrameStyle()
             //.border(.red, width: 2)
             //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         }

@@ -34,9 +34,15 @@ public class Settings : Codable  {
     var scaleLeadInBearCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     //var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
-    private var keyColor:[Double] = [1.0, 1.0, 1.0, 1.0]
-    private var backgroundColor:[Double] = [1.0, 1.0, 1.0, 1.0]
-    var backingSamplerPreset:Int = 0
+    
+    ///Default colors if not set by user
+    //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
+    //private var keyboardColor:[Double] = [0.9960783123970032, 0.9882354140281677, 0.8666667342185974, 1.0]
+    private var keyboardColor:[Double] = [0.9960783123970032, 0.9882354140281677, 0.8666667342185974, 1.0]
+    //private var backgroundColor1:[Double] = [232.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0, 1.0] //light purple
+    private var backgroundColor:[Double] = [0.803921639919281, 0.9098039269447327, 0.7098039984703064, 1.0]
+    
+    var backingSamplerPreset:Int = 2 //default is Moog, 0=Piano
     var metronomeSilent:Bool = false
     var requiredConsecutiveCount = 2
     var badgeStyle = 0
@@ -90,10 +96,11 @@ public class Settings : Codable  {
         str += " Board:\(self.musicBoard)"
         str += " Grade:\(self.musicBoardGrade)"
         str += " Octaves:\(self.defaultOctaves)"
-        str += " KeyColor:\(self.keyColor)"
+        str += " KeyboardColor:\(self.keyboardColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
-        str += " RequiredConsecutiveCount:\(requiredConsecutiveCount)"
-        str += " BadgeStyle:\(badgeStyle)"
+        str += " RequiredConsecutiveCount:\(self.requiredConsecutiveCount)"
+        str += " BadgeStyle:\(self.badgeStyle)"
+        str += " BackgroundColour:\(self.backgroundColor)"
         return str
     }
     
@@ -131,10 +138,11 @@ public class Settings : Codable  {
                     self.metronomeSilent = loaded.metronomeSilent
                     self.scaleLeadInBearCountIndex = loaded.scaleLeadInBearCountIndex
                     self.defaultOctaves = loaded.defaultOctaves
-                    self.keyColor = loaded.keyColor
+                    self.keyboardColor = loaded.keyboardColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset
                     self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
                     self.badgeStyle = loaded.badgeStyle
+                    self.backgroundColor = loaded.backgroundColor
                     SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")
@@ -146,21 +154,21 @@ public class Settings : Codable  {
         }
     }
     
-    func setKeyColor(_ color: Color) {
+    func setKeyboardColor(_ color: Color) {
         let uiColor = UIColor(color)
         var red: CGFloat = 0
         var green: CGFloat = 0
         var blue: CGFloat = 0
         var alpha: CGFloat = 0
         uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        self.keyColor = [Double(red), Double(green), Double(blue), Double(alpha)]
+        self.keyboardColor = [Double(red), Double(green), Double(blue), Double(alpha)]
     }
     
-    func getKeyColor() -> Color {
-        let red = CGFloat(self.keyColor[0])
-        let green = CGFloat(self.keyColor[1])
-        let blue = CGFloat(self.keyColor[2])
-        let alpha = CGFloat(self.keyColor[3])
+    func getKeyboardColor1() -> Color {
+        let red = CGFloat(self.keyboardColor[0])
+        let green = CGFloat(self.keyboardColor[1])
+        let blue = CGFloat(self.keyboardColor[2])
+        let alpha = CGFloat(self.keyboardColor[3])
         let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
         return Color(uiColor)
     }
@@ -185,6 +193,6 @@ public class Settings : Codable  {
     }
     
     func isCustomColor() -> Bool {
-        return keyColor.contains{ $0 != 1.0 }
+        return keyboardColor.contains{ $0 != 1.0 }
     }
 }

@@ -24,6 +24,7 @@ class Backer :MetronomeTimerNotificationProtocol {
         if root >= 55 {
             root -= 12
         }
+        chordRoots = []
         if useMajor(scale) {
             chordRoots.append(root)
             chordRoots.append(root - 3) //ii minor
@@ -36,6 +37,7 @@ class Backer :MetronomeTimerNotificationProtocol {
             chordRoots.append(root - 5) //V
             chordRoots.append(root) //i
         }
+        callNum = 0
     }
     
     func metronomeStop() {
@@ -58,8 +60,9 @@ class Backer :MetronomeTimerNotificationProtocol {
             case 1:
                 midi = root + 7
             case 2:
-                midi = bar % 4 == 1 ? root + 3 : root + 4
-                //midi = root + 4
+                //midi = bar % 4 == 1 ? root + 3 : root + 4
+                //midi = bar % 4 == 1 ? root + 3 : root + 4
+                midi = [1].contains(bar) ? root + 3 : root + 4
             case 3:
                 midi = root + 7
             default:
@@ -73,8 +76,10 @@ class Backer :MetronomeTimerNotificationProtocol {
             case 1:
                 midi = root + 7
             case 2:
-                midi = [0,1,3].contains(bar % 4) ? root + 3 : root + 4
-                //midi = root + 4
+                ///Raise the leading note for the dominant in bar #3
+                midi = [0,1,3].contains(bar) ? root + 3 : root + 4
+                //midi = [0,1,3].contains(bar % beatsInCycle) ? root + 4 : root + 4
+                //midi = root + 3
             case 3:
                 midi = root + 7
             default:
@@ -85,10 +90,12 @@ class Backer :MetronomeTimerNotificationProtocol {
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        let beat = callNum % 4
+        let beatsInCycle = ScalesModel.shared.scale.timeSignature.top
+        let beat = callNum % beatsInCycle
         var midi = 0
-        let bar = callNum / 4
+        let bar = (callNum / beatsInCycle) % 4
         midi = getMidi(bar: bar, beat: beat)
+
         if let sampler = audioManager.backingMidiSampler {
             if let lastMidi = lastMidi {
                 sampler.stop(noteNumber: MIDINoteNumber(lastMidi), channel: 0)

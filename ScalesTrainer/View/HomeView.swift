@@ -45,7 +45,7 @@ struct TitleView: View {
 //                Text(screenName).font(.title2)
 //            }
         }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark) 
     }
 }
 
@@ -84,7 +84,7 @@ struct FamousQuotesView: View {
                 Spacer()
             }
         }
-        .commonFrameStyle(backgroundColor: .white)
+        .commonFrameStyle()
         .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
     }
 }
@@ -145,7 +145,7 @@ struct ActivityModeView: View {
             Spacer()
         }
         //.background()
-        .commonFrameStyle(backgroundColor:UIGlobals.shared.backgroundColor)
+        .commonFrameStyle()
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
                 HelpView(topic: topic)

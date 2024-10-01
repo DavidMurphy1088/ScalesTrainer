@@ -210,7 +210,7 @@ struct SpinWheelView: View {
                 }
                 Spacer()
             }
-            .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+            .commonFrameStyle()
             //.frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
         }
         .onAppear() {

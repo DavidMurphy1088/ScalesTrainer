@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>283</string>
+					<string>284</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>282</string>
+					<string>283</string>
 					<key>Timestamp</key>
-					<string>749376351.245205</string>
+					<string>749456324.223107</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>550</string>
+					<string>549</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>549</string>
+					<string>548</string>
 					<key>Timestamp</key>
-					<string>749383456.405092</string>
+					<string>749456324.22313</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>622</string>
+					<string>621</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>621</string>
+					<string>620</string>
 					<key>Timestamp</key>
-					<string>749383456.405105</string>
+					<string>749456324.223142</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -237,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>484</string>
+					<string>481</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>483</string>
+					<string>480</string>
 					<key>Timestamp</key>
-					<string>749385704.282355</string>
+					<string>749436816.967899</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -259,12 +259,12 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>if scalesModel.showKeyboard {
+				<string>            if scalesModel.showKeyboard {
 </string>
 				<key>leading</key>
-				<string>            }
+				<string>            //}
             
-            </string>
+</string>
 				<key>trailing</key>
 				<string>                VStack {
                     if let joinedKeyboard = PianoKeyboardModel.sharedCombined {

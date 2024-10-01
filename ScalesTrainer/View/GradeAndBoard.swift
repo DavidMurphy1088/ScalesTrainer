@@ -13,7 +13,7 @@ struct GradeAndBoard: View {
     @State var firstName = Settings.shared.firstName
     
     @State private var tapBufferSize = 4096
-    @State private var keyColor: Color = .white
+    //@State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
     @State private var navigateToGrade = false
     //let background = UIGlobals.shared.getBackground()
@@ -60,11 +60,7 @@ struct GradeAndBoard: View {
                     HStack {
                         Spacer()
                         Button(action: {
-                            Settings.shared.setKeyColor(keyColor)
                             settings.save()
-//                                if settings.amplitudeFilter == 0 {
-//                                    tabSelectionManager.selectedTab = 3
-//                                }
                             tabSelectionManager.selectedTab = 1
                         }) {
                             HStack {
@@ -74,14 +70,14 @@ struct GradeAndBoard: View {
                         Spacer()
                     }
                 }
-                .commonFrameStyle(backgroundColor: UIGlobals.shared.backgroundColor)
+                .commonFrameStyle()
                 .padding()
                 Spacer()
                 //}
                 //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
                 .onAppear() {
-                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
-                    self.keyColor = Settings.shared.getKeyColor()
+//                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
+//                    self.keyColor = Settings.shared.getKeyColor()
                 }
             }
         }

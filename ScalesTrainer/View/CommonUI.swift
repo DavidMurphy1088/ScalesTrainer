@@ -11,13 +11,13 @@ class UIGlobals {
     //let screenImageBackgroundOpacity = 0.5
     let screenImageBackgroundOpacity = 0.5
     let screenWidth = 0.9
-    var backgroundColor:Color
     let purpleDark:Color
-
+    let purpleLight:Color
+    
     init() {
         var shade = 9.0
         //purple = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
-        backgroundColor = Color(red: 232.0 / 255.0, green: 216.0 / 255.0, blue:230.0 / 255.0)
+        purpleLight = Color(red: 232.0 / 255.0, green: 216.0 / 255.0, blue:230.0 / 255.0)
         //backgroundColor = Color.cyan
         shade = shade * 0.60
         //purpleDark = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
@@ -59,7 +59,7 @@ struct Hilighted: ViewModifier {
 }
 
 extension View {
-    func commonFrameStyle(backgroundColor: Color = .white,
+    func commonFrameStyle(backgroundColor: Color = Settings.shared.getBackgroundColor(),
                           cornerRadius: CGFloat = 10,
                           borderColor: Color = .blue,
                           borderWidth: CGFloat = 1) -> some View {
