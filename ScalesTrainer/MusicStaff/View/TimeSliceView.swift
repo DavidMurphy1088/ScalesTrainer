@@ -14,7 +14,7 @@ public struct BarLineView: View {
         self.entry = entry
         self.staff = staff
         if let barLine = entry as? BarLine {
-            self.visible = barLine.visible
+            self.visible = barLine.visibleOnStaff
         }
         else {
             self.visible = true
@@ -22,14 +22,13 @@ public struct BarLineView: View {
     }
     
     public var body: some View {
-        ///For some unfathomable reason the bar line does not show if its not in a gemetry reader (-:
+        ///For some unfathomable reason the bar line does not show if its not in a geometry reader (-:
         GeometryReader { geometry in
             Rectangle()
                 .fill(visible ? Color.black : Color.clear)
                 .frame(width: 1.0, height: 4.0 * Double(score.lineSpacing))
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
-        //.frame(maxWidth: Double(staffLayoutSize.lineSpacing)  * 1.0)
         .frame(minWidth: Double(score.lineSpacing)  * 1.1)
         //.border(Color.red)
     }

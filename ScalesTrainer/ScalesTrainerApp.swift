@@ -160,8 +160,8 @@ class TabSelectionManager: ObservableObject {
     func nextNavigationTab() {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
-                if ScalesTrainerApp.runningInXcode() {
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .naturalMinor, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
+                if Settings.shared.isDeveloperMode() {
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [1], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -195,7 +195,7 @@ struct ScalesTrainerApp: App {
         #endif
     }
     
-    static func runningInXcode() -> Bool {
+    static func runningInXcode1() -> Bool {
         let running = ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
         return running
         //return false
@@ -208,7 +208,8 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             VStack {
-                if launchScreenState.state == .finished || ScalesTrainerApp.runningInXcode() {
+                //if launchScreenState.state == .finished || ScalesTrainerApp.runningInXcode() {
+                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode() {
                     MainContentView()
                 }
                 else {
@@ -228,7 +229,7 @@ struct ScalesTrainerApp: App {
     func MainContentView() -> some View {
 
         TabView(selection: $tabSelectionManager.selectedTab) {
-            if ScalesTrainerApp.runningInXcode() {
+            if Settings.shared.isDeveloperMode() {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //SpinWheelView(practiceJournal: PracticeJournal.shared!)
@@ -259,14 +260,16 @@ struct ScalesTrainerApp: App {
                 .tag(3)
                 .environmentObject(tabSelectionManager)
             
-            ScalesLibraryView()
-                .tabItem {
-                    Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
-                }
-                .tag(4)
-                .environmentObject(tabSelectionManager)
-
-            if Settings.shared.developerModeOn {
+            if Settings.shared.isDeveloperMode() {
+                ScalesLibraryView()
+                    .tabItem {
+                        Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
+                    }
+                    .tag(4)
+                    .environmentObject(tabSelectionManager)
+            }
+            
+            if Settings.shared.isDeveloperMode() {
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
@@ -275,7 +278,7 @@ struct ScalesTrainerApp: App {
                     .environmentObject(tabSelectionManager)
             }
             
-            if Settings.shared.developerModeOn  {
+            if Settings.shared.isDeveloperMode()  {
                 // DeveloperView().commonFrameStyle()
                 ScalesLibraryView()
                     .tabItem {

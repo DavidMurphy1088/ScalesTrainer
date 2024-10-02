@@ -26,12 +26,13 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
         //print("    Ticker ========", "TickNum", tickNum , tickNum % ScalesModel.shared.scale.timeSignature.top, ScalesModel.shared.scale.timeSignature.top)
         if !Settings.shared.metronomeSilent {
-            if tickNum % ScalesModel.shared.scale.timeSignature.top == 0 {
-                metronomeAudioPlayerHigh!.play()
-            }
-            else {
-                metronomeAudioPlayerLow!.play()
-            }
+//            if tickNum % ScalesModel.shared.scale.timeSignature.top == 0 {
+//                metronomeAudioPlayerHigh!.play()
+//            }
+//            else {
+//                metronomeAudioPlayerLow!.play()
+//            }
+            metronomeAudioPlayerLow!.play()
         }
         self.tickNum += 1
         return false

@@ -316,7 +316,8 @@ public class Scale : Codable {
             if handIndex == 1 {
                 nextMidi -= 12
                 if self.scaleMotion == .similarMotion {
-                    if firstMidi >= 62 {
+                    //if firstMidi >= 62 {
+                    if nextMidi >= 53 {
                         nextMidi -= 12
                     }
                 }
@@ -483,7 +484,7 @@ public class Scale : Codable {
                 }
             }
         }
-        debug22("------------- End Init")
+        //debug22("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -663,7 +664,7 @@ public class Scale : Codable {
         return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
-    func debug22(_ msg:String)  {
+    func debug2(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

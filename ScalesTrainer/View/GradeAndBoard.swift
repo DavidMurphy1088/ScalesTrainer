@@ -9,7 +9,7 @@ struct GradeAndBoard: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    @State var recordDataMode = Settings.shared.developerModeOn 
+    //@State var recordDataMode = Settings.shared.developerModeOn 
     @State var firstName = Settings.shared.firstName
     
     @State private var tapBufferSize = 4096

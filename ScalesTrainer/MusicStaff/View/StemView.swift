@@ -57,7 +57,7 @@ public struct StemView: View {
                             //if startNote.debug("VIEW staff:\(staff.staffNum)") {
                                 //Note this code eventually has to go adjust the stem length for notes under a quaver beam
                                 //3.5 lines is a full length stem
-                                let stemDirection = startNote.stemDirection == .up ? -1.0 : 1.0 //stemDirection(note: startNote)
+                                let stemDirection = startNote.stemDirection == .up ? -1.0 : 1.0 
                                 let midX = (geo.size.width + (midPointXOffset(notes: notes, staff: staff, stemDirection: stemDirection))) / 2.0
                                 let midY = geo.size.height / 2.0
                                 let offsetY = CGFloat(notes[0].getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust

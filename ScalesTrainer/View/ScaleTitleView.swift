@@ -18,8 +18,8 @@ struct ScaleTitleView: View {
             var handName = ""
             if scale.hands.count == 1 {
                 switch scale.hands[0] {
-                case 0: handName = "Right Hand"
-                case 1: handName = "Left Hand"
+                case 0: handName = "RH"
+                case 1: handName = "LH"
                 default: handName = "Both Hands"
                 }
             }
@@ -41,7 +41,7 @@ struct ScaleTitleView: View {
     var body: some View {
         let compoundTime = scale.timeSignature.top % 3 == 0
         HStack(spacing: 0) {
-            Text("\(getTitle()), ").font(.title).padding(.horizontal, 0)
+            Text("\(getTitle()), min. ").font(.title).padding(.horizontal, 0)
             Image(compoundTime ? "crotchetDotted" : "crotchet")
                 .resizable()
                 .aspectRatio(contentMode: .fit)

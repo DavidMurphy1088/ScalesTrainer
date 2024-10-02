@@ -155,7 +155,7 @@ struct ActivityModeView: View {
         .onAppear() {
             if menuOptionsLeft.count == 0 {
                 var practiceChart:PracticeChart
-                if Settings.shared.developerModeOn {
+                if Settings.shared.isDeveloperMode() {
                     PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
                 }
                 else {

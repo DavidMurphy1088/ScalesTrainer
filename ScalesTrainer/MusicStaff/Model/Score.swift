@@ -368,8 +368,8 @@ public class Score : ObservableObject {
         }
     }
     
-    public func addBarLine(visible:Bool) {
-        let barLine = BarLine(visible: visible)
+    public func addBarLine(visibleOnStaff:Bool, forStaffSpacing: Bool) {
+        let barLine = BarLine(visibleOnStaff: visibleOnStaff, forStaffSpacing: forStaffSpacing)
         barLine.sequence = self.scoreEntries.count
         self.scoreEntries.append(barLine)
     }
@@ -445,7 +445,7 @@ public class Score : ObservableObject {
     }
     
     private func determineStemDirections(staff:Staff, notesUnderBeam:[StaffNote], linesForFullStemLength:Double) {
-        
+
         ///Determine if the quaver group has up or down stems based on the overall staff placement of the group
         var totalOffset = 0
         for note in notesUnderBeam {
@@ -556,6 +556,7 @@ public class Score : ObservableObject {
         
         ///Group quavers under quaver beams
         for scoreEntry in self.scoreEntries {
+
             guard scoreEntry is TimeSlice else {
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
@@ -566,6 +567,12 @@ public class Score : ObservableObject {
                 continue
             }
             let note = timeSlice.getTimeSliceNotes()[0]
+//            if note.midiNumber == 50 {
+//                print("========", note.midiNumber, note.getValue())
+//                if note.getValue() == 1 {
+//                    
+//                }
+//            }
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)

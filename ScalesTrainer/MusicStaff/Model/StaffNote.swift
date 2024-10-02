@@ -1,10 +1,14 @@
 import Foundation
 import SwiftUI
 
+
 public class BarLine : ScoreEntry {
-    let visible:Bool
-    init(visible:Bool) {
-        self.visible = visible
+    let visibleOnStaff:Bool
+    let forStaffSpacing: Bool
+    
+    init(visibleOnStaff:Bool, forStaffSpacing: Bool) {
+        self.visibleOnStaff = visibleOnStaff
+        self.forStaffSpacing = forStaffSpacing
     }
 }
 

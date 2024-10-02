@@ -573,10 +573,9 @@ public class ScalesModel : ObservableObject {
         
         for i in 0..<scale.scaleNoteState[hand].count {
             if totalBarValue >= maxBarValue {
-                if isBrokenChord {
-                    ///Add spacing around longer notes
-                    score.addBarLine(visible: false)  //!isBrokenChord)
-                }
+                ///Bar line is required to calculate presence or not of accidentals. Specificaly in chromatic. It can also provide visible note spacing when required.
+                ///In this app (so far Grade1) the bar line is never visible but it might be added to add space around note(s)
+                score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)  
                 totalBarValue = 0.0
             }
             let noteState = scale.scaleNoteState[hand][i]

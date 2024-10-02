@@ -59,7 +59,7 @@ class PracticeChart: Codable {
         self.musicBoard = musicBoard
         self.musicBoardGrade = musicBoardGrade
         self.columns = 3
-        self.rows = Settings.shared.developerModeOn ? 7 : 6
+        self.rows = Settings.shared.isDeveloperMode() ? 7 : 6
         self.cells = []
         let scales = musicBoardGrade.getScales()
         var scaleCtr = 0

@@ -201,8 +201,14 @@ struct BadgeView: View {
         .onAppear() {
             self.handIndex = 0 //scale.hand == 2 ? 0 : scale.hand
             self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[handIndex].count) * 1.7)
+            ///Ensure not more than 2 concurrent same values
             for _ in 0..<scale.scaleNoteState[handIndex].count {
-                self.imageIds.append(Int.random(in: 0..<3))
+                var newValue: Int
+                repeat {
+                    newValue = Int.random(in: 0..<3)
+                } while imageIds.count >= 2 && newValue == imageIds[imageIds.count - 1] && newValue == imageIds[imageIds.count - 2]
+                
+                self.imageIds.append(newValue)
             }
         }
     }

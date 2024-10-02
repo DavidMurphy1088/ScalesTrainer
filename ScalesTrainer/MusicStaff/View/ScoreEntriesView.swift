@@ -239,22 +239,25 @@ struct ScoreEntriesView: View {
                         }
                         
                         if entry is BarLine {
-                            GeometryReader { geometry in
-                                BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)
-                                    .frame(height: score.getStaffHeight())
+                            let barLine = entry as! BarLine
+                            if barLine.visibleOnStaff || barLine.forStaffSpacing {
+                                GeometryReader { geometry in
+                                    BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)
+                                        .frame(height: score.getStaffHeight())
                                     //.border(Color .red)
-                                    .onAppear {
-                                        if staff.staffNum == 0 {
-                                            let barLine = entry as! BarLine
-                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
+                                        .onAppear {
+                                            if staff.staffNum == 0 {
+                                                let barLine = entry as! BarLine
+                                                barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
+                                            }
                                         }
-                                    }
-                                    .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                        if staff.staffNum == 0 {
-                                            let barLine = entry as! BarLine
-                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
+                                        .onChange(of: score.lineSpacing) { oldValue, newValue in
+                                            if staff.staffNum == 0 {
+                                                let barLine = entry as! BarLine
+                                                barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
+                                            }
                                         }
-                                    }
+                                }
                             }
                         }
                     }

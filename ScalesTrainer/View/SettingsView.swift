@@ -26,12 +26,12 @@ struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    @State var recordDataMode = Settings.shared.developerModeOn 
+    //@State var recordDataMode = Settings.shared.developerModeOn
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
-    @State var developerModeOn = false
+    @State var developerMode = false
     @State var metronomeSilent = false
 
     @State private var defaultOctaves = 2
@@ -193,22 +193,22 @@ struct SettingsView: View {
 //            }
             
             ///Developer
-            if ScalesTrainerApp.runningInXcode() {
+            if Settings.shared.isDeveloperMode() {
                 Spacer()
                 HStack {
                     Spacer()
-                    Toggle(isOn: $developerModeOn) {
+                    Toggle(isOn: $developerMode) {
                         Text("Developer Mode On").font(.title2).padding(0)
                     }
-                    .onChange(of: developerModeOn, {
-                        settings.developerModeOn = developerModeOn
+                    .onChange(of: developerMode, {
+                        settings.developerMode = developerMode
                     })
                     Spacer()
                 }
                 .frame(width: UIScreen.main.bounds.width * 0.30)
             }
             
-            if Settings.shared.developerModeOn {
+            if Settings.shared.isDeveloperMode() {
                 Spacer()
                 HStack {
                     Spacer()
@@ -287,7 +287,7 @@ struct SettingsView: View {
                 self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.metronomeSilent = settings.metronomeSilent
-                self.developerModeOn = settings.developerModeOn
+                self.developerMode = settings.developerMode
                 self.badgeStyleNumber = settings.badgeStyle
             }
             .onDisappear() {

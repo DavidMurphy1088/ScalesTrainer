@@ -607,7 +607,7 @@ struct ScalesView: View {
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
             ///Clean up any recorded files
-            if Settings.shared.developerModeOn  {
+            if Settings.shared.isDeveloperMode()  {
                 let fileManager = FileManager.default
                 if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                     do {
