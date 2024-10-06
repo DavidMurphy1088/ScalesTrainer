@@ -374,7 +374,12 @@ public class ScalesModel : ObservableObject {
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             leadProcess.start()
-            self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+            if false {
+                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+            }
+            else {
+                leadProcess.playDemo()
+            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {

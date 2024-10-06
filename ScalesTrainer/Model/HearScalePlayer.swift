@@ -77,8 +77,17 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                 let velocity:UInt8 = 64
                 sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.40) {
-                    sampler?.stop(noteNumber: UInt8(key.midi), channel: 0)
+                if false {
+                    ///stop note sounding to drop the sampler's reverb
+                    let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
+                    let secsBetweenTicks = secsPerCrotchet / Double(scale.timeSignature.top == 3 ? 3 : 2)
+                    var secsToWait = secsBetweenTicks * 2.5
+                    secsToWait *= note.value
+                    DispatchQueue.main.asyncAfter(deadline: .now() + secsToWait) {
+                        ///stop() should stop all notes but doies not appear to stop the sound
+                        //sampler?.stop()
+                        sampler?.stop(noteNumber: UInt8(key.midi), channel: 0)
+                    }
                 }
             }
         }

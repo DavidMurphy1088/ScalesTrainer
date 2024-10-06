@@ -148,7 +148,7 @@ struct SettingsView: View {
             ///Backing sampler
             Spacer()
             HStack {
-                Text(LocalizedStringResource("Backing Sound")).font(.title2).padding(0)
+                Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
                 Picker("Select Value", selection: $backingPresetNumber) {
                     ForEach(0..<9) { number in
                         Text("\(backingSoundName(number))")

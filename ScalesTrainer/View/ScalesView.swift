@@ -195,9 +195,9 @@ struct ScalesView: View {
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     //if !MetronomeModel.shared.makeSilent && 
-                    if Settings.shared.getLeadInBeats() > 0 {
-                        MetronomeView()
-                    }
+//                    if Settings.shared.getLeadInBeats() > 0 {
+//                        MetronomeView()
+//                    }
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
@@ -269,12 +269,12 @@ struct ScalesView: View {
             Spacer()
             if scalesModel.scale.scaleMotion != .contraryMotion {
                 HStack()  {
-                    Button(NSLocalizedString("Follow The Scale", comment: "ProcessMenu")) {
+                    Button(NSLocalizedString("Follow the Scale", comment: "ProcessMenu")) {
                         scalesModel.setRunningProcess(.followingScale)
                         scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                     }
                     Button(action: {
-                        showHelp("Follow The Scale")
+                        showHelp("Follow the Scale")
                     }) {
                         VStack {
                             Image(systemName: "questionmark.circle")
@@ -300,7 +300,7 @@ struct ScalesView: View {
                         }
                     }
                     Button(action: {
-                        showHelp("LeadTheScale")
+                        showHelp("Lead the Scale")
                     }) {
                         VStack {
                             Image(systemName: "questionmark.circle")
@@ -320,7 +320,7 @@ struct ScalesView: View {
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
                 Button(action: {
-                    showHelp("PlayAlong")
+                    showHelp("Play Along")
                 }) {
                     VStack {
                         Image(systemName: "questionmark.circle")
@@ -334,7 +334,7 @@ struct ScalesView: View {
             
             Spacer()
             HStack {
-                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record The Scale", comment: "Menu")) {
+                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record the Scale", comment: "Menu")) {
                     if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
                     }
@@ -343,7 +343,7 @@ struct ScalesView: View {
                     }
                 }
                 Button(action: {
-                    showHelp("Record The Scale")
+                    showHelp("Record the Scale")
                 }) {
                     VStack {
                         Image(systemName: "questionmark.circle")
@@ -449,34 +449,27 @@ struct ScalesView: View {
     }
     
     var body: some View {
-//        ZStack {
-//            VStack {
-//                Image(backgroundImage)
-//                    .resizable()
-//                    .scaledToFill()
-//                    .edgesIgnoringSafeArea(.top)
-//                    .opacity(UIGlobals.shared.screenImageBackgroundOpacity)
-//            }
-
         VStack {
-            //if scalesModel.showParameters {
-                VStack(spacing: 0) {
-                    ScaleTitleView(scale: scalesModel.scale)
-                        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                        .padding(.vertical)
-                        .padding(.horizontal, 0)
+            VStack(spacing: 0) {
+                ScaleTitleView(scale: scalesModel.scale)
+                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                    .padding(.vertical)
+                    .padding(.horizontal, 0)
 
-                    HStack {
-                        Spacer()
-                        if scalesModel.runningProcessPublished == .none {
-                            SelectScaleParametersView().padding(.vertical, 0)
-                        }
-                        ViewSettingsView().padding(.vertical, 0)
-                        Spacer()
+                HStack {
+                    Spacer()
+                    if scalesModel.runningProcessPublished == .none {
+                        SelectScaleParametersView()
+                            //.padding(.vertical, 0)
+                            .padding()
                     }
-                    .commonFrameStyle(backgroundColor: Color.white)
+                    ViewSettingsView()
+                        //.padding(.vertical, 0)
+                        .padding()
+                    Spacer()
                 }
-            //}
+                .commonFrameStyle(backgroundColor: Color.white)
+            }
             
             if scalesModel.showKeyboard {
                 VStack {

@@ -114,7 +114,15 @@
 
     },
     "Backing Track On" : {
-      "comment" : "Menu"
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伴奏已开启"
+          }
+        }
+      }
     },
     "Badge Styles" : {
 
@@ -196,8 +204,20 @@
     "First name" : {
 
     },
+    "Follow the Scale" : {
+      "comment" : "ProcessMenu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟随音阶"
+          }
+        }
+      }
+    },
     "Follow The Scale" : {
       "comment" : "ProcessMenu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -406,8 +426,20 @@
     "Please enter your first name" : {
 
     },
+    "Record the Scale" : {
+      "comment" : "Menu",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "录制音阶"
+          }
+        }
+      }
+    },
     "Record The Scale" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

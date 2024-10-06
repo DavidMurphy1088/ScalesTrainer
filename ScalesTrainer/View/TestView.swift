@@ -320,7 +320,7 @@ struct FaceView: View {
     }
 }
 
-struct TestView: View {
+struct TestViewFaces: View {
     var body: some View {
         HStack(spacing: 20) {
             FaceView(eyesY: -10, mouthOffsetY: 500, mouthPath: Path { path in
@@ -370,7 +370,7 @@ struct TestView: View {
 
 
 
-struct TestView1: View {
+struct TestView: View {
     @ObservedObject var audioRecorder = AudioRecorder()
 
     var body: some View {
@@ -405,4 +405,3 @@ struct TestView1: View {
         }
     }
 }
-

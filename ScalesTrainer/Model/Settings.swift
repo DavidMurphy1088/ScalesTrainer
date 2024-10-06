@@ -37,10 +37,8 @@ public class Settings : Codable  {
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
-    //private var keyboardColor:[Double] = [0.9960783123970032, 0.9882354140281677, 0.8666667342185974, 1.0]
-    private var keyboardColor:[Double] = [0.9960783123970032, 0.9882354140281677, 0.8666667342185974, 1.0]
-    //private var backgroundColor1:[Double] = [232.0 / 255.0, 216.0 / 255.0, 230.0 / 255.0, 1.0] //light purple
-    private var backgroundColor:[Double] = [0.803921639919281, 0.9098039269447327, 0.7098039984703064, 1.0]
+    private var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
+    private var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
     
     var backingSamplerPreset:Int = 2 //default is Moog, 0=Piano
     var metronomeSilent:Bool = false

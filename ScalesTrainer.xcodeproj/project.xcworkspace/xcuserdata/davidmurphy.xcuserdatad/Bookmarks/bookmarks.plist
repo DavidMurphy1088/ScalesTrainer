@@ -41,7 +41,7 @@
             Spacer()
 </string>
 				<key>trailing</key>
-				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record The Scale", comment: "Menu")) {
+				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record the Scale", comment: "Menu")) {
                     if scalesModel.runningProcessPublished == .recordingScale {
                         scalesModel.setRunningProcess(.none)
 </string>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>549</string>
+					<string>554</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>548</string>
+					<string>553</string>
 					<key>Timestamp</key>
-					<string>749456324.22313</string>
+					<string>749632489.5765131</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>620</string>
+					<string>625</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>619</string>
+					<string>624</string>
 					<key>Timestamp</key>
-					<string>749545912.6784641</string>
+					<string>749632489.576489</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -237,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>481</string>
+					<string>474</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>480</string>
+					<string>473</string>
 					<key>Timestamp</key>
-					<string>749436816.967899</string>
+					<string>749632908.813833</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -262,7 +262,7 @@
 				<string>            if scalesModel.showKeyboard {
 </string>
 				<key>leading</key>
-				<string>            //}
+				<string>            }
             
 </string>
 				<key>trailing</key>

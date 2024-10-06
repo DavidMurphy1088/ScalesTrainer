@@ -14,7 +14,7 @@ class HelpMessages {
         
         //messages["Identify The Scale"] = "Listen to a random scale and identify the type of the scale."
         
-        messages["Pick Any Scale"] = "Select any combination of scale root and type of scale to practice."
+        messages["Pick Any Scale"] = "Select any combination of scale root and type of scale to practise."
         
         messages["Your Coin Bank"] = "Shows all the gold coins in your scales bank. You can win coins as you record scales but if you make mistakes you loose coins."
         
@@ -30,33 +30,33 @@ class HelpMessages {
 
         messages["Calibration"] = m
         
-        m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are hilighted."
-        m += "\n\n➤ Each note of the scale will be highlighted in turn. When the scale note is highlighted play the note on your piano. Then the next note will be hilighted. The keyboard shows the correct finger to use for every note of the scale."
-        m += "\n\n➤ When you follow the all notes both ascending and descending you will have completed the whole scale."
+        m = "Follow the scale helps you to learn the scale by following along as the notes of the scale are highlighted."
+        m += "\n\n➤ Each note of the scale will be highlighted in turn. When the scale note is highlighted play the note on your piano. The keyboard shows the correct finger to use for every note of the scale."
+        //m += "\n\n➤ When you follow the all notes both ascending and descending you will have completed the whole scale."
         m += "\n\n➤ Once you've learnt the pattern of the scale you can try following the scale without the fingers displayed to check if you remember the correct fingering."
-        messages["Follow The Scale"] = m
+        messages["Follow the Scale"] = m
         
-        m = "Leading the scale lets you practice playing the scale by watching the notes you play appear on the keyboard and staff to check that they are correct."
+        m = "Leading the scale lets you practise playing the scale by watching the notes you play appear on the keyboard and staff to check that they are correct."
         m += "\n\n➤ The displayed keyboard shows the right finger to use for each note."
-        m += "\n\n➤ When you have learnt the scale trying leading without the finger numbers displayed to see how well you remember the scale."
-        messages["LeadTheScale"] = m
+        m += "\n\n➤ When you have learnt the scale try leading without the finger numbers displayed to see how well you remember the scale."
+        messages["Lead the Scale"] = m
         
-        m = "Play along on your piano as the scale is played. "
+        m = "Play along on your piano at the same time as the scale is played. "
         m += "\n\n➤ The scale will be played ascending and descending. "
-        m += "\n\n➤ Listen for any notes you play that are not in the scale. Make sure you use the correct fingers for each note."
+        m += "\n\n➤ Listen for any notes you play that are not in the scale. Make sure you use the correct fingering for each note."
         m += "\n\n➤ When you can play along without mistakes, try playing along with the finger numbers and keyboard turned off."
-        messages["PlayAlong"] = m
+        messages["Play Along"] = m
         
-        m = "Backing provides a backing harmony that you can use when practicing the scale."
-        m += "\n\n➤ The backing adjusts to the key of your scale so you can hear how the scale sounds alongside the harmony. "
+        m = "Backing provides a backing harmony that you can use when practising the scale."
+        m += "\n\n➤ The backing adjusts to the key of your scale so you can hear how the scale sounds along with the harmony. "
         m += "\n\n➤ When you play the scale with backing on, correctly played notes will sound good with the backing harmony. Notice that notes not in the scale sound unpleasant against the backing harmony."
         messages["Backing"] = m
         
         m = "Record your playing to see how well you know the scale."
         //No keyboard or fingering is shown. This means recording is similiar to how you would play the scale in an exam."
-        m += "\n\n➤ You will hear the metronome lead in and when its finished start to play the scale."
+        //m += "\n\n➤ You will hear the metronome lead in and when its finished start to play the scale."
         m += "\n\n➤ Make sure to play your scale accurately and evenly. When your recording is complete, you can listen to your recording."
-        messages["Record The Scale"] = m
+        messages["Record the Scale"] = m
 
         m = "Listen to the last scale recording you made."
         messages["Hear Recording"] = m
