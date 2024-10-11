@@ -261,7 +261,6 @@ public class ScalesModel : ObservableObject {
         }
         else {
             if let backer = self.backer {
-                //metronome.removeProcessesToNotify(process: backer)
                 metronome.removeAllProcesses()
             }
         }

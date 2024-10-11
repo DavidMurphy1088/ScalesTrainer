@@ -664,6 +664,32 @@ public class Scale : Codable {
         return self.hands.count > 1 //&& self.scaleMotion != .contraryMotion1
     }
     
+    func getBackingChords() -> BackingChords? {
+        if self.scaleNoteState.count == 0 {
+            return nil
+        }
+        var backingChords:BackingChords? = nil
+        if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
+            backingChords = BackingChords(scaleType: self.scaleType, octaves: self.octaves)
+        }
+        guard let backingChords = backingChords else {
+            return nil
+        }
+        
+        ///Transpose to scale's key
+        var transposedChords = BackingChords(scaleType: self.scaleType)
+        var rootPitch = self.scaleNoteState[0][0].midi
+        for backingChord in backingChords.chords {
+            var pitches = Array(backingChord.pitches)
+            for i in 0..<pitches.count {
+                pitches[i] += rootPitch
+            }
+            let transposedChord = BackingChords.BackingChord(pitches: pitches, value: backingChord.value)
+            transposedChords.chords.append(transposedChord)
+        }
+        return transposedChords
+    }
+    
     func debug2(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {

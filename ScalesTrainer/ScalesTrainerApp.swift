@@ -235,6 +235,7 @@ struct ScalesTrainerApp: App {
                 //SpinWheelView(practiceJournal: PracticeJournal.shared!)
                 ScalesView()
                 //TestView()
+                //FFTContentView()
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }

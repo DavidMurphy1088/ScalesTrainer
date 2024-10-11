@@ -123,7 +123,6 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 }
             }
 
-
             ///A MIDI heard may be in both the LH and RH keyboards.
             ///Determine which keyboard the MIDI was played on
             var possibleKeysPlayed:[PossibleKeyPlayed] = []

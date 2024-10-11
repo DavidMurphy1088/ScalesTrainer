@@ -9,7 +9,8 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var callNum = 0
     var metronomeAudioPlayerLow:AVAudioPlayer?
-    var metronomeAudioPlayerHigh:AVAudioPlayer?
+    ///Oct2024 Changed to one tone for metronome
+    //var metronomeAudioPlayerHigh:AVAudioPlayer?
     var tickNum = 0
     
     init() {
@@ -18,8 +19,8 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
         metronomeAudioPlayerLow = audioManager.loadAudioPlayer(name: "metronome_mechanical_low")
         metronomeAudioPlayerLow?.volume = 0.1
-        metronomeAudioPlayerHigh = audioManager.loadAudioPlayer(name: "metronome_mechanical_high")
-        metronomeAudioPlayerHigh?.volume = 0.2
+        //metronomeAudioPlayerHigh = audioManager.loadAudioPlayer(name: "metronome_mechanical_high")
+        //metronomeAudioPlayerHigh?.volume = 0.2
         tickNum = 0
     }
     
@@ -32,6 +33,7 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
 //            else {
 //                metronomeAudioPlayerLow!.play()
 //            }
+            
             metronomeAudioPlayerLow!.play()
         }
         self.tickNum += 1

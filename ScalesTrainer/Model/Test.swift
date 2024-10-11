@@ -24,6 +24,7 @@ class FFTAnalyzer: ObservableObject {
     @Published var amplitude: Float = 0.0
     var cnt = 0
     var startTime = Date()
+    var maxAmp:Double = 0
     
     let sampleRate: Float = 44100.0 // Standard sample rate, adjust if different
     
@@ -80,29 +81,55 @@ class FFTAnalyzer: ObservableObject {
         
     func setupTap() {
         let bufferSize:UInt32 = 4096 * 1//* 4 * 4
+        let minAmp:Double = 0.007
         
-        self.ampTap = AmplitudeTap(mixerC, bufferSize: bufferSize) {amp in
-            if amp > 0.005 {
-                //let timeStamp = self.getTime()
-                self.showFFT = 12
+        if false {
+            self.ampTap = AmplitudeTap(mixerC, bufferSize: bufferSize) { [self]amp in
+                if Double(amp) > self.maxAmp {
+                    self.maxAmp = Double(amp)
+                }
+                
+                if Double(amp) > minAmp {
+                    print(String(format: "%.4f", amp), String(format: "%.4f", maxAmp))
+                    print("==========AmpTap", amp)
+                    //let timeStamp = self.getTime()
+                    self.showFFT = 12
+                }
             }
         }
         
-        self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
-            ///PitchTap: BaseTap {
-            if a[0] > 0.03 {
+        if false {
+            self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
+                if Double(a[0]) > minAmp {
+                    print("==========PitchTap", a[0])
+                }
             }
         }
         
-        fftTap = FFTTap(mixerA, bufferSize: bufferSize) { fftData in
-            ///FFTTap uses Hann smoothing internally
-            ///FFTTap: BaseTap
-            self.cnt += 1
-            let topFreqs = self.calculateTopFrequencies(fftData: fftData)
-            let midis = self.frequencyToMIDI(frequencyHz: topFreqs)
-            if self.showFFT > 0 {
-                if midis[0] >= 60 {
+        if true {
+            if let input = engine.input {
+                pitchTap = PitchTap(input) { pitch, amplitude in
+                    if Double(amplitude[0]) > 0.05 { // Filter out low-amplitude noise
+                        let midiNote = self.frequencyToMIDI_GPT(pitch[0])
+                        print("MIDI Note: \(String(format: "%.4f", amplitude[0])) GPT:\(midiNote), OLD:\(self.frequencyToMIDI(frequencyHz: pitch))")
+                    }
+                }
+                pitchTap.start()
+            }
+        }
+        
+        if false {
+            fftTap = FFTTap(mixerA, bufferSize: bufferSize) { fftData in
+                ///FFTTap uses Hann smoothing internally
+                ///FFTTap: BaseTap
+                self.cnt += 1
+                if self.showFFT > 0 {
+                    let topFreqs = self.calculateTopFrequencies(fftData: fftData)
+                    let midis = self.frequencyToMIDI(frequencyHz: topFreqs)
+                    
+                    //if midis[0] >= 60 {
                     if Set(midis).count <= 2 {
+                        print("======= FFTTap MIDIS", self.cnt,  midis)
                         //let timeStamp = self.getTime()
                         //let topFreqInt = topFreqs.map { Int($0) }
                         //let mf = self.mostFreqInArray(inArr: midis)
@@ -113,10 +140,15 @@ class FFTAnalyzer: ObservableObject {
                             //self.amplitude = self.calculateAmplitude(fftData: fftData)
                         }
                     }
+                    //}
                 }
             }
         }
 
+    }
+    
+    func frequencyToMIDI_GPT(_ frequency: Float) -> Int {
+        return Int(69 + 12 * log2(frequency / 440.0))
     }
     
     func calculateTopFrequencies(fftData: [Float]) -> [Float] {
@@ -181,15 +213,15 @@ class FFTAnalyzer: ObservableObject {
             print("Starting audio engine")
             try engine.start()
             print("Starting FFT tap")
-            if let tap = fftTap {
-                tap.start()
-            }
-            if let tap = pitchTap {
-                tap.start()
-            }
-            if let tap = ampTap {
-                tap.start()
-            }
+//            if let tap = fftTap {
+//                tap.start()
+//            }
+//            if let tap = pitchTap {
+//                tap.start()
+//            }
+//            if let tap = ampTap {
+//                tap.start()
+//            }
         } catch {
             print("Error starting audio engine: \(error.localizedDescription)")
         }
@@ -237,13 +269,13 @@ struct FFTContentView: View {
                     .font(.headline)
                     .padding()
                 
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        ForEach(0..<min(50, magnitudes.count), id: \.self) { index in
-                            Text("Magnitude[\(index)]: \(magnitudes[index], specifier: "%.2f")")
-                        }
-                    }
-                }
+//                ScrollView {
+//                    VStack(alignment: .leading) {
+//                        ForEach(0..<min(50, magnitudes.count), id: \.self) { index in
+//                            Text("Magnitude[\(index)]: \(magnitudes[index], specifier: "%.2f")")
+//                        }
+//                    }
+//                }
             }
         }
     }

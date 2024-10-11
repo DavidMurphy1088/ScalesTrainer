@@ -110,9 +110,6 @@
         }
       }
     },
-    "Backing Sound" : {
-
-    },
     "Backing Track On" : {
       "comment" : "Menu",
       "localizations" : {
@@ -123,6 +120,9 @@
           }
         }
       }
+    },
+    "Backing Track Sound" : {
+
     },
     "Badge Styles" : {
 
@@ -359,16 +359,6 @@
     },
     "Log" : {
 
-    },
-    "Magnitude[%lld]: %.2f" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Magnitude[%1$lld]: %2$.2f"
-          }
-        }
-      }
     },
     "Major Scales" : {
 

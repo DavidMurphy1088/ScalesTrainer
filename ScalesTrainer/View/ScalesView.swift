@@ -395,30 +395,32 @@ struct ScalesView: View {
 //                .frame(maxWidth: .infinity, alignment: .topLeading)
 //                .padding()
 //            }
-
-            Spacer()
-            HStack {
-                Button(hearingBacking ? "Backing Track Off" : NSLocalizedString("Backing Track On", comment: "Menu")) {
-                    hearingBacking.toggle()
-                    if hearingBacking {
-                        scalesModel.setBacking(true)
+            
+            if scalesModel.scale.getBackingChords() != nil {
+                Spacer()
+                HStack {
+                    Button(hearingBacking ? "Backing Track Off" : NSLocalizedString("Backing Track On", comment: "Menu")) {
+                        hearingBacking.toggle()
+                        if hearingBacking {
+                            scalesModel.setBacking(true)
+                        }
+                        else {
+                            scalesModel.setBacking(false)
+                        }
                     }
-                    else {
-                        scalesModel.setBacking(false)
+                    Button(action: {
+                        showHelp("Backing")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)//.bold()
+                                .foregroundColor(.green)
+                        }
                     }
                 }
-                Button(action: {
-                    showHelp("Backing")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)//.bold()
-                            .foregroundColor(.green)
-                    }
-                }
+                .padding()
             }
-            .padding()
             
             Spacer()
         }
