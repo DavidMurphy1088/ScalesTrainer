@@ -229,82 +229,67 @@ public struct TimeSliceView: View {
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
             //let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
             let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
+
+            if note.staffNum == staff.staffNum  {
+                if timeSlice.showIsPlaying {
+                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
+                }
+            }
             
-//            if placement.showOctaveOverlay {
-//                VStack {
-//                    Text("...")
-//                    Spacer()
-//                }
-//            }
-//            if statusTag != .noTag  {
-//                Text("X").bold().font(.system(size: lineSpacing * 2.0)).foregroundColor(.red)
-//                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-//                if note.staffNum == staff.staffNum  {
-//                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
-//                }
-//            }
-//            else {
-                if note.staffNum == staff.staffNum  {
-                    if timeSlice.showIsPlaying {
-                        NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
+            if let accidental = accidental {
+                let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
+                Text(getAccidental(accidental: accidental))
+                    .font(.system(size: lineSpacing * 3.0))
+                    .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
+                    .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
+                              y: noteEllipseMidpoint + yOffset)
+                    .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
+                
+            }
+            if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted )  {
+                Ellipse()
+                //Closed ellipse
+                    .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff, adjustFor: true))
+                    //.foregroundColor(.green)
+                    .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
+                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+                    //.position(x: noteFrameWidth/2 * (Int.random(in: 0...10) < 3 ? 1.5 : 1.0), y: noteEllipseMidpoint)
+            }
+            if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
+                Ellipse()
+                //Open ellipse
+                    .stroke(note.getColor(ctx: "NoteView3", staff: staff, adjustFor: false), lineWidth: 2)
+                    .foregroundColor(note.getColor(ctx: "NoteView4", staff: staff, adjustFor: false))
+                    .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
+                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+            }
+            
+            if note.isDotted() {
+                //the dot needs to be moved off the note center to move the dot off a staff line
+                let yOffset = offsetFromStaffMiddle % 2 == 0 ? lineSpacing / 3.0 : 0
+                Ellipse()
+                //Open ellipse
+                    .frame(width: noteWidth/3.0, height: noteWidth/3.0)
+                    //.position(x: noteFrameWidth/2 + noteWidth/0.90, y: noteEllipseMidpoint - yOffset)
+                    //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
+                    //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
+                    .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
+                    .foregroundColor(note.getColor(ctx: "NoteView5", staff: staff, adjustFor: false))
+            }
+            
+            ///Ledger lines
+            if !note.isOnlyRhythmNote {
+                ForEach(getLedgerLines(staff: staff, note: note, noteWidth: noteWidth, lineSpacing: lineSpacing)) { line in
+                    let y = geometry.size.height/2.0 + line.offsetVertical
+                    ///offset - make sure ledger lines dont join on small width stafff's. ex melody examples
+                    let xOffset = noteWidth * 0.2
+                    let x = noteFrameWidth/2 - noteWidth - (note.rotated ? noteWidth : 0)
+                    Path { path in
+                        path.move(to: CGPoint(x: x + xOffset, y: y))
+                        path.addLine(to: CGPoint(x: x + (2 * noteWidth) - xOffset, y: y))
                     }
+                    .stroke(note.getColor(ctx: "NoteView6", staff: staff, adjustFor: false), lineWidth: 1)
                 }
-                
-                if let accidental = accidental {
-                    let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
-                    Text(getAccidental(accidental: accidental))
-                        .font(.system(size: lineSpacing * 3.0))
-                        .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
-                        .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
-                                  y: noteEllipseMidpoint + yOffset)
-                        .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
-                    
-                }
-                if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted )  {
-                    Ellipse()
-                    //Closed ellipse
-                        .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff, adjustFor: true))
-                        //.foregroundColor(.green)
-                        .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
-                        .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-                        //.position(x: noteFrameWidth/2 * (Int.random(in: 0...10) < 3 ? 1.5 : 1.0), y: noteEllipseMidpoint)
-                }
-                if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
-                    Ellipse()
-                    //Open ellipse
-                        .stroke(note.getColor(ctx: "NoteView3", staff: staff, adjustFor: false), lineWidth: 2)
-                        .foregroundColor(note.getColor(ctx: "NoteView4", staff: staff, adjustFor: false))
-                        .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
-                        .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-                }
-                
-                if note.isDotted() {
-                    //the dot needs to be moved off the note center to move the dot off a staff line
-                    let yOffset = offsetFromStaffMiddle % 2 == 0 ? lineSpacing / 3.0 : 0
-                    Ellipse()
-                    //Open ellipse
-                        .frame(width: noteWidth/3.0, height: noteWidth/3.0)
-                        //.position(x: noteFrameWidth/2 + noteWidth/0.90, y: noteEllipseMidpoint - yOffset)
-                        //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
-                        //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
-                        .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
-                        .foregroundColor(note.getColor(ctx: "NoteView5", staff: staff, adjustFor: false))
-                }
-                
-                if !note.isOnlyRhythmNote {
-                    //if staff.type == .treble {
-                    ForEach(getLedgerLines(staff: staff, note: note, noteWidth: noteWidth, lineSpacing: lineSpacing)) { line in
-                        let y = geometry.size.height/2.0 + line.offsetVertical
-                        ///offset - make sure ledger lines dont join on small wodth stafff's. ex melody examples
-                        let xOffset = noteWidth * 0.2
-                        let x = noteFrameWidth/2 - noteWidth - (note.rotated ? noteWidth : 0)
-                        Path { path in
-                            path.move(to: CGPoint(x: x + xOffset, y: y))
-                            path.addLine(to: CGPoint(x: x + (2 * noteWidth) - xOffset, y: y))
-                        }
-                        .stroke(note.getColor(ctx: "NoteView6", staff: staff, adjustFor: false), lineWidth: 1)
-                    }
-                //}
             }
         }
     }

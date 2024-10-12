@@ -9,36 +9,20 @@ import AudioKitEX
 
 class Backer :MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
-    var callNum = 0
     var chordRoots:[Int] = []
     var lastChord:BackingChords.BackingChord? = nil
     var backingChords:BackingChords? = nil
     var scale:Scale? = nil
+    var remainingSoundValue:Double? = nil
+    var nextChordIndex = 0
     
     func metronomeStart() {
         self.scale = ScalesModel.shared.scale
         if let scale = self.scale {
             self.backingChords = scale.getBackingChords()
         }
-//        let scaleRoot = scale.scaleNoteState[0][0].midi % 12
-//        var root = scaleRoot + 60 - 12
-//        if root >= 55 {
-//            root -= 12
-//        }
-//        chordRoots = []
-//        if useMajor(scale) {
-//            chordRoots.append(root)
-//            chordRoots.append(root - 3) //ii minor
-//            chordRoots.append(root - 7) //IV
-//            chordRoots.append(root - 5) //V
-//        }
-//        else {
-//            chordRoots.append(root) // i
-//            chordRoots.append(root - 7) //iv
-//            chordRoots.append(root - 5) //V
-//            chordRoots.append(root) //i
-//        }
-        callNum = 0
+        remainingSoundValue = nil
+        nextChordIndex = 0
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
@@ -51,23 +35,35 @@ class Backer :MetronomeTimerNotificationProtocol {
         guard let scale = scale else {
             return false
         }
-        //        let bar = (callNum / beatsInCycle) % 4
-        //        midi = getMidi(bar: bar, beat: beat)
-
-        let beatsInCycle = ScalesModel.shared.scale.timeSignature.top
-        //let beat = callNum % beatsInCycle
-        let backingChord = backingChords.chords[callNum % backingChords.chords.count]
-        if let lastChord = lastChord {
-            for pitch in lastChord.pitches {
-                sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
+        let tickDuration = MetronomeModel.shared.getNoteValueDuration()
+        //print("==============", timerTickerNumber, nextChordIndex, self.remainingSoundValue)
+        if self.remainingSoundValue == nil || self.remainingSoundValue == 0 {
+            let backingChord = backingChords.chords[nextChordIndex]
+            if let lastChord = lastChord {
+                for pitch in lastChord.pitches {
+                    sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
+                }
+            }
+            sampler.volume = 0.9
+            for pitch in backingChord.pitches {
+                //print("    ===== ", pitch)
+                sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
+            }
+            self.remainingSoundValue = backingChord.value - tickDuration
+            lastChord = backingChord
+            if nextChordIndex >= backingChords.chords.count - 1 {
+                nextChordIndex = 0
+            }
+            else {
+                nextChordIndex += 1
             }
         }
-
-        for pitch in backingChord.pitches {
-            sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
+        else {
+            if self.remainingSoundValue != nil {
+                self.remainingSoundValue! -= tickDuration
+                self.remainingSoundValue = Double(String(format: "%.4f", self.remainingSoundValue!))!
+            }
         }
-        lastChord = backingChord
-        callNum += 1
         return false
     }
     

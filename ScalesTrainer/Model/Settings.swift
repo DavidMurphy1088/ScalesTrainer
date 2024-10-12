@@ -40,7 +40,7 @@ public class Settings : Codable  {
     private var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
     private var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
     
-    var backingSamplerPreset:Int = 2 //default is Moog, 0=Piano
+    var backingSamplerPreset:Int = 0 //2 //default is Moog, 0=Piano
     var metronomeSilent:Bool = false
     var requiredConsecutiveCount = 2
     var badgeStyle = 0

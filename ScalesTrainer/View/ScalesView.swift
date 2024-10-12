@@ -601,6 +601,7 @@ struct ScalesView: View {
             metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
+            scalesModel.setBacking(false)
             ///Clean up any recorded files
             if Settings.shared.isDeveloperMode()  {
                 let fileManager = FileManager.default

@@ -484,7 +484,7 @@ public class Scale : Codable {
                 }
             }
         }
-        //debug22("------------- End Init")
+        debug2("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -670,7 +670,10 @@ public class Scale : Codable {
         }
         var backingChords:BackingChords? = nil
         if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
-            backingChords = BackingChords(scaleType: self.scaleType, octaves: self.octaves)
+            backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
+        }
+        if [.brokenChordMajor].contains(scaleType) {
+            backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
         }
         guard let backingChords = backingChords else {
             return nil
@@ -678,13 +681,19 @@ public class Scale : Codable {
         
         ///Transpose to scale's key
         var transposedChords = BackingChords(scaleType: self.scaleType)
-        var rootPitch = self.scaleNoteState[0][0].midi
+        var rootPitch:Int
+        if self.hands.count > 1 {
+            rootPitch = self.scaleNoteState[1][0].midi
+        }
+        else {
+            rootPitch = self.scaleNoteState[hands[0]][0].midi
+        }
         for backingChord in backingChords.chords {
             var pitches = Array(backingChord.pitches)
             for i in 0..<pitches.count {
                 pitches[i] += rootPitch
             }
-            let transposedChord = BackingChords.BackingChord(pitches: pitches, value: backingChord.value)
+            let transposedChord = BackingChords.BackingChord(pitches: pitches, value: backingChord.value, offset: 0)
             transposedChords.chords.append(transposedChord)
         }
         return transposedChords

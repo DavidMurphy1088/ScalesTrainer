@@ -21,15 +21,16 @@ public struct StemView: View {
     }
 
     func midPointXOffset(notes:[StaffNote], staff:Staff, stemDirection:Double) -> Double {
+        let delta = stemDirection * -1.0 ///Slightly tighter fit to note head
         for n in notes {
             if n.rotated {
                 if n.midiNumber < staff.middleNoteValue {
                     ///Normally the up stem goes to the right of the note. But if there is a left rotated note we want the stem to go thru the middle of the two notes
-                    return -1.0 * getNoteWidth()
+                    return -1.0 * getNoteWidth() - delta
                 }
             }
         }
-        return (stemDirection * -1.0 * getNoteWidth())
+        return (stemDirection * -1.0 * getNoteWidth() - delta)
     }
 
     func getStaffNotes(staff:Staff) -> [StaffNote] {

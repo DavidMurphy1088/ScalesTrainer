@@ -252,7 +252,6 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var backingOn:Bool = false
     func setBacking(_ way:Bool) {
         let metronome = MetronomeModel.shared
-        self.backer?.callNum = 0
         if way {
             if self.backer == nil {
                 self.backer = Backer()
