@@ -122,7 +122,7 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .padding(.horizontal, 0)
             .onChange(of: tempoIndex, {
-                scalesModel.setTempo(self.tempoIndex)
+                scalesModel.setTempo(self.tempoIndex) .. wont be done for iPhone
             })
             
             //Spacer()
@@ -273,14 +273,16 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.followingScale)
                         scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                     }
-                    Button(action: {
-                        showHelp("Follow the Scale")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)//.bold()
-                                .foregroundColor(.green)
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Button(action: {
+                            showHelp("Follow the Scale")
+                        }) {
+                            VStack {
+                                Image(systemName: "questionmark.circle")
+                                    .imageScale(.large)
+                                    .font(.title2)//.bold()
+                                    .foregroundColor(.green)
+                            }
                         }
                     }
                 }
@@ -299,14 +301,16 @@ struct ScalesView: View {
                             scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                         }
                     }
-                    Button(action: {
-                        showHelp("Lead the Scale")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)//.bold()
-                                .foregroundColor(.green)
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Button(action: {
+                            showHelp("Lead the Scale")
+                        }) {
+                            VStack {
+                                Image(systemName: "questionmark.circle")
+                                    .imageScale(.large)
+                                    .font(.title2)//.bold()
+                                    .foregroundColor(.green)
+                            }
                         }
                     }
                 }
@@ -319,14 +323,16 @@ struct ScalesView: View {
                     scalesModel.setRunningProcess(.playingAlongWithScale)
                     scalesModel.setProcessInstructions("Play along with the scale as its played")
                 }
-                Button(action: {
-                    showHelp("Play Along")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)//.bold()
-                            .foregroundColor(.green)
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    Button(action: {
+                        showHelp("Play Along")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)//.bold()
+                                .foregroundColor(.green)
+                        }
                     }
                 }
             }
@@ -342,14 +348,16 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.recordingScale)
                     }
                 }
-                Button(action: {
-                    showHelp("Record the Scale")
-                }) {
-                    VStack {
-                        Image(systemName: "questionmark.circle")
-                            .imageScale(.large)
-                            .font(.title2)
-                            .foregroundColor(.green)
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    Button(action: {
+                        showHelp("Record the Scale")
+                    }) {
+                        VStack {
+                            Image(systemName: "questionmark.circle")
+                                .imageScale(.large)
+                                .font(.title2)
+                                .foregroundColor(.green)
+                        }
                     }
                 }
             }
@@ -360,14 +368,16 @@ struct ScalesView: View {
                     Button("Hear\nRecording") {
                         AudioManager.shared.playRecordedFile()
                     }
-                    Button(action: {
-                        showHelp("Hear Recording")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)
-                                .foregroundColor(.green)
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Button(action: {
+                            showHelp("Hear Recording")
+                        }) {
+                            VStack {
+                                Image(systemName: "questionmark.circle")
+                                    .imageScale(.large)
+                                    .font(.title2)
+                                    .foregroundColor(.green)
+                            }
                         }
                     }
                 }
@@ -408,14 +418,16 @@ struct ScalesView: View {
                             scalesModel.setBacking(false)
                         }
                     }
-                    Button(action: {
-                        showHelp("Backing")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)//.bold()
-                                .foregroundColor(.green)
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Button(action: {
+                            showHelp("Backing")
+                        }) {
+                            VStack {
+                                Image(systemName: "questionmark.circle")
+                                    .imageScale(.large)
+                                    .font(.title2)//.bold()
+                                    .foregroundColor(.green)
+                            }
                         }
                     }
                 }
@@ -457,20 +469,21 @@ struct ScalesView: View {
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     .padding(.vertical)
                     .padding(.horizontal, 0)
-
-                HStack {
-                    Spacer()
-                    if scalesModel.runningProcessPublished == .none {
-                        SelectScaleParametersView()
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    HStack {
+                        Spacer()
+                        if scalesModel.runningProcessPublished == .none {
+                            SelectScaleParametersView()
                             //.padding(.vertical, 0)
-                            .padding()
-                    }
-                    ViewSettingsView()
+                                .padding()
+                        }
+                        ViewSettingsView()
                         //.padding(.vertical, 0)
-                        .padding()
-                    Spacer()
+                            .padding()
+                        Spacer()
+                    }
+                    .commonFrameStyle(backgroundColor: Color.white)
                 }
-                .commonFrameStyle(backgroundColor: Color.white)
             }
             
             if scalesModel.showKeyboard {
@@ -499,18 +512,12 @@ struct ScalesView: View {
                     }
                 }
                 .commonFrameStyle()
-                //                    if scalesModel.scale.needsTwoKeyboards() {
-                //                        VStack {
-                //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: pianoKeyboard2, keyColor: Settings.shared.getKeyColor())
-                //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                //                                .commonFrameStyle()
-                //                        }
-                //                    }
-                
-                if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
-                    if scalesModel.showLegend {
-                        LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                            .commonFrameStyle(backgroundColor: Color.white)
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+                        if scalesModel.showLegend {
+                            LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                                .commonFrameStyle(backgroundColor: Color.white)
+                        }
                     }
                 }
             }

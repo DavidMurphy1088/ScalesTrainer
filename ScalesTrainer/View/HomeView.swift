@@ -155,17 +155,19 @@ struct ActivityModeView: View {
         .onAppear() {
             if menuOptionsLeft.count == 0 {
                 var practiceChart:PracticeChart
-                if Settings.shared.isDeveloperMode() {
-                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
-                }
-                else {
+//                if Settings.shared.isDeveloperMode() {
+//                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
+//                    PracticeChart.shared.adjustForStartDay()
+//                }
+//                else {
                     if let savedChart = PracticeChart.loadPracticeChartFromFile()  {
                         PracticeChart.shared = savedChart
+                        PracticeChart.shared.adjustForStartDay()
                     }
                     else {
                         PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
                     }
-                }
+//                }
                 practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
                                                     view: AnyView(PracticeChartView(practiceChart: practiceChart)),

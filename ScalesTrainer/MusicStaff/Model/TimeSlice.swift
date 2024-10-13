@@ -64,14 +64,12 @@ public class TimeSlice : ScoreEntry {
 
     public func addNote(n:StaffNote) {
         n.timeSlice = self
-        //DispatchQueue.main.async {
-            self.entries.append(n)
-            for i in 0..<self.score.staffs.count {
-                n.setNotePlacementAndAccidental(score:self.score, staff: self.score.staffs[i])
-            }
-            self.score.updateStaffs()
-            self.score.addStemAndBeamCharaceteristics()
-        //}
+        self.entries.append(n)
+        for i in 0..<self.score.staffs.count {
+            n.setNotePlacementAndAccidental(score:self.score, staff: self.score.staffs[i])
+        }
+        self.score.updateStaffs()
+        self.score.addStemAndBeamCharaceteristics()
     }
     
     public func addRest(rest:Rest) {

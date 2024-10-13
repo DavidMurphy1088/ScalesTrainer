@@ -119,9 +119,9 @@ class MetronomeModel:ObservableObject {
         timerTickerCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
         let notesPerClick = self.getNotesPerClick()
-        let delay = (60.0 / Double(scalesModel.getTempo())) / Double(notesPerClick)
-        //delay = delay * 3
-        Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo())")
+        let tempo = Double(scalesModel.getTempo())
+        let delay = (60.0 / tempo) / Double(notesPerClick)
+        Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
         var ctr = 0
         let leadInTicks = Settings.shared.getLeadInBeats() * notesPerClick
         var leadingIn = false

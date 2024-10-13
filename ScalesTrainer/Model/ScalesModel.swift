@@ -372,7 +372,7 @@ public class ScalesModel : ObservableObject {
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             leadProcess.start()
-            if false {
+            if true {
                 self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
             }
             else {
@@ -546,6 +546,7 @@ public class ScalesModel : ObservableObject {
         var selected = self.tempoSettings[self.selectedTempoIndex]
         //selected = String(selected.dropFirst(2))
         selected = String(selected)
+        print("=========+GETTEMO", Int(selected), "sel_index", self.selectedTempoIndex, self.tempoSettings)
         return Int(selected) ?? 60
     }
     
@@ -576,10 +577,13 @@ public class ScalesModel : ObservableObject {
         
         for i in 0..<scale.scaleNoteState[hand].count {
             if totalBarValue >= maxBarValue {
-                ///Bar line is required to calculate presence or not of accidentals. Specificaly in chromatic. It can also provide visible note spacing when required.
-                ///In this app (so far Grade1) the bar line is never visible but it might be added to add space around note(s)
-                score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)  
-                totalBarValue = 0.0
+                ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
+                ///The bar line not currenlty visible but it might be added to add space around notes
+                ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
+                if false {
+                    score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
+                    totalBarValue = 0.0
+                }
             }
             let noteState = scale.scaleNoteState[hand][i]
             let ts = score.createTimeSlice()

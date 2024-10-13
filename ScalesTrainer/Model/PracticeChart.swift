@@ -54,6 +54,8 @@ class PracticeChart: Codable {
     var columns: Int
     var cells: [[PracticeChartCell]]
     var minorScaleType: Int
+    var firstColumnDayOfWeekNumber:Int
+    var todaysColumn:Int
     
     init(musicBoard:MusicBoard, musicBoardGrade:MusicBoardGrade, minorScaleType:Int) {
         self.musicBoard = musicBoard
@@ -76,6 +78,39 @@ class PracticeChart: Codable {
                 }
             }
             cells.append(rowCells)
+        }
+        
+        let currentDate = Date()
+        let calendar = Calendar.current
+        self.firstColumnDayOfWeekNumber = calendar.component(.weekday, from: currentDate) - 1
+        self.todaysColumn = 0
+    }
+    
+    func adjustForStartDay() {
+        let currentDate = Date()
+        let calendar = Calendar.current
+        var todaysDayNumber = calendar.component(.weekday, from: currentDate) - 1
+        todaysDayNumber = 0
+        
+        while true {
+            let dayDiff = todaysDayNumber - self.firstColumnDayOfWeekNumber
+            if [0,1,2].contains(dayDiff) {
+                ///Hilight the column for today
+                self.todaysColumn = dayDiff
+                break
+            }
+            if [-6,-5].contains(dayDiff) {
+                ///Hilight the column for today
+                self.todaysColumn = 7 + dayDiff
+                break
+            }
+
+            ///Reset the chart's first column day
+            self.firstColumnDayOfWeekNumber += 3
+            if self.firstColumnDayOfWeekNumber > 6 {
+                self.firstColumnDayOfWeekNumber -= 7
+            }
+            self.savePracticeChartToFile(chart: self)
         }
     }
     
@@ -129,7 +164,6 @@ class PracticeChart: Codable {
 
         do {
             let data = try encoder.encode(chart)  // Encode the PracticeChart object
-            
             let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             try data.write(to: url)  // Write the data to the file
@@ -144,6 +178,7 @@ extension PracticeChart {
         let decoder = JSONDecoder()
         let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let url = dir.appendingPathComponent(PracticeChart.fileName)
+        //let url = dir.appendingPathComponent("Test")
 
         do {
             let data = try Data(contentsOf: url)  // Read the data from the file

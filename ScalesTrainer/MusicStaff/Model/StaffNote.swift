@@ -252,14 +252,16 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-        let barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
+        var barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }
-
+        if self.midiNumber == 72 {
+            print("============ natural")
+        }
         if let writtenAccidental = self.writtenAccidental {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental

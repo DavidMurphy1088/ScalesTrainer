@@ -484,7 +484,7 @@ public class Scale : Codable {
                 }
             }
         }
-        debug2("------------- End Init")
+        //debug2("------------- End Init")
         Scale.createCount += 1
     }
     
@@ -699,7 +699,7 @@ public class Scale : Codable {
         return transposedChords
     }
     
-    func debug2(_ msg:String)  {
+    func debug22(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

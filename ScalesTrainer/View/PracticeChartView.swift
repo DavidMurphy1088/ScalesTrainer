@@ -127,8 +127,9 @@ struct PracticeChartView: View {
             return []
         }
         let calendar = Calendar.current
-        let todayIndex = calendar.component(.weekday, from: Date()) - 1 // Calendar component .weekday returns 1 for Sunday, 2 for Monday, etc.
-        let reorderedDayNames = Array(dayNames[todayIndex...] + dayNames[..<todayIndex])
+        //let todayIndex = calendar.component(.weekday, from: Date()) - 1 // Calendar component .weekday returns 1 for Sunday, 2 for Monday, etc.
+        //let reorderedDayNames = Array(dayNames[todayIndex...] + dayNames[..<todayIndex])
+        let reorderedDayNames = Array(dayNames[practiceChart.firstColumnDayOfWeekNumber...] + dayNames[..<practiceChart.firstColumnDayOfWeekNumber])
         return reorderedDayNames
     }
     
@@ -149,102 +150,100 @@ struct PracticeChartView: View {
         let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
         let minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
         
-            VStack {
-                VStack(spacing: 0) {
-                    TitleView(screenName: "Practice Chart").commonFrameStyle()
-                    HStack {
-                        Spacer()
-                        Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
-                        Button(action: {
-                            helpShowing = true
-                       }) {
-                            Text("Instructions")
-                        }
-                        .padding()
-
-                        Spacer()
-                        Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
-                        Text("\(self.redrawCounter)").opacity(0.0).padding(0)
-                        Picker("Select Value", selection: $minorTypeIndex) {
-                            ForEach(minorScaleTypes.indices, id: \.self) { index in
-                                Text("\(minorScaleTypes[index])")
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: minorTypeIndex, {
-                            let newType:ScaleType
-                            switch minorTypeIndex {
-                            case 0:newType = .harmonicMinor
-                            case 1:newType = .naturalMinor
-                            default:newType = .melodicMinor
-                            }
-                            practiceChart.minorScaleType = minorTypeIndex
-                            practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
-                            self.reloadTrigger = !self.reloadTrigger
-                        })
-                        
-                        Spacer()
-                        Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
-                        Button(action: {
-                            cellOpacityValue = 0.1
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                sleep(1)
-                                doShuffle(update: true)
-                                withAnimation(.linear(duration: 1.0)) {
-                                    cellOpacityValue = 1.0
-                                }
-                            }
-                       }) {
-                            Text("Shuffle Practice Chart")
-                        }
-                        .padding()
-                        
-                        Spacer()
+        VStack {
+            VStack(spacing: 0) {
+                TitleView(screenName: "Practice Chart").commonFrameStyle()
+                HStack {
+                    Spacer()
+                    Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
+                    Button(action: {
+                        helpShowing = true
+                   }) {
+                        Text("Instructions")
                     }
-                }
-                .commonFrameStyle()
+                    .padding()
 
-                ScrollView(.vertical) {
-                    VStack(spacing: 0) {
-                        
-                        // Column Headers
+                    Spacer()
+                    Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
+                    Text("\(self.redrawCounter)").opacity(0.0).padding(0)
+                    Picker("Select Value", selection: $minorTypeIndex) {
+                        ForEach(minorScaleTypes.indices, id: \.self) { index in
+                            Text("\(minorScaleTypes[index])")
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: minorTypeIndex, {
+                        let newType:ScaleType
+                        switch minorTypeIndex {
+                        case 0:newType = .harmonicMinor
+                        case 1:newType = .naturalMinor
+                        default:newType = .melodicMinor
+                        }
+                        practiceChart.minorScaleType = minorTypeIndex
+                        practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
+                        self.reloadTrigger = !self.reloadTrigger
+                    })
+                    
+                    Spacer()
+                    Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
+                    Button(action: {
+                        cellOpacityValue = 0.1
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            sleep(1)
+                            doShuffle(update: true)
+                            withAnimation(.linear(duration: 1.0)) {
+                                cellOpacityValue = 1.0
+                            }
+                        }
+                   }) {
+                        Text("Shuffle Practice Chart")
+                    }
+                    .padding()
+                    
+                    Spacer()
+                }
+            }
+            .commonFrameStyle()
+
+            ScrollView(.vertical) {
+                VStack(spacing: 0) {
+                    
+                    // Column Headers
+                    HStack(spacing: 0) {
+                        ForEach(0..<practiceChart.columns, id: \.self) { index in
+                            VStack {
+                                Text(self.daysOfWeek[index])
+                            }
+                            .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
+                            .background(index == practiceChart.todaysColumn ? Color.blue : Color.gray)
+                            .foregroundColor(.white).bold()
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.white, lineWidth: 3)
+                            )
+                            .padding(cellPadding)
+                        }
+                    }
+                    
+                    ///Rows
+                    ForEach(0..<practiceChart.rows, id: \.self) { row in
                         HStack(spacing: 0) {
-                            ForEach(0..<practiceChart.columns, id: \.self) { index in
-                                VStack {
-                                    Text(self.daysOfWeek[index])
-                                }
-                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                .background(Color.gray)
-                                .foregroundColor(.white).bold()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 3)
-                                )
+                            ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
+                                         cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue)
                                 .padding(cellPadding)
                             }
                         }
-                        
-                        ///Rows
-                        ForEach(0..<practiceChart.rows, id: \.self) { row in
-                            HStack(spacing: 0) {
-                                ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
-                                             cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue)
-                                    .padding(cellPadding)
-                                }
-                            }
-                        }
                     }
-                    .id(reloadTrigger)
                 }
-                
+                .id(reloadTrigger)
             }
-            .commonFrameStyle()
+        }
+        .commonFrameStyle()
         
         .onAppear() {
             minorTypeIndex = practiceChart.minorScaleType
-            //practiceChart.getScales()
         }
         .onDisappear() {
             practiceChart.savePracticeChartToFile(chart: practiceChart)

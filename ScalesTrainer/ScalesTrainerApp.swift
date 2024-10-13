@@ -233,8 +233,8 @@ struct ScalesTrainerApp: App {
             if Settings.shared.isDeveloperMode() {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
-                //SpinWheelView(practiceJournal: PracticeJournal.shared!)
-                ScalesView()
+                HomeView()
+                //ScalesView()
                 //TestView()
                 //FFTContentView()
                     .tabItem {
