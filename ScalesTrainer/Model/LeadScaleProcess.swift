@@ -11,9 +11,9 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     var lastMidi:Int? = nil
     var notifyCount = 0
     var leadInShowing = false
-    let metronome:MetronomeModel
+    let metronome:Metronome
     
-    init(scalesModel:ScalesModel, metronome:MetronomeModel) {
+    init(scalesModel:ScalesModel, metronome:Metronome) {
         self.scalesModel = scalesModel
         nextExpectedScaleIndex = 0
         self.metronome = metronome
@@ -28,7 +28,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     func metronomeStop() {
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
 //        if Settings.shared.getLeadInBeats() > 0 {
 //            if timerTickerNumber < Settings.shared.getLeadInBeats() {
 //                MetronomeModel.shared.setLeadingIn(way: true)
@@ -42,7 +42,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 //            leadInShowing = false
 //        }
 
-        return false
     }
     
     func start() {
@@ -128,7 +127,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             sleep(1)
             self.badges.clearMatches()
             self.scalesModel.scale.resetMatchedData()
-            let metronome = MetronomeModel.shared
             var lastSegment:Int? = nil
             //metronome.DontUse_JustForDemo()
             let hand = 0
@@ -164,7 +162,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                     self.notify(midi: midi, status: .inScale)
                     
                     //var tempo:Double = [9, 19].contains(ctr) ? 70/3 : 70 //Broken Chords
-                    var tempo:Double =  70 //50 = Broken
+                    let tempo:Double =  70 //50 = Broken
                     //let notesPerBeatBeat = [9, 19].contains(ctr) ? 1.0 : 3.0 //Broken
                     let notesPerBeatBeat = [14].contains(ctr) ? 0.75 : 2.0
                     var sleep = (1000000 * 1.0 * (Double(60)/tempo)) / notesPerBeatBeat

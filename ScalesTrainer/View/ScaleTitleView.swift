@@ -41,16 +41,21 @@ struct ScaleTitleView: View {
     var body: some View {
         let compoundTime = scale.timeSignature.top % 3 == 0
         HStack(spacing: 0) {
-            Text("\(getTitle()), min. ").font(.title).padding(.horizontal, 0)
-            Image(compoundTime ? "crotchetDotted" : "crotchet")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                Text("\(getTitle())").font(.title2).padding(.horizontal, 0)
+            }
+            else {
+                Text("\(getTitle()), min. ").font(.title).padding(.horizontal, 0)
+                Image(compoundTime ? "crotchetDotted" : "crotchet")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
                 ///Center it
-                .padding(.bottom, 8)
-            Text("=\(scale.minTempo)").font(.title).padding(.horizontal, 0)
-            Text(", mf").italic().font(.title).padding(.horizontal, 0)
-            Text(", legato").font(.title).padding(.horizontal, 0)
+                    .padding(.bottom, 8)
+                Text("=\(scale.minTempo)").font(.title).padding(.horizontal, 0)
+                Text(", mf").italic().font(.title).padding(.horizontal, 0)
+                Text(", legato").font(.title).padding(.horizontal, 0)
+            }
         }
     }
 }

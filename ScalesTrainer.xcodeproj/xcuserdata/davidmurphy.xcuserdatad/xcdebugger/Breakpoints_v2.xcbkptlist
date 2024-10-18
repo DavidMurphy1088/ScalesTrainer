@@ -7,62 +7,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D41A81AA-04AB-4C54-BA04-6AFC1E7E70D0"
+            uuid = "CF758B7D-18E9-4272-8A61-49E068B433EF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/PracticeChart.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "adjustForStartDay()"
+            startingLineNumber = "191"
+            endingLineNumber = "191"
+            landmarkName = "savePracticeChartToFile(chart:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "D41A81AA-04AB-4C54-BA04-6AFC1E7E70D0 - 4e2e6fd381f598ff"
+                  uuid = "CF758B7D-18E9-4272-8A61-49E068B433EF - 414d779e030e80db"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
+                  symbolName = "ScalesStar.PracticeChart.savePracticeChartToFile(chart: ScalesStar.PracticeChart) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96"
-                  offsetFromSymbolStart = "624">
+                  startingLineNumber = "190"
+                  endingLineNumber = "190"
+                  offsetFromSymbolStart = "1112">
                </Location>
                <Location
-                  uuid = "D41A81AA-04AB-4C54-BA04-6AFC1E7E70D0 - 4e2e6fd381f5989e"
+                  uuid = "CF758B7D-18E9-4272-8A61-49E068B433EF - 414d779e030e8095"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
+                  symbolName = "ScalesStar.PracticeChart.savePracticeChartToFile(chart: ScalesStar.PracticeChart) -&gt; ()"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "95"
-                  endingLineNumber = "95"
-                  offsetFromSymbolStart = "356">
-               </Location>
-               <Location
-                  uuid = "D41A81AA-04AB-4C54-BA04-6AFC1E7E70D0 - 4e2e6fd381f5989e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "95"
-                  endingLineNumber = "95"
-                  offsetFromSymbolStart = "348">
+                  startingLineNumber = "188"
+                  endingLineNumber = "188"
+                  offsetFromSymbolStart = "732">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -70,62 +55,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9D1E2044-7CE9-4665-8339-171E0275AB4D"
+            uuid = "E6E80431-7802-423D-BA24-AAE025EFC883"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ScalesTrainer/Model/PracticeChart.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "96"
-            endingLineNumber = "96"
-            landmarkName = "adjustForStartDay()"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
+            landmarkName = "loadPracticeChartFromFile()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "9D1E2044-7CE9-4665-8339-171E0275AB4D - 4e2e6fd381f598ff"
+                  uuid = "E6E80431-7802-423D-BA24-AAE025EFC883 - f7890481690b75f7"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96"
-                  offsetFromSymbolStart = "376">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213"
+                  offsetFromSymbolStart = "872">
                </Location>
                <Location
-                  uuid = "9D1E2044-7CE9-4665-8339-171E0275AB4D - 4e2e6fd381f598ff"
+                  uuid = "E6E80431-7802-423D-BA24-AAE025EFC883 - f7890481690b756a"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96"
-                  offsetFromSymbolStart = "384">
-               </Location>
-               <Location
-                  uuid = "9D1E2044-7CE9-4665-8339-171E0275AB4D - 4e2e6fd381f598ff"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.PracticeChart.adjustForStartDay() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "96"
-                  endingLineNumber = "96"
-                  offsetFromSymbolStart = "380">
+                  startingLineNumber = "210"
+                  endingLineNumber = "210"
+                  offsetFromSymbolStart = "1188">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -133,157 +103,47 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0D90C1B1-D0A7-4181-BAF1-0BBF80B95792"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Metronome.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
-            landmarkName = "startTimerThread()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0D90C1B1-D0A7-4181-BAF1-0BBF80B95792 - 11dfeba503c8d33d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MetronomeModel.startTimerThread() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "1796">
-               </Location>
-               <Location
-                  uuid = "0D90C1B1-D0A7-4181-BAF1-0BBF80B95792 - 2c73436647c7cc51"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 @Sendable () -&gt; () in ScalesStar.MetronomeModel.startTimerThread() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "176">
-               </Location>
-               <Location
-                  uuid = "0D90C1B1-D0A7-4181-BAF1-0BBF80B95792 - 3330c659850cb092"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Foundation.Date) -&gt; () in closure #1 @Sendable () -&gt; () in ScalesStar.MetronomeModel.startTimerThread() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "160">
-               </Location>
-               <Location
-                  uuid = "0D90C1B1-D0A7-4181-BAF1-0BBF80B95792 - 11dfeba503c8d33d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ScalesStar.MetronomeModel.startTimerThread() -&gt; ()"
-                  moduleName = "ScalesStar"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/Metronome.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "124"
-                  endingLineNumber = "124"
-                  offsetFromSymbolStart = "848">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "00E423F9-2C9B-4E80-BC99-712F3C888C02"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/Metronome.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "startTimerThread()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "352C4D1F-2EE7-4264-9EBC-054ABE166592"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "550"
-            endingLineNumber = "550"
-            landmarkName = "getTempo()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0C33966D-70B2-4B6F-9065-17BE4FCC3E21"
+            uuid = "759CECB0-E282-4594-8183-903C038DC141"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/View/ScalesView.swift"
+            filePath = "ScalesTrainer/Model/PracticeChart.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "599"
-            endingLineNumber = "599"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "loadPracticeChartFromFile()"
+            landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "0C33966D-70B2-4B6F-9065-17BE4FCC3E21 - e7344dba48f87f0c"
+                  uuid = "759CECB0-E282-4594-8183-903C038DC141 - f7890481690b75f7"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #3 () -&gt; () in ScalesStar.ScalesView.body.getter : some"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/ScalesView.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "599"
-                  endingLineNumber = "599"
-                  offsetFromSymbolStart = "2684">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213"
+                  offsetFromSymbolStart = "872">
                </Location>
                <Location
-                  uuid = "0C33966D-70B2-4B6F-9065-17BE4FCC3E21 - 4f69166fc4838088"
+                  uuid = "759CECB0-E282-4594-8183-903C038DC141 - f7890481690b75f7"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.String) -&gt; Swift.Bool in closure #3 () -&gt; () in ScalesStar.ScalesView.body.getter : some"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
                   moduleName = "ScalesStar"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/View/ScalesView.swift"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "599"
-                  endingLineNumber = "599"
-                  offsetFromSymbolStart = "64">
+                  startingLineNumber = "213"
+                  endingLineNumber = "213"
+                  offsetFromSymbolStart = "2124">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -291,32 +151,112 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CE0C7425-3080-4AC3-9E47-F07902556E1B"
-            shouldBeEnabled = "No"
+            uuid = "BB1C145A-FE67-42DE-B57D-AF859A908DB1"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/View/ScalesView.swift"
+            filePath = "ScalesTrainer/Model/PracticeChart.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "602"
-            endingLineNumber = "602"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "189"
+            endingLineNumber = "189"
+            landmarkName = "savePracticeChartToFile(chart:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BB1C145A-FE67-42DE-B57D-AF859A908DB1 - 414d779e030e80fa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.PracticeChart.savePracticeChartToFile(chart: ScalesStar.PracticeChart) -&gt; ()"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189"
+                  offsetFromSymbolStart = "728">
+               </Location>
+               <Location
+                  uuid = "BB1C145A-FE67-42DE-B57D-AF859A908DB1 - 414d779e030e80fa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.PracticeChart.savePracticeChartToFile(chart: ScalesStar.PracticeChart) -&gt; ()"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189"
+                  offsetFromSymbolStart = "996">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6499AC63-0DB2-4EE2-B146-1F9C618FE070"
-            shouldBeEnabled = "Yes"
+            uuid = "946935FA-3DB9-4C40-B39A-9CED2FC7A5C0"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            filePath = "ScalesTrainer/Model/PracticeChart.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "684"
-            endingLineNumber = "684"
-            landmarkName = "setTempo(_:)"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "loadPracticeChartFromFile()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "946935FA-3DB9-4C40-B39A-9CED2FC7A5C0 - f7890481690b74a0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "204"
+                  endingLineNumber = "204"
+                  offsetFromSymbolStart = "484">
+               </Location>
+               <Location
+                  uuid = "946935FA-3DB9-4C40-B39A-9CED2FC7A5C0 - f7890481690b7481"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static ScalesStar.PracticeChart.loadPracticeChartFromFile() -&gt; Swift.Optional&lt;ScalesStar.PracticeChart&gt;"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/PracticeChart.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "1344">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F79F06C1-9818-473B-8AC7-D69C78F1B834"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/PracticeChart.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "loadPracticeChartFromFile()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

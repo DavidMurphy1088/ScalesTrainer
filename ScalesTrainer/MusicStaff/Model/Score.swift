@@ -567,12 +567,7 @@ public class Score : ObservableObject {
                 continue
             }
             let note = timeSlice.getTimeSliceNotes()[0]
-//            if note.midiNumber == 50 {
-//                print("========", note.midiNumber, note.getValue())
-//                if note.getValue() == 1 {
-//                    
-//                }
-//            }
+
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)

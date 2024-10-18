@@ -31,9 +31,9 @@ public class Settings : Codable  {
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
     var defaultOctaves = 2
-    var scaleLeadInBearCountIndex:Int = 2
+    var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
-    //var scaleNoteValue = 4 // What note values the score is written with  1/4, 1/8 or 1/16
+    var practiceChartGamificationOn = true
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
@@ -41,7 +41,6 @@ public class Settings : Codable  {
     private var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
     
     var backingSamplerPreset:Int = 0 //2 //default is Moog, 0=Piano
-    var metronomeSilent:Bool = false
     var requiredConsecutiveCount = 2
     var badgeStyle = 0
     
@@ -62,7 +61,7 @@ public class Settings : Codable  {
     }
     
     public func getLeadInBeats() -> Int {
-        switch scaleLeadInBearCountIndex {
+        switch scaleLeadInBeatCountIndex {
         case 1:
             return 2
         case 2:
@@ -91,8 +90,8 @@ public class Settings : Codable  {
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
-        str += " MetronomeSilent:\(self.metronomeSilent)"
-        str += " LeadIn:\(self.scaleLeadInBearCountIndex)"
+       
+        str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
         str += " RecordDataMode:\(self.developerMode)"
         str += " FirstName:\(self.firstName)"
         str += " Board:\(self.musicBoard)"
@@ -137,8 +136,7 @@ public class Settings : Codable  {
                     self.firstName = loaded.firstName
                     self.musicBoard = loaded.musicBoard
                     self.musicBoardGrade = loaded.musicBoardGrade
-                    self.metronomeSilent = loaded.metronomeSilent
-                    self.scaleLeadInBearCountIndex = loaded.scaleLeadInBearCountIndex
+                    self.scaleLeadInBeatCountIndex = loaded.scaleLeadInBeatCountIndex
                     self.defaultOctaves = loaded.defaultOctaves
                     self.keyboardColor = loaded.keyboardColor
                     self.backingSamplerPreset = loaded.backingSamplerPreset

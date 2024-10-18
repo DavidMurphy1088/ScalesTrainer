@@ -6,7 +6,6 @@ import WebKit
 
 enum ActiveSheet: Identifiable {
     case emailRecording
-    //case leadingIn
     var id: Int {
         hashValue
     }
@@ -14,31 +13,43 @@ enum ActiveSheet: Identifiable {
 
 struct MetronomeView: View {
     let scalesModel = ScalesModel.shared
-    @ObservedObject var metronome = MetronomeModel.shared
+    @ObservedObject var metronome = Metronome.shared
     
     var body: some View {
         let beat = (metronome.timerTickerCountPublished % 4) + 1
-        HStack {
-            Image("metronome-left")
-                .resizable()
-                .scaledToFit()
-                .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
-                //.animation(.easeInOut(duration: 0.1), value: beat)
+        Button(action: {
+            //scalesModel.setMetronomeTicking(way: !scalesModel.isMetronomeTicking())
+            metronome.setTicking(way: !metronome.isMetronomeTicking())
+            if metronome.isMetronomeTicking() {
+                metronome.start()
+            }
+            else {
+                metronome.stop()
+            }
+        }) {
+            HStack {
+                Image("metronome-left")
+                    .resizable()
+                    .scaledToFit()
+                    .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
+                    //.animation(.easeInOut(duration: 0.1), value: beat)
+            }
+            .frame(width: UIScreen.main.bounds.size.width * 0.04)
         }
-        .frame(width: UIScreen.main.bounds.size.width * 0.04)
     }
 }
 
 struct ScalesView: View {
     let initialRunProcess:RunningProcess?
-        
+    let practiceChartCell:PracticeChartCell?
+
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var badgeBank = BadgeBank.shared
     
     @StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
 
-    @ObservedObject private var metronome = MetronomeModel.shared
+    @ObservedObject private var metronome = Metronome.shared
     private let audioManager = AudioManager.shared
 
     @State private var numberOfOctaves = Settings.shared.defaultOctaves
@@ -59,11 +70,13 @@ struct ScalesView: View {
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
     
-    init(initialRunProcess:RunningProcess? = nil) {
-        //self.pianoKeyboardRH = PianoKeyboardModel.shared1
-        //self.pianoKeyboard2 = PianoKeyboardModel.shared2
-        //self.pianoKeyboard3 = PianoKeyboardModel.shared3
+    @State private var badgeVisibleState = 0 //0 down, 1 centered, 2 go top, 3 go bottom
+    let badgeImage = Image("pet_dogface")
+    @State private var rotationAngle: Double = 0
+    
+    init(initialRunProcess:RunningProcess?, practiceChartCell:PracticeChartCell?) {
         self.initialRunProcess = initialRunProcess
+        self.practiceChartCell = practiceChartCell
     }
     
     func showHelp(_ topic:String) {
@@ -121,9 +134,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
             .padding(.horizontal, 0)
-            .onChange(of: tempoIndex, {
-                scalesModel.setTempo(self.tempoIndex) .. wont be done for iPhone
-            })
+
             
             //Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
@@ -182,7 +193,7 @@ struct ScalesView: View {
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     MetronomeView()
-                    let text = metronome.isLeadingIn ? "  Leading In  " : NSLocalizedString("Stop Playing Along", comment: "Menu")
+                    let text = metronome.isLeadingIn ? "  Leading In  \(metronome.timerTickerCountPublished)" : NSLocalizedString("Stop Playing Along", comment: "Menu")
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -194,13 +205,23 @@ struct ScalesView: View {
 
             if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //if !MetronomeModel.shared.makeSilent && 
-//                    if Settings.shared.getLeadInBeats() > 0 {
-//                        MetronomeView()
-//                    }
                     let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
+                        if BadgeBank.shared.totalCorrect > 0 {
+                            self.badgeVisibleState = 2
+                            practiceChartCell?.adjustBadges(delta: 1)
+                        }
+                        else {
+                            self.badgeVisibleState = 3
+                            withAnimation(.easeInOut(duration: 1)) {
+                                rotationAngle += 180 // Spin 360 degrees
+                            }
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            rotationAngle = 0
+                            self.badgeVisibleState = 0
+                        }
                     }) {
                         Text("\(text)")
                         .padding().font(.title2).hilighted(backgroundColor: .blue)
@@ -210,10 +231,10 @@ struct ScalesView: View {
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //if Settings.shared.metronomeOn {
-                        MetronomeView()
-                    //}
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
+                    MetronomeView()
+                    //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
+                    ///1.0.11 recording now has no lead in
+                    let text = "Stop Recording The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                     }) {
@@ -265,17 +286,86 @@ struct ScalesView: View {
     }
     
     func SelectActionView() -> some View {
-        HStack(alignment: .top) {
-            Spacer()
-            if scalesModel.scale.scaleMotion != .contraryMotion {
-                HStack()  {
-                    Button(NSLocalizedString("Follow the Scale", comment: "ProcessMenu")) {
-                        scalesModel.setRunningProcess(.followingScale)
-                        scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+        VStack {
+
+            HStack(alignment: .top) {
+                Spacer()
+                if scalesModel.scale.scaleMotion != .contraryMotion {
+                    HStack()  {
+                        let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
+                        Button(action: {
+                            scalesModel.setRunningProcess(.followingScale)
+                            scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                        }) {
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        }
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            Button(action: {
+                                showHelp("Follow")
+                            }) {
+                                VStack {
+                                    Image(systemName: "questionmark.circle")
+                                        .imageScale(.large)
+                                        .font(.title2)//.bold()
+                                        .foregroundColor(.green)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical)
+                    .padding(.horizontal, 0)
+                }
+                
+                if scalesModel.scale.scaleMotion != .contraryMotion {
+                    Spacer()
+                    HStack() {
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
+                        Button(action: {
+                            if scalesModel.runningProcessPublished == .leadingTheScale {
+                                scalesModel.setRunningProcess(.none)
+                            }
+                            else {
+                                scalesModel.setRunningProcess(.leadingTheScale)
+                                scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                                self.badgeVisibleState = 1
+                            }
+                        }) {
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        }
+                        
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            Button(action: {
+                                showHelp("Lead")
+                            }) {
+                                VStack {
+                                    Image(systemName: "questionmark.circle")
+                                        .imageScale(.large)
+                                        .font(.title2)//.bold()
+                                        .foregroundColor(.green)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical)
+                    .padding(.horizontal, 0)
+                }
+                
+                Spacer()
+                HStack {
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play Along" : "Play Along With"
+                    //                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : NSLocalizedString("Play Along", comment: "Menu")) {
+                    //                    scalesModel.setRunningProcess(.playingAlongWithScale)
+                    //                    scalesModel.setProcessInstructions("Play along with the scale as its played")
+                    //                }
+                    Button(action: {
+                        scalesModel.setRunningProcess(.playingAlongWithScale)
+                        scalesModel.setProcessInstructions("Play along with the scale as its played")
+                    }) {
+                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         Button(action: {
-                            showHelp("Follow the Scale")
+                            showHelp("Play Along")
                         }) {
                             VStack {
                                 Image(systemName: "questionmark.circle")
@@ -286,91 +376,26 @@ struct ScalesView: View {
                         }
                     }
                 }
-                .padding()
-            }
-            
-            if scalesModel.scale.scaleMotion != .contraryMotion {
+                .padding(.vertical)
+                .padding(.horizontal, 0)
+                
                 Spacer()
-                HStack() {
-                    Button(scalesModel.runningProcessPublished == .leadingTheScale ? "Stop Leading" : NSLocalizedString("Lead the Scale", comment: "Menu") ) {
-                        if scalesModel.runningProcessPublished == .leadingTheScale {
+                HStack {
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
+                    Button(action: {
+                        if scalesModel.runningProcessPublished == .recordingScale {
                             scalesModel.setRunningProcess(.none)
                         }
                         else {
-                            scalesModel.setRunningProcess(.leadingTheScale)
-                            scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                            scalesModel.setRunningProcess(.recordingScale)
                         }
+                        
+                    }) {
+                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         Button(action: {
-                            showHelp("Lead the Scale")
-                        }) {
-                            VStack {
-                                Image(systemName: "questionmark.circle")
-                                    .imageScale(.large)
-                                    .font(.title2)//.bold()
-                                    .foregroundColor(.green)
-                            }
-                        }
-                    }
-                }
-                .padding()
-            }
-            
-            Spacer()
-            HStack {
-                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : NSLocalizedString("Play Along", comment: "Menu")) {
-                    scalesModel.setRunningProcess(.playingAlongWithScale)
-                    scalesModel.setProcessInstructions("Play along with the scale as its played")
-                }
-                if UIDevice.current.userInterfaceIdiom != .phone {
-                    Button(action: {
-                        showHelp("Play Along")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)//.bold()
-                                .foregroundColor(.green)
-                        }
-                    }
-                }
-            }
-            .padding()
-            
-            Spacer()
-            HStack {
-                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record the Scale", comment: "Menu")) {
-                    if scalesModel.runningProcessPublished == .recordingScale {
-                        scalesModel.setRunningProcess(.none)
-                    }
-                    else {
-                        scalesModel.setRunningProcess(.recordingScale)
-                    }
-                }
-                if UIDevice.current.userInterfaceIdiom != .phone {
-                    Button(action: {
-                        showHelp("Record the Scale")
-                    }) {
-                        VStack {
-                            Image(systemName: "questionmark.circle")
-                                .imageScale(.large)
-                                .font(.title2)
-                                .foregroundColor(.green)
-                        }
-                    }
-                }
-            }
-            .padding()
-            
-            if scalesModel.recordedAudioFile != nil {
-                HStack {
-                    Button("Hear\nRecording") {
-                        AudioManager.shared.playRecordedFile()
-                    }
-                    if UIDevice.current.userInterfaceIdiom != .phone {
-                        Button(action: {
-                            showHelp("Hear Recording")
+                            showHelp("Record")
                         }) {
                             VStack {
                                 Image(systemName: "questionmark.circle")
@@ -381,60 +406,70 @@ struct ScalesView: View {
                         }
                     }
                 }
-                .padding()
-            }
-            
-//            if scalesModel.resultPublished != nil {
-//                VStack {
-//                    Button(action: {
-//                        showHelp("Sync The Scale")
-//                    }) {
-//                        VStack {
-//                            Image(systemName: "questionmark.circle")
-//                                .imageScale(.large)
-//                                .font(.title2)//.bold()
-//                                .foregroundColor(.green)
-//                        }
-//                    }
-//                    Text("")
-//                    Button("Sync\nRecording") {
-//                        scalesModel.setRunningProcess(.syncRecording)
-//                    }
-//
-//                }
-//                .frame(maxWidth: .infinity, alignment: .topLeading)
-//                .padding()
-//            }
-            
-            if scalesModel.scale.getBackingChords() != nil {
-                Spacer()
-                HStack {
-                    Button(hearingBacking ? "Backing Track Off" : NSLocalizedString("Backing Track On", comment: "Menu")) {
-                        hearingBacking.toggle()
-                        if hearingBacking {
-                            scalesModel.setBacking(true)
-                        }
-                        else {
-                            scalesModel.setBacking(false)
-                        }
-                    }
-                    if UIDevice.current.userInterfaceIdiom != .phone {
+                .padding(.vertical)
+                .padding(.horizontal, 0)
+                
+                if scalesModel.recordedAudioFile != nil {
+                    HStack {
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Hear" : "Hear Recording"
                         Button(action: {
-                            showHelp("Backing")
+                            AudioManager.shared.playRecordedFile()
                         }) {
-                            VStack {
-                                Image(systemName: "questionmark.circle")
-                                    .imageScale(.large)
-                                    .font(.title2)//.bold()
-                                    .foregroundColor(.green)
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        }
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            Button(action: {
+                                showHelp("Hear Recording")
+                            }) {
+                                VStack {
+                                    Image(systemName: "questionmark.circle")
+                                        .imageScale(.large)
+                                        .font(.title2)
+                                        .foregroundColor(.green)
+                                }
                             }
                         }
                     }
+                    .padding(.vertical)
+                    .padding(.horizontal, 0)
                 }
-                .padding()
+                
+                if scalesModel.scale.getBackingChords() != nil {
+                    Spacer()
+                    HStack {
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track\nHarmony"
+                        Button(action: {
+                            hearingBacking.toggle()
+                            if hearingBacking {
+                                scalesModel.setBacking(true)
+                            }
+                            else {
+                                scalesModel.setBacking(false)
+                            }
+                        }) {
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        }
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            Button(action: {
+                                showHelp("Backing")
+                            }) {
+                                VStack {
+                                    Image(systemName: "questionmark.circle")
+                                        .imageScale(.large)
+                                        .font(.title2)//.bold()
+                                        .foregroundColor(.green)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical)
+                    .padding(.horizontal, 0)
+                }
+                Spacer()
             }
-            
-            Spacer()
+//            if UIDevice.current.userInterfaceIdiom != .phone {
+//                Text("")
+//            }
         }
     }
     
@@ -460,6 +495,32 @@ struct ScalesView: View {
 //        dateFormatter.dateFormat = "MMMM-dd-HH:mm"
 //        let dateString = dateFormatter.string(from: currentDate)
         return mailInfo
+    }
+    
+//    func moveBadge() {
+//        //self.isImageVisible = true
+//        //self.moveToTopLeft.toggle()
+//        self.badgeVisibleState = 2
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+////            withAnimation {
+////                isImageVisible = false // Hide the image after the delay
+////            }
+//            //badgeVisibleState = 0
+//            //moveToTopLeft = false
+//        }
+//    }
+    
+    func getBadgeOffset() -> Int {
+        if self.badgeVisibleState == 0 {
+            return 300
+        }
+        if self.badgeVisibleState == 2 {
+            return Int(0-UIScreen.main.bounds.height)
+        }
+        if self.badgeVisibleState == 3 {
+            return 0 - Int(300)
+        }
+        return 0
     }
     
     var body: some View {
@@ -558,6 +619,14 @@ struct ScalesView: View {
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
+            if Settings.shared.practiceChartGamificationOn {
+                self.badgeImage
+                    .offset(x: self.badgeVisibleState == 2 ? -UIScreen.main.bounds.width / 2 : 0, y: CGFloat(self.getBadgeOffset()))
+                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 2 : 1), value:  badgeVisibleState)
+                    .rotationEffect(.degrees(rotationAngle))
+                    .opacity(badgeVisibleState == 0 ? 0.0 : 1.0)
+            }
+
             Spacer()
         }
         ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
@@ -571,7 +640,10 @@ struct ScalesView: View {
                 HelpView(topic: topic)
             }
         }
-        
+        .onChange(of: tempoIndex, {
+            scalesModel.setTempo(self.tempoIndex)
+        })
+
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
@@ -602,6 +674,7 @@ struct ScalesView: View {
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
             scalesModel.setRecordedAudioFile(nil)
+            //moveBadge()
         }
         
         .onDisappear {
@@ -650,6 +723,7 @@ struct ScalesView: View {
                 }
             }
         }
+
     }
 }
 

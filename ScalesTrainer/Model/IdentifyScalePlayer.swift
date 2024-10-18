@@ -5,7 +5,7 @@ class IdentifyScalePlayer : MetronomeTimerNotificationProtocol {
         
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
         //let audioManager = AudioManager.shared
         //let sampler = audioManager.midiSampler
 
@@ -22,7 +22,7 @@ class IdentifyScalePlayer : MetronomeTimerNotificationProtocol {
 //                //setFingers(direction: 1)
 //            }
         }
-        return timerTickerNumber >= ScalesModel.shared.scale.scaleNoteState.count - 1
+        //return timerTickerNumber >= ScalesModel.shared.scale.scaleNoteState.count - 1
     }
     
     func metronomeStop() {

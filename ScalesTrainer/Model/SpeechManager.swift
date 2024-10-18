@@ -74,13 +74,13 @@ class SpeechManagerUnused : NSObject, MetronomeTimerNotificationProtocol, SFSpee
         wordIndex = 0
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) {
         let utterance = AVSpeechUtterance(string: countInWords[wordIndex])
         //utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = 0.5 // Adjust the rate as needed
         speechSynthesizer.speak(utterance)
         wordIndex += 1
-        return wordIndex >= countInWords.count
+        //return wordIndex >= countInWords.count
     }
     
     func metronomeStop() {

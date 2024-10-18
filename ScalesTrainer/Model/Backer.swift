@@ -7,7 +7,7 @@ import AVFoundation
 import Foundation
 import AudioKitEX
 
-class Backer :MetronomeTimerNotificationProtocol {
+class Backer : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var chordRoots:[Int] = []
     var lastChord:BackingChords.BackingChord? = nil
@@ -25,18 +25,19 @@ class Backer :MetronomeTimerNotificationProtocol {
         nextChordIndex = 0
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) {
+        if leadingIn {
+            return
+        }
+
         guard let sampler = audioManager.backingMidiSampler else {
-            return false
+            return
         }
         guard let backingChords = backingChords else {
-            return false
+            return
         }
-        guard let scale = scale else {
-            return false
-        }
-        let tickDuration = MetronomeModel.shared.getNoteValueDuration()
-        //print("==============", timerTickerNumber, nextChordIndex, self.remainingSoundValue)
+
+        let tickDuration = Metronome.shared.getNoteValueDuration()
         if self.remainingSoundValue == nil || self.remainingSoundValue == 0 {
             let backingChord = backingChords.chords[nextChordIndex]
             if let lastChord = lastChord {
@@ -44,7 +45,7 @@ class Backer :MetronomeTimerNotificationProtocol {
                     sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
                 }
             }
-            sampler.volume = 0.9
+            sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
             for pitch in backingChord.pitches {
                 //print("    ===== ", pitch)
                 sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
@@ -64,7 +65,6 @@ class Backer :MetronomeTimerNotificationProtocol {
                 self.remainingSoundValue = Double(String(format: "%.4f", self.remainingSoundValue!))!
             }
         }
-        return false
     }
     
     func metronomeStop() {

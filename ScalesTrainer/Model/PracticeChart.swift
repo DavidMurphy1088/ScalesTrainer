@@ -3,42 +3,50 @@ import Foundation
 
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
+    var badges:Int = 0
+    @Published var isActive: Bool = false
+
     var scale: Scale
     var row: Int
-    var enabled: Bool = false
-    
-    @Published var isActive: Bool = false
-    
+    var hilighted: Bool = false
+
     enum CodingKeys: String, CodingKey {
         case scale
         case row
-        case enabled
+        case hilighted
     }
     
-    init(scale: Scale, row: Int, enabled: Bool = false) {
+    init(scale: Scale, row: Int, hilighted: Bool = false) {
         self.scale = scale
         self.row = row
-        self.enabled = enabled
-        self.isActive = enabled  // Set isActive based on enabled during initialization
+        self.hilighted = hilighted
+        self.isActive = hilighted  // Set isActive based on enabled during initialization
+    }
+    
+    func adjustBadges(delta:Int) {
+        //DispatchQueue.main.async {
+        self.badges += delta
+        PracticeChart.shared.savePracticeChartToFile(chart: PracticeChart.shared)
+        //}
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         scale = try container.decode(Scale.self, forKey: .scale)
         row = try container.decode(Int.self, forKey: .row)
-        enabled = try container.decode(Bool.self, forKey: .enabled)
-        self.isActive = enabled
+        hilighted = try container.decode(Bool.self, forKey: .hilighted)
+        self.isActive = hilighted
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scale, forKey: .scale)
         try container.encode(row, forKey: .row)
-        try container.encode(enabled, forKey: .enabled)
+        try container.encode(hilighted, forKey: .hilighted)
     }
     
-    func setEnabled(way: Bool) {
-        self.enabled = way
+    func setHilighted(way: Bool) {
+        self.hilighted = way
         DispatchQueue.main.async {
             self.isActive = way
         }
@@ -86,11 +94,21 @@ class PracticeChart: Codable {
         self.todaysColumn = 0
     }
     
+    func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
+        for cells in cells {
+            for row in cells {
+                if row.scale.getScaleName(handFull: false) == scale.getScaleName(handFull: false) {
+                    return row
+                }
+            }
+        }
+        return nil
+    }
+    
     func adjustForStartDay() {
         let currentDate = Date()
         let calendar = Calendar.current
-        var todaysDayNumber = calendar.component(.weekday, from: currentDate) - 1
-        todaysDayNumber = 0
+        let todaysDayNumber = calendar.component(.weekday, from: currentDate) - 1
         
         while true {
             let dayDiff = todaysDayNumber - self.firstColumnDayOfWeekNumber
@@ -164,9 +182,13 @@ class PracticeChart: Codable {
 
         do {
             let data = try encoder.encode(chart)  // Encode the PracticeChart object
-            let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to save PracticeChart")
+                return
+            }
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             try data.write(to: url)  // Write the data to the file
+            Logger.shared.log(self, "Saved PracticeChart to \(url)")
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
@@ -176,15 +198,17 @@ class PracticeChart: Codable {
 extension PracticeChart {
     static func loadPracticeChartFromFile() -> PracticeChart? {
         let decoder = JSONDecoder()
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let url = dir.appendingPathComponent(PracticeChart.fileName)
-        //let url = dir.appendingPathComponent("Test")
-
         do {
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to load PracticeChart - file not found")
+                return nil
+            }
+            let url = dir.appendingPathComponent(PracticeChart.fileName)
             let data = try Data(contentsOf: url)  // Read the data from the file
             let chart = try decoder.decode(PracticeChart.self, from: data)  // Decode the data
+            Logger.shared.log(self, "Loaded PracticeChart")
             return chart
-        } catch {
+         } catch {
             Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
             return nil
         }

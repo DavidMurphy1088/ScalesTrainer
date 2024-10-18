@@ -9,7 +9,7 @@ class RecordScaleProcess : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
 //        if beatCount < Settings.shared.getLeadInBeats() {
 //            MetronomeModel.shared.setLeadingIn(way: true)
 //            leadInShown = true
@@ -19,7 +19,6 @@ class RecordScaleProcess : MetronomeTimerNotificationProtocol {
 //        if leadInShown {
 //            MetronomeModel.shared.setLeadingIn(way: false)
 //        }
-        return false
     }
     
     func metronomeStop() {

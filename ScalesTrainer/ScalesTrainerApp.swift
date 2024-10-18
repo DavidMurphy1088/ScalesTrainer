@@ -162,7 +162,7 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
                     //ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 1, hands: [0], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -233,8 +233,8 @@ struct ScalesTrainerApp: App {
             if Settings.shared.isDeveloperMode() {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
-                HomeView()
-                //ScalesView()
+                //HomeView()
+                ScalesView(initialRunProcess: nil, practiceChartCell: nil)
                 //TestView()
                 //FFTContentView()
                     .tabItem {

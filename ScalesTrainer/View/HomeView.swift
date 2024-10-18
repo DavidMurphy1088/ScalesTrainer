@@ -37,7 +37,7 @@ struct TitleView: View {
     var body: some View {
         let grade = "Trinity, Grade 1"
         VStack {
-            Text(getTitle()).font(.title)
+            Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             //if Settings.shared.musicBoard.name.count > 0 {
                 Text("\(grade)").font(.title2)
             //}

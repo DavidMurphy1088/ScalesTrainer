@@ -112,6 +112,7 @@
     },
     "Backing Track On" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -206,6 +207,7 @@
     },
     "Follow the Scale" : {
       "comment" : "ProcessMenu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -248,9 +250,6 @@
 
     },
     "Hand:" : {
-
-    },
-    "Hear\nRecording" : {
 
     },
     "Hide Fingers" : {
@@ -332,11 +331,12 @@
     "Key 4" : {
       "extractionState" : "manual"
     },
-    "Lead in Count" : {
+    "Lead In Count" : {
 
     },
     "Lead the Scale" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -361,12 +361,6 @@
 
     },
     "Major Scales" : {
-
-    },
-    "Metronome Silent" : {
-
-    },
-    "Minor Scale Type" : {
 
     },
     "Minor Scales" : {
@@ -418,6 +412,7 @@
     },
     "Record the Scale" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -541,9 +536,6 @@
 
     },
     "Shuffle" : {
-
-    },
-    "Shuffle Practice Chart" : {
 
     },
     "Start Analysis" : {

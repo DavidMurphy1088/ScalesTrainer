@@ -7,27 +7,57 @@ import AudioKit
 
 protocol MetronomeTimerNotificationProtocol: AnyObject {
     func metronomeStart()
-    func metronomeTickNotification(timerTickerNumber:Int, leadingIn:Bool) -> Bool
+    func metronomeTickNotification(timerTickerNumber:Int, leadingIn:Bool) 
     func metronomeStop()
 }
 
-class MetronomeModel:ObservableObject {
+class Metronome:ObservableObject {
+    public static let shared = Metronome()
+
     @Published private(set) var isLeadingIn:Bool = false
     @Published var timerTickerCountPublished = 0
-    private var timerTickerCount = 0
     
-    public static let shared = MetronomeModel()
+    public var timerTickerCount = 0
     private let scalesModel = ScalesModel.shared
     private var tickTimer:AnyCancellable?
     private let audioManager = AudioManager.shared
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
-    let ticker:MetronomeTicker
+    private let ticker:MetronomeTicker
+    private var isTicking:Bool
     
     init() {
+        self.isTicking = false
         self.ticker = MetronomeTicker()
         self.ticker.metronomeStart()
     }
     
+    func start() {
+        self.timerTickerCount = 0
+        setTimerTickerCountPublished(count: 0)
+        self.ticker.tickNum = 0
+        if self.tickTimer == nil {
+            self.startTimerThread()
+        }
+    }
+    
+    func stop() {
+        if let timer = self.tickTimer {
+            timer.cancel()
+            self.tickTimer = nil
+        }
+        self.isTicking = false
+        setTimerTickerCountPublished(count: 0)
+        removeAllProcesses()
+    }
+
+    func setTicking(way:Bool) {
+        self.isTicking = way
+    }
+    
+    func isMetronomeTicking() -> Bool {
+        return self.isTicking
+    }
+
     func setLeadingIn(way:Bool) {
         DispatchQueue.main.async {
             self.isLeadingIn = way
@@ -44,33 +74,18 @@ class MetronomeModel:ObservableObject {
         return "♩= \(tempo)"
     }
     
-//    func setTicking(on:Bool) {
-//        if on {
-//            self.makeSilent = false
-//            self.startTimerThread()
-//            self.isTiming = true
-//        }
-//        else {
-//            self.isTiming = false
-//        }
-//    }
-    
     func DontUse_JustForDemo() {
         self.startTimerThread()
-        //self.isTiming = true
     }
     
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
-        for i in 0..<self.processesToNotify.count {
-            self.processesToNotify[i].metronomeStop()
-        }
+//        for i in 0..<self.processesToNotify.count {
+//            self.processesToNotify[i].metronomeStop()
+//        }
         self.processesToNotify.append(process)
         for i in 0..<self.processesToNotify.count {
             self.processesToNotify[i].metronomeStart()
         }
-        //print("Ticker =============== Metronome addProcessesTo", process, self.processesToNotify.count)
-        self.ticker.metronomeStart()
-        self.startTimerThread()
     }
     
     func removeAllProcesses() {
@@ -80,7 +95,7 @@ class MetronomeModel:ObservableObject {
         }
     }
     
-    private func removeProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
+    func removeProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
         process.metronomeStop()
         for i in 0..<self.processesToNotify.count {
             if self.processesToNotify[i] === process {
@@ -100,29 +115,19 @@ class MetronomeModel:ObservableObject {
         let notesPerClick = scalesModel.scale.timeSignature.top % 3 == 0 ? 3 : 2
         return 1.0 / Double(notesPerClick)
     }
-
-//    private func stopTimerThread() {
-//        isTiming = false
-//        for notified in self.processesToNotify {
-//            notified.metronomeStop()
-//        }
-//        processesToNotify = []
-//        timerTickerCount = 0
-//    }
         
     ///notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?
     func startTimerThread() {
+        ///Dont create another thread
         if self.tickTimer != nil {
-            //Logger.shared.reportError(self, "Attempt to start >1 ticker")
             return
         }
-        timerTickerCount = 0
+        self.timerTickerCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
         let notesPerClick = self.getNotesPerClick()
         let tempo = Double(scalesModel.getTempo())
         let delay = (60.0 / tempo) / Double(notesPerClick)
         Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
-        var ctr = 0
         let leadInTicks = Settings.shared.getLeadInBeats() * notesPerClick
         var leadingIn = false
         
@@ -132,35 +137,37 @@ class MetronomeModel:ObservableObject {
                 tickTimer = Timer.publish(every: delay, on: .main, in: .common)
                     .autoconnect()
                     .sink { _ in
-                        if self.processesToNotify.count == 0 {
-                            self.tickTimer?.cancel()
-                            Logger.shared.log(self, "Metronome thread ended count:\(self.timerTickerCount)")
-                            self.tickTimer = nil
-                            return
+//                    if self.processesToNotify.count == 0 {
+//                        if let timer = self.tickTimer {
+//                            self.tickTimer = nil
+//                            timer.cancel()
+//                        }
+//                        Logger.shared.log(self, "Metronome thread ended count:\(self.timerTickerCount)")
+//                        return
+//                    }
+//                        if ctr % notesPerClick == 0 {
+//                            _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
+//                            self.setTimerTickerCountPublished(count: self.timerTickerCount / notesPerClick)
+//                        }
+                    if self.timerTickerCount < leadInTicks {
+                        if !leadingIn {
+                            leadingIn = true
+                            self.setLeadingIn(way: true)
                         }
-
-                        if ctr % notesPerClick == 0 {
-                            _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
-                            self.setTimerTickerCountPublished(count: self.timerTickerCount / notesPerClick)
-                        }
-                        if self.timerTickerCount < leadInTicks {
-                            if !leadingIn {
-                                leadingIn = true
-                                self.setLeadingIn(way: true)
-                            }
-                        }
-                        else {
-                            if leadingIn  {
-                                leadingIn = false
-                                self.setLeadingIn(way: false)
-                            }
-                            for toNotify in self.processesToNotify {
-                                _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
-                            }
-                        }
-                        self.timerTickerCount += 1
-                        ctr += 1
                     }
+                    else {
+                        if leadingIn  {
+                            leadingIn = false
+                            self.setLeadingIn(way: false)
+                        }
+                    }
+                    self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
+                    for toNotify in self.processesToNotify {
+                        _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
+                    }
+
+                    self.timerTickerCount += 1
+                }
             }
         }
 //        else {

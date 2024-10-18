@@ -74,6 +74,7 @@ public class ScalesModel : ObservableObject {
     @Published var synchedIsPlaying = false
 
     var scoreHidden = false
+    var metronomeTicker:MetronomeTicker? = nil
     
     var recordedTapsFileURL:URL? //File where recorded taps were written
     @Published var recordedTapsFileName:String?
@@ -213,14 +214,7 @@ public class ScalesModel : ObservableObject {
             self.showKeyboard = newValue
         }
     }
-    
-//    @Published private(set) var showParameters:Bool = true
-//    func setShowParameters(_ newValue: Bool) {
-//        DispatchQueue.main.async {
-//            self.showParameters = newValue
-//        }
-//    }
-    
+        
     @Published private(set) var showLegend:Bool = true
     func setShowLegend(_ newValue: Bool) {
         DispatchQueue.main.async {
@@ -251,17 +245,17 @@ public class ScalesModel : ObservableObject {
     
     @Published private(set) var backingOn:Bool = false
     func setBacking(_ way:Bool) {
-        let metronome = MetronomeModel.shared
+        let metronome = Metronome.shared
         if way {
             if self.backer == nil {
                 self.backer = Backer()
             }
             metronome.addProcessesToNotify(process: self.backer!)
+            metronome.setTicking(way: true)
+            metronome.start()
         }
         else {
-            if let backer = self.backer {
-                metronome.removeAllProcesses()
-            }
+            metronome.stop()
         }
         DispatchQueue.main.async {
             self.backingOn = way
@@ -291,7 +285,7 @@ public class ScalesModel : ObservableObject {
                     self.synchedIsPlaying = false
                 }
             }
-            MetronomeModel.shared.removeAllProcesses()
+            
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = true
             PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = true
             if self.tapHandlers.count > 0 {
@@ -305,6 +299,7 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setShow(false)
             self.setSelectedScaleSegment(0)
         }
+        Metronome.shared.stop()
         self.runningProcess = setProcess
         DispatchQueue.main.async {
             self.runningProcessPublished = self.runningProcess
@@ -315,7 +310,6 @@ public class ScalesModel : ObservableObject {
         self.audioManager.resetAudioKit()
 
         self.setShowKeyboard(true)
-        //self.setShowParameters(true)
         self.setShowLegend(true)
         self.setSelectedScaleSegment(0)
         self.setProcessInstructions(nil)
@@ -328,41 +322,41 @@ public class ScalesModel : ObservableObject {
         PianoKeyboardModel.sharedLH.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.sharedLH.redraw()
         
-        let metronome = MetronomeModel.shared
+        let metronome = Metronome.shared
         
         if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             BadgeBank.shared.setTotalCorrect(0)
-            
             setShowKeyboard(true)
             ///Play first note to start then wait some time.
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.scaleNoteState.count > 0 {
                 if let sampler = self.audioManager.keyboardMidiSampler {
+                    BadgeBank.shared.setShow(true)
+                    
                     let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                     for hand in scale.hands {
                         let midi = self.scale.scaleNoteState[hand][0].midi
                         if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
                             let key = keyboard.pianoKeyModel[keyIndex]
                             //key.hilightCallback = {
-                                //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                            //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
                             //}
                             key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
+                            print("============== Redraw2", midi)
                             keyboard.redraw1()
                         }
                         sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
                     }
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
-                    usleep(1000000 * UInt32(2.0))
+                    usleep(1000000 * UInt32(1.0))
                 }
+                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+                self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
+                    self.setRunningProcess(.none)
+                })
             }
-            
-            self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-            BadgeBank.shared.setShow(true)
-            self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
-                self.setRunningProcess(.none)
-            })
         }
         
         if [.leadingTheScale].contains(setProcess) {
@@ -382,13 +376,15 @@ public class ScalesModel : ObservableObject {
         
         if [.playingAlongWithScale].contains(setProcess) {
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands))
+            metronome.setTicking(way: true)
+            metronome.start()
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.startRecordingMicToRecord()
-            let metronome = MetronomeModel.shared
-            let process = RecordScaleProcess()
-            metronome.addProcessesToNotify(process: process)
+            metronome.setTicking(way: true)
+            metronome.start()
+            //metronome.addProcessesToNotify(process: RecordScaleProcess())
         }
         
         if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
@@ -434,6 +430,10 @@ public class ScalesModel : ObservableObject {
             }
         }
     }
+    
+//    func isMetronomeTicking() -> Bool {
+//        return self.metronomeTicker != nil
+//    }
     
     ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
@@ -546,7 +546,6 @@ public class ScalesModel : ObservableObject {
         var selected = self.tempoSettings[self.selectedTempoIndex]
         //selected = String(selected.dropFirst(2))
         selected = String(selected)
-        print("=========+GETTEMO", Int(selected), "sel_index", self.selectedTempoIndex, self.tempoSettings)
         return Int(selected) ?? 60
     }
     

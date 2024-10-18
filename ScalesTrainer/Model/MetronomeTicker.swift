@@ -9,8 +9,6 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var callNum = 0
     var metronomeAudioPlayerLow:AVAudioPlayer?
-    ///Oct2024 Changed to one tone for metronome
-    //var metronomeAudioPlayerHigh:AVAudioPlayer?
     var tickNum = 0
     
     init() {
@@ -24,20 +22,14 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
         tickNum = 0
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) -> Bool {
-        //print("    Ticker ========", "TickNum", tickNum , tickNum % ScalesModel.shared.scale.timeSignature.top, ScalesModel.shared.scale.timeSignature.top)
-        if !Settings.shared.metronomeSilent {
-//            if tickNum % ScalesModel.shared.scale.timeSignature.top == 0 {
-//                metronomeAudioPlayerHigh!.play()
-//            }
-//            else {
-//                metronomeAudioPlayerLow!.play()
-//            }
-            
+    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
+        let metronome = Metronome.shared
+        let notesPerClick = metronome.getNotesPerClick()
+        if timerTickerNumber % notesPerClick == 0 {
             metronomeAudioPlayerLow!.play()
+            self.tickNum += 1
+            metronome.setTimerTickerCountPublished(count: self.tickNum)
         }
-        self.tickNum += 1
-        return false
     }
     
     func metronomeStop() {

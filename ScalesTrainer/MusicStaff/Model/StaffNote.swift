@@ -259,9 +259,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }
-        if self.midiNumber == 72 {
-            print("============ natural")
-        }
+
         if let writtenAccidental = self.writtenAccidental {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental

@@ -470,7 +470,7 @@ class AudioManager {
                 }
             }
         }
-        Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapHandler.getBufferSize())")
+        //Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapHandler.getBufferSize())")
         return installedTap
     }
     

@@ -12,13 +12,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>342</string>
+					<string>383</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>341</string>
+					<string>382</string>
 					<key>Timestamp</key>
-					<string>750508098.0214061</string>
+					<string>750930099.712904</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -34,16 +34,16 @@
 			<key>text-context</key>
 			<dict>
 				<key>focused</key>
-				<string>            HStack {
+				<string>                HStack {
 </string>
 				<key>leading</key>
-				<string>            
-            Spacer()
+				<string>                
+                Spacer()
 </string>
 				<key>trailing</key>
-				<string>                Button(scalesModel.runningProcessPublished == .recordingScale ? "Stop Recording" : NSLocalizedString("Record the Scale", comment: "Menu")) {
-                    if scalesModel.runningProcessPublished == .recordingScale {
-                        scalesModel.setRunningProcess(.none)
+				<string>                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
+                    Button(action: {
+                        if scalesModel.runningProcessPublished == .recordingScale {
 </string>
 			</dict>
 			<key>type</key>
@@ -57,13 +57,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>282</string>
+					<string>276</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>281</string>
+					<string>275</string>
 					<key>Timestamp</key>
-					<string>750413296.4011199</string>
+					<string>750844690.756516</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -147,13 +147,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>553</string>
+					<string>552</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>552</string>
+					<string>551</string>
 					<key>Timestamp</key>
-					<string>750509630.7291189</string>
+					<string>750898114.763804</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>627</string>
+					<string>626</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>626</string>
+					<string>625</string>
 					<key>Timestamp</key>
-					<string>750509630.7291059</string>
+					<string>750898114.763845</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -237,13 +237,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>489</string>
+					<string>550</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>488</string>
+					<string>549</string>
 					<key>Timestamp</key>
-					<string>750508124.047521</string>
+					<string>750930099.712922</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -314,6 +314,51 @@
 				<string>        for i in 0..&lt;numberOfKeys {
             if i &lt; self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>437</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>436</string>
+					<key>Timestamp</key>
+					<string>750898114.763832</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/Model/ScalesModel.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    
+</string>
+				<key>leading</key>
+				<string>//        return self.metronomeTicker != nil
+//    }
+</string>
+				<key>trailing</key>
+				<string>    ///Allow user to follow notes hilighted on the keyboard.
+    ///Wait till user hits correct key before moving to and highlighting the next note
+    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
 </string>
 			</dict>
 			<key>type</key>

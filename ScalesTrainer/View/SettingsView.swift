@@ -109,10 +109,10 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.vertical, 0)
-                .border(Color.green, width: 3)
+                //.border(Color.green, width: 3)
             //}
             .padding(.vertical, 0)
-            .border(Color.red)
+            //.border(Color.red)
             
 //            ///Metronome on
 //            Spacer()
@@ -131,7 +131,7 @@ struct SettingsView: View {
             ///Lead in count
             Spacer()
             HStack {
-                Text(LocalizedStringResource("Lead in Count")).font(.title2).padding(0)
+                Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
                 Picker("Select Value", selection: $leadInBarCount) {
                     ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
                         Text("\(scalesModel.scaleLeadInCounts[index])")
@@ -140,8 +140,7 @@ struct SettingsView: View {
                 //.disabled(!self.metronomeOn)
                 .pickerStyle(.menu)
                 .onChange(of: leadInBarCount, {
-                    
-                    settings.scaleLeadInBearCountIndex = leadInBarCount
+                    settings.scaleLeadInBeatCountIndex = leadInBarCount
                 })
             }
             
@@ -208,20 +207,20 @@ struct SettingsView: View {
                 .frame(width: UIScreen.main.bounds.width * 0.30)
             }
             
-            if Settings.shared.isDeveloperMode() {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Toggle(isOn: $metronomeSilent) {
-                        Text("Metronome Silent").font(.title2).padding(0)
-                    }
-                    .onChange(of: metronomeSilent, {
-                        settings.metronomeSilent = metronomeSilent
-                    })
-                    Spacer()
-                }
-                .frame(width: UIScreen.main.bounds.width * 0.30)
-            }
+//            if Settings.shared.isDeveloperMode() {
+//                Spacer()
+//                HStack {
+//                    Spacer()
+//                    Toggle(isOn: $metronomeSilent) {
+//                        Text("Metronome Silent").font(.title2).padding(0)
+//                    }
+//                    .onChange(of: metronomeSilent, {
+//                        settings.metronomeSilent = metronomeSilent
+//                    })
+//                    Spacer()
+//                }
+//                .frame(width: UIScreen.main.bounds.width * 0.30)
+//            }
 
 //            Spacer()
 //            HStack {
@@ -279,14 +278,13 @@ struct SettingsView: View {
             
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
             .onAppear() {
-                leadInBarCount = settings.scaleLeadInBearCountIndex
+                leadInBarCount = settings.scaleLeadInBeatCountIndex
                 self.defaultOctaves = settings.defaultOctaves
                 //self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
                 self.keyboardColor = Settings.shared.getKeyboardColor1()
                 self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
-                self.metronomeSilent = settings.metronomeSilent
                 self.developerMode = settings.developerMode
                 self.badgeStyleNumber = settings.badgeStyle
             }

@@ -69,7 +69,6 @@
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
-		79BCF7EF2C257A5D004E26ED /* HearScaleOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7EE2C257A5D004E26ED /* HearScaleOld.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
 		79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
@@ -169,7 +168,6 @@
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
-		79BCF7EE2C257A5D004E26ED /* HearScaleOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScaleOld.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
 		79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = UprightPianoKW.sf2; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
@@ -396,7 +394,6 @@
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
-				79BCF7EE2C257A5D004E26ED /* HearScaleOld.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
@@ -562,7 +559,6 @@
 				79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */,
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* GradeAndBoard.swift in Sources */,
-				79BCF7EF2C257A5D004E26ED /* HearScaleOld.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
@@ -744,7 +740,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -757,8 +753,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -779,7 +774,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -792,8 +787,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

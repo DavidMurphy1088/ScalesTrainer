@@ -40,13 +40,13 @@ struct CellView: View {
         return Int.random(in: 0..<3)
     }
     
-    func setEnabled(scale:Scale) {
+    func setHilighted(scale:Scale) {
         for row in practiceChart.cells {
             for chartCell in row {
                 if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
                     if chartCell.scale.hands == scale.hands {
                         if chartCell.scale.scaleType == scale.scaleType {
-                            chartCell.setEnabled(way: !chartCell.enabled)
+                            chartCell.setHilighted(way: !chartCell.hilighted)
                         }
                     }
                 }
@@ -66,32 +66,42 @@ struct CellView: View {
             }) {
                 let label = practiceCell.scale.getScaleName(handFull: true)
                 Text(label)
-                    .font(.title2)
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
                     .foregroundColor(.blue)
                     .opacity(opacityValue)
             }
             .padding(self.padding)
             Spacer()
             HStack {
-                NavigationLink(destination: ScalesView(), isActive: $navigateToScales) {
+                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)), isActive: $navigateToScales) {
                 }.frame(width: 0.0)
-                
                 HStack {
                     Button(action: {
-                        setEnabled(scale: practiceCell.scale)
+                        setHilighted(scale: practiceCell.scale)
                     }) {
                         let name = practiceCell.isActive ? "star.fill" : "star"
                         Image(systemName: name)
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(Color(red: 1.0, green: 0.843, blue: 0.0))
-                            .frame(height: cellHeight * 0.5)
+                            .frame(height: cellHeight * 0.4)
                     }
                     .padding(.vertical, 0)
                     .padding(.horizontal)
                 }
                 .padding(self.padding)
                 .padding(.vertical, 0)
+                
+            }
+            if Settings.shared.practiceChartGamificationOn  {
+                HStack {
+                    ForEach(0..<practiceCell.badges) { index in
+                        Image("pet_dogface")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 30)
+                    }
+                }
             }
             Spacer()
             //.border(.red)
@@ -104,7 +114,6 @@ struct CellView: View {
         )
     }
 }
-
 
 struct PracticeChartView: View {
     @State private var practiceChart:PracticeChart
@@ -134,7 +143,7 @@ struct PracticeChartView: View {
     }
     
     func doShuffle(update:Bool) {
-        for i in 0..<24 {
+        for _ in 0..<24 {
             practiceChart.shuffle()
         }
         self.redrawCounter += 1
@@ -154,21 +163,24 @@ struct PracticeChartView: View {
             VStack(spacing: 0) {
                 TitleView(screenName: "Practice Chart").commonFrameStyle()
                 HStack {
-                    Spacer()
-                    Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
-                    Button(action: {
-                        helpShowing = true
-                   }) {
-                        Text("Instructions")
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Spacer()
+                        Text(LocalizedStringResource("Instructions")).font(.title2).padding(0)
+                        Button(action: {
+                            helpShowing = true
+                        }) {
+                            Text("Instructions")
+                        }
+                        .padding()
                     }
-                    .padding()
 
                     Spacer()
-                    Text(LocalizedStringResource("Minor Scale Type")).font(.title2).padding(0)
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Minor" : "Minor Scale Type"
+                    Text(LocalizedStringResource("\(title)")).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2).padding(0)
                     Text("\(self.redrawCounter)").opacity(0.0).padding(0)
                     Picker("Select Value", selection: $minorTypeIndex) {
                         ForEach(minorScaleTypes.indices, id: \.self) { index in
-                            Text("\(minorScaleTypes[index])")
+                            Text("\(minorScaleTypes[index])").font(.body)
                         }
                     }
                     .pickerStyle(.menu)
@@ -185,7 +197,6 @@ struct PracticeChartView: View {
                     })
                     
                     Spacer()
-                    Text(LocalizedStringResource("Shuffle")).font(.title2).padding(0)
                     Button(action: {
                         cellOpacityValue = 0.1
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -196,7 +207,7 @@ struct PracticeChartView: View {
                             }
                         }
                    }) {
-                        Text("Shuffle Practice Chart")
+                        Text("Shuffle")
                     }
                     .padding()
                     

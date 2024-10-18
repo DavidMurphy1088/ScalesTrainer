@@ -7,7 +7,7 @@ public struct ClassicStyle {
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
     let cornerRadiusMultiplier: CGFloat
-    let labelFont: Font
+    //let labelFont: Font
     let labelColor: Color
     let keyColor: Color
     let hand:Int
@@ -21,7 +21,7 @@ public struct ClassicStyle {
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
         naturalKeySpace: CGFloat = 3,
-        labelFont: Font = .title3.bold(),
+        //labelFont: Font = .title3.bold(),
         labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
@@ -31,7 +31,7 @@ public struct ClassicStyle {
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
         self.cornerRadiusMultiplier = cornerRadiusMultiplier
         self.naturalKeySpace = naturalKeySpace
-        self.labelFont = labelFont
+        //self.labelFont = labelFont
         self.labelColor = labelColor
         self.keyColor = keyColor
     }
@@ -139,16 +139,19 @@ public struct ClassicStyle {
 
                 /// ----------- Middle C Note name ----------
                 if key.midi == 60 {
-                    let circleRadius = 15
-                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
-                                        y: 6,
+                    let circleRadius:Double = UIDevice.current.userInterfaceIdiom == .phone ? 10 : 12
+                    let y = UIDevice.current.userInterfaceIdiom == .phone ? circleRadius * 1.0 : circleRadius / 2 + 2
+                    let circle = CGRect(x: Double(Int(rect.midX)) - circleRadius, // * 2,
+                                        y: y,
                                         width: circleRadius * 2,
                                         height: circleRadius * 2)
                     context.fill(Path(ellipseIn: circle), with: .color(.white))
                     context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
                     context.draw(
-                        Text("C").font(labelFont).foregroundColor(.blue),
-                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
+                        Text("C")
+                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2).bold()
+                        .foregroundColor(.blue),
+                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                     )
                 }
                 
@@ -157,7 +160,10 @@ public struct ClassicStyle {
                     if key.finger.count > 0 {
                         if key.midi != 60 {
                             context.draw(
-                                Text(key.name).font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
+                                Text(key.name)
+                                    //.font(labelFont)
+                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)
+                                    .foregroundColor(keyModel.midi == 60 ? .blue : .black),
                                 //Text("X").font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
                                 at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                             )
@@ -196,7 +202,7 @@ public struct ClassicStyle {
                             
                             context.draw(
                                 Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
-                                    .font(.title).bold(),
+                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),
                                 at: point
                             )
                         }
@@ -267,7 +273,10 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if key.finger.count > 0 {
                         context.draw(
-                            Text(key.name).font(labelFont).foregroundColor(.white),
+                            Text(key.name)
+                                //.font(labelFont)
+                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
+                                .foregroundColor(.white),
                             at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                         )
                     }
@@ -338,7 +347,7 @@ public struct ClassicStyle {
                         }
                         context.draw(
                             Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
-                                .font(.title).bold(),
+                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),
                             at: point
                         )
                     }

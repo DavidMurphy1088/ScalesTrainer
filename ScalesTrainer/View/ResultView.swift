@@ -36,7 +36,7 @@ struct ResultView: View {
         }
         if getAllCorrect() {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
-                let metronome = MetronomeModel.shared
+                let metronome = Metronome.shared
                 status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
                 var appTempoString = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
                 if appTempoString.count >= 2 {
