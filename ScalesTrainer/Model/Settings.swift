@@ -33,7 +33,7 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
-    var practiceChartGamificationOn = true
+    var practiceChartGamificationOn = false
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
@@ -102,6 +102,7 @@ public class Settings : Codable  {
         str += " RequiredConsecutiveCount:\(self.requiredConsecutiveCount)"
         str += " BadgeStyle:\(self.badgeStyle)"
         str += " BackgroundColour:\(self.backgroundColor)"
+        str += " Gamification:\(self.practiceChartGamificationOn)"
         return str
     }
     
@@ -143,6 +144,8 @@ public class Settings : Codable  {
                     self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
                     self.badgeStyle = loaded.badgeStyle
                     self.backgroundColor = loaded.backgroundColor
+                    self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
+
                     SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")

@@ -17,7 +17,7 @@ struct CellView: View {
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScales = false
     let padding = 5.0
-        
+
     func getColor() -> Color {
         return .green
     }
@@ -73,7 +73,10 @@ struct CellView: View {
             .padding(self.padding)
             Spacer()
             HStack {
-                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)), isActive: $navigateToScales) {
+                //self.practiceChartCell = PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)
+//                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)), isActive: $navigateToScales) {
+//                }.frame(width: 0.0)
+                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: practiceCell), isActive: $navigateToScales) {
                 }.frame(width: 0.0)
                 HStack {
                     Button(action: {
@@ -93,9 +96,10 @@ struct CellView: View {
                 .padding(.vertical, 0)
                 
             }
+            //Text("\(practiceCell.badges)")
             if Settings.shared.practiceChartGamificationOn  {
                 HStack {
-                    ForEach(0..<practiceCell.badges) { index in
+                    ForEach(0..<practiceCell.badgeCount, id: \.self) { index in
                         Image("pet_dogface")
                             .resizable()
                             .scaledToFit()
@@ -112,6 +116,7 @@ struct CellView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
         )
+
     }
 }
 
@@ -211,6 +216,16 @@ struct PracticeChartView: View {
                     }
                     .padding()
                     
+                    if Settings.shared.practiceChartGamificationOn {
+                        Spacer()
+                        Button(action: {
+                            practiceChart.reset()
+                        }) {
+                            Text("Reset")
+                        }
+                        .padding()
+                    }
+
                     Spacer()
                 }
             }

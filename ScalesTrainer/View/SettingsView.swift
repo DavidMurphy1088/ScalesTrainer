@@ -14,8 +14,7 @@ func backingSoundName(_ n:Int) -> String {
     case 4: str = "Saxophone"
     case 5: str = "Moog Synthesiser"
     case 6: str = "Steel Guitar"
-    case 7: str = "Choir"
-    case 8: str = "Melody Bell"
+    case 7: str = "Melody Bell"
     default:
         str = "Piano"
     }
@@ -32,6 +31,7 @@ struct SettingsView: View {
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
+    @State var practiceChartGamificationOn = false
     @State var metronomeSilent = false
 
     @State private var defaultOctaves = 2
@@ -149,7 +149,7 @@ struct SettingsView: View {
             HStack {
                 Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
                 Picker("Select Value", selection: $backingPresetNumber) {
-                    ForEach(0..<9) { number in
+                    ForEach(0..<8) { number in
                         Text("\(backingSoundName(number))")
                     }
                 }
@@ -190,7 +190,19 @@ struct SettingsView: View {
 //                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
 //                })
 //            }
-            
+            Spacer()
+            HStack {
+                Spacer()
+                Toggle(isOn: $practiceChartGamificationOn) {
+                    Text("Gamification").font(.title2).padding(0)
+                }
+                .onChange(of: practiceChartGamificationOn, {
+                    settings.practiceChartGamificationOn = practiceChartGamificationOn
+                })
+                Spacer()
+            }
+            .frame(width: UIScreen.main.bounds.width * 0.30)
+
             ///Developer
             if Settings.shared.isDeveloperMode() {
                 Spacer()
@@ -247,8 +259,7 @@ struct SettingsView: View {
         case 4: str = "Saxophone"
         case 5: str = "Moog Synthesiser"
         case 6: str = "Steel Guitar"
-        case 7: str = "Choir"
-        case 8: str = "Melody Bell"
+        case 7: str = "Melody Bell"
         default:
             str = "Piano"
         }
@@ -280,12 +291,12 @@ struct SettingsView: View {
             .onAppear() {
                 leadInBarCount = settings.scaleLeadInBeatCountIndex
                 self.defaultOctaves = settings.defaultOctaves
-                //self.scaleNoteValue = settings.scaleNoteValue==4 ? 0 : 1
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
                 self.keyboardColor = Settings.shared.getKeyboardColor1()
                 self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.developerMode = settings.developerMode
+                self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
             }
             .onDisappear() {

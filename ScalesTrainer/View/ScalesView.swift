@@ -72,13 +72,13 @@ struct ScalesView: View {
     
     @State private var badgeVisibleState = 0 //0 down, 1 centered, 2 go top, 3 go bottom
     let badgeImage = Image("pet_dogface")
-    @State private var rotationAngle: Double = 0
+    @State private var badgeRotationAngle: Double = 0
     
     init(initialRunProcess:RunningProcess?, practiceChartCell:PracticeChartCell?) {
         self.initialRunProcess = initialRunProcess
         self.practiceChartCell = practiceChartCell
     }
-    
+
     func showHelp(_ topic:String) {
         scalesModel.helpTopic = topic
         self.helpShowing = true
@@ -180,15 +180,15 @@ struct ScalesView: View {
     func StopProcessView() -> some View {
         VStack {
             
-            if scalesModel.runningProcessPublished == .followingScale {
-                VStack {
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                    }) {
-                        Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
-                    }
-                }
-            }
+//            if scalesModel.runningProcessPublished == .followingScale {
+//                VStack {
+//                    Button(action: {
+//                        scalesModel.setRunningProcess(.none)
+//                    }) {
+//                        Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                    }
+//                }
+//            }
                         
             if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
@@ -203,24 +203,27 @@ struct ScalesView: View {
                 }
             }
 
-            if [.leadingTheScale].contains(scalesModel.runningProcessPublished) {
+            if [.followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
+                    //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
+                    let text = scalesModel.runningProcessPublished == .followingScale ? "Stop Following Scale" : "Stop Leading The Scale"
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
-                        if BadgeBank.shared.totalCorrect > 0 {
-                            self.badgeVisibleState = 2
-                            practiceChartCell?.adjustBadges(delta: 1)
-                        }
-                        else {
-                            self.badgeVisibleState = 3
-                            withAnimation(.easeInOut(duration: 1)) {
-                                rotationAngle += 180 // Spin 360 degrees
+                        if Settings.shared.practiceChartGamificationOn {
+                            if BadgeBank.shared.totalCorrect > scalesModel.scale.getScaleNoteCount() / 3 {
+                                self.badgeVisibleState = 2
+                                practiceChartCell?.adjustBadges(delta: 1)
                             }
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            rotationAngle = 0
-                            self.badgeVisibleState = 0
+                            else {
+                                self.badgeVisibleState = 3
+                                withAnimation(.easeInOut(duration: 1)) {
+                                    badgeRotationAngle += 180 // Spin 360 degrees
+                                }
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                badgeRotationAngle = 0
+                                self.badgeVisibleState = 0
+                            }
                         }
                     }) {
                         Text("\(text)")
@@ -296,6 +299,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.setRunningProcess(.followingScale)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                            self.badgeVisibleState = 1
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
@@ -622,8 +626,8 @@ struct ScalesView: View {
             if Settings.shared.practiceChartGamificationOn {
                 self.badgeImage
                     .offset(x: self.badgeVisibleState == 2 ? -UIScreen.main.bounds.width / 2 : 0, y: CGFloat(self.getBadgeOffset()))
-                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 2 : 1), value:  badgeVisibleState)
-                    .rotationEffect(.degrees(rotationAngle))
+                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 1.5 : 1), value:  badgeVisibleState)
+                    .rotationEffect(.degrees(badgeRotationAngle))
                     .opacity(badgeVisibleState == 0 ? 0.0 : 1.0)
             }
 
@@ -682,21 +686,31 @@ struct ScalesView: View {
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
             scalesModel.setBacking(false)
+//            if let cell = self.practiceChartCell {
+//                //DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                    //usleep(1000000 * UInt32(1.0))
+//                    cell.adjustBadges(delta: 1)
+//                //}
+//            }
             ///Clean up any recorded files
-            if Settings.shared.isDeveloperMode()  {
-                let fileManager = FileManager.default
-                if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
-                    do {
-                        let fileURLs = try fileManager.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
-                        for fileURL in fileURLs {
-                            do {
-                                try fileManager.removeItem(at: fileURL)
-                            } catch {
-                                Logger.shared.reportError(fileManager, error.localizedDescription)
+            if false {
+                ///This deletes the practice chart AND shouldnt
+                if Settings.shared.isDeveloperMode()  {
+                    let fileManager = FileManager.default
+                    if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        do {
+                            let fileURLs = try fileManager.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+                            for fileURL in fileURLs {
+                                do {
+                                    try fileManager.removeItem(at: fileURL)
+                                    //Logger.shared.log("Removed file at \(fileURL)")
+                                } catch {
+                                    Logger.shared.reportError(fileManager, error.localizedDescription)
+                                }
                             }
+                        } catch {
+                            Logger.shared.reportError(fileManager, error.localizedDescription)
                         }
-                    } catch {
-                        Logger.shared.reportError(fileManager, error.localizedDescription)
                     }
                 }
             }

@@ -3,8 +3,8 @@ import Foundation
 
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
-    var badges:Int = 0
     @Published var isActive: Bool = false
+    @Published var badgeCount:Int
 
     var scale: Scale
     var row: Int
@@ -14,20 +14,23 @@ class PracticeChartCell: ObservableObject, Codable {
         case scale
         case row
         case hilighted
+        case badges
     }
     
-    init(scale: Scale, row: Int, hilighted: Bool = false) {
+    init(scale: Scale, row: Int, hilighted: Bool = false, badges:Int) {
         self.scale = scale
         self.row = row
         self.hilighted = hilighted
         self.isActive = hilighted  // Set isActive based on enabled during initialization
+        self.badgeCount = badges
     }
     
     func adjustBadges(delta:Int) {
-        //DispatchQueue.main.async {
-        self.badges += delta
-        PracticeChart.shared.savePracticeChartToFile(chart: PracticeChart.shared)
-        //}
+        print("========= adjust")
+        DispatchQueue.main.async {
+            self.badgeCount += delta
+            PracticeChart.shared.savePracticeChartToFile(chart: PracticeChart.shared)
+        }
     }
     
     required init(from decoder: Decoder) throws {
@@ -35,6 +38,7 @@ class PracticeChartCell: ObservableObject, Codable {
         scale = try container.decode(Scale.self, forKey: .scale)
         row = try container.decode(Int.self, forKey: .row)
         hilighted = try container.decode(Bool.self, forKey: .hilighted)
+        badgeCount = try container.decode(Int.self, forKey: .badges)
         self.isActive = hilighted
     }
     
@@ -43,6 +47,7 @@ class PracticeChartCell: ObservableObject, Codable {
         try container.encode(scale, forKey: .scale)
         try container.encode(row, forKey: .row)
         try container.encode(hilighted, forKey: .hilighted)
+        try container.encode(badgeCount, forKey: .badges)
     }
     
     func setHilighted(way: Bool) {
@@ -79,7 +84,7 @@ class PracticeChart: Codable {
             var rowCells:[PracticeChartCell]=[]
             for _ in 0..<columns {
                 //chartRow.append(scales[scaleCtr])
-                rowCells.append(PracticeChartCell(scale: scales[scaleCtr], row: 0))
+                rowCells.append(PracticeChartCell(scale: scales[scaleCtr], row: 0, badges: 0))
                 scaleCtr += 1
                 if scaleCtr >= scales.count {
                     scaleCtr = 0
@@ -94,6 +99,15 @@ class PracticeChart: Codable {
         self.todaysColumn = 0
     }
     
+    func reset() {
+        for row in cells {
+            for cell in row {
+                cell.adjustBadges(delta: 0 - cell.badgeCount)
+                self.savePracticeChartToFile(chart: self)
+            }
+        }
+    }
+    
     func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
         for cells in cells {
             for row in cells {
@@ -105,6 +119,8 @@ class PracticeChart: Codable {
         return nil
     }
     
+    ///Make the correct column hilighted if it is today
+    ///If today cannot be shown on the current set of days for the chart rotate the chart to the next set of three days
     func adjustForStartDay() {
         let currentDate = Date()
         let calendar = Calendar.current
@@ -127,6 +143,11 @@ class PracticeChart: Codable {
             self.firstColumnDayOfWeekNumber += 3
             if self.firstColumnDayOfWeekNumber > 6 {
                 self.firstColumnDayOfWeekNumber -= 7
+                for row in self.cells {
+                    for cell in row {
+                        cell.badgeCount = 0
+                    }
+                }
             }
             self.savePracticeChartToFile(chart: self)
         }
@@ -188,7 +209,7 @@ class PracticeChart: Codable {
             }
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             try data.write(to: url)  // Write the data to the file
-            Logger.shared.log(self, "Saved PracticeChart to \(url)")
+            //Logger.shared.log(self, "Saved PracticeChart to \(url)")
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
@@ -205,8 +226,10 @@ extension PracticeChart {
             }
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             let data = try Data(contentsOf: url)  // Read the data from the file
-            let chart = try decoder.decode(PracticeChart.self, from: data)  // Decode the data
-            Logger.shared.log(self, "Loaded PracticeChart")
+            //let json = String(data: data, encoding: .utf8)
+            //print("=====read", json)
+            let chart = try decoder.decode(PracticeChart.self, from: data)
+            Logger.shared.log(self, "Loaded PracticeChart \(url)")
             return chart
          } catch {
             Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")

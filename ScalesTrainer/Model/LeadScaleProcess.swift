@@ -76,6 +76,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
+        print("============ LEAD Start", "midi", midi, "expected", nextExpected.midi, "status", status)
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
@@ -103,7 +104,8 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 }
             }
         }
-        
+        print("============ LEAD End", "midi", midi, "expected", nextExpected.midi, "status", status, "\n")
+        //why
         if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
             nextExpectedScaleIndex += 1
             ///Set next segment here so the tap handler hilights the correct stave note

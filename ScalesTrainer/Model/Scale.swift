@@ -672,9 +672,10 @@ public class Scale : Codable {
         if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
             backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
         }
-        if [.brokenChordMajor].contains(scaleType) {
+        if [.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
             backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
         }
+
         guard let backingChords = backingChords else {
             return nil
         }
@@ -699,6 +700,10 @@ public class Scale : Codable {
         return transposedChords
     }
     
+    func getScaleNoteCount() -> Int {
+        return self.scaleNoteState[0].count
+    }
+    
     func debug22(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
@@ -709,7 +714,7 @@ public class Scale : Codable {
                 return String(format: "%.2f", value!)
             }
         }
-        for handIndex in [0,1]{
+        for handIndex in [0,1] {
             var idx = 0
             for state in self.scaleNoteState[handIndex] {
 //                let xxx = state.id.uuidString
