@@ -38,8 +38,9 @@ class AudioManager {
     func stopPlayingRecordedFile() {
         if let audioPlayer = self.audioPlayer {
             audioPlayer.stop()
+            self.resetAudioKit()
             DispatchQueue.main.async {
-                ScalesModel.shared.recordingIsPlaying1 = false
+                ScalesModel.shared.recordingIsPlaying = false
             }
         }
     }
@@ -52,13 +53,14 @@ class AudioManager {
                 engine?.output = self.audioPlayer
                 Logger.shared.log(self, "Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
                 audioPlayer?.completionHandler = {
+                    self.resetAudioKit()
                     DispatchQueue.main.async {
-                        ScalesModel.shared.recordingIsPlaying1 = false
+                        ScalesModel.shared.recordingIsPlaying = false
                     }
                 }
                 self.audioPlayer?.play()
                 DispatchQueue.main.async {
-                    ScalesModel.shared.recordingIsPlaying1 = true
+                    ScalesModel.shared.recordingIsPlaying = true
                 }
             }
         }

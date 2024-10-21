@@ -668,6 +668,9 @@ public class Scale : Codable {
         if self.scaleNoteState.count == 0 {
             return nil
         }
+        if self.scaleMotion == .contraryMotion {
+            return nil
+        }
         var backingChords:BackingChords? = nil
         if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
             backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
@@ -683,11 +686,12 @@ public class Scale : Codable {
         ///Transpose to scale's key
         var transposedChords = BackingChords(scaleType: self.scaleType)
         var rootPitch:Int
-        if self.hands.count > 1 {
+        if false && self.hands.count > 1 {   ///Temporarily try same pitch for LH
             rootPitch = self.scaleNoteState[1][0].midi
         }
         else {
-            rootPitch = self.scaleNoteState[hands[0]][0].midi
+            //rootPitch = self.scaleNoteState[hands[0]][0].midi
+            rootPitch = self.scaleNoteState[0][0].midi
         }
         for backingChord in backingChords.chords {
             var pitches = Array(backingChord.pitches)
@@ -704,7 +708,7 @@ public class Scale : Codable {
         return self.scaleNoteState[0].count
     }
     
-    func debug22(_ msg:String)  {
+    func debug12(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         func getValue(_ value:Double?) -> String {
             if value == nil {

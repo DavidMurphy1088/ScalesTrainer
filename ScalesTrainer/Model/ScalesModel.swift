@@ -70,7 +70,7 @@ public class ScalesModel : ObservableObject {
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
     @Published var scores:[Score?] = [nil, nil]
-    @Published var recordingIsPlaying1 = false
+    @Published var recordingIsPlaying = false
     @Published var synchedIsPlaying = false
 
     var scoreHidden = false
@@ -243,6 +243,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    ///Dont make backing a full blown process. This way Its designed to be able to run with a full blown process (but does not yet)
     @Published private(set) var backingOn:Bool = false
     func setBacking(_ way:Bool) {
         let metronome = Metronome.shared
@@ -300,6 +301,7 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
         }
         Metronome.shared.stop()
+        self.setBacking(false)
         self.runningProcess = setProcess
         DispatchQueue.main.async {
             self.runningProcessPublished = self.runningProcess
@@ -344,7 +346,6 @@ public class ScalesModel : ObservableObject {
                             //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
                             //}
                             key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
-                            print("============== Redraw2", midi)
                             keyboard.redraw1()
                         }
                         sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)

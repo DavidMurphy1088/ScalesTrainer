@@ -559,6 +559,9 @@
     "Stop Analysis" : {
 
     },
+    "Stop Backing Track Harmony" : {
+      "comment" : "Menu"
+    },
     "Stop Hearing" : {
 
     },

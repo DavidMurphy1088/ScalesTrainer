@@ -179,6 +179,19 @@ struct ScalesView: View {
     
     func StopProcessView() -> some View {
         VStack {
+            if hearingBacking {
+                HStack {
+                    //MetronomeView()
+                    let text = metronome.isLeadingIn ? "  Leading In  \(metronome.timerTickerCountPublished)" : NSLocalizedString("Stop Backing Track Harmony", comment: "Menu")
+                    Button(action: {
+                        hearingBacking = false
+                        scalesModel.setBacking(false)
+                    }) {
+                        Text("\(text)")
+                        .padding().font(.title2).hilighted(backgroundColor: .blue)
+                    }
+                }
+             }
             
 //            if scalesModel.runningProcessPublished == .followingScale {
 //                VStack {
@@ -270,7 +283,7 @@ struct ScalesView: View {
                 Spacer()
             }
             
-            if scalesModel.recordingIsPlaying1 {
+            if scalesModel.recordingIsPlaying {
                 Button(action: {
                     AudioManager.shared.stopPlayingRecordedFile()
                 }) {
@@ -616,10 +629,13 @@ struct ScalesView: View {
                 BadgeView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying1 || scalesModel.synchedIsPlaying {
+            if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying || scalesModel.synchedIsPlaying {
                 StopProcessView()
             }
             else {
+                if hearingBacking  {
+                    StopProcessView()
+                }
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             

@@ -19,7 +19,7 @@ class BackingChords {
                               
     init(scaleType:ScaleType, hands : [Int], octaves:Int) {
         self.scaleType = scaleType
-        let octaveOffset = hands.contains(1) ? -12 : -12
+        let octaveOffset = -12 //hands.contains(1) ? -12 : -12
         
         if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
             let isMinor = [.melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType)
@@ -49,29 +49,28 @@ class BackingChords {
         }
         if [.brokenChordMajor].contains(scaleType) {
             let value = 1.0 / 3.0
-            let octaveOffset = hands.contains(1) ? 0 : -24
-
-            for _ in 0..<3 {
+            //let octaveOffset = hands.contains(1) ? 0 : -24
+            let octaveOffset = 0
+            //for _ in 0..<3 {
+            for _ in 0..<7 {
                 chords.append(BackingChord(pitches: [0], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [4, 7], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [4, 7], value: value, offset: octaveOffset))
             }
-
             chords.append(BackingChord(pitches: [7], value: 1, offset: octaveOffset))
         }
         if [.brokenChordMinor].contains(scaleType) {
             let value = 1.0 / 3.0
-            let octaveOffset = hands.contains(1) ? 0 : -24
-
-            for _ in 0..<3 {
+            //let octaveOffset = hands.contains(1) ? 0 : -24
+            let octaveOffset = 0
+            //for _ in 0..<3 {
+            for _ in 0..<7 {
                 chords.append(BackingChord(pitches: [-12], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [3, 7], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [3, 7], value: value, offset: octaveOffset))
             }
-
             chords.append(BackingChord(pitches: [7], value: 1, offset: octaveOffset))
         }
-
     }
     
     init(scaleType:ScaleType) {

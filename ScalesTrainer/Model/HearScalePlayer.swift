@@ -1,4 +1,7 @@
-
+import Foundation
+import AudioKit
+import Foundation
+import AVFoundation
 import Foundation
 
 class HearScalePlayer : MetronomeTimerNotificationProtocol {
@@ -13,6 +16,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var leadInShown = false
     let scale = ScalesModel.shared.scale
     var backingWasOn = false
+    var backingChords:BackingChords? = nil
+    
+    ///Backing
+    var nextChordIndex = 0
+    var lastChord:BackingChords.BackingChord? = nil
+    var remainingSoundValue:Double? = nil
     
     init(hands:[Int]) {
     }
@@ -37,8 +46,45 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
         }
-        //scalesModel.setBacking(false)
-        //self.scalesModel.scale.debug2("HearScale")
+        
+        self.backingChords = scale.getBackingChords()
+    }
+    
+    func playBacking() {
+        guard let sampler = audioManager.backingMidiSampler else {
+            return
+        }
+        guard let backingChords = backingChords else {
+            return
+        }
+        let tickDuration = Metronome.shared.getNoteValueDuration()
+        if self.remainingSoundValue == nil || self.remainingSoundValue == 0 {
+            let backingChord = backingChords.chords[nextChordIndex]
+            if let lastChord = lastChord {
+                for pitch in lastChord.pitches {
+                    sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
+                }
+            }
+            sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
+            for pitch in backingChord.pitches {
+                //print("    ===== ", pitch)
+                sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
+            }
+            self.remainingSoundValue = backingChord.value - tickDuration
+            lastChord = backingChord
+            if nextChordIndex >= backingChords.chords.count - 1 {
+                nextChordIndex = 0
+            }
+            else {
+                nextChordIndex += 1
+            }
+        }
+        else {
+            if self.remainingSoundValue != nil {
+                self.remainingSoundValue! -= tickDuration
+                self.remainingSoundValue = Double(String(format: "%.4f", self.remainingSoundValue!))!
+            }
+        }
     }
     
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) {
@@ -59,7 +105,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 key.setKeyPlaying(hilight: true)
                 //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                 let velocity:UInt8 = 64
-                sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                //if true {
+                    self.playBacking()
+                //}
+                //else {
+                    //sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                //}
                 if false {
                     ///stop note sounding to drop the sampler's reverb
                     let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
@@ -86,6 +137,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         else {
             scalesModel.setSelectedScaleSegment(0)
             self.nextNoteIndex = 0
+            self.remainingSoundValue = nil
         }
     }
     
