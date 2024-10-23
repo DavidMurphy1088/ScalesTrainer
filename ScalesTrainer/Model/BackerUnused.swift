@@ -7,7 +7,7 @@ import AVFoundation
 import Foundation
 import AudioKitEX
 
-class Backer : MetronomeTimerNotificationProtocol {
+class BackerUnused : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var chordRoots:[Int] = []
     var lastChord:BackingChords.BackingChord? = nil

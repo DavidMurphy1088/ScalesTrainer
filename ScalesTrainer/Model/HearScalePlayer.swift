@@ -5,9 +5,11 @@ import AVFoundation
 import Foundation
 
 class HearScalePlayer : MetronomeTimerNotificationProtocol {
+    let process:RunningProcess
     var noteToPlayIndex:[Int] = [0, 0]
     var lastNoteValue:Double? = nil
-    var waitBeats = 0
+    var waitBeatsForScale = 0
+    var waitBeatsForBacking = 0
     let audioManager = AudioManager.shared
     
     let scalesModel = ScalesModel.shared
@@ -15,15 +17,15 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var beatCount = 0
     var leadInShown = false
     let scale = ScalesModel.shared.scale
-    var backingWasOn = false
     var backingChords:BackingChords? = nil
-    
+    let tickDuration:Double
     ///Backing
     var nextChordIndex = 0
-    var lastChord:BackingChords.BackingChord? = nil
-    var remainingSoundValue:Double? = nil
+    var backingChord:BackingChords.BackingChord? = nil
     
-    init(hands:[Int]) {
+    init(hands:[Int], process:RunningProcess) {
+        self.process = process
+        self.tickDuration = Metronome.shared.getNoteValueDuration()
     }
     
     func getKeyboard(hand:Int) -> PianoKeyboardModel {
@@ -38,7 +40,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
         beatCount = 0
         nextNoteIndex = 0
-        backingWasOn = scalesModel.backingOn
+        //backingWasOn = scalesModel.backingOn
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.hilightNotesOutsideScale = false
         }
@@ -57,33 +59,28 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         guard let backingChords = backingChords else {
             return
         }
-        let tickDuration = Metronome.shared.getNoteValueDuration()
-        if self.remainingSoundValue == nil || self.remainingSoundValue == 0 {
-            let backingChord = backingChords.chords[nextChordIndex]
-            if let lastChord = lastChord {
-                for pitch in lastChord.pitches {
-                    sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
-                }
-            }
-            sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
-            for pitch in backingChord.pitches {
-                //print("    ===== ", pitch)
-                sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
-            }
-            self.remainingSoundValue = backingChord.value - tickDuration
-            lastChord = backingChord
-            if nextChordIndex >= backingChords.chords.count - 1 {
-                nextChordIndex = 0
-            }
-            else {
-                nextChordIndex += 1
+        
+        if let lastChord = self.backingChord {
+            for pitch in lastChord.pitches {
+                sampler.stop(noteNumber: MIDINoteNumber(pitch), channel: 0)
             }
         }
+
+        self.backingChord = backingChords.chords[nextChordIndex]
+        guard let backingChord = self.backingChord else {
+            return
+        }
+        sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
+        for pitch in backingChord.pitches {
+            sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
+        }
+        
+        //lastChord = backingChord
+        if nextChordIndex >= backingChords.chords.count - 1 {
+            nextChordIndex = 0
+        }
         else {
-            if self.remainingSoundValue != nil {
-                self.remainingSoundValue! -= tickDuration
-                self.remainingSoundValue = Double(String(format: "%.4f", self.remainingSoundValue!))!
-            }
+            nextChordIndex += 1
         }
     }
     
@@ -91,32 +88,37 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         if leadingIn {
             return
         }
-        if waitBeats > 0 {
-            waitBeats -= 1
-            return
-        }
+
         let sampler = audioManager.keyboardMidiSampler
         for hand in scale.hands {
             let note = scale.scaleNoteState[hand][nextNoteIndex]
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
             if let keyIndex = keyIndex {
-                let key=keyboard.pianoKeyModel[keyIndex]
-                key.setKeyPlaying(hilight: true)
-                //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
-                let velocity:UInt8 = 64
-                //if true {
-                    self.playBacking()
-                //}
-                //else {
-                    //sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
-                //}
+
+                if self.waitBeatsForScale == 0 {
+                    let key=keyboard.pianoKeyModel[keyIndex]
+                    key.setKeyPlaying(hilight: true)
+                    //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
+                    let velocity:UInt8 = 64
+                    if process == .playingAlongWithScale {
+                        sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                    }
+                }
+
+                if self.waitBeatsForBacking == 0 {
+                    if process == .backingOn {
+                        self.playBacking()
+                    }
+                }
+
                 if false {
                     ///stop note sounding to drop the sampler's reverb
                     let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
                     let secsBetweenTicks = secsPerCrotchet / Double(scale.timeSignature.top == 3 ? 3 : 2)
                     var secsToWait = secsBetweenTicks * 2.5
                     secsToWait *= note.value
+                    let key=keyboard.pianoKeyModel[keyIndex]
                     DispatchQueue.main.asyncAfter(deadline: .now() + secsToWait) {
                         ///stop() should stop all notes but doies not appear to stop the sound
                         //sampler?.stop()
@@ -125,19 +127,33 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 }
             }
         }
-        let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
-        let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
-        waitBeats = Int(scaleNoteState.value * notesPerBeat) - 1
 
-        if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
-            self.nextNoteIndex += 1
-            let nextNote = scale.scaleNoteState[0][nextNoteIndex]
-            scalesModel.setSelectedScaleSegment(nextNote.segments[0])
+        if waitBeatsForScale == 0 {
+            let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
+            let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
+            waitBeatsForScale = Int(scaleNoteState.value * notesPerBeat) - 1
+            if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
+                self.nextNoteIndex += 1
+                let nextNote = scale.scaleNoteState[0][nextNoteIndex]
+                scalesModel.setSelectedScaleSegment(nextNote.segments[0])
+            }
+            else {
+                scalesModel.setSelectedScaleSegment(0)
+                self.nextNoteIndex = 0
+            }
         }
         else {
-            scalesModel.setSelectedScaleSegment(0)
-            self.nextNoteIndex = 0
-            self.remainingSoundValue = nil
+            waitBeatsForScale -= 1
+        }
+        
+        if waitBeatsForBacking == 0 {
+            if let backingChord = self.backingChord {
+                waitBeatsForBacking = Int(backingChord.value/self.tickDuration) - 1
+
+            }
+        }
+        else {
+            waitBeatsForBacking -= 1
         }
     }
     

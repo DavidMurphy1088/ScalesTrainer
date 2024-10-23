@@ -91,7 +91,6 @@ class FFTAnalyzer: ObservableObject {
                 
                 if Double(amp) > minAmp {
                     print(String(format: "%.4f", amp), String(format: "%.4f", maxAmp))
-                    print("==========AmpTap", amp)
                     //let timeStamp = self.getTime()
                     self.showFFT = 12
                 }
@@ -101,7 +100,6 @@ class FFTAnalyzer: ObservableObject {
         if false {
             self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
                 if Double(a[0]) > minAmp {
-                    print("==========PitchTap", a[0])
                 }
             }
         }

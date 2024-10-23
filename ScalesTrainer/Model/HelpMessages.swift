@@ -30,29 +30,30 @@ class HelpMessages {
 
         messages["Calibration"] = m
         
-        m = "➤ Wait for each note to be highlighted on the app’s keyboard then play it on your piano in response. The app’s keyboard will display the notes that you play too. The keyboard shows you the correct fingering to use."
-        m += "\n\n➤ Once you’ve learnt the pattern you can try following along without the fingers displayed."
+        m = "Wait for each note to be highlighted on the app’s keyboard then play it on your piano in response."
+        m += "\n\n➤ The app’s keyboard will display the notes that you play."
+        m += "\n\n➤ The keyboard shows you the correct fingering to use."
+        m += "\n\n➤ Once you’ve learnt the pattern you can try following along without the finger numbers displayed."
         messages["Follow"] = m
         
-        m = "➤ Play your technical work on your piano from start to finish. The app’s keyboard will display the notes that you play, as you play them. Make any corrections that you need to."
+        m = "Play your technical work on your piano from start to finish and the app’s keyboard will display the notes as you play them."
         m += "\n\n➤ When you’re confident, try leading without the finger numbers displayed."
         messages["Lead"] = m
         
-        m = "Play along on your piano at the same time as the scale is played. "
+        m = "Play along on your piano with the app as it plays the technical work aloud."
         m += "\n\n➤ The number of clicks for the lead in can be adjusted in Settings."
-        m += "\n\n➤ The scale will be played ascending and descending. "
-        m += "\n\n➤ Listen for any notes you play that are not in the scale. Make sure you use the correct fingering for each note."
-        m += "\n\n➤ When you can play along without mistakes, try playing along with the finger numbers and keyboard turned off."
-        messages["Play Along"] = m
+        m += "\n\n➤ Make sure you use the correct fingering."
+        m += "\n\n➤ When you can play along confidently, try playing along without the finger numbers displayed."
+        messages["Play Along With"] = m
         
-        m = "➤ Record your playing and then listen back to it. Focus on playing accurately and evenly."
-        //m += "\n\n➤ The number of clicks for the lead in can be adjusted in Settings."
+        m = "Record your playing and then listen back to it."
+        m += "\n\n➤ Focus on playing evenly."
         messages["Record"] = m
         
-        m = "➤ The number of clicks for the lead in can be adjusted in Settings."
-        m += "\n\n➤ Correctly played notes will sound good with the backing harmony while incorrect notes will sound unpleasant."
-        m += "\n\n➤ In Settings you can change the instrument on the Backing Track."
-        messages["Backing"] = m
+        m = "Play your technical work on your piano as the app plays a backing track harmony to accompany you."
+        m += "\n\n➤ The number of clicks for the lead in can be adjusted in Settings."
+        m += "\n\n➤ The instrument used for the backing track can also be changed in Settings."
+        messages["Backing Track Harmony"] = m
 
         m = "Listen to the last recording you made."
         messages["Hear Recording"] = m

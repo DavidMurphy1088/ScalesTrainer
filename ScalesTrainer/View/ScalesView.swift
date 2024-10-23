@@ -60,7 +60,7 @@ struct ScalesView: View {
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
-    @State var hearingBacking = false
+    //@State var hearingBacking = false
     @State var recordingScale = false
     @State var showResultPopup = false
     @State var notesHidden = false
@@ -163,85 +163,60 @@ struct ScalesView: View {
 //            })
         }
     }
-
-//    
-//    func leadInMsg() -> String {
-//        let leadIn = Settings.shared.scaleLeadInBarCount
-//        var msg = "Leading In For "
-//        if leadIn == 1 {
-//             msg += "One Bar"
-//        }
-//        else {
-//            msg += "\(leadIn) Bars"
-//        }
-//        return msg
-//    }
+    
+    func getStopButtonText(process: RunningProcess) -> String {
+        let text:String
+        if metronome.isLeadingIn {
+            text = "  Leading In  \(metronome.timerTickerCountPublished)"
+        }
+        else {
+            switch process {
+            case.leadingTheScale:
+                text = "Stop Leading"
+            case.backingOn:
+                text = "Stop Backing Harmony"
+            case.followingScale :
+                text = "Stop Following"
+            case.playingAlongWithScale :
+                text = "Stop Play Along"
+            default:
+                text = ""
+            }
+        }
+        return text
+    }
     
     func StopProcessView() -> some View {
         VStack {
-            if hearingBacking {
-                HStack {
-                    //MetronomeView()
-                    let text = metronome.isLeadingIn ? "  Leading In  \(metronome.timerTickerCountPublished)" : NSLocalizedString("Stop Backing Track Harmony", comment: "Menu")
-                    Button(action: {
-                        hearingBacking = false
-                        scalesModel.setBacking(false)
-                    }) {
-                        Text("\(text)")
-                        .padding().font(.title2).hilighted(backgroundColor: .blue)
-                    }
-                }
-             }
-            
-//            if scalesModel.runningProcessPublished == .followingScale {
-//                VStack {
-//                    Button(action: {
-//                        scalesModel.setRunningProcess(.none)
-//                    }) {
-//                        Text("Stop Following Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                    }
-//                }
-//            }
-                        
-            if [.playingAlongWithScale].contains(scalesModel.runningProcessPublished) {
-                HStack {
-                    MetronomeView()
-                    let text = metronome.isLeadingIn ? "  Leading In  \(metronome.timerTickerCountPublished)" : NSLocalizedString("Stop Playing Along", comment: "Menu")
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                    }) {
-                        Text("\(text)")
-                        .padding().font(.title2).hilighted(backgroundColor: .blue)
-                    }
-                }
-            }
 
-            if [.followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+            if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Leading The Scale"
-                    let text = scalesModel.runningProcessPublished == .followingScale ? "Stop Following Scale" : "Stop Leading The Scale"
+                    let text = getStopButtonText(process: scalesModel.runningProcessPublished)
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
-                        if Settings.shared.practiceChartGamificationOn {
-                            if BadgeBank.shared.totalCorrect > scalesModel.scale.getScaleNoteCount() / 3 {
-                                self.badgeVisibleState = 2
-                                practiceChartCell?.adjustBadges(delta: 1)
-                            }
-                            else {
-                                self.badgeVisibleState = 3
-                                withAnimation(.easeInOut(duration: 1)) {
-                                    badgeRotationAngle += 180 // Spin 360 degrees
+                        if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+                            if Settings.shared.practiceChartGamificationOn {
+                                if BadgeBank.shared.totalCorrect > scalesModel.scale.getScaleNoteCount() / 3 {
+                                    self.badgeVisibleState = 2
+                                    practiceChartCell?.adjustBadges(delta: 1)
                                 }
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                badgeRotationAngle = 0
-                                self.badgeVisibleState = 0
+                                else {
+                                    self.badgeVisibleState = 3
+                                    withAnimation(.easeInOut(duration: 1)) {
+                                        badgeRotationAngle += 180 // Spin 360 degrees
+                                    }
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    badgeRotationAngle = 0
+                                    self.badgeVisibleState = 0
+                                }
                             }
                         }
                     }) {
                         Text("\(text)")
                         .padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
+                        
                 }
             }
 
@@ -382,7 +357,7 @@ struct ScalesView: View {
                     }
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         Button(action: {
-                            showHelp("Play Along")
+                            showHelp("Play Along With")
                         }) {
                             VStack {
                                 Image(systemName: "questionmark.circle")
@@ -456,19 +431,19 @@ struct ScalesView: View {
                     HStack {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track\nHarmony"
                         Button(action: {
-                            hearingBacking.toggle()
-                            if hearingBacking {
-                                scalesModel.setBacking(true)
+                            //hearingBacking.toggle()
+                            if scalesModel.runningProcessPublished == .backingOn {
+                                scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                scalesModel.setBacking(false)
+                                scalesModel.setRunningProcess(.backingOn)
                             }
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         if UIDevice.current.userInterfaceIdiom != .phone {
                             Button(action: {
-                                showHelp("Backing")
+                                showHelp("Backing Track Harmony")
                             }) {
                                 VStack {
                                     Image(systemName: "questionmark.circle")
@@ -633,16 +608,16 @@ struct ScalesView: View {
                 StopProcessView()
             }
             else {
-                if hearingBacking  {
-                    StopProcessView()
-                }
+//                if hearingBacking  {
+//                    StopProcessView()
+//                }
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
             if Settings.shared.practiceChartGamificationOn {
                 self.badgeImage
                     .offset(x: self.badgeVisibleState == 2 ? -UIScreen.main.bounds.width / 2 : 0, y: CGFloat(self.getBadgeOffset()))
-                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 1.5 : 1), value:  badgeVisibleState)
+                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 2.0 : 1), value:  badgeVisibleState)
                     .rotationEffect(.degrees(badgeRotationAngle))
                     .opacity(badgeVisibleState == 0 ? 0.0 : 1.0)
             }
@@ -694,20 +669,13 @@ struct ScalesView: View {
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
             scalesModel.setRecordedAudioFile(nil)
-            //moveBadge()
         }
         
         .onDisappear {
             metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
-            scalesModel.setBacking(false)
-//            if let cell = self.practiceChartCell {
-//                //DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                    //usleep(1000000 * UInt32(1.0))
-//                    cell.adjustBadges(delta: 1)
-//                //}
-//            }
+
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt

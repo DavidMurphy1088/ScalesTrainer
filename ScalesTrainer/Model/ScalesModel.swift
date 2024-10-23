@@ -20,10 +20,10 @@ enum RunningProcess {
     case leadingTheScale
     case recordingScale
     case recordingScaleForAssessment
-    //case metronomeOn
     case recordScaleWithFileData
     case syncRecording
     case playingAlongWithScale
+    case backingOn
 
     var description: String {
         switch self {
@@ -40,16 +40,12 @@ enum RunningProcess {
             return "Recording Scale"
         case .recordScaleWithFileData:
             return "Recording Scale With File Data"
-//        case .recordScaleWithTapData:
-//            return "Recording Scale With Tap Data"
-//        case .identifyingScale:
-//            return "Identifying Scale"
         case .syncRecording:
             return "Synchronize Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
-//        case .metronomeOn:
-//            return "Metronome On"
+        case .backingOn:
+            return "Backing On"
         }
     }
 }
@@ -98,7 +94,7 @@ public class ScalesModel : ObservableObject {
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     var tapHandlers:[TapHandlerProtocol] = []
-    var backer:Backer?
+    //var backer:Backer?
     
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
@@ -244,24 +240,24 @@ public class ScalesModel : ObservableObject {
     }
     
     ///Dont make backing a full blown process. This way Its designed to be able to run with a full blown process (but does not yet)
-    @Published private(set) var backingOn:Bool = false
-    func setBacking(_ way:Bool) {
-        let metronome = Metronome.shared
-        if way {
-            if self.backer == nil {
-                self.backer = Backer()
-            }
-            metronome.addProcessesToNotify(process: self.backer!)
-            metronome.setTicking(way: true)
-            metronome.start()
-        }
-        else {
-            metronome.stop()
-        }
-        DispatchQueue.main.async {
-            self.backingOn = way
-        }
-    }
+//    @Published private(set) var backingOn:Bool = false
+//    func setBacking(_ way:Bool) {
+//        let metronome = Metronome.shared
+//        if way {
+//            if self.backer == nil {
+//                self.backer = Backer()
+//            }
+//            metronome.addProcessesToNotify(process: self.backer!)
+//            metronome.setTicking(way: true)
+//            metronome.start()
+//        }
+//        else {
+//            metronome.stop()
+//        }
+//        DispatchQueue.main.async {
+//            self.backingOn = way
+//        }
+//    }
     
     //init(musicBoardGrade:MusicBoardGrade) {
     init() {
@@ -301,7 +297,6 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
         }
         Metronome.shared.stop()
-        self.setBacking(false)
         self.runningProcess = setProcess
         DispatchQueue.main.async {
             self.runningProcessPublished = self.runningProcess
@@ -376,7 +371,12 @@ public class ScalesModel : ObservableObject {
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
-            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands))
+            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlongWithScale))
+            metronome.setTicking(way: true)
+            metronome.start()
+        }
+        if [.backingOn].contains(setProcess) {
+            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
             metronome.setTicking(way: true)
             metronome.start()
         }

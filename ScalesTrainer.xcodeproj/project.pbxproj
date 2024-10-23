@@ -61,7 +61,7 @@
 		7985635D2C0349BF008BAC79 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* Settings.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
-		799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A52BFDDBC5004B19F6 /* Backer.swift */; };
+		799BE2A62BFDDBC5004B19F6 /* BackerUnused.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A52BFDDBC5004B19F6 /* BackerUnused.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
@@ -160,7 +160,7 @@
 		7985635C2C0349BF008BAC79 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		799BE2A52BFDDBC5004B19F6 /* Backer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backer.swift; sourceTree = "<group>"; };
+		799BE2A52BFDDBC5004B19F6 /* BackerUnused.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackerUnused.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
@@ -390,7 +390,7 @@
 			isa = PBXGroup;
 			children = (
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
-				799BE2A52BFDDBC5004B19F6 /* Backer.swift */,
+				799BE2A52BFDDBC5004B19F6 /* BackerUnused.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
@@ -593,7 +593,7 @@
 				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
-				799BE2A62BFDDBC5004B19F6 /* Backer.swift in Sources */,
+				799BE2A62BFDDBC5004B19F6 /* BackerUnused.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
 				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
 				79C8AD042C12F81C00770C10 /* PracticeJournalOld.swift in Sources */,
@@ -740,7 +740,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -774,7 +774,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

@@ -49,9 +49,7 @@ class BackingChords {
         }
         if [.brokenChordMajor].contains(scaleType) {
             let value = 1.0 / 3.0
-            //let octaveOffset = hands.contains(1) ? 0 : -24
             let octaveOffset = 0
-            //for _ in 0..<3 {
             for _ in 0..<7 {
                 chords.append(BackingChord(pitches: [0], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [4, 7], value: value, offset: octaveOffset))
@@ -61,9 +59,7 @@ class BackingChords {
         }
         if [.brokenChordMinor].contains(scaleType) {
             let value = 1.0 / 3.0
-            //let octaveOffset = hands.contains(1) ? 0 : -24
             let octaveOffset = 0
-            //for _ in 0..<3 {
             for _ in 0..<7 {
                 chords.append(BackingChord(pitches: [-12], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [3, 7], value: value, offset: octaveOffset))

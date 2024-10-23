@@ -26,7 +26,6 @@ class PracticeChartCell: ObservableObject, Codable {
     }
     
     func adjustBadges(delta:Int) {
-        print("========= adjust")
         DispatchQueue.main.async {
             self.badgeCount += delta
             PracticeChart.shared.savePracticeChartToFile(chart: PracticeChart.shared)
