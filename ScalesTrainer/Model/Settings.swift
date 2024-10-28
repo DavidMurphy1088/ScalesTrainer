@@ -26,7 +26,7 @@ public class SettingsPublished : ObservableObject {
 
 public class Settings : Codable  {
     static var shared = Settings()
-    var developerMode = false
+    var developerMode1 = false
     var firstName = ""
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
@@ -48,12 +48,12 @@ public class Settings : Codable  {
     
     init() {
         self.musicBoard = MusicBoard(name: "")
-        self.musicBoardGrade = MusicBoardGrade(grade: "")
+        self.musicBoardGrade = MusicBoardGrade(index: 0, grade: "")
         load()
     }
     
     public func isDeveloperMode() -> Bool {
-        return self.firstName.range(of: "david", options: .caseInsensitive) != nil
+        return self.firstName.range(of: "dev", options: .caseInsensitive) != nil
     }
     
     public func settingsExists() -> Bool {
@@ -92,10 +92,10 @@ public class Settings : Codable  {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
        
         str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
-        str += " RecordDataMode:\(self.developerMode)"
         str += " FirstName:\(self.firstName)"
         str += " Board:\(self.musicBoard)"
-        str += " Grade:\(self.musicBoardGrade)"
+        str += " Grade:\(self.musicBoardGrade.grade)"
+        str += " GradeIndex:\(self.musicBoardGrade.gradeIndex)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " KeyboardColor:\(self.keyboardColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
@@ -132,7 +132,6 @@ public class Settings : Codable  {
                     let jsonDecoder = JSONDecoder()
                     let decoded = try jsonDecoder.decode(Settings.self, from: data)
                     let loaded = decoded
-                    self.developerMode  = loaded.developerMode
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
                     self.musicBoard = loaded.musicBoard

@@ -60,7 +60,6 @@ struct ScalesView: View {
     @State private var bufferSizeIndex = 11
     @State private var startMidiIndex = 4
     @State var amplitudeFilter: Double = 0.00
-    //@State var hearingBacking = false
     @State var recordingScale = false
     @State var showResultPopup = false
     @State var notesHidden = false
@@ -70,9 +69,10 @@ struct ScalesView: View {
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
     
-    @State private var badgeVisibleState = 0 //0 down, 1 centered, 2 go top, 3 go bottom
-    let badgeImage = Image("pet_dogface")
-    @State private var badgeRotationAngle: Double = 0
+    ///Practice Chart badge control
+    @State private var practiceChartBadgeVisibleState = 0 //0 down off screen, 1 centered and visible, 2 go top, 3 go bottom
+    let practiceChartBadgeImage = Image("pet_dogface")
+    @State private var practiceChartBadgeRotationAngle: Double = 0
     
     init(initialRunProcess:RunningProcess?, practiceChartCell:PracticeChartCell?) {
         self.initialRunProcess = initialRunProcess
@@ -186,6 +186,15 @@ struct ScalesView: View {
         return text
     }
     
+    func badgePointsNeeded() -> Int {
+        if Settings.shared.practiceChartGamificationOn {
+            return 2 * scalesModel.scale.getScaleNoteCount() / 3
+        }
+        else {
+            return 0
+        }
+    }
+    
     func StopProcessView() -> some View {
         VStack {
 
@@ -196,19 +205,19 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.none)
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
                             if Settings.shared.practiceChartGamificationOn {
-                                if BadgeBank.shared.totalCorrect > scalesModel.scale.getScaleNoteCount() / 3 {
-                                    self.badgeVisibleState = 2
+                                if BadgeBank.shared.totalCorrect >= badgePointsNeeded()  {
+                                    self.practiceChartBadgeVisibleState = 2
                                     practiceChartCell?.adjustBadges(delta: 1)
                                 }
                                 else {
-                                    self.badgeVisibleState = 3
+                                    self.practiceChartBadgeVisibleState = 3
                                     withAnimation(.easeInOut(duration: 1)) {
-                                        badgeRotationAngle += 180 // Spin 360 degrees
+                                        practiceChartBadgeRotationAngle += 180 // Spin 360 degrees
                                     }
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    badgeRotationAngle = 0
-                                    self.badgeVisibleState = 0
+                                    practiceChartBadgeRotationAngle = 0
+                                    self.practiceChartBadgeVisibleState = 0
                                 }
                             }
                         }
@@ -287,7 +296,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.setRunningProcess(.followingScale)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                            self.badgeVisibleState = 1
+                            self.practiceChartBadgeVisibleState = 1
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
@@ -319,7 +328,7 @@ struct ScalesView: View {
                             else {
                                 scalesModel.setRunningProcess(.leadingTheScale)
                                 scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
-                                self.badgeVisibleState = 1
+                                self.practiceChartBadgeVisibleState = 1
                             }
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -489,30 +498,34 @@ struct ScalesView: View {
         return mailInfo
     }
     
-//    func moveBadge() {
-//        //self.isImageVisible = true
-//        //self.moveToTopLeft.toggle()
-//        self.badgeVisibleState = 2
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-////            withAnimation {
-////                isImageVisible = false // Hide the image after the delay
-////            }
-//            //badgeVisibleState = 0
-//            //moveToTopLeft = false
-//        }
-//    }
-    
     func getBadgeOffset() -> Int {
-        if self.badgeVisibleState == 0 {
+        if self.practiceChartBadgeVisibleState == 0 {
             return 300
         }
-        if self.badgeVisibleState == 2 {
+        if self.practiceChartBadgeVisibleState == 2 {
             return Int(0-UIScreen.main.bounds.height)
         }
-        if self.badgeVisibleState == 3 {
+        if self.practiceChartBadgeVisibleState == 3 {
             return 0 - Int(300)
         }
         return 0
+    }
+    
+    func getBadgeMessage() -> String {
+        let remaining = self.badgePointsNeeded() - BadgeBank.shared.totalCorrect
+        var msg = ""
+        if remaining > 0 {
+            if remaining == 1 {
+                msg = "Win me with one more correct note 😊"
+            }
+            else {
+                msg = BadgeBank.shared.totalCorrect == 0 ? "Win me with just \(remaining) notes correct 😊" : "Win me with \(remaining) more notes correct 😊"
+            }
+        }
+        else {
+            msg = "😊 You won me 😊"
+        }
+        return msg
     }
     
     var body: some View {
@@ -522,21 +535,21 @@ struct ScalesView: View {
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     .padding(.vertical)
                     .padding(.horizontal, 0)
-                if UIDevice.current.userInterfaceIdiom != .phone {
-                    HStack {
-                        Spacer()
-                        if scalesModel.runningProcessPublished == .none {
-                            SelectScaleParametersView()
-                            //.padding(.vertical, 0)
-                                .padding()
-                        }
-                        ViewSettingsView()
+                HStack {
+                    Spacer()
+                    if scalesModel.runningProcessPublished == .none {
+                        SelectScaleParametersView()
+                        //.padding(.vertical, 0)
+                        //.padding()
+                    }
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        HideandShowView()
                         //.padding(.vertical, 0)
                             .padding()
-                        Spacer()
                     }
-                    .commonFrameStyle(backgroundColor: Color.white)
+                    Spacer()
                 }
+                .commonFrameStyle(backgroundColor: Color.white)
             }
             
             if scalesModel.showKeyboard {
@@ -600,36 +613,43 @@ struct ScalesView: View {
                 }
             }
             
-            if badgeBank.show {
-                BadgeView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
-            }
+//            if badgeBank.show {
+//                
+//            }
             
             if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying || scalesModel.synchedIsPlaying {
                 StopProcessView()
             }
             else {
-//                if hearingBacking  {
-//                    StopProcessView()
-//                }
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if Settings.shared.practiceChartGamificationOn {
-                self.badgeImage
-                    .offset(x: self.badgeVisibleState == 2 ? -UIScreen.main.bounds.width / 2 : 0, y: CGFloat(self.getBadgeOffset()))
-                    .animation(.easeInOut(duration: [2,3].contains(self.badgeVisibleState) ? 2.0 : 1), value:  badgeVisibleState)
-                    .rotationEffect(.degrees(badgeRotationAngle))
-                    .opacity(badgeVisibleState == 0 ? 0.0 : 1.0)
+            if Settings.shared.practiceChartGamificationOn && badgeBank.show {
+                BadgeView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
+                ///Practice chart badge temporarily removed awaiting more design
+                if Settings.shared.isDeveloperMode() {
+                    self.practiceChartBadgeImage
+                        .offset(x: self.practiceChartBadgeVisibleState == 2 ? -UIScreen.main.bounds.width / 2 : 0, y: CGFloat(self.getBadgeOffset()))
+                        .animation(.easeInOut(duration: [2,3].contains(self.practiceChartBadgeVisibleState) ? 2.0 : 1), value:  practiceChartBadgeVisibleState)
+                        .rotationEffect(.degrees(practiceChartBadgeRotationAngle))
+                        .opacity(practiceChartBadgeVisibleState == 0 ? 0.0 : 1.0)
+                    
+                    Text(getBadgeMessage())
+                        .padding()
+                        .foregroundColor(.blue)
+                        .opacity(practiceChartBadgeVisibleState == 0 ? 0.0 : 1.0)
+                        .animation(.easeInOut(duration: 0.5), value: practiceChartBadgeVisibleState)
+                        .zIndex(1) // Keeps it above other views
+                }
             }
-
+            
             Spacer()
         }
         ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
         ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
         //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
         .commonFrameStyle()
-        //}
-        
+    
         .sheet(isPresented: $helpShowing) {
             if let topic = scalesModel.helpTopic {
                 HelpView(topic: topic)

@@ -162,7 +162,7 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
                     //ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0], ctx: "App Start")
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [1], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -170,7 +170,7 @@ class TabSelectionManager: ObservableObject {
                 }
             }
             else{
-                selectedTab = 4
+                selectedTab = 5
             }
         }
         else {
@@ -179,8 +179,19 @@ class TabSelectionManager: ObservableObject {
     }
 }
 
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .portrait // Lock to portrait on iPhone
+        } else {
+            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
+        }
+    }
+}
+
 @main
 struct ScalesTrainerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var tabSelectionManager = TabSelectionManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
     var launchTimeSecs = 4.5
@@ -262,12 +273,19 @@ struct ScalesTrainerApp: App {
                 .tag(3)
                 .environmentObject(tabSelectionManager)
             
+            FeatureReportView() 
+                .tabItem {
+                    Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
+                }
+                .tag(4)
+                .environmentObject(tabSelectionManager)
+
             if Settings.shared.isDeveloperMode() {
                 ScalesLibraryView()
                     .tabItem {
                         Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
                     }
-                    .tag(4)
+                    .tag(5)
                     .environmentObject(tabSelectionManager)
             }
             
@@ -276,7 +294,7 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
-                    .tag(5)
+                    .tag(6)
                     .environmentObject(tabSelectionManager)
             }
             
@@ -286,20 +304,20 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label("ScaleLibrary", systemImage: "book.pages")
                     }
-                    .tag(6)
+                    .tag(7)
                     .environmentObject(tabSelectionManager)
 
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")
                     }
-                    .tag(7)
+                    .tag(8)
                     .environmentObject(tabSelectionManager)
                 DeveloperView()
                     .tabItem {
                         Label("Dev", systemImage: "book.pages")
                     }
-                    .tag(8)
+                    .tag(9)
                     .environmentObject(tabSelectionManager)
             }
         }

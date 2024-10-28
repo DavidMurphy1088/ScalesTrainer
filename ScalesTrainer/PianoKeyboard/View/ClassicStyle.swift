@@ -7,21 +7,21 @@ public struct ClassicStyle {
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
     let cornerRadiusMultiplier: CGFloat
-    //let labelFont: Font
     let labelColor: Color
     let keyColor: Color
     let hand:Int
+    let scale:Scale
     
     public let naturalKeySpace: CGFloat
 
     public init(
+        scale:Scale,
         hand:Int,
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
         naturalKeySpace: CGFloat = 3,
-        //labelFont: Font = .title3.bold(),
         labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
@@ -31,9 +31,9 @@ public struct ClassicStyle {
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
         self.cornerRadiusMultiplier = cornerRadiusMultiplier
         self.naturalKeySpace = naturalKeySpace
-        //self.labelFont = labelFont
         self.labelColor = labelColor
         self.keyColor = keyColor
+        self.scale = scale
     }
 
     public func naturalColor(_ down: Bool) -> Color {
@@ -116,7 +116,6 @@ public struct ClassicStyle {
                 let hilightColor:Color
                 if keyModel.hilightKeyToFollow == .followThisNote {
                     hilightColor = hiliteKeyColor(key.touchDown)
-                    //key.hilightCallback()
                 }
                 else {
                     if keyModel.hilightKeyToFollow == .middleOfKeyboard {
@@ -161,10 +160,8 @@ public struct ClassicStyle {
                         if key.midi != 60 {
                             context.draw(
                                 Text(key.name)
-                                    //.font(labelFont)
-                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)
+                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
                                     .foregroundColor(keyModel.midi == 60 ? .blue : .black),
-                                //Text("X").font(labelFont).foregroundColor(keyModel.midi == 60 ? .blue : .black),
                                 at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                             )
                         }
@@ -269,34 +266,21 @@ public struct ClassicStyle {
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
                 ))
                 
-                ///------------- Note name -----
-                if scalesModel.showFingers {
-                    if key.finger.count > 0 {
-                        context.draw(
-                            Text(key.name)
-                                //.font(labelFont)
-                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
-                                .foregroundColor(.white),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                        )
+                ///------------- Back notes - Note name -----
+                ///On iPhone too many keys results in overlapping key names. So dont show the black key key names.
+                if scale.getScaleNoteCount() < 16 { //}|| UIDevice.current.userInterfaceIdiom != .phone {
+                    if scalesModel.showFingers {
+                        if key.finger.count > 0 {
+                            context.draw(
+                                Text(key.name)
+                                //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
+                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
+                                    .foregroundColor(.white),
+                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
+                            )
+                        }
                     }
                 }
-                
-                ///Hilite Middle C
-                ///Draw it here (not during white key draw) to ensure it appears above the black note
-//                if keyModel.midi == 61 { //}|| keyModel.midi == 64 {
-//                    let circleRadius = 15
-//                    let circle = CGRect(x: Int(rect.midX) - circleRadius * 2,
-//                                        y: 6,
-//                                        width: circleRadius * 2,
-//                                        height: circleRadius * 2)
-//                    context.fill(Path(ellipseIn: circle), with: .color(.white))
-//                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
-//                    context.draw(
-//                        Text("C").font(labelFont).foregroundColor(.blue),
-//                        at: CGPoint(x: rect.origin.x + (rect.width / 2.0) - CGFloat(circleRadius), y: 20)
-//                    )
-//                }
 
                 /// ----------- The note from the key touch is playing ----------
                 if keyModel.keyIsSounding {

@@ -45,7 +45,7 @@ struct SegmentView: View {
             )
 
             Text(text)
-                .font(.title2) // Increase the font size
+                .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption : .title2).bold(true)
                 .foregroundColor(.white)
                 .rotationEffect(.degrees((startAngle + endAngle) / 2))
                 .position(x: radius + CGFloat(radius / 2 * cos((startAngle + angle / 2) * .pi / 180)), y: radius + CGFloat(radius / 2 * sin((startAngle + angle / 2) * .pi / 180)))

@@ -40,8 +40,11 @@ struct SpinWheelView: View {
         var res:[String] = []
 
         for scale in practiceChart.getScales() {
-            let name = scale.getScaleName(handFull: false)
-            //let name = scale.getScaleName(handFull: false, octaves: false)
+            var name = scale.getScaleName(handFull: false)
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                ///push outward from wheel center to avoid overcrowding
+                name = "         " + scale.abbreviateFileName(name: name)
+            }
             res.append(name)
         }
         return res
@@ -201,7 +204,7 @@ struct SpinWheelView: View {
 
                 if scalesModel.spinStatePublished == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
-                    let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
+                    //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
                     NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()

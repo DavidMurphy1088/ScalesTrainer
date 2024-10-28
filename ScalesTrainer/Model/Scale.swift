@@ -365,9 +365,16 @@ public class Scale : Codable {
                         noteValue *= 3
                     }
                     let segment = getSegment(hand: handIndex)
+                    let segments:[Int]
+                    if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+                        segments = [segment]
+                    }
+                    else {
+                        segments = [segment, segment+1]
+                    }
                     ///The top note is in the upward and downward segment. i.e. it should show on both segments
                     scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][0].midi + (octaves) * 12,
-                                                                     value: noteValue, segment: [segment, segment+1]))
+                                                                     value: noteValue, segment: segments))
                     sequence += 1
                 }
             }
@@ -706,6 +713,14 @@ public class Scale : Codable {
     
     func getScaleNoteCount() -> Int {
         return self.scaleNoteState[0].count
+    }
+    
+    func abbreviateFileName(name:String) -> String {
+        var out = name
+        out = out.replacingOccurrences(of: "Harmonic", with: "H")
+        out = out.replacingOccurrences(of: "Motion", with: "")
+        out = out.replacingOccurrences(of: "Broken", with: "Br. ")
+        return out
     }
     
     func debug12(_ msg:String)  {

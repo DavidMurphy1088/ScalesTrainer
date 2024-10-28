@@ -9,6 +9,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     var nextExpectedScaleIndex:Int
     let badges = BadgeBank.shared
     var lastMidi:Int? = nil
+    var lastMidiScaleIndex:Int? = nil
     var notifyCount = 0
     var leadInShowing = false
     let metronome:Metronome
@@ -22,7 +23,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
-        //MetronomeModel.shared.makeSilent = false
     }
     
     func metronomeStop() {
@@ -54,18 +54,31 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
+        lastMidiScaleIndex = nil
         notifyCount = 0
+        scalesModel.scale.debug12("Lead Start")
     }
     
     func notify(midi:Int, status:TapEventStatus) {
         if leadInShowing {
             return
         }
-        if ![.inScale, .outOfScale].contains(status) {
+        if [.belowAmplitudeFilter, .countTooLow].contains(status) {
+        //if [.belowAmplitudeFilter].contains(status) {
             return
         }
+        //print("\n========= Lead", notifyCount, "midi:", midi, "status:", status, "lastCorrectMidi:", lastMidi ?? "_")
+        //if ![.inScale, .outOfScale].contains(status) {
+        if ![.inScale].contains(status) {
+           // badges.setTotalCorrect(badges.totalCorrect - 1)
+           // badges.removeMatch()
+            //print("    ===== Lead rejected status", status)
+            return
+        }
+
         if let lastCorrectMidi = lastMidi {
             if midi == lastCorrectMidi {
+                //print("    ===== Lead rejected duplicate", status)
                 return
             }
         }
@@ -76,6 +89,8 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
+        notifyCount += 1
+        //print("    ===== Lead", "😊", "nextExpected", nextExpected.midi, "index", self.nextExpectedScaleIndex)
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
@@ -84,39 +99,40 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 nextExpected.matchedTime = Date()
             }
         }
-        else {
-            if status == .outOfScale {
-                nextExpected.matchedTime = Date()
-                badges.setTotalIncorrect(badges.totalIncorrect + 1)
+//        else {
+//            if status == .outOfScale {
+//                nextExpected.matchedTime = Date()
+//                badges.setTotalIncorrect(badges.totalIncorrect + 1)
+//            }
+//            else {
+//                ///Look for a matching scale note that has not been played yet
+//                for i in 0..<scale.scaleNoteState[hand].count {
+//                    let unplayed = scale.scaleNoteState[hand][i]
+//                    if unplayed.midi == midi && unplayed.matchedTime == nil {
+//                        badges.setTotalCorrect(badges.totalCorrect + 1)
+//                        badges.addMatch(midi)
+//                        unplayed.matchedTime = Date()
+//                        nextExpectedScaleIndex = i
+//                        break
+//                    }
+//                }
+//            }
+//        }
+        if midi == nextExpected.midi {
+            if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
+                nextExpectedScaleIndex += 1
+                ///Set next segment here so the tap handler hilights the correct stave note
+                let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+                scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
+                //print("    ===== Lead Result", "nextExpected", nextExpected.midi, "index", self.nextExpectedScaleIndex, "segment", nextExpected.segments[0])
             }
-            else {
-                ///Look for a matching scale note that has not been played yet
-                for i in 0..<scale.scaleNoteState[hand].count {
-                    let unplayed = scale.scaleNoteState[hand][i]
-                    if unplayed.midi == midi && unplayed.matchedTime == nil {
-                        badges.setTotalCorrect(badges.totalCorrect + 1)
-                        badges.addMatch(midi)
-                        unplayed.matchedTime = Date()
-                        nextExpectedScaleIndex = i
-                        break
-                    }
-                }
-            }
         }
-        
-        if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
-            nextExpectedScaleIndex += 1
-            ///Set next segment here so the tap handler hilights the correct stave note
-            let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
-            scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
-        }
-        else {
-            ///🙄a random harmonic may trigger a stop
-            //scalesModel.setRunningProcess(.none)
-            ///Leave the last segment fingering showing
-            scalesModel.setSelectedScaleSegment(scalesModel.scale.getHighestSegment())
-        }
-        notifyCount += 1
+//        else {
+//            ///🙄a random harmonic may trigger a stop
+//            //scalesModel.setRunningProcess(.none)
+//            ///Leave the last segment fingering showing
+//            scalesModel.setSelectedScaleSegment(scalesModel.scale.getHighestSegment())
+//        }
     }
     
     func playDemo() {

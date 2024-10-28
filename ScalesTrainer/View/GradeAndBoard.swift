@@ -42,19 +42,18 @@ struct GradeAndBoard: View {
                         SettingsPublished.shared.firstName = firstName
                     })
                     
-                    //Spacer()
-                    //Button("Select Your Music Board and Grade") {
-                    Button("Select Your Grade") {
-                        //navigateToSelectBoard = true
-                        navigateToGrade = true
-                    }
-                    .padding()
-                    .navigationDestination(isPresented: $navigateToSelectBoard) {
-                        SelectMusicBoardView()
-                    }
-                    .navigationDestination(isPresented: $navigateToGrade) {
-                        BoardGradesView(board: "trinity")
-                    }
+                    //if false {
+                        Button("Select Your Grade") {
+                            navigateToGrade = true
+                        }
+                        .padding()
+                        .navigationDestination(isPresented: $navigateToSelectBoard) {
+                            SelectMusicBoardView()
+                        }
+                        .navigationDestination(isPresented: $navigateToGrade) {
+                            BoardGradesView(board: "trinity")
+                        }
+                    //}
 
                     Spacer()
                     HStack {

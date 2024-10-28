@@ -25,14 +25,13 @@ struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    //@State var recordDataMode = Settings.shared.developerModeOn
     @State var firstName = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
-    @State var practiceChartGamificationOn = false
     @State var metronomeSilent = false
+    @State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
@@ -174,22 +173,7 @@ struct SettingsView: View {
                     settings.badgeStyle = badgeStyleNumber
                 })
             }
-
-//            ///Score values
-//            Spacer()
-//            HStack {
-//                Text(LocalizedStringResource("Scale Note Value")).font(.title2).padding(0)
-//                Picker("Select Value", selection: $scaleNoteValue) {
-//                    ForEach(0..<2) { number in
-//                        let valueStr = number == 0 ? "Crotchet" : "Quaver"
-//                        Text("\(valueStr)")
-//                    }
-//                }
-//                .pickerStyle(.menu)
-//                .onChange(of: scaleNoteValue, {
-//                    settings.scaleNoteValue = scaleNoteValue == 0 ? 4 : 8
-//                })
-//            }
+            
             Spacer()
             HStack {
                 Spacer()
@@ -201,23 +185,23 @@ struct SettingsView: View {
                 })
                 Spacer()
             }
-            .frame(width: UIScreen.main.bounds.width * 0.30)
-
+            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+            
             ///Developer
-            if Settings.shared.isDeveloperMode() {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Toggle(isOn: $developerMode) {
-                        Text("Developer Mode On").font(.title2).padding(0)
-                    }
-                    .onChange(of: developerMode, {
-                        settings.developerMode = developerMode
-                    })
-                    Spacer()
-                }
-                .frame(width: UIScreen.main.bounds.width * 0.30)
-            }
+//            if Settings.shared.isDeveloperMode() {
+//                Spacer()
+//                HStack {
+//                    Spacer()
+//                    Toggle(isOn: $developerMode) {
+//                        Text("Developer Mode").font(.title2).padding(0)
+//                    }
+//                    .onChange(of: developerMode, {
+//                        settings.developerMode = developerMode
+//                    })
+//                    Spacer()
+//                }
+//                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+//            }
             
 //            if Settings.shared.isDeveloperMode() {
 //                Spacer()
@@ -295,7 +279,7 @@ struct SettingsView: View {
                 self.keyboardColor = Settings.shared.getKeyboardColor1()
                 self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
-                self.developerMode = settings.developerMode
+                //self.developerMode = settings.developerMode
                 self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
             }

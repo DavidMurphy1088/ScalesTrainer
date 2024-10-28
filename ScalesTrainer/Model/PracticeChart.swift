@@ -58,7 +58,7 @@ class PracticeChartCell: ObservableObject, Codable {
 }
 
 class PracticeChart: Codable {
-    static var shared:PracticeChart = PracticeChart(musicBoard: MusicBoard(name: ""), musicBoardGrade:MusicBoardGrade(grade: "0"), minorScaleType: 0)
+    static var shared:PracticeChart = PracticeChart(musicBoard: MusicBoard(name: ""), musicBoardGrade:MusicBoardGrade(index: 0, grade: "0"), minorScaleType: 0)
     static let fileName = "practice_chart.json"
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade

@@ -216,15 +216,15 @@ struct PracticeChartView: View {
                     }
                     .padding()
                     
-                    if Settings.shared.practiceChartGamificationOn {
-                        Spacer()
-                        Button(action: {
-                            practiceChart.reset()
-                        }) {
-                            Text("Reset")
-                        }
-                        .padding()
-                    }
+//                    if Settings.shared.practiceChartGamificationOn {
+//                        Spacer()
+//                        Button(action: {
+//                            practiceChart.reset()
+//                        }) {
+//                            Text("Reset")
+//                        }
+//                        .padding()
+//                    }
 
                     Spacer()
                 }

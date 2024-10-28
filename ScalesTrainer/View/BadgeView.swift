@@ -30,6 +30,15 @@ class BadgeBank : ObservableObject {
             self.matches.append(value)
         }
     }
+
+    func removeMatch() {
+        DispatchQueue.main.async {
+            if !self.matches.isEmpty {
+                self.matches.removeLast()
+            }
+        }
+    }
+
     func clearMatches() {
         DispatchQueue.main.async {
             self.matches = []
@@ -121,13 +130,8 @@ struct BadgeView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("\(scale.getScaleName(handFull: true))").font(.title)
-                Text("Correct:\(bank.totalCorrect)")
-//                if Settings.shared.developerModeOn {
-//                    Text(bank.matches.map { String($0) }.joined(separator: ", "))
-//                }
-
-                //Text("Incorrect:\(bank.totalIncorrect)")
+                //Text("\(scale.getScaleName(handFull: true))").font(.title)
+                Text("Badges").font(.title3)
                 Button(action: {
                     bank.setShow(false)
                 }) {

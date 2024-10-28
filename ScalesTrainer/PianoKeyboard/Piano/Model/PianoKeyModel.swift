@@ -61,7 +61,6 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.scaleNoteState = state
     }
     
-    //public func setKeyPlaying(ascending:Int, hilight:Bool) {
     public func setKeyPlaying(hilight:Bool) {
         if hilight {
             self.keyIsSounding = true

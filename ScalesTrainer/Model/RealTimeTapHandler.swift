@@ -157,7 +157,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                         tapStatus = .outOfScale
                     }
                     else {
-                        ///New option for scale Leacd in? - For all keys played show the played status only on one keyboard - RH or LH, not both
+                        ///New option for scale Lead in? - For all keys played show the played status only on one keyboard - RH or LH, not both
                         ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
                         for possibleKey in possibleKeysPlayed {
                             let keyboard = possibleKey.keyboard

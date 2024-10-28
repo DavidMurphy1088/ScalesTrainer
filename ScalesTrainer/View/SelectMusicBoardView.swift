@@ -4,36 +4,39 @@ import SwiftUI
 struct BoardGradesView: View {
     let board:String
     let width = 0.7
-    //let background = UIGlobals.shared.getBackground()
     let grades = Array(1...9)
     
-    @State private var isOn = [Bool](repeating: false, count: 9)
+    @State private var isOn = [Bool](repeating: true, count: 9)
     @State var index = 0
         
     var body: some View {
         VStack {
             VStack {
-                //Text("\(self.board), Select Your Grade").font(.title)//.foregroundColor(.blue)
-                Text("Trinity").font(.title)//.foregroundColor(.blue)
+                Text("Trinity").font(.title)
             }
             .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
             .padding()
             Spacer()
             List {
-                ForEach(0..<grades.count, id: \.self) { i in
+                ForEach(0..<grades.count, id: \.self) { gradeIndex in
                     HStack {
-                        Text(i == 0 ? "Initial Piano" : "Grade \(i) Piano").background(Color.clear).padding()
+                        Text(gradeIndex == 0 ? "Initial Piano" : "Grade \(gradeIndex) Piano").background(Color.clear).padding()
                         Spacer()
-                        Toggle("", isOn: $isOn[i])
-                            .onChange(of: isOn[i]) { old, value in
-                                if value {
-                                    for j in 0..<isOn.count {
-                                        if j != i {
-                                            isOn[j] = false
+                        if gradeIndex == 1 {
+                            Toggle("", isOn: $isOn[gradeIndex])
+                                .onChange(of: isOn[gradeIndex]) { old, value in
+                                    if value {
+                                        for j in 0..<isOn.count {
+                                            if j != gradeIndex {
+                                                isOn[j] = false
+                                            }
                                         }
                                     }
                                 }
-                            }
+                        }
+                        else {
+                            Text("Under construction").foregroundColor(.gray)
+                        }
                     }
                 }
             }
@@ -41,12 +44,15 @@ struct BoardGradesView: View {
             .padding()
 
             .onAppear() {
+                //isOn[Settings.shared.musicBoardGrade.gradeIndex] = true
                 isOn[1] = true
             }
             .onDisappear() {
-                if let grade = isOn.firstIndex(where: { $0 == true }) {
-                    Settings.shared.musicBoardGrade = MusicBoardGrade(grade: String(grade))
-                }
+                //if let grade = isOn.firstIndex(where: { $0 == true }) {
+                let grade = isOn[1]
+                Settings.shared.musicBoardGrade = MusicBoardGrade(index: 1, grade: String(grade))
+                Settings.shared.save()
+                //}
             }
         }
         .commonFrameStyle()
