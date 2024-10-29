@@ -124,6 +124,21 @@ struct BadgeView: View {
             default: name = "bug_beetle"
             }
         }
+        if imageSet == 3 {
+            switch imageIds[n] {
+            case 1: name = "dinosaur_1"
+            case 2: name = "dinosaur_2"
+            default: name = "dinosaur_3"
+            }
+        }
+        if imageSet == 4 {
+            switch imageIds[n] {
+            case 1: name = "sea_creature_1"
+            case 2: name = "sea_creature_2"
+            default: name = "sea_creature_3"
+            }
+        }
+        
         return name
     }
     

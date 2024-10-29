@@ -33,7 +33,7 @@ public class Settings : Codable  {
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
-    var practiceChartGamificationOn = false
+    var practiceChartGamificationOn = true
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]

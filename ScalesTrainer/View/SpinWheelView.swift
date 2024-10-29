@@ -132,7 +132,7 @@ struct SpinWheelView: View {
 
     var body: some View {
         VStack {
-            TitleView(screenName: "Spin The Scales Wheel").commonFrameStyle()
+            TitleView(screenName: "Spin The Scales Wheel", showGrade: true).commonFrameStyle()
             VStack {
                 ZStack {
                     GeometryReader { geometry in

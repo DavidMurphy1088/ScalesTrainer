@@ -166,7 +166,7 @@ struct PracticeChartView: View {
         
         VStack {
             VStack(spacing: 0) {
-                TitleView(screenName: "Practice Chart").commonFrameStyle()
+                TitleView(screenName: "Practice Chart", showGrade: true).commonFrameStyle()
                 HStack {
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         Spacer()

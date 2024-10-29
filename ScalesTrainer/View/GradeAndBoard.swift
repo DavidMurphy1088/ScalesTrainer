@@ -23,8 +23,7 @@ struct GradeAndBoard: View {
     var body: some View {
         NavigationStack {
             VStack {
-                //TitleView(screenName: "Music Board and Grade").commonFrameStyle()
-                TitleView(screenName: "Trinity Grade").commonFrameStyle()
+                TitleView(screenName: "Trinity Grade", showGrade: true).commonFrameStyle()
 
                 VStack {
                     Spacer()
@@ -60,7 +59,7 @@ struct GradeAndBoard: View {
                         Spacer()
                         Button(action: {
                             settings.save()
-                            tabSelectionManager.selectedTab = 1
+                            tabSelectionManager.selectedTab = 10
                         }) {
                             HStack {
                                 Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)

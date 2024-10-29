@@ -164,7 +164,7 @@ struct SettingsView: View {
             HStack {
                 Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
                 Picker("Select Value", selection: $badgeStyleNumber) {
-                    ForEach(0..<3) { number in
+                    ForEach(0..<5) { number in
                         Text("\(badgeStyle(number))")
                     }
                 }
@@ -174,18 +174,20 @@ struct SettingsView: View {
                 })
             }
             
-            Spacer()
-            HStack {
+            if false {
                 Spacer()
-                Toggle(isOn: $practiceChartGamificationOn) {
-                    Text("Gamification").font(.title2).padding(0)
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $practiceChartGamificationOn) {
+                        Text("Gamification").font(.title2).padding(0)
+                    }
+                    .onChange(of: practiceChartGamificationOn, {
+                        settings.practiceChartGamificationOn = practiceChartGamificationOn
+                    })
+                    Spacer()
                 }
-                .onChange(of: practiceChartGamificationOn, {
-                    settings.practiceChartGamificationOn = practiceChartGamificationOn
-                })
-                Spacer()
+                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
             }
-            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
             
             ///Developer
 //            if Settings.shared.isDeveloperMode() {
@@ -255,6 +257,8 @@ struct SettingsView: View {
         switch n {
         case 1: str = "Pets"
         case 2: str = "Bugs"
+        case 3: str = "Dinosaurs"
+        case 4: str = "Sea Creatures"
         default:
             str = "Star"
         }
@@ -265,7 +269,7 @@ struct SettingsView: View {
         NavigationStack {
             
             VStack {
-                TitleView(screenName: "Settings").commonFrameStyle()
+                TitleView(screenName: "Settings", showGrade: true).commonFrameStyle()
                 DetailedCustomSettingsView()
                     .commonFrameStyle()
                     .padding()
@@ -279,7 +283,6 @@ struct SettingsView: View {
                 self.keyboardColor = Settings.shared.getKeyboardColor1()
                 self.backgroundColor = Settings.shared.getBackgroundColor()
                 self.backingPresetNumber = settings.backingSamplerPreset
-                //self.developerMode = settings.developerMode
                 self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
             }

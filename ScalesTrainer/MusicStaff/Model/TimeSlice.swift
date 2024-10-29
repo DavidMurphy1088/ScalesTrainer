@@ -65,6 +65,7 @@ public class TimeSlice : ScoreEntry {
     public func addNote(n:StaffNote) {
         n.timeSlice = self
         self.entries.append(n)
+
         for i in 0..<self.score.staffs.count {
             n.setNotePlacementAndAccidental(score:self.score, staff: self.score.staffs[i])
         }

@@ -3,4 +3,102 @@
    uuid = "598FF346-62DA-418E-BD27-717FEF9F35F8"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64C93404-1112-4505-B183-E3039226003F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "578"
+            endingLineNumber = "578"
+            landmarkName = "createScore(scale:hand:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DE4B430B-95F7-452A-8F3D-1BE503D5EB87"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/Model/ScalesModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "584"
+            endingLineNumber = "584"
+            landmarkName = "createScore(scale:hand:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "DE4B430B-95F7-452A-8F3D-1BE503D5EB87 - 102aab2df9228138"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale, hand: Swift.Int) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "583"
+                  endingLineNumber = "583"
+                  offsetFromSymbolStart = "1820">
+               </Location>
+               <Location
+                  uuid = "DE4B430B-95F7-452A-8F3D-1BE503D5EB87 - 102aab2df9228138"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ScalesStar.ScalesModel.createScore(scale: ScalesStar.Scale, hand: Swift.Int) -&gt; ScalesStar.Score"
+                  moduleName = "ScalesStar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/davidmurphy/Projects/ScalesTrainer/ScalesTrainer/Model/ScalesModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "583"
+                  endingLineNumber = "583"
+                  offsetFromSymbolStart = "1828">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C8AA198-9956-4238-B2A4-78DEC768A07D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/MusicStaff/Model/StaffNote.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "314"
+            endingLineNumber = "314"
+            landmarkName = "setNotePlacementAndAccidental(score:staff:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "02423FE9-380F-4E4E-A52F-0B15FC5A60C0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ScalesTrainer/View/LicenseManagerView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "537"
+            endingLineNumber = "537"
+            landmarkName = "DetailedLicensesView()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

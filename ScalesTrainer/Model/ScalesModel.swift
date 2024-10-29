@@ -580,8 +580,10 @@ public class ScalesModel : ObservableObject {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line not currenlty visible but it might be added to add space around notes
                 ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
-                if false {
-                    score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
+                ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor apepars to imply invisible bar lines when setting accidentals.
+                if true {
+                    //score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
+                    score.addBarLine(visibleOnStaff: true, forStaffSpacing: isBrokenChord)
                     totalBarValue = 0.0
                 }
             }

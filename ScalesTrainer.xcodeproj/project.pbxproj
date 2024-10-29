@@ -13,6 +13,7 @@
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
+		791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* LicenseManagerView.swift */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */; };
 		79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* ResultView.swift */; };
@@ -113,6 +114,7 @@
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
+		791F6C302CD18939006BAEBD /* LicenseManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManagerView.swift; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTicker.swift; sourceTree = "<group>"; };
 		79312DB02C0B2B7E005FDE8B /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
@@ -382,6 +384,7 @@
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
+				791F6C302CD18939006BAEBD /* LicenseManagerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 			children = (
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				799BE2A52BFDDBC5004B19F6 /* BackerUnused.swift */,
+				79566AD52CB9259C00581A57 /* BackingChords.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
@@ -419,7 +423,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79566AD52CB9259C00581A57 /* BackingChords.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -594,6 +597,7 @@
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
 				799BE2A62BFDDBC5004B19F6 /* BackerUnused.swift in Sources */,
+				791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
 				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
 				79C8AD042C12F81C00770C10 /* PracticeJournalOld.swift in Sources */,

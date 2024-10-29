@@ -301,8 +301,8 @@ public class StaffNote : TimeSliceEntry, Comparable {
             }
             ///Determine if an accidental for this note is required to cancel the accidental of a previous note in the bar at the same offset.
             ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
+            
             var lastNoteAtOffset:StaffNote? = nil
-            //var lastStaffPlacement:NoteStaffPlacement? = nil
             var barPreviousNotes = score.getNotesForLastBar(pitch:nil)
             if barPreviousNotes.count > 1 {
                 ///Dont consider current note

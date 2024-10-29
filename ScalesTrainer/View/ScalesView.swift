@@ -689,6 +689,7 @@ struct ScalesView: View {
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
             scalesModel.setRecordedAudioFile(nil)
+            //scalesModel.scale.debug12("In View1")
         }
         
         .onDisappear {

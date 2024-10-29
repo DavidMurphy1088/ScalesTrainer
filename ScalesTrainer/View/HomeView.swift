@@ -24,6 +24,7 @@ struct CustomBackButton: View {
 struct TitleView: View {
     @ObservedObject var settingsPublished = SettingsPublished.shared
     let screenName: String
+    let showGrade:Bool
     
     func getTitle() -> String {
         var name = self.settingsPublished.firstName
@@ -38,8 +39,9 @@ struct TitleView: View {
         let grade = "Trinity, Grade 1"
         VStack {
             Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-            //if Settings.shared.musicBoard.name.count > 0 {
+            if showGrade {
                 Text("\(grade)").font(.title2)
+            }
             //}
 //            if let screenName = screenName {
 //                Text(screenName).font(.title2)
@@ -199,7 +201,7 @@ struct HomeView: View {
                 NavigationView {
                     VStack {
                         Spacer()
-                        TitleView(screenName: "Scales Academy")
+                        TitleView(screenName: "Scales Academy", showGrade: true)
                         ActivityModeView()
                         Spacer()
                     }

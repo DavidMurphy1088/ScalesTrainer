@@ -7,6 +7,9 @@
     " " : {
 
     },
+    "                  " : {
+
+    },
     "  %@  " : {
 
     },
@@ -92,6 +95,12 @@
     "Are you sure you want to go back?" : {
 
     },
+    "Available Products" : {
+
+    },
+    "Available Subscriptions" : {
+
+    },
     "Back" : {
 
     },
@@ -169,6 +178,9 @@
 
     },
     "Dev" : {
+
+    },
+    "Dismiss" : {
 
     },
     "Famous Quotes" : {
@@ -416,6 +428,12 @@
     "Please enter your first name" : {
 
     },
+    "Purchase" : {
+
+    },
+    "Purchase in progress. Please standby..." : {
+
+    },
     "Record the Scale" : {
       "comment" : "Menu",
       "extractionState" : "stale",
@@ -444,6 +462,9 @@
 
     },
     "Required Consecutive Count" : {
+
+    },
+    "Restore Subscriptions" : {
 
     },
     "Right Hand" : {
@@ -547,6 +568,9 @@
     "Shuffle" : {
 
     },
+    "Sorry, no subscription is available yet" : {
+
+    },
     "Start Analysis" : {
 
     },
@@ -588,6 +612,9 @@
     "Stop Recording Scale" : {
 
     },
+    "Subscriptions" : {
+      "comment" : "Menu"
+    },
     "Taps AmpFilter:%lf RequiredConcurrent:%lld" : {
       "localizations" : {
         "en" : {
@@ -597,6 +624,9 @@
           }
         }
       }
+    },
+    "Teacher email %@" : {
+
     },
     "Tempo" : {
       "extractionState" : "manual",
@@ -626,6 +656,9 @@
           }
         }
       }
+    },
+    "This subscription provides you with access to all the NZMEB Musicianship practice examples and practice exams." : {
+
     },
     "Thumb Under" : {
       "extractionState" : "manual",
@@ -673,6 +706,9 @@
 
     },
     "Yes" : {
+
+    },
+    "Your current subscription is " : {
 
     }
   },
