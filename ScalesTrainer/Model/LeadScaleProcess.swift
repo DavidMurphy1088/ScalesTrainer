@@ -56,7 +56,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         lastMidi = nil
         lastMidiScaleIndex = nil
         notifyCount = 0
-        scalesModel.scale.debug12("Lead Start")
+        //scalesModel.scale.debug12("Lead Start")
     }
     
     func notify(midi:Int, status:TapEventStatus) {
@@ -64,21 +64,17 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             return
         }
         if [.belowAmplitudeFilter, .countTooLow].contains(status) {
-        //if [.belowAmplitudeFilter].contains(status) {
             return
         }
-        //print("\n========= Lead", notifyCount, "midi:", midi, "status:", status, "lastCorrectMidi:", lastMidi ?? "_")
         //if ![.inScale, .outOfScale].contains(status) {
         if ![.inScale].contains(status) {
            // badges.setTotalCorrect(badges.totalCorrect - 1)
            // badges.removeMatch()
-            //print("    ===== Lead rejected status", status)
             return
         }
 
         if let lastCorrectMidi = lastMidi {
             if midi == lastCorrectMidi {
-                //print("    ===== Lead rejected duplicate", status)
                 return
             }
         }
@@ -90,7 +86,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
         notifyCount += 1
-        //print("    ===== Lead", "😊", "nextExpected", nextExpected.midi, "index", self.nextExpectedScaleIndex)
 
         if midi == nextExpected.midi {
             if nextExpected.matchedTime == nil {
@@ -124,7 +119,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 ///Set next segment here so the tap handler hilights the correct stave note
                 let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
                 scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
-                //print("    ===== Lead Result", "nextExpected", nextExpected.midi, "index", self.nextExpectedScaleIndex, "segment", nextExpected.segments[0])
+
             }
         }
 //        else {

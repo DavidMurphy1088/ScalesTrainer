@@ -6,8 +6,23 @@ Translucent background https://www.remove.bg/
 colors
         https://coolors.co/993955-ae76a6-a3c3d9-ccd6eb-e9ecf5
 
-Subscriptions
+--- Subscriptions ---
 
 Your first subscription must be submitted with a new app version. Create your subscription, then select it from the app’s In-App Purchases and Subscriptions section on the version page before submitting the version to App Review.
 
-Once your binary has been uploaded and your first subscription has been submitted for review, additional subscriptions can be submitted from the Subscriptions section. Learn More
+Once your binary has been uploaded and your first subscription has been submitted for review, additional subscriptions can be submitted from the Subscriptions section.
+- frequencies - 1 week, 1,2,3 or 6 months, yearly
+
+--- Monthly subscriptions ---
+For monthly subscriptions, Apple does not send an advance notification or prompt specifically before each renewal charge. Since monthly renewals occur frequently, Apple assumes users are aware of the regular billing cycle, which is disclosed during the initial purchase and confirmed in the original purchase confirmation email.
+
+Key Points on Monthly Subscription Billing and Notifications
+No Monthly Pre-Charge Notification: Unlike longer subscription periods (such as annual plans), which might have a reminder a few days before renewal, monthly subscriptions don’t typically receive this notification due to the regularity of charges.
+
+Purchase Confirmation: Users receive an email receipt upon their initial purchase, which clearly states that the subscription will renew monthly until they cancel. This is intended to set the expectation of automatic monthly billing.
+
+Renewal Receipts: After each renewal charge, Apple emails the user a renewal receipt as confirmation. Users can also view their subscription status and next billing date at any time under Settings > [Your Name] > Subscriptions.
+
+Failed Payment Notifications: If a payment fails, Apple notifies the user via email and provides instructions to update their payment method, offering a grace period to avoid subscription cancellation.
+
+If you want to keep users informed about upcoming charges in your app, you might consider adding in-app reminders around the renewal date as a courtesy, though Apple doesn’t require this.

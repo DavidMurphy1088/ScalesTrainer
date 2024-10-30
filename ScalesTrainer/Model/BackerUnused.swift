@@ -47,7 +47,6 @@ class BackerUnused : MetronomeTimerNotificationProtocol {
             }
             sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
             for pitch in backingChord.pitches {
-                //print("    ===== ", pitch)
                 sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
             }
             self.remainingSoundValue = backingChord.value - tickDuration

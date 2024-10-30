@@ -43,8 +43,6 @@ public class ContentSection: ObservableObject, Identifiable { //Codable,
     public var name: String = ""
 }
 
-
-
 ///The subscription transaction receipt
 ///All dates are GMT
 public class SubscriptionTransactionReceipt: Encodable, Decodable { //, Encodable,
@@ -65,7 +63,7 @@ public class SubscriptionTransactionReceipt: Encodable, Decodable { //, Encodabl
         dateFormatter.dateFormat = "d MMMM yyyy h:mm a"
         dateFormatter.timeZone = TimeZone.current // Use the device's current time zone
         let localDateString = dateFormatter.string(from: expiryDate)
-        return self.name + "\nexpiring " + localDateString
+        return self.name + ", Expiring " + localDateString
     }
     
     public func allDatesDescription() -> String {
@@ -83,7 +81,8 @@ public class SubscriptionTransactionReceipt: Encodable, Decodable { //, Encodabl
         encoder.dateEncodingStrategy = .iso8601 // Since your dates are in GMT, ISO8601 is a good choice
         do {
             let encodedData = try encoder.encode(self)
-            UserDefaults.standard.set(encodedData, forKey: "subscription")
+            UserDefaults.standard.set(encodedData, forKey: SubscriptionTransactionReceipt.storageKey)
+            Logger.shared.log(self, "Saved SubscriptionReceipt: \(name)")
         } catch {
             Logger.shared.reportError(self, "Failed to encode SubscriptionReceipt: \(error)")
         }
@@ -94,7 +93,7 @@ public class SubscriptionTransactionReceipt: Encodable, Decodable { //, Encodabl
     }
 
     static public func load() -> SubscriptionTransactionReceipt? {
-        guard let encodedData = UserDefaults.standard.data(forKey: storageKey) else {
+        guard let encodedData = UserDefaults.standard.data(forKey: SubscriptionTransactionReceipt.storageKey) else {
             return nil
         }
         
@@ -132,7 +131,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     @Published public var purchaseableProducts:[String: SKProduct] = [:] ///Product id's that are returned from a product request to StoreKit
     var emailLicenses = Set<FreeLicenseUser>()
     @Published public var isInPurchasingState = false
-    @Published public var configuredLicenceEmail:String = ""
+    //@Published public var configuredLicenceEmail:String = ""
     
     private let localSubscriptionStorageKey = "subscription"
     public static let shared = LicenceManager()
@@ -147,17 +146,19 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     }
     
     public func isLicensed() -> Bool {
-        if emailIsLicensed(email: configuredLicenceEmail) {
-            return true
-        }
-        else {
-            if let subscription = SubscriptionTransactionReceipt.load() {
-                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
-                return subscription.expiryDate >= Date()
-            }
-        }
-        return false
+        return true
+//        if emailIsLicensed(email: Settings.shared.emailAddress) {
+//            return true
+//        }
+//        else {
+//            if let subscription = SubscriptionTransactionReceipt.load() {
+//                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
+//                return subscription.expiryDate >= Date()
+//            }
+//        }
+//        return false
     }
+    
     ///Load email licenses (e.g. teachers)
     public func loadEmailLicenses(sheetRows:[[String]]) {
         for rowCells in sheetRows {
@@ -222,7 +223,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     /// Sent immediately before -requestDidFinish
     public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         DispatchQueue.main.async {
-            Logger.shared.log(self, "Products request reply, availabe products count:\(response.products.count)")
+            Logger.shared.log(self, "Available products request reply, availabe products count:\(response.products.count)")
             if response.products.count > 0 {
                 for product in response.products {
                     self.purchaseableProducts[product.productIdentifier] = product
@@ -258,12 +259,11 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
             guard let receiptURL = Bundle.main.appStoreReceiptURL else {
                 return false
             }
-            
             return receiptURL.lastPathComponent == "sandboxReceipt"
         }
 
         let base64encodedReceipt = receiptData.base64EncodedString()
-        let appSharedSecret = "1e1adf0415b046edbf2a1aa7e0d09d64" ///generated in App Store Connect under App Information
+        let appSharedSecret = "b4c32cef87e04c01b2f9e6dddc6a99c2" ///generated in App Store Connect under App Information, Oct 30, 2024
         let requestBody = ["receipt-data": base64encodedReceipt, "password": appSharedSecret, "exclude-old-transactions": true] as [String: Any]
         
         ///To verify subscription receipts for an app running on TestFlight, you should use the following URL for the receipt validation
@@ -318,9 +318,11 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
 
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    //print("============= validateSubscriptionReceipt", json.keys)
                     if let latestReceipts = json["latest_receipt_info"] as? [Any] {
                         //let log = "Validating subscription receipt for \(ctx)"
                         //Logger.logger.log(self, log)
+                        
                         for i in 0..<latestReceipts.count {
                             if let latestReceipt = latestReceipts[i] as? [String: Any] {
                                // print(latestReceipt.keys)
@@ -422,10 +424,10 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
                 switch transaction.transactionState {
                 case .purchasing:
                     /// Transaction is being added to the server queue. Client should not complete the transaction.
-                    Logger.shared.log(self, "Purchasing: \(transaction.payment.productIdentifier)")
+                    Logger.shared.log(self, "PaymentQueueNotification - Purchasing: \(transaction.payment.productIdentifier)")
                     self.isInPurchasingState = true
                 case .purchased:
-                    Logger.shared.log(self, "Purchased: \(transaction.payment.productIdentifier) ")
+                    Logger.shared.log(self, "PaymentQueueNotification - Purchased: \(transaction.payment.productIdentifier) ")
                     //self.purchasedProductIds.insert(transaction.payment.productIdentifier)
                     SKPaymentQueue.default().finishTransaction(transaction)
                     if let receiptData = self.extractTransactionReceipt() {
@@ -435,7 +437,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
                     /// Transaction was restored from user's purchase history.  Client should complete the transaction.
                     let restored:SKPayment = transaction.payment
                     //print("==============>>>", restored.applicationUsername, restored)
-                    Logger.shared.log(self, "Purchased licences restored from history: \(transaction.payment.productIdentifier)")
+                    Logger.shared.log(self, "PaymentQueueNotification - Purchased licences restored from history: \(transaction.payment.productIdentifier)")
                     //self.purchasedProductIds.insert(transaction.payment.productIdentifier)
                     SKPaymentQueue.default().finishTransaction(transaction)
                     if let receiptData = self.extractTransactionReceipt() {
@@ -443,7 +445,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
                     }
                 case .failed:
                     let err:String = transaction.error?.localizedDescription ?? ""
-                    Logger.shared.reportError(self, "paymentQueue.failed didFailWithError \(err) or the user cancelled the purchase")
+                    Logger.shared.reportError(self, "PaymentQueueNotification - .failed didFailWithError \(err) or the user cancelled the purchase")
                     SKPaymentQueue.default().finishTransaction(transaction)
                 default:
                     break
@@ -516,7 +518,8 @@ public struct LicenseManagerView: View {
         let yearString:String
         public var body: some View {
             VStack() {
-                let info = "Access to some content is restricted without a subscription.\n\nPurchasing a subscription provides you with access to all the NZMEB Musicianship practice examples and practice exams.\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
+                let info = "Access to Scales Academy content is restricted without a subscription.\n\nPurchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
+                //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
                 Text(info).padding()
             }
         }
@@ -533,21 +536,22 @@ public struct LicenseManagerView: View {
     
     func DetailedLicensesView() -> some View {
         VStack {
-            Text("Available Subscriptions").font(.title).padding()
+            
             if LicenceManager.shared.isLicensed() {
                 VStack {
-                    Text("Your current subscription is ").padding()
-                    if LicenceManager.shared.emailIsLicensed(email:LicenceManager.shared.configuredLicenceEmail) {
-                        Text("Teacher email \(LicenceManager.shared.configuredLicenceEmail)").foregroundColor(.green).bold().padding()
+                    Text("Your current subscription is ").font(.title2).padding()
+                    if LicenceManager.shared.emailIsLicensed(email:Settings.shared.emailAddress) {
+                        Text("Email \(Settings.shared.emailAddress)").font(.title2).foregroundColor(.green).bold().padding()
                     }
                     else {
-                        Text(getSubscriptionName()).foregroundColor(.green).bold().padding()
+                        Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
                     }
                 }
                 .padding()
-                Text("This subscription provides you with access to all the NZMEB Musicianship practice examples and practice exams.").padding().padding().padding()
+                Text("This subscription provides you with access to all Sales Academy content.").font(.title2).padding().padding().padding()
             }
             else {
+                Text("Available Subscriptions").font(.title).padding()
                 if iapManager.isLicenseAvailableToPurchase(grade: contentSection.name) {
                     List {
                         ForEach(getProducts(), id: \.self) { product in
@@ -559,7 +563,6 @@ public struct LicenseManagerView: View {
                                 let price:String = product.price.description
                                 Text(price)
                                 Button(action: {
-                                    //iapManager.buyProduct(grade: contentSection.name)
                                     iapManager.buyProductSubscription(product: product)
                                 }) {
                                     Text("Purchase")
@@ -570,7 +573,7 @@ public struct LicenseManagerView: View {
                         }
                     }
                     .padding()
-                    .navigationTitle("Available Products")
+                    .navigationTitle("Available Subscriptions")
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         Button(action: {
                             isPopupPresented.toggle()
@@ -611,24 +614,26 @@ public struct LicenseManagerView: View {
                         .font(.title)
                         .padding()
                 }
+//                let info = "If your subscription needs to be restored from another device ..."
+//                Text(info).padding()
             }
 
-            HStack {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Dismiss")
-                        .font(.title)
-                        .padding()
-                }
-            }
+//            HStack {
+//                Button(action: {
+//                    presentationMode.wrappedValue.dismiss()
+//                }) {
+//                    Text("Dismiss")
+//                        .font(.title)
+//                        .padding()
+//                }
+//            }
         }
     }
     
     public var body: some View {
         NavigationStack {
             VStack {
-                TitleView(screenName: "Licence Subscriptions", showGrade: true).commonFrameStyle()
+                TitleView(screenName: "Licence Subscriptions", showGrade: false).commonFrameStyle()
                 DetailedLicensesView()
                     .commonFrameStyle()
                     .padding()

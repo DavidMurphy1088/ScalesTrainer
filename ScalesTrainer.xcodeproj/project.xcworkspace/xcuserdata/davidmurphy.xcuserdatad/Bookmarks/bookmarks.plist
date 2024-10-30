@@ -192,13 +192,13 @@
 					<key>EndingColumnNumber</key>
 					<string>0</string>
 					<key>EndingLineNumber</key>
-					<string>629</string>
+					<string>631</string>
 					<key>StartingColumnNumber</key>
 					<string>0</string>
 					<key>StartingLineNumber</key>
-					<string>628</string>
+					<string>630</string>
 					<key>Timestamp</key>
-					<string>751888897.570447</string>
+					<string>751975228.195237</string>
 				</dict>
 				<key>rebasable-url</key>
 				<dict>
@@ -359,6 +359,51 @@
 				<string>    ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
     func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)-&gt;Void)?) {
+</string>
+			</dict>
+			<key>type</key>
+			<string>bookmark</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>location-parameters</key>
+				<dict>
+					<key>EndingColumnNumber</key>
+					<string>0</string>
+					<key>EndingLineNumber</key>
+					<string>419</string>
+					<key>StartingColumnNumber</key>
+					<string>0</string>
+					<key>StartingLineNumber</key>
+					<string>418</string>
+					<key>Timestamp</key>
+					<string>751974532.75885</string>
+				</dict>
+				<key>rebasable-url</key>
+				<dict>
+					<key>base</key>
+					<string>workspace</string>
+					<key>payload</key>
+					<dict>
+						<key>relative-path</key>
+						<string>ScalesTrainer/View/LicenseManagerView.swift</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>text-context</key>
+			<dict>
+				<key>focused</key>
+				<string>    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+</string>
+				<key>leading</key>
+				<string>    ///When a subscription is renewed the app must locally store the renewed subscription to ensure the subscription dates that the app checks are updated
+    ///To determine the subscription expiry date the app must call Apple web API to verify the transaction receipt and that verification process then returns the subscription expiry date
+</string>
+				<key>trailing</key>
+				<string>        //Logger.logger.log(self, "updatedTransactions")
+        DispatchQueue.main.async {
+            self.isInPurchasingState = false
 </string>
 			</dict>
 			<key>type</key>

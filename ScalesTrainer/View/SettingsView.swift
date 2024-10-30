@@ -25,7 +25,7 @@ struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    @State var firstName = Settings.shared.firstName
+    //@State var firstName1 = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0

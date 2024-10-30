@@ -9,14 +9,13 @@ struct GradeAndBoard: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    //@State var recordDataMode = Settings.shared.developerModeOn 
     @State var firstName = Settings.shared.firstName
-    
+    @State var emailAddress = Settings.shared.emailAddress
+
     @State private var tapBufferSize = 4096
     //@State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
     @State private var navigateToGrade = false
-    //let background = UIGlobals.shared.getBackground()
     
     let width = UIScreen.main.bounds.width * 0.7
     
@@ -41,18 +40,30 @@ struct GradeAndBoard: View {
                         SettingsPublished.shared.firstName = firstName
                     })
                     
-                    //if false {
-                        Button("Select Your Grade") {
-                            navigateToGrade = true
-                        }
-                        .padding()
-                        .navigationDestination(isPresented: $navigateToSelectBoard) {
-                            SelectMusicBoardView()
-                        }
-                        .navigationDestination(isPresented: $navigateToGrade) {
-                            BoardGradesView(board: "trinity")
-                        }
-                    //}
+                    Spacer()
+                    VStack() {
+                        Text("Optional Email").padding()
+                        TextField("Email", text: $emailAddress)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                    }
+                    .onChange(of: emailAddress, {
+                        settings.emailAddress = emailAddress
+                        //SettingsPublished.shared = firstName
+                    })
+                    
+                    Spacer()
+                    Button("Select Your Grade") {
+                        navigateToGrade = true
+                    }
+                    .padding()
+                    .navigationDestination(isPresented: $navigateToSelectBoard) {
+                        SelectMusicBoardView()
+                    }
+                    .navigationDestination(isPresented: $navigateToGrade) {
+                        BoardGradesView(board: "trinity")
+                    }
 
                     Spacer()
                     HStack {
@@ -71,11 +82,10 @@ struct GradeAndBoard: View {
                 .commonFrameStyle()
                 .padding()
                 Spacer()
-                //}
+
                 //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
                 .onAppear() {
-//                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(start: 36, numberOfKeys: 20, scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0)
-//                    self.keyColor = Settings.shared.getKeyColor()
+
                 }
             }
         }

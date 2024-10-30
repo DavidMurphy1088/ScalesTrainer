@@ -95,9 +95,6 @@
     "Are you sure you want to go back?" : {
 
     },
-    "Available Products" : {
-
-    },
     "Available Subscriptions" : {
 
     },
@@ -180,7 +177,10 @@
     "Dev" : {
 
     },
-    "Dismiss" : {
+    "Email" : {
+
+    },
+    "Email %@" : {
 
     },
     "Famous Quotes" : {
@@ -405,6 +405,9 @@
     "OK" : {
 
     },
+    "Optional Email" : {
+
+    },
     "Piano Calibration" : {
 
     },
@@ -612,6 +615,9 @@
     "Stop Recording Scale" : {
 
     },
+    "Subscription Required" : {
+
+    },
     "Subscriptions" : {
       "comment" : "Menu"
     },
@@ -624,9 +630,6 @@
           }
         }
       }
-    },
-    "Teacher email %@" : {
-
     },
     "Tempo" : {
       "extractionState" : "manual",
@@ -657,7 +660,7 @@
         }
       }
     },
-    "This subscription provides you with access to all the NZMEB Musicianship practice examples and practice exams." : {
+    "This subscription provides you with access to all Sales Academy content." : {
 
     },
     "Thumb Under" : {

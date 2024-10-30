@@ -28,6 +28,7 @@ public class Settings : Codable  {
     static var shared = Settings()
     var developerMode1 = false
     var firstName = ""
+    var emailAddress = ""
     var musicBoard:MusicBoard
     var musicBoardGrade:MusicBoardGrade
     var defaultOctaves = 2
@@ -101,7 +102,8 @@ public class Settings : Codable  {
         str += " BackingMidi:\(self.backingSamplerPreset)"
         str += " RequiredConsecutiveCount:\(self.requiredConsecutiveCount)"
         str += " BadgeStyle:\(self.badgeStyle)"
-        str += " BackgroundColour:\(self.backgroundColor)"
+        //str += " BackgroundColour:\(self.backgroundColor)"
+        str += " email:\(self.emailAddress)"
         str += " Gamification:\(self.practiceChartGamificationOn)"
         return str
     }
@@ -134,6 +136,7 @@ public class Settings : Codable  {
                     let loaded = decoded
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
+                    self.emailAddress = loaded.emailAddress
                     self.musicBoard = loaded.musicBoard
                     self.musicBoardGrade = loaded.musicBoardGrade
                     self.scaleLeadInBeatCountIndex = loaded.scaleLeadInBeatCountIndex

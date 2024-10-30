@@ -7,22 +7,21 @@ class PracticeChartCell: ObservableObject, Codable {
     @Published var badgeCount:Int
 
     var scale: Scale
-    var row: Int
     var hilighted: Bool = false
-
+    var isLicensed:Bool = false
+    
     enum CodingKeys: String, CodingKey {
         case scale
-        case row
         case hilighted
         case badges
     }
     
-    init(scale: Scale, row: Int, hilighted: Bool = false, badges:Int) {
+    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false, badges:Int) {
         self.scale = scale
-        self.row = row
         self.hilighted = hilighted
         self.isActive = hilighted  // Set isActive based on enabled during initialization
         self.badgeCount = badges
+        self.isLicensed = isLicensed
     }
     
     func adjustBadges(delta:Int) {
@@ -35,7 +34,6 @@ class PracticeChartCell: ObservableObject, Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         scale = try container.decode(Scale.self, forKey: .scale)
-        row = try container.decode(Int.self, forKey: .row)
         hilighted = try container.decode(Bool.self, forKey: .hilighted)
         badgeCount = try container.decode(Int.self, forKey: .badges)
         self.isActive = hilighted
@@ -44,7 +42,6 @@ class PracticeChartCell: ObservableObject, Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scale, forKey: .scale)
-        try container.encode(row, forKey: .row)
         try container.encode(hilighted, forKey: .hilighted)
         try container.encode(badgeCount, forKey: .badges)
     }
@@ -79,11 +76,10 @@ class PracticeChart: Codable {
         var scaleCtr = 0
         self.minorScaleType = minorScaleType
         
-        for _ in 0..<rows {
+        for row in 0..<rows {
             var rowCells:[PracticeChartCell]=[]
             for _ in 0..<columns {
-                //chartRow.append(scales[scaleCtr])
-                rowCells.append(PracticeChartCell(scale: scales[scaleCtr], row: 0, badges: 0))
+                rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: row == 0 || LicenceManager.shared.isLicensed(), badges: 0))
                 scaleCtr += 1
                 if scaleCtr >= scales.count {
                     scaleCtr = 0
@@ -226,8 +222,21 @@ extension PracticeChart {
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             let data = try Data(contentsOf: url)  // Read the data from the file
             //let json = String(data: data, encoding: .utf8)
-            //print("=====read", json)
             let chart = try decoder.decode(PracticeChart.self, from: data)
+            for r in 0..<chart.cells.count {
+                let row:[PracticeChartCell] = chart.cells[r]
+                for chartCell in row {
+                    chartCell.isLicensed = false
+                    if LicenceManager.shared.isLicensed() {
+                        chartCell.isLicensed = true
+                    }
+                    else {
+                        if r == 0 {
+                            chartCell.isLicensed = true
+                        }
+                    }
+                }
+            }
             Logger.shared.log(self, "Loaded PracticeChart \(url)")
             return chart
          } catch {

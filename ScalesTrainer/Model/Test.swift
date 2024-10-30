@@ -127,7 +127,6 @@ class FFTAnalyzer: ObservableObject {
                     
                     //if midis[0] >= 60 {
                     if Set(midis).count <= 2 {
-                        //print("======= FFTTap MIDIS", self.cnt,  midis)
                         //let timeStamp = self.getTime()
                         //let topFreqInt = topFreqs.map { Int($0) }
                         //let mf = self.mostFreqInArray(inArr: midis)

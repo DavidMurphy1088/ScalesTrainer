@@ -16,6 +16,8 @@ struct CellView: View {
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScales = false
+    @State var showLicenceRequiredScale = false
+    @State var licenceRequiredMessage:String = ""
     let padding = 5.0
 
     func getColor() -> Color {
@@ -57,27 +59,41 @@ struct CellView: View {
     var body: some View {
         VStack {
             Button(action: {
-                //ScalesModel.shared.setScale(scale:  practiceCell.scale)
-                ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType, 
+                ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType,
                                                          scaleMotion: practiceCell.scale.scaleMotion,
                                                          minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
                                                          hands: practiceCell.scale.hands, ctx: "PracticeChart")
-                navigateToScales = true
+                if practiceCell.isLicensed {
+                    navigateToScales = true
+                }
+                else {
+                    self.showLicenceRequiredScale = true
+                    self.licenceRequiredMessage = "A subscription is required to access \n" + practiceCell.scale.getScaleName(handFull: true)
+                }
             }) {
                 let label = practiceCell.scale.getScaleName(handFull: true)
-                Text(label)
-                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
-                    .foregroundColor(.blue)
-                    .opacity(opacityValue)
+                HStack {
+                    Text(label)
+                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
+                        .foregroundColor(practiceCell.isLicensed ? .blue : .gray)
+                        .opacity(opacityValue)
+                    if !practiceCell.isLicensed {
+                        Image(systemName: "lock")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(Color.gray)
+                        .frame(height: cellHeight * 0.3)
+                    }
+                }
             }
             .padding(self.padding)
+
             Spacer()
             HStack {
-                //self.practiceChartCell = PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)
-//                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: PracticeChart.shared.getCellIDByScale(scale: practiceCell.scale)), isActive: $navigateToScales) {
-//                }.frame(width: 0.0)
-                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: practiceCell), isActive: $navigateToScales) {
-                }.frame(width: 0.0)
+                //if practiceCell.isLicensed {
+                    NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: practiceCell), isActive: $navigateToScales) {
+                    }.frame(width: 0.0)
+                //}
                 HStack {
                     Button(action: {
                         setHilighted(scale: practiceCell.scale)
@@ -94,9 +110,8 @@ struct CellView: View {
                 }
                 .padding(self.padding)
                 .padding(.vertical, 0)
-                
             }
-            //Text("\(practiceCell.badges)")
+            
             if Settings.shared.practiceChartGamificationOn  {
                 HStack {
                     ForEach(0..<practiceCell.badgeCount, id: \.self) { index in
@@ -116,7 +131,13 @@ struct CellView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
         )
-
+        .alert(isPresented: $showLicenceRequiredScale) {
+            Alert(
+                title: Text("Subscription Required"),
+                message: Text(self.licenceRequiredMessage),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
 }
 
