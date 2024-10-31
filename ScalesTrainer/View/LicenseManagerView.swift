@@ -145,21 +145,6 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
         super.init()
     }
     
-    public func isLicensed() -> Bool {
-        //return true
-        if emailIsLicensed(email: Settings.shared.emailAddress) {
-            return true
-        }
-        else {
-            if let subscription = SubscriptionTransactionReceipt.load() {
-                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
-                return subscription.expiryDate >= Date()
-            }
-        }
-        return false
-    }
-    
-    ///Load email licenses (e.g. teachers)
     public func loadEmailLicenses(sheetRows:[[String]]) {
         for rowCells in sheetRows {
             if rowCells.count < 5 {
@@ -175,6 +160,37 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
             //}
         }
     }
+    
+    public func isLicensed() -> Bool {
+        //return true
+        if emailIsLicensed(email: Settings.shared.emailAddress) {
+            return true
+        }
+        else {
+            if let subscription = SubscriptionTransactionReceipt.load() {
+                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
+                return subscription.expiryDate >= Date()
+            }
+        }
+        return false
+    }
+    
+//    ///Load email licenses (e.g. teachers)
+//    public func loadEmailLicenses(sheetRows:[[String]]) {
+//        for rowCells in sheetRows {
+//            if rowCells.count < 5 {
+//                continue
+//            }
+//            if rowCells[0].hasPrefix("//")  {
+//                continue
+//            }
+//            let email = rowCells[1]
+//            let allowTest = rowCells[2] == "Y"
+//            //DispatchQueue.main.async {
+//                self.emailLicenses.insert(FreeLicenseUser(email:email, allowTest: allowTest))
+//            //}
+//        }
+//    }
             
     public func emailIsLicensed(email:String) -> Bool {
         let toCheck:String = email.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)

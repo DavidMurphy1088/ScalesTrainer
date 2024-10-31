@@ -11,11 +11,11 @@ enum LaunchScreenStep {
     case finished
 }
 
-public enum RequestStatus {
-    case success
-    case waiting
-    case failed
-}
+//public enum RequestStatus {
+//    case success
+//    case waiting
+//    case failed
+//}
 
 final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep = .firstStep
@@ -76,35 +76,33 @@ struct LaunchScreenView: View {
     private var image: some View {  // Mark 3
         GeometryReader { geo in
             //hack: for some reason there are 2 instances of LaunchScreenView. The first starts showing too early ??
-            //if id == 1 {
+            VStack {
+                ///Image causes title to be truncated on phone
                 VStack {
-                    ///Image causes title to be truncated on phone
-                    VStack {
+                    Spacer()
+                    HStack {
                         Spacer()
-                        HStack {
-                            Spacer()
-                            Image("trinity")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geo.size.width * 0.40)
-                                    .cornerRadius(10) // Adjust the radius value to your preference
-                                    .opacity(self.opacity.imageOpacity)
-                            Spacer()
-                        }
+                        Image("trinity")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geo.size.width * 0.40)
+                                .cornerRadius(10) // Adjust the radius value to your preference
+                                .opacity(self.opacity.imageOpacity)
                         Spacer()
                     }
-                    VStack(alignment: .center) {
-                        Text("Scales Academy").font(.title)
-                        Text("")
-                        Text("© 2024 Musicmaster Education LLC.")//.font(.title3)
-                        //.position(x: geo.size.width * 0.5, y: geo.size.height * 0.85)
-                        //.opacity(self.opacity.imageOpacity)
-                        Text("Version \(appVersion())")
-                        Text("")
-                        Text("")
-                    }
+                    Spacer()
                 }
-            //}
+                VStack(alignment: .center) {
+                    Text("Scales Academy").font(.title)
+                    Text("")
+                    Text("© 2024 Musicmaster Education LLC.")//.font(.title3)
+                    //.position(x: geo.size.width * 0.5, y: geo.size.height * 0.85)
+                    //.opacity(self.opacity.imageOpacity)
+                    Text("Version \(appVersion())")
+                    Text("")
+                    Text("")
+                }
+            }
         }
     }
     
@@ -256,9 +254,9 @@ struct ScalesTrainerApp: App {
         //return false
     }
     
-    func getDataLoadedStatus() -> RequestStatus {
-        return .waiting //self.exampleData.dataStatus
-    }
+//    func getDataLoadedStatus() -> RequestStatus {
+//        return .waiting //self.exampleData.dataStatus
+//    }
     
     var body: some Scene {
         WindowGroup {
@@ -288,8 +286,8 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(initialRunProcess: nil, practiceChartCell: nil)
-                //TestView()
+                //ScalesView(initialRunProcess: nil, practiceChartCell: nil)
+                TestView()
                 //FFTContentView()
                     .tabItem {
                         Label("Home", systemImage: "house")

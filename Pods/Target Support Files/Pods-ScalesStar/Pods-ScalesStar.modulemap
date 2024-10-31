@@ -1,0 +1,6 @@
+framework module Pods_ScalesStar {
+  umbrella header "Pods-ScalesStar-umbrella.h"
+
+  export *
+  module * { export * }
+}

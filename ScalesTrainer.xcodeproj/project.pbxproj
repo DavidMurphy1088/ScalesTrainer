@@ -69,6 +69,8 @@
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
+		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
+		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
 		79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
@@ -105,9 +107,12 @@
 		79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* BadgeView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes */; };
+		CD8C6062E02C23A805D8B979 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
+		17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.release.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.release.xcconfig"; sourceTree = "<group>"; };
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
@@ -169,6 +174,8 @@
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
+		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
+		79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAPI.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
 		79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = UprightPianoKW.sf2; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
@@ -204,6 +211,7 @@
 		79E220ED2C856150004F64D8 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes; sourceTree = "<group>"; };
+		AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,12 +223,21 @@
 				79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */,
 				794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */,
 				79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */,
+				CD8C6062E02C23A805D8B979 /* Pods_ScalesStar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2732AC845A1FCDC797EE57CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7943AE602BD6539500E94AC7 /* Games */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,6 +298,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		79BA2BC32CD387AB00CA68B4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		79C0D2532BE30E7B0036CC91 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,6 +342,8 @@
 				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
 				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
 				79DA82132BCCE95F008AC492 /* Products */,
+				DDA3121AEE7C45E54101ED2B /* Pods */,
+				2732AC845A1FCDC797EE57CF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -338,11 +365,12 @@
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
 				79DA822C2BCCED24008AC492 /* Model */,
 				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
+				79EAB8762C8737B400255FC6 /* Notes */,
 				794D492E2BCD07220005A173 /* PianoKeyboard */,
 				79DA821B2BCCE960008AC492 /* Preview Content */,
+				79BA2BC32CD387AB00CA68B4 /* Resources */,
 				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
 				79DA82232BCCEA6A008AC492 /* View */,
-				79EAB8762C8737B400255FC6 /* Notes */,
 			);
 			path = ScalesTrainer;
 			sourceTree = "<group>";
@@ -423,6 +451,7 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
+				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -436,6 +465,15 @@
 			path = MusicStaff;
 			sourceTree = "<group>";
 		};
+		DDA3121AEE7C45E54101ED2B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */,
+				17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -443,9 +481,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 79DA82202BCCE960008AC492 /* Build configuration list for PBXNativeTarget "ScalesStar" */;
 			buildPhases = (
+				0A28A08811B84F1463D0AAB0 /* [CP] Check Pods Manifest.lock */,
 				79DA820E2BCCE95F008AC492 /* Sources */,
 				79DA820F2BCCE95F008AC492 /* Frameworks */,
 				79DA82102BCCE95F008AC492 /* Resources */,
+				08A18182DCD09349C7A87D86 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -512,6 +552,7 @@
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */,
@@ -527,6 +568,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		08A18182DCD09349C7A87D86 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		0A28A08811B84F1463D0AAB0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ScalesStar-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		79DA820E2BCCE95F008AC492 /* Sources */ = {
@@ -581,6 +664,7 @@
 				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
 				797013972BEE3E45009F85D6 /* StemView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
+				79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */,
 				79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */,
 				79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */,
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
@@ -656,7 +740,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -719,7 +803,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -740,6 +824,7 @@
 		};
 		79DA82212BCCE960008AC492 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -774,6 +859,7 @@
 		};
 		79DA82222BCCE960008AC492 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
