@@ -111,14 +111,15 @@ struct CellView: View {
                 .padding(self.padding)
                 .padding(.vertical, 0)
             }
-            
-            if Settings.shared.practiceChartGamificationOn  {
-                HStack {
-                    ForEach(0..<practiceCell.badgeCount, id: \.self) { index in
-                        Image("pet_dogface")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 30)
+            if Settings.shared.isDeveloperMode() {
+                if Settings.shared.practiceChartGamificationOn  {
+                    HStack {
+                        ForEach(0..<practiceCell.badgeCount, id: \.self) { index in
+                            Image("pet_dogface")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 30)
+                        }
                     }
                 }
             }

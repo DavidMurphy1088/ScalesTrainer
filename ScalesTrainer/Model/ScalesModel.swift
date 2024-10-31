@@ -581,9 +581,9 @@ public class ScalesModel : ObservableObject {
                 ///The bar line not currenlty visible but it might be added to add space around notes
                 ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
                 ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor apepars to imply invisible bar lines when setting accidentals.
+                ///But their melodic minor does not imply invisible bar lines - nightmare ....
                 if ![ScaleType.melodicMinor].contains(scale.scaleType) {
                     if true {
-                        //score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
                         score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
                         totalBarValue = 0.0
                     }

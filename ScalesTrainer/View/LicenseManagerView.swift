@@ -146,17 +146,17 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     }
     
     public func isLicensed() -> Bool {
-        return true
-//        if emailIsLicensed(email: Settings.shared.emailAddress) {
-//            return true
-//        }
-//        else {
-//            if let subscription = SubscriptionTransactionReceipt.load() {
-//                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
-//                return subscription.expiryDate >= Date()
-//            }
-//        }
-//        return false
+        //return true
+        if emailIsLicensed(email: Settings.shared.emailAddress) {
+            return true
+        }
+        else {
+            if let subscription = SubscriptionTransactionReceipt.load() {
+                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
+                return subscription.expiryDate >= Date()
+            }
+        }
+        return false
     }
     
     ///Load email licenses (e.g. teachers)
