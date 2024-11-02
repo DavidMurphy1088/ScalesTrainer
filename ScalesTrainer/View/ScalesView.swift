@@ -317,7 +317,7 @@ struct ScalesView: View {
                     .padding(.horizontal, 0)
                 }
                 
-                if scalesModel.scale.scaleMotion != .contraryMotion {
+                if settings.useMidiKeyboard || scalesModel.scale.scaleMotion != .contraryMotion {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
@@ -730,7 +730,7 @@ struct ScalesView: View {
             switch item {
             case .emailRecording:
                 if MFMailComposeViewController.canSendMail() {
-                    if let fileName = scalesModel.recordedTapsFileName {
+                    if scalesModel.recordedTapsFileName != nil {
                         if let url = scalesModel.recordedTapsFileURL {
                             SendMailView(isShowing: $emailShowing, result: $emailResult,
                                          messageRecipient:"davidmurphy1088@gmail.com",

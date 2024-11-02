@@ -9,7 +9,8 @@
 
 # all files under directory...
 # **/APIKeys/**
-**/GoogleAPI*
+# **/GoogleAPI*
+**/GoogleAPI.plist
 
 ### Firebase ###
 .idea

@@ -194,6 +194,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         LicenceManager.shared.requestProducts() ///Get products
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
+        LicenceManager.shared.getFreeLicenses()
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
         
@@ -286,8 +287,8 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                //ScalesView(initialRunProcess: nil, practiceChartCell: nil)
-                TestView()
+                ScalesView(initialRunProcess: nil, practiceChartCell: nil)
+                //TestView()
                 //FFTContentView()
                     .tabItem {
                         Label("Home", systemImage: "house")
@@ -330,11 +331,18 @@ struct ScalesTrainerApp: App {
                 .environmentObject(tabSelectionManager)
 
             if Settings.shared.isDeveloperMode() {
+                MIDIView()
+                    .tabItem {
+                        Label(NSLocalizedString("MIDITest", comment: "Menu"), systemImage: "brakesignal.dashed")
+                    }
+                    .tag(60)
+                    .environmentObject(tabSelectionManager)
+
                 ScalesLibraryView()
                     .tabItem {
                         Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
                     }
-                    .tag(60)
+                    .tag(62)
                     .environmentObject(tabSelectionManager)
             }
             

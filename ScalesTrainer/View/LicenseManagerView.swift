@@ -131,12 +131,12 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     @Published public var purchaseableProducts:[String: SKProduct] = [:] ///Product id's that are returned from a product request to StoreKit
     var emailLicenses = Set<FreeLicenseUser>()
     @Published public var isInPurchasingState = false
-    //@Published public var configuredLicenceEmail:String = ""
     
     private let localSubscriptionStorageKey = "subscription"
     public static let shared = LicenceManager()
     public static var subscriptionURLLogged = false
-
+    private let googleAPI = GoogleAPI.shared
+    
     ///Product ID's that are known to the app
     //private let configuredProductIDs:[String] = ["MT_NZMEB_Subscription_Month_3", "MT_NZMEB_Subscription_Month_6", "MT_NZMEB_Subscription_Month_12"]
     private let configuredProductIDs:[String] = ["Trinity_Monthly_Test"]
@@ -155,9 +155,35 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
             }
             let email = rowCells[1]
             let allowTest = rowCells[2] == "Y"
-            //DispatchQueue.main.async {
-                self.emailLicenses.insert(FreeLicenseUser(email:email, allowTest: allowTest))
-            //}
+            self.emailLicenses.insert(FreeLicenseUser(email:email, allowTest: allowTest))
+        }
+        Logger.shared.log(self, "Loaded \(sheetRows.count) free licences")
+    }
+    
+    public func getFreeLicenses() {
+        googleAPI.getContentSheet(sheetName: "SAFreeLicences", cacheKey: "SAFreeLicences") { status, data in
+            if status == .success {
+                if let data = data {
+                    struct JSONSheet: Codable {
+                        let range: String
+                        let values:[[String]]
+                    }
+                    do {
+                        let jsonData = try JSONDecoder().decode(JSONSheet.self, from: data)
+                        let sheetRows = jsonData.values
+                        self.loadEmailLicenses(sheetRows: sheetRows)
+                    }
+                    catch {
+                        Logger.shared.reportError(self, "FreeLicenses- Cannot parse JSON data")
+                    }
+                }
+                else {
+                    Logger.shared.reportError(self, "FreeLicenses - Load  no content data")
+                }
+            }
+            else {
+                Logger.shared.reportError(self, "FreeLicenses - Load status \(status)")
+            }
         }
     }
     
@@ -168,30 +194,12 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
         }
         else {
             if let subscription = SubscriptionTransactionReceipt.load() {
-                //print("=============", "    Expire:", subscription.expiryDate, " now:", Date())
                 return subscription.expiryDate >= Date()
             }
         }
         return false
     }
     
-//    ///Load email licenses (e.g. teachers)
-//    public func loadEmailLicenses(sheetRows:[[String]]) {
-//        for rowCells in sheetRows {
-//            if rowCells.count < 5 {
-//                continue
-//            }
-//            if rowCells[0].hasPrefix("//")  {
-//                continue
-//            }
-//            let email = rowCells[1]
-//            let allowTest = rowCells[2] == "Y"
-//            //DispatchQueue.main.async {
-//                self.emailLicenses.insert(FreeLicenseUser(email:email, allowTest: allowTest))
-//            //}
-//        }
-//    }
-            
     public func emailIsLicensed(email:String) -> Bool {
         let toCheck:String = email.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
         for emailInList in self.emailLicenses {
@@ -334,11 +342,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
 
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    //print("============= validateSubscriptionReceipt", json.keys)
                     if let latestReceipts = json["latest_receipt_info"] as? [Any] {
-                        //let log = "Validating subscription receipt for \(ctx)"
-                        //Logger.logger.log(self, log)
-                        
                         for i in 0..<latestReceipts.count {
                             if let latestReceipt = latestReceipts[i] as? [String: Any] {
                                // print(latestReceipt.keys)
@@ -452,7 +456,6 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
                 case .restored:
                     /// Transaction was restored from user's purchase history.  Client should complete the transaction.
                     let restored:SKPayment = transaction.payment
-                    //print("==============>>>", restored.applicationUsername, restored)
                     Logger.shared.log(self, "PaymentQueueNotification - Purchased licences restored from history: \(transaction.payment.productIdentifier)")
                     //self.purchasedProductIds.insert(transaction.payment.productIdentifier)
                     SKPaymentQueue.default().finishTransaction(transaction)

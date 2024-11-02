@@ -107,6 +107,8 @@
 		79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* BadgeView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes */; };
+		79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E092CD4CD1700D636FB /* MidiManager.swift */; };
+		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
 		CD8C6062E02C23A805D8B979 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */; };
 /* End PBXBuildFile section */
 
@@ -211,6 +213,8 @@
 		79E220ED2C856150004F64D8 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes; sourceTree = "<group>"; };
+		79F80E092CD4CD1700D636FB /* MidiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiManager.swift; sourceTree = "<group>"; };
+		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
 		AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -413,6 +417,7 @@
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
+				79F80E0B2CD4CD6800D636FB /* MIDIView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -452,6 +457,7 @@
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
+				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -620,6 +626,7 @@
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				799381772C755F2300734FDE /* SpinWheelView.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
+				79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */,
 				799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */,
 				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
 				79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */,
@@ -676,6 +683,7 @@
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
+				79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
 				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,

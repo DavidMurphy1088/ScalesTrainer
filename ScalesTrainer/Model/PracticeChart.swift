@@ -221,7 +221,6 @@ extension PracticeChart {
             }
             let url = dir.appendingPathComponent(PracticeChart.fileName)
             let data = try Data(contentsOf: url)  // Read the data from the file
-            //let json = String(data: data, encoding: .utf8)
             let chart = try decoder.decode(PracticeChart.self, from: data)
             for r in 0..<chart.cells.count {
                 let row:[PracticeChartCell] = chart.cells[r]
@@ -237,7 +236,7 @@ extension PracticeChart {
                     }
                 }
             }
-            Logger.shared.log(self, "Loaded PracticeChart \(url)")
+            Logger.shared.log(self, "Loaded PracticeChart from local file")
             return chart
          } catch {
             Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")

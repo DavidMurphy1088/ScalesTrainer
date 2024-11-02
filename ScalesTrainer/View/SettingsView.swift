@@ -25,12 +25,12 @@ struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    //@State var firstName1 = Settings.shared.firstName
     @State var leadInBarCount = 0
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
-    @State var metronomeSilent = false
+    @State var useMidiKeyboard = false
+    //@State var metronomeSilent = false
     @State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
@@ -72,60 +72,38 @@ struct SettingsView: View {
     
     func DetailedCustomSettingsView() -> some View {
         VStack {
-            //ZStack {
-//                if self.backgroundChange >= 0 {
-//                    VStack {
-//                        Settings.shared.getBackgroundColor()
-//                    }
-//                }
-                VStack {
-                    HStack {
-                        //Spacer()
-                        Text("Choose your background colour ").font(.title2).padding(0)
-                        ///Force a repaint on color change with published self.backgroundChange
-                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
-                            .padding()
-                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                                Settings.shared.setBackgroundColor(newColor)
-                                self.backgroundChange += 1
-                            }
-                            .labelsHidden()
-                        //Spacer()
-                    }
-                    HStack {
-                        //Spacer()
-                        VStack {
-                            SetKeyboardColourView(parentColor: $keyboardColor)
+            VStack {
+                HStack {
+                    //Spacer()
+                    Text("Choose your background colour ").font(.title2).padding(0)
+                    ///Force a repaint on color change with published self.backgroundChange
+                    ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
+                        .padding()
+                        .onChange(of: selectedBackgroundColor) { oldColor, newColor in
+                            Settings.shared.setBackgroundColor(newColor)
+                            self.backgroundChange += 1
                         }
-                        //.padding()
-                        .onChange(of: keyboardColor, {
-                            Settings.shared.setKeyboardColor(keyboardColor)
-                        })
-                        .hilighted(backgroundColor: .gray)
-                        .frame(width: UIScreen.main.bounds.size.width * 0.9,
-                               height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
-                        //Spacer()
-                    }
+                        .labelsHidden()
+                    //Spacer()
                 }
-                .padding(.vertical, 0)
-                //.border(Color.green, width: 3)
-            //}
+                HStack {
+                    //Spacer()
+                    VStack {
+                        SetKeyboardColourView(parentColor: $keyboardColor)
+                    }
+                    //.padding()
+                    .onChange(of: keyboardColor, {
+                        Settings.shared.setKeyboardColor(keyboardColor)
+                    })
+                    .hilighted(backgroundColor: .gray)
+                    .frame(width: UIScreen.main.bounds.size.width * 0.9,
+                           height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                    //Spacer()
+                }
+            }
             .padding(.vertical, 0)
+            //.padding(.vertical, 0)
             //.border(Color.red)
-            
-//            ///Metronome on
-//            Spacer()
-//            HStack {
-//                Spacer()
-//                Toggle(isOn: $metronomeOn) {
-//                    Text("Metronome On").font(.title2).padding(0)
-//                }
-//                .onChange(of: metronomeOn, {
-//                    settings.metronomeOn = metronomeOn
-//                })
-//                Spacer()
-//            }
-//            .frame(width: UIScreen.main.bounds.width * 0.30)
         
             ///Lead in count
             Spacer()
@@ -190,20 +168,20 @@ struct SettingsView: View {
             }
             
             ///Developer
-//            if Settings.shared.isDeveloperMode() {
-//                Spacer()
-//                HStack {
-//                    Spacer()
-//                    Toggle(isOn: $developerMode) {
-//                        Text("Developer Mode").font(.title2).padding(0)
-//                    }
-//                    .onChange(of: developerMode, {
-//                        settings.developerMode = developerMode
-//                    })
-//                    Spacer()
-//                }
-//                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-//            }
+            if Settings.shared.isDeveloperMode() {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $useMidiKeyboard) {
+                        Text("Use MIDI Keyboard").font(.title2).padding(0)
+                    }
+                    .onChange(of: useMidiKeyboard, {
+                        settings.useMidiKeyboard = useMidiKeyboard
+                    })
+                    Spacer()
+                }
+                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+            }
             
 //            if Settings.shared.isDeveloperMode() {
 //                Spacer()
@@ -267,7 +245,6 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            
             VStack {
                 TitleView(screenName: "Settings", showGrade: true).commonFrameStyle()
                 DetailedCustomSettingsView()
@@ -285,6 +262,7 @@ struct SettingsView: View {
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
+                self.useMidiKeyboard = settings.useMidiKeyboard
             }
             .onDisappear() {
                 settings.save()

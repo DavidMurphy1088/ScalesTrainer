@@ -72,6 +72,7 @@ struct ScaleTitleView: View {
                 Text(", mf,").italic().padding(.horizontal, 0)
                 Text(" legato").padding(.horizontal, 0)
             }
+            //.font(.body)
             .font(.title)
         }
     }

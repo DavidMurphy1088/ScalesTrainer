@@ -29,7 +29,6 @@ enum RunningProcess {
         switch self {
         case .none:
             return "None"
-
         case .followingScale:
             return "Following Scale"
         case .leadingTheScale:
@@ -360,7 +359,11 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            if Settings.shared.useMidiKeyboard {
+            }
+            else {
+                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            }
             leadProcess.start()
             if true {
                 self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
@@ -375,6 +378,7 @@ public class ScalesModel : ObservableObject {
             metronome.setTicking(way: true)
             metronome.start()
         }
+        
         if [.backingOn].contains(setProcess) {
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
             metronome.setTicking(way: true)
@@ -394,7 +398,6 @@ public class ScalesModel : ObservableObject {
             self.scale.resetMatchedData()
             self.setShowKeyboard(false)
             self.setShowStaff(false)
-            //self.setShowParameters(false)
             self.setShowLegend(false)
             self.setResultInternal(nil, "setRunningProcess::start record")
             setUserMessage(heading: nil, msg: nil)
@@ -591,7 +594,7 @@ public class ScalesModel : ObservableObject {
             }
             let noteState = scale.scaleNoteState[hand][i]
             let ts = score.createTimeSlice()
-            let value:Double
+            //let value:Double
             let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, segments: noteState.segments, staffNum: 0)
             note.setValue(value: noteState.value)
             ts.addNote(n: note)

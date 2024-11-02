@@ -35,6 +35,7 @@ public class Settings : Codable  {
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var practiceChartGamificationOn = true
+    var useMidiKeyboard = false
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
@@ -91,7 +92,6 @@ public class Settings : Codable  {
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
-       
         str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
         str += " FirstName:\(self.firstName)"
         str += " Board:\(self.musicBoard)"
@@ -105,6 +105,7 @@ public class Settings : Codable  {
         //str += " BackgroundColour:\(self.backgroundColor)"
         str += " email:\(self.emailAddress)"
         str += " Gamification:\(self.practiceChartGamificationOn)"
+        str += " MIDIKeyboard:\(self.useMidiKeyboard)"
         return str
     }
     
@@ -122,10 +123,6 @@ public class Settings : Codable  {
         let name1 = name + (name.count>0 ? "'s" : "")
         return name1
     }
-    
-//    func getSettingsNoteValueFactor() -> Double {
-//        return self.scaleNoteValue == 4 ? 1.0 : 0.5
-//    }
     
     func load() {
         if let jsonData = UserDefaults.standard.string(forKey: "settings") {
@@ -147,6 +144,7 @@ public class Settings : Codable  {
                     self.badgeStyle = loaded.badgeStyle
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
+                    self.useMidiKeyboard  = loaded.useMidiKeyboard
 
                     SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)

@@ -155,6 +155,12 @@
     "Choose your keyboard colour " : {
 
     },
+    "Clear MIDI" : {
+
+    },
+    "Connected to MIDI keyboards: %@" : {
+
+    },
     "Correct Notes:%lld Errors:%lld" : {
       "localizations" : {
         "en" : {
@@ -245,9 +251,6 @@
 
     },
     "Good job 😊" : {
-
-    },
-    "GoogleAPI" : {
 
     },
     "Grade" : {
@@ -381,6 +384,9 @@
     "MessageUs" : {
       "comment" : "Menu"
     },
+    "MIDITest" : {
+      "comment" : "Menu"
+    },
     "min. " : {
 
     },
@@ -438,6 +444,9 @@
 
     },
     "Purchase in progress. Please standby..." : {
+
+    },
+    "Received MIDI Messages" : {
 
     },
     "Record the Scale" : {
@@ -565,9 +574,6 @@
     "Show Alert" : {
 
     },
-    "Show MIDI" : {
-
-    },
     "Show Tap Data" : {
 
     },
@@ -687,6 +693,9 @@
 
     },
     "Under Construction" : {
+
+    },
+    "Use MIDI Keyboard" : {
 
     },
     "Version %@" : {

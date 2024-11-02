@@ -143,6 +143,10 @@ struct ActivityModeView: View {
                     .padding()
                 }
             }
+            if Settings.shared.useMidiKeyboard {
+                let midis = MIDIManager.shared.getMidiConections()
+                Text("Connected to MIDI keyboards: \(midis)")
+            }
 
             Spacer()
         }
@@ -194,21 +198,20 @@ struct ActivityModeView: View {
 
 struct HomeView: View {
     @State var scaleGroupsSheet = false
-    
+    //let midiManager = MIDIManager.shared
     var body: some View {
-        //GeometryReader { geometry in
-            VStack {
-                NavigationView {
-                    VStack {
-                        Spacer()
-                        TitleView(screenName: "Scales Academy", showGrade: true)
-                        ActivityModeView()
-                        Spacer()
-                    }
+        VStack {
+            NavigationView {
+                VStack {
+                    Spacer()
+                    TitleView(screenName: "Scales Academy", showGrade: true)
+                    ActivityModeView()
+                    Spacer()
                 }
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-        //}
+        }
+
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
 }

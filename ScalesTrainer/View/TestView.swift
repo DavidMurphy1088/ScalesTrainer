@@ -11,22 +11,6 @@ import AudioKitEX
 import Speech
 import SwiftUI
 
-struct MIDIView: View {
-    @Environment(\.presentationMode) var presentationMode
-    let midiModel = MIDIModel.shared
-    @State private var showAlert = false
-
-    var body: some View {
-        VStack {
-            Button(action: {
-                //self.showAlert = true
-            }) {
-                Text("Show MIDI")
-            }
-        }
-    }
-}
-
 struct ScreenA: View {
     var body: some View {
         NavigationView {
@@ -368,47 +352,17 @@ struct TestViewFaces: View {
 
 struct TestView: View {
     @ObservedObject var audioRecorder = AudioRecorder()
-    let googleAPI = GoogleAPI.shared
-    private func getSheet(sheetName:String, context:String, loadFunction: @escaping (_ sheetRows: [[String]]) -> Void) {
-        googleAPI.getContentSheet(sheetName: sheetName) { status, data in
-            if status == .success {
-                if let data = data {
-                    struct JSONSheet: Codable {
-                        let range: String
-                        let values:[[String]]
-                    }
-                    do {
-                        let jsonData = try JSONDecoder().decode(JSONSheet.self, from: data)
-                        let sheetRows = jsonData.values
-                        //self.loadSheetData(sheetRows: sheetRows)
-                        //loadFunction(sheetRows)
-                        print("===== Loaded", sheetRows.count)
-                        //self.setDataReady(context: context, way: status)
-                    }
-                    catch {
-                        print("===== Load cannot parse JSON content")
-                    }
-                }
-                else {
-                    //self.setDataReady(context: context, way: .failed)
-                    print("===== Load  no content data")
-                }
-            }
-            else {
-               // self.setDataReady(context:context, way: status)
-            }
-        }
-    }
-    
+
     var body: some View {
         VStack {
-            Button(action: {
-                getSheet(sheetName: "MTFreeLicenses", context: "Licenses", loadFunction: LicenceManager.shared.loadEmailLicenses)
-            }) {
-                Text("GoogleAPI")
-            }
-            .padding()
-
+//            Button(action: {
+//                getSheet(sheetName: "MTFreeLicenses", context: "Licenses", loadFunction: LicenceManager.shared.loadEmailLicenses)
+//            }) {
+//                Text("GoogleAPI")
+//            }
+//            .padding()
+            
+            
             Button(action: {
                 audioRecorder.startRecording()
             }) {

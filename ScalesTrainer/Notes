@@ -26,3 +26,16 @@ Renewal Receipts: After each renewal charge, Apple emails the user a renewal rec
 Failed Payment Notifications: If a payment fails, Apple notifies the user via email and provides instructions to update their payment method, offering a grace period to avoid subscription cancellation.
 
 If you want to keep users informed about upcoming charges in your app, you might consider adding in-app reminders around the renewal date as a courtesy, though Apple doesn’t require this.
+
+=== MIDI setup === 1Nov2024
+Run Audio Midi Setup on MAC and ensure iPad window is online
+
+Use VMPK virtual keyboard on MAC
+ - use VMPK, Edit ->Midi Connections and set Output MIDI Connection to iPad
+ 
+Run MIDI Monitor on MAC to ensure VMPK is sending MIDI events
+
+Run code on iPad to listen for events.
+
+ 
+ 
