@@ -601,16 +601,11 @@ public class ScalesModel : ObservableObject {
             totalBarValue += noteState.value
         }
         
-//        if isBrokenChord {
-//            value = noteState.value == StaffNote.VALUE_TRIPLET ? noteState.value : StaffNote.VALUE_QUARTER + StaffNote.VALUE_QUAVER
-//        }
-//        else {
-//            value = noteState.value
-//        }
-
+        let scoreWithClefs = score.addClefs()
+        
         //score.debugScore2("Broken", withBeam: true, toleranceLevel: 0)
         //Logger.shared.log(self, "Created score type:\(staffType)")
-        return score
+        return scoreWithClefs
     }
     
     func setScale(scale:Scale) {

@@ -580,10 +580,16 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sorry, no subscription is available yet" : {
 
     },
     "Start Analysis" : {
+
+    },
+    "Start MIDI" : {
 
     },
     "Start Recording" : {

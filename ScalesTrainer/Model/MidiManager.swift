@@ -71,6 +71,9 @@ class MIDIManager: ObservableObject {
     var lastNoteOn:Date? = nil
     
     init() {
+    }
+    
+    func connectSources() {
         MIDIClientCreate("Scales Academy" as CFString, nil, nil, &midiClient)
         MIDIInputPortCreate(midiClient, "Input Port" as CFString, midiReadProc, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()), &inputPort)
         

@@ -136,6 +136,37 @@ public class Score : ObservableObject {
         self.heightPaddingEnabled = heightPaddingEnabled
     }
     
+    func addClefs() -> Score {
+        return self
+        var entryIndex = 0
+        var newEntries:[ScoreEntry] = []
+        ///deep copy the staff
+        for entry in self.scoreEntries {
+            if entry is TimeSlice {
+                //let
+            }
+        }
+        
+        while entryIndex < self.scoreEntries.count {
+            let entry = self.scoreEntries[entryIndex]
+            if entry is TimeSlice {
+                let timeSlice = entry as! TimeSlice
+                
+                for note in timeSlice.getTimeSliceNotes() {
+                    if let ledgerLines = note.noteStaffPlacements[0]?.offsetFromStaffMidline {
+                        print("========", entryIndex, note.midiNumber, ledgerLines)
+                        if ledgerLines > 6 {
+                            note.midiNumber -= 12
+                            if let placement = note.noteStaffPlacements[0] {
+                                placement.offsetFromStaffMidline -= 7
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     public func setScoreNotePlayed(midi: Int, segment: Int) -> TimeSlice? {
         let timeSlices = getAllTimeSlices()
         //var nearestDist = Int(Int64.max)

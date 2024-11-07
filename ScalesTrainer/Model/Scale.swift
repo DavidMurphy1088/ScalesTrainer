@@ -328,15 +328,16 @@ public class Scale : Codable {
                         nextMidi -= 12
                     }
                 }
-                if handIndex == 1 {
-                    if firstMidi >= 69 {
-                        nextMidi -= 12
-                    }
-                }
+//                if handIndex == 1 {
+//                    if firstMidi >= 69 {
+//                        nextMidi -= 12
+//                    }
+//                }
             }
             
             self.scaleNoteState.append([])
-            
+            if scaleRoot.name == "A" {
+            }
             for oct in 0..<octaves {
                 
                 for i in 0..<scaleOffsetsForHand.count {
@@ -491,7 +492,10 @@ public class Scale : Codable {
                 }
             }
         }
-        //debug2("------------- End Init")
+        if scaleRoot.name == "A" {
+            debug1("------------- End Init")
+        }
+        
         Scale.createCount += 1
     }
     

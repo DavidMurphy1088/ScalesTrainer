@@ -11,12 +11,6 @@ enum LaunchScreenStep {
     case finished
 }
 
-//public enum RequestStatus {
-//    case success
-//    case waiting
-//    case failed
-//}
-
 final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep = .firstStep
 
@@ -161,7 +155,7 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
                     //ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .melodicMinor, scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0], ctx: "App Start")
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 80, octaves: 2, hands: [0,1], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -222,8 +216,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
 
     }
+    
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
+            //return [.portrait, .landscapeLeft, .landscapeRight]
             return .portrait // Lock to portrait on iPhone
         } else {
             return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
@@ -262,7 +258,6 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             VStack {
-                //if launchScreenState.state == .finished || ScalesTrainerApp.runningInXcode() {
                 if launchScreenState.state == .finished || Settings.shared.isDeveloperMode() {
                     MainContentView()
                 }

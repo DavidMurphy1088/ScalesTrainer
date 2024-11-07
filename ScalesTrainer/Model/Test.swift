@@ -7,6 +7,9 @@ import AudioKit
 import AudioKitEX
 import SoundpipeAudioKit
 
+import AVFoundation
+import Combine
+
 class FFTAnalyzer: ObservableObject {
     var engine: AudioEngine!
     var mic: AudioEngine.InputNode!
@@ -100,6 +103,16 @@ class FFTAnalyzer: ObservableObject {
         if false {
             self.pitchTap = PitchTap(mixerB, bufferSize: bufferSize) {f,a in
                 if Double(a[0]) > minAmp {
+                }
+//                let tracker = PitchTap(mixerB, strategy: PitchDetectionStrategy.yinHybrid, handler: { pitch, amp in
+////                    DispatchQueue.main.async {
+////                        self.detectedPitch = pitch
+////                        self.detectedAmplitude = amp
+////                    }
+//                })
+                if let tracker = self.pitchTap {
+                    //tracker.strategy = PitchDetectionStrategy.yinHybrid
+                    //tracker.threshold = 0.1
                 }
             }
         }
