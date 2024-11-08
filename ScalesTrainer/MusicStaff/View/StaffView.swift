@@ -188,17 +188,6 @@ public struct StaffView: View {
         return Double(score.lineSpacing) * 3.0
     }
     
-    func getNotes(entry:ScoreEntry) -> [StaffNote] {
-        if entry is TimeSlice {
-            let ts = entry as! TimeSlice
-            return ts.getTimeSliceNotes()
-        }
-        else {
-            let n:[StaffNote] = []
-            return n
-        }
-    }
-    
     func keySigOffsets(staff:Staff, keySignture:KeySignature) -> [Int] {
         var offsets:[Int] = []
         //Key Sig offsets on staff
@@ -274,12 +263,9 @@ public struct StaffView: View {
                     .coordinateSpace(name: "StaffNotesView")
             }
             .padding([.leading, .trailing], widthPadding ? score.lineSpacing * 4 : 0)
-            
         }
         .coordinateSpace(name: "StaffView.ZStack")
         .frame(height: score.getStaffHeight())
-        
-
     }
 }
 

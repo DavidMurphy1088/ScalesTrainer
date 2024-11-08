@@ -100,7 +100,7 @@ public struct CalibrationView: View {
 //                .frame(height: UIScreen.main.bounds.size.height / 6)
 //                .commonFrameStyle(backgroundColor: .clear).padding()
 
-            if let score = scalesModel.scores[0] {
+            if let score = scalesModel.score {
                 ScoreView(score: score, widthPadding: false).padding()
             }
             

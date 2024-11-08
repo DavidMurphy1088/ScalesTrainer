@@ -155,7 +155,7 @@ class TabSelectionManager: ObservableObject {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
                     //ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0], ctx: "App Start")
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 80, octaves: 2, hands: [0,1], ctx: "App Start")
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 1, hands: [0,1], ctx: "App Start")
                     selectedTab = 0
                 }
                 else {
@@ -326,32 +326,27 @@ struct ScalesTrainerApp: App {
                 .environmentObject(tabSelectionManager)
 
             if Settings.shared.isDeveloperMode() {
-                MIDIView()
-                    .tabItem {
-                        Label(NSLocalizedString("MIDITest", comment: "Menu"), systemImage: "brakesignal.dashed")
-                    }
-                    .tag(60)
-                    .environmentObject(tabSelectionManager)
-
                 ScalesLibraryView()
                     .tabItem {
                         Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
                     }
+                    .tag(60)
+                    .environmentObject(tabSelectionManager)
+
+                MIDIView()
+                    .tabItem {
+                        Label(NSLocalizedString("MIDITest", comment: "Menu"), systemImage: "brakesignal.dashed")
+                    }
                     .tag(62)
                     .environmentObject(tabSelectionManager)
-            }
             
-            if Settings.shared.isDeveloperMode() {
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
                     .tag(70)
                     .environmentObject(tabSelectionManager)
-            }
-            
-            if Settings.shared.isDeveloperMode()  {
-                // DeveloperView().commonFrameStyle()
+
                 ScalesLibraryView()
                     .tabItem {
                         Label("ScaleLibrary", systemImage: "book.pages")

@@ -170,7 +170,6 @@ public class Staff : ObservableObject, Identifiable {
     
     let score:Score
     public var type:StaffType
-    public var staffNum:Int
     var lowestNoteValue:Int
     var highestNoteValue:Int
     public var middleNoteValue:Int
@@ -179,11 +178,10 @@ public class Staff : ObservableObject, Identifiable {
     public var linesInStaff:Int
     let noteOffsetsInStaffByKey:NoteOffsetsInStaffByKey
 
-    public init(score:Score, type:StaffType, staffNum:Int, linesInStaff:Int) {
+    public init(score:Score, type:StaffType, linesInStaff:Int) {
         self.score = score
         self.type = type
         self.noteOffsetsInStaffByKey = NoteOffsetsInStaffByKey(keyType: score.key.type)
-        self.staffNum = staffNum
         self.linesInStaff = linesInStaff
         lowestNoteValue = 20 //MIDI C0
         highestNoteValue = 107 //MIDI B7

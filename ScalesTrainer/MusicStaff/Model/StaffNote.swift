@@ -12,16 +12,13 @@ public class BarLine : ScoreEntry {
     }
 }
 
-public class Tie : ScoreEntry {
-}
-
 public class Rest : TimeSliceEntry {
-    public override init(timeSlice:TimeSlice, value:Double, segments:[Int], staffNum:Int) {
-        super.init(timeSlice:timeSlice, value: value, segments: segments, staffNum: staffNum)
+    public override init(timeSlice:TimeSlice, value:Double, staffType:StaffType, segments:[Int]) {
+        super.init(timeSlice:timeSlice, value: value, staffType: staffType, segments: segments)
     }
     
     public init(r:Rest) {
-        super.init(timeSlice: r.timeSlice, value: r.getValue(), segments: r.segments, staffNum: r.staffNum)
+        super.init(timeSlice: r.timeSlice, value: r.getValue(), staffType: r.staffType, segments: r.segments)
     }
 }
 
@@ -57,6 +54,7 @@ public class NoteStaffPlacement {
     }
 }
 
+///Contains the layout of how a note is displayed on a staff
 public class StaffNote : TimeSliceEntry, Comparable {
     static let MIDDLE_C = 60 //Midi pitch for C4
     static let OCTAVE = 12
@@ -75,8 +73,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
     
     ///Placements for the note on treble and bass staff
-    var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
-    
+    //var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
+    var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(noteValue: 0, offsetFroMidLine: 0)
+
     ///Quavers in a beam have either a start, middle or end beam type. A standlone quaver type has type beamEnd. A non quaver has beam type none.
     public var beamType:QuaverBeamType = .none
     
@@ -94,15 +93,15 @@ public class StaffNote : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, midi:Int, value:Double, segments:[Int], staffNum:Int, writtenAccidental:Int?=nil) {
+    public init(timeSlice:TimeSlice, midi:Int, value:Double, staffType:StaffType, segments:[Int], writtenAccidental:Int?=nil) {
         self.midiNumber = midi
-        super.init(timeSlice:timeSlice, value: value, segments: segments, staffNum: staffNum)
+        super.init(timeSlice:timeSlice, value: value, staffType: staffType, segments: segments)
         self.writtenAccidental = writtenAccidental
     }
     
     public init(note:StaffNote) {
         self.midiNumber = note.midiNumber
-        super.init(timeSlice:note.timeSlice, value: note.getValue(), segments: note.segments, staffNum: note.staffNum)
+        super.init(timeSlice:note.timeSlice, value: note.getValue(), staffType: note.staffType, segments: note.segments)
         self.timeSlice.sequence = note.timeSlice.sequence
         self.writtenAccidental = note.writtenAccidental
         self.isOnlyRhythmNote = note.isOnlyRhythmNote
@@ -188,7 +187,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     }
     
     ///Find the first note for this quaver group
-    public func getBeamStartNote(score:Score, np: NoteLayoutPositions) -> StaffNote {
+    public func getBeamStartNote(score:Score, staff:Staff, np: NoteLayoutPositions) -> StaffNote {
         let endNote = self
         if endNote.beamType != .end {
             return endNote
@@ -199,7 +198,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
         while idx>=0 {
             let ts = score.scoreEntries[idx]
             if ts is TimeSlice {
-                let notes = ts.getTimeSliceNotes()
+                let notes = ts.getTimeSliceNotes(staffType: staff.type)
                 if notes.count > 0 {
                     let note = notes[0]
                     if note.timeSlice.sequence == endNote.timeSlice.sequence {
@@ -241,9 +240,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
         }
     }
     
-    public func getNoteDisplayCharacteristics(staff:Staff) -> NoteStaffPlacement {
-        return self.noteStaffPlacements[staff.staffNum]!
-    }
+//    public func getNoteDisplayCharacteristics(staff:Staff) -> NoteStaffPlacement {
+//        return self.noteStaffPlacements[self.staffType == .treble ? 0 : 1]!
+//    }
     
     ///The note has a default accidental determined by which key the score is in but can be overidden by content specifying a written accidental
     ///The written accidental must overide the default accidental and the note's offset adjusted accordingly.
@@ -252,7 +251,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-        var barAlreadyHasNote = score.getNotesForLastBar(pitch:self.midiNumber).count > 1
+        var barAlreadyHasNote = score.getNotesForLastBar(staff: staff, pitch:self.midiNumber).count > 1
         let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
@@ -303,23 +302,21 @@ public class StaffNote : TimeSliceEntry, Comparable {
             ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
             
             var lastNoteAtOffset:StaffNote? = nil
-            var barPreviousNotes = score.getNotesForLastBar(pitch:nil)
+            var barPreviousNotes = score.getNotesForLastBar(staff: staff, pitch:nil)
             if barPreviousNotes.count > 1 {
                 ///Dont consider current note
                 barPreviousNotes.removeFirst()
             }
             for prevNote in barPreviousNotes {
-                if let prevPlacement = prevNote.noteStaffPlacements[staff.staffNum] {
-                    if prevPlacement.offsetFromStaffMidline == offsetFromMiddle {
-                        if prevPlacement.accidental != nil {
-                            lastNoteAtOffset = prevNote
-                            break
-                        }
+                if prevNote.noteStaffPlacement.offsetFromStaffMidline == offsetFromMiddle {
+                    if prevNote.noteStaffPlacement.accidental != nil {
+                        lastNoteAtOffset = prevNote
+                        break
                     }
                 }
             }
             if let lastNoteAtOffset = lastNoteAtOffset {
-                if let lastAccidental = lastNoteAtOffset.noteStaffPlacements[staffNum]?.accidental {
+                if let lastAccidental = lastNoteAtOffset.noteStaffPlacement.accidental {
                     if lastNoteAtOffset.midiNumber > self.midiNumber {
                         offsetAccidental = lastAccidental - 1
                     }
@@ -330,7 +327,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
             }
         }
         let placement = NoteStaffPlacement(noteValue: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental)
-        self.noteStaffPlacements[staff.staffNum] = placement
+        self.noteStaffPlacement = placement
         //self.debug("setNoteDisplayCharacteristics")
     }
 }

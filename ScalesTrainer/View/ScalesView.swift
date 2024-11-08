@@ -589,29 +589,28 @@ struct ScalesView: View {
             }
             
             if scalesModel.showStaff {
-                if scalesModel.scale.hands.count < 2 {
-                    if let score = scalesModel.scores[scalesModel.scale.hands[0]] {
-                        VStack {
-                            ScoreView(score: score, widthPadding: false)
-                        }
-                        .commonFrameStyle(backgroundColor: Color.white)
+                if let score = scalesModel.score {
+                    VStack {
+                        ScoreView(score: score, widthPadding: false)
                     }
-                }
-                else {
-                    if let scoreRH = scalesModel.scores[0] {
-                        VStack {
-                            ScoreView(score: scoreRH, widthPadding: false)
-                        }
-                        .commonFrameStyle(backgroundColor: Color.white)
-                    }
-                    if let scoreLH = scalesModel.scores[1] {
-                        VStack {
-                            ScoreView(score: scoreLH, widthPadding: false)
-                        }
-                        .commonFrameStyle(backgroundColor: Color.white)
-                    }
+                    .commonFrameStyle(backgroundColor: Color.white)
                 }
             }
+//                else {
+//                    if let scoreRH = scalesModel.scores[0] {
+//                        VStack {
+//                            ScoreView(score: scoreRH, widthPadding: false)
+//                        }
+//                        .commonFrameStyle(backgroundColor: Color.white)
+//                    }
+//                    if let scoreLH = scalesModel.scores[1] {
+//                        VStack {
+//                            ScoreView(score: scoreLH, widthPadding: false)
+//                        }
+//                        .commonFrameStyle(backgroundColor: Color.white)
+//                    }
+//                }
+//            }
             
 //            if badgeBank.show {
 //                

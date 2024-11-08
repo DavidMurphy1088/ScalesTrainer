@@ -3,21 +3,18 @@ import SwiftUI
 
 
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
-    //@Published public var showPlaying:TimeSliceEntryStatusType = .none
-    //@Published public var showIsPlaying:Bool = false
-
     public let id = UUID()
-    public var staffNum:Int //Narrow the display of the note to just one staff
+    let staffType:StaffType
     public var timeSlice:TimeSlice
 
     private var value:Double = StaffNote.VALUE_QUARTER
     public var valueNormalized:Double? = nil
     let segments:[Int]
     
-    init(timeSlice:TimeSlice, value:Double, segments:[Int], staffNum: Int = 0) {
-        self.value = value
-        self.staffNum = staffNum
+    init(timeSlice:TimeSlice, value:Double, staffType:StaffType, segments:[Int]) {
         self.timeSlice = timeSlice
+        self.value = value
+        self.staffType = staffType
         self.segments = segments
     }
     

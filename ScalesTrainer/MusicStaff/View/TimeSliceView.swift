@@ -112,8 +112,9 @@ public struct TimeSliceView: View {
     
     func getLedgerLines(staff:Staff, note:StaffNote, noteWidth:Double, lineSpacing:Double) -> [LedgerLine] {
         var result:[LedgerLine] = []
-        let p = note.getNoteDisplayCharacteristics(staff: staff)
-        
+        //let p = note.getNoteDisplayCharacteristics(staff: staff)
+        let p = note.noteStaffPlacement 
+
         if p.offsetFromStaffMidline <= -6 {
             result.append(LedgerLine(offsetVertical: 3 * lineSpacing * 1.0))
         }
@@ -222,7 +223,7 @@ public struct TimeSliceView: View {
     
     func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:TimeSliceStatusTag) -> some View {
         ZStack {
-            let placement = note.getNoteDisplayCharacteristics(staff: staff)
+            let placement = note.noteStaffPlacement // note.getNoteDisplayCharacteristics(staff: staff)
             let offsetFromStaffMiddle = placement.offsetFromStaffMidline
             let accidental = placement.accidental
 
@@ -230,11 +231,11 @@ public struct TimeSliceView: View {
             //let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
             let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
 
-            if note.staffNum == staff.staffNum  {
+            //if note.staffNum == staff.staffNum  {
                 if timeSlice.showIsPlaying {
                     NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
                 }
-            }
+            //}
             
             if let accidental = accidental {
                 let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
@@ -341,9 +342,11 @@ public struct TimeSliceView: View {
                 let noteFrameWidth = geometry.size.width * 1.0 //center the note in the space allocated by the parent for this note's view
                 ForEach(getTimeSliceEntries(), id: \.id) { entry in
                     VStack {
-                        if entry is StaffNote {
-                            NoteView(note: entry as! StaffNote, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
-                            //.border(Color.green)
+                        if let staffNote = entry as? StaffNote {
+                            if staffNote.staffType == self.staff.type {
+                                NoteView(note: entry as! StaffNote, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
+                                //.border(Color.green)
+                            }
                         }
                         if entry is Rest {
                             RestView(staff: staff, entry: entry, lineSpacing: lineSpacing, geometry: geometry)

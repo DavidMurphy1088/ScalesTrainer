@@ -55,7 +55,6 @@ import CoreData
 struct ScoreEntriesView: View {
     var noteLayoutPositions:NoteLayoutPositions
     @ObservedObject var barLayoutPositions:BarLayoutPositions
-
     @ObservedObject var score:Score
     @ObservedObject var staff:Staff
     
@@ -73,16 +72,16 @@ struct ScoreEntriesView: View {
         self.noteOffsetsInStaffByKey = NoteOffsetsInStaffByKey(keyType: score.key.type == .major ? .major : .minor)
     }
         
-    func getNote(entry:ScoreEntry) -> StaffNote? {
-        if entry is TimeSlice {
-            let notes = entry.getTimeSliceNotes()
-            if notes.count > 0 {
-                return notes[0]
-            }
-        }
-        return nil
-    }
-    
+//    func getNote(entry:ScoreEntry) -> StaffNote? {
+//        if entry is TimeSlice {
+//            let notes = entry.getTimeSliceNotes()
+//            if notes.count > 0 {
+//                return notes[0]
+//            }
+//        }
+//        return nil
+//    }
+//    
 //    ///Return the start and end points for te quaver beam based on the note postions that were reported
 //    func getBeamLine(endNote:Note, noteWidth:Double, startNote:Note, stemLength:Double) -> (CGPoint, CGPoint)? {
 //        let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
@@ -123,11 +122,12 @@ struct ScoreEntriesView: View {
         let stemLength = max(startNote.stemLength, endNote.stemLength) * score.lineSpacing
         //let endNotePos = noteLayoutPositions.positions[endNote]
         let endNotePos = noteLayoutPositions.getPositionForSequence(sequence: endNote.timeSlice.sequence)
+
         if let endNotePos = endNotePos {
             let xEndMid = endNotePos.origin.x + endNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
             let yEndMid = endNotePos.origin.y + endNotePos.size.height / 2.0
             
-            let endPitchOffset = endNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
+            let endPitchOffset = endNote.noteStaffPlacement.offsetFromStaffMidline
             let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
             let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
             
@@ -136,7 +136,7 @@ struct ScoreEntriesView: View {
             if let startNotePos = startNotePos {
                 let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
                 let yStartMid = startNotePos.origin.y + startNotePos.size.height / 2.0
-                let startPitchOffset = startNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
+                let startPitchOffset = startNote.noteStaffPlacement.offsetFromStaffMidline
                 let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * score.lineSpacing * -0.5)
                 let yStartNoteStemTip = yStartNoteMiddle + stemLength * stemDirection
                 let p1 = CGPoint(x:xEndMid, y: yEndNoteStemTip)
@@ -197,10 +197,10 @@ struct ScoreEntriesView: View {
                 ForEach(score.scoreEntries) { entry in
                     ZStack { //VStack - required in forEach closure
                         if entry is TimeSlice {
-                            let entries = entry as! TimeSlice
+                            let timeSlice = entry as! TimeSlice
                             ZStack { // Each note frame in the timeslice shares the same same vertical space
                                 TimeSliceView(staff: staff,
-                                              timeSlice: entries,
+                                              timeSlice: timeSlice,
                                               noteWidth: noteWidth,
                                               lineSpacing: score.lineSpacing)
                                 //.border(Color.green)
@@ -208,31 +208,31 @@ struct ScoreEntriesView: View {
                                     ///Record and store the note's postion so we can later draw its stems which maybe dependent on the note being in a quaver group with a quaver beam
                                     Color.clear
                                         .onAppear {
-                                            if staff.staffNum == 0 {
-                                                noteLayoutPositions.storePosition(onAppear: true, notes: entries.getTimeSliceNotes(),
+                                            //if staff.staffNum == 0 {
+                                            noteLayoutPositions.storePosition(onAppear: true, notes: timeSlice.getTimeSliceNotes(staffType: staff.type),
                                                                                   rect: geometry.frame(in: .named("HStack")))
                                                 DispatchQueue.main.async {
                                                     ///Ensure note layout updates are published for subsequent drawing of quaver beams
                                                     staff.beamUpdates += 1
                                                 }
-                                            }
+                                            //}
                                         }
                                         .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                            if staff.staffNum == 0 {
-                                                noteLayoutPositions.storePosition(onAppear: false, notes: entries.getTimeSliceNotes(),
+                                            //if staff.staffNum == 0 {
+                                            noteLayoutPositions.storePosition(onAppear: false, notes: timeSlice.getTimeSliceNotes(staffType: staff.type),
                                                                                   rect: geometry.frame(in: .named("HStack")))
                                                 DispatchQueue.main.async {
                                                     ///Ensure note layout updates are published for subsequent drawing of quaver beams
                                                     staff.beamUpdates += 1
                                                 }
-                                            }
+                                            //}
                                         }
                                 })
                                 
                                 StemView(score:score,
                                          staff:staff,
                                          notePositionLayout: noteLayoutPositions,
-                                         notes: entries.getTimeSliceNotes())
+                                         notes: timeSlice.getTimeSliceNotes(staffType: staff.type))
 
                              }
                             //.border(Color.red)
@@ -246,16 +246,16 @@ struct ScoreEntriesView: View {
                                         .frame(height: score.getStaffHeight())
                                     //.border(Color .red)
                                         .onAppear {
-                                            if staff.staffNum == 0 {
+                                            //if staff.staffNum == 0 {
                                                 let barLine = entry as! BarLine
                                                 barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
-                                            }
+                                            //}
                                         }
                                         .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                            if staff.staffNum == 0 {
+                                            //if staff.staffNum == 0 {
                                                 let barLine = entry as! BarLine
                                                 barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
-                                            }
+                                            //}
                                         }
                                 }
                             }
@@ -275,14 +275,14 @@ struct ScoreEntriesView: View {
             ///Draw quaver stems and beams over quavers that are beamed together
             ///noteLayoutPositions has recorded the position of each note to enable drawing the quaver beam
             
-            if staff.staffNum == 0 {
+            //if staff.staffNum == 0 {
                 GeometryReader { geo in
                     ZStack {
                         ZStack {
                             ForEach(noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence }), id: \.key.id) {
                                 endNote, endNotePos in
                                 if endNote.beamType == .end || endNote.beamType == .none {
-                                    let startNote = endNote.getBeamStartNote(score: score, np:noteLayoutPositions)
+                                    let startNote = endNote.getBeamStartNote(score: score, staff: staff, np:noteLayoutPositions)
                                     if let line = getBeamLine(endNote: endNote,
                                                               noteWidth: noteWidth,
                                                               startNote: startNote) {
@@ -299,7 +299,7 @@ struct ScoreEntriesView: View {
                     }
                 }
                 .padding(.horizontal, 0)
-            }
+            //}
         }
         .coordinateSpace(name: "ZStack0")
         .onAppear() {

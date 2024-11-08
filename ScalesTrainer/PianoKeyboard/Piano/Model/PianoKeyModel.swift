@@ -74,11 +74,11 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
             self.keyboardModel.redraw()
 
-            ///Update the stave(s) if its showing
+            ///Update the score if its showing
             ///The MIDI might be in both staves. e.g. first note of a contrary scale.
-            for i in 0..<scalesModel.scores.count {
+            //for i in 0..<scalesModel.scores.count {
                 //if let score = scalesModel.scores[self.hand] {
-                if let score = scalesModel.scores[i] {
+                if let score = scalesModel.score {
                     let segment = self.scaleNoteState?.segments[0]
                     if let segment = segment {
                         if let staffNote = score.setScoreNotePlayed(midi: self.midi, segment:segment) {
@@ -91,7 +91,7 @@ public class PianoKeyModel: Identifiable, Hashable {
                         }
                     }
                 }
-            }
+            //}
         }
         if let callback = self.wasPlayedCallback {
             callback()
@@ -111,22 +111,19 @@ public class PianoKeyModel: Identifiable, Hashable {
         if [.melodicMinor, .harmonicMinor].contains(scale.scaleType) {
 
             ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
-            if ScalesModel.shared.scores.count > 0 {
-                let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
-                if let score = ScalesModel.shared.scores[scoreIndex] {
+            //if ScalesModel.shared.scores.count > 0 {
+                //let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
+                if let score = ScalesModel.shared.score {
                     if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
                         let note:StaffNote = ts.entries[0] as! StaffNote
-                        if note.noteStaffPlacements.count > 0 {
-                            let notePlacement = note.noteStaffPlacements[0]
-                            if let notePlacement = notePlacement {
-                                if notePlacement.accidental == 1 {
-                                    showSharps = true
-                                }
-                            }
+                        //if note.noteStaffPlacements.count > 0 {
+                        if note.noteStaffPlacement.accidental == 1 {
+                            showSharps = true
                         }
+                        //}
                     }
                 }
-            }
+            //}
         }
         return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
     }

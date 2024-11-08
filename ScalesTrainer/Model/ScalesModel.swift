@@ -64,7 +64,8 @@ public class ScalesModel : ObservableObject {
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
-    @Published var scores:[Score?] = [nil, nil]
+    //@Published var scores:[Score?] = [nil, nil]
+    @Published var score:Score? = nil
     @Published var recordingIsPlaying = false
     @Published var synchedIsPlaying = false
 
@@ -553,11 +554,9 @@ public class ScalesModel : ObservableObject {
         return Int(selected) ?? 60
     }
     
-    func createScore(scale:Scale, hand:Int) -> Score {
-        let staffType:StaffType
+    func createScore(scale:Scale) -> Score {
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
-        staffType = hand == 0 ? .treble : .bass
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature:KeySignature
         if [.chromatic].contains(scale.scaleType) {
@@ -570,15 +569,19 @@ public class ScalesModel : ObservableObject {
 
         let timeSigVisible = false //isBrokenChord ? false : true
         let timeSig = scale.timeSignature
-        let score = Score(scale: scale, key: staffKey, timeSignature: TimeSignature(top: timeSig.top, bottom: timeSig.bottom, visible: timeSigVisible), linesPerStaff: 5)
-
-        let staff = Staff(score: score, type: staffType, staffNum: 0, linesInStaff: 5)
-        score.addStaff(num: 0, staff: staff)
+        let score = Score(scale: scale, key: staffKey, 
+                          timeSignature: TimeSignature(top: timeSig.top, bottom: timeSig.bottom, visible: timeSigVisible),
+                          linesPerStaff: 5)
+        
+        ///Add the required number of staves to the score depending on the number of hands
+        
         var totalBarValue = 0.0
         let mult = timeSig.bottom == 8 ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
         let maxBarValue:Double = Double(timeSig.top) * mult
+        let hands:[Int] = scale.hands.count > 1 ? [0,1] : [scale.hands[0]]
         
-        for i in 0..<scale.scaleNoteState[hand].count {
+        ///Add notes played LH and RH together to the same TimeSlice
+        for i in 0..<scale.scaleNoteState[0].count {
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line not currenlty visible but it might be added to add space around notes
@@ -592,20 +595,49 @@ public class ScalesModel : ObservableObject {
                     }
                 }
             }
-            let noteState = scale.scaleNoteState[hand][i]
+            
             let ts = score.createTimeSlice()
-            //let value:Double
-            let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, segments: noteState.segments, staffNum: 0)
-            note.setValue(value: noteState.value)
-            ts.addNote(n: note)
-            totalBarValue += noteState.value
+            var maxValue:Double?
+            ///The note for each hand is added to the one TimeSlice
+            for hand in hands {
+                let noteState = scale.scaleNoteState[hand][i]
+                let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, 
+                                     staffType: hand == 0 ? .treble : .bass, segments: noteState.segments)
+                note.setValue(value: noteState.value)
+                //note.setValue(value: StaffNote.VALUE_QUARTER)
+
+                ts.addNote(n: note)
+                if maxValue == nil || noteState.value > maxBarValue {
+                    maxValue = noteState.value
+                }
+            }
+            if let maxValue = maxValue {
+                totalBarValue += maxValue
+            }
         }
+        score.setTimesliceStartAtValues()
         
-        let scoreWithClefs = score.addClefs()
-        
-        //score.debugScore2("Broken", withBeam: true, toleranceLevel: 0)
-        //Logger.shared.log(self, "Created score type:\(staffType)")
-        return scoreWithClefs
+        ///Create the required staffs (one for each hand) and position the required notes in them
+        for hand in hands {
+            let staff = Staff(score: score, type: hand == 0 ? .treble : .bass, linesInStaff: 5)
+            score.addStaff(staff: staff)
+            for scoreEntry in score.scoreEntries {
+                if let timeSlice = scoreEntry as? TimeSlice {
+                    for entry in timeSlice.getTimeSliceEntries() {
+                        if let staffNote = entry as? StaffNote {
+                            if staffNote.staffType == staff.type {
+                                staffNote.setNotePlacementAndAccidental(score:score, staff:staff)
+                            }
+                        }
+                    }
+                }
+            }
+            //score.debug111("Score create 0", withBeam: false, toleranceLevel: 0)
+            score.addStemCharaceteristics(staff: staff)
+        }
+        //scale.debug1("Score create")
+        score.debug111("Score create 1", withBeam: false, toleranceLevel: 0)
+        return score
     }
     
     func setScale(scale:Scale) {
@@ -623,16 +655,16 @@ public class ScalesModel : ObservableObject {
                            octaves: octaves,
                            hands: hands,
                           minTempo: minTempo, dynamicType: .mf, articulationType: .legato)
-        setScaleKeyboardAndScore(scale: scale)
+        setKeyboardAndScore(scale: scale)
     }
 
-    private func setScaleKeyboardAndScore(scale:Scale) {
+    private func setKeyboardAndScore(scale:Scale) {
         ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScale to:\(name)")
         
-        let scoreRH = self.createScore(scale: scale, hand: 0)
-        let scoreLH = self.createScore(scale: scale, hand: 1)
+        let score = self.createScore(scale: scale)
+        
         if scale.timeSignature.top == 3 {
             self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
         }
@@ -645,14 +677,15 @@ public class ScalesModel : ObservableObject {
             ///Scores are @Published so set them here
             DispatchQueue.main.async {
                 self.tempoChangePublished = !self.tempoChangePublished
-                self.scores = [scoreRH, scoreLH]
+                //self.scores = [scoreRH, scoreLH]
+                self.score = score
             }
         }
     }
     
     func configureKeyboards(scale:Scale, ctx:String) {
-        let name1 = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleAndScore to:\(name1) ctx:\(ctx)")
+        let name = scale.getScaleName(handFull: true, octaves: true)
+        Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
         self.scale = scale
         
         if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
