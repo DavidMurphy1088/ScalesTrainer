@@ -76,6 +76,7 @@
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
 		79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */; };
 		79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */; };
+		79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C65D6F2CDED7AC00467597 /* StaffClef.swift */; };
 		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
 		79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoard.swift */; };
 		79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD012C128F0200770C10 /* PracticeJournalView.swift */; };
@@ -184,6 +185,7 @@
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelViewCoins.swift; sourceTree = "<group>"; };
 		79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesLibraryView.swift; sourceTree = "<group>"; };
+		79C65D6F2CDED7AC00467597 /* StaffClef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffClef.swift; sourceTree = "<group>"; };
 		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
 		79C8ACFF2C127D8400770C10 /* MusicBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoard.swift; sourceTree = "<group>"; };
 		79C8AD012C128F0200770C10 /* PracticeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalView.swift; sourceTree = "<group>"; };
@@ -282,6 +284,7 @@
 				7970137F2BEE36E1009F85D6 /* KeySignature.swift */,
 				7970137C2BEE36E1009F85D6 /* Score.swift */,
 				79CF5D6F2BEE426B00454BB6 /* Staff.swift */,
+				79C65D6F2CDED7AC00467597 /* StaffClef.swift */,
 				797013802BEE36E1009F85D6 /* StaffKey.swift */,
 				7970137E2BEE36E1009F85D6 /* StaffNote.swift */,
 				797013822BEE36E1009F85D6 /* TimeSignature.swift */,
@@ -431,6 +434,7 @@
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
+				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
@@ -438,6 +442,7 @@
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
+				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
@@ -456,8 +461,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
-				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -685,6 +688,7 @@
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
 				79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
+				79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */,
 				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,

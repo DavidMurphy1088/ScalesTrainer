@@ -598,14 +598,12 @@ public class ScalesModel : ObservableObject {
             
             let ts = score.createTimeSlice()
             var maxValue:Double?
-            ///The note for each hand is added to the one TimeSlice
+            ///The note for each hand is added to the one single TimeSlice
             for hand in hands {
                 let noteState = scale.scaleNoteState[hand][i]
                 let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, 
                                      staffType: hand == 0 ? .treble : .bass, segments: noteState.segments)
                 note.setValue(value: noteState.value)
-                //note.setValue(value: StaffNote.VALUE_QUARTER)
-
                 ts.addNote(n: note)
                 if maxValue == nil || noteState.value > maxBarValue {
                     maxValue = noteState.value
@@ -615,28 +613,83 @@ public class ScalesModel : ObservableObject {
                 totalBarValue += maxValue
             }
         }
+        
         score.setTimesliceStartAtValues()
         
+        ///Insert clefs where necessary to reduce too many ledger lines
+        ///Clefs are inserted prior to a quaver group of notes if any note in that group requires too many ledger lines using the staff's current clef
+        ///Clefs are inserted at the location of the first note in group's value offset within the scale
+        ///Each note's vertical offset from the staff center is checked to see if it exceeds either the highest or lowest offset allowed before a clef switch must occur
+        ///When each note in the scale is subsequently analysed for its position that analyis is conducated from the staff's current clef, not the staff's default clef (LH = bass clef etc)
+        let timeSlices = score.getAllTimeSlices()
+        let handIndex = 1
+        var currentClefType = handIndex == 1 ? StaffType.bass : StaffType.treble
+        var lastGroupStart = 0.0
+        var offsetsInGroup:[Int] = []
+        let offsetsAboveLimit = 8
+        let offsetsBelowLimit = -4
+
+        for tsIndex in 0..<timeSlices.count {
+            if timeSlices[tsIndex].valuePointInBar == 0 {
+                let highest = offsetsInGroup.max()
+                let lowest = offsetsInGroup.min()
+                if highest != nil && lowest != nil {
+                    if highest! > offsetsAboveLimit || lowest! < offsetsBelowLimit {
+                        let newClefType:StaffType = currentClefType == .bass ? .treble : .bass
+                        print("  =======xxxInsertClef", newClefType, "at", lastGroupStart)
+                        score.addStaffClef(staffType: newClefType, atValuePosition: lastGroupStart)
+                        currentClefType = newClefType
+                    }
+                }
+                offsetsInGroup = []
+                lastGroupStart = timeSlices[tsIndex].valuePoint
+            }
+            let timeSlice = timeSlices[tsIndex]
+            let entries = timeSlice.getTimeSliceEntries(notesOnly: true)
+            if entries.count <= handIndex {
+                continue
+            }
+            let staffNote = entries[handIndex] as! StaffNote
+            let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
+
+            let placement = staff.getNoteViewPlacement(note: staffNote)
+            offsetsInGroup.append(placement.offsetFromStaffMidline)
+            print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
+        }
+
         ///Create the required staffs (one for each hand) and position the required notes in them
         for hand in hands {
             let staff = Staff(score: score, type: hand == 0 ? .treble : .bass, linesInStaff: 5)
             score.addStaff(staff: staff)
+            var staffForPositioning = staff
             for scoreEntry in score.scoreEntries {
+                if let staffClef = scoreEntry as? StaffClef {
+                    if staff.type == .bass {
+                        staffForPositioning = Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
+                    }
+                }
                 if let timeSlice = scoreEntry as? TimeSlice {
-                    for entry in timeSlice.getTimeSliceEntries() {
+                    for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
                         if let staffNote = entry as? StaffNote {
                             if staffNote.staffType == staff.type {
-                                staffNote.setNotePlacementAndAccidental(score:score, staff:staff)
+                                staffNote.setNotePlacementAndAccidental(score:score, staff:staffForPositioning)
+                                print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
+                                var debug = false
+                                if hand == 1 && staffNote.timeSlice.valuePoint == 4.0 {
+                                    if staff.type == .bass {
+                                        debug = true
+                                    }
+                                }
+                                score.addStemCharacteristics(staff: staffForPositioning, debug: debug)
                             }
                         }
                     }
                 }
             }
+            //score.addStemCharacteristics(staff: staff)
             //score.debug111("Score create 0", withBeam: false, toleranceLevel: 0)
-            score.addStemCharaceteristics(staff: staff)
         }
         //scale.debug1("Score create")
-        score.debug111("Score create 1", withBeam: false, toleranceLevel: 0)
         return score
     }
     

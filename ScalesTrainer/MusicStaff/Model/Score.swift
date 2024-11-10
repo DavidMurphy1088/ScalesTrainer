@@ -55,15 +55,22 @@ public class ScoreEntry : ObservableObject, Identifiable, Hashable {
         hasher.combine(id)
     }
     
-    public func getTimeSliceEntries() -> [TimeSliceEntry] {
+    public func getTimeSliceEntries(notesOnly:Bool?) -> [TimeSliceEntry] {
         var result:[TimeSliceEntry] = []
         if self is TimeSlice {
             let ts:TimeSlice = self as! TimeSlice
             let entries = ts.entries
             for entry in entries {
-                //if entry is Note {
+                if let notesOnly = notesOnly {
+                    if notesOnly {
+                        if entry is StaffNote {
+                            result.append(entry)
+                        }
+                    }
+                }
+                else {
                     result.append(entry)
-                //}
+                }
             }
         }
         return result
@@ -117,9 +124,10 @@ public class Score : ObservableObject {
     public var studentFeedback:StudentFeedback? = nil
     public var tempo:Int?
     
-    public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 6.0 : 10.0
-    //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 10.0
-    
+    //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 6.0 : 10.0
+    ///NB Changing this needs changes to getBraceHeight() for alignment
+    public var lineSpacing:Double
+
     private var totalStaffLineCount:Int = 0
     static var accSharp = "\u{266f}"
     static var accNatural = "\u{266e}"
@@ -131,11 +139,28 @@ public class Score : ObservableObject {
     public init(scale:Scale, key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
         self.id = UUID()
         self.scale = scale
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.lineSpacing = 8.0
+        }
+        else {
+            self.lineSpacing = scale.hands.count > 1 ? 8.0 : 10
+        }
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
+    }
+    
+    func getBraceHeight() -> Double {
+        let heightMult:Double
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            heightMult = scale.hands.count > 1 ? 1.47 : 1.54
+        }
+        else {
+            heightMult = scale.hands.count > 1 ? 1.47 : 1.54
+        }
+        return getStaffHeight() * heightMult
     }
     
 //    func addClefs() -> Score {
@@ -216,7 +241,9 @@ public class Score : ObservableObject {
     }
 
     public func getStaffHeight() -> Double {
-        let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
+        //let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
+        ///9Nov24 - Trinity E minor LH broken chords needs 3 ledger lines aboave staff ☹️
+        let height = Double(getTotalStaffLineCount() + 2) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
         return height
     }
     
@@ -288,7 +315,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug11(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.getKeyName(withType: true)
               //"StaffCount", self.staffs.count,
@@ -346,13 +373,14 @@ public class Score : ObservableObject {
                     else {
                         //let rest = t.
                         print("  Seq", timeSlice.sequence,
-                              "[type:", type(of: timeSlice.entries[0]), "]",
-                              "[rest:","R ", "]",
+                              "[Type:", type(of: timeSlice.entries[0]), "]",
+                              "[Rest:","R ", "]",
                               "[TapDuration Seconds:",String(format: "%.4f", timeSlice.tapDurationNormalised ?? 0),"]",
-                              "[Note Value:", timeSlice.getValue(),"]",
-                              "[status]",timeSlice.statusTag,
-                              "[beat]",timeSlice.valuePoint,
-                              "[writtenAccidental:","_","]",
+                              "[NoteValue:", timeSlice.getValue(),"]",
+                              "[Status]",timeSlice.statusTag,
+                              "[StartAtValue]",timeSlice.valuePoint,
+                              "[Beat]",timeSlice.valuePointInBar,
+                              "[WrittenAccidental:","_","]",
                               "[Staff:","_","]"
                         )
                     }
@@ -403,7 +431,7 @@ public class Score : ObservableObject {
         self.staffs.append(staff)
     }
     
-    public func getStaff() -> [Staff] {
+    public func getStaffs() -> [Staff] {
         return self.staffs
     }
     
@@ -420,6 +448,23 @@ public class Score : ObservableObject {
         self.scoreEntries.append(barLine)
     }
     
+    public func addStaffClef(staffType:StaffType, atValuePosition:Double) {
+        let clef = StaffClef(staffType: staffType)
+        //self.scoreEntries.insert(3, at: atSequenceIndex)
+        var totalValue = 0.0
+        for i in 0..<self.scoreEntries.count {
+            if self.scoreEntries[i] is TimeSlice {
+                if atValuePosition == totalValue {
+                    self.scoreEntries.insert(StaffClef(staffType: staffType), at: i)
+                    break
+                }
+                let timeslice = self.scoreEntries[i] as! TimeSlice
+                totalValue += timeslice.getValue()
+            }
+        }
+        //self.scoreEntries.append(clef)
+    }
+
     public func clear() {
         self.scoreEntries = []
         for staff in staffs  {
@@ -463,6 +508,7 @@ public class Score : ObservableObject {
     
     ///For each time slice calculate its beat number in its bar
     func setTimesliceStartAtValues() {
+        var barTotalValue = 0.0
         var totalValue = 0.0
         ///For broken chords its 3 1/8 notes per quaver group
         let maxGroupValue = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) ? 1.0 : 2.0
@@ -474,18 +520,19 @@ public class Score : ObservableObject {
                 //beatCtr = 0
                 continue
             }
-            if totalValue >= rangeMin && totalValue <= rangeMax {
-                totalValue = 0
+            if barTotalValue >= rangeMin && barTotalValue <= rangeMax {
+                barTotalValue = 0
             }
             if let timeSlice = self.scoreEntries[i] as? TimeSlice {
+                timeSlice.valuePointInBar = barTotalValue
                 timeSlice.valuePoint = totalValue
+                barTotalValue += timeSlice.getValue()
                 totalValue += timeSlice.getValue()
             }
         }
     }
     
     private func determineStemDirections(staff:Staff, notesUnderBeam:[StaffNote], linesForFullStemLength:Double) {
-
         ///Determine if the quaver group has up or down stems based on the overall staff placement of the group
         var totalOffset = 0
         for note in notesUnderBeam {
@@ -546,19 +593,17 @@ public class Score : ObservableObject {
     
     ///Determine whether quavers can be beamed within a bar's strong and weak beats
     ///StartBeam is the possible start of beam, lastBeat is the end of beam
-    public func addStemCharaceteristics(staff:Staff) {
+    public func addStemCharacteristics(staff:Staff, debug:Bool) {
         
         func setStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
-            //for staffIndex in 0..<self.staffs.count {
-                let stemDirection = getStemDirection(staff: staff, notes: timeSlice.getTimeSliceNotes(staffType: staff.type))
-                let staffNotes = timeSlice.getTimeSliceNotes(staffType: staff.type)
-                for note in staffNotes {
-                    note.stemDirection = stemDirection
-                    note.stemLength = linesForFullStemLength
-                    note.beamType = beamType
-                    ///Dont try yet to beam semiquavers
-                }
-            //}
+            let stemDirection = getStemDirection(staff: staff, notes: timeSlice.getTimeSliceNotes(staffType: staff.type))
+            let staffNotes = timeSlice.getTimeSliceNotes(staffType: staff.type)
+            for note in staffNotes {
+                note.stemDirection = stemDirection
+                note.stemLength = linesForFullStemLength
+                note.beamType = beamType
+                ///Dont try yet to beam semiquavers
+            }
         }
         
         ///Set the beam states of the notes and empty the notes under beam bucket
@@ -607,14 +652,20 @@ public class Score : ObservableObject {
                 continue
             }
             let note = timeSlice.getTimeSliceNotes(staffType: staff.type)[0]
+            if debug {
+                print("=======", staff.type, note.midiNumber, note.timeSlice.valuePoint)
+            }
 
+//            if note.stemDirection != .none {
+//                continue
+//            }
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             
-            if timeSlice.valuePoint == 0 {
+            if timeSlice.valuePointInBar == 0 {
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam.append(timeSlice)
             }
@@ -652,8 +703,8 @@ public class Score : ObservableObject {
                             var timeSigAllowsJoin = true
                             if timeSignature.top == 4 {
                                 /// 4/4 beats after 2nd cannot join to earlier beats
-                                let beat = Int(note.timeSlice.valuePoint)
-                                let startBeat = Int(lastNote.timeSlice.valuePoint)
+                                let beat = Int(note.timeSlice.valuePointInBar)
+                                let startBeat = Int(lastNote.timeSlice.valuePointInBar)
                                 timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
                             }
                             if timeSigAllowsJoin {
@@ -690,16 +741,6 @@ public class Score : ObservableObject {
             }
         }
     }
-    
-//    public func errorCount() -> Int {
-//        var cnt = 0
-//        for timeSlice in self.getAllTimeSlices() {
-//            if [TimeSliceStatusTag.pitchError, TimeSliceStatusTag.rhythmError].contains(timeSlice.statusTag) {
-//                cnt += 1
-//            }
-//        }
-//        return cnt
-//    }
     
     public func isNextTimeSliceANote(fromScoreEntryIndex:Int) -> Bool {
         if fromScoreEntryIndex > self.scoreEntries.count - 1 {
@@ -850,8 +891,8 @@ public class Score : ObservableObject {
     public func getEndRestsDuration() -> Double {
         var totalDuration = 0.0
         for e in self.getAllTimeSlices().reversed() {
-            if e.getTimeSliceEntries().count > 0 {
-                let entry = e.getTimeSliceEntries()[0]
+            if e.getTimeSliceEntries(notesOnly: false).count > 0 {
+                let entry = e.getTimeSliceEntries(notesOnly: false)[0]
                 if entry is StaffNote {
                     break
                 }

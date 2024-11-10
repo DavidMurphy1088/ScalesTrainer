@@ -477,7 +477,7 @@ struct ScalesView: View {
     func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
         var height:Double
         if scalesModel.scale.needsTwoKeyboards() {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 8)
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 5)
         }
         else {
             height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
@@ -533,7 +533,7 @@ struct ScalesView: View {
             VStack(spacing: 0) {
                 ScaleTitleView(scale: scalesModel.scale)
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                    .padding(.vertical)
+                    //.padding(.vertical)
                     .padding(.horizontal, 0)
                 HStack {
                     Spacer()
@@ -558,10 +558,7 @@ struct ScalesView: View {
                         ///Scale is contrary with LH and RH joined on one keyboard
                         PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyboardColor1())
                             .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                        //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyColor())
-                        //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                        //                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyColor())
-                        //                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+
                     }
                     else {
                         if scalesModel.scale.needsTwoKeyboards() {
@@ -596,21 +593,6 @@ struct ScalesView: View {
                     .commonFrameStyle(backgroundColor: Color.white)
                 }
             }
-//                else {
-//                    if let scoreRH = scalesModel.scores[0] {
-//                        VStack {
-//                            ScoreView(score: scoreRH, widthPadding: false)
-//                        }
-//                        .commonFrameStyle(backgroundColor: Color.white)
-//                    }
-//                    if let scoreLH = scalesModel.scores[1] {
-//                        VStack {
-//                            ScoreView(score: scoreLH, widthPadding: false)
-//                        }
-//                        .commonFrameStyle(backgroundColor: Color.white)
-//                    }
-//                }
-//            }
             
 //            if badgeBank.show {
 //                

@@ -40,6 +40,7 @@ public enum QuaverBeamType {
 }
 
 public enum StemDirection {
+    case none
     case up
     case down
 }
@@ -79,7 +80,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///Quavers in a beam have either a start, middle or end beam type. A standlone quaver type has type beamEnd. A non quaver has beam type none.
     public var beamType:QuaverBeamType = .none
     
-    public var stemDirection:StemDirection = .up
+    public var stemDirection:StemDirection = .none
     public var stemLength:Double = 0.0
     
     //the note where the quaver beam for this note ends

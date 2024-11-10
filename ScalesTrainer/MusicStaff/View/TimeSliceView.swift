@@ -34,6 +34,39 @@ public struct BarLineView: View {
     }
 }
 
+public struct StaffClefView: View {
+    var score:Score
+    var staffClef:StaffClef
+    var staff:Staff
+    let visible:Bool
+    
+    public init(score:Score, staffClef:StaffClef, staff: Staff) {
+        self.score = score
+        self.staffClef = staffClef
+        self.staff = staff
+        self.visible = staff.type == .bass
+    }
+        
+    public var body: some View {
+        VStack {
+            if staffClef.staffType == .treble {
+                Text("\u{1d11e}")
+                    .foregroundColor(visible ? .black : .clear)
+                    .font(.system(size: CGFloat(score.lineSpacing * 8)))
+                    .padding(.top, 0.0)
+                    .padding(.bottom, score.lineSpacing * 1.0)
+            }
+            else {
+                Text("\u{1d122}")
+                    .foregroundColor(visible ? .black : .clear)
+                    .font(.system(size: CGFloat(Double(score.lineSpacing) * 5.0)))
+            }
+        }
+        .frame(minWidth: Double(score.lineSpacing)  * 1.1)
+        //.border(Color.red)
+    }
+}
+
 public struct NoteHiliteView: View {
     @ObservedObject var entry:TimeSliceEntry
     var x:CGFloat
@@ -43,7 +76,7 @@ public struct NoteHiliteView: View {
 //    func log(entry:TimeSliceEntry) -> Bool {
 //        return true
 //    }
-//    
+//
     public var body: some View {
         VStack {
             //if log(entry: entry) {
@@ -113,7 +146,7 @@ public struct TimeSliceView: View {
     func getLedgerLines(staff:Staff, note:StaffNote, noteWidth:Double, lineSpacing:Double) -> [LedgerLine] {
         var result:[LedgerLine] = []
         //let p = note.getNoteDisplayCharacteristics(staff: staff)
-        let p = note.noteStaffPlacement 
+        let p = note.noteStaffPlacement
 
         if p.offsetFromStaffMidline <= -6 {
             result.append(LedgerLine(offsetVertical: 3 * lineSpacing * 1.0))
@@ -353,6 +386,8 @@ public struct TimeSliceView: View {
                                 .position(x: geometry.size.width / 2.0, y: geometry.size.height / 2.0)
                             //.border(Color.blue)
                         }
+
+
                     }
                 }
                 
@@ -397,4 +432,3 @@ public struct TimeSliceView: View {
         }
     }
 }
-

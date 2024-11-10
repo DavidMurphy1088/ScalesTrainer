@@ -19,7 +19,9 @@ public class TimeSlice : ScoreEntry {
     var score:Score
     var footnote:String?
     var barLine:Int = 0
-    var valuePoint:Double = 0.0 //the value point in the bar that the timeslice is at. e.g. the 2nd crotchet in a bar is at 1.0
+    
+    var valuePoint:Double = 0.0 //the value point in the score the timeslice is at
+    var valuePointInBar:Double = 0.0 //the value point in the bar that the timeslice is at. e.g. the 2nd crotchet in a bar is at 1.0
 
     @Published private(set) var statusTag:TimeSliceStatusTag = .noTag
     public func setStatusTag(_ tag: TimeSliceStatusTag) {

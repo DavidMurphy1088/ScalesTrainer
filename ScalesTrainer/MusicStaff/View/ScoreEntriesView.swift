@@ -1,57 +1,6 @@
 import SwiftUI
 import CoreData
 
-//struct TimeSliceLabelView: View {
-//    var score:Score
-//    var staff:Staff
-//    @ObservedObject var timeSlice:TimeSlice
-//    @State var showPopover = false
-//    @State var font = Font.system(size:0)
-//
-//    var body: some View {
-//        ZStack {
-//            if staff.staffNum == 0 {
-//                if let tag = timeSlice.tagHigh {
-//                    VStack {
-//                        if tag.enablePopup {
-//                            if tag.popup != nil {
-//                                Button(action: {
-//                                    showPopover.toggle()
-//                                }) {
-//                                    Text(tag.content).font(font)
-//                                }
-//                            }
-//                            else {
-//                                Text(tag.content).font(font)
-//                            }
-//                        }
-//                        else {
-//                            //Text(tag.content).font(font).defaultTextStyle()
-//                            //Text(tag.content).defaultTextStyle()
-//                        }
-//                        Spacer()
-//                    }
-//                    .popover(isPresented: $showPopover) {
-//                        Text(tag.popup ?? "").font(font).padding()
-//                    }
-//                }
-//                if let tag = timeSlice.tagLow {
-//                    VStack {
-//                        Spacer()
-//                        Text(tag).font(font)//.defaultTextStyle()
-//                        //Text(tag).defaultTextStyle()
-//                    }
-//                }
-//            }
-//        }
-//        .onAppear() {
-//            font = Font.custom("TimesNewRomanPS-BoldMT", size: score.lineSpacing * 2.0)
-//        }
-//        //.border(Color.red)
-//    }
-//}
-//
-
 struct ScoreEntriesView: View {
     var noteLayoutPositions:NoteLayoutPositions
     @ObservedObject var barLayoutPositions:BarLayoutPositions
@@ -71,47 +20,6 @@ struct ScoreEntriesView: View {
         self.viewNum = ScoreEntriesView.viewNum
         self.noteOffsetsInStaffByKey = NoteOffsetsInStaffByKey(keyType: score.key.type == .major ? .major : .minor)
     }
-        
-//    func getNote(entry:ScoreEntry) -> StaffNote? {
-//        if entry is TimeSlice {
-//            let notes = entry.getTimeSliceNotes()
-//            if notes.count > 0 {
-//                return notes[0]
-//            }
-//        }
-//        return nil
-//    }
-//    
-//    ///Return the start and end points for te quaver beam based on the note postions that were reported
-//    func getBeamLine(endNote:Note, noteWidth:Double, startNote:Note, stemLength:Double) -> (CGPoint, CGPoint)? {
-//        let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
-//        if [StatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
-//            return nil
-//        }
-//        let endNotePos = noteLayoutPositions.positions[endNote]
-//        if let endNotePos = endNotePos {
-//            let xEndMid = endNotePos.origin.x + endNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
-//            let yEndMid = endNotePos.origin.y + endNotePos.size.height / 2.0
-//            
-//            let endPitchOffset = endNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
-//            let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
-//            let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
-//            
-//            //start note
-//            let startNotePos = noteLayoutPositions.positions[startNote]
-//            if let startNotePos = startNotePos {
-//                let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0) - noteWidth/.0
-//                let yStartMid = startNotePos.origin.y + startNotePos.size.height / 2.0
-//                let startPitchOffset = startNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
-//                let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * score.lineSpacing * -0.5)
-//                let yStartNoteStemTip = yStartNoteMiddle + stemLength * stemDirection
-//                let p1 = CGPoint(x:5, y: yEndNoteStemTip)
-//                let p2 = CGPoint(x:xStartMid, y:yStartNoteStemTip)
-//                return (p1, p2)
-//            }
-//        }
-//        return nil
-//    }
     
     ///Return the start and end points for the quaver beam based on the note postions that were reported
     func getBeamLine(endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
@@ -244,25 +152,23 @@ struct ScoreEntriesView: View {
                                 GeometryReader { geometry in
                                     BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)
                                         .frame(height: score.getStaffHeight())
-                                    //.border(Color .red)
                                         .onAppear {
-                                            //if staff.staffNum == 0 {
-                                                let barLine = entry as! BarLine
-                                                barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
-                                            //}
+                                            let barLine = entry as! BarLine
+                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
                                         }
                                         .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                            //if staff.staffNum == 0 {
-                                                let barLine = entry as! BarLine
-                                                barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
-                                            //}
+                                            let barLine = entry as! BarLine
+                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
                                         }
                                 }
                             }
                         }
+                        if entry is StaffClef {
+                            StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
+                        }
                     }
                     .coordinateSpace(name: "VStack")
-                    //IMPORTANT - keep this since the quaver beam code needs to know exactly the note view width
+                    //IMPORTANT - keep this coordinateSpace name since the quaver beam code needs to know exactly the note view width
                 }
 
                 ///Spacing before end of staff
@@ -306,5 +212,45 @@ struct ScoreEntriesView: View {
         }
     }
     
+//    func getNote(entry:ScoreEntry) -> StaffNote? {
+//        if entry is TimeSlice {
+//            let notes = entry.getTimeSliceNotes()
+//            if notes.count > 0 {
+//                return notes[0]
+//            }
+//        }
+//        return nil
+//    }
+//
+//    ///Return the start and end points for te quaver beam based on the note postions that were reported
+//    func getBeamLine(endNote:Note, noteWidth:Double, startNote:Note, stemLength:Double) -> (CGPoint, CGPoint)? {
+//        let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
+//        if [StatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
+//            return nil
+//        }
+//        let endNotePos = noteLayoutPositions.positions[endNote]
+//        if let endNotePos = endNotePos {
+//            let xEndMid = endNotePos.origin.x + endNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
+//            let yEndMid = endNotePos.origin.y + endNotePos.size.height / 2.0
+//
+//            let endPitchOffset = endNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
+//            let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
+//            let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
+//
+//            //start note
+//            let startNotePos = noteLayoutPositions.positions[startNote]
+//            if let startNotePos = startNotePos {
+//                let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0) - noteWidth/.0
+//                let yStartMid = startNotePos.origin.y + startNotePos.size.height / 2.0
+//                let startPitchOffset = startNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
+//                let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * score.lineSpacing * -0.5)
+//                let yStartNoteStemTip = yStartNoteMiddle + stemLength * stemDirection
+//                let p1 = CGPoint(x:5, y: yEndNoteStemTip)
+//                let p2 = CGPoint(x:xStartMid, y:yStartNoteStemTip)
+//                return (p1, p2)
+//            }
+//        }
+//        return nil
+//    }
 }
 

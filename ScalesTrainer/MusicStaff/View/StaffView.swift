@@ -9,7 +9,6 @@ public struct StaffLinesView: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            
             ZStack {
                 let top:Double = (geometry.size.height/2.0) + Double(2 * score.lineSpacing)
                 let bottom:Double = (geometry.size.height/2.0) - Double(2 * score.lineSpacing)
@@ -41,30 +40,22 @@ public struct StaffLinesView: View {
                     .stroke(Color.black, lineWidth: 1)
                 }
                 
-                // end of staff bar lines
-                
-                let x:Double = geometry.size.width - 2.0
-                
-                Path { path in
-                    path.move(to: CGPoint(x: x, y: top))
-                    path.addLine(to: CGPoint(x: x, y: bottom))
+                /// End of staff bar lines
+                if false {
+                    let x:Double = geometry.size.width - 2.0
+                    
+                    Path { path in
+                        path.move(to: CGPoint(x: x, y: top))
+                        path.addLine(to: CGPoint(x: x, y: bottom))
+                    }
+                    .stroke(Color.black, lineWidth: Double(score.lineSpacing) / 3)
+                    let x1:Double = geometry.size.width - (Double(score.lineSpacing) * 0.7)
+                    Path { path in
+                        path.move(to: CGPoint(x: x1, y: top))
+                        path.addLine(to: CGPoint(x: x1, y: bottom))
+                    }
+                    .stroke(Color.black, lineWidth: 1)
                 }
-                .stroke(Color.black, lineWidth: Double(score.lineSpacing) / 3)
-                let x1:Double = geometry.size.width - (Double(score.lineSpacing) * 0.7)
-                Path { path in
-                    path.move(to: CGPoint(x: x1, y: top))
-                    path.addLine(to: CGPoint(x: x1, y: bottom))
-                }
-                .stroke(Color.black, lineWidth: 1)
-                
-//                VStack {
-//                    Spacer()
-//                    Rectangle()
-//                        .fill(getGradient())
-//                        .frame(height: 20)
-//                        .border(Color.black, width: 1)
-//                        .opacity(0.4)
-//                }
             }
         }
     }
@@ -107,7 +98,7 @@ struct TimeSignatureView: View {
     }
 }
 
-struct CleffView: View {
+struct ClefView: View {
     var score:Score
     @ObservedObject var staff:Staff
 
@@ -241,7 +232,7 @@ public struct StaffView: View {
                 .padding([.leading, .trailing], widthPadding ? score.lineSpacing * 4 : 0)
             HStack(spacing: 0) {
                 if staff.linesInStaff != 1 {
-                    CleffView(score:score, staff: staff)
+                    ClefView(score:score, staff: staff)
                         .frame(height: score.getStaffHeight())
                         .padding([.leading], widthPadding ? score.lineSpacing * 1 : 0)
                     //.border(Color.red)
