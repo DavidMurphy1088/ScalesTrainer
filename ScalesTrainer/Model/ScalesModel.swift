@@ -616,9 +616,10 @@ public class ScalesModel : ObservableObject {
         
         score.setTimesliceStartAtValues()
         
-        ///Insert clefs where necessary to reduce too many ledger lines
+        ///Insert clefs into the score as ScoreEntries (not Timeslices) where necessary to reduce too many ledger lines.
         ///Clefs are inserted prior to a quaver group of notes if any note in that group requires too many ledger lines using the staff's current clef
         ///Clefs are inserted at the location of the first note in group's value offset within the scale
+        ///The clef is inserted into both staves. e.g. if a (UI invisible) treble clef is insert into the LH staff a clef is also insert into the RH staff so the staffs still line up in the UI.
         ///Each note's vertical offset from the staff center is checked to see if it exceeds either the highest or lowest offset allowed before a clef switch must occur
         ///When each note in the scale is subsequently analysed for its position that analyis is conducated from the staff's current clef, not the staff's default clef (LH = bass clef etc)
         let timeSlices = score.getAllTimeSlices()
@@ -630,6 +631,8 @@ public class ScalesModel : ObservableObject {
         let offsetsBelowLimit = -4
 
         for tsIndex in 0..<timeSlices.count {
+            ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
+            ///Consider a clef change only at a bar start
             if timeSlices[tsIndex].valuePointInBar == 0 {
                 let highest = offsetsInGroup.max()
                 let lowest = offsetsInGroup.min()
@@ -651,20 +654,29 @@ public class ScalesModel : ObservableObject {
             }
             let staffNote = entries[handIndex] as! StaffNote
             let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
-
+            ///Consider the note's placement in the current clef layout
             let placement = staff.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
-            print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
+            //print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
         }
 
-        ///Create the required staffs (one for each hand) and position the required notes in them
+        ///Create the required staffs (one for the each hand) and position the required notes in them.
+        ///Group all notes within a clef and then set their stem characteristics according to the clef just before them
+        
         for hand in hands {
+            var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, type: hand == 0 ? .treble : .bass, linesInStaff: 5)
             score.addStaff(staff: staff)
             var staffForPositioning = staff
-            for scoreEntry in score.scoreEntries {
+            
+            for scoreEntryIndex in 0..<score.scoreEntries.count {
+                let scoreEntry = score.scoreEntries[scoreEntryIndex]
                 if let staffClef = scoreEntry as? StaffClef {
+                    ///Set stem characteristics for all the notes in the previous clef
                     if staff.type == .bass {
+                        //score.debug11("hand \(hand) staff:\(staff.type) \(scoreEntryIndex)", withBeam: false, toleranceLevel: 0)
+                        score.addStemCharacteristics(hand: hand, staff: staffForPositioning, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: scoreEntryIndex)
+                        startStemCharacteristicsIndex = scoreEntryIndex
                         staffForPositioning = Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
                     }
                 }
@@ -673,23 +685,22 @@ public class ScalesModel : ObservableObject {
                         if let staffNote = entry as? StaffNote {
                             if staffNote.staffType == staff.type {
                                 staffNote.setNotePlacementAndAccidental(score:score, staff:staffForPositioning)
-                                print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
-                                var debug = false
-                                if hand == 1 && staffNote.timeSlice.valuePoint == 4.0 {
-                                    if staff.type == .bass {
-                                        debug = true
-                                    }
-                                }
-                                score.addStemCharacteristics(staff: staffForPositioning, debug: debug)
+                                staffNote.clef = staffForPositioning
+                                //print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
                             }
                         }
                     }
                 }
             }
-            //score.addStemCharacteristics(staff: staff)
+            ///Do stem characteristics for the last remaining group of notes
+            //if staff.type == .treble {
+                score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
+            //}
+            //else {
+                //score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
+            //}
             //score.debug111("Score create 0", withBeam: false, toleranceLevel: 0)
         }
-        //scale.debug1("Score create")
         return score
     }
     

@@ -593,11 +593,14 @@ public class Score : ObservableObject {
     
     ///Determine whether quavers can be beamed within a bar's strong and weak beats
     ///StartBeam is the possible start of beam, lastBeat is the end of beam
-    public func addStemCharacteristics(staff:Staff, debug:Bool) {
+    ///hand is 0 for the RH staff and 1 for the LH staff
+    ///staff is the staff clef that is present just prior to the startEntryIndex, endEntryIndex set of notes, irrespective of being called on the LH or RH staff
+    ///endEntryIndex is inclusive
+    public func addStemCharacteristics(hand:Int, staff:Staff, startEntryIndex:Int, endEntryIndex:Int) {
         
         func setStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
-            let stemDirection = getStemDirection(staff: staff, notes: timeSlice.getTimeSliceNotes(staffType: staff.type))
-            let staffNotes = timeSlice.getTimeSliceNotes(staffType: staff.type)
+            let staffNotes = timeSlice.getTimeSliceNotes(staffType: hand == 0 ? .treble : .bass)
+            let stemDirection = getStemDirection(staff: staff, notes: staffNotes)
             for note in staffNotes {
                 note.stemDirection = stemDirection
                 note.stemLength = linesForFullStemLength
@@ -640,8 +643,11 @@ public class Score : ObservableObject {
         var timeSlicesUnderBeam:[TimeSlice] = []
         let linesForFullStemLength = 3.5
         
+        //print("=======Add stems", staff.type, startEntryIndex, endEntryIndex)
+
         ///Group quavers under quaver beams
-        for scoreEntry in self.scoreEntries {
+        for scoreEntryIndex in startEntryIndex...endEntryIndex {
+            let scoreEntry = self.scoreEntries[scoreEntryIndex]
             guard scoreEntry is TimeSlice else {
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
@@ -651,14 +657,14 @@ public class Score : ObservableObject {
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
-            let note = timeSlice.getTimeSliceNotes(staffType: staff.type)[0]
-            if debug {
-                print("=======", staff.type, note.midiNumber, note.timeSlice.valuePoint)
+            
+            let note = timeSlice.entries[hand]
+            if note is StaffNote {
+                let note1 = note as! StaffNote
+                if hand == 1 && note1.midiNumber == 72 {
+                }
             }
-
-//            if note.stemDirection != .none {
-//                continue
-//            }
+        
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
@@ -681,56 +687,60 @@ public class Score : ObservableObject {
         timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
         
         ///Join up adjoining beams where possible. Existing beams only span one main beat and can be joined in some cases
-        var lastNote:StaffNote? = nil
-        for scoreEntry in self.scoreEntries {
-            guard let timeSlice = scoreEntry as? TimeSlice else {
-                lastNote = nil
-                continue
-            }
-            if timeSlice.getTimeSliceNotes(staffType: staff.type).count == 0 {
-                lastNote = nil
-                continue
-            }
-            let note = timeSlice.getTimeSliceNotes(staffType: staff.type)[0]
-            if note.beamType == .none {
-                lastNote = nil
-                continue
-            }
-            if false {
-                if note.beamType == .start {
-                    if let lastNote = lastNote {
-                        if lastNote.beamType == .end {
-                            var timeSigAllowsJoin = true
-                            if timeSignature.top == 4 {
-                                /// 4/4 beats after 2nd cannot join to earlier beats
-                                let beat = Int(note.timeSlice.valuePointInBar)
-                                let startBeat = Int(lastNote.timeSlice.valuePointInBar)
-                                timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
-                            }
-                            if timeSigAllowsJoin {
-                                lastNote.beamType = .middle
-                                note.beamType = .middle
+        if false { ///10Nov2024 - does not appear to do anything?
+            var lastNote:StaffNote? = nil
+            for scoreEntryIndex in startEntryIndex...endEntryIndex {
+                let scoreEntry = self.scoreEntries[scoreEntryIndex]
+                guard let timeSlice = scoreEntry as? TimeSlice else {
+                    lastNote = nil
+                    continue
+                }
+                if timeSlice.getTimeSliceNotes(staffType: staff.type).count == 0 {
+                    lastNote = nil
+                    continue
+                }
+                let note = timeSlice.getTimeSliceNotes(staffType: staff.type)[0]
+                if note.beamType == .none {
+                    lastNote = nil
+                    continue
+                }
+                if false {
+                    if note.beamType == .start {
+                        if let lastNote = lastNote {
+                            if lastNote.beamType == .end {
+                                var timeSigAllowsJoin = true
+                                if timeSignature.top == 4 {
+                                    /// 4/4 beats after 2nd cannot join to earlier beats
+                                    let beat = Int(note.timeSlice.valuePointInBar)
+                                    let startBeat = Int(lastNote.timeSlice.valuePointInBar)
+                                    timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
+                                }
+                                if timeSigAllowsJoin {
+                                    lastNote.beamType = .middle
+                                    note.beamType = .middle
+                                }
                             }
                         }
                     }
                 }
+                lastNote = note
             }
-            lastNote = note
         }
         
         ///Determine stem directions for each quaver beam
         
         var notesUnderBeam:[StaffNote] = []
-        for scoreEntry in self.scoreEntries {
+        for scoreEntryIndex in startEntryIndex...endEntryIndex {
+            let scoreEntry = self.scoreEntries[scoreEntryIndex]
             guard let timeSlice = scoreEntry as? TimeSlice else {
-                lastNote = nil
+                //lastNote = nil
                 continue
             }
-            if timeSlice.getTimeSliceNotes(staffType: staff.type).count == 0 {
-                lastNote = nil
+            if timeSlice.getTimeSliceNotes(staffType: hand == 0 ? .treble : .bass).count == 0 {
+                //lastNote = nil
                 continue
             }
-            let note = timeSlice.getTimeSliceNotes(staffType: staff.type)[0]
+            let note = timeSlice.getTimeSliceNotes(staffType: hand == 0 ? .treble : .bass)[0]
             if note.beamType != .none {
                 notesUnderBeam.append(note)
                 if note.beamType == .end {
@@ -741,7 +751,7 @@ public class Score : ObservableObject {
             }
         }
     }
-    
+        
     public func isNextTimeSliceANote(fromScoreEntryIndex:Int) -> Bool {
         if fromScoreEntryIndex > self.scoreEntries.count - 1 {
             return false
