@@ -327,6 +327,11 @@ public class Score : ObservableObject {
                 print("Bar line", timeSlice.sequence)
                 continue
             }
+            if let timeSlice = entry as? StaffClef {
+                print("Staff Clef", timeSlice.sequence, timeSlice.staffType)
+                continue
+            }
+
             if let timeSlice = entry as? TimeSlice {
                 print("TimeSlice, ", terminator: "")
                 print("Seq", String(format: "%2d", timeSlice.sequence), terminator: "")
@@ -643,7 +648,7 @@ public class Score : ObservableObject {
         var timeSlicesUnderBeam:[TimeSlice] = []
         let linesForFullStemLength = 3.5
         
-        //print("=======Add stems", staff.type, startEntryIndex, endEntryIndex)
+        print("=======Add stems", staff.type, startEntryIndex, endEntryIndex)
 
         ///Group quavers under quaver beams
         for scoreEntryIndex in startEntryIndex...endEntryIndex {
@@ -658,7 +663,8 @@ public class Score : ObservableObject {
                 continue
             }
             
-            let note = timeSlice.entries[hand]
+            let handIndex = scale.hands.count > 1 ? scale.hands[hand] : 0
+            let note = timeSlice.entries[handIndex]
             if note is StaffNote {
                 let note1 = note as! StaffNote
                 if hand == 1 && note1.midiNumber == 72 {
@@ -770,15 +776,6 @@ public class Score : ObservableObject {
         }
         return false
     }
-
-    
-//    public func resetTapToValueRatios() {
-//        for i in 0..<self.scoreEntries.count {
-//            if let ts = self.scoreEntries[i] as? TimeSlice {
-//                ts.tapTempoRatio = nil
-//            }
-//        }
-//    }
     
     public func processAllTimeSlices(processFunction:(_:TimeSlice) -> Void) {
         for i in 0..<self.scoreEntries.count {

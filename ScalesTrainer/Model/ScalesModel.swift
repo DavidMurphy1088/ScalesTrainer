@@ -628,7 +628,7 @@ public class ScalesModel : ObservableObject {
         var lastGroupStart = 0.0
         var offsetsInGroup:[Int] = []
         let offsetsAboveLimit = 8
-        let offsetsBelowLimit = -4
+        let offsetsBelowLimit = -7
 
         for tsIndex in 0..<timeSlices.count {
             ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
@@ -639,7 +639,7 @@ public class ScalesModel : ObservableObject {
                 if highest != nil && lowest != nil {
                     if highest! > offsetsAboveLimit || lowest! < offsetsBelowLimit {
                         let newClefType:StaffType = currentClefType == .bass ? .treble : .bass
-                        print("  =======xxxInsertClef", newClefType, "at", lastGroupStart)
+                        print("  ====================xxxInsertClef", newClefType, "at", lastGroupStart)
                         score.addStaffClef(staffType: newClefType, atValuePosition: lastGroupStart)
                         currentClefType = newClefType
                     }
@@ -649,10 +649,12 @@ public class ScalesModel : ObservableObject {
             }
             let timeSlice = timeSlices[tsIndex]
             let entries = timeSlice.getTimeSliceEntries(notesOnly: true)
-            if entries.count <= handIndex {
+            let noteIndex = scale.hands.count > 1 ? scale.hands[handIndex] : 0
+            if entries.count <= noteIndex {
                 continue
             }
-            let staffNote = entries[handIndex] as! StaffNote
+            
+            let staffNote = entries[noteIndex] as! StaffNote
             let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
             ///Consider the note's placement in the current clef layout
             let placement = staff.getNoteViewPlacement(note: staffNote)
@@ -692,14 +694,11 @@ public class ScalesModel : ObservableObject {
                     }
                 }
             }
+            
             ///Do stem characteristics for the last remaining group of notes
-            //if staff.type == .treble {
-                score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
-            //}
-            //else {
-                //score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
-            //}
-            //score.debug111("Score create 0", withBeam: false, toleranceLevel: 0)
+            score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
+
+            score.debug11("Score create 0", withBeam: true, toleranceLevel: 0)
         }
         return score
     }

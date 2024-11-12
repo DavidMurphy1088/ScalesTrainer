@@ -69,6 +69,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     public static let VALUE_WHOLE = 4.0
 
     public var midiNumber:Int
+    public var hand:Int // RH = 0, LH = 1
     public var isOnlyRhythmNote = false
     public var writtenAccidental:Int? = nil ///An accidental that was explicitly specified in content
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
