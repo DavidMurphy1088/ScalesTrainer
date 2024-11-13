@@ -91,7 +91,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
 
         let sampler = audioManager.keyboardMidiSampler
         for hand in scale.hands {
-            let note = scale.scaleNoteState[hand][nextNoteIndex]
+            let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
             if let keyIndex = keyIndex {
@@ -129,12 +129,13 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
 
         if waitBeatsForScale == 0 {
-            let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
+            //let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
+            let scaleNoteState = scale.getScaleNoteState(handType: .right, index: nextNoteIndex)
             let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
             waitBeatsForScale = Int(scaleNoteState.value * notesPerBeat) - 1
-            if nextNoteIndex < self.scalesModel.scale.scaleNoteState[0].count - 1 {
+            if nextNoteIndex < self.scalesModel.scale.getScaleNoteCount() - 1 {
                 self.nextNoteIndex += 1
-                let nextNote = scale.scaleNoteState[0][nextNoteIndex]
+                let nextNote = scale.getScaleNoteState(handType: .right, index: nextNoteIndex) //[0][nextNoteIndex]
                 scalesModel.setSelectedScaleSegment(nextNote.segments[0])
             }
             else {

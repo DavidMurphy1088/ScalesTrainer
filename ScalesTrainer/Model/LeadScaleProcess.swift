@@ -81,9 +81,9 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         self.lastMidi = midi
         
         let scale = scalesModel.scale
-        let hand = scale.hands[0]
+        let handType = scale.hands[0] == 0 ? HandType.right : HandType.left
         
-        let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+        let nextExpected = scale.getScaleNoteState(handType: handType, index: self.nextExpectedScaleIndex) //scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
         scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
         notifyCount += 1
 
@@ -114,10 +114,10 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 //            }
 //        }
         if midi == nextExpected.midi {
-            if self.nextExpectedScaleIndex < scale.scaleNoteState[hand].count - 1 {
+            if self.nextExpectedScaleIndex < scale.getScaleNoteStates(handType: handType).count - 1 {
                 nextExpectedScaleIndex += 1
                 ///Set next segment here so the tap handler hilights the correct stave note
-                let nextExpected = scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
+                let nextExpected = scale.getScaleNoteState(handType: handType, index: self.nextExpectedScaleIndex) ///scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
                 scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
 
             }

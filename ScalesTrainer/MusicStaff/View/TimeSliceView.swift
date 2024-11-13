@@ -44,12 +44,12 @@ public struct StaffClefView: View {
         self.score = score
         self.staffClef = staffClef
         self.staff = staff
-        self.visible = staff.type == .bass
+        self.visible = staff.handType == .left
     }
         
     public var body: some View {
         VStack {
-            if staffClef.staffType == .treble {
+            if staffClef.clefType == .treble {
                 Text("\u{1d11e}")
                     .foregroundColor(visible ? .black : .clear)
                     .font(.system(size: CGFloat(score.lineSpacing * 8)))
@@ -376,7 +376,8 @@ public struct TimeSliceView: View {
                 ForEach(getTimeSliceEntries(), id: \.id) { entry in
                     VStack {
                         if let staffNote = entry as? StaffNote {
-                            if staffNote.staffType == self.staff.type {
+                            //if (staffNote.hand == 0 && self.staff.type == .treble) || (staffNote.hand == 1 && self.staff.type == .bass) {
+                            if (staffNote.handType == .right && self.staff.handType == .right) || (staffNote.handType == .left && self.staff.handType == .left) {
                                 NoteView(note: entry as! StaffNote, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
                                 //.border(Color.green)
                             }

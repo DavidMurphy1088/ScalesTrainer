@@ -1,20 +1,18 @@
 import Foundation
 import SwiftUI
 
-
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
     public let id = UUID()
-    let staffType:StaffType
+    let handType:HandType
     public var timeSlice:TimeSlice
-
     private var value:Double = StaffNote.VALUE_QUARTER
     public var valueNormalized:Double? = nil
     let segments:[Int]
     
-    init(timeSlice:TimeSlice, value:Double, staffType:StaffType, segments:[Int]) {
+    init(timeSlice:TimeSlice, value:Double, handType:HandType, segments:[Int]) {
         self.timeSlice = timeSlice
         self.value = value
-        self.staffType = staffType
+        self.handType = handType
         self.segments = segments
     }
     

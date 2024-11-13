@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 
-
 public class BarLine : ScoreEntry {
     let visibleOnStaff:Bool
     let forStaffSpacing: Bool
@@ -13,12 +12,12 @@ public class BarLine : ScoreEntry {
 }
 
 public class Rest : TimeSliceEntry {
-    public override init(timeSlice:TimeSlice, value:Double, staffType:StaffType, segments:[Int]) {
-        super.init(timeSlice:timeSlice, value: value, staffType: staffType, segments: segments)
+    public init(timeSlice:TimeSlice, value:Double, segments:[Int]) {
+        super.init(timeSlice:timeSlice, value: value, handType: HandType.right, segments: segments)
     }
     
     public init(r:Rest) {
-        super.init(timeSlice: r.timeSlice, value: r.getValue(), staffType: r.staffType, segments: r.segments)
+        super.init(timeSlice: r.timeSlice, value: r.getValue(), handType: r.handType, segments: r.segments)
     }
 }
 
@@ -67,13 +66,12 @@ public class StaffNote : TimeSliceEntry, Comparable {
     public static let VALUE_QUARTER = 1.0
     public static let VALUE_HALF = 2.0
     public static let VALUE_WHOLE = 4.0
-
+    
     public var midiNumber:Int
-    public var hand:Int // RH = 0, LH = 1
     public var isOnlyRhythmNote = false
     public var writtenAccidental:Int? = nil ///An accidental that was explicitly specified in content
     public var rotated:Bool = false ///true if note must be displayed vertically rotated due to closeness to a neighbor.
-    public var clef:Staff? = nil ///The clef that this note is prefixed by. e.g. in LH staff that clef might still be the treble clef
+    public var clef:StaffClef? = nil ///The clef that this note is prefixed by. e.g. in LH staff that clef might still be the treble clef
     
     ///Placements for the note on treble and bass staff
     //var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
@@ -96,15 +94,15 @@ public class StaffNote : TimeSliceEntry, Comparable {
         return (note1 % 12) == (note2 % 12)
     }
     
-    public init(timeSlice:TimeSlice, midi:Int, value:Double, staffType:StaffType, segments:[Int], writtenAccidental:Int?=nil) {
+    public init(timeSlice:TimeSlice, midi:Int, value:Double, handType:HandType, segments:[Int], writtenAccidental:Int?=nil) {
         self.midiNumber = midi
-        super.init(timeSlice:timeSlice, value: value, staffType: staffType, segments: segments)
+        super.init(timeSlice:timeSlice, value: value, handType:handType, segments: segments)
         self.writtenAccidental = writtenAccidental
     }
     
     public init(note:StaffNote) {
         self.midiNumber = note.midiNumber
-        super.init(timeSlice:note.timeSlice, value: note.getValue(), staffType: note.staffType, segments: note.segments)
+        super.init(timeSlice:note.timeSlice, value: note.getValue(), handType: note.handType, segments: note.segments)
         self.timeSlice.sequence = note.timeSlice.sequence
         self.writtenAccidental = note.writtenAccidental
         self.isOnlyRhythmNote = note.isOnlyRhythmNote
@@ -201,7 +199,8 @@ public class StaffNote : TimeSliceEntry, Comparable {
         while idx>=0 {
             let ts = score.scoreEntries[idx]
             if ts is TimeSlice {
-                let notes = ts.getTimeSliceNotes(staffType: staff.type)
+                //let notes = ts.getTimeSliceNotes(staffType: staff.type)
+                let notes = ts.getTimeSliceNotes(handType: staff.handType)
                 if notes.count > 0 {
                     let note = notes[0]
                     if note.timeSlice.sequence == endNote.timeSlice.sequence {
@@ -253,9 +252,11 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///default staff offset based on the written accidental. e.g. a note at MIDI 75 would be defaulted to show as E ♭ in C major but may be speciifed to show as D# by a written
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
-    func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-        var barAlreadyHasNote = score.getNotesForLastBar(staff: staff, pitch:self.midiNumber).count > 1
-        let defaultNotePlacement = staff.getNoteViewPlacement(note: self)
+    //func setNotePlacementAndAccidental(score:Score, staff:Staff) {
+    func setNotePlacementAndAccidental(score:Score, clef:StaffClef) {
+
+        var barAlreadyHasNote = score.getNotesForLastBar(clef: clef, pitch:self.midiNumber).count > 1
+        let defaultNotePlacement = clef.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
         if self.isOnlyRhythmNote {
@@ -266,9 +267,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental
             if writtenAccidental != defaultNotePlacement.accidental {
-                let defaultNoteStaffPlacement = staff.noteStaffPlacement[self.midiNumber]
+                let defaultNoteStaffPlacement = clef.noteStaffPlacement[self.midiNumber]
                 let targetOffsetIndex = self.midiNumber - writtenAccidental
-                let targetNoteStaffPlacement = staff.noteStaffPlacement[targetOffsetIndex]
+                let targetNoteStaffPlacement = clef.noteStaffPlacement[targetOffsetIndex]
                 let adjustOffset = defaultNoteStaffPlacement.offsetFromStaffMidline - targetNoteStaffPlacement.offsetFromStaffMidline
                 offsetFromMiddle -= adjustOffset
             }
@@ -277,7 +278,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
             //Determine if the note's accidental is implied by the key signature
             //Or a note has to have a natural accidental to offset the key signature
 
-            let keySignatureHasNote = staff.score.key.hasKeySignatureNote(note: self.midiNumber)
+            let keySignatureHasNote = clef.score.key.hasKeySignatureNote(note: self.midiNumber)
 
             if let defaultAccidental = defaultNotePlacement.accidental {
                 if !keySignatureHasNote {
@@ -289,11 +290,11 @@ public class StaffNote : TimeSliceEntry, Comparable {
             else {
                 ///Check if the key signature causes show should be a nautural accidental to be required
                 let keySignatureHasNote:Bool
-                if staff.score.key.keySig.flats.count > 0 {
-                    keySignatureHasNote = self.midiNumber > 0 && staff.score.key.hasKeySignatureNote(note: self.midiNumber - 1)
+                if clef.score.key.keySig.flats.count > 0 {
+                    keySignatureHasNote = self.midiNumber > 0 && clef.score.key.hasKeySignatureNote(note: self.midiNumber - 1)
                 }
                 else {
-                    keySignatureHasNote = staff.score.key.hasKeySignatureNote(note: self.midiNumber + 1)
+                    keySignatureHasNote = clef.score.key.hasKeySignatureNote(note: self.midiNumber + 1)
                 }
                 if keySignatureHasNote {
                     if !barAlreadyHasNote {
@@ -305,7 +306,8 @@ public class StaffNote : TimeSliceEntry, Comparable {
             ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
             
             var lastNoteAtOffset:StaffNote? = nil
-            var barPreviousNotes = score.getNotesForLastBar(staff: staff, pitch:nil)
+            //var barPreviousNotes = score.getNotesForLastBar(staff: staff, pitch:nil)
+            var barPreviousNotes = score.getNotesForLastBar(clef: clef, pitch:nil)
             if barPreviousNotes.count > 1 {
                 ///Dont consider current note
                 barPreviousNotes.removeFirst()

@@ -649,7 +649,8 @@ struct ScalesView: View {
             if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
                 PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale)
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.scaleNoteState[0][0].midi, segment: 0)
+                    //let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.scaleNoteState[0][0].midi, segment: 0)
+                    let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi, segment: 0)
                     if let middleKeyIndex = middleKeyIndex {
                         combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
                     }

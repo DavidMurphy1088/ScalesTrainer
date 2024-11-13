@@ -4,7 +4,8 @@ import MessageUI
 
 public struct StaffLinesView: View {
     var score:Score
-    @ObservedObject var staff:Staff
+    //@ObservedObject
+    var staff:Staff
     var widthPadding:Bool
     
     public var body: some View {
@@ -62,7 +63,8 @@ public struct StaffLinesView: View {
 }
 
 struct TimeSignatureView: View {
-    @ObservedObject var staff:Staff
+    //@ObservedObject
+    var staff:Staff
     var timeSignature:TimeSignature
     var lineSpacing:Double
     var clefWidth:Double
@@ -100,11 +102,12 @@ struct TimeSignatureView: View {
 
 struct ClefView: View {
     var score:Score
-    @ObservedObject var staff:Staff
+    //@ObservedObject
+    var staff:Staff
 
     var body: some View {
         HStack {
-            if staff.type == StaffType.treble {
+            if staff.handType == HandType.right {
                 VStack {
                     Text("\u{1d11e}")
                         .foregroundColor(.black)
@@ -158,7 +161,8 @@ struct KeySignatureView: View {
 
 public struct StaffView: View {
     @ObservedObject var score:Score
-    @ObservedObject var staff:Staff
+    //@ObservedObject
+    var staff:Staff
     let widthPadding:Bool
     
     @State private var rotationId: UUID = UUID()
@@ -219,7 +223,7 @@ public struct StaffView: View {
         if keySignture.flats.count > 6 {
             offsets.append(-3)
         }
-        if staff.type == .bass {
+        if staff.handType == .left {
             offsets = offsets.map { $0 - 2 }
         }
         return offsets

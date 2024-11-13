@@ -157,7 +157,8 @@ public class Scale : Codable {
     var id = UUID()
     static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
-    private(set) var scaleNoteState:[[ScaleNoteState]]
+    //private(set) var scaleNoteState:[[ScaleNoteState]]
+    private var scaleNoteState:[[ScaleNoteState]]
     private var metronomeAscending = true
     var octaves:Int
     let hands:[Int]
@@ -191,6 +192,13 @@ public class Scale : Codable {
             self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
         }
     }
+    
+    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
+        return self.scaleNoteState[handType == .right ? 0 : 1][index]
+    }
+    func getScaleNoteStates(handType:HandType) -> [ScaleNoteState] {
+        return self.scaleNoteState[handType == .right ? 0 : 1]
+    }
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
                 minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType) {
@@ -203,6 +211,9 @@ public class Scale : Codable {
         self.scaleMotion = scaleMotion
         scaleNoteState = []
         self.hands = hands
+        
+        print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
@@ -223,6 +234,8 @@ public class Scale : Codable {
         ///Lowest start note is A three ledger lines below the stave, making highest note G three ledger lines above the stave.
         
         ///The start of the scale for one octave -
+        
+
         var firstMidi = 0
         switch scaleRoot.name {
         case "C":
@@ -314,7 +327,9 @@ public class Scale : Codable {
             scaleOffsetsForHand = scaleOffsets
             
             if handIndex == 1 {
-                nextMidi -= 12
+                //if self.scaleMotion != .contraryMotion {
+                    nextMidi -= 12
+                //}
                 if self.scaleMotion == .similarMotion {
                     //if firstMidi >= 62 {
                     if nextMidi >= 53 {
@@ -336,8 +351,7 @@ public class Scale : Codable {
             }
             
             self.scaleNoteState.append([])
-            if scaleRoot.name == "A" {
-            }
+
             for oct in 0..<octaves {
                 
                 for i in 0..<scaleOffsetsForHand.count {
@@ -492,11 +506,15 @@ public class Scale : Codable {
                 }
             }
         }
-        if scaleRoot.name == "A" {
+        if debugStop() {
             debug1("------------- End Init")
         }
         
         Scale.createCount += 1
+    }
+    
+    func debugStop() -> Bool {
+        return scaleRoot.name == "C"  && self.scaleMotion == .contraryMotion
     }
     
     func setChromaticFingerBreaks(hand:Int) {
@@ -828,8 +846,9 @@ public class Scale : Codable {
         }
     }
     
-    func getStateForMidi(handIndex:Int, midi:Int, scaleSegment:Int) -> ScaleNoteState? {
-        for state in self.scaleNoteState[handIndex] {
+    func getStateForMidi(handType:HandType, midi:Int, scaleSegment:Int) -> ScaleNoteState? {
+        let hand = handType == .right ? 0 : 1
+        for state in self.scaleNoteState[hand] {
             for i in 0..<state.segments.count {
                 if state.segments[i] == scaleSegment {
                     if state.midi == midi {

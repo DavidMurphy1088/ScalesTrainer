@@ -103,7 +103,7 @@ struct BadgeView: View {
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
     @State var imageIds:[Int] = []
-    @State var handIndex = 0
+    @State var handType = HandType.right
     
     func imageName(imageSet:Int, n:Int) -> String {
         var name = ""
@@ -158,7 +158,8 @@ struct BadgeView: View {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                 let imWidth = CGFloat(40)
                 
-                ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { scaleNoteNumber in
+                //ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { scaleNoteNumber in
+                ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
                     if scaleNoteNumber == BadgeBank.shared.totalCorrect - 1  {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
@@ -218,10 +219,10 @@ struct BadgeView: View {
             })
         }
         .onAppear() {
-            self.handIndex = 0 //scale.hand == 2 ? 0 : scale.hand
-            self.size = UIScreen.main.bounds.size.width / (Double(scale.scaleNoteState[handIndex].count) * 1.7)
+            self.handType = HandType.right //scale.hand == 2 ? 0 : scale.hand
+            self.size = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteStates(handType: handType).count) * 1.7)
             ///Ensure not more than 2 concurrent same values
-            for _ in 0..<scale.scaleNoteState[handIndex].count {
+            for _ in 0..<scale.getScaleNoteStates(handType: handType).count {
                 var newValue: Int
                 repeat {
                     newValue = Int.random(in: 0..<3)

@@ -37,4 +37,7 @@ Run MIDI Monitor on MAC to ensure VMPK is sending MIDI events
 Run code on iPad to listen for events.
 
  
- 
+Refactoring <---------
+Clefs (not staffs) should determine note placment
+Staffs have a hand but not a treble, bass type
+

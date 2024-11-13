@@ -78,22 +78,22 @@ class Result : Equatable {
         let handIndex = 0
         
         ///For each key played check its its midi is in the scale. If not, its a wrongly played key
-        for direction in [0,1] {
-            for key in self.keyboard.pianoKeyModel {
-                if let matchedTime = direction == 0 ? key.keyWasPlayedState.tappedTimeAscending : key.keyWasPlayedState.tappedTimeDescending {
-                    if let scaleNote = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, scaleSegment: 0) {
-                        if direction == 0 {
-                            scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeAscending
-                        }
-                        else {
-                            scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeDescending
-                        }
-                        if let score = score {
-                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, occurence: direction == 0 ? 0 : 1) {
-                                timeSlice.setStatusTag(.correct)
-                            }
-                        }
-                    }
+//        for direction in [0,1] {
+//            for key in self.keyboard.pianoKeyModel {
+//                if let matchedTime = direction == 0 ? key.keyWasPlayedState.tappedTimeAscending : key.keyWasPlayedState.tappedTimeDescending {
+//                    if let scaleNote = scale.getStateForMidi(handIndex: handIndex, midi: key.midi, scaleSegment: 0) {
+//                        if direction == 0 {
+//                            scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeAscending
+//                        }
+//                        else {
+//                            scaleNote.matchedTime = key.keyWasPlayedState.tappedTimeDescending
+//                        }
+//                        if let score = score {
+//                            if let timeSlice = score.getTimeSliceForMidi(midi: key.midi, occurence: direction == 0 ? 0 : 1) {
+//                                timeSlice.setStatusTag(.correct)
+//                            }
+//                        }
+//                    }
 //                    else {
 //                        if direction == 0 {
 //                            self.playedAndWrongCountAsc += 1
@@ -102,9 +102,9 @@ class Result : Equatable {
 //                            self.playedAndWrongCountDesc += 1
 //                        }
 //                    }
-                }
-            }
-        }
+//                }
+//            }
+//        }
         
         let maxScaleMidi = scale.getMinMax(handIndex: handIndex).1
         for key in self.keyboard.pianoKeyModel {
@@ -132,30 +132,30 @@ class Result : Equatable {
         ///Look for notes in scale that were not played
         let topNoteMidi = scale.getMinMax(handIndex: handIndex).1
         var direction = 0
-        for scaleNote in scale.scaleNoteState[handIndex] {
-            if scaleNote.matchedTime == nil {
-                if direction == 0 {
-                    self.missedFromScaleCountAsc += 1
-                } else {
-                    self.missedFromScaleCountDesc += 1
-                }
-                if let score = score {
-                    if let timeSlice = score.getTimeSliceForMidi(midi: scaleNote.midi, occurence: direction == 0 ? 0 : 1) {
-                        timeSlice.setStatusTag(.missingError)
-                    }
-                }
-            }
-            if scaleNote.midi == topNoteMidi {
-                direction = 1
-            }
-        }
+//        for scaleNote in scale.getScaleNoteState[handIndex] {
+//            if scaleNote.matchedTime == nil {
+//                if direction == 0 {
+//                    self.missedFromScaleCountAsc += 1
+//                } else {
+//                    self.missedFromScaleCountDesc += 1
+//                }
+//                if let score = score {
+//                    if let timeSlice = score.getTimeSliceForMidi(midi: scaleNote.midi, occurence: direction == 0 ? 0 : 1) {
+//                        timeSlice.setStatusTag(.missingError)
+//                    }
+//                }
+//            }
+//            if scaleNote.midi == topNoteMidi {
+//                direction = 1
+//            }
+//        }
         
-        if noErrors() {
-            let _ = scale.setNoteNormalizedValues()
-            if let score = score {
-                score.setNormalizedValues(scale: scale, handIndex: handIndex)
-            }
-        }
+//        if noErrors() {
+//            let _ = scale.setNoteNormalizedValues()
+//            if let score = score {
+//                score.setNormalizedValues(scale: scale, handIndex: handIndex)
+//            }
+//        }
         //Logger.shared.log(self, "Built result. scaleStart:\(scale.scaleNoteState[0].midi) Errors:\(self.getErrorString()) Ampl Filter:\(self.amplitudeFilter)")
     }
 }

@@ -176,8 +176,8 @@ public class ScalesModel : ObservableObject {
             self.selectedScaleSegmentPublished = segment
         }
         if let combined = PianoKeyboardModel.sharedCombined {
-            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 0)
-            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 1)
+            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
+            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left)
             combined.redraw()
         }
         else {
@@ -186,9 +186,9 @@ public class ScalesModel : ObservableObject {
             PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
             PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
             
-            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 0)
+            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
             PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, hand: 1)
+            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left)
             PianoKeyboardModel.sharedLH.redraw()
         }
     }
@@ -328,13 +328,14 @@ public class ScalesModel : ObservableObject {
             setShowKeyboard(true)
             ///Play first note to start then wait some time.
             ///Wait for note to die down otherwise it triggers the first note detection
-            if self.scale.scaleNoteState.count > 0 {
+            if self.scale.getScaleNoteCount() > 0 {
                 if let sampler = self.audioManager.keyboardMidiSampler {
                     BadgeBank.shared.setShow(true)
                     
                     let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                     for hand in scale.hands {
-                        let midi = self.scale.scaleNoteState[hand][0].midi
+                        //let midi = self.scale.scaleNoteState[hand][0].midi
+                        let midi = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0).midi
                         if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
                             let key = keyboard.pianoKeyModel[keyIndex]
                             //key.hilightCallback = {
@@ -485,12 +486,13 @@ public class ScalesModel : ObservableObject {
             var inScaleCount = 0
             
             while true {
-                if scaleIndex >= self.scale.scaleNoteState[0].count {
+                if scaleIndex >= self.scale.getScaleNoteCount() {
                     break
                 }
                 ///Add a semaphore to detect when the expected keyboard key is played
                 for keyboardSemaphore in keyboardSemaphores {
-                    let note = self.scale.scaleNoteState[keyboardSemaphore.keyboard.keyboardNumber - 1][scaleIndex]
+                    let keyboardNumber = keyboardSemaphore.keyboard.keyboardNumber - 1
+                    let note = self.scale.getScaleNoteState(handType: keyboardNumber == 0 ? .right : .left, index: scaleIndex)
                     guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, segment:note.segments[0]) else {
                         scaleIndex += 1
                         continue
@@ -520,13 +522,13 @@ public class ScalesModel : ObservableObject {
                 if !cancelled {
                     BadgeBank.shared.setTotalCorrect(BadgeBank.shared.totalCorrect + 1)
                 }
-                if cancelled || self.runningProcess != .followingScale || scaleIndex >= self.scale.scaleNoteState[0].count - 1 {
+                if cancelled || self.runningProcess != .followingScale || scaleIndex >= self.scale.getScaleNoteCount() - 1 {
                     //self.setSelectedScaleSegment(0)
                     break
                 }
                 else {
                     scaleIndex += 1
-                    let nextNote = self.scale.scaleNoteState[0][scaleIndex]
+                    let nextNote = self.scale.getScaleNoteState(handType: .right, index: scaleIndex)
                     self.setSelectedScaleSegment(nextNote.segments[0])
                 }
             }
@@ -578,10 +580,10 @@ public class ScalesModel : ObservableObject {
         var totalBarValue = 0.0
         let mult = timeSig.bottom == 8 ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
         let maxBarValue:Double = Double(timeSig.top) * mult
-        let hands:[Int] = scale.hands.count > 1 ? [0,1] : [scale.hands[0]]
+        let handTypes:[HandType] = scale.hands.count > 1 ? [HandType.right,HandType.left] : [scale.hands[0] == 0 ? .right : .left]
         
         ///Add notes played LH and RH together to the same TimeSlice
-        for i in 0..<scale.scaleNoteState[0].count {
+        for i in 0..<scale.getScaleNoteCount() {
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line not currenlty visible but it might be added to add space around notes
@@ -599,10 +601,9 @@ public class ScalesModel : ObservableObject {
             let ts = score.createTimeSlice()
             var maxValue:Double?
             ///The note for each hand is added to the one single TimeSlice
-            for hand in hands {
-                let noteState = scale.scaleNoteState[hand][i]
-                let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, 
-                                     staffType: hand == 0 ? .treble : .bass, segments: noteState.segments)
+            for handType in handTypes {
+                let noteState = scale.getScaleNoteState(handType: handType, index: i)
+                let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, handType:handType, segments: noteState.segments)
                 note.setValue(value: noteState.value)
                 ts.addNote(n: note)
                 if maxValue == nil || noteState.value > maxBarValue {
@@ -624,7 +625,7 @@ public class ScalesModel : ObservableObject {
         ///When each note in the scale is subsequently analysed for its position that analyis is conducated from the staff's current clef, not the staff's default clef (LH = bass clef etc)
         let timeSlices = score.getAllTimeSlices()
         let handIndex = 1
-        var currentClefType = handIndex == 1 ? StaffType.bass : StaffType.treble
+        var currentClefType = handIndex == 1 ? ClefType.bass : ClefType.treble
         var lastGroupStart = 0.0
         var offsetsInGroup:[Int] = []
         let offsetsAboveLimit = 8
@@ -638,9 +639,8 @@ public class ScalesModel : ObservableObject {
                 let lowest = offsetsInGroup.min()
                 if highest != nil && lowest != nil {
                     if highest! > offsetsAboveLimit || lowest! < offsetsBelowLimit {
-                        let newClefType:StaffType = currentClefType == .bass ? .treble : .bass
-                        print("  ====================xxxInsertClef", newClefType, "at", lastGroupStart)
-                        score.addStaffClef(staffType: newClefType, atValuePosition: lastGroupStart)
+                        let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
+                        score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
                         currentClefType = newClefType
                     }
                 }
@@ -655,9 +655,10 @@ public class ScalesModel : ObservableObject {
             }
             
             let staffNote = entries[noteIndex] as! StaffNote
-            let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
+            //let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
             ///Consider the note's placement in the current clef layout
-            let placement = staff.getNoteViewPlacement(note: staffNote)
+            let clef = StaffClef(score: score, clefType: currentClefType)
+            let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
             //print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
         }
@@ -665,40 +666,42 @@ public class ScalesModel : ObservableObject {
         ///Create the required staffs (one for the each hand) and position the required notes in them.
         ///Group all notes within a clef and then set their stem characteristics according to the clef just before them
         
-        for hand in hands {
+        for handType in handTypes {
             var startStemCharacteristicsIndex = 0
-            let staff = Staff(score: score, type: hand == 0 ? .treble : .bass, linesInStaff: 5)
+            let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var staffForPositioning = staff
-            
+            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble) : StaffClef(score: score, clefType: .bass)
+
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
                 if let staffClef = scoreEntry as? StaffClef {
                     ///Set stem characteristics for all the notes in the previous clef
-                    if staff.type == .bass {
+                    if staff.handType == .left {
                         //score.debug11("hand \(hand) staff:\(staff.type) \(scoreEntryIndex)", withBeam: false, toleranceLevel: 0)
-                        score.addStemCharacteristics(hand: hand, staff: staffForPositioning, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: scoreEntryIndex)
+                        score.addStemCharacteristics(handType: handType, clef: clefForPositioning, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: scoreEntryIndex)
                         startStemCharacteristicsIndex = scoreEntryIndex
-                        staffForPositioning = Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
+                        clefForPositioning = staffClef //Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
                     }
                 }
                 if let timeSlice = scoreEntry as? TimeSlice {
-                    for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
-                        if let staffNote = entry as? StaffNote {
-                            if staffNote.staffType == staff.type {
-                                staffNote.setNotePlacementAndAccidental(score:score, staff:staffForPositioning)
-                                staffNote.clef = staffForPositioning
+                    //for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
+                    for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
+                        //if let staffNote = entry as? StaffNote {
+                            //if (staffNote.hand == 0 && staff.type == .treble) || (staffNote.hand == 1 && staff.type == .bass) {
+                                staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning)
+                                staffNote.clef = clefForPositioning
                                 //print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
-                            }
-                        }
+                            //}
+                        //}
                     }
                 }
             }
             
             ///Do stem characteristics for the last remaining group of notes
-            score.addStemCharacteristics(hand: hand, staff: staff, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
+            score.addStemCharacteristics(handType: handType, clef: clefForPositioning,
+                                         startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
 
-            score.debug11("Score create 0", withBeam: true, toleranceLevel: 0)
+            //score.debug11("Score create", withBeam: true, toleranceLevel: 0)
         }
         return score
     }
@@ -753,7 +756,7 @@ public class ScalesModel : ObservableObject {
         
         if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
             combinedKeyboard.resetLinkScaleFingersToKeyboardKeys()
-            combinedKeyboard.configureKeyboardForScale(scale: scale, hand: 0)
+            combinedKeyboard.configureKeyboardForScale(scale: scale, handType: .right)
             self.setSelectedScaleSegment(0)
             let middleKey = combinedKeyboard.pianoKeyModel.count / 2
             combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying(hilight: true)
@@ -763,8 +766,8 @@ public class ScalesModel : ObservableObject {
             ///Set the single RH and RH keyboard
             PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
             PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
-            PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, hand: 0)
-            PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, hand: 1)
+            PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, handType: .right)
+            PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, handType: .left)
             self.setSelectedScaleSegment(0)
             PianoKeyboardModel.sharedRH.redraw()
             PianoKeyboardModel.sharedLH.redraw()
@@ -797,7 +800,7 @@ public class ScalesModel : ObservableObject {
         var keyName = scale.getScaleName(handFull: true)
         keyName = keyName.replacingOccurrences(of: " ", with: "")
         var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
-        fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.scaleNoteState[handIndex][0].midi) + "_" + modelName
+        fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.getScaleNoteState(handType: .right, index: 0).midi) + "_" + modelName
 //        fileName += "_"+String(result.playedAndWrongCountAsc)+","+String(result.playedAndWrongCountDesc)+","+String(result.missedFromScaleCountAsc)+","+String(result.missedFromScaleCountDesc)
         fileName += "_Taps"+String(tapSets.count)
         fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)

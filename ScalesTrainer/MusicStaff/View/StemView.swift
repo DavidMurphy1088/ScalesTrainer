@@ -5,6 +5,7 @@ import CoreData
 public struct StemView: View {
     @ObservedObject var score: Score
     @State var staff: Staff
+    //@State var clef: StaffClef
     @State var notePositionLayout: NoteLayoutPositions
     var notes: [StaffNote]
 
@@ -22,14 +23,14 @@ public struct StemView: View {
 
     func midPointXOffset(notes:[StaffNote], staff:Staff, stemDirection:Double) -> Double {
         let delta = stemDirection * -1.0 ///Slightly tighter fit to note head
-        for n in notes {
-            if n.rotated {
-                if n.midiNumber < staff.middleNoteValue {
-                    ///Normally the up stem goes to the right of the note. But if there is a left rotated note we want the stem to go thru the middle of the two notes
-                    return -1.0 * getNoteWidth() - delta
-                }
-            }
-        }
+//        for n in notes {
+//            if n.rotated {
+//                if n.midiNumber < clef.middleNoteValue {
+//                    ///Normally the up stem goes to the right of the note. But if there is a left rotated note we want the stem to go thru the middle of the two notes
+//                    return -1.0 * getNoteWidth() - delta
+//                }
+//            }
+//        }
         return (stemDirection * -1.0 * getNoteWidth() - delta)
     }
 
