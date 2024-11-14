@@ -582,14 +582,14 @@ public class ScalesModel : ObservableObject {
         let maxBarValue:Double = Double(timeSig.top) * mult
         let handTypes:[HandType] = scale.hands.count > 1 ? [HandType.right,HandType.left] : [scale.hands[0] == 0 ? .right : .left]
         
-        ///Add notes played LH and RH together to the same TimeSlice
+        ///Add LH and RH notes played at the same time to the same TimeSlice and add bar lines.
         for i in 0..<scale.getScaleNoteCount() {
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line not currenlty visible but it might be added to add space around notes
                 ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
-                ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor apepars to imply invisible bar lines when setting accidentals.
-                ///But their melodic minor does not imply invisible bar lines - nightmare ....
+                ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor appears to imply invisible bar lines when setting accidentals.
+                ///But their melodic minor does not imply invisible bar lines - nightmare 🥵 ....
                 if ![ScaleType.melodicMinor].contains(scale.scaleType) {
                     if true {
                         score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
@@ -634,18 +634,20 @@ public class ScalesModel : ObservableObject {
         for tsIndex in 0..<timeSlices.count {
             ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
             ///Consider a clef change only at a bar start
-            if timeSlices[tsIndex].valuePointInBar == 0 {
-                let highest = offsetsInGroup.max()
-                let lowest = offsetsInGroup.min()
-                if highest != nil && lowest != nil {
-                    if highest! > offsetsAboveLimit || lowest! < offsetsBelowLimit {
-                        let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
-                        score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
-                        currentClefType = newClefType
+            if true {
+                if timeSlices[tsIndex].valuePointInBar == 0 {
+                    let highest = offsetsInGroup.max()
+                    let lowest = offsetsInGroup.min()
+                    if highest != nil && lowest != nil {
+                        if (highest! > offsetsAboveLimit && currentClefType == .bass) || (lowest! < offsetsBelowLimit && currentClefType == .treble) {
+                            let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
+                            score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
+                            currentClefType = newClefType
+                        }
                     }
+                    offsetsInGroup = []
+                    lastGroupStart = timeSlices[tsIndex].valuePoint
                 }
-                offsetsInGroup = []
-                lastGroupStart = timeSlices[tsIndex].valuePoint
             }
             let timeSlice = timeSlices[tsIndex]
             let entries = timeSlice.getTimeSliceEntries(notesOnly: true)
@@ -657,20 +659,20 @@ public class ScalesModel : ObservableObject {
             let staffNote = entries[noteIndex] as! StaffNote
             //let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
             ///Consider the note's placement in the current clef layout
-            let clef = StaffClef(score: score, clefType: currentClefType)
+            let clef = StaffClef(score: score, clefType: currentClefType, isVisible: true)
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
             //print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
         }
 
-        ///Create the required staffs (one for the each hand) and position the required notes in them.
-        ///Group all notes within a clef and then set their stem characteristics according to the clef just before them
+        ///Create the required display staffs (one for the each hand) and position the required notes in them.
+        ///Group all notes within a clef and then set their stem characteristics according to the clef just before them. i.e. obey clef switching
         
         for handType in handTypes {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble) : StaffClef(score: score, clefType: .bass)
+            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble, isVisible: true) : StaffClef(score: score, clefType: .bass, isVisible: true)
 
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
@@ -686,13 +688,9 @@ public class ScalesModel : ObservableObject {
                 if let timeSlice = scoreEntry as? TimeSlice {
                     //for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        //if let staffNote = entry as? StaffNote {
-                            //if (staffNote.hand == 0 && staff.type == .treble) || (staffNote.hand == 1 && staff.type == .bass) {
-                                staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning)
-                                staffNote.clef = clefForPositioning
-                                //print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
-                            //}
-                        //}
+                        staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning)
+                        staffNote.clef = clefForPositioning
+                        //print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
                     }
                 }
             }
@@ -712,15 +710,15 @@ public class ScalesModel : ObservableObject {
                                    minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String) {
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String, debug:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
-                          //ctx:\(ctx) from:\(self.scale.getScaleName(handFull: false, octaves: false))")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
-                           octaves: octaves,
-                           hands: hands,
-                          minTempo: minTempo, dynamicType: .mf, articulationType: .legato)
+                          octaves: octaves,
+                          hands: hands,
+                          minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                          debug: debug)
         setKeyboardAndScore(scale: scale)
     }
 
@@ -789,7 +787,6 @@ public class ScalesModel : ObservableObject {
 
     func saveTapsToFile(tapSets:[TapEventSet], result:Result) {
         let scale = self.scale
-        let handIndex = 0
         let calendar = Calendar.current
         let month = calendar.component(.month, from: Date())
         let day = calendar.component(.day, from: Date())

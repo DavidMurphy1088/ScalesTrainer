@@ -38,27 +38,27 @@ public struct StaffClefView: View {
     var score:Score
     var staffClef:StaffClef
     var staff:Staff
-    let visible:Bool
+    let isTransparent:Bool
     
     public init(score:Score, staffClef:StaffClef, staff: Staff) {
         self.score = score
         self.staffClef = staffClef
         self.staff = staff
-        self.visible = staff.handType == .left
+        self.isTransparent = staff.handType == .left
     }
         
     public var body: some View {
         VStack {
             if staffClef.clefType == .treble {
                 Text("\u{1d11e}")
-                    .foregroundColor(visible ? .black : .clear)
+                    .foregroundColor(isTransparent ? .black : .clear)
                     .font(.system(size: CGFloat(score.lineSpacing * 8)))
                     .padding(.top, 0.0)
                     .padding(.bottom, score.lineSpacing * 1.0)
             }
             else {
                 Text("\u{1d122}")
-                    .foregroundColor(visible ? .black : .clear)
+                    .foregroundColor(isTransparent ? .black : .clear)
                     .font(.system(size: CGFloat(Double(score.lineSpacing) * 5.0)))
             }
         }

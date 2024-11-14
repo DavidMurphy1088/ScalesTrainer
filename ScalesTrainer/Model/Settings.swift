@@ -36,6 +36,7 @@ public class Settings : Codable  {
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var practiceChartGamificationOn = true
     var useMidiKeyboard = false
+    var customTrinity = true
     
     ///Default colors if not set by user
     //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
@@ -144,7 +145,7 @@ public class Settings : Codable  {
                     self.badgeStyle = loaded.badgeStyle
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
-                    self.useMidiKeyboard  = loaded.useMidiKeyboard
+                    self.useMidiKeyboard = loaded.useMidiKeyboard
 
                     SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)

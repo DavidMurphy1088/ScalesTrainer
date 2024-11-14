@@ -465,42 +465,26 @@ public class Score : ObservableObject {
         return self.staffs
     }
     
-//    public func setKey(key:StaffKey) {
-//        DispatchQueue.main.async {
-//            self.key = key
-//            self.updateStaffs()
-//        }
-//    }
-    
     public func addBarLine(visibleOnStaff:Bool, forStaffSpacing: Bool) {
         let barLine = BarLine(visibleOnStaff: visibleOnStaff, forStaffSpacing: forStaffSpacing)
         barLine.sequence = self.scoreEntries.count
         self.scoreEntries.append(barLine)
     }
     
-    public func addStaffClef(clefType:ClefType, atValuePosition:Double) {
-        let clef = StaffClef(score:self, clefType: clefType)
-        //self.scoreEntries.insert(3, at: atSequenceIndex)
+    public func addStaffClef(clefType:ClefType, atValuePosition:Double, isVisible:Bool) {
+        //let clef = StaffClef(score:self, clefType: clefType, isVisible: isVisible)
         var totalValue = 0.0
         for i in 0..<self.scoreEntries.count {
             if self.scoreEntries[i] is TimeSlice {
                 if atValuePosition == totalValue {
-                    self.scoreEntries.insert(StaffClef(score: self, clefType: clefType), at: i)
+                    self.scoreEntries.insert(StaffClef(score: self, clefType: clefType, isVisible: isVisible), at: i)
                     break
                 }
                 let timeslice = self.scoreEntries[i] as! TimeSlice
                 totalValue += timeslice.getValue()
             }
         }
-        //self.scoreEntries.append(clef)
     }
-
-//    public func clear() {
-//        self.scoreEntries = []
-//        for staff in staffs  {
-//            staff.clear()
-//        }
-//    }
     
     public func getEntryForSequence(sequence:Int) -> ScoreEntry? {
         for entry in self.scoreEntries {
@@ -630,8 +614,9 @@ public class Score : ObservableObject {
         
         func setStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
             let staffNotes = timeSlice.getTimeSliceNotes(handType: handType)
-            //let stemDirection = getStemDirection(staff: staff, notes: staffNotes) //TODO
-            let stemDirection = StemDirection.up
+            //let stemDirection = StemDirection.up
+            let stemDirection = getStemDirection(clef: clef, notes: staffNotes)
+            
             for note in staffNotes {
                 note.stemDirection = stemDirection
                 note.stemLength = linesForFullStemLength
@@ -687,14 +672,8 @@ public class Score : ObservableObject {
                 continue
             }
             
-            //let handIndex = scale.hands.count > 1 ? scale.hands[hand] : 0
             let note = timeSlice.getTimeSliceNotes(handType: handType)[0] //.entries[handIndex]
-//            if note is StaffNote {
-//                let note1 = note as! StaffNote
-//                if hand == 1 && note1.midiNumber == 72 {
-//                }
-//            }
-        
+
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)

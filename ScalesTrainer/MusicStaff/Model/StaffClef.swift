@@ -50,8 +50,6 @@ public class NoteLayoutPositions { //}: ObservableObject {
                     //sleep(UInt32(0.25))
                     //sleep(UInt32(0.5))
                 self.positions[notes[0]] = rectCopy
-                //print("=======NoteLayoutPos:Store Pos ID:", self.id, notes[0].midiNumber, notes[0].clef?.clefType)
-                //}
             }
         }
     }
@@ -165,20 +163,21 @@ public enum ClefType {
 public class StaffClef : ScoreEntry { 
     let clefType:ClefType
     let score:Score
-    
+    let isVisible:Bool //The clef is on the staff but takes no width space
     var staffOffsets:[Int] = []
     var noteStaffPlacement:[NoteStaffPlacement]=[]
     var lowestNoteValue:Int
     var highestNoteValue:Int
     var middleNoteValue:Int
     
-    init(score:Score, clefType:ClefType) {
+    init(score:Score, clefType:ClefType, isVisible:Bool) {
         self.score = score
         self.clefType = clefType        
         self.lowestNoteValue = 20 //MIDI C0
         self.highestNoteValue = 107 //MIDI B7
         self.middleNoteValue = clefType == ClefType.treble ? 71 : StaffNote.MIDDLE_C - StaffNote.OCTAVE + 2
         self.middleNoteValue = clefType == .treble ? 71 : StaffNote.MIDDLE_C - StaffNote.OCTAVE + 2
+        self.isVisible = isVisible
         super.init()
         self.setPlacements()
     }

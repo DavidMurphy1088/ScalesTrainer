@@ -157,7 +157,6 @@ public class Scale : Codable {
     var id = UUID()
     static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
-    //private(set) var scaleNoteState:[[ScaleNoteState]]
     private var scaleNoteState:[[ScaleNoteState]]
     private var metronomeAscending = true
     var octaves:Int
@@ -172,7 +171,8 @@ public class Scale : Codable {
     ///e.g. a maj scale is octaves * 8 beats. A broken chord has 3 beats since the keyboard fingering needs to be refreshed for each new inverted chord arpeggio
     var notesPerSegment:Int
     let timeSignature:TimeSignature
-
+    let debugOn:Bool
+    
     public init() {
         self.scaleRoot = ScaleRoot(name: "")
         self.scaleNoteState = []
@@ -191,17 +191,19 @@ public class Scale : Codable {
         else {
             self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
         }
+        self.debugOn = false
     }
     
     func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
         return self.scaleNoteState[handType == .right ? 0 : 1][index]
     }
+    
     func getScaleNoteStates(handType:HandType) -> [ScaleNoteState] {
         return self.scaleNoteState[handType == .right ? 0 : 1]
     }
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
-                minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType) {
+                minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType, debug:Bool = false) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
         self.dynamicType = dynamicType
@@ -209,6 +211,7 @@ public class Scale : Codable {
         self.octaves = octaves
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
+        self.debugOn = debug
         scaleNoteState = []
         self.hands = hands
         
@@ -301,7 +304,7 @@ public class Scale : Codable {
         }
          
         ///Set midi values in scale
-        
+
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
         let scaleNoteValue = [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUAVER
 
@@ -353,7 +356,8 @@ public class Scale : Codable {
             self.scaleNoteState.append([])
 
             for oct in 0..<octaves {
-                
+                if self.debugOn {
+                }
                 for i in 0..<scaleOffsetsForHand.count {
                     var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
@@ -363,12 +367,12 @@ public class Scale : Codable {
                         let segment = getSegment(hand: handIndex)
                         scaleNoteState[handIndex].append(ScaleNoteState(sequence: sequence, midi: nextMidi, value: noteValue,
                                                                         segment: [segment]))
-                        let deltaDirection = 1 //(scaleType == .contraryMotion && handIndex==1) ? -1 : 1
+                        let deltaDirection = 1
                         nextMidi += scaleOffsetsForHand[i] * deltaDirection
                     }
                     else {
                         let segment = getSegment(hand: handIndex)
-                        scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][i % 8].midi + (oct * 12),
+                        scaleNoteState[handIndex].append(ScaleNoteState (sequence: sequence, midi: scaleNoteState[handIndex][i % scaleOffsetsForHand.count].midi + (oct * 12),
                                                                          value: noteValue, segment: [segment]))
                     }
                     sequence += 1
@@ -393,6 +397,9 @@ public class Scale : Codable {
                     sequence += 1
                 }
             }
+        }
+        if self.debugOn {
+            //self.debug1("====== afdter set")
         }
 
         ///Set MIDIS for downwards direction - Mirror notes with midis for the downwards direction
@@ -433,23 +440,26 @@ public class Scale : Codable {
             }
         }
         
-        ///Set MIDIs - downwards direction, contrary
-        if scaleMotion == .contraryMotion {
+        ///Set MIDIs for contrary motion - downwards direction, contrary
+        if true && scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
             let middleIndex = (scaleNoteState[1].count / 2) + 1
             let firstPart = scaleNoteState[1].prefix(middleIndex)
             let secondPart = scaleNoteState[1].suffix(middleIndex)
+
             scaleNoteState[1] = []
             var seq = 0
+            ///For octaves > 1 the top of the left hand scale is higher than the start of the right hand scale. So remove that overlap.
+            let leftOverlapWithRight = octaves == 1 ? 0 : 12
             for state in secondPart {
                 ///Need deep copy
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi, value: state.value, segment: [0]))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi - leftOverlapWithRight, value: state.value, segment: [0]))
                 //segmentCounter += 1
             }
             seq = 0
             for i in 1..<firstPart.count {
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi, value: firstPart[i].value, segment: [1]))
+                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi - leftOverlapWithRight, value: firstPart[i].value, segment: [1]))
             }
             ///The last note value is now in the middle of the scale ... so exchange it
             let lastNoteValue = scaleNoteState[1][middleIndex - 1].value
@@ -459,7 +469,7 @@ public class Scale : Codable {
             scaleNoteState[1][lastNoteIndex].value = lastNoteValue
         }
         
-        ///Set ast note value
+        ///Set last note value
 
         for handIndex in [0,1] {
             var barValue = 0.0
@@ -479,7 +489,13 @@ public class Scale : Codable {
                 }
                 else {
                     let lastBarTotal = barValue - lastNote.value
-                    let lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
+                    let lastNoteValue:Int
+                    if Settings.shared.customTrinity {
+                        lastNoteValue = 1
+                    }
+                    else {
+                        lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
+                    }
                     lastNote.value = Double(lastNoteValue)
                 }
             }
@@ -506,15 +522,12 @@ public class Scale : Codable {
                 }
             }
         }
-        if debugStop() {
-            debug1("------------- End Init")
-        }
         
         Scale.createCount += 1
     }
     
     func debugStop() -> Bool {
-        return scaleRoot.name == "C"  && self.scaleMotion == .contraryMotion
+        return scaleRoot.name == "B♭" && self.scaleMotion == .similarMotion
     }
     
     func setChromaticFingerBreaks(hand:Int) {
@@ -745,8 +758,9 @@ public class Scale : Codable {
         return out
     }
     
-    func debug1(_ msg:String)  {
+    func debug11(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
+        
         func getValue(_ value:Double?) -> String {
             if value == nil {
                 return "None"
@@ -765,6 +779,9 @@ public class Scale : Codable {
                       //"valueNormalized:", getValue(state.valueNormalized)
                 )
                 idx += 1
+                if idx % 4 == 0 {
+                    print()
+                }
             }
         }
     }
