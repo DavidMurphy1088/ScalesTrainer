@@ -170,9 +170,7 @@ struct ScoreEntriesView: View {
                         }
                         if entry is StaffClef {
                             let clef = entry as! StaffClef
-                            if clef.isVisible {
-                                StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
-                            }
+                            StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
                         }
                     }
                     .coordinateSpace(name: "VStack")

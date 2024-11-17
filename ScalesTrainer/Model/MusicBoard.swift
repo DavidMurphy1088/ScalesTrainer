@@ -1,26 +1,40 @@
 import Foundation
 
-class MusicBoardGrade: Codable {
-    //var board:MusicBoard
-    let gradeIndex:Int
-    var grade:String
+class BoardGrade: Codable, Identifiable {
+    let board:MusicBoard
+    let grade:Int
+    var name:String
+    var scales:[Scale]
 
-    init(index:Int, grade:String) {
+    init(board:MusicBoard, grade:Int) {
+        self.board = board
         self.grade = grade
-        self.gradeIndex = 1 //index
+        self.name = "Grade " + String(grade)
+        self.scales = []
+        self.scales = self.setScales()
+        self.scales =  self.getScales()
+        //print("========= Grade Init", board.name, "Scales", self.scales.count)
     }
     
+    func getGradeName() -> String {
+        return "Grade " + String(self.grade) + " Piano"
+    }
+    
+    func getFullName() -> String {
+        return self.board.name + ", Grade " + String(self.grade) + " Piano"
+    }
+
     func getScales() -> [Scale] {
-        var scales:[Scale] = []
+        return self.scales
+    }
+    
+    func scalesTrinity(grade:Int) -> [Scale] {
         let octaves = 1
         let minTempo = 70
         let brokenChordTempo = 50
-
-        if self.gradeIndex == 0 {
-
-        }
+        var scales:[Scale] = []
         
-        if self.gradeIndex == 1 {
+        if grade == 1 {
             ///Row 1
             if false && Settings.shared.isDeveloperMode() {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
@@ -59,6 +73,21 @@ class MusicBoardGrade: Codable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
+        }
+        if grade == 2 {
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+        }
+        return scales
+    }
+    
+    func setScales() -> [Scale] {
+        var scales:[Scale] = []
+        switch self.board.name {
+            case "Trinity":
+            return scalesTrinity(grade:self.grade)
+            default:
+                return scales
         }
 
         return scales
@@ -109,38 +138,59 @@ class MusicBoardGrade: Codable {
 //    }
 }
 
-class MusicBoard : Identifiable, Codable {
+class MusicBoard : Identifiable, Codable, Hashable {
+    
     let name:String
-    let fullName:String
-    let imageName:String
-    //var grades:[MusicBoardGrade] = []
+    var fullName:String
+    var imageName:String
+    var grades:[BoardGrade]
 
-    static let options = [
-        MusicBoard(name1: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
-        MusicBoard(name1: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"),
-        MusicBoard(name1: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"),
-        MusicBoard(name1: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"),
-        MusicBoard(name1: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"),
-        MusicBoard(name1: "Trinity", fullName: "Trinity College London", imageName: "trinity"),
+    static let boards = [
+        MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
+        MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"),
+        MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"),
+        MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"),
+        MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"),
+        MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"),
     ]
 
-    init(name:String) {
+    init(name:String, fullName:String, imageName:String) {
         self.name = name
-        if let board = MusicBoard.options.first(where: { $0.name == name }) {
-            self.fullName = board.fullName
-            self.imageName = board.imageName
-        }
-        else {
-            self.fullName = ""
-            self.imageName = ""
-        }
-        //self.grades.append(MusicBoardGrade(grade: "1"))
-    }
-    
-    init(name1:String, fullName:String, imageName:String) {
-        self.name = name1
         self.imageName = imageName
         self.fullName = fullName
-        //self.grades.append(MusicBoardGrade(grade: "1"))
+        grades = []
+        
+        switch name {
+        case "Trinity":
+            grades.append(BoardGrade(board: self, grade: 1))
+            grades.append(BoardGrade(board: self, grade: 2))
+            grades.append(BoardGrade(board: self, grade: 3))
+            grades.append(BoardGrade(board: self, grade: 4))
+            grades.append(BoardGrade(board: self, grade: 5))
+        default:
+            grades = []
+        }
+    }
+    
+    init (name:String) {
+        self.name = name
+        self.imageName = ""
+        self.fullName = ""
+        grades = []
+        for board in MusicBoard.boards {
+            if board.name == name {
+                self.fullName = board.fullName
+                self.imageName = board.imageName
+                self.grades = board.grades
+            }
+        }
+    }
+    
+    static func == (lhs: MusicBoard, rhs: MusicBoard) -> Bool {
+        return lhs.name == rhs.name
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
     }
 }

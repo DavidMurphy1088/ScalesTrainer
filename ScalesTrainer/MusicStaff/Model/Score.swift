@@ -471,13 +471,13 @@ public class Score : ObservableObject {
         self.scoreEntries.append(barLine)
     }
     
-    public func addStaffClef(clefType:ClefType, atValuePosition:Double, isVisible:Bool) {
+    public func addStaffClef(clefType:ClefType, atValuePosition:Double) {
         //let clef = StaffClef(score:self, clefType: clefType, isVisible: isVisible)
         var totalValue = 0.0
         for i in 0..<self.scoreEntries.count {
             if self.scoreEntries[i] is TimeSlice {
                 if atValuePosition == totalValue {
-                    self.scoreEntries.insert(StaffClef(score: self, clefType: clefType, isVisible: isVisible), at: i)
+                    self.scoreEntries.insert(StaffClef(score: self, clefType: clefType), at: i)
                     break
                 }
                 let timeslice = self.scoreEntries[i] as! TimeSlice

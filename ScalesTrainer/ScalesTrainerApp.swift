@@ -301,9 +301,8 @@ struct ScalesTrainerApp: App {
                 }
                 .tag(10)
 
-            GradeAndBoard()
+            UserDetailsView()
                 .tabItem {
-                    //Label("Board and Grade", systemImage: "arrowshape.forward.circle")
                     Label(NSLocalizedString("Grade", comment: "Menu"), systemImage: "graduationcap.fill")
                 }
                 .tag(20)

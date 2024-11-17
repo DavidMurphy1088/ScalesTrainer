@@ -5,7 +5,7 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-struct GradeAndBoard: View {
+struct UserDetailsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
@@ -13,16 +13,14 @@ struct GradeAndBoard: View {
     @State var emailAddress = Settings.shared.emailAddress
 
     @State private var tapBufferSize = 4096
-    //@State private var keyColor: Color = .white
     @State private var navigateToSelectBoard = false
-    @State private var navigateToGrade = false
     
     let width = UIScreen.main.bounds.width * 0.7
     
     var body: some View {
         NavigationStack {
             VStack {
-                TitleView(screenName: "Trinity Grade", showGrade: true).commonFrameStyle()
+                TitleView(screenName: "Name and Grade", showGrade: true).commonFrameStyle()
 
                 VStack {
                     Spacer()
@@ -54,30 +52,37 @@ struct GradeAndBoard: View {
                     })
                     
                     Spacer()
-                    Button("Select Your Grade") {
-                        navigateToGrade = true
+//                    Button("Select Your Music Board") {
+//                        navigateToSelectBoard = true
+//                    }
+//                    .padding()
+//                    .navigationDestination(isPresented: $navigateToSelectBoard) {
+//                        SelectMusicBoardView()
+//                    }
+                    
+                    Button(action: {
+                        navigateToSelectBoard = true
+                    }) {
+                        HStack {
+                            Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        }
                     }
-                    .padding()
                     .navigationDestination(isPresented: $navigateToSelectBoard) {
-                        SelectMusicBoardView()
-                    }
-                    .navigationDestination(isPresented: $navigateToGrade) {
-                        BoardGradesView(board: "trinity")
+                        SelectMusicBoardView(inBoard: Settings.shared.getBoardGrade()?.board)
+                        //SelectMusicBoardView()
                     }
 
                     Spacer()
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            settings.save()
-                            tabSelectionManager.selectedTab = 10
-                        }) {
-                            HStack {
-                                Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-                            }
+                    Button(action: {
+                        settings.save()
+                        tabSelectionManager.selectedTab = 10
+                    }) {
+                        HStack {
+                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
-                        Spacer()
                     }
+                    
+                    Spacer()
                 }
                 .commonFrameStyle()
                 .padding()

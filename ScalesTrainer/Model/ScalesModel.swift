@@ -635,18 +635,22 @@ public class ScalesModel : ObservableObject {
             ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
             ///Consider a clef change only at a bar start
             if true {
-                if timeSlices[tsIndex].valuePointInBar == 0 {
-                    let highest = offsetsInGroup.max()
-                    let lowest = offsetsInGroup.min()
-                    if highest != nil && lowest != nil {
-                        if (highest! > offsetsAboveLimit && currentClefType == .bass) || (lowest! < offsetsBelowLimit && currentClefType == .treble) {
-                            let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
-                            score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
-                            currentClefType = newClefType
+                ///Clef switching currenlty only occurs in the LH stave. Only if it occurs there must an invisible clef be inserted into the RH stave to keep the two staves aligned.
+                ///i.e. if the stave is the LH stave or its the LH and RH staves showing together.
+                if scale.hands.contains(1) {
+                    if timeSlices[tsIndex].valuePointInBar == 0 {
+                        let highest = offsetsInGroup.max()
+                        let lowest = offsetsInGroup.min()
+                        if highest != nil && lowest != nil {
+                            if (highest! > offsetsAboveLimit && currentClefType == .bass) || (lowest! < offsetsBelowLimit && currentClefType == .treble) {
+                                let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
+                                score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
+                                currentClefType = newClefType
+                            }
                         }
+                        offsetsInGroup = []
+                        lastGroupStart = timeSlices[tsIndex].valuePoint
                     }
-                    offsetsInGroup = []
-                    lastGroupStart = timeSlices[tsIndex].valuePoint
                 }
             }
             let timeSlice = timeSlices[tsIndex]
@@ -659,7 +663,7 @@ public class ScalesModel : ObservableObject {
             let staffNote = entries[noteIndex] as! StaffNote
             //let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
             ///Consider the note's placement in the current clef layout
-            let clef = StaffClef(score: score, clefType: currentClefType, isVisible: true)
+            let clef = StaffClef(score: score, clefType: currentClefType)
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
             //print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
@@ -672,7 +676,7 @@ public class ScalesModel : ObservableObject {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble, isVisible: true) : StaffClef(score: score, clefType: .bass, isVisible: true)
+            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble) : StaffClef(score: score, clefType: .bass)
 
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]

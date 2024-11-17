@@ -36,18 +36,21 @@ struct TitleView: View {
     }
 
     var body: some View {
-        let grade = "Trinity, Grade 1"
         VStack {
             Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             if showGrade {
-                Text("\(grade)").font(.title2)
+                HStack {
+                    Text("\(settingsPublished.boardName)").font(.title2)
+                    Text("\(settingsPublished.gradeName)").font(.title2)
+                }
             }
-            //}
-//            if let screenName = screenName {
-//                Text(screenName).font(.title2)
-//            }
         }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark) 
+        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+        .onAppear() {
+            if let boardAndGrade = Settings.shared.getBoardGrade() {
+                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
+            }
+        }
     }
 }
 
@@ -159,21 +162,18 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            if menuOptionsLeft.count == 0 {
+            if false && menuOptionsLeft.count == 0 {
                 var practiceChart:PracticeChart
-//                if Settings.shared.isDeveloperMode() {
-//                    PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
-//                    PracticeChart.shared.adjustForStartDay()
-//                }
-//                else {
-                    if let savedChart = PracticeChart.loadPracticeChartFromFile()  {
-                        PracticeChart.shared = savedChart
-                        PracticeChart.shared.adjustForStartDay()
+                if let savedChart = PracticeChart.loadPracticeChartFromFile()  {
+                    PracticeChart.shared = savedChart
+                    savedChart.adjustForStartDay()
+                }
+                else {
+                    ///Create a new one for this board and grade
+                    if let boardAndGrade = Settings.shared.getBoardGrade() {
+                        PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, minorScaleType: 0)
                     }
-                    else {
-                        PracticeChart.shared = PracticeChart(musicBoard: Settings.shared.musicBoard, musicBoardGrade: Settings.shared.musicBoardGrade, minorScaleType: 0)
-                    }
-//                }
+                }
                 practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
                                                     view: AnyView(PracticeChartView(practiceChart: practiceChart)),
@@ -205,12 +205,16 @@ struct HomeView: View {
                 VStack {
                     Spacer()
                     TitleView(screenName: "Scales Academy", showGrade: true)
-                    ActivityModeView()
+                    if let boardAndGrade = Settings.shared.getBoardGrade() {
+                        ActivityModeView()
+                    }
+                    else {
+                        Text("Please select your music grade")
+                    }
                     Spacer()
                 }
             }
         }
-
         .navigationViewStyle(StackNavigationViewStyle())
     }
     

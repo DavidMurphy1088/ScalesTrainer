@@ -8,13 +8,13 @@ import AudioKit
 public class SettingsPublished : ObservableObject {
     static var shared = SettingsPublished()
     @Published var firstName = ""
-    @Published var board = ""
-    @Published var grade = ""
+    @Published var boardName = ""
+    @Published var gradeName = ""
     
-    func setBoardAndGrade(board:String, grade:String) {
+    func setBoardAndGrade(boardAndGrade:BoardGrade) {
         DispatchQueue.main.async {
-            self.board = board
-            self.grade = grade
+            self.boardName = boardAndGrade.board.name
+            self.gradeName = boardAndGrade.getGradeName()
         }
     }
     func setFirstName(firstName:String) {
@@ -26,11 +26,10 @@ public class SettingsPublished : ObservableObject {
 
 public class Settings : Codable  {
     static var shared = Settings()
-    var developerMode1 = false
     var firstName = ""
     var emailAddress = ""
-    var musicBoard:MusicBoard
-    var musicBoardGrade:MusicBoardGrade
+    var boardName = ""
+    var boardGrade = 0
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
@@ -50,8 +49,6 @@ public class Settings : Codable  {
     private var wasLoaded = false
     
     init() {
-        self.musicBoard = MusicBoard(name: "")
-        self.musicBoardGrade = MusicBoardGrade(index: 0, grade: "")
         load()
     }
     
@@ -91,13 +88,23 @@ public class Settings : Codable  {
         return nil
     }
     
+    func getBoardGrade() -> BoardGrade? {
+        if self.boardName != "" {
+            let board = MusicBoard(name: self.boardName)
+            let boardAndGrade = BoardGrade(board: board, grade: self.boardGrade)
+            //print("============getBoardGrade()", boardAndGrade.getFullName())
+            return boardAndGrade
+        }
+        else {
+            return nil
+        }
+    }
+    
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
         str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
         str += " FirstName:\(self.firstName)"
-        str += " Board:\(self.musicBoard)"
-        str += " Grade:\(self.musicBoardGrade.grade)"
-        str += " GradeIndex:\(self.musicBoardGrade.gradeIndex)"
+        str += " Board/Grade:\(self.boardName)/\(self.boardGrade)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " KeyboardColor:\(self.keyboardColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
@@ -135,8 +142,6 @@ public class Settings : Codable  {
                     self.amplitudeFilter = loaded.amplitudeFilter
                     self.firstName = loaded.firstName
                     self.emailAddress = loaded.emailAddress
-                    self.musicBoard = loaded.musicBoard
-                    self.musicBoardGrade = loaded.musicBoardGrade
                     self.scaleLeadInBeatCountIndex = loaded.scaleLeadInBeatCountIndex
                     self.defaultOctaves = loaded.defaultOctaves
                     self.keyboardColor = loaded.keyboardColor
@@ -146,15 +151,21 @@ public class Settings : Codable  {
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
                     self.useMidiKeyboard = loaded.useMidiKeyboard
-
-                    SettingsPublished.shared.setBoardAndGrade(board: self.musicBoard.name, grade: self.musicBoardGrade.grade)
-                    SettingsPublished.shared.setFirstName(firstName: self.firstName)
+                    self.boardName = loaded.boardName
+                    self.boardGrade = loaded.boardGrade
+                    //if let boardAndGrade = getBoardGrade() {
+                        //SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
+                        SettingsPublished.shared.setFirstName(firstName: self.firstName)
+                    //}
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
                     Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
                 }
             }
+        }
+        else {
+            Logger.shared.log(self, "No settings file")
         }
     }
     

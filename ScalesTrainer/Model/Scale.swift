@@ -215,7 +215,7 @@ public class Scale : Codable {
         scaleNoteState = []
         self.hands = hands
         
-        print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        //print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
         
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
@@ -484,7 +484,7 @@ public class Scale : Codable {
             }
             if let lastNote = lastNote {
                 if self.scaleType == .chromatic {
-                    ///Only required to match Trinity ??
+                    ///Only required to match Trinity  🥵
                     lastNote.value = 1.0
                 }
                 else {
@@ -758,7 +758,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug11(_ msg:String)  {
+    func debug111(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {

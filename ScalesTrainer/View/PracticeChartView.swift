@@ -294,7 +294,7 @@ struct PracticeChartView: View {
             minorTypeIndex = practiceChart.minorScaleType
         }
         .onDisappear() {
-            practiceChart.savePracticeChartToFile(chart: practiceChart)
+            practiceChart.saveToFile()
         }
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Practice Chart")

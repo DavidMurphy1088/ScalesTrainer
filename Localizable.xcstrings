@@ -7,6 +7,9 @@
     " " : {
 
     },
+    "     " : {
+
+    },
     "                  " : {
 
     },
@@ -264,9 +267,6 @@
         }
       }
     },
-    "Grade %lld Piano" : {
-
-    },
     "Hand:" : {
 
     },
@@ -313,9 +313,6 @@
           }
         }
       }
-    },
-    "Initial Piano" : {
-
     },
     "Instructions" : {
 
@@ -440,6 +437,9 @@
     "Please enter your first name" : {
 
     },
+    "Please select your music grade" : {
+
+    },
     "Purchase" : {
 
     },
@@ -554,7 +554,7 @@
     "Select Value" : {
 
     },
-    "Select Your Grade" : {
+    "Select Your Music Board" : {
 
     },
     "Send us a message about an issue or a new feature" : {
@@ -689,13 +689,7 @@
         }
       }
     },
-    "Trinity" : {
-
-    },
     "Type:" : {
-
-    },
-    "Under construction" : {
 
     },
     "Under Construction" : {

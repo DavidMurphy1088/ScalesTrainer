@@ -27,7 +27,7 @@ class PracticeChartCell: ObservableObject, Codable {
     func adjustBadges(delta:Int) {
         DispatchQueue.main.async {
             self.badgeCount += delta
-            PracticeChart.shared.savePracticeChartToFile(chart: PracticeChart.shared)
+            PracticeChart.shared.saveToFile()
         }
     }
     
@@ -55,10 +55,10 @@ class PracticeChartCell: ObservableObject, Codable {
 }
 
 class PracticeChart: Codable {
-    static var shared:PracticeChart = PracticeChart(musicBoard: MusicBoard(name: ""), musicBoardGrade:MusicBoardGrade(index: 0, grade: "0"), minorScaleType: 0)
+    static var shared:PracticeChart = PracticeChart(boardAndGrade:BoardGrade(board: MusicBoard(name: "", fullName: "", imageName: ""), grade: 0), minorScaleType: 0)
+    //static var shared:PracticeChart?
     static let fileName = "practice_chart.json"
-    var musicBoard:MusicBoard
-    var musicBoardGrade:MusicBoardGrade
+    var boardAndGrade:BoardGrade
     var rows: Int
     var columns: Int
     var cells: [[PracticeChartCell]]
@@ -66,28 +66,27 @@ class PracticeChart: Codable {
     var firstColumnDayOfWeekNumber:Int
     var todaysColumn:Int
     
-    init(musicBoard:MusicBoard, musicBoardGrade:MusicBoardGrade, minorScaleType:Int) {
-        self.musicBoard = musicBoard
-        self.musicBoardGrade = musicBoardGrade
+    init(boardAndGrade:BoardGrade, minorScaleType:Int) {
+        self.boardAndGrade = boardAndGrade
         self.columns = 3
-        self.rows = Settings.shared.isDeveloperMode() ? 7 : 6
         self.cells = []
-        let scales = musicBoardGrade.getScales()
+        let scales = self.boardAndGrade.getScales()
         var scaleCtr = 0
         self.minorScaleType = minorScaleType
+        var row = 0
         
-        for row in 0..<rows {
+        for scaleCtr in 0..<self.boardAndGrade.getScales().count {
             var rowCells:[PracticeChartCell]=[]
             for _ in 0..<columns {
                 rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: row == 0 || LicenceManager.shared.isLicensed(), badges: 0))
-                scaleCtr += 1
-                if scaleCtr >= scales.count {
-                    scaleCtr = 0
-                }
+//                if scaleCtr >= scales.count {
+//                    scaleCtr = 0
+//                }
             }
             cells.append(rowCells)
+            row += 1
         }
-        
+        self.rows = row
         let currentDate = Date()
         let calendar = Calendar.current
         self.firstColumnDayOfWeekNumber = calendar.component(.weekday, from: currentDate) - 1
@@ -98,7 +97,7 @@ class PracticeChart: Codable {
         for row in cells {
             for cell in row {
                 cell.adjustBadges(delta: 0 - cell.badgeCount)
-                self.savePracticeChartToFile(chart: self)
+                self.saveToFile()
             }
         }
     }
@@ -144,7 +143,7 @@ class PracticeChart: Codable {
                     }
                 }
             }
-            self.savePracticeChartToFile(chart: self)
+            self.saveToFile()
         }
     }
     
@@ -192,12 +191,12 @@ class PracticeChart: Codable {
         }
     }
     
-    func savePracticeChartToFile(chart: PracticeChart) {
+    func saveToFile() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted  // Optional: to make JSON output readable
 
         do {
-            let data = try encoder.encode(chart)  // Encode the PracticeChart object
+            let data = try encoder.encode(self)  // Encode the PracticeChart object
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 Logger.shared.reportError(self, "Failed to save PracticeChart")
                 return
