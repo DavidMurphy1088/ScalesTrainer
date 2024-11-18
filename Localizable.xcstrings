@@ -496,9 +496,6 @@
     "Save Configuration" : {
 
     },
-    "Save Settings" : {
-
-    },
     "Scale" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -554,7 +551,7 @@
     "Select Value" : {
 
     },
-    "Select Your Music Board" : {
+    "Select Your Piano Grade" : {
 
     },
     "Send us a message about an issue or a new feature" : {

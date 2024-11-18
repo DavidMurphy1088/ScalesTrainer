@@ -275,12 +275,14 @@ struct PracticeChartView: View {
                     }
                     
                     ///Rows
-                    ForEach(0..<practiceChart.rows, id: \.self) { row in
+                    ForEach(0..<practiceChart.cells.count, id: \.self) { row in
                         HStack(spacing: 0) {
                             ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
-                                         cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue)
-                                .padding(cellPadding)
+                                if column < practiceChart.cells[row].count {
+                                    CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.cells[row][column],
+                                             cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue)
+                                    .padding(cellPadding)
+                                }
                             }
                         }
                     }

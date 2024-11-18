@@ -223,8 +223,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            //return [.portrait, .landscapeLeft, .landscapeRight]
-            return .portrait // Lock to portrait on iPhone
+            //return .portrait // Lock to portrait on iPhone
+            return [.portrait, .landscapeLeft, .landscapeRight]
         } else {
             return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
         }
@@ -236,8 +236,8 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var tabSelectionManager = TabSelectionManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
-    var launchTimeSecs = 4.5
-    
+    let launchTimeSecs = 3.0
+
     init() {
         #if os(iOS)
             do {
@@ -267,7 +267,8 @@ struct ScalesTrainerApp: App {
                 }
                 else {
                     if launchScreenState.state != .finished {
-                        LaunchScreenView(launchTimeSecs: 4.5)
+                        //LaunchScreenView(launchTimeSecs: 4.5)
+                        LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
                     }
                 }
             }

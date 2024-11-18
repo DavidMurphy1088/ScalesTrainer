@@ -1,27 +1,58 @@
 import Foundation
 
-class BoardGrade: Codable, Identifiable {
+class BoardAndGrade: Codable, Identifiable {
     let board:MusicBoard
     let grade:Int
-    var name:String
     var scales:[Scale]
 
     init(board:MusicBoard, grade:Int) {
         self.board = board
         self.grade = grade
-        self.name = "Grade " + String(grade)
         self.scales = []
         self.scales = self.setScales()
-        self.scales =  self.getScales()
         //print("========= Grade Init", board.name, "Scales", self.scales.count)
     }
     
+    enum CodingKeys: String, CodingKey {
+        case boardName
+        case grade
+    }
+        
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let boardName = try container.decode(String.self, forKey: .boardName)
+        board = MusicBoard(name: boardName)
+        grade = try container.decode(Int.self, forKey: .grade)
+        self.scales = []
+        self.scales = self.setScales()
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        ///Dont try to encode all the scale info - causes crash
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(board.name, forKey: .boardName)
+        try container.encode(grade, forKey: .grade)
+    }
+    
     func getGradeName() -> String {
-        return "Grade " + String(self.grade) + " Piano"
+        //if let grade = self.grade {
+            return "Grade " + String(grade) + " Piano"
+//        }
+//        else {
+//            return ""
+//        }
     }
     
     func getFullName() -> String {
-        return self.board.name + ", Grade " + String(self.grade) + " Piano"
+        var name = self.board.name
+        name += ", Grade " + String(grade) + " Piano"
+        return name
+    }
+    
+    func getFileName() -> String {
+        var name = self.board.name
+        name += "____grade_"+String(grade)
+        return name
     }
 
     func getScales() -> [Scale] {
@@ -29,12 +60,13 @@ class BoardGrade: Codable, Identifiable {
     }
     
     func scalesTrinity(grade:Int) -> [Scale] {
-        let octaves = 1
+        
         let minTempo = 70
         let brokenChordTempo = 50
         var scales:[Scale] = []
         
         if grade == 1 {
+            let octaves = 1
             ///Row 1
             if false && Settings.shared.isDeveloperMode() {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
@@ -74,9 +106,40 @@ class BoardGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
         }
+        
         if grade == 2 {
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+            let octaves = 2
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+
         }
         return scales
     }
@@ -84,10 +147,10 @@ class BoardGrade: Codable, Identifiable {
     func setScales() -> [Scale] {
         var scales:[Scale] = []
         switch self.board.name {
-            case "Trinity":
-            return scalesTrinity(grade:self.grade)
-            default:
-                return scales
+        case "Trinity":
+            return scalesTrinity(grade:grade)
+        default:
+            return scales
         }
 
         return scales
@@ -139,11 +202,10 @@ class BoardGrade: Codable, Identifiable {
 }
 
 class MusicBoard : Identifiable, Codable, Hashable {
-    
     let name:String
     var fullName:String
     var imageName:String
-    var grades:[BoardGrade]
+    var gradesOffered:[BoardAndGrade]
 
     static let boards = [
         MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"),
@@ -158,30 +220,30 @@ class MusicBoard : Identifiable, Codable, Hashable {
         self.name = name
         self.imageName = imageName
         self.fullName = fullName
-        grades = []
+        gradesOffered = []
         
         switch name {
         case "Trinity":
-            grades.append(BoardGrade(board: self, grade: 1))
-            grades.append(BoardGrade(board: self, grade: 2))
-            grades.append(BoardGrade(board: self, grade: 3))
-            grades.append(BoardGrade(board: self, grade: 4))
-            grades.append(BoardGrade(board: self, grade: 5))
+            gradesOffered.append(BoardAndGrade(board: self, grade: 1))
+            gradesOffered.append(BoardAndGrade(board: self, grade: 2))
+//            gradesOffered.append(BoardAndGrade(board: self, grade: 3))
+//            gradesOffered.append(BoardAndGrade(board: self, grade: 4))
+//            gradesOffered.append(BoardAndGrade(board: self, grade: 5))
         default:
-            grades = []
+            gradesOffered = []
         }
     }
     
-    init (name:String) {
+    init(name:String) {
         self.name = name
         self.imageName = ""
         self.fullName = ""
-        grades = []
+        gradesOffered = []
         for board in MusicBoard.boards {
             if board.name == name {
                 self.fullName = board.fullName
                 self.imageName = board.imageName
-                self.grades = board.grades
+                self.gradesOffered = board.gradesOffered
             }
         }
     }

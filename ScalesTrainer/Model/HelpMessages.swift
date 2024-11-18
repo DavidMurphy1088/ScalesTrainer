@@ -61,7 +61,7 @@ class HelpMessages {
         m = "Listen to your recording synchronised to the scale."
         messages["Sync The Scale"] = m
         
-        m = "Use the Practice Chart to regularly cover all of your Grade 1 Technical Work."
+        m = "Use the Practice Chart to regularly cover all of your Grade's Technical Work."
         m += "\n\nThe days of the week will automatically update themselves."
         m += "\n\nDon’t forget to choose your minor scale preference."
         m += "\n\nYou can fill in a star if your teacher has covered the scale or broken chord with you."

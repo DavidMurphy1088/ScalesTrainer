@@ -55,42 +55,58 @@ class PracticeChartCell: ObservableObject, Codable {
 }
 
 class PracticeChart: Codable {
-    static var shared:PracticeChart = PracticeChart(boardAndGrade:BoardGrade(board: MusicBoard(name: "", fullName: "", imageName: ""), grade: 0), minorScaleType: 0)
-    //static var shared:PracticeChart?
-    static let fileName = "practice_chart.json"
-    var boardAndGrade:BoardGrade
-    var rows: Int
+    static var shared:PracticeChart = PracticeChart(boardAndGrade:BoardAndGrade(board: MusicBoard(name: "", fullName: "", imageName: ""), grade: 0), columnWidth: 3, minorScaleType: 0)
+
+    var boardAndGrade:BoardAndGrade
     var columns: Int
     var cells: [[PracticeChartCell]]
     var minorScaleType: Int
     var firstColumnDayOfWeekNumber:Int
     var todaysColumn:Int
     
-    init(boardAndGrade:BoardGrade, minorScaleType:Int) {
+    init(boardAndGrade:BoardAndGrade, columnWidth:Int, minorScaleType:Int) {
         self.boardAndGrade = boardAndGrade
         self.columns = 3
         self.cells = []
         let scales = self.boardAndGrade.getScales()
-        var scaleCtr = 0
         self.minorScaleType = minorScaleType
-        var row = 0
         
-        for scaleCtr in 0..<self.boardAndGrade.getScales().count {
+        var scaleCtr = 0
+        while true {
             var rowCells:[PracticeChartCell]=[]
-            for _ in 0..<columns {
-                rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: row == 0 || LicenceManager.shared.isLicensed(), badges: 0))
-//                if scaleCtr >= scales.count {
-//                    scaleCtr = 0
-//                }
+            if scaleCtr < scales.count {
+                for c in 0..<columnWidth {
+                    if scaleCtr < scales.count {
+                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: cells.count == 0 || LicenceManager.shared.isLicensed(), badges: 0))
+                        scaleCtr += 1
+                    }
+                    else {
+                        break
+                    }
+                }
+                cells.append(rowCells)
             }
-            cells.append(rowCells)
-            row += 1
+            else {
+                break
+            }
         }
-        self.rows = row
+        
         let currentDate = Date()
         let calendar = Calendar.current
         self.firstColumnDayOfWeekNumber = calendar.component(.weekday, from: currentDate) - 1
         self.todaysColumn = 0
+        //debug1("Init")
+    }
+    
+    func debug1(_ ctx:String) {
+        print("====== Chart Debug", ctx)
+        for r in 0..<self.cells.count {
+            let row = self.self.cells[r]
+            for c in 0..<row.count {
+                let cell = self.cells[r][c]
+                print(r, c, "cell \(cell.scale.getScaleName(handFull: false))")
+            }
+        }
     }
     
     func reset() {
@@ -154,6 +170,12 @@ class PracticeChart: Codable {
         let srcCol = (Int.random(in: 0..<cells))
         let tarRow = (Int.random(in: 0..<rows))
         let tarCol = (Int.random(in: 0..<cells))
+        if srcCol >= self.cells[srcRow].count {
+            return
+        }
+        if tarCol >= self.cells[tarRow].count {
+            return
+        }
         let cell:PracticeChartCell = self.cells[srcRow][srcCol]
         self.cells[srcRow][srcCol] = self.cells[tarRow][tarCol]
         self.cells[tarRow][tarCol] = cell
@@ -190,7 +212,7 @@ class PracticeChart: Codable {
             }
         }
     }
-    
+
     func saveToFile() {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted  // Optional: to make JSON output readable
@@ -201,9 +223,10 @@ class PracticeChart: Codable {
                 Logger.shared.reportError(self, "Failed to save PracticeChart")
                 return
             }
-            let url = dir.appendingPathComponent(PracticeChart.fileName)
+            let url = dir.appendingPathComponent(self.boardAndGrade.getFileName())
             try data.write(to: url)  // Write the data to the file
-            //Logger.shared.log(self, "Saved PracticeChart to \(url)")
+            self.debug1("SAVEING")
+            Logger.shared.log(self, "Saved PracticeChart to \(url) size:\(data.count)")
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
@@ -211,14 +234,14 @@ class PracticeChart: Codable {
 }
 
 extension PracticeChart {
-    static func loadPracticeChartFromFile() -> PracticeChart? {
+    static func loadPracticeChartFromFile(boardAndGrade:BoardAndGrade) -> PracticeChart? {
         let decoder = JSONDecoder()
         do {
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 Logger.shared.reportError(self, "Failed to load PracticeChart - file not found")
                 return nil
             }
-            let url = dir.appendingPathComponent(PracticeChart.fileName)
+            let url = dir.appendingPathComponent(boardAndGrade.getFileName())
             let data = try Data(contentsOf: url)  // Read the data from the file
             let chart = try decoder.decode(PracticeChart.self, from: data)
             for r in 0..<chart.cells.count {

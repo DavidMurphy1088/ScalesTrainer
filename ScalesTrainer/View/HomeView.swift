@@ -40,14 +40,16 @@ struct TitleView: View {
             Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             if showGrade {
                 HStack {
-                    Text("\(settingsPublished.boardName)").font(.title2)
-                    Text("\(settingsPublished.gradeName)").font(.title2)
+                    if let board = settingsPublished.boardAndGrade {
+                        Text("\(board.getFullName())").font(.title2)
+                        //Text("\(board.getGradeName())").font(.title2)
+                    }
                 }
             }
         }
         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
         .onAppear() {
-            if let boardAndGrade = Settings.shared.getBoardGrade() {
+            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
                 SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
             }
         }
@@ -162,19 +164,19 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            if false && menuOptionsLeft.count == 0 {
-                var practiceChart:PracticeChart
-                if let savedChart = PracticeChart.loadPracticeChartFromFile()  {
-                    PracticeChart.shared = savedChart
-                    savedChart.adjustForStartDay()
-                }
-                else {
-                    ///Create a new one for this board and grade
-                    if let boardAndGrade = Settings.shared.getBoardGrade() {
-                        PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, minorScaleType: 0)
+            menuOptionsLeft = []
+            //if menuOptionsLeft.count == 0 {
+                if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+                    if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
+                        PracticeChart.shared = savedChart
+                        savedChart.adjustForStartDay()
+                    }
+                    else {
+                        ///Create a new one for this board and grade
+                        PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
                     }
                 }
-                practiceChart = PracticeChart.shared
+                let practiceChart = PracticeChart.shared
                 menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
                                                     view: AnyView(PracticeChartView(practiceChart: practiceChart)),
                                                     imageName: "home_practice_chart_1"))
@@ -191,7 +193,7 @@ struct ActivityModeView: View {
                 
                 //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
                 //menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
-            }
+            //}
         }
     }
 }
@@ -205,7 +207,7 @@ struct HomeView: View {
                 VStack {
                     Spacer()
                     TitleView(screenName: "Scales Academy", showGrade: true)
-                    if let boardAndGrade = Settings.shared.getBoardGrade() {
+                    if let boardAndGrade = Settings.shared.getBoardAndGrade() {
                         ActivityModeView()
                     }
                     else {

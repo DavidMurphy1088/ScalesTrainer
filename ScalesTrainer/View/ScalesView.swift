@@ -84,41 +84,10 @@ struct ScalesView: View {
         self.helpShowing = true
     }
     
-    ///Set state of the model and the view
-//    func setState(octaves:Int) {
-//        ///There maybe a change in octaves or LH vs. RH
-//        let root = scalesModel.scale.scaleRoot
-//        let scaleType = scalesModel.scale.scaleType
-//        let hand = scalesModel.scale.hand
-//        scalesModel.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: octaves, hand: hand, ctx: "ScalesView setState")
-//        self.directionIndex = 0
-//    }
-    
     func SelectScaleParametersView() -> some View {
-        HStack {
-//            Spacer()
-//            Text("Hand:")
-//            Picker("Select Value", selection: $handIndex) {
-//                ForEach(scalesModel.handTypes.indices, id: \.self) { index in
-//                    Text("\(scalesModel.handTypes[index])")
-//                }
-//            }
-//            .pickerStyle(.menu)
-//            .onChange(of: handIndex, {
-//                setState(octaves: self.numberOfOctaves, hand: handIndex)
-//            })
-
-//            Button(action: {
-//                metronome.setTicking(on: !metronome.isTiming)
-//            }) {
-                MetronomeView()
-//            }
-//            .padding()
-            
+        HStack {            
             HStack(spacing: 0) {
-                //let unicodeCrotchet = "\u{2669}\u{00B7}"
                 let compoundTime = scalesModel.scale.timeSignature.top % 3 == 0
-                //Text("\(NSLocalizedString("Tempo", comment: "MenuView"))").padding(.horizontal, 0)
                 Image(compoundTime ? "crotchetDotted" : "crotchet")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -477,7 +446,7 @@ struct ScalesView: View {
     func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
         var height:Double
         if scalesModel.scale.needsTwoKeyboards() {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 8 : 5)
+            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
         }
         else {
             height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
@@ -539,13 +508,13 @@ struct ScalesView: View {
                     Spacer()
                     if scalesModel.runningProcessPublished == .none {
                         SelectScaleParametersView()
-                        //.padding(.vertical, 0)
+                        .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
                         //.padding()
                     }
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         HideandShowView()
-                        //.padding(.vertical, 0)
-                            .padding()
+                        .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                        //.padding()
                     }
                     Spacer()
                 }

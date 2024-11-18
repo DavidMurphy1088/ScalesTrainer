@@ -7,16 +7,17 @@ import AudioKit
 
 public class SettingsPublished : ObservableObject {
     static var shared = SettingsPublished()
+    @Published var boardAndGrade:BoardAndGrade?
+    @Published var grade:Int?
     @Published var firstName = ""
-    @Published var boardName = ""
-    @Published var gradeName = ""
     
-    func setBoardAndGrade(boardAndGrade:BoardGrade) {
+    func setBoardAndGrade(boardAndGrade:BoardAndGrade) {
         DispatchQueue.main.async {
-            self.boardName = boardAndGrade.board.name
-            self.gradeName = boardAndGrade.getGradeName()
+            self.boardAndGrade = boardAndGrade
+            self.grade = boardAndGrade.grade
         }
     }
+    
     func setFirstName(firstName:String) {
         DispatchQueue.main.async {
             self.firstName = firstName
@@ -28,8 +29,8 @@ public class Settings : Codable  {
     static var shared = Settings()
     var firstName = ""
     var emailAddress = ""
-    var boardName = ""
-    var boardGrade = 0
+    var boardName:String? = "Trinity"
+    var boardGrade:Int?
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
@@ -88,16 +89,15 @@ public class Settings : Codable  {
         return nil
     }
     
-    func getBoardGrade() -> BoardGrade? {
-        if self.boardName != "" {
-            let board = MusicBoard(name: self.boardName)
-            let boardAndGrade = BoardGrade(board: board, grade: self.boardGrade)
-            //print("============getBoardGrade()", boardAndGrade.getFullName())
-            return boardAndGrade
+    func getBoardAndGrade() -> BoardAndGrade? {
+        if let boardName = self.boardName {
+            let board = MusicBoard(name: boardName)
+            if let grade = self.boardGrade {
+                let boardAndGrade = BoardAndGrade(board: board, grade: grade)
+                return boardAndGrade
+            }
         }
-        else {
-            return nil
-        }
+        return nil
     }
     
     func toString() -> String {
@@ -121,7 +121,7 @@ public class Settings : Codable  {
         guard let str = toJSON() else {
             return
         }
-        Logger.shared.log(self, "Setting saved, \(toString())")
+        //Logger.shared.log(self, "Setting saved, \(toString())")
         UserDefaults.standard.set(str, forKey: "settings")
         self.wasLoaded = true
     }

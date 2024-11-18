@@ -7,6 +7,7 @@ import AudioKit
 
 struct UserDetailsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    @ObservedObject var publishedSettings = SettingsPublished.shared
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var firstName = Settings.shared.firstName
@@ -14,8 +15,19 @@ struct UserDetailsView: View {
 
     @State private var tapBufferSize = 4096
     @State private var navigateToSelectBoard = false
-    
+    @State private var navigateToSelectGrade = false
+    @State private var selectedGrade:Int?
+
     let width = UIScreen.main.bounds.width * 0.7
+    
+    func setSelectedGrade() -> Int? {
+        if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+            return boardAndGrade.grade
+        }
+        else {
+            return nil
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -64,23 +76,24 @@ struct UserDetailsView: View {
                         navigateToSelectBoard = true
                     }) {
                         HStack {
-                            Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            //Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
                         }
                     }
                     .navigationDestination(isPresented: $navigateToSelectBoard) {
-                        SelectMusicBoardView(inBoard: Settings.shared.getBoardGrade()?.board)
-                        //SelectMusicBoardView()
+                        //SelectMusicBoardView(inBoard: Settings.shared.getBoardGrade()?.board)
+                        SelectBoardGradesView(inBoard: MusicBoard(name: "Trinity"), inGrade: publishedSettings.grade)
                     }
 
-                    Spacer()
-                    Button(action: {
-                        settings.save()
-                        tabSelectionManager.selectedTab = 10
-                    }) {
-                        HStack {
-                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-                        }
-                    }
+//                    Spacer()
+//                    Button(action: {
+//                        settings.save()
+//                        tabSelectionManager.selectedTab = 10
+//                    }) {
+//                        HStack {
+//                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                        }
+//                    }
                     
                     Spacer()
                 }
@@ -91,6 +104,9 @@ struct UserDetailsView: View {
                 //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
                 .onAppear() {
 
+                }
+                .onDisappear() {
+                    settings.save()
                 }
             }
         }
