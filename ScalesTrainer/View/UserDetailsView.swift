@@ -64,25 +64,29 @@ struct UserDetailsView: View {
                     })
                     
                     Spacer()
-//                    Button("Select Your Music Board") {
-//                        navigateToSelectBoard = true
-//                    }
-//                    .padding()
-//                    .navigationDestination(isPresented: $navigateToSelectBoard) {
-//                        SelectMusicBoardView()
-//                    }
-                    
-                    Button(action: {
-                        navigateToSelectBoard = true
-                    }) {
-                        HStack {
-                            //Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
-                            Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
+                    if MusicBoard.getSupportedBoards().count == 1 {
+                        Button(action: {
+                            navigateToSelectGrade = true
+                        }) {
+                            HStack {
+                                Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            }
+                        }
+                        .navigationDestination(isPresented: $navigateToSelectGrade) {
+                            SelectBoardGradesView(inBoard: MusicBoard(name: MusicBoard.getSupportedBoards()[0].name), inGrade: publishedSettings.grade)
                         }
                     }
-                    .navigationDestination(isPresented: $navigateToSelectBoard) {
-                        //SelectMusicBoardView(inBoard: Settings.shared.getBoardGrade()?.board)
-                        SelectBoardGradesView(inBoard: MusicBoard(name: "Trinity"), inGrade: publishedSettings.grade)
+                    else {
+                        Button(action: {
+                            navigateToSelectBoard = true
+                        }) {
+                            HStack {
+                                Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            }
+                        }
+                        .navigationDestination(isPresented: $navigateToSelectBoard) {
+                            SelectMusicBoardView(inBoard: Settings.shared.getBoardAndGrade()?.board)
+                        }
                     }
 
 //                    Spacer()

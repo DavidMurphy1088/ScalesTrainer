@@ -158,7 +158,7 @@ class TabSelectionManager: ObservableObject {
                     
 //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, minTempo: 70, octaves: 1, hands: [0,1], ctx: "App Start")
                     
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0,1], ctx: "App Start", debug: true)
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0], ctx: "App Start", debug: true)
                     
                     selectedTab = 0
                 }

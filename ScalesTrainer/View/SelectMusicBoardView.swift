@@ -49,9 +49,10 @@ struct SelectBoardGradesView: View {
         .onDisappear() {
             if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
                 Settings.shared.boardGrade = gradeIndex
+                Settings.shared.boardName = inBoard.name
                 Settings.shared.save()
                 SettingsPublished.shared.setBoardAndGrade(boardAndGrade: BoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex))
-                //print("==================== BoardView Disappear SETTINGS UPDATED grade:", gradeIndex)
+                print("==================== BoardView Disappear SETTINGS UPDATED grade:", Settings.shared.boardName, Settings.shared.boardGrade)
             }
         }
     }
@@ -77,7 +78,7 @@ struct SelectMusicBoardView: View {
             Spacer()
             
             List {
-                ForEach(Array(MusicBoard.boards.enumerated()), id: \.element.id) { index, board in
+                ForEach(Array(MusicBoard.getSupportedBoards().enumerated()), id: \.element.id) { index, board in
                     ///Send in the board chosen in the navigation. If that board is the same board already set in the setting boardAndGrade also send in the grade so that the grade selectedion preslects it.
                     NavigationLink(destination: SelectBoardGradesView(inBoard: board, inGrade: alreadySetGradeForBoard[board])) {
                         HStack {

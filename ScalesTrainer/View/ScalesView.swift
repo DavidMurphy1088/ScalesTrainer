@@ -254,12 +254,17 @@ struct ScalesView: View {
         }
     }
     
+    func scaleIsAcousticCapable(scale:Scale) -> Bool {
+        //scalesModel.scale.scaleMotion != .contraryMotion
+        return scale.hands.count == 1
+    }
+    
     func SelectActionView() -> some View {
         VStack {
 
             HStack(alignment: .top) {
                 Spacer()
-                if scalesModel.scale.scaleMotion != .contraryMotion {
+                if settings.useMidiKeyboard || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     HStack()  {
                         let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
                         Button(action: {
@@ -286,7 +291,7 @@ struct ScalesView: View {
                     .padding(.horizontal, 0)
                 }
                 
-                if settings.useMidiKeyboard || scalesModel.scale.scaleMotion != .contraryMotion {
+                if settings.useMidiKeyboard || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
@@ -612,6 +617,7 @@ struct ScalesView: View {
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
+            //self.scalesModel.scale.debug111("SV")
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()

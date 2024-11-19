@@ -215,7 +215,7 @@ public class Scale : Codable {
         scaleNoteState = []
         self.hands = hands
         
-        //print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
         
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
@@ -288,7 +288,7 @@ public class Scale : Codable {
             notesPerSegment = (self.octaves *  7) + 1
         }
         if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished].contains(self.scaleType) {
-            notesPerSegment = 3
+            self.scaleShapeForFingering = .arpgeggio
             notesPerSegment = (self.octaves *  3) + 1
         }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
@@ -356,8 +356,6 @@ public class Scale : Codable {
             self.scaleNoteState.append([])
 
             for oct in 0..<octaves {
-                if self.debugOn {
-                }
                 for i in 0..<scaleOffsetsForHand.count {
                     var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
@@ -397,9 +395,6 @@ public class Scale : Codable {
                     sequence += 1
                 }
             }
-        }
-        if self.debugOn {
-            //self.debug1("====== afdter set")
         }
 
         ///Set MIDIS for downwards direction - Mirror notes with midis for the downwards direction
@@ -490,7 +485,8 @@ public class Scale : Codable {
                 else {
                     let lastBarTotal = barValue - lastNote.value
                     let lastNoteValue:Int
-                    if Settings.shared.customTrinity {
+                    ///Last note for C time must be minum for backing to synchronise with scale on loop #2 of scale/backing
+                    if false && Settings.shared.customTrinity {
                         lastNoteValue = 1
                     }
                     else {
@@ -524,10 +520,6 @@ public class Scale : Codable {
         }
         
         Scale.createCount += 1
-    }
-    
-    func debugStop() -> Bool {
-        return scaleRoot.name == "B♭" && self.scaleMotion == .similarMotion
     }
     
     func setChromaticFingerBreaks(hand:Int) {
@@ -728,13 +720,13 @@ public class Scale : Codable {
         ///Transpose to scale's key
         var transposedChords = BackingChords(scaleType: self.scaleType)
         var rootPitch:Int
-        if false && self.hands.count > 1 {   ///Temporarily try same pitch for LH
-            rootPitch = self.scaleNoteState[1][0].midi
-        }
-        else {
+//        if false && self.hands.count > 1 {   ///Temporarily try same pitch for LH
+//            rootPitch = self.scaleNoteState[1][0].midi
+//        }
+//        else {
             //rootPitch = self.scaleNoteState[hands[0]][0].midi
-            rootPitch = self.scaleNoteState[0][0].midi
-        }
+        rootPitch = self.scaleNoteState[0][0].midi
+        //}
         for backingChord in backingChords.chords {
             var pitches = Array(backingChord.pitches)
             for i in 0..<pitches.count {
@@ -758,7 +750,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug111(_ msg:String)  {
+    func debug11(_ msg:String)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {

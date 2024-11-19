@@ -40,7 +40,6 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
         beatCount = 0
         nextNoteIndex = 0
-        //backingWasOn = scalesModel.backingOn
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.hilightNotesOutsideScale = false
         }
@@ -105,10 +104,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                         sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
                     }
                 }
-
-                if self.waitBeatsForBacking == 0 {
-                    if process == .backingOn {
-                        self.playBacking()
+                
+                if scale.hands.count == 1 || hand == 0 {
+                    if self.waitBeatsForBacking == 0 {
+                        if process == .backingOn {
+                            self.playBacking()
+                        }
                     }
                 }
 

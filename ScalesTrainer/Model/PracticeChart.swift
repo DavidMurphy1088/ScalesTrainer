@@ -98,7 +98,7 @@ class PracticeChart: Codable {
         //debug1("Init")
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print("====== Chart Debug", ctx)
         for r in 0..<self.cells.count {
             let row = self.self.cells[r]
@@ -225,7 +225,6 @@ class PracticeChart: Codable {
             }
             let url = dir.appendingPathComponent(self.boardAndGrade.getFileName())
             try data.write(to: url)  // Write the data to the file
-            self.debug1("SAVEING")
             Logger.shared.log(self, "Saved PracticeChart to \(url) size:\(data.count)")
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
