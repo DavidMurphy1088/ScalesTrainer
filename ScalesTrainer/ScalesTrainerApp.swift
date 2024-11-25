@@ -236,6 +236,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var tabSelectionManager = TabSelectionManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
+    @StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
 
     init() {
@@ -264,6 +265,7 @@ struct ScalesTrainerApp: App {
             VStack {
                 if launchScreenState.state == .finished || Settings.shared.isDeveloperMode() {
                     MainContentView()
+                        .environmentObject(orientationInfo)
                 }
                 else {
                     if launchScreenState.state != .finished {

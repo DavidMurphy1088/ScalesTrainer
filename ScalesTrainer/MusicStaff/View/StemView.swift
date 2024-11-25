@@ -67,7 +67,7 @@ public struct StemView: View {
                                 path.move(to: CGPoint(x: midX, y: midY - offsetY))
                                 path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength() - inErrorAjdust))))
                             }
-                            .stroke(notes[0].getColor(ctx: "StemView1", staff: staff, adjustFor: false), lineWidth: 1.5)
+                            .stroke(notes[0].getColor(staff: staff), lineWidth: 1.5)
                         }
                     }
                     else {
@@ -88,7 +88,7 @@ public struct StemView: View {
                                         path.move(to: CGPoint(x: midX, y: midY - offsetY))
                                         path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength() - inErrorAjdust))))
                                     }
-                                    .stroke(staffNotes[0].getColor(ctx: "StemView2", staff: staff, adjustFor: false), lineWidth: 1.5)
+                                    .stroke(staffNotes[0].getColor(staff: staff), lineWidth: 1.5)
                                         
                                 }
                             }

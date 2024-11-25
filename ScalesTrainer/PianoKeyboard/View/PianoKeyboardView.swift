@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 
 public struct PianoKeyboardView : View {
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel: ScalesModel
     @ObservedObject private var viewModel: PianoKeyboardModel
     let keyColor:Color

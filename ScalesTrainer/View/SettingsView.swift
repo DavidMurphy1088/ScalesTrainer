@@ -23,6 +23,7 @@ func backingSoundName(_ n:Int) -> String {
 
 struct SettingsView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    @EnvironmentObject var orientationInfo: OrientationInfo
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var leadInBarCount = 0
@@ -38,7 +39,7 @@ struct SettingsView: View {
     @State private var keyboardColor: Color = .white
     @State private var backgroundColor: Color = .white
     @State private var navigateToSelectBoard = false
-    @StateObject private var orientationObserver = DeviceOrientationObserver()
+    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     @State private var selectedBackgroundColor: Color = .white
     @State var backgroundChange = 0
     
@@ -97,7 +98,9 @@ struct SettingsView: View {
                     })
                     .hilighted(backgroundColor: .gray)
                     .frame(width: UIScreen.main.bounds.size.width * 0.9,
-                           height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                           //height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                           height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
+
                     //Spacer()
                 }
             }

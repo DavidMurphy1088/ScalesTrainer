@@ -40,13 +40,14 @@ struct MetronomeView: View {
 }
 
 struct ScalesView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     let initialRunProcess:RunningProcess?
     let practiceChartCell:PracticeChartCell?
 
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var badgeBank = BadgeBank.shared
     
-    @StateObject private var orientationObserver = DeviceOrientationObserver()
+    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     let settings = Settings.shared
 
     @ObservedObject private var metronome = Metronome.shared
@@ -451,10 +452,12 @@ struct ScalesView: View {
     func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
         var height:Double
         if scalesModel.scale.needsTwoKeyboards() {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
+            //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
+            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
         }
         else {
-            height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+            //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait  ? 4 : 3)
         }
         if scalesModel.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
@@ -502,6 +505,17 @@ struct ScalesView: View {
         return msg
     }
     
+    func staffCanFit() -> Bool {
+        var canFit = true
+        if self.scalesModel.scale.hands.count > 1 {
+            //if UIDevice.current.userInterfaceIdiom == .phone && !orientationObserver.orientation.isPortrait {
+            if UIDevice.current.userInterfaceIdiom == .phone && !orientationInfo.isPortrait {
+                canFit = false
+            }
+        }
+        return canFit
+    }
+        
     var body: some View {
         VStack {
             VStack(spacing: 0) {
@@ -559,18 +573,16 @@ struct ScalesView: View {
                 }
             }
             
-            if scalesModel.showStaff {
-                if let score = scalesModel.score {
-                    VStack {
-                        ScoreView(score: score, widthPadding: false)
+            if staffCanFit() {
+                if scalesModel.showStaff {
+                    if let score = scalesModel.score {
+                        VStack {
+                            ScoreView(score: score, widthPadding: false)
+                        }
+                        .commonFrameStyle(backgroundColor: Color.white)
                     }
-                    .commonFrameStyle(backgroundColor: Color.white)
                 }
             }
-            
-//            if badgeBank.show {
-//                
-//            }
             
             if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying || scalesModel.synchedIsPlaying {
                 StopProcessView()

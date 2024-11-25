@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftUI
 
 public struct ClassicStyle {
-    let orientationObserver:DeviceOrientationObserver
+    let orientationObserver = OrientationInfo()
     let sfKeyWidthMultiplier: CGFloat
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
@@ -35,8 +35,8 @@ public struct ClassicStyle {
         self.labelColor = labelColor
         self.keyColor = keyColor
         self.scale = scale
-        self.orientationObserver = DeviceOrientationObserver()
-        self.blackNoteYHeightMult = orientationObserver.orientation.isAnyLandscape ? 0.50 : 0.80
+        //self.blackNoteYHeightMult = orientationObserver.orientation.isAnyLandscape ? 0.50 : 0.80
+        self.blackNoteYHeightMult = orientationObserver.isPortrait ? 0.80 : 0.50
     }
 
     public func naturalColor(_ down: Bool) -> Color {

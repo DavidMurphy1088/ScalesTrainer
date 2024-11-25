@@ -31,7 +31,7 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         return self.value
     }
 
-    public func getColor(ctx:String, staff:Staff, adjustFor:Bool, log:Bool? = false) -> Color {
+    public func getColor(staff:Staff) -> Color {
         return Color.black
 //        var out:Color? = nil
 //

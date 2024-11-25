@@ -90,21 +90,25 @@ public struct NoteHiliteView: View {
 }
 
 public struct TimeSliceView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var timeSlice:TimeSlice
     @ObservedObject var scalesModel:ScalesModel
+    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     var staff:Staff
     var color: Color
     var lineSpacing:Double
     var noteWidth:Double
     var accidental:Int?
+    let isPortrait:Bool
     
-    public init(staff:Staff, timeSlice:TimeSlice, noteWidth:Double, lineSpacing: Double) {
+    public init(staff:Staff, timeSlice:TimeSlice, noteWidth:Double, lineSpacing: Double, isPortrait:Bool) {
         self.staff = staff
         self.timeSlice = timeSlice
         self.noteWidth = noteWidth
         self.color = Color.black
         self.lineSpacing = lineSpacing
         scalesModel = ScalesModel.shared
+        self.isPortrait = isPortrait
     }
 
     func getAccidental(accidental:Int) -> String {
@@ -184,7 +188,7 @@ public struct TimeSliceView: View {
             if entry.getValue() == 0 {
                 Text("?")
                     .font(.largeTitle)
-                    .foregroundColor(entry.getColor(ctx: "RestView1", staff: staff, adjustFor: false, log: true))
+                    .foregroundColor(entry.getColor(staff: staff))
                 Spacer()
             }
             else {
@@ -192,7 +196,7 @@ public struct TimeSliceView: View {
                     Image("rest_quarter_grayscale")
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundColor(entry.getColor(ctx: "RestView2", staff: staff, adjustFor: false, log: true))
+                        .foregroundColor(entry.getColor(staff: staff))
                         .scaledToFit()
                         .frame(height: lineSpacing * 3)
                 }
@@ -200,7 +204,7 @@ public struct TimeSliceView: View {
                     if entry.getValue() == 2 {
                         let height = lineSpacing / 2.0
                         Rectangle()
-                            .fill(entry.getColor(ctx: "RestView3", staff: staff, adjustFor: false, log: true))
+                            .fill(entry.getColor(staff: staff))
                             .frame(width: lineSpacing * 1.5, height: height)
                             .offset(y: 0 - height / 2.0)
                     }
@@ -210,19 +214,19 @@ public struct TimeSliceView: View {
                                 Image("rest_quarter_grayscale")
                                     .resizable()
                                     .renderingMode(.template)
-                                    .foregroundColor(entry.getColor(ctx: "RestView4", staff: staff, adjustFor: false, log: true))
+                                    .foregroundColor(entry.getColor(staff: staff))
                                     .scaledToFit()
                                     .frame(height: lineSpacing * 3)
                                 Text(".")
                                     .font(.largeTitle)
-                                    .foregroundColor(entry.getColor(ctx: "RestView5", staff: staff, adjustFor: false, log: true))
+                                    .foregroundColor(entry.getColor(staff: staff))
                             }
                         }
                         else {
                             if (entry.getValue() == 4.0) {
                                 let height = lineSpacing / 2.0
                                 Rectangle()
-                                    .fill(entry.getColor(ctx: "RestView6", staff: staff, adjustFor: false, log: true))
+                                    .fill(entry.getColor(staff: staff))
                                     .frame(width: lineSpacing * 1.5, height: height)
                                     .offset(y: 0 - height * 1.5)
                             }
@@ -231,7 +235,7 @@ public struct TimeSliceView: View {
                                     Image("rest_quaver")
                                         .resizable()
                                         .renderingMode(.template)
-                                        .foregroundColor(entry.getColor(ctx: "RestView7", staff: staff, adjustFor: false, log: true))
+                                        .foregroundColor(entry.getColor(staff: staff))
                                         .scaledToFit()
                                         .frame(height: lineSpacing * 2)
                                     
@@ -240,7 +244,7 @@ public struct TimeSliceView: View {
                                     VStack {
                                         Text("?")
                                             .font(.largeTitle)
-                                            .foregroundColor(entry.getColor(ctx: "RestView8", staff: staff, adjustFor: false, log: true))
+                                            .foregroundColor(entry.getColor(staff: staff))
                                         Spacer()
                                     }
                                 }
@@ -252,6 +256,23 @@ public struct TimeSliceView: View {
             
         }
         //.border(Color.red)
+    }
+    
+//    func log(geometry: GeometryProxy, noteFrameWidth:Double, frameHeight:Double, noteEllipseMidpoint:Double) -> Bool {
+//        print("=============== NOTEVIEW GEOMETYR", geometry.size.width, geometry.size.height, "FrameWidth", noteFrameWidth, "FrameHeight", frameHeight, "Midpoint", noteEllipseMidpoint)
+//        return false
+//    }
+//    
+    func sizeMultiplier() -> Double {
+        ///The closed ellipse on iPhone, landscape appears to be too small to draw. No idea why 🥵. So bump the closed ellipse size slightly to force it to draw.
+        var multipler = 1.0
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            //if orientationObserver.orientation.isAnyLandscape {
+            if !orientationInfo.isPortrait {
+                multipler = 1.1
+            }
+        }
+        return multipler
     }
     
     func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:TimeSliceStatusTag) -> some View {
@@ -277,23 +298,22 @@ public struct TimeSliceView: View {
                     .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
                     .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
                               y: noteEllipseMidpoint + yOffset)
-                    .foregroundColor(note.getColor(ctx: "NoteView1", staff: staff, adjustFor: false))
+                    .foregroundColor(note.getColor(staff: staff))
                 
             }
-            if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted )  {
+            if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted ) {
                 Ellipse()
                 //Closed ellipse
-                    .foregroundColor(note.getColor(ctx: "NoteView2", staff: staff, adjustFor: true))
-                    //.foregroundColor(.green)
-                    .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 1.0))
+                    //.stroke(note.getColor(staff: staff), lineWidth: 2)
+                    .foregroundColor(note.getColor(staff: staff))
+                    .frame(width: noteWidth * self.sizeMultiplier(), height: CGFloat(Double(lineSpacing) * 1.0) * self.sizeMultiplier())
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-                    //.position(x: noteFrameWidth/2 * (Int.random(in: 0...10) < 3 ? 1.5 : 1.0), y: noteEllipseMidpoint)
             }
             if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
                 Ellipse()
                 //Open ellipse
-                    .stroke(note.getColor(ctx: "NoteView3", staff: staff, adjustFor: false), lineWidth: 2)
-                    .foregroundColor(note.getColor(ctx: "NoteView4", staff: staff, adjustFor: false))
+                    .stroke(note.getColor(staff: staff), lineWidth: 2)
+                    .foregroundColor(note.getColor(staff: staff))
                     .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
             }
@@ -308,7 +328,7 @@ public struct TimeSliceView: View {
                     //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
                     //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
                     .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
-                    .foregroundColor(note.getColor(ctx: "NoteView5", staff: staff, adjustFor: false))
+                    .foregroundColor(note.getColor(staff: staff))
             }
             
             ///Ledger lines
@@ -322,7 +342,7 @@ public struct TimeSliceView: View {
                         path.move(to: CGPoint(x: x + xOffset, y: y))
                         path.addLine(to: CGPoint(x: x + (2 * noteWidth) - xOffset, y: y))
                     }
-                    .stroke(note.getColor(ctx: "NoteView6", staff: staff, adjustFor: false), lineWidth: 1)
+                    .stroke(note.getColor(staff: staff), lineWidth: 1)
                 }
             }
         }

@@ -97,6 +97,8 @@ struct FamousQuotesView: View {
 }
 
 struct ActivityModeView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     @State var menuOptionsLeft:[ActivityMode] = []
     //@State var menuOptionsRight:[ActivityMode] = []
     @State var helpShowing = false
@@ -115,14 +117,17 @@ struct ActivityModeView: View {
                 let activityMode = menuOptionsLeft[0]
                 NavigationLink(destination: getView(activityMode: activityMode)) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        Image(menuOptionsLeft[0].imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(Circle())  // Clips the image to a circular shape
-                            .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                            .overlay(overlay)
+                        //if UIDevice.current.userInterfaceIdiom != .phone || !orientationObserver.orientation.isAnyLandscape {
+                        if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                            ///Image wont scale reasonably when too little space
+                            Image(menuOptionsLeft[0].imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(Circle())  // Clips the image to a circular shape
+                                .frame(width: UIScreen.main.bounds.size.width * 0.35)
+                                .overlay(overlay)
                             //.border(.red)
-                            
+                        }
                         Text(activityMode.name)
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
                     }
@@ -135,13 +140,16 @@ struct ActivityModeView: View {
                 let activityMode = menuOptionsLeft[1]
                 NavigationLink(destination: getView(activityMode: activityMode)) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        Image(activityMode.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(Circle())
-                            .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                            .overlay(overlay)
+                        //if UIDevice.current.userInterfaceIdiom != .phone || !orientationObserver.orientation.isAnyLandscape {
+                        if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                            Image(activityMode.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(Circle())
+                                .frame(width: UIScreen.main.bounds.size.width * 0.35)
+                                .overlay(overlay)
                             //.border(.red)
+                        }
                         Text(activityMode.name)
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
                     }

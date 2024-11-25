@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SpinWheelView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel = ScalesModel.shared
     //let board:MusicBoard
     //let boardGrade:MusicBoardGrade
@@ -12,8 +13,6 @@ struct SpinWheelView: View {
     
     //@State private var wheelSize: CGFloat = UIScreen.main.bounds.size.height * (DeviceOrientationObserver().orientation.isAnyLandscape ? 0.1 : 0.1)
     @State private var wheelSize: CGFloat = 0
-    //0.5 // Size as a percentage of screen width
-    //@State private var width = 0.0 //DeviceOrientationObserver().orientation.isAnyLandscape ? 0.5 : 0.8
 
     @State private var selectedScaleType = 0
     @State private var selectedScaleRoot = 0
@@ -138,7 +137,7 @@ struct SpinWheelView: View {
                     GeometryReader { geometry in
                         let handSizeFactor = 0.25
                         let rootSizeFactor = 0.40
-                        let arrowPos = geometry.size.width * 0.92
+                        let arrowPos = geometry.size.width * (orientationInfo.isPortrait ? 0.94 : 0.76)
                         ZStack {
                             if true {
                                 SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize * geometry.size.width)
@@ -219,7 +218,7 @@ struct SpinWheelView: View {
         }
         .onAppear() {
             scalesModel.setSpinState(.notStarted)
-            self.wheelSize = DeviceOrientationObserver().orientation.isAnyLandscape ? 0.55 : 0.9
+            self.wheelSize = orientationInfo.isPortrait ? 0.9 : 0.55
         }
 
         ///Block the back button for a badge attempt

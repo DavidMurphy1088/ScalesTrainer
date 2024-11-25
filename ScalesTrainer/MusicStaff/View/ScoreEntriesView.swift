@@ -2,6 +2,7 @@ import SwiftUI
 import CoreData
 
 struct ScoreEntriesView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     var noteLayoutPositions:NoteLayoutPositions
     @ObservedObject var barLayoutPositions:BarLayoutPositions
     @ObservedObject var score:Score
@@ -71,7 +72,7 @@ struct ScoreEntriesView: View {
                 getQuaverImage(note:startNote)
                     .resizable()
                     .renderingMode(.template)
-                    .foregroundColor(startNote.getColor(ctx: "quaverBeamView1", staff: staff, adjustFor: false))
+                    .foregroundColor(startNote.getColor(staff: staff))
                     .scaledToFit()
                     .frame(height: height)
                     .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset)
@@ -80,7 +81,7 @@ struct ScoreEntriesView: View {
                     getQuaverImage(note:startNote)
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundColor(startNote.getColor(ctx: "quaverBeamView2", staff: staff, adjustFor: false))
+                        .foregroundColor(startNote.getColor(staff: staff))
                         .scaledToFit()
                         .frame(height: height)
                         .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset + lineSpacing)
@@ -92,63 +93,57 @@ struct ScoreEntriesView: View {
                     path.move(to: CGPoint(x: line.0.x, y: line.0.y))
                     path.addLine(to: CGPoint(x: line.1.x, y: line.1.y))
                 }
-                .stroke(endNote.getColor(ctx: "quaverBeamView3", staff: staff, adjustFor: false), lineWidth: 3)
+                .stroke(endNote.getColor(staff: staff), lineWidth: 3)
             }
         }
     }
         
 //    func log(_ s:String) -> Bool {
-//        print("============ ScoreEntryView \(s)")
+//        print("============ ScoreEntryView LOG \(s)")
 //        return true
 //    }
     
+    func updateQuaverBeamsLayouts(timeSlice:TimeSlice, frame:CGRect) {
+        ///Update note layout positions so the view can draw in quaver beams in the exact right x,y positions
+        noteLayoutPositions.storePosition(onAppear: true, notes: timeSlice.getTimeSliceNotes(handType: staff.handType), rect: frame)
+        DispatchQueue.main.async {
+            ///Ensure note layout updates are published for subsequent drawing of quaver beams
+            //print("=================================== BEAM .ONChange", staff.beamUpdates)
+            staff.beamUpdates += 1
+        }
+    }
+    
     var body: some View {
         ZStack {
-            //let noteWidth = score.lineSpacing * 1.2
-            let noteWidth = score.lineSpacing * 1.1
+            let noteWidth = score.lineSpacing * 1.1 * (self.orientationInfo.isPortrait ? 1.0 : 1.0)
             HStack(spacing: 0) { //HStack - score entries display along the staff
                 ForEach(score.scoreEntries) { entry in
-                    ZStack { //VStack - required in forEach closure
+                    ZStack {
                         if entry is TimeSlice {
                             let timeSlice = entry as! TimeSlice
                             ZStack { // Each note frame in the timeslice shares the same same vertical space
                                 TimeSliceView(staff: staff,
                                               timeSlice: timeSlice,
                                               noteWidth: noteWidth,
-                                              lineSpacing: score.lineSpacing)
-                                //.border(Color.green)
+                                              lineSpacing: score.lineSpacing,
+                                              isPortrait: self.orientationInfo.isPortrait)
                                 .background(GeometryReader { geometry in
                                     ///Record and store the note's postion so we can later draw its stems which maybe dependent on the note being in a quaver group with a quaver beam
                                     Color.clear
+                                        .onChange(of: self.orientationInfo.isPortrait, {
+                                            self.updateQuaverBeamsLayouts(timeSlice: timeSlice, frame: geometry.frame(in: .named("NotePositioningStack")))
+                                        })
+                                        
                                         .onAppear {
-                                            //if staff.staffNum == 0 {
-                                            noteLayoutPositions.storePosition(onAppear: true, notes: timeSlice.getTimeSliceNotes(handType: staff.handType),
-                                                                                  rect: geometry.frame(in: .named("HStack")))
-                                                DispatchQueue.main.async {
-                                                    ///Ensure note layout updates are published for subsequent drawing of quaver beams
-                                                    staff.beamUpdates += 1
-                                                }
-                                            //}
+                                            self.updateQuaverBeamsLayouts(timeSlice: timeSlice, frame: geometry.frame(in: .named("NotePositioningStack")))
                                         }
-                                        .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                            //if staff.staffNum == 0 {
-                                            noteLayoutPositions.storePosition(onAppear: false, notes: timeSlice.getTimeSliceNotes(handType: staff.handType),
-                                                                                  rect: geometry.frame(in: .named("HStack")))
-                                                DispatchQueue.main.async {
-                                                    ///Ensure note layout updates are published for subsequent drawing of quaver beams
-                                                    staff.beamUpdates += 1
-                                                }
-                                            //}
-                                        }
-                                })
-                                
-                                StemView(score:score,
-                                         staff:staff,
-                                         notePositionLayout: noteLayoutPositions,
-                                         notes: timeSlice.getTimeSliceNotes(handType: staff.handType))
-
-                             }
-                            //.border(Color.red)
+                                    })
+                                    
+                                    StemView(score:score,
+                                             staff:staff,
+                                             notePositionLayout: noteLayoutPositions,
+                                             notes: timeSlice.getTimeSliceNotes(handType: staff.handType))
+                            }
                         }
                         
                         if entry is BarLine {
@@ -181,7 +176,7 @@ struct ScoreEntriesView: View {
                 Text(" ")
                     .frame(width:1.5 * noteWidth)
             }
-            .coordinateSpace(name: "HStack")
+            .coordinateSpace(name: "NotePositioningStack")
 
             ///---------- Quaver beams ------------
             ///Draw quaver stems and beams over quavers that are beamed together
