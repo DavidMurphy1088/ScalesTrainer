@@ -123,6 +123,15 @@ public enum KeyboardColourType: CaseIterable, Comparable, Codable {
     }
 }
 
+public class ScaleCustomisation : Codable {
+    let startMidiLH:Int?
+    let startMidiRH:Int?
+    init (startMidiRH:Int, startMidiLH:Int) {
+        self.startMidiRH = startMidiRH
+        self.startMidiLH = startMidiLH
+    }
+}
+
 public class ScaleNoteState : Codable {
     var id = UUID()
     let sequence:Int
@@ -172,6 +181,7 @@ public class Scale : Codable {
     var notesPerSegment:Int
     let timeSignature:TimeSignature
     let debugOn:Bool
+    var scaleCustomisation:ScaleCustomisation? = nil
     
     public init() {
         self.scaleRoot = ScaleRoot(name: "")
@@ -203,7 +213,8 @@ public class Scale : Codable {
     }
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
-                minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType, debug:Bool = false) {
+                minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType, 
+                scaleCustomisation:ScaleCustomisation? = nil, debug:Bool = false) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
         self.dynamicType = dynamicType
@@ -214,9 +225,11 @@ public class Scale : Codable {
         self.debugOn = debug
         scaleNoteState = []
         self.hands = hands
+        self.scaleCustomisation = scaleCustomisation
         
-        print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
-        
+        if debug {
+            print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
@@ -237,50 +250,55 @@ public class Scale : Codable {
         ///Lowest start note is A three ledger lines below the stave, making highest note G three ledger lines above the stave.
         
         ///The start of the scale for one octave -
-        
 
         var firstMidi = 0
-        switch scaleRoot.name {
-        case "C":
-            firstMidi = 60
-        case "C#":
-            firstMidi = 61
-        case "D♭":
-            firstMidi = 61
-        case "D":
-            firstMidi = 62
-        case "D#":
-            firstMidi = 63
-        case "E♭":
-            firstMidi = 63
-        case "E":
-            firstMidi = 64
-        case "F":
-            firstMidi = 65
-        case "F#":
-            firstMidi = 66
-        case "G♭":
-            firstMidi = 66
-        case "G":
-            firstMidi = 67 //- 12
-        case "G#":
-            firstMidi = 68 //- 12
-        case "A♭":
-            firstMidi = 68 //- 12
-        case "A":
-            firstMidi = 69 //- 12
-        case "A#":
-            firstMidi = 70 - 12
-        case "B♭":
-            firstMidi = 70 - 12
-        case "B":
-            firstMidi = 71 - 12
-        default:
-            firstMidi = 60
+        if let scaleCustomisation = self.scaleCustomisation {
+            if let startMidiRH = scaleCustomisation.startMidiRH {
+                firstMidi = startMidiRH
+            }
+        }
+        if firstMidi == 0 {
+            switch scaleRoot.name {
+            case "C":
+                firstMidi = 60
+            case "C#":
+                firstMidi = 61
+            case "D♭":
+                firstMidi = 61
+            case "D":
+                firstMidi = 62
+            case "D#":
+                firstMidi = 63
+            case "E♭":
+                firstMidi = 63
+            case "E":
+                firstMidi = 64
+            case "F":
+                firstMidi = 65
+            case "F#":
+                firstMidi = 66
+            case "G♭":
+                firstMidi = 66
+            case "G":
+                firstMidi = 67 //- 12
+            case "G#":
+                firstMidi = 68 //- 12
+            case "A♭":
+                firstMidi = 68 //- 12
+            case "A":
+                firstMidi = 69 //- 12
+            case "A#":
+                firstMidi = 70 - 12
+            case "B♭":
+                firstMidi = 70 - 12
+            case "B":
+                firstMidi = 71 - 12
+            default:
+                firstMidi = 60
+            }
         }
         
         self.scaleShapeForFingering = .none
-        
         notesPerSegment = 0
         
         if [.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(self.scaleType) {
@@ -323,35 +341,46 @@ public class Scale : Codable {
             }
         }
         
-        for handIndex in [0,1] {
-            var sequence = 0
-            var nextMidi = firstMidi
-            let scaleOffsetsForHand:[Int]
-            scaleOffsetsForHand = scaleOffsets
-            
-            if handIndex == 1 {
-                //if self.scaleMotion != .contraryMotion {
-                    nextMidi -= 12
-                //}
+        ///Get the start MIDI for the scale and hand
+        ///The scale start might have been set by scale customisation
+        func getStartMidi(hand:Int, midi:Int) -> Int {
+            var startMidi = midi
+            if let scaleCustomisation = self.scaleCustomisation {
+                if hand == 0 {
+                    if let startMidiRH = scaleCustomisation.startMidiRH {
+                         return startMidiRH
+                    }
+                }
+
+                if hand == 1 {
+                    if let startMidiLH = scaleCustomisation.startMidiLH {
+                         return startMidiLH
+                    }
+                }
+            }
+            if hand == 1 {
+                startMidi = midi - 12
                 if self.scaleMotion == .similarMotion {
-                    //if firstMidi >= 62 {
-                    if nextMidi >= 53 {
-                        nextMidi -= 12
+                    if startMidi >= 53 {
+                        startMidi -= 12
                     }
                 }
             }
             if octaves > 1 {
-                if handIndex == 0 {
-                    if firstMidi >= 65 {
-                        nextMidi -= 12
+                if hand == 0 {
+                    if startMidi >= 65 {
+                        startMidi -= 12
                     }
                 }
-//                if handIndex == 1 {
-//                    if firstMidi >= 69 {
-//                        nextMidi -= 12
-//                    }
-//                }
             }
+            return startMidi
+        }
+        
+        for handIndex in [0,1] {
+            var sequence = 0
+            var nextMidi = getStartMidi(hand: handIndex, midi: firstMidi)
+            let scaleOffsetsForHand:[Int]
+            scaleOffsetsForHand = scaleOffsets
             
             self.scaleNoteState.append([])
 

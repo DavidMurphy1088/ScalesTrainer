@@ -714,7 +714,8 @@ public class ScalesModel : ObservableObject {
                                    minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String, debug:Bool = false) {
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String, 
+                               scaleCustimisation:ScaleCustomisation? = nil, debug:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
@@ -722,6 +723,7 @@ public class ScalesModel : ObservableObject {
                           octaves: octaves,
                           hands: hands,
                           minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                          scaleCustomisation: scaleCustimisation,
                           debug: debug)
         setKeyboardAndScore(scale: scale)
     }
