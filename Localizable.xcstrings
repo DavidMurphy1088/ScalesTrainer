@@ -158,9 +158,6 @@
     "Choose your keyboard colour " : {
 
     },
-    "Clear MIDI" : {
-
-    },
     "Connected to MIDI keyboards: %@" : {
 
     },
@@ -180,6 +177,9 @@
     "Current Amplitude Filter:%@" : {
 
     },
+    "Delete" : {
+
+    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -190,6 +190,9 @@
 
     },
     "Email %@" : {
+
+    },
+    "Enable MIDI Connections" : {
 
     },
     "Famous Quotes" : {
@@ -693,9 +696,6 @@
 
     },
     "Under Construction" : {
-
-    },
-    "Use MIDI Keyboard" : {
 
     },
     "Version %@" : {

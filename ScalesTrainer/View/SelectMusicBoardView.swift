@@ -52,7 +52,6 @@ struct SelectBoardGradesView: View {
                 Settings.shared.boardName = inBoard.name
                 Settings.shared.save()
                 SettingsPublished.shared.setBoardAndGrade(boardAndGrade: BoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex))
-                print("==================== BoardView Disappear SETTINGS UPDATED grade:", Settings.shared.boardName, Settings.shared.boardGrade)
             }
         }
     }

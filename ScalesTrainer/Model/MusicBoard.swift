@@ -10,7 +10,6 @@ class BoardAndGrade: Codable, Identifiable {
         self.grade = grade
         self.scales = []
         self.scales = self.setScales()
-        //print("========= Grade Init", board.name, "Scales", self.scales.count)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -151,16 +150,20 @@ class BoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                scaleCustomisation: ScaleCustomisation(startMidiRH: 66, startMidiLH: 54)))
             
             ///Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 51)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiLH: 39)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
@@ -172,7 +175,8 @@ class BoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
         }
         
         if grade == 4 {
@@ -185,18 +189,23 @@ class BoardAndGrade: Codable, Identifiable {
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 52, startMidiLH: 40)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 52)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiLH: 40)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
@@ -207,8 +216,8 @@ class BoardAndGrade: Codable, Identifiable {
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                scaleCustomisation: ScaleCustomisation(startMidiRH: 56, startMidiLH: 44, clefSwitch: false)))
         }
 
         if grade == 5 {
@@ -231,17 +240,20 @@ class BoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(clefSwitch: false)))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 67, startMidiLH: 55, clefSwitch: false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false), debug1: true))
         }
 
         return scales
@@ -357,8 +369,8 @@ class MusicBoard : Identifiable, Codable, Hashable {
         result.append(MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"))
         if true {
             result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"))
-            result.append(MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"))
-            result.append(MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"))
+            //result.append(MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"))
+            //result.append(MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"))
             result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"))
             result.append(MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"))
         }

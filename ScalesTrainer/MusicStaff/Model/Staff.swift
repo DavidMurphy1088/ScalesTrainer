@@ -5,7 +5,6 @@ import AVFoundation
 public class Staff : ObservableObject, Identifiable {
     @Published var publishUpdate = 0
     @Published var beamUpdates = 0
-    
     @Published public var noteLayoutPositions:NoteLayoutPositions
     
     public let id = UUID()

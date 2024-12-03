@@ -89,7 +89,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
 
         let sampler = audioManager.keyboardMidiSampler
-        for hand in scale.hands {
+        for hand in scale.hands { //scale.hands {
+
             let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
@@ -129,6 +130,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             }
         }
 
+        ///Calculate required note delay
         if waitBeatsForScale == 0 {
             //let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
             let scaleNoteState = scale.getScaleNoteState(handType: .right, index: nextNoteIndex)
@@ -151,7 +153,6 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         if waitBeatsForBacking == 0 {
             if let backingChord = self.backingChord {
                 waitBeatsForBacking = Int(backingChord.value/self.tickDuration) - 1
-
             }
         }
         else {

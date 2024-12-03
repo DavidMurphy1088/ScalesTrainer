@@ -265,7 +265,7 @@ struct ScalesView: View {
 
             HStack(alignment: .top) {
                 Spacer()
-                if settings.useMidiKeyboard || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if settings.enableMidiConnnections || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     HStack()  {
                         let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
                         Button(action: {
@@ -292,7 +292,7 @@ struct ScalesView: View {
                     .padding(.horizontal, 0)
                 }
                 
-                if settings.useMidiKeyboard || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if settings.enableMidiConnnections || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
@@ -658,7 +658,9 @@ struct ScalesView: View {
             scalesModel.setShowStaff(true) //scalesModel.scale.hand != 2)
             BadgeBank.shared.setShow(false)
             scalesModel.setRecordedAudioFile(nil)
-            //scalesModel.scale.debug12("In View1")
+            //if scalesModel.scale.debugOn {
+                //scalesModel.scale.debug1("In View1", short: false)
+            //}
         }
         
         .onDisappear {

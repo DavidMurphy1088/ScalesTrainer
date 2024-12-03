@@ -48,15 +48,14 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         badges.clearMatches()
         scalesModel.scale.resetMatchedData()
         if scalesModel.tapHandlers.count > 0 {
-            let tapHandler = scalesModel.tapHandlers[0] as! RealTimeTapHandler
-            tapHandler.notifyFunction = self.notify
+            let tapHandler = scalesModel.tapHandlers[0] //as! RealTimeTapHandler
+            tapHandler.setNotifyFunction(notifyFunction: self.notify(midi:status:))
         }
         
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
         lastMidiScaleIndex = nil
         notifyCount = 0
-        //scalesModel.scale.debug12("Lead Start")
     }
     
     func notify(midi:Int, status:TapEventStatus) {
@@ -66,7 +65,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         if [.belowAmplitudeFilter, .countTooLow].contains(status) {
             return
         }
-        //if ![.inScale, .outOfScale].contains(status) {
         if ![.inScale].contains(status) {
            // badges.setTotalCorrect(badges.totalCorrect - 1)
            // badges.removeMatch()
@@ -119,7 +117,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 ///Set next segment here so the tap handler hilights the correct stave note
                 let nextExpected = scale.getScaleNoteState(handType: handType, index: self.nextExpectedScaleIndex) ///scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
                 scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
-
             }
         }
 //        else {

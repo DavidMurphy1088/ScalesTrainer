@@ -99,8 +99,6 @@ struct ScoreEntriesView: View {
     }
         
 //    func log(_ s:String) -> Bool {
-//        print("============ ScoreEntryView LOG \(s)")
-//        return true
 //    }
     
     func updateQuaverBeamsLayouts(timeSlice:TimeSlice, frame:CGRect) {
@@ -108,7 +106,6 @@ struct ScoreEntriesView: View {
         noteLayoutPositions.storePosition(onAppear: true, notes: timeSlice.getTimeSliceNotes(handType: staff.handType), rect: frame)
         DispatchQueue.main.async {
             ///Ensure note layout updates are published for subsequent drawing of quaver beams
-            //print("=================================== BEAM .ONChange", staff.beamUpdates)
             staff.beamUpdates += 1
         }
     }

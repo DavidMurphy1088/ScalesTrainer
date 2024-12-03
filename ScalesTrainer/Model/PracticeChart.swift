@@ -59,7 +59,7 @@ class PracticeChart: Codable {
 
     var boardAndGrade:BoardAndGrade
     var columns: Int
-    var cells: [[PracticeChartCell]]
+    var rows: [[PracticeChartCell]]
     var minorScaleType: Int
     var firstColumnDayOfWeekNumber:Int
     var todaysColumn:Int
@@ -67,7 +67,7 @@ class PracticeChart: Codable {
     init(boardAndGrade:BoardAndGrade, columnWidth:Int, minorScaleType:Int) {
         self.boardAndGrade = boardAndGrade
         self.columns = 3
-        self.cells = []
+        self.rows = []
         let scales = self.boardAndGrade.getScales()
         self.minorScaleType = minorScaleType
         
@@ -77,14 +77,14 @@ class PracticeChart: Codable {
             if scaleCtr < scales.count {
                 for c in 0..<columnWidth {
                     if scaleCtr < scales.count {
-                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: cells.count == 0 || LicenceManager.shared.isLicensed(), badges: 0))
+                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed(), badges: 0))
                         scaleCtr += 1
                     }
                     else {
                         break
                     }
                 }
-                cells.append(rowCells)
+                self.rows.append(rowCells)
             }
             else {
                 break
@@ -99,18 +99,18 @@ class PracticeChart: Codable {
     }
     
     func debug11(_ ctx:String) {
-        print("====== Chart Debug", ctx)
-        for r in 0..<self.cells.count {
-            let row = self.self.cells[r]
+        print("====== DEUBG Chart Debug", ctx)
+        for r in 0..<self.rows.count {
+            let row = self.self.rows[r]
             for c in 0..<row.count {
-                let cell = self.cells[r][c]
+                let cell = self.rows[r][c]
                 print(r, c, "cell \(cell.scale.getScaleName(handFull: false))")
             }
         }
     }
     
     func reset() {
-        for row in cells {
+        for row in rows {
             for cell in row {
                 cell.adjustBadges(delta: 0 - cell.badgeCount)
                 self.saveToFile()
@@ -119,7 +119,7 @@ class PracticeChart: Codable {
     }
     
     func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
-        for cells in cells {
+        for cells in rows {
             for row in cells {
                 if row.scale.getScaleName(handFull: false) == scale.getScaleName(handFull: false) {
                     return row
@@ -153,7 +153,7 @@ class PracticeChart: Codable {
             self.firstColumnDayOfWeekNumber += 3
             if self.firstColumnDayOfWeekNumber > 6 {
                 self.firstColumnDayOfWeekNumber -= 7
-                for row in self.cells {
+                for row in self.rows {
                     for cell in row {
                         cell.badgeCount = 0
                     }
@@ -164,21 +164,21 @@ class PracticeChart: Codable {
     }
     
     func shuffle() {
-        let rows = self.cells.count
-        let cells = self.cells[0].count
+        let rows = self.rows.count
+        let cells = self.rows[0].count
         let srcRow = (Int.random(in: 0..<rows))
         let srcCol = (Int.random(in: 0..<cells))
         let tarRow = (Int.random(in: 0..<rows))
         let tarCol = (Int.random(in: 0..<cells))
-        if srcCol >= self.cells[srcRow].count {
+        if srcCol >= self.rows[srcRow].count {
             return
         }
-        if tarCol >= self.cells[tarRow].count {
+        if tarCol >= self.rows[tarRow].count {
             return
         }
-        let cell:PracticeChartCell = self.cells[srcRow][srcCol]
-        self.cells[srcRow][srcCol] = self.cells[tarRow][tarCol]
-        self.cells[tarRow][tarCol] = cell
+        let cell:PracticeChartCell = self.rows[srcRow][srcCol]
+        self.rows[srcRow][srcCol] = self.rows[tarRow][tarCol]
+        self.rows[tarRow][tarCol] = cell
         let secs = Double.random(in: 0..<0.75)
         DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
             cell.isActive = !cell.isActive
@@ -191,7 +191,7 @@ class PracticeChart: Codable {
     
     func getScales() -> [Scale] {
         var result:[Scale] = []
-        for row in cells {
+        for row in rows {
             for col in row {
                 result.append(col.scale)
             }
@@ -200,7 +200,7 @@ class PracticeChart: Codable {
     }
     
     func changeScaleTypes(oldTypes:[ScaleType], newType:ScaleType) {
-        for row in cells {
+        for row in rows {
             for chartCell in row {
                 //if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
                     if oldTypes.contains(chartCell.scale.scaleType) {
@@ -230,6 +230,21 @@ class PracticeChart: Codable {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
     }
+    
+    func deleteFile() {
+        do {
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to save PracticeChart")
+                return
+            }
+            let url = dir.appendingPathComponent(self.boardAndGrade.getFileName())
+            try FileManager.default.removeItem(at: url)
+            Logger.shared.log(self, "PracticeChart deleted: \(url.path)")
+        } catch {
+            Logger.shared.reportError(self, "Failed to delete PracticeChart \(error)")
+        }
+    }
+
 }
 
 extension PracticeChart {
@@ -243,8 +258,8 @@ extension PracticeChart {
             let url = dir.appendingPathComponent(boardAndGrade.getFileName())
             let data = try Data(contentsOf: url)  // Read the data from the file
             let chart = try decoder.decode(PracticeChart.self, from: data)
-            for r in 0..<chart.cells.count {
-                let row:[PracticeChartCell] = chart.cells[r]
+            for r in 0..<chart.rows.count {
+                let row:[PracticeChartCell] = chart.rows[r]
                 for chartCell in row {
                     chartCell.isLicensed = false
                     if LicenceManager.shared.isLicensed() {

@@ -163,7 +163,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    //@Published Cant use it. Published needs main thread update but some processes cant wait for tjhe main thread to update it.
+    //@Published Cant use it. Published needs main thread update but some processes cant wait for the main thread to update it.
     var selectedScaleSegment = 0
     @Published var selectedScaleSegmentPublished = 0
     func setSelectedScaleSegment(_ segment:Int) {
@@ -361,18 +361,19 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            if Settings.shared.useMidiKeyboard {
+            if Settings.shared.enableMidiConnnections {
+                self.tapHandlers.append(MidiNotificationHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             }
             else {
                 self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             }
             leadProcess.start()
-            if true {
+            if !Settings.shared.enableMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
             }
-            else {
-                leadProcess.playDemo()
-            }
+//            if demo {
+//                leadProcess.playDemo()
+//            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
@@ -634,7 +635,13 @@ public class ScalesModel : ObservableObject {
         for tsIndex in 0..<timeSlices.count {
             ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
             ///Consider a clef change only at a bar start
-            if true {
+            var clefSwitchEnabled = true
+            if let customisation = scale.scaleCustomisation {
+                if let clefSwitch = customisation.clefSwitch {
+                    clefSwitchEnabled = clefSwitch
+                }
+            }
+            if clefSwitchEnabled {
                 ///Clef switching currenlty only occurs in the LH stave. Only if it occurs there must an invisible clef be inserted into the RH stave to keep the two staves aligned.
                 ///i.e. if the stave is the LH stave or its the LH and RH staves showing together.
                 if scale.hands.contains(1) {
@@ -661,12 +668,10 @@ public class ScalesModel : ObservableObject {
             }
             
             let staffNote = entries[noteIndex] as! StaffNote
-            //let staff = Staff(score: score, type: currentClefType, linesInStaff: 5)
             ///Consider the note's placement in the current clef layout
             let clef = StaffClef(score: score, clefType: currentClefType)
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
-            //print("=========xxx", timeSlice.valuePointInBar,  staffNote.midiNumber, offsetsInGroup)
         }
 
         ///Create the required display staffs (one for the each hand) and position the required notes in them.
@@ -694,7 +699,7 @@ public class ScalesModel : ObservableObject {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
                         staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning)
                         staffNote.clef = clefForPositioning
-                        //print("======== NoteOffset Hand:", hand, "valuept:", staffNote.timeSlice.valuePoint, "midi:", staffNote.midiNumber, "cleftype:", staffForPositioning.type, "offset:", staffNote.noteStaffPlacement.offsetFromStaffMidline)
+
                     }
                 }
             }
@@ -714,8 +719,8 @@ public class ScalesModel : ObservableObject {
                                    minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String, 
-                               scaleCustimisation:ScaleCustomisation? = nil, debug:Bool = false) {
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String="", 
+                               scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
@@ -723,8 +728,8 @@ public class ScalesModel : ObservableObject {
                           octaves: octaves,
                           hands: hands,
                           minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
-                          scaleCustomisation: scaleCustimisation,
-                          debug: debug)
+                          scaleCustomisation: scaleCustomisation,
+                          debug1: debug1)
         setKeyboardAndScore(scale: scale)
     }
 

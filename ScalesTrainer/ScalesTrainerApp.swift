@@ -154,11 +154,14 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
-//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1], ctx: "App Start", debug:true)
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, 
+                        scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0],
+                        //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
+                        debug1: true)
                     
 //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, minTempo: 70, octaves: 1, hands: [0,1], ctx: "App Start")
                     
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0,1], ctx: "App Start", scaleCustimisation : ScaleCustomisation(startMidiRH: 51, startMidiLH: 39), debug: true)
+//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0,1], ctx: "App Start", scaleCustomisation : ScaleCustomisation(startMidiRH: 51, startMidiLH: 39), debug: true)
                     
                     selectedTab = 0
                 }
@@ -217,6 +220,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             statusMsg = "unknown \(status)"
         }
         Logger.shared.log(self, "Microphone access:\(statusMsg))")
+        if Settings.shared.enableMidiConnnections {
+            let midiManager = MIDIManager.shared
+            midiManager.connectSources()
+        }
         return true
 
     }

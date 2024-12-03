@@ -126,9 +126,12 @@ public enum KeyboardColourType: CaseIterable, Comparable, Codable {
 public class ScaleCustomisation : Codable {
     let startMidiLH:Int?
     let startMidiRH:Int?
-    init (startMidiRH:Int, startMidiLH:Int) {
+    let clefSwitch:Bool?
+    
+    init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil) {
         self.startMidiRH = startMidiRH
         self.startMidiLH = startMidiLH
+        self.clefSwitch = clefSwitch
     }
 }
 
@@ -214,7 +217,7 @@ public class Scale : Codable {
 
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
                 minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType, 
-                scaleCustomisation:ScaleCustomisation? = nil, debug:Bool = false) {
+                scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
         self.dynamicType = dynamicType
@@ -222,13 +225,13 @@ public class Scale : Codable {
         self.octaves = octaves
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
-        self.debugOn = debug
+        self.debugOn = debug1
         scaleNoteState = []
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
         
-        if debug {
-            print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        if self.debugOn {
+            //print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
         }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
@@ -464,7 +467,7 @@ public class Scale : Codable {
             }
         }
         
-        ///Set MIDIs for contrary motion - downwards direction, contrary
+        ///Now adjust MIDIs for contrary motion if required - downwards direction, contrary
         if true && scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
@@ -547,7 +550,9 @@ public class Scale : Codable {
                 }
             }
         }
-        
+        if self.debugOn {
+            //self.debug11("end create", short: false)
+        }
         Scale.createCount += 1
     }
     
@@ -779,7 +784,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug11(_ msg:String)  {
+    func debug444(_ msg:String, short:Bool)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {
@@ -802,6 +807,9 @@ public class Scale : Codable {
                 idx += 1
                 if idx % 4 == 0 {
                     print()
+                }
+                if short {
+                    break
                 }
             }
         }

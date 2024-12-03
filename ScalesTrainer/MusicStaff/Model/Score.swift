@@ -184,51 +184,16 @@ public class Score : ObservableObject {
         }
         return getStaffHeight() * heightMult
     }
-    
-//    func addClefs() -> Score {
-//        return self
-//        var entryIndex = 0
-//        //var newEntries:[ScoreEntry] = []
-//        ///deep copy the staff
-//        for entry in self.scoreEntries {
-//            if entry is TimeSlice {
-//                //let
-//            }
-//        }
-//        
-//        while entryIndex < self.scoreEntries.count {
-//            let entry = self.scoreEntries[entryIndex]
-//            if entry is TimeSlice {
-//                let timeSlice = entry as! TimeSlice
-//                
-//                for note in timeSlice.getTimeSliceNotes() {
-//                    if let ledgerLines = note.noteStaffPlacements[0]?.offsetFromStaffMidline {
-//                        print("========", entryIndex, note.midiNumber, ledgerLines)
-//                        if ledgerLines > 6 {
-//                            note.midiNumber -= 12
-//                            if let placement = note.noteStaffPlacements[0] {
-//                                placement.offsetFromStaffMidline -= 7
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
-    public func setScoreNotePlayed(midi: Int, segment: Int) -> TimeSlice? {
+        
+    public func setScoreNotePlayed(handType:HandType, midi: Int, segment: Int) -> TimeSlice? {
         let timeSlices = getAllTimeSlices()
-        //var nearestDist = Int(Int64.max)
-//        let startIndex = segment == 0 ? 0 : timeSlices.count-1
-//        let endIndex = segment == 0 ? timeSlices.count-1 :0
         var noteFound:TimeSlice?
 
-        //for i in stride(from: startIndex, through: endIndex, by: segment == 0 ? 1 : -1) {
         for i in 0..<timeSlices.count {
             let ts = timeSlices[i]
             let entry = ts.entries[0]
             let staffNote = entry as! StaffNote
-            if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
+            if staffNote.handType == handType && staffNote.midiNumber == midi && staffNote.segments[0] == segment {
                 ts.setShowIsPlaying(true)
                 noteFound = ts
                 break

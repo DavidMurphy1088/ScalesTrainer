@@ -30,7 +30,7 @@ struct SettingsView: View {
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
-    @State var useMidiKeyboard = false
+    @State var enableMidiConnnections = false
     //@State var metronomeSilent = false
     @State var practiceChartGamificationOn = false
 
@@ -171,20 +171,20 @@ struct SettingsView: View {
             }
             
             ///Developer
-            if Settings.shared.isDeveloperMode() {
+            //if Settings.shared.isDeveloperMode() {
                 Spacer()
                 HStack {
                     Spacer()
-                    Toggle(isOn: $useMidiKeyboard) {
-                        Text("Use MIDI Keyboard").font(.title2).padding(0)
+                    Toggle(isOn: $enableMidiConnnections) {
+                        Text("Enable MIDI Connections").font(.title2).padding(0)
                     }
-                    .onChange(of: useMidiKeyboard, {
-                        settings.useMidiKeyboard = useMidiKeyboard
+                    .onChange(of: enableMidiConnnections, {
+                        settings.enableMidiConnnections = enableMidiConnnections
                     })
                     Spacer()
                 }
                 .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-            }
+            //}
             
 //            if Settings.shared.isDeveloperMode() {
 //                Spacer()
@@ -265,7 +265,7 @@ struct SettingsView: View {
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
-                self.useMidiKeyboard = settings.useMidiKeyboard
+                self.enableMidiConnnections = settings.enableMidiConnnections
             }
             .onDisappear() {
                 settings.save()

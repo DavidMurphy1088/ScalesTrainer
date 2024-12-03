@@ -14,6 +14,7 @@ import UIKit
 protocol TapHandlerProtocol {
     init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
+    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void)
     func stopTappingProcess() -> TapEventSet
     func getBufferSize() -> Int
 }
@@ -49,22 +50,15 @@ class RealTimeTapHandler : TapHandlerProtocol {
         lastPlayedKey = nil
     }
     
+    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void) {
+        self.notifyFunction = notifyFunction
+    }
+
     func getBufferSize() -> Int {
         return self.bufferSize
     }
     
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
-        class PossibleKeyPlayed {
-            let keyboard:PianoKeyboardModel
-            let keyIndex: Int
-            let inScale:Bool
-            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
-                //self.hand = hand
-                self.keyIndex = keyIndex
-                self.inScale = inScale
-                self.keyboard = keyboard
-            }
-        }
         var tapStatus:TapEventStatus = .none
         let scalesModel = ScalesModel.shared
 
@@ -106,8 +100,21 @@ class RealTimeTapHandler : TapHandlerProtocol {
         }
         
         ///Determine if the midi represents a keyboard key.
-        ///Hilight the keyboard key
+        ///If its a key hilight and sound the key
+        ///Hilight the staff note corresponding to the key
         if tapStatus == .none {
+            class PossibleKeyPlayed {
+                let keyboard:PianoKeyboardModel
+                let keyIndex: Int
+                let inScale:Bool
+                init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
+                    //self.hand = hand
+                    self.keyIndex = keyIndex
+                    self.inScale = inScale
+                    self.keyboard = keyboard
+                }
+            }
+            //PianoKeyboardModel.setKeysHilight(scale: self.scale, midi: midi)
             var keyboards:[PianoKeyboardModel] = []
             if self.scale.getKeyboardCount() == 1 {
                 let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
@@ -149,7 +156,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                     }
                 }
                 else {
-                    if possibleKeysPlayed.first(where: { $0.inScale == true})  == nil {
+                    if possibleKeysPlayed.first(where: {$0.inScale == true}) == nil {
                         ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
                         if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
                             let keyboard = outOfScale.keyboard

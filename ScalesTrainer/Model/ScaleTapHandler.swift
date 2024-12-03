@@ -28,6 +28,10 @@ class ScaleTapHandler : TapHandlerProtocol  {
         midisInScale = scale.getMidisInScale(handIndex: scale.hands[0])
     }
     
+    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void) {
+        //self.notifyFunction = notifyFunction
+    }
+    
     func getBufferSize() -> Int {
         return self.bufferSize
     }

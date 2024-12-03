@@ -56,7 +56,6 @@ public class OrientationInfo: ObservableObject {
                 guard let self = self else { return }
                 let orientation = UIDevice.current.orientation
                 self.isPortrait = orientation.isPortrait || orientation.isFlat
-                print("==========================---------------------->> ORIENTATION CHANGED PORTRAIT:", UIDevice.current.orientation.isPortrait)
             }
     }
 

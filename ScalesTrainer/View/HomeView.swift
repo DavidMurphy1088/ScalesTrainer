@@ -156,7 +156,7 @@ struct ActivityModeView: View {
                     .padding()
                 }
             }
-            if Settings.shared.useMidiKeyboard {
+            if Settings.shared.enableMidiConnnections {
                 let midis = MIDIManager.shared.getMidiConections()
                 Text("Connected to MIDI keyboards: \(midis)")
             }
@@ -173,35 +173,34 @@ struct ActivityModeView: View {
     
         .onAppear() {
             menuOptionsLeft = []
-            //if menuOptionsLeft.count == 0 {
-                if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-                    if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
-                        PracticeChart.shared = savedChart
-                        savedChart.adjustForStartDay()
-                    }
-                    else {
-                        ///Create a new one for this board and grade
-                        PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
-                    }
+            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+                if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
+                    PracticeChart.shared = savedChart
+                    savedChart.adjustForStartDay()
                 }
-                let practiceChart = PracticeChart.shared
-                menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
-                                                    view: AnyView(PracticeChartView(practiceChart: practiceChart)),
-                                                    imageName: "home_practice_chart_1"))
-                
-                menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
-                                                    view: AnyView(SpinWheelView()),
-                                                    imageName: "home_scales_wheel_1"))
-                
-                //if Settings.shared.developerModeOn {
+                else {
+                    ///Create a new one for this board and grade
+                    PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
+                }
+            }
+            let practiceChart = PracticeChart.shared
+            menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
+                                                view: AnyView(PracticeChartView(practiceChart: practiceChart)),
+                                                imageName: "home_practice_chart_1"))
+            
+            menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
+                                                view: AnyView(SpinWheelView()),
+                                                imageName: "home_scales_wheel_1"))
+            
+            //if Settings.shared.developerModeOn {
 //                menuOptionsLeft.append(ActivityMode(name: "Scales Library",
 //                                                        view: AnyView(ScalesLibraryView()),
 //                                                        imageName: "home_pick_any_scale_1"))
-                //}
-                
-                //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
-                //menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
             //}
+            
+            //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
+            //menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
+
         }
     }
 }

@@ -259,7 +259,6 @@ public struct TimeSliceView: View {
     }
     
 //    func log(geometry: GeometryProxy, noteFrameWidth:Double, frameHeight:Double, noteEllipseMidpoint:Double) -> Bool {
-//        print("=============== NOTEVIEW GEOMETYR", geometry.size.width, geometry.size.height, "FrameWidth", noteFrameWidth, "FrameHeight", frameHeight, "Midpoint", noteEllipseMidpoint)
 //        return false
 //    }
 //    

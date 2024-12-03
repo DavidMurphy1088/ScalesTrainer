@@ -35,7 +35,7 @@ public class Settings : Codable  {
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
     var practiceChartGamificationOn = true
-    var useMidiKeyboard = false
+    var enableMidiConnnections = true
     var customTrinity = true
     
     ///Default colors if not set by user
@@ -113,7 +113,7 @@ public class Settings : Codable  {
         //str += " BackgroundColour:\(self.backgroundColor)"
         str += " email:\(self.emailAddress)"
         str += " Gamification:\(self.practiceChartGamificationOn)"
-        str += " MIDIKeyboard:\(self.useMidiKeyboard)"
+        str += " enableMIDI:\(self.enableMidiConnnections)"
         return str
     }
     
@@ -150,13 +150,10 @@ public class Settings : Codable  {
                     self.badgeStyle = loaded.badgeStyle
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
-                    self.useMidiKeyboard = loaded.useMidiKeyboard
+                    self.enableMidiConnnections = loaded.enableMidiConnnections
                     self.boardName = loaded.boardName
                     self.boardGrade = loaded.boardGrade
-                    //if let boardAndGrade = getBoardGrade() {
-                        //SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
-                        SettingsPublished.shared.setFirstName(firstName: self.firstName)
-                    //}
+                    SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
