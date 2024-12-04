@@ -256,8 +256,12 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        //scalesModel.scale.scaleMotion != .contraryMotion
-        return scale.hands.count == 1
+        if Settings.shared.enableMidiConnnections {
+            return true
+        }
+        else {
+            return scale.hands.count == 1
+        }
     }
     
     func SelectActionView() -> some View {
@@ -265,7 +269,7 @@ struct ScalesView: View {
 
             HStack(alignment: .top) {
                 Spacer()
-                if settings.enableMidiConnnections || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     HStack()  {
                         let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
                         Button(action: {
@@ -292,7 +296,7 @@ struct ScalesView: View {
                     .padding(.horizontal, 0)
                 }
                 
-                if settings.enableMidiConnnections || self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"

@@ -68,6 +68,7 @@
 		799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */; };
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
+		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
 		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
 		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
@@ -176,6 +177,7 @@
 		799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
+		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
 		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
 		79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAPI.swift; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
+				79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
@@ -455,12 +458,12 @@
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
 				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
 				7985635C2C0349BF008BAC79 /* Settings.swift */,
+				79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -628,6 +631,7 @@
 				7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */,
 				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
 				799381772C755F2300734FDE /* SpinWheelView.swift in Sources */,
+				79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */,
 				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
 				79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */,
 				799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */,

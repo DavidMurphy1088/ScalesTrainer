@@ -93,8 +93,7 @@ public class ScalesModel : ObservableObject {
     let logger = Logger.shared
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
-    var tapHandlers:[TapHandlerProtocol] = []
-    //var backer:Backer?
+    var soundEventHandlers:[SoundEventHandler] = []
     
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
@@ -285,13 +284,15 @@ public class ScalesModel : ObservableObject {
             
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = true
             PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = true
-            if self.tapHandlers.count > 0 {
-                self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
+            if self.soundEventHandlers.count > 0 {
+                //self.setTapEventSet(self.tapHandlers[0].stopTappingProcess(), publish: true)
+                //self.setTapEventSet(self.soundEventHandlers[0].stop(), publish: true)
+                self.soundEventHandlers[0].stop()
             }
             //self.tapHandlers = [] //Dont remove them here. Processes may want them before next process
         }
         else {
-            self.tapHandlers = []
+            self.soundEventHandlers = []
             setUserMessage(heading: nil, msg: nil)
             BadgeBank.shared.setShow(false)
             self.setSelectedScaleSegment(0)
@@ -323,7 +324,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+            //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             BadgeBank.shared.setTotalCorrect(0)
             setShowKeyboard(true)
             ///Play first note to start then wait some time.
@@ -349,7 +350,7 @@ public class ScalesModel : ObservableObject {
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
                     usleep(1000000 * UInt32(1.0))
                 }
-                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+                //self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
                 self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
                     self.setRunningProcess(.none)
                 })
@@ -360,16 +361,19 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setShow(true)
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
-            let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
+            let soundHandler:SoundEventHandler
             if Settings.shared.enableMidiConnnections {
-                self.tapHandlers.append(MidiNotificationHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+                soundHandler = MIDISoundEventHandler(scale: scale)
             }
             else {
-                self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+                soundHandler = AcousticSoundEventHandler(scale: scale)
             }
+            self.soundEventHandlers.append(soundHandler)
+            soundHandler.start()
+            let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
             leadProcess.start()
             if !Settings.shared.enableMidiConnnections {
-                self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
+                self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
             }
 //            if demo {
 //                leadProcess.playDemo()
@@ -409,17 +413,16 @@ public class ScalesModel : ObservableObject {
             PianoKeyboardModel.sharedLH.redraw()
             ///4096 has extra params to figure out automatic scale play end
             ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, amplitudeFilter: nil))
-//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 1024, scale: nil, amplitudeFilter: nil))
-            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, amplitudeFilter: nil))
+//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, amplitudeFilter: nil))
+//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, amplitudeFilter: nil))
 
             //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
             self.recordedTapsFileURL = nil
             if setProcess == .recordScaleWithFileData {
                 ///For plaback of an emailed file
                 let tapEventSets = self.audioManager.readTestDataFile()
-                self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
+                //self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
             }
 
             if setProcess == .recordingScaleForAssessment {

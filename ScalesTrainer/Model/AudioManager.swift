@@ -143,7 +143,7 @@ class AudioManager {
         }
     }
     
-    func startRecordingMicWithTapHandlers(tapHandlers:[TapHandlerProtocol], recordAudio:Bool) {
+    func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandler], recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
         checkMicPermission(completion: {granted in
@@ -177,58 +177,29 @@ class AudioManager {
             ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
             engine.output = self.silencer
         }
-//        else {
-//            ///Cant include sampler for backer
-//            ///This setup wont work since the ampl and freq passed to the PitchTap is garbage.
-//            ///Maybe its not required anyway - anytime another node is generating output and a pitch tap is connected it will pick up output from that node in addition to the microphone.
-//            ///Whereas the pitch tap should only ever include input from the user's instrument.
-//            self.silencer = Fader(engineInput, gain: 0)
-//            self.mixer = Mixer(engineInput)
-//            mixer?.addInput(self.silencer!)
-//            self.audioPlayer = AudioPlayer()
-//            mixer?.addInput(self.audioPlayer!)
-//            //if let midiSampler = setupSampler() {
-//            if let midiSampler = self.midiSampler {
-//                mixer?.addInput(midiSampler)
-//            }
-//            //}
-//            engine.output = self.mixer
-//        }
         
-//        if recordAudio {
-//            if let fader = self.tappableNodeF {
-//                do {
-//                    self.recorder = try NodeRecorder(node: fader)
-//                } catch let err {
-//                    Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
-//                }
-//            }
-//            else {
-//                self.recorder = nil
-//            }
-//        }
-        if tapHandlers.count > 4 {
-            Logger.shared.reportError(self, "Too many pitch tap handlers to install \(tapHandlers.count)")
+        if soundEventHandlers.count > 4 {
+            Logger.shared.reportError(self, "Too many pitch tap handlers to install \(soundEventHandlers.count)")
             return
         }
         self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
-                                                tapHandler: tapHandlers[0],
+                                                tapHandler: soundEventHandlers[0] as! AcousticSoundEventHandler,
                                                 asynch: true))
-        if tapHandlers.count > 1 {
-            self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
-                                                    tapHandler: tapHandlers[1],
-                                                    asynch: true))
-        }
-        if tapHandlers.count > 2 {
-            self.pitchTaps.append(installTapHandler(node: self.tappableNodeC!,
-                                                    tapHandler: tapHandlers[2],
-                                                    asynch: true))
-        }
-        if tapHandlers.count > 3 {
-            self.pitchTaps.append(installTapHandler(node: self.tappableNodeD!,
-                                                    tapHandler: tapHandlers[3],
-                                                    asynch: true))
-        }
+//        if tapHandlers.count > 1 {
+//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
+//                                                    tapHandler: tapHandlers[1],
+//                                                    asynch: true))
+//        }
+//        if tapHandlers.count > 2 {
+//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeC!,
+//                                                    tapHandler: tapHandlers[2],
+//                                                    asynch: true))
+//        }
+//        if tapHandlers.count > 3 {
+//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeD!,
+//                                                    tapHandler: tapHandlers[3],
+//                                                    asynch: true))
+//        }
 
         for tap in self.pitchTaps {
             tap.start()
@@ -457,9 +428,7 @@ class AudioManager {
         ScalesModel.shared.setRunningProcess(.none)
     }
     
-    func installTapHandler(node:Node, tapHandler:TapHandlerProtocol, asynch : Bool) -> PitchTap {
-        let s = String(describing: type(of: tapHandler))
-        
+    func installTapHandler(node:Node, tapHandler:AcousticSoundEventHandler, asynch : Bool) -> PitchTap {
         let installedTap = PitchTap(node, bufferSize:UInt32(tapHandler.getBufferSize())) { pitch, amplitude in
             if !self.blockTaps {
                 if asynch {
@@ -472,7 +441,6 @@ class AudioManager {
                 }
             }
         }
-        //Logger.shared.log(self, "Installed tap handler type:\(s) bufferSize:\(tapHandler.getBufferSize())")
         return installedTap
     }
     

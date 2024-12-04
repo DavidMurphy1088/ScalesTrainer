@@ -81,11 +81,11 @@ public class PianoKeyModel: Identifiable, Hashable {
                 if let score = scalesModel.score {
                     let segment = self.scaleNoteState?.segments[0]
                     if let segment = segment {
-                        if let staffNote = score.setScoreNotePlayed(handType: self.hand == 0 ? .right : .left, midi: self.midi, segment:segment) {
+                        if let scoreTimeSlice = score.setScoreNotePlayed(handType: self.hand == 0 ? .right : .left, midi: self.midi, segment:segment) {
                             DispatchQueue.global(qos: .background).async {
                                 usleep(UInt32(1000000 * self.keySoundingSeconds))
                                 DispatchQueue.main.async {
-                                    staffNote.setShowIsPlaying(false)
+                                    scoreTimeSlice.setShowIsPlaying(false)
                                 }
                             }
                         }

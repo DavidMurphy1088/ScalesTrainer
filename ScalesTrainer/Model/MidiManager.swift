@@ -94,7 +94,11 @@ class MIDIManager: ObservableObject {
         let sourceCount = MIDIGetNumberOfSources()
         for i in 0..<sourceCount {
             let src:MIDIEndpointRef = MIDIGetSource(i)
-            Logger.shared.log(self, "Connected MIDI Source : \(self.describeMIDIEndpoint(src))")
+            var property: Unmanaged<CFString>?
+                MIDIObjectGetStringProperty(src, kMIDIPropertyName, &property)
+                let name = property?.takeRetainedValue() as String?
+            
+            Logger.shared.log(self, "Connected MIDI Source : \(self.describeMIDIEndpoint(src)) name:\(name)")
             MIDIPortConnectSource(inputPort, src, nil)
         }
         let names = self.getMIDISources()
@@ -102,7 +106,7 @@ class MIDIManager: ObservableObject {
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
-        //print("========== MIDI Manager, processMidiMessage", processMidiMessage, MIDImsg)
+        print("========== MIDI Manager, processMidiMessage", processMidiMessage, MIDImessage.midi)
         if let target = self.installedNotificationTarget {
             target(MIDImessage)
         }

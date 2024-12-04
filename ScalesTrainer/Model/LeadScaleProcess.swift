@@ -18,8 +18,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         self.scalesModel = scalesModel
         nextExpectedScaleIndex = 0
         self.metronome = metronome
-        //scalesModel.scale.debug11("LeadScaleProcess")
-        //scalesModel.scores[0]?.debug1("LeadScaleProcess", withBeam: false, toleranceLevel: 0)
     }
     
     func metronomeStart() {
@@ -47,9 +45,11 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     func start() {
         badges.clearMatches()
         scalesModel.scale.resetMatchedData()
-        if scalesModel.tapHandlers.count > 0 {
-            let tapHandler = scalesModel.tapHandlers[0] //as! RealTimeTapHandler
-            tapHandler.setNotifyFunction(notifyFunction: self.notify(midi:status:))
+        if scalesModel.soundEventHandlers.count > 0 {
+            let soundHandler = scalesModel.soundEventHandlers[0] //as! RealTimeTapHandler
+            ///Tell the sound handler (acoutic or MIDI) which function to call on a new sound arriving
+            //soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:status:))
+            soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midis:))
         }
         
         scalesModel.scale.resetMatchedData()
@@ -58,18 +58,20 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         notifyCount = 0
     }
     
-    func notify(midi:Int, status:TapEventStatus) {
+    func notifiedOfSound(midis:[Int]) {
         if leadInShowing {
             return
         }
-        if [.belowAmplitudeFilter, .countTooLow].contains(status) {
-            return
-        }
-        if ![.inScale].contains(status) {
-           // badges.setTotalCorrect(badges.totalCorrect - 1)
-           // badges.removeMatch()
-            return
-        }
+        let midi = midis[0]
+        //TODO - was it ok to remove the status from the SoundEWvent Handler for this call???
+//        if [.belowAmplitudeFilter, .countTooLow].contains(status) {
+//            return
+//        }
+//        if ![.inScale].contains(status) {
+//           // badges.setTotalCorrect(badges.totalCorrect - 1)
+//           // badges.removeMatch()
+//            return
+//        }
 
         if let lastCorrectMidi = lastMidi {
             if midi == lastCorrectMidi {
@@ -167,7 +169,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 
                     sampler.play(noteNumber: UInt8(midi), velocity: 65, channel: 0)
 
-                    self.notify(midi: midi, status: .inScale)
+                    self.notifiedOfSound(midis: [midi])
                     
                     //var tempo:Double = [9, 19].contains(ctr) ? 70/3 : 70 //Broken Chords
                     let tempo:Double =  70 //50 = Broken
