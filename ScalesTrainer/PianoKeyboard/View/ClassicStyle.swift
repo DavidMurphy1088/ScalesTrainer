@@ -197,9 +197,8 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         if scaleNote.finger > 0 {
-                            let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
+                            let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
                             let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
-                            
                             context.draw(
                                 Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),

@@ -185,32 +185,27 @@ public class Score : ObservableObject {
         return getStaffHeight() * heightMult
     }
         
-    public func setScoreNotePlayed(handType:HandType, midi: Int, segment: Int) -> TimeSlice? {
+    public func getStaffNote(segment: Int, midi: Int, handType:HandType) -> StaffNote? {
         let timeSlices = getAllTimeSlices()
-        var noteFound:TimeSlice?
+        var staffNoteFound:StaffNote?
 
         for i in 0..<timeSlices.count {
             let ts = timeSlices[i]
-            let entry = ts.entries[0]
-            let staffNote = entry as! StaffNote
-            if staffNote.handType == handType && staffNote.midiNumber == midi && staffNote.segments[0] == segment {
-                ts.setShowIsPlaying(true)
-                noteFound = ts
+            let timeSliceNotes = ts.getTimeSliceNotes(handType: handType)
+            for staffNote in timeSliceNotes {
+                if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
+                    staffNote.setShowIsPlaying(true)
+                    staffNoteFound = staffNote
+                    break
+                }
+            }
+            if staffNoteFound != nil {
                 break
             }
-//            else {
-//                let dist = abs(staffNote.midiNumber - midi)
-//                if dist < nearestDist {
-//                    nearestDist = dist
-//                    //nearestIndex = i
-//                    //nearestNote = note
-//                }
-//            }
         }
-        if let noteFound = noteFound {
-            return noteFound
+        if let staffNoteFound = staffNoteFound {
+            return staffNoteFound
         }
-        ///beyond here when reading notifcaions from test data causes a zero count in a timeslice
         return nil
     }
     

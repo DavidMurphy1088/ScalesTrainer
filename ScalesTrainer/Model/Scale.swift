@@ -163,6 +163,11 @@ public class ScaleNoteState : Codable {
         let offset = self.midi % 12
         return [0,2,4,5,7,9,11].contains(offset)
     }
+    
+    func toString() -> String {
+        var res = "Seq:\(sequence) midi:\(midi)"
+        return res
+    }
 }
 
 public class Scale : Codable {
@@ -798,11 +803,7 @@ public class Scale : Codable {
         for handIndex in [0,1] {
             var idx = 0
             for state in self.scaleNoteState[handIndex] {
-//                let xxx = state.id.uuidString
-//                let stateid = String(xxx.suffix(4))
-                print("Hand", handIndex, "idx:", String(format: "%2d", idx), "seg:", state.segments, "\tMidi:", state.midi,  "value:", String(format: "%.2f", state.value), "finger:", state.finger, "break:", state.keyboardColourType
-                      //"matched:", state.matchedTime != nil, "time:", state.matchedTime ?? "",
-                      //"valueNormalized:", getValue(state.valueNormalized)
+                print("Hand", handIndex, "idx:", String(format: "%2d", idx), "seg:", state.segments, "\tMidi:", state.midi,  "value:", String(format: "%.2f", state.value), "finger:", state.finger, "matched:", state.matchedTime != nil
                 )
                 idx += 1
                 if idx % 4 == 0 {

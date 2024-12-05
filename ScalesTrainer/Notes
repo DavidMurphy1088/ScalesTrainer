@@ -41,3 +41,9 @@ Refactoring <---------
 Clefs (not staffs) should determine note placment
 Staffs have a hand but not a treble, bass type
 
+
+soundevent handler must filter out any pitch that is not on either keyb or the combined kebb
+- if two notes will arrive together at lead the scale: higher will go to RH keyboard, lower to LH keyboard
+- if one note arrives it will go to the KB that had the note last closest to new note
+
+- chromatric and contrary n=motion differnet

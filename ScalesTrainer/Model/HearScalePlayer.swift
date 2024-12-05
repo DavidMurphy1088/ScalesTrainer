@@ -98,7 +98,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
 
                 if self.waitBeatsForScale == 0 {
                     let key=keyboard.pianoKeyModel[keyIndex]
-                    key.setKeyPlaying(hilight: true)
+                    key.setKeyPlaying()
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
                     if process == .playingAlongWithScale {

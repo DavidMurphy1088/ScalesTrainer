@@ -16,13 +16,13 @@ import UIKit
 class SoundEventHandler  {
     let scale:Scale
     //var functionToNotify: ((Int, TapEventStatus) -> Void)?
-    var functionToNotify: (([Int]) -> Void)?
+    var functionToNotify: ((Int) -> Void)?
 
     required init(scale: Scale) {
         self.scale = scale
     }
     
-    func setFunctionToNotify(functionToNotify: @escaping ([Int]) -> Void) {
+    func setFunctionToNotify(functionToNotify: ((Int) -> Void)?) {
         self.functionToNotify = functionToNotify
     }
     
@@ -31,7 +31,7 @@ class SoundEventHandler  {
     
     func stop() { //}-> TapEventSet {
     }
-    
+        
     ///Determine if the midi represents a keyboard key.
     ///If its a key hilight and sound the key.
     func hilightKeysAndStaff(midi:Int) {
@@ -79,7 +79,7 @@ class SoundEventHandler  {
             if keyboards.count == 1 {
                 let keyboard = keyboards[0]
                 let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
-                keyboardKey.setKeyPlaying(hilight: true)
+                keyboardKey.setKeyPlaying()
             }
             else {
                 if possibleKeysPlayed.first(where: {$0.inScale == true}) == nil {
@@ -88,7 +88,7 @@ class SoundEventHandler  {
                     if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
                         let keyboard = outOfScale.keyboard
                         let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
-                        keyboardKey.setKeyPlaying(hilight: true)
+                        keyboardKey.setKeyPlaying()
                     }
                 }
                 else {
@@ -98,7 +98,7 @@ class SoundEventHandler  {
                     for possibleKey in possibleKeysPlayed {
                         let keyboard = possibleKey.keyboard
                         let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
-                        keyboardKey.setKeyPlaying(hilight: true)
+                        keyboardKey.setKeyPlaying()
                     }
                 }
             }
@@ -181,7 +181,7 @@ class AcousticSoundEventHandler : SoundEventHandler {
             self.hilightKeysAndStaff(midi: midi)
             if let notify = self.functionToNotify {
                 //notify(midi, .inScale)
-                notify([midi])
+                notify(midi)
             }
         }
     }
@@ -195,12 +195,18 @@ class MIDISoundEventHandler : SoundEventHandler {
     
     ///The feature function that is called when a new MIDI notification arrives
     func MIDIManagerNotificationTarget(msg:MIDIMessage) {
-        print("========== Handler NotificationTarget", msg.midi)
-        self.hilightKeysAndStaff(midi: msg.midi)
+        //print("========== Handler NotificationTarget", msg.midi)
         if let notify = self.functionToNotify {
-            //notify(msg.midi, .inScale)
-            notify([msg.midi])
+            notify(msg.midi)
         }
     }
     
+    func sendNotes(notes:[Int], wait:Double) {
+        if let notify = self.functionToNotify {
+            for note in notes {
+                notify(note)
+                usleep(UInt32(1000000 * wait))
+            }
+        }
+    }
 }

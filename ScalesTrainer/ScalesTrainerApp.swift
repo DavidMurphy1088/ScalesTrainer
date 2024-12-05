@@ -154,8 +154,8 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, 
-                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1],
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, 
+                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1],
                         //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
                         debug1: true)
                     

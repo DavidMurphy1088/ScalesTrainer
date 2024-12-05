@@ -9,7 +9,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public static var sharedRH = PianoKeyboardModel(keyboardNumber: 1)
     public static var sharedLH = PianoKeyboardModel(keyboardNumber: 2)
     public static var sharedCombined:PianoKeyboardModel?
-    
     public static var sharedForSettings = PianoKeyboardModel(keyboardNumber: 2)
 
     let id = UUID()
@@ -117,7 +116,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public func join(fromKeyboard:PianoKeyboardModel, scale:Scale) -> PianoKeyboardModel {
         let merged = PianoKeyboardModel(keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
         var offset = 0
-        //var keyedMidis:[Int] = []
         var keyCount = 0
         var lowestRHInScaleKey:PianoKeyModel? = nil
         for key in fromKeyboard.pianoKeyModel {
@@ -395,7 +393,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
                         keyboardAudioManager?.pianoKeyUp(noteNumber)
                     }
                     pianoKeyModel[index].touchDown = keyDownAt[index]
-                    pianoKeyModel[index].setKeyPlaying(hilight: true)
+                    pianoKeyModel[index].setKeyPlaying()
                 }
             } else {
                 if pianoKeyModel[index].touchDown && keyDownAt[index] && pianoKeyModel[index].latched {

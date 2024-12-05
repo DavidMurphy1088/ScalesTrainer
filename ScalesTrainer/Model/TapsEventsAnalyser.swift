@@ -401,7 +401,7 @@ class TapsEventsAnalyser {
                 keyboardKey.keyWasPlayedState.tappedAmplitudeDescending = Double(eventToProcess.amplitude)
             }
             if updateKeyboardDisplay {
-               keyboardKey.setKeyPlaying(hilight: true)
+               keyboardKey.setKeyPlaying()
             }
         }
         

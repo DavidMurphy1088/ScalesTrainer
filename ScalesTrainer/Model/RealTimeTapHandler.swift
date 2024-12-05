@@ -147,7 +147,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                 if keyboards.count == 1 {
                     let keyboard = keyboards[0]
                     let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
-                    keyboardKey.setKeyPlaying(hilight: true)
+                    keyboardKey.setKeyPlaying()
                     if possibleKeysPlayed[0].inScale {
                         tapStatus = .inScale
                     }
@@ -161,7 +161,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                         if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
                             let keyboard = outOfScale.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
-                            keyboardKey.setKeyPlaying(hilight: true)
+                            keyboardKey.setKeyPlaying()
                         }
                         tapStatus = .outOfScale
                     }
@@ -171,7 +171,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
                         for possibleKey in possibleKeysPlayed {
                             let keyboard = possibleKey.keyboard
                             let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
-                            keyboardKey.setKeyPlaying(hilight: true)
+                            keyboardKey.setKeyPlaying()
                         }
                         tapStatus = .inScale
                     }

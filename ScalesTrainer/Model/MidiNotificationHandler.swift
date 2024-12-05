@@ -25,7 +25,7 @@ class MidiNotificationHandler : TapHandlerProtocol {
     
     ///The function this class installs to receive notification from the MIDI manager when a new MIDI notification arrives
     func MIDIManagerNotificationTarget(msg:MIDIMessage) {
-        print("========== Handler NotificationTarget", msg.messageType, msg.midi)
+        //print("========== Handler NotificationTarget", msg.messageType, msg.midi)
         if let notify = self.notifyFunction {
             notify(msg.midi, .inScale)
         }

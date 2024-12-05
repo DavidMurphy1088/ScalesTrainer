@@ -269,6 +269,21 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    ///Let a feature process tell the sound handler (acoutic or MIDI) which function in the feature to call on a new sound arriving
+    func setFunctionToNotify(functionToNotify: @escaping (Int) -> Void) {
+        if soundEventHandlers.count > 0 {
+            let soundHandler = soundEventHandlers[0]
+            soundHandler.setFunctionToNotify(functionToNotify: functionToNotify)
+        }
+    }
+    
+    func clearFunctionToNotify() {
+        if soundEventHandlers.count > 0 {
+            let soundHandler = soundEventHandlers[0]
+            soundHandler.setFunctionToNotify(functionToNotify: nil)
+        }
+    }
+
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
         if setProcess == self.runningProcess {
             return
@@ -364,6 +379,11 @@ public class ScalesModel : ObservableObject {
             let soundHandler:SoundEventHandler
             if Settings.shared.enableMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
+                DispatchQueue.global(qos: .background).async {
+                    sleep(2)
+                    let x = soundHandler as! MIDISoundEventHandler
+                    x.sendNotes(notes: [62, 61, 63], wait: 0.5)
+                }
             }
             else {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
@@ -375,6 +395,7 @@ public class ScalesModel : ObservableObject {
             if !Settings.shared.enableMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
             }
+            
 //            if demo {
 //                leadProcess.playDemo()
 //            }
@@ -771,7 +792,7 @@ public class ScalesModel : ObservableObject {
             combinedKeyboard.configureKeyboardForScale(scale: scale, handType: .right)
             self.setSelectedScaleSegment(0)
             let middleKey = combinedKeyboard.pianoKeyModel.count / 2
-            combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying(hilight: true)
+            combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying()
             combinedKeyboard.redraw()
         }
         else {

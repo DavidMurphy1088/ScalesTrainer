@@ -105,10 +105,11 @@ class AudioManager {
             Logger.shared.reportError(self, "No engine")
             return
         }
-        
         var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
-        self.keyboardMidiSampler = loadSampler(num: 0, preset: preset)
-
+        if self.keyboardMidiSampler == nil {
+            var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+            self.keyboardMidiSampler = loadSampler(num: 0, preset: preset)
+        }
         //let preset:Int
         switch Settings.shared.backingSamplerPreset {
         case 1: preset = 28
@@ -121,7 +122,10 @@ class AudioManager {
         case 8: preset = 4
         default: preset = 0
         }
-        self.backingMidiSampler = loadSampler(num: 1, preset: preset)
+        
+        if self.backingMidiSampler == nil {
+            self.backingMidiSampler = loadSampler(num: 1, preset: preset)
+        }
 
         if self.mixer == nil {
             self.mixer = Mixer()

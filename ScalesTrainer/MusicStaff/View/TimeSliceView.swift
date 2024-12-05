@@ -89,28 +89,26 @@ public struct NoteHiliteView: View {
     }
 }
 
-public struct TimeSliceView: View {
+struct StaffNoteView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
-    @ObservedObject var timeSlice:TimeSlice
-    @ObservedObject var scalesModel:ScalesModel
-    //@StateObject private var orientationObserver = DeviceOrientationObserver()
-    var staff:Staff
-    var color: Color
-    var lineSpacing:Double
-    var noteWidth:Double
-    var accidental:Int?
-    let isPortrait:Bool
+    let staff:Staff
+    let timeSlice:TimeSlice
+    @ObservedObject var note:StaffNote
+    let noteFrameWidth:Double
+    let geometry: GeometryProxy
+    let noteWidth:Double
+    let lineSpacing:Double
     
-    public init(staff:Staff, timeSlice:TimeSlice, noteWidth:Double, lineSpacing: Double, isPortrait:Bool) {
+    public init(staff:Staff, timeSlice:TimeSlice, note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, noteWidth:Double, lineSpacing:Double ) {
         self.staff = staff
         self.timeSlice = timeSlice
+        self.note = note
+        self.noteFrameWidth = noteFrameWidth
+        self.geometry = geometry
         self.noteWidth = noteWidth
-        self.color = Color.black
         self.lineSpacing = lineSpacing
-        scalesModel = ScalesModel.shared
-        self.isPortrait = isPortrait
     }
-
+    
     func getAccidental(accidental:Int) -> String {
 //        if false {
 //            ///requires quite a bit of work in staff placement to get the accidental correct
@@ -140,6 +138,18 @@ public struct TimeSliceView: View {
                 }
             }
 //        }
+    }
+    
+    func sizeMultiplier() -> Double {
+        ///The closed ellipse on iPhone, landscape appears to be too small to draw. No idea why 🥵. So bump the closed ellipse size slightly to force it to draw.
+        var multipler = 1.0
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            //if orientationObserver.orientation.isAnyLandscape {
+            if !orientationInfo.isPortrait {
+                multipler = 1.1
+            }
+        }
+        return multipler
     }
     
     struct LedgerLine:Hashable, Identifiable {
@@ -174,6 +184,101 @@ public struct TimeSliceView: View {
         return result
     }
     
+    public var body: some View {
+        ZStack {
+            let placement = note.noteStaffPlacement // note.getNoteDisplayCharacteristics(staff: staff)
+            let offsetFromStaffMiddle = placement.offsetFromStaffMidline
+            let accidental = placement.accidental
+
+            let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
+
+            ////let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
+            let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
+
+            //if note.staffNum == staff.staffNum  {
+            //if timeSlice.showIsPlaying {
+            if note.showIsPlaying {
+                NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
+            }
+            
+            if let accidental = accidental {
+                let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
+                Text(getAccidental(accidental: accidental))
+                    .font(.system(size: lineSpacing * 3.0))
+                    .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
+                    .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
+                              y: noteEllipseMidpoint + yOffset)
+                    .foregroundColor(note.getColor(staff: staff))
+            }
+            if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted ) {
+                Ellipse()
+                //Closed ellipse
+                    //.stroke(note.getColor(staff: staff), lineWidth: 2)
+                    .foregroundColor(note.getColor(staff: staff))
+                    .frame(width: noteWidth * self.sizeMultiplier(), height: CGFloat(Double(lineSpacing) * 1.0) * self.sizeMultiplier())
+                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+            }
+            if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
+                Ellipse()
+                //Open ellipse
+                    .stroke(note.getColor(staff: staff), lineWidth: 2)
+                    .foregroundColor(note.getColor(staff: staff))
+                    .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
+                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
+            }
+            
+            if note.isDotted() {
+                //the dot needs to be moved off the note center to move the dot off a staff line
+                let yOffset = offsetFromStaffMiddle % 2 == 0 ? lineSpacing / 3.0 : 0
+                Ellipse()
+                //Open ellipse
+                    .frame(width: noteWidth/3.0, height: noteWidth/3.0)
+                    //.position(x: noteFrameWidth/2 + noteWidth/0.90, y: noteEllipseMidpoint - yOffset)
+                    //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
+                    //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
+                    .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
+                    .foregroundColor(note.getColor(staff: staff))
+            }
+            
+            ///Ledger lines
+            if !note.isOnlyRhythmNote {
+                ForEach(getLedgerLines(staff: staff, note: note, noteWidth: noteWidth, lineSpacing: lineSpacing)) { line in
+                    let y = geometry.size.height/2.0 + line.offsetVertical
+                    ///offset - make sure ledger lines dont join on small width stafff's. ex melody examples
+                    let xOffset = noteWidth * 0.2
+                    let x = noteFrameWidth/2 - noteWidth - (note.rotated ? noteWidth : 0)
+                    Path { path in
+                        path.move(to: CGPoint(x: x + xOffset, y: y))
+                        path.addLine(to: CGPoint(x: x + (2 * noteWidth) - xOffset, y: y))
+                    }
+                    .stroke(note.getColor(staff: staff), lineWidth: 1)
+                }
+            }
+        }
+    }
+}
+
+public struct TimeSliceView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
+    @ObservedObject var timeSlice:TimeSlice
+    @ObservedObject var scalesModel:ScalesModel
+    var staff:Staff
+    var color: Color
+    var lineSpacing:Double
+    var noteWidth:Double
+    var accidental:Int?
+    let isPortrait:Bool
+    
+    public init(staff:Staff, timeSlice:TimeSlice, noteWidth:Double, lineSpacing: Double, isPortrait:Bool) {
+        self.staff = staff
+        self.timeSlice = timeSlice
+        self.noteWidth = noteWidth
+        self.color = Color.black
+        self.lineSpacing = lineSpacing
+        scalesModel = ScalesModel.shared
+        self.isPortrait = isPortrait
+    }
+    
     func getTimeSliceEntries() -> [TimeSliceEntry] {
         var result:[TimeSliceEntry] = []
         for n in self.timeSlice.entries {
@@ -184,7 +289,6 @@ public struct TimeSliceView: View {
     
     func RestView(staff:Staff, entry:TimeSliceEntry, lineSpacing:Double, geometry:GeometryProxy) -> some View {
         ZStack {
-            
             if entry.getValue() == 0 {
                 Text("?")
                     .font(.largeTitle)
@@ -262,91 +366,7 @@ public struct TimeSliceView: View {
 //        return false
 //    }
 //    
-    func sizeMultiplier() -> Double {
-        ///The closed ellipse on iPhone, landscape appears to be too small to draw. No idea why 🥵. So bump the closed ellipse size slightly to force it to draw.
-        var multipler = 1.0
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            //if orientationObserver.orientation.isAnyLandscape {
-            if !orientationInfo.isPortrait {
-                multipler = 1.1
-            }
-        }
-        return multipler
-    }
-    
-    func NoteView(note:StaffNote, noteFrameWidth:Double, geometry: GeometryProxy, statusTag:TimeSliceStatusTag) -> some View {
-        ZStack {
-            let placement = note.noteStaffPlacement // note.getNoteDisplayCharacteristics(staff: staff)
-            let offsetFromStaffMiddle = placement.offsetFromStaffMidline
-            let accidental = placement.accidental
-
-            let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
-            //let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
-            let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
-
-            //if note.staffNum == staff.staffNum  {
-                if timeSlice.showIsPlaying {
-                    NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
-                }
-            //}
-            
-            if let accidental = accidental {
-                let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
-                Text(getAccidental(accidental: accidental))
-                    .font(.system(size: lineSpacing * 3.0))
-                    .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
-                    .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
-                              y: noteEllipseMidpoint + yOffset)
-                    .foregroundColor(note.getColor(staff: staff))
-                
-            }
-            if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted ) {
-                Ellipse()
-                //Closed ellipse
-                    //.stroke(note.getColor(staff: staff), lineWidth: 2)
-                    .foregroundColor(note.getColor(staff: staff))
-                    .frame(width: noteWidth * self.sizeMultiplier(), height: CGFloat(Double(lineSpacing) * 1.0) * self.sizeMultiplier())
-                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-            }
-            if noteValueUnDotted == StaffNote.VALUE_HALF || noteValueUnDotted == StaffNote.VALUE_WHOLE {
-                Ellipse()
-                //Open ellipse
-                    .stroke(note.getColor(staff: staff), lineWidth: 2)
-                    .foregroundColor(note.getColor(staff: staff))
-                    .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
-                    .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
-            }
-            
-            if note.isDotted() {
-                //the dot needs to be moved off the note center to move the dot off a staff line
-                let yOffset = offsetFromStaffMiddle % 2 == 0 ? lineSpacing / 3.0 : 0
-                Ellipse()
-                //Open ellipse
-                    .frame(width: noteWidth/3.0, height: noteWidth/3.0)
-                    //.position(x: noteFrameWidth/2 + noteWidth/0.90, y: noteEllipseMidpoint - yOffset)
-                    //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
-                    //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
-                    .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
-                    .foregroundColor(note.getColor(staff: staff))
-            }
-            
-            ///Ledger lines
-            if !note.isOnlyRhythmNote {
-                ForEach(getLedgerLines(staff: staff, note: note, noteWidth: noteWidth, lineSpacing: lineSpacing)) { line in
-                    let y = geometry.size.height/2.0 + line.offsetVertical
-                    ///offset - make sure ledger lines dont join on small width stafff's. ex melody examples
-                    let xOffset = noteWidth * 0.2
-                    let x = noteFrameWidth/2 - noteWidth - (note.rotated ? noteWidth : 0)
-                    Path { path in
-                        path.move(to: CGPoint(x: x + xOffset, y: y))
-                        path.addLine(to: CGPoint(x: x + (2 * noteWidth) - xOffset, y: y))
-                    }
-                    .stroke(note.getColor(staff: staff), lineWidth: 1)
-                }
-            }
-        }
-    }
-    
+        
     func getTempoGradient(valueNormalized:Double) -> LinearGradient {
         if valueNormalized < 0.66 {
             return LinearGradient(
@@ -395,9 +415,12 @@ public struct TimeSliceView: View {
                 ForEach(getTimeSliceEntries(), id: \.id) { entry in
                     VStack {
                         if let staffNote = entry as? StaffNote {
-                            //if (staffNote.hand == 0 && self.staff.type == .treble) || (staffNote.hand == 1 && self.staff.type == .bass) {
                             if (staffNote.handType == .right && self.staff.handType == .right) || (staffNote.handType == .left && self.staff.handType == .left) {
-                                NoteView(note: entry as! StaffNote, noteFrameWidth: noteFrameWidth, geometry: geometry, statusTag: timeSlice.statusTag)
+                                StaffNoteView(staff: staff, timeSlice: timeSlice, note: entry as! StaffNote, noteFrameWidth: noteFrameWidth,
+                                              geometry: geometry, noteWidth: noteWidth, lineSpacing: lineSpacing)
+//                                StaffNoteView(timeslice: timeSlice, note: entry as! StaffNote, noteFrameWidth: noteFrameWidth,
+//                                              geometry: geometry, noteWidth: noteWidth, staff:staff)
+//                                              //statusTag: timeSlice.statusTag)
                                 //.border(Color.green)
                             }
                         }
@@ -406,8 +429,6 @@ public struct TimeSliceView: View {
                                 .position(x: geometry.size.width / 2.0, y: geometry.size.height / 2.0)
                             //.border(Color.blue)
                         }
-
-
                     }
                 }
                 

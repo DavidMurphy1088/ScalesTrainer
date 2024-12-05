@@ -2,8 +2,12 @@ import Foundation
 import SwiftUI
 
 public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
+    @Published public var showIsPlaying:Bool = false
     public let id = UUID()
+    
+    ///Hand is needed to now which staff to place the note into
     let handType:HandType
+    
     public var timeSlice:TimeSlice
     private var value:Double = StaffNote.VALUE_QUARTER
     public var valueNormalized:Double? = nil
@@ -20,6 +24,15 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         return lhs.id == rhs.id
     }
     
+    func setShowIsPlaying(_ way:Bool) { //status: TimeSliceEntryStatusType) {
+        DispatchQueue.main.async {
+            if way != self.showIsPlaying {
+                let note = self as! StaffNote
+                self.showIsPlaying = way
+            }
+        }
+    }
+
     public func isDotted() -> Bool {
         if ScalesModel.shared.scale.timeSignature.bottom == 8 {
             return [1.0].contains(value)

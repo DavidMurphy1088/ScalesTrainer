@@ -34,7 +34,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
-    let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 : 
+    static let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
     
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
@@ -61,38 +61,36 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.scaleNoteState = state
     }
     
-    public func setKeyPlaying(hilight:Bool) {
-        if hilight {
-            self.keyIsSounding = true
-            DispatchQueue.global(qos: .background).async {
-                usleep(UInt32(1000000 * self.keySoundingSeconds))
-                DispatchQueue.main.async {
-                    self.keyIsSounding = false
-                    self.keyboardModel.redraw()
-                }
+    ///Set a keyboard key as playing.
+    ///Also hilight the associated score note.
+    public func setKeyPlaying() {
+        //print("============= KEY PLAYED finger:", self.scaleNoteState?.finger, self.scaleNoteState?.midi, "keyhand:", self.hand)
+        self.keyIsSounding = true
+        DispatchQueue.global(qos: .background).async {
+            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+            DispatchQueue.main.async {
+                self.keyIsSounding = false
+                self.keyboardModel.redraw()
             }
-            ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
-            self.keyboardModel.redraw()
-
-            ///Update the score if its showing
-            ///The MIDI might be in both staves. e.g. first note of a contrary scale.
-            //for i in 0..<scalesModel.scores.count {
-                //if let score = scalesModel.scores[self.hand] {
-                if let score = scalesModel.score {
-                    let segment = self.scaleNoteState?.segments[0]
-                    if let segment = segment {
-                        if let scoreTimeSlice = score.setScoreNotePlayed(handType: self.hand == 0 ? .right : .left, midi: self.midi, segment:segment) {
-                            DispatchQueue.global(qos: .background).async {
-                                usleep(UInt32(1000000 * self.keySoundingSeconds))
-                                DispatchQueue.main.async {
-                                    scoreTimeSlice.setShowIsPlaying(false)
-                                }
-                            }
-                        }
-                    }
-                }
-            //}
         }
+        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+        self.keyboardModel.redraw()
+
+        ///Update the score if its showing
+        ///The MIDI might be in both staves. e.g. first note of a contrary scale.
+//        if let score = scalesModel.score {
+//            let segment = self.scaleNoteState?.segments[0]
+//            if let segment = segment {
+//                if let staffNotePlayed:StaffNote = score.setStaffNotePlayed(handType: self.hand == 0 ? .right : .left, midi: self.midi, segment:segment) {
+//                    DispatchQueue.global(qos: .background).async {
+//                        usleep(UInt32(1000000 * self.keySoundingSeconds))
+//                        DispatchQueue.main.async {
+//                            staffNotePlayed.setShowIsPlaying(false)
+//                        }
+//                    }
+//                }
+//            }
+//        }
         if let callback = self.wasPlayedCallback {
             callback()
         }

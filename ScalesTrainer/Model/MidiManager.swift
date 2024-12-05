@@ -106,7 +106,7 @@ class MIDIManager: ObservableObject {
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
-        print("========== MIDI Manager, processMidiMessage", processMidiMessage, MIDImessage.midi)
+        //print("========== MIDI Manager, processMidiMessage", processMidiMessage, MIDImessage.midi)
         if let target = self.installedNotificationTarget {
             target(MIDImessage)
         }
