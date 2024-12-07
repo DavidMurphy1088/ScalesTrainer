@@ -154,11 +154,16 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, 
-                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1],
-                        //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
-                        debug1: true)
+                    //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
                     
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
+//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
+//                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+
+                    //MIDIManager.shared.setTestMidiNotesNotes(TestMidiNotes([48,60,   50,62,   52,64]))
+                    //MIDIManager.shared.setTestMidiNotesNotes(TestMidiNotes(scale: ScalesModel.shared.scale, hands: [0,1], noteSetWait: 0.7))
+
 //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, minTempo: 70, octaves: 1, hands: [0,1], ctx: "App Start")
                     
 //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0,1], ctx: "App Start", scaleCustomisation : ScaleCustomisation(startMidiRH: 51, startMidiLH: 39), debug: true)
@@ -195,7 +200,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         LicenceManager.shared.requestProducts() ///Get products
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
-        LicenceManager.shared.getFreeLicenses()
+        if !Settings.shared.isDeveloperMode() {
+            LicenceManager.shared.getFreeLicenses()
+        }
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
         
@@ -222,10 +229,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Logger.shared.log(self, "Microphone access:\(statusMsg))")
         if Settings.shared.enableMidiConnnections {
             let midiManager = MIDIManager.shared
-            midiManager.connectSources()
+            midiManager.createMIDIClientAndConnectSources()
         }
         return true
-
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
@@ -290,7 +296,6 @@ struct ScalesTrainerApp: App {
     }
 
     func MainContentView() -> some View {
-
         TabView(selection: $tabSelectionManager.selectedTab) {
             if Settings.shared.isDeveloperMode() {
                 //MIDIView()
@@ -339,6 +344,14 @@ struct ScalesTrainerApp: App {
                 .environmentObject(tabSelectionManager)
 
             if Settings.shared.isDeveloperMode() {
+                LogView()
+                    .tabItem {
+                        Label("Log", systemImage: "book.pages")
+                    }
+                    .tag(90)
+                    .accessibilityIdentifier("app_log")
+                    .environmentObject(tabSelectionManager)
+                
                 ScalesLibraryView()
                     .tabItem {
                         Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
@@ -367,12 +380,7 @@ struct ScalesTrainerApp: App {
                     .tag(80)
                     .environmentObject(tabSelectionManager)
 
-                LogView()
-                    .tabItem {
-                        Label("Log", systemImage: "book.pages")
-                    }
-                    .tag(90)
-                    .environmentObject(tabSelectionManager)
+
                 DeveloperView()
                     .tabItem {
                         Label("Dev", systemImage: "book.pages")

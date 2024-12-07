@@ -93,7 +93,7 @@ public class ScalesModel : ObservableObject {
     let logger = Logger.shared
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
-    var soundEventHandlers:[SoundEventHandler] = []
+    var soundEventHandlers:[SoundEventHandlerProtocol] = []
     
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
@@ -269,14 +269,6 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    ///Let a feature process tell the sound handler (acoutic or MIDI) which function in the feature to call on a new sound arriving
-    func setFunctionToNotify(functionToNotify: @escaping (Int) -> Void) {
-        if soundEventHandlers.count > 0 {
-            let soundHandler = soundEventHandlers[0]
-            soundHandler.setFunctionToNotify(functionToNotify: functionToNotify)
-        }
-    }
-    
     func clearFunctionToNotify() {
         if soundEventHandlers.count > 0 {
             let soundHandler = soundEventHandlers[0]
@@ -376,29 +368,20 @@ public class ScalesModel : ObservableObject {
             BadgeBank.shared.setShow(true)
             BadgeBank.shared.setTotalCorrect(0)
             BadgeBank.shared.setTotalIncorrect(0)
-            let soundHandler:SoundEventHandler
+            let soundHandler:SoundEventHandlerProtocol
             if Settings.shared.enableMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
-                DispatchQueue.global(qos: .background).async {
-                    sleep(2)
-                    let x = soundHandler as! MIDISoundEventHandler
-                    x.sendNotes(notes: [62, 61, 63], wait: 0.5)
-                }
             }
             else {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
             }
             self.soundEventHandlers.append(soundHandler)
-            soundHandler.start()
+            
             let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
-            leadProcess.start()
+            leadProcess.start(soundHandler: soundHandler)
             if !Settings.shared.enableMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
             }
-            
-//            if demo {
-//                leadProcess.playDemo()
-//            }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {

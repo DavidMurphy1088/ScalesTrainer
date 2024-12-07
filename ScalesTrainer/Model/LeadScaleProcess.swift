@@ -36,10 +36,10 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
     }
     
-    func start() {
+    func start(soundHandler:SoundEventHandlerProtocol) {
         badges.clearMatches()
         scalesModel.scale.resetMatchedData()
-        scalesModel.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
+        soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
         scalesModel.scale.resetMatchedData()
         lastMidi = nil
         lastMidiScaleIndex = nil
@@ -50,6 +50,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         nextExpectedScaleSegment[.right] = 0
         scale.resetMatchedData()
         noteStack=[]
+        soundHandler.start()
     }
     
     func notifiedOfSound(midi:Int) {
@@ -57,7 +58,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     private func processSound(midi:Int, external:Bool) {
-        print("========== LEAD processMIDI", midi, "External", external)
+        //print("========== LEAD processMIDI", midi, "External", external)
         ///Does the received midi match with the expected note in any hand?
         var handForNote:HandType?
         for hand in [HandType.right, .left] {
@@ -77,41 +78,53 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         keyboard[.right] = PianoKeyboardModel.sharedRH
         keyboard[.left] = PianoKeyboardModel.sharedLH
         
-        if let handForNote = handForNote {
-            ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
-            if let keyboardIndex = keyboard[handForNote]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
-                let key=keyboard[handForNote]!.pianoKeyModel[keyboardIndex]
-                key.setKeyPlaying()
-            }
-            let matchedIndex = self.nextExpectedScaleIndex[handForNote]!
-            var noteState = scale.getScaleNoteState(handType: handForNote, index: matchedIndex)
-            noteState.matchedTime = Date()
-            
-            ///Decide if a badge was earned. For both hand scales both thze LH and RH must be matched
-            var badgeEarned = false
-            if scale.hands.count == 1 {
-                badgeEarned = true
-            }
-            else {
-                if handForNote == .left {
-                    badgeEarned = scale.getScaleNoteState(handType: .right, index: matchedIndex).matchedTime != nil
+        if scale.scaleMotion == .contraryMotion {
+            if let keyboard = PianoKeyboardModel.sharedCombined {
+                if let handForNote = handForNote {
+                    if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+                        let key=keyboard.pianoKeyModel[keyboardIndex]
+                        key.setKeyPlaying()
+                    }
                 }
-                else {
-                    badgeEarned = scale.getScaleNoteState(handType: .left, index: matchedIndex).matchedTime != nil
-                }
-            }
-            if badgeEarned {
-                badges.setTotalCorrect(badges.totalCorrect + 1)
-                //badges.addMatch(midi)
             }
         }
         else {
-            ///Midi not in scale - Press the keyboard key in whicher keyboard found first
-            for hand in [HandType.right, .left] {
-                if let keyboardIndex = keyboard[hand]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[hand]) {
-                    let key=keyboard[hand]!.pianoKeyModel[keyboardIndex]
+            if let handForNote = handForNote {
+                ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
+                if let keyboardIndex = keyboard[handForNote]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+                    let key=keyboard[handForNote]!.pianoKeyModel[keyboardIndex]
                     key.setKeyPlaying()
-                    break
+                }
+                let matchedIndex = self.nextExpectedScaleIndex[handForNote]!
+                var noteState = scale.getScaleNoteState(handType: handForNote, index: matchedIndex)
+                noteState.matchedTime = Date()
+                
+                ///Decide if a badge was earned. For both hand scales both thze LH and RH must be matched
+                var badgeEarned = false
+                if scale.hands.count == 1 {
+                    badgeEarned = true
+                }
+                else {
+                    if handForNote == .left {
+                        badgeEarned = scale.getScaleNoteState(handType: .right, index: matchedIndex).matchedTime != nil
+                    }
+                    else {
+                        badgeEarned = scale.getScaleNoteState(handType: .left, index: matchedIndex).matchedTime != nil
+                    }
+                }
+                if badgeEarned {
+                    badges.setTotalCorrect(badges.totalCorrect + 1)
+                    //badges.addMatch(midi)
+                }
+            }
+            else {
+                ///Midi not in scale - Press the keyboard key in whicher keyboard found first
+                for hand in [HandType.right, .left] {
+                    if let keyboardIndex = keyboard[hand]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[hand]) {
+                        let key=keyboard[hand]!.pianoKeyModel[keyboardIndex]
+                        key.setKeyPlaying()
+                        break
+                    }
                 }
             }
         }
@@ -151,10 +164,18 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             if index < scale.getScaleNoteCount() {
                 self.nextExpectedScaleIndex[handForNote]! += 1
             }
+            
             ///Test for the end of the process - i.e. all notes matched.
-            if self.nextExpectedScaleIndex[.left]! >= scale.getScaleNoteCount() &&
-                self.nextExpectedScaleIndex[.right]! >= scale.getScaleNoteCount() {
-                ///self.scale.debug444("END Lead", short: false)
+            let atEnd:Bool
+            if scale.hands.count == 1 {
+                atEnd = self.nextExpectedScaleIndex[.left]! >= scale.getScaleNoteCount() ||
+                self.nextExpectedScaleIndex[.right]! >= scale.getScaleNoteCount()
+            }
+            else {
+                atEnd = self.nextExpectedScaleIndex[.left]! >= scale.getScaleNoteCount() &&
+                        self.nextExpectedScaleIndex[.right]! >= scale.getScaleNoteCount()
+            }
+            if atEnd {
                 scalesModel.clearFunctionToNotify()
                 scalesModel.setRunningProcess(.none)
             }
@@ -224,7 +245,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func playDemo() {
-        self.start()
+        //self.start()
        
         DispatchQueue.global(qos: .background).async {
             //BadgeBank.shared.clearMatches()

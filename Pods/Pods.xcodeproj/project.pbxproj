@@ -62,7 +62,7 @@
 		1824A2DEBC97959FB5E590C6AB6A6EC4 /* GTLRDuration.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AE55E8C001F6A87DDB58703378C168 /* GTLRDuration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		18299D017C27CA603D8166A5713E8DE1 /* GIDSignInResult.h in Headers */ = {isa = PBXBuildFile; fileRef = BB99EE2ADDB02F7D6611C3A3763B1F18 /* GIDSignInResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		187447DA85375A7BCFB7E00856197DE6 /* GIDMDMPasscodeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 471C79E28DA5375B1A5865A67F204145 /* GIDMDMPasscodeState.m */; };
-		192EBA8A80687FB08B594F7FF040CA95 /* GTMSessionFetcher_Core_Privacy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher_Core_Privacy.bundle */; };
+		192EBA8A80687FB08B594F7FF040CA95 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy in Resources */ = {isa = PBXBuildFile; fileRef = E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy */; };
 		19A7355118B6136C8BA42A7BBC3E32C6 /* sv.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 17C819FEE0ECCF6943E7F678021586BF /* sv.lproj */; };
 		19EF217F286EC673ACFB11033ABF30EF /* CryptorRSAErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E4A901336A896656E9065FC23952E2 /* CryptorRSAErrors.swift */; };
 		1A0ADDD9FE5AD192B994832CCE476F14 /* OIDTokenRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 04F0FF9DC4A98C2431699D3ADA569AD0 /* OIDTokenRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -193,14 +193,14 @@
 		5B9E9B3D8672FFD547897D52E7DE5040 /* GACAppCheckTokenRefreshResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 58289ECB3E80D79F5D55A53FAE147C78 /* GACAppCheckTokenRefreshResult.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		5C0F8C811DB98267F9A707DE11D521A2 /* SSLPointerTricks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B362A86B7F7C071184E6177473D2178 /* SSLPointerTricks.swift */; };
 		5C86323DAF0D5BCBC8E2F8E0E97E8245 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3509B4378D3D63CF4F168F315AD680B8 /* PrivacyInfo.xcprivacy */; };
-		5CD127F101529C336A07D45CE1106A54 /* Alamofire.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire.bundle */; };
+		5CD127F101529C336A07D45CE1106A54 /* Alamofire-Alamofire in Resources */ = {isa = PBXBuildFile; fileRef = 085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire-Alamofire */; };
 		5CF85BD377F36C29A99B9C594552D567 /* GACAppCheckToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 89B2DC10E2CC22E3C8893131EAAB0EE5 /* GACAppCheckToken.m */; };
 		5D164123866C9E91334B83F1B63F8908 /* FBLPromise+Always.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECD0DBD54FE1ADEC98986FADEA1EAA /* FBLPromise+Always.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5E0FE034C3020FF69E6DFFFBD40510C9 /* OIDEndSessionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = CF573D152C93AFFFCD7A6D34F6699DD4 /* OIDEndSessionRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5E7E974CB089116A355E034E42EA0D54 /* GACAppAttestStoredArtifact.m in Sources */ = {isa = PBXBuildFile; fileRef = A473A88317E60AC0F97338D5E76D3650 /* GACAppAttestStoredArtifact.m */; };
 		5F70A63F57400E9FC5B84C82F2D454EC /* GTMGatherInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = FB407FD462501BBE86E428FD010FABFD /* GTMGatherInputStream.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5FC84E893D819B0D08AFFC1F215AD094 /* JWT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4DB36137D7CA97E08C54B5EE234F20 /* JWT.swift */; };
-		6013B7C8F1F5F25DFB08AFF362B3155F /* GTMAppAuth_Privacy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth_Privacy.bundle */; };
+		6013B7C8F1F5F25DFB08AFF362B3155F /* GTMAppAuth-GTMAppAuth_Privacy in Resources */ = {isa = PBXBuildFile; fileRef = DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth-GTMAppAuth_Privacy */; };
 		60E72455D9F3A197AA858E3C42282832 /* GTLRErrorObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 5628D1D5029797D32AEE35841F3C7D25 /* GTLRErrorObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6170E9B57C3CEF286FBEC36A4127905E /* OIDGrantTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = B010B9A1129085864FDF9780BF306D83 /* OIDGrantTypes.m */; };
 		621A266B3403DB38E1273F4CE164BA52 /* Cryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F1C437A68A5CB8DEE5B29E239E772FD /* Cryptor.swift */; };
@@ -296,7 +296,7 @@
 		910B8FFBAB19ADB92F201809CB1C1F0E /* nl.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 347C62B35CCB61CD90AC7EDB264F6221 /* nl.lproj */; };
 		9155898F3DDC32F4CA079B9C696D0AD6 /* Data+Base64URLEncoded.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65B6EF3AC3A8AB2BA74522ADC3ABD67 /* Data+Base64URLEncoded.swift */; };
 		918B53B1FE28A828CBDC1438ABBB7F0A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DEAFD203E7B225B1C0C034E14A7C4FC /* UIKit.framework */; };
-		921884D7B84AD776095A8839A9EA507F /* GTMSessionFetcher_Full_Privacy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher_Full_Privacy.bundle */; };
+		921884D7B84AD776095A8839A9EA507F /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy in Resources */ = {isa = PBXBuildFile; fileRef = 097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy */; };
 		9291B0A550DD5D6E151D8C2C9E774767 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FABF7D58C90EA50575B36B26EC09A64E /* Foundation.framework */; };
 		93A73BF03D532584B3EC26681D8EF599 /* FBLPromise+Catch.h in Headers */ = {isa = PBXBuildFile; fileRef = 35052DF7FA9FB84B225626127B7DA961 /* FBLPromise+Catch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9430B5316DA2BFDCBA543BD10F999FF1 /* OIDURLSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = C81A5A66AF783439A92A101B6C3D005F /* OIDURLSessionProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -385,7 +385,7 @@
 		B51977E77B556C20BD20942F38808BB7 /* google.png in Resources */ = {isa = PBXBuildFile; fileRef = 86FD74CCA2195E5F4684C4C4D728B46D /* google.png */; };
 		B5570044B06347B31244416485DF5CA1 /* Digest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E36148E2396B43D170FB08A976B78D /* Digest.swift */; };
 		B61F152EC97DCCF16A4EC11E68031300 /* GIDScopes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4AAE1DE862EA77605CD5A5F1A52AFEBA /* GIDScopes.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		B70AD60D5676B3B6E191E991C7028578 /* FBLPromises_Privacy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3F238BB22C5201CE689CAF2F766AED95 /* FBLPromises_Privacy.bundle */; };
+		B70AD60D5676B3B6E191E991C7028578 /* PromisesObjC-FBLPromises_Privacy in Resources */ = {isa = PBXBuildFile; fileRef = 3F238BB22C5201CE689CAF2F766AED95 /* PromisesObjC-FBLPromises_Privacy */; };
 		B77AC6D01EA62D3D52E68DA161485697 /* hr.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 62ED36CB3E9AB70AAEA61BC7D694337D /* hr.lproj */; };
 		B7E302335E55D8AC9AE0A932115E0779 /* GIDSignInResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FAFDB8AB7D5C63780791D60E091534FA /* GIDSignInResult.m */; };
 		B8A8397D74EC222F2E11A16F7E70D9FD /* GIDSignInResult_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 2240E3FF655FF1A99F96651427B913AD /* GIDSignInResult_Private.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -448,7 +448,7 @@
 		D113A464B8F95A4849DF94B4D300A4D3 /* OIDAuthStateErrorDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = D5A79257B647784E1F803727C2B77448 /* OIDAuthStateErrorDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D1F0123A32394CFE85744DECB6A68514 /* OIDDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = C6E28CD76524DB2408337A64C2350BEA /* OIDDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D2854184492AB0652C029448967FE129 /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F196351F2DBBE8D985ED3C324365E4BC /* ServerTrustEvaluation.swift */; };
-		D2C1DE31C7076EB32C252F911014C098 /* AppAuthCore_Privacy.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EF9852680BCD6EC8B15F622B5B92A838 /* AppAuthCore_Privacy.bundle */; };
+		D2C1DE31C7076EB32C252F911014C098 /* AppAuth-AppAuthCore_Privacy in Resources */ = {isa = PBXBuildFile; fileRef = EF9852680BCD6EC8B15F622B5B92A838 /* AppAuth-AppAuthCore_Privacy */; };
 		D33A70B5F3D101DFA5FC2BC014E5D8F0 /* OIDAuthorizationResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = B9E5227B2306879BE138A4057E71BE8A /* OIDAuthorizationResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D3F95D81B933EE05BE11B4B1D2BF0ADD /* AppAuth.h in Headers */ = {isa = PBXBuildFile; fileRef = 87C95B40C26CE2A0DB5ED1FE8B11DA14 /* AppAuth.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D4012E7BD97DE91597C9EE3741F4CC20 /* GoogleUtilities-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 162984225578021BBD1FB4AEFD8ABDD6 /* GoogleUtilities-dummy.m */; };
@@ -854,14 +854,14 @@
 		0728961A5795809E7588B510C7D6BC11 /* GTMOAuth2Compatibility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GTMOAuth2Compatibility.swift; path = GTMAppAuth/Sources/KeychainStore/GTMOAuth2Compatibility.swift; sourceTree = "<group>"; };
 		075ADD792AAE99EB13A1D9450C1CD985 /* OIDExternalUserAgentIOSCustomBrowser.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OIDExternalUserAgentIOSCustomBrowser.m; path = Sources/AppAuth/iOS/OIDExternalUserAgentIOSCustomBrowser.m; sourceTree = "<group>"; };
 		0763FF117AEEEA3AF9C5FD41820E3C7A /* GIDEMMErrorHandler.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GIDEMMErrorHandler.h; path = GoogleSignIn/Sources/GIDEMMErrorHandler.h; sourceTree = "<group>"; };
-		085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Alamofire.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire-Alamofire */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "Alamofire-Alamofire"; path = Alamofire.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		08A9DC46D14929A19998A1EEEC2F0A19 /* NSURLSession+GACPromises.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSURLSession+GACPromises.m"; path = "AppCheckCore/Sources/Core/APIService/NSURLSession+GACPromises.m"; sourceTree = "<group>"; };
 		08C9DB7C46A4CBB39B67E20422293746 /* SwiftJWT-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftJWT-dummy.m"; sourceTree = "<group>"; };
 		08F4E8DDC2C1C7C679F95AAAE2B54A2C /* GoogleSignIn.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = GoogleSignIn.modulemap; sourceTree = "<group>"; };
 		0934374D01E44CD51E627F31DA558088 /* DataStreamRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DataStreamRequest.swift; path = Source/Core/DataStreamRequest.swift; sourceTree = "<group>"; };
 		0939C399B7593C9AC29986819A2C1873 /* OIDAuthorizationRequest.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OIDAuthorizationRequest.m; path = Sources/AppAuthCore/OIDAuthorizationRequest.m; sourceTree = "<group>"; };
 		093D1E8DF4C9EF4B15C90851A35A6B62 /* GIDSignIn_Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GIDSignIn_Private.h; path = GoogleSignIn/Sources/GIDSignIn_Private.h; sourceTree = "<group>"; };
-		097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher_Full_Privacy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTMSessionFetcher_Full_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "GTMSessionFetcher-GTMSessionFetcher_Full_Privacy"; path = GTMSessionFetcher_Full_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		09B3DB5A2F4B109A6F44D4F5F7D0D769 /* GTLRBatchResult.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTLRBatchResult.m; path = Sources/Core/GTLRBatchResult.m; sourceTree = "<group>"; };
 		09E4C52DA072439B10ADF265D1543915 /* GTMReadMonitorInputStream.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMReadMonitorInputStream.m; path = Sources/Full/GTMReadMonitorInputStream.m; sourceTree = "<group>"; };
 		0A4DB36137D7CA97E08C54B5EE234F20 /* JWT.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JWT.swift; path = Sources/SwiftJWT/JWT.swift; sourceTree = "<group>"; };
@@ -984,7 +984,7 @@
 		3D03E70476CC100BF46801422D4B9077 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		3D9A617FD53F8138B49F665C3DF891E0 /* OIDAuthState.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDAuthState.h; path = Sources/AppAuthCore/OIDAuthState.h; sourceTree = "<group>"; };
 		3E50E566A486372EE107A21DE41C92E7 /* Logging-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Logging-dummy.m"; sourceTree = "<group>"; };
-		3F238BB22C5201CE689CAF2F766AED95 /* FBLPromises_Privacy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FBLPromises_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F238BB22C5201CE689CAF2F766AED95 /* PromisesObjC-FBLPromises_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "PromisesObjC-FBLPromises_Privacy"; path = FBLPromises_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F2C5C4F1A5431D35CC4AD6B3CD38EF4 /* FBLPromise+Wrap.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "FBLPromise+Wrap.m"; path = "Sources/FBLPromises/FBLPromise+Wrap.m"; sourceTree = "<group>"; };
 		3F73AE48DE2BC4A0C7DA97FDE8320AC8 /* AuthenticationInterceptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthenticationInterceptor.swift; path = Source/Features/AuthenticationInterceptor.swift; sourceTree = "<group>"; };
 		3F89C7ECF99668471AD0E727F8654D54 /* RetryPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RetryPolicy.swift; path = Source/Features/RetryPolicy.swift; sourceTree = "<group>"; };
@@ -1276,8 +1276,8 @@
 		B38B856C8B8F74E5CA8DFA14F907B52D /* BodyFormat.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BodyFormat.swift; path = Sources/KituraContracts/BodyFormat.swift; sourceTree = "<group>"; };
 		B3B6EBDAD7445CC7EAD8CE4E3CFD00E8 /* OIDScopes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDScopes.h; path = Sources/AppAuthCore/OIDScopes.h; sourceTree = "<group>"; };
 		B3FCDCEE79B8F7E71CCC7158F5E2538D /* Utilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = Sources/Cryptor/Utilities.swift; sourceTree = "<group>"; };
-		B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = GoogleUtilities; path = GoogleUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = AppCheckCore; path = AppCheckCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GoogleUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppCheckCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B529A4A40ECCBAFA91468B99B41F1B9D /* CryptorRSAUtilities.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CryptorRSAUtilities.swift; path = Sources/CryptorRSA/CryptorRSAUtilities.swift; sourceTree = "<group>"; };
 		B5376939812F3D85CA98880FEE61DF06 /* Logging.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Logging.modulemap; sourceTree = "<group>"; };
 		B642B3DDEAE387E224A34EA42E133FC3 /* GoogleAPIClientForREST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = GoogleAPIClientForREST.debug.xcconfig; sourceTree = "<group>"; };
@@ -1374,7 +1374,7 @@
 		D871F5484004B07CEA1423A69EE4B9F6 /* OIDExternalUserAgentIOS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDExternalUserAgentIOS.h; path = Sources/AppAuth/iOS/OIDExternalUserAgentIOS.h; sourceTree = "<group>"; };
 		D90609BFAE17793F74536432354CFBD2 /* Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Alamofire.swift; path = Source/Alamofire.swift; sourceTree = "<group>"; };
 		D917697940BAF8F63E5EC45FDF0B619C /* QueryEncoder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = QueryEncoder.swift; path = Sources/KituraContracts/CodableQuery/QueryEncoder.swift; sourceTree = "<group>"; };
-		DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth_Privacy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTMAppAuth_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth-GTMAppAuth_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "GTMAppAuth-GTMAppAuth_Privacy"; path = GTMAppAuth_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA30518269D3CAC932C08F3CEE9C5D04 /* GACDeviceCheckProvider.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GACDeviceCheckProvider.h; path = AppCheckCore/Sources/Public/AppCheckCore/GACDeviceCheckProvider.h; sourceTree = "<group>"; };
 		DA955DD2148967D79EF058F0DDB51A4A /* sk.lproj */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = sk.lproj; path = GoogleSignIn/Sources/Strings/sk.lproj; sourceTree = "<group>"; };
 		DB13E9D958F798C0B7D0D84DA1A16916 /* GIDProfileData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GIDProfileData.m; path = GoogleSignIn/Sources/GIDProfileData.m; sourceTree = "<group>"; };
@@ -1408,7 +1408,7 @@
 		E63227A6763490F7806EC5AD80F3CCCA /* HTTPHeaders.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTPHeaders.swift; path = Source/Core/HTTPHeaders.swift; sourceTree = "<group>"; };
 		E78051E03AC248D56B4D7B42750086D7 /* GTMGatherInputStream.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTMGatherInputStream.m; path = Sources/Full/GTMGatherInputStream.m; sourceTree = "<group>"; };
 		E7D108BF19B0B1C271ED0FC2D933AED1 /* GTLRUploadParameters.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GTLRUploadParameters.m; path = Sources/Core/GTLRUploadParameters.m; sourceTree = "<group>"; };
-		E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher_Core_Privacy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GTMSessionFetcher_Core_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "GTMSessionFetcher-GTMSessionFetcher_Core_Privacy"; path = GTMSessionFetcher_Core_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		E979C5C21BE56A166264DC968A6CF20C /* GACAppCheckErrorUtil.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GACAppCheckErrorUtil.h; path = AppCheckCore/Sources/Core/Errors/GACAppCheckErrorUtil.h; sourceTree = "<group>"; };
 		EA3BB4D997EA9E8B54E8DFA4A960C5FB /* CryptorRSAConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CryptorRSAConstants.swift; path = Sources/CryptorRSA/CryptorRSAConstants.swift; sourceTree = "<group>"; };
 		EABE45EB08D0549DA3DF93286D3B78F2 /* NetworkReachabilityManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkReachabilityManager.swift; path = Source/Features/NetworkReachabilityManager.swift; sourceTree = "<group>"; };
@@ -1423,7 +1423,7 @@
 		EEC20221D8A291D80BEE4C554276E25C /* GACAppAttestAPIService.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = GACAppAttestAPIService.h; path = AppCheckCore/Sources/AppAttestProvider/API/GACAppAttestAPIService.h; sourceTree = "<group>"; };
 		EEDA68C4A14FC7CB4DAE33FC36793056 /* OIDTokenUtilities.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OIDTokenUtilities.h; path = Sources/AppAuthCore/OIDTokenUtilities.h; sourceTree = "<group>"; };
 		EF14DF8E239A540D4D0D98951BA52A52 /* GULUserDefaults.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = GULUserDefaults.m; path = GoogleUtilities/UserDefaults/GULUserDefaults.m; sourceTree = "<group>"; };
-		EF9852680BCD6EC8B15F622B5B92A838 /* AppAuthCore_Privacy.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppAuthCore_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF9852680BCD6EC8B15F622B5B92A838 /* AppAuth-AppAuthCore_Privacy */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "AppAuth-AppAuthCore_Privacy"; path = AppAuthCore_Privacy.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFA824C3221913B2E8F06C7C5A631403 /* SwiftJWT.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SwiftJWT.modulemap; sourceTree = "<group>"; };
 		F03F620F709817809C3D36C00DC856CD /* ca.lproj */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder; name = ca.lproj; path = GoogleSignIn/Sources/Strings/ca.lproj; sourceTree = "<group>"; };
 		F0C7F3B35064F614EE53F426A00FA044 /* OIDEndSessionResponse.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OIDEndSessionResponse.m; path = Sources/AppAuthCore/OIDEndSessionResponse.m; sourceTree = "<group>"; };
@@ -1454,7 +1454,7 @@
 		FC5B20A7B643495B1056E918025F9BAB /* FBLPromise+Then.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "FBLPromise+Then.h"; path = "Sources/FBLPromises/include/FBLPromise+Then.h"; sourceTree = "<group>"; };
 		FCF621F91ED3803165B882593DE8FF18 /* ResourceBundle-GoogleSignIn-GoogleSignIn-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-GoogleSignIn-GoogleSignIn-Info.plist"; sourceTree = "<group>"; };
 		FD519882861480B93B563B477CE1FA29 /* GoogleAPIClientForREST */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = GoogleAPIClientForREST; path = GoogleAPIClientForREST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = GoogleSignIn; path = GoogleSignIn.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GoogleSignIn.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDA12DCF1B0E8BD81E37E3D2CC5B0807 /* OIDFieldMapping.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OIDFieldMapping.m; path = Sources/AppAuthCore/OIDFieldMapping.m; sourceTree = "<group>"; };
 		FE9542BA221FEF1DCBFBD3106B09F700 /* DispatchQueue+Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DispatchQueue+Alamofire.swift"; path = "Source/Extensions/DispatchQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		FF10857F36CD2B84330ED8AD3C8215EC /* ResourceBundle-Alamofire-Alamofire-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-Alamofire-Alamofire-Info.plist"; sourceTree = "<group>"; };
@@ -1769,30 +1769,30 @@
 			isa = PBXGroup;
 			children = (
 				5D797E9A5C5782CE845840781FA1CC81 /* Alamofire.framework */,
-				085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire.bundle */,
+				085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire-Alamofire */,
 				3FD1B4C1246D643E9476438C28048FA8 /* AppAuth.framework */,
-				EF9852680BCD6EC8B15F622B5B92A838 /* AppAuthCore_Privacy.bundle */,
-				B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore */,
+				EF9852680BCD6EC8B15F622B5B92A838 /* AppAuth-AppAuthCore_Privacy */,
+				B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore.framework */,
 				0EF2AA497DAF2C29FA3EB06BDE44553F /* Cryptor.framework */,
 				53D3E35E7EB25621342FA0CA77C0167B /* CryptorECC.framework */,
 				A5CF16B4996DB7D0E4981082FB86ED82 /* CryptorRSA.framework */,
 				FD519882861480B93B563B477CE1FA29 /* GoogleAPIClientForREST */,
 				60A08F8640CD99836A2D380855F045D0 /* GoogleAPIClientForREST-GoogleAPIClientForREST_Privacy */,
-				FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn */,
+				FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn.framework */,
 				E5BA41B7F2E1FE47F9ABCAC27C9E4281 /* GoogleSignIn-GoogleSignIn */,
-				B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities */,
+				B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities.framework */,
 				44E291D18340EAC3F761346198515323 /* GoogleUtilities-GoogleUtilities_Privacy */,
 				6FD122EA0AB9AB2A8FFA5F676C795DF0 /* GTMAppAuth.framework */,
-				DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth_Privacy.bundle */,
+				DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth-GTMAppAuth_Privacy */,
 				C1998E0D8085221AD87F89B614C10E52 /* GTMSessionFetcher.framework */,
-				E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher_Core_Privacy.bundle */,
-				097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher_Full_Privacy.bundle */,
+				E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy */,
+				097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy */,
 				B9E276AB0F6AE3009D9751E19C8A0E0F /* KituraContracts.framework */,
 				A3B85B880B894F1FF5BAFD94E036CC04 /* LoggerAPI.framework */,
 				A6513E0A6CB60623515716E73996F0F5 /* Logging.framework */,
 				82ACECA2416F08B50AB95075B238A120 /* Pods-ScalesStar */,
 				3347A1AB6546F0A3977529B8F199DC41 /* FBLPromises.framework */,
-				3F238BB22C5201CE689CAF2F766AED95 /* FBLPromises_Privacy.bundle */,
+				3F238BB22C5201CE689CAF2F766AED95 /* PromisesObjC-FBLPromises_Privacy */,
 				D5E011D8AD8603675BA8A5634EC21B9B /* SwiftJWT.framework */,
 			);
 			name = Products;
@@ -3100,7 +3100,7 @@
 			);
 			name = "PromisesObjC-FBLPromises_Privacy";
 			productName = FBLPromises_Privacy;
-			productReference = 3F238BB22C5201CE689CAF2F766AED95 /* FBLPromises_Privacy.bundle */;
+			productReference = 3F238BB22C5201CE689CAF2F766AED95 /* PromisesObjC-FBLPromises_Privacy */;
 			productType = "com.apple.product-type.bundle";
 		};
 		24D7789A4C8783E3684E7D8CFAC12CC6 /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy */ = {
@@ -3117,7 +3117,7 @@
 			);
 			name = "GTMSessionFetcher-GTMSessionFetcher_Full_Privacy";
 			productName = GTMSessionFetcher_Full_Privacy;
-			productReference = 097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher_Full_Privacy.bundle */;
+			productReference = 097A1F5B958C73856FCF44A3F4A839C6 /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy */;
 			productType = "com.apple.product-type.bundle";
 		};
 		2ABF3F8EC6CE525E1E02C51D72C64E94 /* Logging */ = {
@@ -3171,7 +3171,7 @@
 			);
 			name = "AppAuth-AppAuthCore_Privacy";
 			productName = AppAuthCore_Privacy;
-			productReference = EF9852680BCD6EC8B15F622B5B92A838 /* AppAuthCore_Privacy.bundle */;
+			productReference = EF9852680BCD6EC8B15F622B5B92A838 /* AppAuth-AppAuthCore_Privacy */;
 			productType = "com.apple.product-type.bundle";
 		};
 		3CA5FD5A45C3F901A76060FE0F4A9B5F /* BlueRSA */ = {
@@ -3225,7 +3225,7 @@
 			);
 			name = "GTMSessionFetcher-GTMSessionFetcher_Core_Privacy";
 			productName = GTMSessionFetcher_Core_Privacy;
-			productReference = E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher_Core_Privacy.bundle */;
+			productReference = E826FA0DCB9AA6E7829C68391B323B78 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy */;
 			productType = "com.apple.product-type.bundle";
 		};
 		5768DFA40F6926417DA5BBD7EF5A1B61 /* AppCheckCore */ = {
@@ -3245,7 +3245,7 @@
 			);
 			name = AppCheckCore;
 			productName = AppCheckCore;
-			productReference = B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore */;
+			productReference = B46CC14F5020A277B322D80BA336BC10 /* AppCheckCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		5B10C920DE193A91B2A4865B39D5C800 /* GoogleAPIClientForREST-GoogleAPIClientForREST_Privacy */ = {
@@ -3332,7 +3332,7 @@
 			);
 			name = "GTMAppAuth-GTMAppAuth_Privacy";
 			productName = GTMAppAuth_Privacy;
-			productReference = DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth_Privacy.bundle */;
+			productReference = DA0C8E4A1DAFC158C8B8845D021E6531 /* GTMAppAuth-GTMAppAuth_Privacy */;
 			productType = "com.apple.product-type.bundle";
 		};
 		8627999EF1D5E93E13DAFF580DA8CDCF /* GTMAppAuth */ = {
@@ -3372,7 +3372,7 @@
 			);
 			name = GoogleUtilities;
 			productName = GoogleUtilities;
-			productReference = B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities */;
+			productReference = B43874C6CBB50E7134FBEC24BABFE14F /* GoogleUtilities.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		921D74A1881BD89FA651ED7078F37128 /* KituraContracts */ = {
@@ -3408,7 +3408,7 @@
 			);
 			name = "Alamofire-Alamofire";
 			productName = Alamofire;
-			productReference = 085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire.bundle */;
+			productReference = 085DBCE7DD98588B2ED103B1C1F36026 /* Alamofire-Alamofire */;
 			productType = "com.apple.product-type.bundle";
 		};
 		9FF604BE1801EF6B67EED51EDA9D63C9 /* BlueECC */ = {
@@ -3501,7 +3501,7 @@
 			);
 			name = GoogleSignIn;
 			productName = GoogleSignIn;
-			productReference = FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn */;
+			productReference = FD56AB51475BC5F592781EE2692D1412 /* GoogleSignIn.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D676E21115185671D7258A56944ABE98 /* GTMSessionFetcher */ = {
@@ -3594,14 +3594,6 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-					8627999EF1D5E93E13DAFF580DA8CDCF = {
-						LastSwiftMigration = "";
-					};
-					EAAA1AD3A8A1B59AB91319EE40752C6D = {
-						LastSwiftMigration = "";
-					};
-				};
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -3757,7 +3749,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6013B7C8F1F5F25DFB08AFF362B3155F /* GTMAppAuth_Privacy.bundle in Resources */,
+				6013B7C8F1F5F25DFB08AFF362B3155F /* GTMAppAuth-GTMAppAuth_Privacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3815,7 +3807,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CD127F101529C336A07D45CE1106A54 /* Alamofire.bundle in Resources */,
+				5CD127F101529C336A07D45CE1106A54 /* Alamofire-Alamofire in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3823,7 +3815,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B70AD60D5676B3B6E191E991C7028578 /* FBLPromises_Privacy.bundle in Resources */,
+				B70AD60D5676B3B6E191E991C7028578 /* PromisesObjC-FBLPromises_Privacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3838,7 +3830,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2C1DE31C7076EB32C252F911014C098 /* AppAuthCore_Privacy.bundle in Resources */,
+				D2C1DE31C7076EB32C252F911014C098 /* AppAuth-AppAuthCore_Privacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3846,8 +3838,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				192EBA8A80687FB08B594F7FF040CA95 /* GTMSessionFetcher_Core_Privacy.bundle in Resources */,
-				921884D7B84AD776095A8839A9EA507F /* GTMSessionFetcher_Full_Privacy.bundle in Resources */,
+				192EBA8A80687FB08B594F7FF040CA95 /* GTMSessionFetcher-GTMSessionFetcher_Core_Privacy in Resources */,
+				921884D7B84AD776095A8839A9EA507F /* GTMSessionFetcher-GTMSessionFetcher_Full_Privacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4629,11 +4621,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		10514D95445C822BC95205ACC70C31BD /* Release */ = {
+		0359731090C27786C986A68978888650 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 98F6733B0027CD0105B1F64E320CE7CF /* LoggerAPI.release.xcconfig */;
+			baseConfigurationReference = 1C2B83EDCDE8BB41FF09481E54927EB9 /* KituraContracts.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -4645,28 +4636,61 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/LoggerAPI/LoggerAPI-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/KituraContracts/KituraContracts-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/LoggerAPI/LoggerAPI-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/KituraContracts/KituraContracts-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/LoggerAPI/LoggerAPI.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = LoggerAPI;
-				PRODUCT_NAME = LoggerAPI;
+				MODULEMAP_FILE = "Target Support Files/KituraContracts/KituraContracts.modulemap";
+				PRODUCT_MODULE_NAME = KituraContracts;
+				PRODUCT_NAME = KituraContracts;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.1;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		0CD9539B916DACC95B15D64AE3BF0F56 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5B4DDC2119EE1F52407AB3ACDB8D844D /* GTMSessionFetcher.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher.modulemap";
+				PRODUCT_MODULE_NAME = GTMSessionFetcher;
+				PRODUCT_NAME = GTMSessionFetcher;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -4682,7 +4706,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMSessionFetcher";
 				IBSC_MODULE = GTMSessionFetcher;
 				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/ResourceBundle-GTMSessionFetcher_Core_Privacy-GTMSessionFetcher-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = GTMSessionFetcher_Core_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4708,51 +4732,6 @@
 			};
 			name = Release;
 		};
-		1796F7FB19C0CBF133F67BE683AA48F2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D637079D96480412D4C6A73965B1F72E /* SwiftJWT.release.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/SwiftJWT/SwiftJWT-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/SwiftJWT/SwiftJWT-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/SwiftJWT/SwiftJWT.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = SwiftJWT;
-				PRODUCT_NAME = SwiftJWT;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.1;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		1B74D88684F07FD9D81320F340ED4590 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4A1DAFF119197A988BA17C822B38B13C /* GoogleUtilities.debug.xcconfig */;
@@ -4770,11 +4749,10 @@
 			};
 			name = Debug;
 		};
-		1D55056F3D705B3B1EEB929923A03061 /* Release */ = {
+		1BFE24ABCFE46C59EE1B119806EBF6EA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 67B01D4FE0C5EC3DC72F84E24F8920C8 /* BlueCryptor.release.xcconfig */;
+			baseConfigurationReference = 5D1E240D1F5AA84F4050C1E46AF3011E /* BlueCryptor.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -4790,35 +4768,29 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Target Support Files/BlueCryptor/BlueCryptor-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "Target Support Files/BlueCryptor/BlueCryptor.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_MODULE_NAME = Cryptor;
 				PRODUCT_NAME = Cryptor;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
-		1E4348459400E2A66972DDDAEF549807 /* Debug */ = {
+		1DCFF3A428CC03CB81863FAF9F7AB5D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FFEF8381279160228E1A06DDA5FE471E /* BlueECC.debug.xcconfig */;
+			baseConfigurationReference = BFF255980DEDB353A6F8E04B5EBF398F /* GTMAppAuth.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -4830,28 +4802,23 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/BlueECC/BlueECC-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/BlueECC/BlueECC-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/BlueECC/BlueECC.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = CryptorECC;
-				PRODUCT_NAME = CryptorECC;
+				MODULEMAP_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth.modulemap";
+				PRODUCT_MODULE_NAME = GTMAppAuth;
+				PRODUCT_NAME = GTMAppAuth;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4866,7 +4833,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMSessionFetcher";
 				IBSC_MODULE = GTMSessionFetcher;
 				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/ResourceBundle-GTMSessionFetcher_Core_Privacy-GTMSessionFetcher-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = GTMSessionFetcher_Core_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4875,9 +4842,43 @@
 			};
 			name = Release;
 		};
-		234A1128D659BAD8CD6F5CA470DAF9BD /* Debug */ = {
+		28889F16F727FD40363E1B1A3160C33E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 434F8FD2191B32EE639084C90CE08384 /* GTMSessionFetcher.debug.xcconfig */;
+			baseConfigurationReference = 5B4DDC2119EE1F52407AB3ACDB8D844D /* GTMSessionFetcher.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMSessionFetcher";
+				IBSC_MODULE = GTMSessionFetcher;
+				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/ResourceBundle-GTMSessionFetcher_Full_Privacy-GTMSessionFetcher-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				PRODUCT_NAME = GTMSessionFetcher_Full_Privacy;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		2BC7039347347C9D6FFDF95CEE71D652 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D65F945871E22C1259458873BB706B3C /* Alamofire.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Alamofire";
+				IBSC_MODULE = Alamofire;
+				INFOPLIST_FILE = "Target Support Files/Alamofire/ResourceBundle-Alamofire-Alamofire-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				PRODUCT_NAME = Alamofire;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		2D6D04B7017BFB9AC732A04677A8126C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6D6875210ACB86FDDD32D50ECF7D3D88 /* GoogleSignIn.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -4890,33 +4891,86 @@
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GTMSessionFetcher;
-				PRODUCT_NAME = GTMSessionFetcher;
+				MODULEMAP_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn.modulemap";
+				PRODUCT_MODULE_NAME = GoogleSignIn;
+				PRODUCT_NAME = GoogleSignIn;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
-		282C2565060941676E01F56E63FF0D9A /* Debug */ = {
+		2E4BCDDBC3A6914117586D195BDFD3E6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18D5C7C3264D2DE9FAD069C7D18DF4D6 /* BlueRSA.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/BlueRSA/BlueRSA-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/BlueRSA/BlueRSA-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/BlueRSA/BlueRSA.modulemap";
+				PRODUCT_MODULE_NAME = CryptorRSA;
+				PRODUCT_NAME = CryptorRSA;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		3165012D05C4DCEB5846F1BBD24971C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 248F64BD4538734B67432BEE618EA72F /* PromisesObjC.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/PromisesObjC";
+				IBSC_MODULE = FBLPromises;
+				INFOPLIST_FILE = "Target Support Files/PromisesObjC/ResourceBundle-FBLPromises_Privacy-PromisesObjC-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = FBLPromises_Privacy;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		381470B6F6DB3365050F82052D3BA402 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B642B3DDEAE387E224A34EA42E133FC3 /* GoogleAPIClientForREST.debug.xcconfig */;
 			buildSettings = {
@@ -4940,16 +4994,12 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "Target Support Files/GoogleAPIClientForREST/GoogleAPIClientForREST.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_MODULE_NAME = GoogleAPIClientForREST;
 				PRODUCT_NAME = GoogleAPIClientForREST;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4958,62 +5008,10 @@
 			};
 			name = Debug;
 		};
-		28889F16F727FD40363E1B1A3160C33E /* Release */ = {
+		3A23035F5F36730E35170A90E7445ABB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B4DDC2119EE1F52407AB3ACDB8D844D /* GTMSessionFetcher.release.xcconfig */;
+			baseConfigurationReference = A5B2E0A6660479CECFD3C717CFCE2636 /* AppCheckCore.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGNING_ALLOWED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMSessionFetcher";
-				IBSC_MODULE = GTMSessionFetcher;
-				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/ResourceBundle-GTMSessionFetcher_Full_Privacy-GTMSessionFetcher-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = GTMSessionFetcher_Full_Privacy;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
-		2BC7039347347C9D6FFDF95CEE71D652 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D65F945871E22C1259458873BB706B3C /* Alamofire.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGNING_ALLOWED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Alamofire";
-				IBSC_MODULE = Alamofire;
-				INFOPLIST_FILE = "Target Support Files/Alamofire/ResourceBundle-Alamofire-Alamofire-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = Alamofire;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Debug;
-		};
-		3165012D05C4DCEB5846F1BBD24971C0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 248F64BD4538734B67432BEE618EA72F /* PromisesObjC.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGNING_ALLOWED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/PromisesObjC";
-				IBSC_MODULE = FBLPromises;
-				INFOPLIST_FILE = "Target Support Files/PromisesObjC/ResourceBundle-FBLPromises_Privacy-PromisesObjC-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = FBLPromises_Privacy;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
-		35591B79D79E7A155E691BA0724E98FE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0DF1F6723A399F592356C2231379558C /* SwiftJWT.debug.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -5025,118 +5023,67 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/SwiftJWT/SwiftJWT-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/SwiftJWT/SwiftJWT-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/AppCheckCore/AppCheckCore-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/SwiftJWT/SwiftJWT.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = SwiftJWT;
-				PRODUCT_NAME = SwiftJWT;
+				MODULEMAP_FILE = "Target Support Files/AppCheckCore/AppCheckCore.modulemap";
+				PRODUCT_MODULE_NAME = AppCheckCore;
+				PRODUCT_NAME = AppCheckCore;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.1;
+				SWIFT_VERSION = 5.5;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
-		3A38B8D1BAF196EB8C4E9E666982C21E /* Debug */ = {
+		3DBC67A8DCBC54C12490434148E27829 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4A1DAFF119197A988BA17C822B38B13C /* GoogleUtilities.debug.xcconfig */;
+			baseConfigurationReference = FA767EA1CF7C15455039C7BCF65EFFC2 /* AppAuth.release.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/AppAuth/AppAuth-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/AppAuth/AppAuth-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GoogleUtilities;
-				PRODUCT_NAME = GoogleUtilities;
+				MODULEMAP_FILE = "Target Support Files/AppAuth/AppAuth.modulemap";
+				PRODUCT_MODULE_NAME = AppAuth;
+				PRODUCT_NAME = AppAuth;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
-		};
-		3A808D3F694352FDE990A41B68B060D7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BFF255980DEDB353A6F8E04B5EBF398F /* GTMAppAuth.debug.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GTMAppAuth;
-				PRODUCT_NAME = GTMAppAuth;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
+			name = Release;
 		};
 		3DFC6918EED538E2F2D63DDBBF16F30C /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -5155,74 +5102,47 @@
 			};
 			name = Release;
 		};
-		4146417E0A5EEF9CD061673E613C7D4E /* Release */ = {
+		3E2138106B5CF6E137C5868CE67173CF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 434F8FD2191B32EE639084C90CE08384 /* GTMSessionFetcher.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_RELEASE=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher.modulemap";
+				PRODUCT_MODULE_NAME = GTMSessionFetcher;
+				PRODUCT_NAME = GTMSessionFetcher;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/../build";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
-		47020879E2A0B879EBB0D9C2CDA9534F /* Debug */ = {
+		43E6F219681645AA6A1DC48E87B56284 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D65F945871E22C1259458873BB706B3C /* Alamofire.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -5238,22 +5158,18 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Target Support Files/Alamofire/Alamofire-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "Target Support Files/Alamofire/Alamofire.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_MODULE_NAME = Alamofire;
 				PRODUCT_NAME = Alamofire;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5262,9 +5178,9 @@
 			};
 			name = Debug;
 		};
-		4B4F4FA8B457E29265CB229A933C3E60 /* Debug */ = {
+		4C6450248165267FCCE1E931FDCC492D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 06E605FB5843AA68CFA2ACFA8C8BF465 /* AppCheckCore.debug.xcconfig */;
+			baseConfigurationReference = 394583B03C89AADBEAB135534643A3F3 /* Alamofire.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -5277,115 +5193,30 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/Alamofire/Alamofire-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/AppCheckCore/AppCheckCore-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Alamofire/Alamofire-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/AppCheckCore/AppCheckCore.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = AppCheckCore;
-				PRODUCT_NAME = AppCheckCore;
+				MODULEMAP_FILE = "Target Support Files/Alamofire/Alamofire.modulemap";
+				PRODUCT_MODULE_NAME = Alamofire;
+				PRODUCT_NAME = Alamofire;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		4C2991A42F319082A943F3665897A616 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0923B754C1489B43612DC48B1BDDAAA /* GoogleAPIClientForREST.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GoogleAPIClientForREST/GoogleAPIClientForREST-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GoogleAPIClientForREST/GoogleAPIClientForREST.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GoogleAPIClientForREST;
-				PRODUCT_NAME = GoogleAPIClientForREST;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		5196A5B4787C19763A8B072E3B9F7E8E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7C0CE127485DB39AF1D8B42F5F7E0B0 /* PromisesObjC.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/PromisesObjC/PromisesObjC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = FBLPromises;
-				PRODUCT_NAME = FBLPromises;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 		5440653875B19D3A164820E5ABDB0B2C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -5404,12 +5235,10 @@
 			};
 			name = Debug;
 		};
-		5645F08E47A4D94CA6B40842CEDD60AB /* Debug */ = {
+		550A5D9322BB1999200FCD526594A0A0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 24E7CBE2E51B0F0A7ECBBBA12DA671BD /* Pods-ScalesStar.debug.xcconfig */;
+			baseConfigurationReference = F3D73FEF796EBD79F80DF4B94EE44F00 /* KituraContracts.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -5421,115 +5250,22 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		5C4D9C83E6D3936D87D4518EC90E46A3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 199C2761F6B0CB0AD3A8151399E63510 /* Pods-ScalesStar.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		601A0BC51724E26017C5E4310F13DC43 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA767EA1CF7C15455039C7BCF65EFFC2 /* AppAuth.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/AppAuth/AppAuth-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/KituraContracts/KituraContracts-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/AppAuth/AppAuth-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/KituraContracts/KituraContracts-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/AppAuth/AppAuth.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = AppAuth;
-				PRODUCT_NAME = AppAuth;
+				MODULEMAP_FILE = "Target Support Files/KituraContracts/KituraContracts.modulemap";
+				PRODUCT_MODULE_NAME = KituraContracts;
+				PRODUCT_NAME = KituraContracts;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5539,11 +5275,10 @@
 			};
 			name = Release;
 		};
-		6177A558A3C930B680B1BC623CD87F66 /* Release */ = {
+		563033B45AAEE1A19E5FBC568C1C61AA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4D7AEAF7C09E55247D06E3DC36610A2B /* GoogleUtilities.release.xcconfig */;
+			baseConfigurationReference = DEADAF672E9152ECF1727A79A2B5ECA8 /* Logging.release.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -5554,70 +5289,22 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/Logging/Logging-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Logging/Logging-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GoogleUtilities;
-				PRODUCT_NAME = GoogleUtilities;
+				MODULEMAP_FILE = "Target Support Files/Logging/Logging.modulemap";
+				PRODUCT_MODULE_NAME = Logging;
+				PRODUCT_NAME = Logging;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		632DE08119C89ACC261F2E2E41A39118 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 559F74BA14BD7491D58715F4D2960F7E /* BlueECC.release.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/BlueECC/BlueECC-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/BlueECC/BlueECC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/BlueECC/BlueECC.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = CryptorECC;
-				PRODUCT_NAME = CryptorECC;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5652,7 +5339,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMAppAuth";
 				IBSC_MODULE = GTMAppAuth;
 				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/ResourceBundle-GTMAppAuth_Privacy-GTMAppAuth-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = GTMAppAuth_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -5661,9 +5348,48 @@
 			};
 			name = Release;
 		};
-		6A056831B322ECBA73733A4DC1DC6AEE /* Debug */ = {
+		6A3735EF7DD6CFFC70DFA877D4ED6F06 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AE73F49E26DA508D949B4346DCFCE087 /* AppAuth.debug.xcconfig */;
+			baseConfigurationReference = 67B01D4FE0C5EC3DC72F84E24F8920C8 /* BlueCryptor.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/BlueCryptor/BlueCryptor-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/BlueCryptor/BlueCryptor-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/BlueCryptor/BlueCryptor.modulemap";
+				PRODUCT_MODULE_NAME = Cryptor;
+				PRODUCT_NAME = Cryptor;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6B9814E28E1E913B7FF52D739664C83B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B7C0CE127485DB39AF1D8B42F5F7E0B0 /* PromisesObjC.debug.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -5674,26 +5400,21 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/AppAuth/AppAuth-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/AppAuth/AppAuth-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/PromisesObjC/PromisesObjC-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/AppAuth/AppAuth.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = AppAuth;
-				PRODUCT_NAME = AppAuth;
+				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
+				PRODUCT_MODULE_NAME = FBLPromises;
+				PRODUCT_NAME = FBLPromises;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5702,9 +5423,9 @@
 			};
 			name = Debug;
 		};
-		6AEB43330DABA8657BBE3ABB0F7D193F /* Release */ = {
+		81CE3CA37AD2FCFF29F0A2EC32087975 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A5B2E0A6660479CECFD3C717CFCE2636 /* AppCheckCore.release.xcconfig */;
+			baseConfigurationReference = 06E605FB5843AA68CFA2ACFA8C8BF465 /* AppCheckCore.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -5720,212 +5441,35 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Target Support Files/AppCheckCore/AppCheckCore-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "Target Support Files/AppCheckCore/AppCheckCore.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_MODULE_NAME = AppCheckCore;
 				PRODUCT_NAME = AppCheckCore;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.5;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
-		73779ED8522C2646C1DFA477FF5D429F /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 248F64BD4538734B67432BEE618EA72F /* PromisesObjC.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/PromisesObjC/PromisesObjC-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = FBLPromises;
-				PRODUCT_NAME = FBLPromises;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		8082C3E8B7E337D9FE51379AC83ABD0E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 394583B03C89AADBEAB135534643A3F3 /* Alamofire.release.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/Alamofire/Alamofire-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/Alamofire/Alamofire-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/Alamofire/Alamofire.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = Alamofire;
-				PRODUCT_NAME = Alamofire;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		888CABE92875B68B804E1BE87343E457 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D6875210ACB86FDDD32D50ECF7D3D88 /* GoogleSignIn.release.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GoogleSignIn;
-				PRODUCT_NAME = GoogleSignIn;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		894411BED725F563185F3B2DB4B0B871 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 26EECED534C132E01FC4104F94BF7B12 /* GTMAppAuth.release.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GTMAppAuth;
-				PRODUCT_NAME = GTMAppAuth;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		8FA7A7481543B3DBB7E250B6A3372323 /* Debug */ = {
+		8DE5143C03248BB6CD542DE3963D6F3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -5955,8 +5499,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -5972,7 +5515,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -5985,11 +5527,10 @@
 			};
 			name = Debug;
 		};
-		9023DA2E7E8669F3F45502614B1E12FF /* Debug */ = {
+		90C0B878744BF6AF2BFD4483F8CEF3B4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5D1E240D1F5AA84F4050C1E46AF3011E /* BlueCryptor.debug.xcconfig */;
+			baseConfigurationReference = 98F6733B0027CD0105B1F64E320CE7CF /* LoggerAPI.release.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6001,32 +5542,30 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/BlueCryptor/BlueCryptor-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/LoggerAPI/LoggerAPI-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/BlueCryptor/BlueCryptor-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/LoggerAPI/LoggerAPI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/BlueCryptor/BlueCryptor.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = Cryptor;
-				PRODUCT_NAME = Cryptor;
+				MODULEMAP_FILE = "Target Support Files/LoggerAPI/LoggerAPI.modulemap";
+				PRODUCT_MODULE_NAME = LoggerAPI;
+				PRODUCT_NAME = LoggerAPI;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
 		933DC144E8CAD6C85C829D742FC6C33E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -6036,7 +5575,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMAppAuth";
 				IBSC_MODULE = GTMAppAuth;
 				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/ResourceBundle-GTMAppAuth_Privacy-GTMAppAuth-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = GTMAppAuth_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -6045,28 +5584,10 @@
 			};
 			name = Debug;
 		};
-		A1EE06165E45963F878E3E80BFC03C94 /* Release */ = {
+		9610037B60C6816E2440851EAF0E5016 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA767EA1CF7C15455039C7BCF65EFFC2 /* AppAuth.release.xcconfig */;
+			baseConfigurationReference = 0DF1F6723A399F592356C2231379558C /* SwiftJWT.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGNING_ALLOWED = NO;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppAuth";
-				IBSC_MODULE = AppAuth;
-				INFOPLIST_FILE = "Target Support Files/AppAuth/ResourceBundle-AppAuthCore_Privacy-AppAuth-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = AppAuthCore_Privacy;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				WRAPPER_EXTENSION = bundle;
-			};
-			name = Release;
-		};
-		A9AE6B69617DCD31A2BBA443553D84BE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AAC37336B4045265971DC756490D7EBD /* BlueRSA.debug.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6078,34 +5599,170 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/BlueRSA/BlueRSA-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/SwiftJWT/SwiftJWT-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/BlueRSA/BlueRSA-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/SwiftJWT/SwiftJWT-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/BlueRSA/BlueRSA.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = CryptorRSA;
-				PRODUCT_NAME = CryptorRSA;
+				MODULEMAP_FILE = "Target Support Files/SwiftJWT/SwiftJWT.modulemap";
+				PRODUCT_MODULE_NAME = SwiftJWT;
+				PRODUCT_NAME = SwiftJWT;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		ABD7AEB50F16DC0E94324FDBEE22737B /* Debug */ = {
+		97619315EC93EC449122743DCB4E0DF6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24E7CBE2E51B0F0A7ECBBBA12DA671BD /* Pods-ScalesStar.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9ACF8C32F3D86FA3321A6C74CDB2FC28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1554323CCDBA374BDDEE45B5FB05287D /* Logging.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/Logging/Logging-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/Logging/Logging-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Logging/Logging.modulemap";
+				PRODUCT_MODULE_NAME = Logging;
+				PRODUCT_NAME = Logging;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9E406C6AAF85E580207CD97B0044DEAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		A0776176ABF07FAE785481078B2FD844 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B0258A32312E01ED83B94F7249B024D /* GoogleSignIn.debug.xcconfig */;
 			buildSettings = {
@@ -6122,22 +5779,18 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
 				MODULEMAP_FILE = "Target Support Files/GoogleSignIn/GoogleSignIn.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_MODULE_NAME = GoogleSignIn;
 				PRODUCT_NAME = GoogleSignIn;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6145,6 +5798,101 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
+		};
+		A1EE06165E45963F878E3E80BFC03C94 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FA767EA1CF7C15455039C7BCF65EFFC2 /* AppAuth.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppAuth";
+				IBSC_MODULE = AppAuth;
+				INFOPLIST_FILE = "Target Support Files/AppAuth/ResourceBundle-AppAuthCore_Privacy-AppAuth-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = AppAuthCore_Privacy;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		A8359CC76E4097F63D67E1185AB9049F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AAC37336B4045265971DC756490D7EBD /* BlueRSA.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/BlueRSA/BlueRSA-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/BlueRSA/BlueRSA-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/BlueRSA/BlueRSA.modulemap";
+				PRODUCT_MODULE_NAME = CryptorRSA;
+				PRODUCT_NAME = CryptorRSA;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		A9CBFAE7858E0C1697CE4DE1ABC52687 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D637079D96480412D4C6A73965B1F72E /* SwiftJWT.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/SwiftJWT/SwiftJWT-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/SwiftJWT/SwiftJWT-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/SwiftJWT/SwiftJWT.modulemap";
+				PRODUCT_MODULE_NAME = SwiftJWT;
+				PRODUCT_NAME = SwiftJWT;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
 		};
 		B1408334B3B056963F3DCB1B2D43CDD3 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -6154,7 +5902,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Alamofire";
 				IBSC_MODULE = Alamofire;
 				INFOPLIST_FILE = "Target Support Files/Alamofire/ResourceBundle-Alamofire-Alamofire-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = Alamofire;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -6171,7 +5919,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/AppAuth";
 				IBSC_MODULE = AppAuth;
 				INFOPLIST_FILE = "Target Support Files/AppAuth/ResourceBundle-AppAuthCore_Privacy-AppAuth-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = AppAuthCore_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -6180,39 +5928,37 @@
 			};
 			name = Debug;
 		};
-		C727F3ABC9FE68D7F4DF36B19B5B59A9 /* Release */ = {
+		B75EF05A8F7BE821AF416134DAA5438F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5B4DDC2119EE1F52407AB3ACDB8D844D /* GTMSessionFetcher.release.xcconfig */;
+			baseConfigurationReference = 559F74BA14BD7491D58715F4D2960F7E /* BlueECC.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/BlueECC/BlueECC-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/BlueECC/BlueECC-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/GTMSessionFetcher/GTMSessionFetcher.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = GTMSessionFetcher;
-				PRODUCT_NAME = GTMSessionFetcher;
+				MODULEMAP_FILE = "Target Support Files/BlueECC/BlueECC.modulemap";
+				PRODUCT_MODULE_NAME = CryptorECC;
+				PRODUCT_NAME = CryptorECC;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6222,11 +5968,11 @@
 			};
 			name = Release;
 		};
-		CE9CB74837C0E9C552E563D463105E2D /* Debug */ = {
+		B9CC3C2BB65CA8E3E0294B79E993720C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83946CD5294EE8BA12AFBC257E0FF632 /* LoggerAPI.debug.xcconfig */;
+			baseConfigurationReference = 199C2761F6B0CB0AD3A8151399E63510 /* Pods-ScalesStar.release.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6238,39 +5984,34 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/LoggerAPI/LoggerAPI-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/LoggerAPI/LoggerAPI-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/LoggerAPI/LoggerAPI.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = LoggerAPI;
-				PRODUCT_NAME = LoggerAPI;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = Release;
 		};
-		D7AC9593F1634E0143E6B2A76F9F004A /* Release */ = {
+		BA13463C29CF2BB14DFF9B96A33E9A88 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 18D5C7C3264D2DE9FAD069C7D18DF4D6 /* BlueRSA.release.xcconfig */;
+			baseConfigurationReference = D0923B754C1489B43612DC48B1BDDAAA /* GoogleAPIClientForREST.release.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6282,9 +6023,8 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/BlueRSA/BlueRSA-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/BlueRSA/BlueRSA-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/GoogleAPIClientForREST/GoogleAPIClientForREST-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -6292,17 +6032,92 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/BlueRSA/BlueRSA.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = CryptorRSA;
-				PRODUCT_NAME = CryptorRSA;
+				MODULEMAP_FILE = "Target Support Files/GoogleAPIClientForREST/GoogleAPIClientForREST.modulemap";
+				PRODUCT_MODULE_NAME = GoogleAPIClientForREST;
+				PRODUCT_NAME = GoogleAPIClientForREST;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		C385C6908F0BB43F5A54E77787A4E0F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D7AEAF7C09E55247D06E3DC36610A2B /* GoogleUtilities.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
+				PRODUCT_MODULE_NAME = GoogleUtilities;
+				PRODUCT_NAME = GoogleUtilities;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D7CF80A772827BC374D5E978B256F3B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 26EECED534C132E01FC4104F94BF7B12 /* GTMAppAuth.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GTMAppAuth/GTMAppAuth.modulemap";
+				PRODUCT_MODULE_NAME = GTMAppAuth;
+				PRODUCT_NAME = GTMAppAuth;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -6318,7 +6133,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/PromisesObjC";
 				IBSC_MODULE = FBLPromises;
 				INFOPLIST_FILE = "Target Support Files/PromisesObjC/ResourceBundle-FBLPromises_Privacy-PromisesObjC-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = FBLPromises_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -6335,12 +6150,50 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/GTMSessionFetcher";
 				IBSC_MODULE = GTMSessionFetcher;
 				INFOPLIST_FILE = "Target Support Files/GTMSessionFetcher/ResourceBundle-GTMSessionFetcher_Full_Privacy-GTMSessionFetcher-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = GTMSessionFetcher_Full_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		DD3CA819902DFDB0E2F9375850936FF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4A1DAFF119197A988BA17C822B38B13C /* GoogleUtilities.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
+				PRODUCT_MODULE_NAME = GoogleUtilities;
+				PRODUCT_NAME = GoogleUtilities;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -6361,11 +6214,10 @@
 			};
 			name = Debug;
 		};
-		EB9CD79CDF0D4F6BB418769D7BF8D206 /* Debug */ = {
+		EAF74A5063B05CD34FCDE92D0D18DB25 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C2B83EDCDE8BB41FF09481E54927EB9 /* KituraContracts.debug.xcconfig */;
+			baseConfigurationReference = FFEF8381279160228E1A06DDA5FE471E /* BlueECC.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6377,26 +6229,22 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/KituraContracts/KituraContracts-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/BlueECC/BlueECC-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/KituraContracts/KituraContracts-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/BlueECC/BlueECC-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/KituraContracts/KituraContracts.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = KituraContracts;
-				PRODUCT_NAME = KituraContracts;
+				MODULEMAP_FILE = "Target Support Files/BlueECC/BlueECC.modulemap";
+				PRODUCT_MODULE_NAME = CryptorECC;
+				PRODUCT_NAME = CryptorECC;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6405,41 +6253,35 @@
 			};
 			name = Debug;
 		};
-		ED4BFD28F816BE6A2109D23E5E277D41 /* Debug */ = {
+		EC264E9569125DAAC5EEC6713A307875 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1554323CCDBA374BDDEE45B5FB05287D /* Logging.debug.xcconfig */;
+			baseConfigurationReference = AE73F49E26DA508D949B4346DCFCE087 /* AppAuth.debug.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/Logging/Logging-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/AppAuth/AppAuth-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/Logging/Logging-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/AppAuth/AppAuth-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/Logging/Logging.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = Logging;
-				PRODUCT_NAME = Logging;
+				MODULEMAP_FILE = "Target Support Files/AppAuth/AppAuth.modulemap";
+				PRODUCT_MODULE_NAME = AppAuth;
+				PRODUCT_NAME = AppAuth;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6448,11 +6290,47 @@
 			};
 			name = Debug;
 		};
-		FB7620C2652EFE475E6F8A7CD1110333 /* Release */ = {
+		EF0C5F540E947205EB4B98C726AA9EC4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F3D73FEF796EBD79F80DF4B94EE44F00 /* KituraContracts.release.xcconfig */;
+			baseConfigurationReference = 248F64BD4538734B67432BEE618EA72F /* PromisesObjC.release.xcconfig */;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/PromisesObjC/PromisesObjC-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
+				PRODUCT_MODULE_NAME = FBLPromises;
+				PRODUCT_NAME = FBLPromises;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		FF83A60E02E4961BD1B64DC69D5A36E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83946CD5294EE8BA12AFBC257E0FF632 /* LoggerAPI.debug.xcconfig */;
+			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -6464,78 +6342,29 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/KituraContracts/KituraContracts-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/LoggerAPI/LoggerAPI-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/KituraContracts/KituraContracts-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/LoggerAPI/LoggerAPI-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/KituraContracts/KituraContracts.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = KituraContracts;
-				PRODUCT_NAME = KituraContracts;
+				MODULEMAP_FILE = "Target Support Files/LoggerAPI/LoggerAPI.modulemap";
+				PRODUCT_MODULE_NAME = LoggerAPI;
+				PRODUCT_NAME = LoggerAPI;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 5.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
-		};
-		FE33456CB0B66E412E2D4555F1E60D73 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = DEADAF672E9152ECF1727A79A2B5ECA8 /* Logging.release.xcconfig */;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/Logging/Logging-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/Logging/Logging-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MODULEMAP_FILE = "Target Support Files/Logging/Logging.modulemap";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_MODULE_NAME = Logging;
-				PRODUCT_NAME = Logging;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -6543,8 +6372,8 @@
 		0CB9079D7B7F95B85D5AE6B3230C8421 /* Build configuration list for PBXNativeTarget "GTMAppAuth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3A808D3F694352FDE990A41B68B060D7 /* Debug */,
-				894411BED725F563185F3B2DB4B0B871 /* Release */,
+				1DCFF3A428CC03CB81863FAF9F7AB5D3 /* Debug */,
+				D7CF80A772827BC374D5E978B256F3B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6552,8 +6381,8 @@
 		0D6E5AA2A74055A4B5D6AE7C10E73E62 /* Build configuration list for PBXNativeTarget "BlueRSA" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9AE6B69617DCD31A2BBA443553D84BE /* Debug */,
-				D7AC9593F1634E0143E6B2A76F9F004A /* Release */,
+				A8359CC76E4097F63D67E1185AB9049F /* Debug */,
+				2E4BCDDBC3A6914117586D195BDFD3E6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6561,8 +6390,8 @@
 		10BD70B301AB76E59F0DFE722AAA5B35 /* Build configuration list for PBXNativeTarget "SwiftJWT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				35591B79D79E7A155E691BA0724E98FE /* Debug */,
-				1796F7FB19C0CBF133F67BE683AA48F2 /* Release */,
+				9610037B60C6816E2440851EAF0E5016 /* Debug */,
+				A9CBFAE7858E0C1697CE4DE1ABC52687 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6570,8 +6399,8 @@
 		1705D68282C692038C5099C17181A4A4 /* Build configuration list for PBXNativeTarget "LoggerAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CE9CB74837C0E9C552E563D463105E2D /* Debug */,
-				10514D95445C822BC95205ACC70C31BD /* Release */,
+				FF83A60E02E4961BD1B64DC69D5A36E2 /* Debug */,
+				90C0B878744BF6AF2BFD4483F8CEF3B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6579,8 +6408,8 @@
 		1D407C0DE53254256248F5686686B2EA /* Build configuration list for PBXNativeTarget "PromisesObjC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5196A5B4787C19763A8B072E3B9F7E8E /* Debug */,
-				73779ED8522C2646C1DFA477FF5D429F /* Release */,
+				6B9814E28E1E913B7FF52D739664C83B /* Debug */,
+				EF0C5F540E947205EB4B98C726AA9EC4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6615,8 +6444,8 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8FA7A7481543B3DBB7E250B6A3372323 /* Debug */,
-				4146417E0A5EEF9CD061673E613C7D4E /* Release */,
+				8DE5143C03248BB6CD542DE3963D6F3A /* Debug */,
+				9E406C6AAF85E580207CD97B0044DEAB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6624,8 +6453,8 @@
 		49229557FA9765D99389DE4832D9E638 /* Build configuration list for PBXNativeTarget "Logging" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ED4BFD28F816BE6A2109D23E5E277D41 /* Debug */,
-				FE33456CB0B66E412E2D4555F1E60D73 /* Release */,
+				9ACF8C32F3D86FA3321A6C74CDB2FC28 /* Debug */,
+				563033B45AAEE1A19E5FBC568C1C61AA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6642,8 +6471,8 @@
 		58CAFDF4B96F40CE171BED1468687E37 /* Build configuration list for PBXNativeTarget "BlueECC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1E4348459400E2A66972DDDAEF549807 /* Debug */,
-				632DE08119C89ACC261F2E2E41A39118 /* Release */,
+				EAF74A5063B05CD34FCDE92D0D18DB25 /* Debug */,
+				B75EF05A8F7BE821AF416134DAA5438F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6660,8 +6489,8 @@
 		63ECDE2C79B8ED0684A10A9659C0EAFB /* Build configuration list for PBXNativeTarget "Alamofire" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				47020879E2A0B879EBB0D9C2CDA9534F /* Debug */,
-				8082C3E8B7E337D9FE51379AC83ABD0E /* Release */,
+				43E6F219681645AA6A1DC48E87B56284 /* Debug */,
+				4C6450248165267FCCE1E931FDCC492D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6669,8 +6498,8 @@
 		709949EEDCC5246D785E9C7C99013FF7 /* Build configuration list for PBXNativeTarget "BlueCryptor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9023DA2E7E8669F3F45502614B1E12FF /* Debug */,
-				1D55056F3D705B3B1EEB929923A03061 /* Release */,
+				1BFE24ABCFE46C59EE1B119806EBF6EA /* Debug */,
+				6A3735EF7DD6CFFC70DFA877D4ED6F06 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6696,8 +6525,8 @@
 		87590861B9BC9706E3B417C75C6C55DD /* Build configuration list for PBXNativeTarget "GoogleUtilities" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3A38B8D1BAF196EB8C4E9E666982C21E /* Debug */,
-				6177A558A3C930B680B1BC623CD87F66 /* Release */,
+				DD3CA819902DFDB0E2F9375850936FF1 /* Debug */,
+				C385C6908F0BB43F5A54E77787A4E0F5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6705,8 +6534,8 @@
 		8886F331B14AB6A8D1E9ECD6016B2AB7 /* Build configuration list for PBXNativeTarget "AppCheckCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4B4F4FA8B457E29265CB229A933C3E60 /* Debug */,
-				6AEB43330DABA8657BBE3ABB0F7D193F /* Release */,
+				81CE3CA37AD2FCFF29F0A2EC32087975 /* Debug */,
+				3A23035F5F36730E35170A90E7445ABB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6714,8 +6543,8 @@
 		9D6B01B37B2E426D8D353129FD8E5CBE /* Build configuration list for PBXNativeTarget "GoogleSignIn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ABD7AEB50F16DC0E94324FDBEE22737B /* Debug */,
-				888CABE92875B68B804E1BE87343E457 /* Release */,
+				A0776176ABF07FAE785481078B2FD844 /* Debug */,
+				2D6D04B7017BFB9AC732A04677A8126C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6723,8 +6552,8 @@
 		AE1E650BA44D4246C80A90C922042EF6 /* Build configuration list for PBXNativeTarget "Pods-ScalesStar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5645F08E47A4D94CA6B40842CEDD60AB /* Debug */,
-				5C4D9C83E6D3936D87D4518EC90E46A3 /* Release */,
+				97619315EC93EC449122743DCB4E0DF6 /* Debug */,
+				B9CC3C2BB65CA8E3E0294B79E993720C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6732,8 +6561,8 @@
 		B47134B9EACD3CE8D7138DCCA82B99B8 /* Build configuration list for PBXNativeTarget "GoogleAPIClientForREST" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				282C2565060941676E01F56E63FF0D9A /* Debug */,
-				4C2991A42F319082A943F3665897A616 /* Release */,
+				381470B6F6DB3365050F82052D3BA402 /* Debug */,
+				BA13463C29CF2BB14DFF9B96A33E9A88 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6750,8 +6579,8 @@
 		CD0A385A09F4112D5B0B297E3F98992F /* Build configuration list for PBXNativeTarget "GTMSessionFetcher" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				234A1128D659BAD8CD6F5CA470DAF9BD /* Debug */,
-				C727F3ABC9FE68D7F4DF36B19B5B59A9 /* Release */,
+				3E2138106B5CF6E137C5868CE67173CF /* Debug */,
+				0CD9539B916DACC95B15D64AE3BF0F56 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6759,8 +6588,8 @@
 		D33590A1A41B07057C61742E882402D8 /* Build configuration list for PBXNativeTarget "AppAuth" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6A056831B322ECBA73733A4DC1DC6AEE /* Debug */,
-				601A0BC51724E26017C5E4310F13DC43 /* Release */,
+				EC264E9569125DAAC5EEC6713A307875 /* Debug */,
+				3DBC67A8DCBC54C12490434148E27829 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -6768,8 +6597,8 @@
 		EE53C4B49CE9DC881FDD31481EC26624 /* Build configuration list for PBXNativeTarget "KituraContracts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EB9CD79CDF0D4F6BB418769D7BF8D206 /* Debug */,
-				FB7620C2652EFE475E6F8A7CD1110333 /* Release */,
+				0359731090C27786C986A68978888650 /* Debug */,
+				550A5D9322BB1999200FCD526594A0A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

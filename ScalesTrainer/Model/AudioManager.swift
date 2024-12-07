@@ -147,7 +147,7 @@ class AudioManager {
         }
     }
     
-    func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandler], recordAudio:Bool) {
+    func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandlerProtocol], recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
         checkMicPermission(completion: {granted in

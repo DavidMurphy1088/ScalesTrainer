@@ -6,15 +6,18 @@ import AudioKitEX
 import Foundation
 import UIKit
 
-//protocol SoundEventHandlerProtocol {
+protocol SoundEventHandlerProtocol {
 //    init(scale:Scale)
 //    func setFunctionToNotify(functionToNotify: @escaping (Int, TapEventStatus) -> Void)
-//    func start()
-//    func stop()
-//}
+    func setFunctionToNotify(functionToNotify: ((Int) -> Void)?)
+    func start()
+    func stop()
+}
 
 class SoundEventHandler  {
     let scale:Scale
+    
+    ///The feature function that is called when a new MIDI notification arrives
     //var functionToNotify: ((Int, TapEventStatus) -> Void)?
     var functionToNotify: ((Int) -> Void)?
 
@@ -26,12 +29,9 @@ class SoundEventHandler  {
         self.functionToNotify = functionToNotify
     }
     
-    func start() {
+    func stop() {
     }
     
-    func stop() { //}-> TapEventSet {
-    }
-        
     ///Determine if the midi represents a keyboard key.
     ///If its a key hilight and sound the key.
     func hilightKeysAndStaff(midi:Int) {
@@ -106,7 +106,7 @@ class SoundEventHandler  {
     }
 }
 
-class AcousticSoundEventHandler : SoundEventHandler {
+class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     let bufferSize = 4096
     var consecutiveCount = 0
     let amplitudeFilter = Settings.shared.amplitudeFilter
@@ -128,7 +128,7 @@ class AcousticSoundEventHandler : SoundEventHandler {
         return self.bufferSize
     }
     
-    override func start() {
+    func start() {
         consecutiveCount = 0
     }
 
@@ -187,13 +187,16 @@ class AcousticSoundEventHandler : SoundEventHandler {
     }
 }
 
-class MIDISoundEventHandler : SoundEventHandler {
-    override func start() {
+class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
+    func start() {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.MIDIManagerNotificationTarget(msg:))
+        if let testMidiNotes = midiManager.testMidiNotes {
+            self.sendTestMidiNotes(notes: testMidiNotes)
+        }
     }
-    
-    ///The feature function that is called when a new MIDI notification arrives
+
+    ///Call the feature function that is specified when a new MIDI notification arrives
     func MIDIManagerNotificationTarget(msg:MIDIMessage) {
         //print("========== Handler NotificationTarget", msg.midi)
         if let notify = self.functionToNotify {
@@ -201,11 +204,21 @@ class MIDISoundEventHandler : SoundEventHandler {
         }
     }
     
-    func sendNotes(notes:[Int], wait:Double) {
+    func sendTestMidiNotes(notes:TestMidiNotes) {
+        Logger.shared.log(self, "sending NoteSets \(notes) notify:\(self.functionToNotify != nil)")
         if let notify = self.functionToNotify {
-            for note in notes {
-                notify(note)
-                usleep(UInt32(1000000 * wait))
+            DispatchQueue.global(qos: .background).async {
+                for noteSet in notes.noteSets {
+                    DispatchQueue.main.async {
+                        for note in noteSet.notes {
+                            //print("========= MIDISoundEventHandler Sending Note", note)
+                            notify(note)
+                        }
+                        usleep(UInt32(0.2 * 1000000))
+                    }
+                    let noteSetDelay = UInt32(1000000 * notes.noteSetWait)
+                    usleep(noteSetDelay)
+                }
             }
         }
     }

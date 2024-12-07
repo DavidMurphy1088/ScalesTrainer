@@ -17,7 +17,7 @@ struct MIDIView: View {
 //            .frame(maxHeight: .infinity) // Expand the list to fill available space
 
             Button(action: {
-                midiManager.connectSources()
+                midiManager.createMIDIClientAndConnectSources()
             }) {
                 Text("Start MIDI")
             }

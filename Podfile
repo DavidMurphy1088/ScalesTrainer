@@ -25,4 +25,6 @@ target 'ScalesStar' do
   pod 'GoogleAPIClientForREST/Sheets'
   pod 'SwiftJWT'
   pod 'Alamofire', '~> 5.6'
+  #pod 'CAudioKitEX'
 end
+

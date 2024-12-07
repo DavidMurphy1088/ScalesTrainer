@@ -200,6 +200,7 @@ struct PracticeChartView: View {
             VStack {
                 VStack(spacing: 0) {
                     TitleView(screenName: "Practice Chart", showGrade: true).commonFrameStyle()
+                        .accessibilityIdentifier("chart_title")
                     HStack {
                         if UIDevice.current.userInterfaceIdiom != .phone {
                             Spacer()

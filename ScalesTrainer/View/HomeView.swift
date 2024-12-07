@@ -157,7 +157,7 @@ struct ActivityModeView: View {
                 }
             }
             if Settings.shared.enableMidiConnnections {
-                let midis = MIDIManager.shared.getMidiConections()
+                let midis = "TODO" //MIDIManager.shared.getMidiConections()
                 Text("Connected to MIDI keyboards: \(midis)")
             }
 

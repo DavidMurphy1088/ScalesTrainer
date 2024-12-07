@@ -67,10 +67,15 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>ScalesStarUITests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>ScalesTrainer.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>0</integer>
 		</dict>
 		<key>SoundpipeAudioKit (Playground) 1.xcscheme</key>
 		<dict>
@@ -96,6 +101,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>79B2BFF92D02CA830062F891</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>79DA82112BCCE95F008AC492</key>
 		<dict>
 			<key>primary</key>

@@ -43,6 +43,7 @@
 		79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC12BDBB41100A27531 /* Home_3_60.m4a */; };
 		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
 		79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79566AD52CB9259C00581A57 /* BackingChords.swift */; };
+		795CDF4B2D023F02002D8F9D /* ScalesStarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
 		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
@@ -70,6 +71,8 @@
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
+		79B2BFFD2D02CA830062F891 /* ScalesStarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B2BFFC2D02CA830062F891 /* ScalesStarUITests.swift */; };
+		79B2BFFF2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B2BFFE2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift */; };
 		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
 		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
@@ -111,12 +114,29 @@
 		79F6F9542CFE66E0008DB3D0 /* MidiNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */; };
 		79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E092CD4CD1700D636FB /* MidiManager.swift */; };
 		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
-		CD8C6062E02C23A805D8B979 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */; };
+		818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		795CDF4C2D023F02002D8F9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 79DA820A2BCCE95F008AC492 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79DA82112BCCE95F008AC492;
+			remoteInfo = ScalesStar;
+		};
+		79B2C0002D02CA830062F891 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 79DA820A2BCCE95F008AC492 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79DA82112BCCE95F008AC492;
+			remoteInfo = ScalesStar;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
-		17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.release.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.release.xcconfig"; sourceTree = "<group>"; };
+		0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.release.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.release.xcconfig"; sourceTree = "<group>"; };
+		34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
@@ -152,6 +172,8 @@
 		79552FC12BDBB41100A27531 /* Home_3_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_3_60.m4a; sourceTree = "<group>"; };
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
+		795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarTests.swift; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
@@ -179,6 +201,9 @@
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
+		79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		79B2BFFC2D02CA830062F891 /* ScalesStarUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarUITests.swift; sourceTree = "<group>"; };
+		79B2BFFE2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
 		79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAPI.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
@@ -219,10 +244,24 @@
 		79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiNotificationHandler.swift; sourceTree = "<group>"; };
 		79F80E092CD4CD1700D636FB /* MidiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiManager.swift; sourceTree = "<group>"; };
 		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
-		AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		795CDF452D023F02002D8F9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79B2BFF72D02CA830062F891 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		79DA820F2BCCE95F008AC492 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -231,17 +270,17 @@
 				79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */,
 				794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */,
 				79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */,
-				CD8C6062E02C23A805D8B979 /* Pods_ScalesStar.framework in Frameworks */,
+				818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2732AC845A1FCDC797EE57CF /* Frameworks */ = {
+		29591435A11F915AD3A16C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AEB3925570A2BBFBE9F71614 /* Pods_ScalesStar.framework */,
+				E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -280,6 +319,14 @@
 			path = AudioFiles;
 			sourceTree = "<group>";
 		};
+		795CDF492D023F02002D8F9D /* ScalesStarTests */ = {
+			isa = PBXGroup;
+			children = (
+				795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */,
+			);
+			path = ScalesStarTests;
+			sourceTree = "<group>";
+		};
 		7970138D2BEE3DE0009F85D6 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -305,6 +352,15 @@
 				797013932BEE3E45009F85D6 /* TimeSliceView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		79B2BFFB2D02CA830062F891 /* ScalesStarUITests */ = {
+			isa = PBXGroup;
+			children = (
+				79B2BFFC2D02CA830062F891 /* ScalesStarUITests.swift */,
+				79B2BFFE2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift */,
+			);
+			path = ScalesStarUITests;
 			sourceTree = "<group>";
 		};
 		79BA2BC32CD387AB00CA68B4 /* Resources */ = {
@@ -350,9 +406,11 @@
 			children = (
 				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
 				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
+				795CDF492D023F02002D8F9D /* ScalesStarTests */,
+				79B2BFFB2D02CA830062F891 /* ScalesStarUITests */,
 				79DA82132BCCE95F008AC492 /* Products */,
 				DDA3121AEE7C45E54101ED2B /* Pods */,
-				2732AC845A1FCDC797EE57CF /* Frameworks */,
+				29591435A11F915AD3A16C39 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -360,6 +418,8 @@
 			isa = PBXGroup;
 			children = (
 				79DA82122BCCE95F008AC492 /* ScalesStar.app */,
+				795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */,
+				79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -480,8 +540,8 @@
 		DDA3121AEE7C45E54101ED2B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */,
-				17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */,
+				34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */,
+				0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -489,15 +549,53 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		795CDF472D023F02002D8F9D /* ScalesStarTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 795CDF502D023F02002D8F9D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */;
+			buildPhases = (
+				795CDF442D023F02002D8F9D /* Sources */,
+				795CDF452D023F02002D8F9D /* Frameworks */,
+				795CDF462D023F02002D8F9D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				795CDF4D2D023F02002D8F9D /* PBXTargetDependency */,
+			);
+			name = ScalesStarTests;
+			productName = ScalesStarTests;
+			productReference = 795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		79B2BFF92D02CA830062F891 /* ScalesStarUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 79B2C0042D02CA830062F891 /* Build configuration list for PBXNativeTarget "ScalesStarUITests" */;
+			buildPhases = (
+				79B2BFF62D02CA830062F891 /* Sources */,
+				79B2BFF72D02CA830062F891 /* Frameworks */,
+				79B2BFF82D02CA830062F891 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				79B2C0012D02CA830062F891 /* PBXTargetDependency */,
+			);
+			name = ScalesStarUITests;
+			packageProductDependencies = (
+			);
+			productName = ScalesStarUITests;
+			productReference = 79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		79DA82112BCCE95F008AC492 /* ScalesStar */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 79DA82202BCCE960008AC492 /* Build configuration list for PBXNativeTarget "ScalesStar" */;
 			buildPhases = (
-				0A28A08811B84F1463D0AAB0 /* [CP] Check Pods Manifest.lock */,
+				6CD2004B6595ACA294D88C76 /* [CP] Check Pods Manifest.lock */,
 				79DA820E2BCCE95F008AC492 /* Sources */,
 				79DA820F2BCCE95F008AC492 /* Frameworks */,
 				79DA82102BCCE95F008AC492 /* Resources */,
-				08A18182DCD09349C7A87D86 /* [CP] Embed Pods Frameworks */,
+				7CB3C4C0589CC522C1BC8C9F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -524,6 +622,14 @@
 				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
+					795CDF472D023F02002D8F9D = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 79DA82112BCCE95F008AC492;
+					};
+					79B2BFF92D02CA830062F891 = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = 79DA82112BCCE95F008AC492;
+					};
 					79DA82112BCCE95F008AC492 = {
 						CreatedOnToolsVersion = 15.2;
 					};
@@ -552,11 +658,27 @@
 			projectRoot = "";
 			targets = (
 				79DA82112BCCE95F008AC492 /* ScalesStar */,
+				795CDF472D023F02002D8F9D /* ScalesStarTests */,
+				79B2BFF92D02CA830062F891 /* ScalesStarUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		795CDF462D023F02002D8F9D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79B2BFF82D02CA830062F891 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		79DA82102BCCE95F008AC492 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -582,24 +704,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08A18182DCD09349C7A87D86 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		0A28A08811B84F1463D0AAB0 /* [CP] Check Pods Manifest.lock */ = {
+		6CD2004B6595ACA294D88C76 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -621,9 +726,43 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		7CB3C4C0589CC522C1BC8C9F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		795CDF442D023F02002D8F9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				795CDF4B2D023F02002D8F9D /* ScalesStarTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79B2BFF62D02CA830062F891 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79B2BFFD2D02CA830062F891 /* ScalesStarUITests.swift in Sources */,
+				79B2BFFF2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		79DA820E2BCCE95F008AC492 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -718,7 +857,98 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		795CDF4D2D023F02002D8F9D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79DA82112BCCE95F008AC492 /* ScalesStar */;
+			targetProxy = 795CDF4C2D023F02002D8F9D /* PBXContainerItemProxy */;
+		};
+		79B2C0012D02CA830062F891 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79DA82112BCCE95F008AC492 /* ScalesStar */;
+			targetProxy = 79B2C0002D02CA830062F891 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		795CDF4E2D023F02002D8F9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
+			};
+			name = Debug;
+		};
+		795CDF4F2D023F02002D8F9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
+			};
+			name = Release;
+		};
+		79B2C0022D02CA830062F891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ScalesStar;
+			};
+			name = Debug;
+		};
+		79B2C0032D02CA830062F891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ScalesStar;
+			};
+			name = Release;
+		};
 		79DA821E2BCCE960008AC492 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -840,7 +1070,7 @@
 		};
 		79DA82212BCCE960008AC492 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A5681E2E32107F9AE10D446 /* Pods-ScalesStar.debug.xcconfig */;
+			baseConfigurationReference = 34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -875,7 +1105,7 @@
 		};
 		79DA82222BCCE960008AC492 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 17B63BEF575B89996C822FF8 /* Pods-ScalesStar.release.xcconfig */;
+			baseConfigurationReference = 0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -911,6 +1141,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		795CDF502D023F02002D8F9D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				795CDF4E2D023F02002D8F9D /* Debug */,
+				795CDF4F2D023F02002D8F9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		79B2C0042D02CA830062F891 /* Build configuration list for PBXNativeTarget "ScalesStarUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79B2C0022D02CA830062F891 /* Debug */,
+				79B2C0032D02CA830062F891 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		79DA820D2BCCE95F008AC492 /* Build configuration list for PBXProject "ScalesTrainer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -27,6 +27,7 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
     func setShowIsPlaying(_ way:Bool) { //status: TimeSliceEntryStatusType) {
         DispatchQueue.main.async {
             if way != self.showIsPlaying {
+                let x = self as! StaffNote
                 let note = self as! StaffNote
                 self.showIsPlaying = way
             }

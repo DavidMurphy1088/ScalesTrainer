@@ -71,6 +71,39 @@ func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: Uns
     }
 }
 
+///A package of test notes to replay
+class TestMidiNotes {
+    class NoteSet {
+        var notes:[Int]
+        init(_ notes:[Int]) {
+            self.notes = notes
+        }
+    }
+    var noteSets:[NoteSet]
+    let noteSetWait:Double
+    
+    init(_ noteSets:[NoteSet], noteWait:Double) {
+        self.noteSets = noteSets
+        self.noteSetWait = noteWait
+    }
+    
+    init(scale:Scale, hands:[Int], noteSetWait:Double) {
+        let totalNotes = scale.getScaleNoteCount()
+        self.noteSetWait = noteSetWait
+        self.noteSets = []
+        
+        for i in 0..<totalNotes {
+            var noteSet:[Int] = []
+            for hand in hands {
+                let midi = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: i).midi
+                noteSet.append(midi)
+                
+            }
+            self.noteSets.append(NoteSet(noteSet))
+        }
+    }
+}
+
 class MIDIManager: ObservableObject {
     static let shared = MIDIManager()
     var midiClient = MIDIClientRef()
@@ -79,6 +112,7 @@ class MIDIManager: ObservableObject {
     //var receivedMessages: [String] = []
     var lastNoteOn:Date? = nil
     private var installedNotificationTarget: ((MIDIMessage) -> Void)?
+    var testMidiNotes:TestMidiNotes?
     
     init() {
     }
@@ -88,60 +122,62 @@ class MIDIManager: ObservableObject {
         self.installedNotificationTarget = target
     }
     
-    func connectSources() {
+    func createMIDIClientAndConnectSources() {
         MIDIClientCreate("Scales Academy" as CFString, nil, nil, &midiClient)
         let status = MIDIInputPortCreate(midiClient, "Scales Academy" as CFString, midiReadProc, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()), &inputPort)
+        let name = inputPort.value
+        Logger.shared.log(self, "Connected listening port : \(name)")
+
+        ///Connect to MIDI sources
         let sourceCount = MIDIGetNumberOfSources()
         for i in 0..<sourceCount {
             let src:MIDIEndpointRef = MIDIGetSource(i)
-            var property: Unmanaged<CFString>?
-                MIDIObjectGetStringProperty(src, kMIDIPropertyName, &property)
-                let name = property?.takeRetainedValue() as String?
-            
-            Logger.shared.log(self, "Connected MIDI Source : \(self.describeMIDIEndpoint(src)) name:\(name)")
             MIDIPortConnectSource(inputPort, src, nil)
+            let desc = getSourceDescription(MIDIGetSource(i))
+            Logger.shared.log(self, "Made connection to MIDI Source, name:\(desc)")
         }
-        let names = self.getMIDISources()
-        Logger.shared.log(self, "Connected MIDI Sources : \(self.getMIDISources())")
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
-        //print("========== MIDI Manager, processMidiMessage", processMidiMessage, MIDImessage.midi)
+        Logger.shared.log(self, "Received MIDI \(MIDImessage.midi)")
         if let target = self.installedNotificationTarget {
             target(MIDImessage)
         }
     }
     
+    func getSourceDescription(_ src:MIDIEndpointRef) -> String {
+        var desc = ""
+        let propertyKeys: [CFString] = [
+            kMIDIPropertyDisplayName,
+            kMIDIPropertyName,
+            //kMIDIPropertyManufacturer,
+            kMIDIPropertyModel,
+            kMIDIPropertyDriverOwner
+        ]
+        for key in propertyKeys {
+            var propertyValue: Unmanaged<CFString>?
+            let result = MIDIObjectGetStringProperty(src, key, &propertyValue)
+            if result == noErr, let value = propertyValue?.takeUnretainedValue() as String? {
+                let midiDesc = " [\(key):\(value)] "
+                desc += midiDesc
+            }
+        }
+        return desc
+    }
+    
     ///The primary purpose of MIDIGetNumberOfSources() is to retrieve the total number of MIDI sources currently available on the system. MIDI sources are entities that can send MIDI data to the computer. These can include:
     ///Hardware MIDI devices: Such as keyboards, synthesizers, drum machines, and other MIDI-compatible instruments connected via USB, Thunderbolt, or traditional MIDI ports.
     ///Virtual MIDI ports: Software-based MIDI sources like virtual instruments, digital audio workstations (DAWs), or other applications that can generate MIDI data.
-    func getMIDISources() -> [String] {
-        var sources: [String] = []
-        let sourceCount = MIDIGetNumberOfSources()
-        let propertyKeys: [CFString] = [
-            kMIDIPropertyDisplayName,
-//            kMIDIPropertyName,
-//            kMIDIPropertyManufacturer,
-            //kMIDIPropertyModel
-//            kMIDIPropertyDriverOwner,
-            
-        ]
-        
-        for i in 0..<sourceCount {
-            let src = MIDIGetSource(i)
-            //var endpointName: Unmanaged<CFString>?
-            for key in propertyKeys {
-                var propertyValue: Unmanaged<CFString>?
-                let result = MIDIObjectGetStringProperty(src, key, &propertyValue)
-                if result == noErr, let value = propertyValue?.takeUnretainedValue() as String? {
-                    //let midiDesc = "Key:\(key as String)  Value:\(value)"
-                    let midiDesc = "\(value)"
-                    sources.append(midiDesc)
-                }
-            }
-        }
-        return sources
-    }
+//    func getMIDISources() -> [String] {
+//        var sources: [String] = []
+//        let sourceCount = MIDIGetNumberOfSources()
+//        
+//        for i in 0..<sourceCount {
+//            let src = MIDIGetSource(i)
+//            //var endpointName: Unmanaged<CFString>?
+//        }
+//        return sources
+//    }
     
 //    func midiNotifyProc(message: UnsafePointer<MIDINotification>, refCon: UnsafeMutableRawPointer?) {
 //        Logger.shared.log(self, "Midi Configuration Changed : \(self.getMIDISources())")
@@ -150,10 +186,10 @@ class MIDIManager: ObservableObject {
 //        }
 //    }
 
-    func getMidiConections() -> String {
-        var midis = self.getMIDISources()
-        return midis.joined(separator: ", ")
-    }
+//    func getMidiConections() -> String {
+//        var midis = self.getMIDISources()
+//        return midis.joined(separator: ", ")
+//    }
     
     func timeDifference(startDate: Date, endDate: Date) -> String {
         let timeInterval = endDate.timeIntervalSince(startDate)
@@ -164,9 +200,7 @@ class MIDIManager: ObservableObject {
     
     func parseMIDIMessage(_ bytes: [UInt8]) -> MIDIMessage? {
         guard !bytes.isEmpty else {
-            //return "Empty MIDI message"
             return nil
-
         }
         let statusByte = bytes[0]
         
@@ -302,5 +336,8 @@ class MIDIManager: ObservableObject {
 //        print("  Model: \(model)")
         return description
     }
-
+    
+    func setTestMidiNotesNotes(_ notes:TestMidiNotes) {
+        self.testMidiNotes = notes
+    }
 }
