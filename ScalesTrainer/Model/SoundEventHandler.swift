@@ -134,7 +134,7 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         var tapStatus:TapEventStatus = .none
-        let scalesModel = ScalesModel.shared
+        //let scalesModel = ScalesModel.shared
         
         var frequency:Float
         var amplitude:Float
@@ -192,7 +192,9 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.MIDIManagerNotificationTarget(msg:))
         if let testMidiNotes = midiManager.testMidiNotes {
-            self.sendTestMidiNotes(notes: testMidiNotes)
+            if testMidiNotes.scaleId == self.scale.id {
+                self.sendTestMidiNotes(notes: testMidiNotes)
+            }
         }
     }
 
@@ -211,7 +213,6 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
                 for noteSet in notes.noteSets {
                     DispatchQueue.main.async {
                         for note in noteSet.notes {
-                            //print("========= MIDISoundEventHandler Sending Note", note)
                             notify(note)
                         }
                         usleep(UInt32(0.2 * 1000000))

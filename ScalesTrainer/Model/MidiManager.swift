@@ -72,6 +72,7 @@ func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: Uns
 }
 
 ///A package of test notes to replay
+///Can be generated from a scale under test
 class TestMidiNotes {
     class NoteSet {
         var notes:[Int]
@@ -81,23 +82,49 @@ class TestMidiNotes {
     }
     var noteSets:[NoteSet]
     let noteSetWait:Double
+    let scaleId:UUID?
     
     init(_ noteSets:[NoteSet], noteWait:Double) {
         self.noteSets = noteSets
         self.noteSetWait = noteWait
+        self.scaleId = nil
+    }
+    
+    func debug(_ ctx:String) {
+        var msg = ""
+        for noteSet in noteSets {
+            for note in noteSet.notes {
+                msg += " \(note)"
+            }
+            msg += ", "
+        }
+        print("==== NoteSet Debug \(ctx)", msg)
     }
     
     init(scale:Scale, hands:[Int], noteSetWait:Double) {
         let totalNotes = scale.getScaleNoteCount()
         self.noteSetWait = noteSetWait
         self.noteSets = []
+        self.scaleId = scale.id
         
-        for i in 0..<totalNotes {
+        for n in 0..<totalNotes {
             var noteSet:[Int] = []
             for hand in hands {
-                let midi = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: i).midi
-                noteSet.append(midi)
-                
+                let midi = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: n).midi
+                ///When contrary starting and ending LH and RH on same note the student will only play one note. So only generate that note, not one for each hand
+                if scale.scaleMotion == .contraryMotion && hands.count > 1 {
+                    if hand == 0 {
+                        noteSet.append(midi)
+                    }
+                    else {
+                        if n > 0 && n < scale.getScaleNoteCount() - 1 {
+                            noteSet.append(midi)
+                        }
+                    }
+                }
+                else {
+                    noteSet.append(midi)
+                }
             }
             self.noteSets.append(NoteSet(noteSet))
         }
@@ -139,7 +166,7 @@ class MIDIManager: ObservableObject {
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
-        Logger.shared.log(self, "Received MIDI \(MIDImessage.midi)")
+        //Logger.shared.log(self, "Received MIDI \(MIDImessage.midi)")
         if let target = self.installedNotificationTarget {
             target(MIDImessage)
         }

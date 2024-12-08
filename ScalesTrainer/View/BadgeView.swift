@@ -2,11 +2,40 @@ import SwiftUI
 
 class BadgeBank : ObservableObject {
     static let shared = BadgeBank()
+    var numberToWin = 0
     
-    @Published private(set) var totalCorrect: Int = 0
-    func setTotalCorrect(_ value:Int) {
+    enum BadgeState {
+        case offScreen
+        case visible
+        case won
+        case lost
+    }
+    
+    func badgePointsNeededToWin() -> Int {
+        //if Settings.shared.practiceChartGamificationOn {
+            return numberToWin - totalCorrect
+        //}
+        //else {
+            //return 0
+        //}
+    }
+    
+    @Published private(set) var badgeState: BadgeState = .offScreen
+    func setBadgeState(_ value:BadgeState) {
         DispatchQueue.main.async {
-            self.totalCorrect = value
+            self.badgeState = value
+        }
+    }
+    
+    @Published private(set) var totalCorrectPublished: Int = 0
+    var totalCorrect: Int = 0
+    func setTotalCorrect(_ value:Int) {
+        self.totalCorrect = value
+        DispatchQueue.main.async {
+            self.totalCorrectPublished = self.totalCorrect
+            if self.totalCorrect >= self.numberToWin {
+                self.badgeState = .won
+            }
         }
     }
     

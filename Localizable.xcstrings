@@ -89,6 +89,18 @@
     "😔" : {
 
     },
+    "1. Check Email Account Configuration" : {
+
+    },
+    "2. Enable Email Sending" : {
+
+    },
+    "3. Internet Connection" : {
+
+    },
+    "4. Restart the Device" : {
+
+    },
     "Adjust:" : {
 
     },
@@ -177,9 +189,6 @@
     "Current Amplitude Filter:%@" : {
 
     },
-    "Delete" : {
-
-    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -193,6 +202,9 @@
 
     },
     "Enable MIDI Connections" : {
+
+    },
+    "Ensure your email account supports sending emails and is not restricted (e.g., by parental controls or device management settings)." : {
 
     },
     "Famous Quotes" : {
@@ -256,6 +268,9 @@
     "Go to Screen B" : {
 
     },
+    "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
+
+    },
     "Good job 😊" : {
 
     },
@@ -283,6 +298,9 @@
           }
         }
       }
+    },
+    "Hide Hands" : {
+
     },
     "Hide Keyboard" : {
       "comment" : "LegendView",
@@ -317,7 +335,13 @@
         }
       }
     },
+    "If the issue persists, try opening the Mail app and attempting to send an email manually. This can provide additional error messages to help troubleshoot the problem." : {
+
+    },
     "Instructions" : {
+
+    },
+    "It seems your device is not configured to send emails. Here are some steps you can follow to fix this issue:" : {
 
     },
     "Key" : {
@@ -379,6 +403,9 @@
 
     },
     "Major Scales" : {
+
+    },
+    "Make sure your device has an active internet connection. Without internet, emails cannot be sent." : {
 
     },
     "MessageUs" : {
@@ -563,6 +590,9 @@
     "Send us a message about an issue or a new feature" : {
 
     },
+    "Send us the app's log file" : {
+
+    },
     "Settings" : {
       "comment" : "Menu",
       "localizations" : {
@@ -577,10 +607,19 @@
     "Show Alert" : {
 
     },
+    "Show Hands" : {
+
+    },
     "Show Tap Data" : {
 
     },
     "Shuffle" : {
+
+    },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
+    "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
     "Sorry, no subscription is available yet" : {
@@ -690,6 +729,9 @@
       }
     },
     "Type:" : {
+
+    },
+    "Unable to Send Email" : {
 
     },
     "Under Construction" : {

@@ -11,6 +11,7 @@ struct HideandShowView: View {
             }) {
                 Text(scalesModel.showKeyboard ? NSLocalizedString("Hide Keyboard", comment: "LegendView") : "Show Keyboard")
             }
+            .buttonStyle(.bordered)
             .padding()
             
             if scalesModel.showKeyboard {
@@ -20,6 +21,7 @@ struct HideandShowView: View {
                 }) {
                     Text(scalesModel.showFingers ? NSLocalizedString("Hide Fingers", comment: "LegendView") : "Show Fingers")
                 }
+                .buttonStyle(.bordered)
                 .padding()
             }
             
@@ -29,6 +31,7 @@ struct HideandShowView: View {
             }) {
                 Text(scalesModel.showStaff ? NSLocalizedString("Hide Staff", comment: "LegendView") : "Show Staff")
             }
+            .buttonStyle(.bordered)
             .padding()
         }
     }

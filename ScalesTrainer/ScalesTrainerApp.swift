@@ -154,20 +154,22 @@ class TabSelectionManager: ObservableObject {
         if Settings.shared.settingsExists() {
             if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
+                    let hands = [0,1]
                     //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
                     
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
+//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+//                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
+
 //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
 //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
-
-                    //MIDIManager.shared.setTestMidiNotesNotes(TestMidiNotes([48,60,   50,62,   52,64]))
-                    //MIDIManager.shared.setTestMidiNotesNotes(TestMidiNotes(scale: ScalesModel.shared.scale, hands: [0,1], noteSetWait: 0.7))
-
-//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, minTempo: 70, octaves: 1, hands: [0,1], ctx: "App Start")
                     
-//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, minTempo: 70, octaves: 2, hands: [0,1], ctx: "App Start", scaleCustomisation : ScaleCustomisation(startMidiRH: 51, startMidiLH: 39), debug: true)
-                    
+                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+
+                    let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
+                    testNotes.debug("Start")
+                    //MIDIManager.shared.setTestMidiNotesNotes(testNotes)
+
                     selectedTab = 0
                 }
                 else {
@@ -323,20 +325,20 @@ struct ScalesTrainerApp: App {
                 .tag(20)
                 .environmentObject(tabSelectionManager)
             
-            LicenseManagerView(contentSection: ContentSection(), email: "email.com")
-                .tabItem {
-                    Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
-                }
-                .tag(30)
-            
             SettingsView()
                 .tabItem {
                     Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
                 }
-                .tag(40)
+                .tag(30)
                 .environmentObject(tabSelectionManager)
             
-            FeatureReportView() 
+            LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+                .tabItem {
+                    Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+                }
+                .tag(40)
+            
+            FeatureReportView()
                 .tabItem {
                     Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
                 }

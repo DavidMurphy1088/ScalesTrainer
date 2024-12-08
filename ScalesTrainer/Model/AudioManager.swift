@@ -129,13 +129,13 @@ class AudioManager {
 
         if self.mixer == nil {
             self.mixer = Mixer()
-        }
-        if let mixer = self.mixer {
+        //}
+        //if let mixer = self.mixer {
             if let sampler = self.keyboardMidiSampler {
-                mixer.addInput(sampler)
+                self.mixer!.addInput(sampler)
             }
             if let sampler = self.backingMidiSampler {
-                mixer.addInput(sampler)
+                self.mixer!.addInput(sampler)
             }
             engine.output = self.mixer
         }

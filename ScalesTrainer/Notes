@@ -1,3 +1,6 @@
+            - how to get badge to go up (state=2) when enought dons
+            - when contrary motion keybnoard no badges are ever awarded
+            
 --- UI TESTS ---
 Run UI Tests Correctly: Use Command + U or the Test Navigator to execute tests. *** Do not use the Run button (⌘R).***
 
