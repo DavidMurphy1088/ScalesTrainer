@@ -71,7 +71,7 @@ func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: Uns
     }
 }
 
-///A package of test notes to replay
+///A package of test notes to replay in automated testing.
 ///Can be generated from a scale under test
 class TestMidiNotes {
     class NoteSet {

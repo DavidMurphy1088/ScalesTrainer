@@ -57,6 +57,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 midisWithOneKeyPress.append(scale.getScaleNoteState(handType: .left, index: 0).midi)
             }
         }
+        //scale.debug444("")
     }
     
     func notifiedOfSound(midi:Int) {
@@ -150,16 +151,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             let index = self.nextExpectedNoteInScaleIndex[handForNote]!
             if let score = score {
                 let noteScaleState = scale.getScaleNoteState(handType: handForNote, index: index)
-                let staffNote = score.getStaffNote(segment: noteScaleState.segments[0], midi: midi, handType: handForNote)
-                if let staffNote = staffNote {
-                    staffNote.setShowIsPlaying(true)
-                    DispatchQueue.global(qos: .background).async {
-                        usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
-                        DispatchQueue.main.async {
-                            staffNote.setShowIsPlaying(false)
-                        }
-                    }
-                }
+                score.hilightStaffNote(segment: noteScaleState.segments[0], midi: midi, handType: handForNote)
             }
             
             ///Advance the hand that played a scale note
@@ -176,9 +168,6 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             else {
                 atEnd = self.nextExpectedNoteInScaleIndex[.left]! >= scale.getScaleNoteCount() &&
                         self.nextExpectedNoteInScaleIndex[.right]! >= scale.getScaleNoteCount()
-//                if index > 12 {
-//                    print("======== AT END? ", atEnd, "midi:", midi, "hand:", handForNote, self.nextExpectedNoteInScaleIndex[.left], self.nextExpectedNoteInScaleIndex[.right])
-//                }
             }
             if atEnd {
                 scalesModel.clearFunctionToNotify()
@@ -186,8 +175,69 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             }
         }
     }
+    
+    func playDemo() {
+        //self.start()
+       
+        DispatchQueue.global(qos: .background).async {
+            //BadgeBank.shared.clearMatches()
+            sleep(1)
+            self.badges.clearMatches()
+            self.scalesModel.scale.resetMatchedData()
+            var lastSegment:Int? = nil
+            //metronome.DontUse_JustForDemo()
+            let hand = 0
+            let keyboard = hand == 0 ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
+            let midis =   [65, 67, 69, 70, 72, 74, 76, 77, 76, 74, 72, 70, 69, 67, 65] //FMAj RH
+            //let midis =   [38, 40, 41, 43, 45, 46, 49, 50, 49, 46, 45, 43, 41, 40, 38] Dmin Harm
+            //let midis =     [67, 71, 74, 71, 74, 79, 74, 79, 83, 79, 83, 79, 74, 79, 74, 71, 74, 71, 67, 74] //G maj broken
+            
+            let notes = self.scalesModel.scale.getStatesInScale(handIndex: hand)
+            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
+            
+            if let sampler = AudioManager.shared.getSamplerForKeyboard() {
+//                let leadin:UInt32 = ScalesModel.shared.scale.scaleType == .brokenChordMajor ? 3 : 4
+//                sleep(leadin)
+//                //metronome.makeSilent = true
+//                MetronomeModel.shared.setLeadingIn(way: false)
+//                sleep(1)
+                var ctr = 0
+                for midi in midis {
+                    
+                    if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
+                        let key=keyboard.pianoKeyModel[keyIndex]
+                        let segment = notes[ctr].segments[0]
+                        if let lastSegment = lastSegment {
+                            self.scalesModel.setSelectedScaleSegment(segment)
+                        }
+                        lastSegment = segment
+                        key.setKeyPlaying()
+                    }
 
-    func notifiedOfSoundOld(midi:Int) {
+                    sampler.play(noteNumber: UInt8(midi), velocity: 65, channel: 0)
+
+                    self.notifiedOfSound(midi: midi)
+                    
+                    //var tempo:Double = [9, 19].contains(ctr) ? 70/3 : 70 //Broken Chords
+                    let tempo:Double =  70 //50 = Broken
+                    //let notesPerBeatBeat = [9, 19].contains(ctr) ? 1.0 : 3.0 //Broken
+                    let notesPerBeatBeat = [14].contains(ctr) ? 0.75 : 2.0
+                    var sleep = (1000000 * 1.0 * (Double(60)/tempo)) / notesPerBeatBeat
+                    sleep = sleep * 0.95
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0/notesPerBeatBeat) {
+//                        //sampler.stop(noteNumber: UInt8(midi), channel: 0)
+//                    }
+                    usleep(UInt32(sleep))
+                    ctr += 1
+                }
+                ScalesModel.shared.setRunningProcess(.none)
+            }
+        }
+    }
+
+}
+
+//func notifiedOfSoundOld(midi:Int) {
 //        if leadInShowing {
 //            return
 //        }
@@ -198,10 +248,10 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 //            }
 //        }
 //        self.lastMidi = midi
-//        
+//
 //        let scale = scalesModel.scale
 //        let handType = scale.hands[0] == 0 ? HandType.right : HandType.left
-//        
+//
 //        let nextExpected = scale.getScaleNoteState(handType: handType, index: self.nextExpectedScaleIndex) //scale.scaleNoteState[hand][self.nextExpectedScaleIndex]
 //        scalesModel.setSelectedScaleSegment(nextExpected.segments[0])
 //        notifyCount += 1
@@ -246,65 +296,4 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
 ////            ///Leave the last segment fingering showing
 ////            scalesModel.setSelectedScaleSegment(scalesModel.scale.getHighestSegment())
 ////        }
-    }
-    
-    func playDemo() {
-        //self.start()
-       
-        DispatchQueue.global(qos: .background).async {
-            //BadgeBank.shared.clearMatches()
-            sleep(1)
-            self.badges.clearMatches()
-            self.scalesModel.scale.resetMatchedData()
-            var lastSegment:Int? = nil
-            //metronome.DontUse_JustForDemo()
-            let hand = 0
-            let keyboard = hand == 0 ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
-            let midis =   [65, 67, 69, 70, 72, 74, 76, 77, 76, 74, 72, 70, 69, 67, 65] //FMAj RH
-            //let midis =   [38, 40, 41, 43, 45, 46, 49, 50, 49, 46, 45, 43, 41, 40, 38] Dmin Harm
-            //let midis =     [67, 71, 74, 71, 74, 79, 74, 79, 83, 79, 83, 79, 74, 79, 74, 71, 74, 71, 67, 74] //G maj broken
-            
-            let notes = self.scalesModel.scale.getStatesInScale(handIndex: hand)
-            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
-            
-            if let sampler = AudioManager.shared.keyboardMidiSampler {
-//                let leadin:UInt32 = ScalesModel.shared.scale.scaleType == .brokenChordMajor ? 3 : 4
-//                sleep(leadin)
-//                //metronome.makeSilent = true
-//                MetronomeModel.shared.setLeadingIn(way: false)
-//                sleep(1)
-                var ctr = 0
-                for midi in midis {
-                    
-                    if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
-                        let key=keyboard.pianoKeyModel[keyIndex]
-                        let segment = notes[ctr].segments[0]
-                        if let lastSegment = lastSegment {
-                            self.scalesModel.setSelectedScaleSegment(segment)
-                        }
-                        lastSegment = segment
-                        key.setKeyPlaying()
-                    }
-
-                    sampler.play(noteNumber: UInt8(midi), velocity: 65, channel: 0)
-
-                    self.notifiedOfSound(midi: midi)
-                    
-                    //var tempo:Double = [9, 19].contains(ctr) ? 70/3 : 70 //Broken Chords
-                    let tempo:Double =  70 //50 = Broken
-                    //let notesPerBeatBeat = [9, 19].contains(ctr) ? 1.0 : 3.0 //Broken
-                    let notesPerBeatBeat = [14].contains(ctr) ? 0.75 : 2.0
-                    var sleep = (1000000 * 1.0 * (Double(60)/tempo)) / notesPerBeatBeat
-                    sleep = sleep * 0.95
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0/notesPerBeatBeat) {
-//                        //sampler.stop(noteNumber: UInt8(midi), channel: 0)
-//                    }
-                    usleep(UInt32(sleep))
-                    ctr += 1
-                }
-                ScalesModel.shared.setRunningProcess(.none)
-            }
-        }
-    }
-
-}
+//}

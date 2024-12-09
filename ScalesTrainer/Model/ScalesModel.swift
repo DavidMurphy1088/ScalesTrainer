@@ -311,8 +311,8 @@ public class ScalesModel : ObservableObject {
         }
 
         ///For some unknown reason the 1st call does not silence some residue sound from the sampler. The 2nd does appear to.
-        self.audioManager.resetAudioKit()
-        self.audioManager.resetAudioKit()
+        //self.audioManager.resetAudioKit()
+        //self.audioManager.resetAudioKit()
 
         self.setShowKeyboard(true)
         self.setShowLegend(true)
@@ -337,7 +337,7 @@ public class ScalesModel : ObservableObject {
             ///Play first note to start then wait some time.
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.getScaleNoteCount() > 0 {
-                if let sampler = self.audioManager.keyboardMidiSampler {
+                if let sampler = self.audioManager.getSamplerForKeyboard() {
                     BadgeBank.shared.setShow(true)
                     
                     let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH

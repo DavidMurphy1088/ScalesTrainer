@@ -262,7 +262,9 @@ struct ScalesView: View {
     }
     
     func setBadgeImage() -> Image {
-        let names = ["pet_penguinface", "pet_catface","pet_dogface", "dinosaur_2", "sea_creature_1", "sea_creature_3", "sea_creature_2" ]
+        //let names = ["pet_penguinface", "pet_catface","pet_dogface", "sea_creature_1", "sea_creature_2" ]
+        //let names = ["pet_dogface", "sea_creature_2", "pet_penguinface","badge_koala", "badge_tiger", "badge_giraffe" , "badge_camel" , "badge_owl"]
+        let names = ["badge_1", "badge_2", "badge_3", "badge_4", "badge_5", "badge_6", "badge_7", "badge_8"]
         var r = 0
         while true {
             r = Int.random(in: 0...names.count-1)
@@ -435,9 +437,8 @@ struct ScalesView: View {
                 if scalesModel.scale.getBackingChords() != nil {
                     Spacer()
                     HStack {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track\nHarmony"
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track" //"Backing Track\nHarmony"
                         Button(action: {
-                            //hearingBacking.toggle()
                             if scalesModel.runningProcessPublished == .backingOn {
                                 scalesModel.setRunningProcess(.none)
                             }

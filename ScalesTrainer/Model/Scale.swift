@@ -790,7 +790,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug444(_ msg:String, short:Bool)  {
+    func debug444(_ msg:String, short:Bool=false)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {

@@ -184,7 +184,7 @@ public struct ClassicStyle {
                     }
                     
                     let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2,
-                                       y: rect.origin.y + rect.height * 0.80 - w/2,
+                                       y: rect.origin.y + rect.height * 0.70 - w/2,
                                        width: w, height: w)
                     innerContext.stroke(
                         Path(ellipseIn: frame),

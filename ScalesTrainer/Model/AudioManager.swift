@@ -6,13 +6,18 @@ import Foundation
 import AudioKitEX
 import AudioToolbox
 
+import AudioKit
+import AVFoundation
+
 class AudioManager {
     static let shared = AudioManager()
-    private var engine: AudioEngine?
-    var keyboardMidiSampler:MIDISampler?
-    var backingMidiSampler:MIDISampler?
+    private var audioEngine: AudioEngine?
+    
+    private var samplerForKeyboard:MIDISampler?
+    private var samplerForBacking:MIDISampler?
+    private var mixer:Mixer?
+
     var nodeRecorder: NodeRecorder?
-    var mixer:Mixer?
     var fader:Fader?
     var mic:AudioEngine.InputNode? = nil
     var recordedFileSequenceNum = 0
@@ -32,43 +37,113 @@ class AudioManager {
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
-        resetAudioKit()
+        initAudioKit()
     }
-    
-    func stopPlayingRecordedFile() {
-        if let audioPlayer = self.audioPlayer {
-            audioPlayer.stop()
-            self.resetAudioKit()
-            DispatchQueue.main.async {
-                ScalesModel.shared.recordingIsPlaying = false
+    func getSamplerForKeyboard() -> MIDISampler? {
+        return self.samplerForKeyboard
+    }
+    func getSamplerForBacking() -> MIDISampler? {
+        return self.samplerForKeyboard
+    }
+
+    private func initAudioKit() {
+        do {
+            if self.audioEngine != nil {
+                return
             }
+            self.audioEngine = AudioEngine()
+            guard let engine = self.audioEngine else {
+                Logger.shared.reportError(self, "No engine")
+                return
+            }
+            
+            self.samplerForKeyboard = MIDISampler()
+            var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+            self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
+            
+            switch Settings.shared.backingSamplerPreset {
+            case 1: preset = 28
+            case 2: preset = 37
+            case 3: preset = 49
+            case 4: preset = 33
+            case 5: preset = 39
+            case 6: preset = 43
+            case 7: preset = 2
+            case 8: preset = 4
+            default: preset = 0
+            }
+            self.samplerForBacking = loadSampler(num: 1, preset: preset)
+
+            self.mixer = Mixer()
+            self.mixer!.addInput(samplerForKeyboard!)
+            self.mixer!.addInput(samplerForBacking!)
+            engine.output = self.mixer
+            
+            try engine.start()
+            Logger.shared.log(self, "Started audio engine")
+        } catch {
+            Logger.shared.reportError(self, "Can't setup AudioKit \(error)")
         }
     }
     
-    func playRecordedFile() {
-        if let recorder = nodeRecorder {
-            if let audioFile = recorder.audioFile {
-                self.audioPlayer = AudioPlayer(file: audioFile)
-                self.audioPlayer?.volume = 1.0  // Set volume to maximum
-                engine?.output = self.audioPlayer
-                Logger.shared.log(self, "Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
-                audioPlayer?.completionHandler = {
-                    self.resetAudioKit()
-                    DispatchQueue.main.async {
-                        ScalesModel.shared.recordingIsPlaying = false
-                    }
-                }
-                self.audioPlayer?.play()
-                DispatchQueue.main.async {
-                    ScalesModel.shared.recordingIsPlaying = true
-                }
-            }
-        }
-    }
-    
+//    func resetAudioKitOld() {
+//        if let sampler = self.samplerForKeyboard {
+//            sampler.stop()
+//        }
+//        
+//        setSession()
+//        if self.audioEngine == nil {
+//            ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
+//            self.audioEngine = AudioEngine()
+//        }
+//        else {
+//            audioEngine!.stop() ///NO 👹
+//        }
+//        guard let engine = self.audioEngine else {
+//            Logger.shared.reportError(self, "No engine")
+//            return
+//        }
+//        var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+//        //if self.keyboardMidiSampler == nil {
+//            self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
+//        //}
+//        //let preset:Int
+//        switch Settings.shared.backingSamplerPreset {
+//        case 1: preset = 28
+//        case 2: preset = 37
+//        case 3: preset = 49
+//        case 4: preset = 33
+//        case 5: preset = 39
+//        case 6: preset = 43
+//        case 7: preset = 2
+//        case 8: preset = 4
+//        default: preset = 0
+//        }
+//        
+//        if self.samplerForBacking == nil {
+//            self.samplerForBacking = loadSampler(num: 1, preset: preset)
+//        }
+//
+//        if self.mixer == nil {
+//            self.mixer = Mixer()
+//            if let sampler = self.samplerForKeyboard {
+//                self.mixer!.addInput(sampler)
+//            }
+//            if let sampler = self.samplerForBacking {
+//                self.mixer!.addInput(sampler)
+//            }
+//            engine.output = self.mixer
+//        }
+//        do {
+//            try engine.start()
+//        }
+//        catch {
+//            Logger.shared.reportError(self, "Error starting engine: \(error)")
+//        }
+//    }
+
     func loadAudioPlayer(name:String) -> AVAudioPlayer? {
         let clapURL = Bundle.main.url(forResource: name, withExtension: "aiff")
-
         do {
             let audioPlayer = try AVAudioPlayer(contentsOf: clapURL!)
             audioPlayer.prepareToPlay()
@@ -84,68 +159,37 @@ class AudioManager {
         return nil
     }
     
-    func resetAudioKit() {
-//        if self.engine != nil {
-//            return
-//        }
-        if let sampler = self.keyboardMidiSampler {
-            sampler.stop()
-        }
-        
-        setSession()
-        if self.engine == nil {
-            ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
-            self.engine = AudioEngine()
-        }
-        else {
-            engine!.stop()
-            //public static var inputDevices: [Device] {
-        }
-        guard let engine = self.engine else {
-            Logger.shared.reportError(self, "No engine")
-            return
-        }
-        var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
-        if self.keyboardMidiSampler == nil {
-            var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
-            self.keyboardMidiSampler = loadSampler(num: 0, preset: preset)
-        }
-        //let preset:Int
-        switch Settings.shared.backingSamplerPreset {
-        case 1: preset = 28
-        case 2: preset = 37
-        case 3: preset = 49
-        case 4: preset = 33
-        case 5: preset = 39
-        case 6: preset = 43
-        case 7: preset = 2
-        case 8: preset = 4
-        default: preset = 0
-        }
-        
-        if self.backingMidiSampler == nil {
-            self.backingMidiSampler = loadSampler(num: 1, preset: preset)
-        }
-
-        if self.mixer == nil {
-            self.mixer = Mixer()
-        //}
-        //if let mixer = self.mixer {
-            if let sampler = self.keyboardMidiSampler {
-                self.mixer!.addInput(sampler)
+    func stopPlayingRecordedFile() {
+        if let audioPlayer = self.audioPlayer {
+            audioPlayer.stop()
+            //self.resetAudioKit()
+            DispatchQueue.main.async {
+                ScalesModel.shared.recordingIsPlaying = false
             }
-            if let sampler = self.backingMidiSampler {
-                self.mixer!.addInput(sampler)
-            }
-            engine.output = self.mixer
-        }
-        do {
-            try engine.start()
-        }
-        catch {
-            Logger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
+    
+    func playRecordedFile() {
+        if let recorder = nodeRecorder {
+            if let audioFile = recorder.audioFile {
+                self.audioPlayer = AudioPlayer(file: audioFile)
+                self.audioPlayer?.volume = 1.0  // Set volume to maximum
+                audioEngine?.output = self.audioPlayer
+                Logger.shared.log(self, "Recording Duration: \(recorder.audioFile?.duration ?? 0) seconds")
+                audioPlayer?.completionHandler = {
+                    //self.resetAudioKit()
+                    DispatchQueue.main.async {
+                        ScalesModel.shared.recordingIsPlaying = false
+                    }
+                }
+                self.audioPlayer?.play()
+                DispatchQueue.main.async {
+                    ScalesModel.shared.recordingIsPlaying = true
+                }
+            }
+        }
+    }
+    
     
     func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandlerProtocol], recordAudio:Bool) {
         ///It appears that we cannot both record the mic and install a tap on it at the same time
@@ -158,8 +202,8 @@ class AudioManager {
         setSession()
         
         ///Based on CookBook Tuner
-        self.engine = AudioEngine()
-        guard let engine = self.engine else {
+        self.audioEngine = AudioEngine()
+        guard let engine = self.audioEngine else {
             Logger.shared.reportError(self, "No engine")
             return
         }
@@ -228,8 +272,8 @@ class AudioManager {
         setSession()
         
         ///Based on CookBook Tuner
-        self.engine = AudioEngine()
-        guard let engine = self.engine else {
+        self.audioEngine = AudioEngine()
+        guard let engine = self.audioEngine else {
             Logger.shared.reportError(self, "No engine")
             return
         }
@@ -273,7 +317,7 @@ class AudioManager {
                 Logger.shared.reportError(self, "No audio file found after stopping recording")
             }
         }
-        engine?.stop()
+        //audioEngine?.stop() NO 🥵
     }
     
     func setSession() {
@@ -311,7 +355,7 @@ class AudioManager {
             //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-            //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+            Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
             return sampler
         }
         catch {
@@ -468,14 +512,14 @@ class AudioManager {
 
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
-        if let sampler = keyboardMidiSampler {
+        if let sampler = samplerForKeyboard {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
         }        
     }
 
     func pianoKeyUp(_ keyNumber: Int) {
         //sampler.stopNote(UInt8(keyNumber), onChannel: 0)
-        if let sampler = keyboardMidiSampler {
+        if let sampler = samplerForKeyboard {
             sampler.stop()
         }
     }

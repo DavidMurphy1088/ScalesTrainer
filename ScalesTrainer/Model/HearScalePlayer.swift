@@ -52,7 +52,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func playBacking() {
-        guard let sampler = audioManager.backingMidiSampler else {
+        guard let sampler = audioManager.getSamplerForBacking() else {
             return
         }
         guard let backingChords = backingChords else {
@@ -88,12 +88,13 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             return
         }
 
-        let sampler = audioManager.keyboardMidiSampler
-        for hand in scale.hands { //scale.hands {
+        let samplerForKeyboard = audioManager.getSamplerForKeyboard()
+        for hand in scale.hands { 
 
             let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
+            
             if let keyIndex = keyIndex {
 
                 if self.waitBeatsForScale == 0 {
@@ -102,8 +103,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
                     if process == .playingAlongWithScale {
-                        sampler?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                        samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
                     }
+                }
+                
+                if let score = scalesModel.score {
+                    score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
                 }
                 
                 if scale.hands.count == 1 || hand == 0 {
@@ -114,25 +119,24 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     }
                 }
 
-                if false {
-                    ///stop note sounding to drop the sampler's reverb
-                    let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
-                    let secsBetweenTicks = secsPerCrotchet / Double(scale.timeSignature.top == 3 ? 3 : 2)
-                    var secsToWait = secsBetweenTicks * 2.5
-                    secsToWait *= note.value
-                    let key=keyboard.pianoKeyModel[keyIndex]
-                    DispatchQueue.main.asyncAfter(deadline: .now() + secsToWait) {
-                        ///stop() should stop all notes but doies not appear to stop the sound
-                        //sampler?.stop()
-                        sampler?.stop(noteNumber: UInt8(key.midi), channel: 0)
-                    }
-                }
+//                if false {
+//                    ///stop note sounding to drop the sampler's reverb
+//                    let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
+//                    let secsBetweenTicks = secsPerCrotchet / Double(scale.timeSignature.top == 3 ? 3 : 2)
+//                    var secsToWait = secsBetweenTicks * 2.5
+//                    secsToWait *= note.value
+//                    let key=keyboard.pianoKeyModel[keyIndex]
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + secsToWait) {
+//                        ///stop() should stop all notes but doies not appear to stop the sound
+//                        //sampler?.stop()
+//                        samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
+//                    }
+//                }
             }
         }
 
-        ///Calculate required note delay
+        ///Calculate any required note delay
         if waitBeatsForScale == 0 {
-            //let scaleNoteState = scale.scaleNoteState[0][nextNoteIndex]
             let scaleNoteState = scale.getScaleNoteState(handType: .right, index: nextNoteIndex)
             let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
             waitBeatsForScale = Int(scaleNoteState.value * notesPerBeat) - 1

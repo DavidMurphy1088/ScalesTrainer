@@ -136,7 +136,7 @@ struct SettingsView: View {
                 .pickerStyle(.menu)
                 .onChange(of: backingPresetNumber, {
                     settings.backingSamplerPreset = backingPresetNumber
-                    AudioManager.shared.resetAudioKit()
+                    //AudioManager.shared.resetAudioKit()
                 })
             }
             

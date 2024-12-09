@@ -164,10 +164,10 @@ class TabSelectionManager: ObservableObject {
 //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
                     
                     ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
 
                     let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
-                    testNotes.debug("Start")
+                    //testNotes.debug("Start")
                     //MIDIManager.shared.setTestMidiNotesNotes(testNotes)
 
                     selectedTab = 0

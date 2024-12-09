@@ -185,7 +185,7 @@ public class Score : ObservableObject {
         return getStaffHeight() * heightMult
     }
         
-    public func getStaffNote(segment: Int, midi: Int, handType:HandType) -> StaffNote? {
+    public func hilightStaffNote(segment: Int, midi: Int, handType:HandType) { //}-> StaffNote? {
         let timeSlices = getAllTimeSlices()
         var staffNoteFound:StaffNote?
 
@@ -196,6 +196,12 @@ public class Score : ObservableObject {
                 if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
                     staffNote.setShowIsPlaying(true)
                     staffNoteFound = staffNote
+                    DispatchQueue.global(qos: .background).async {
+                        usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+                        DispatchQueue.main.async {
+                            staffNote.setShowIsPlaying(false)
+                        }
+                    }
                     break
                 }
             }
@@ -203,10 +209,10 @@ public class Score : ObservableObject {
                 break
             }
         }
-        if let staffNoteFound = staffNoteFound {
-            return staffNoteFound
-        }
-        return nil
+//        if let staffNoteFound = staffNoteFound {
+//            return staffNoteFound
+//        }
+//        return nil
     }
     
     public func createTimeSlice() -> TimeSlice {
