@@ -98,6 +98,9 @@ public class ScalesModel : ObservableObject {
     var onRecordingDoneCallback:(()->Void)?
     var soundEventHandlers:[SoundEventHandlerProtocol] = []
     
+    ///Just used for receiving MIDI messages locally generated for testing
+    var midiTestHander:MIDISoundEventHandler?
+    
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
     func setProcessedEventSet(_ value:TapStatusRecordSet?, publish:Bool) {
@@ -304,7 +307,6 @@ public class ScalesModel : ObservableObject {
         else {
             self.soundEventHandlers = []
             setUserMessage(heading: nil, msg: nil)
-           // badgeBank. .setShow(false)
             self.setSelectedScaleSegment(0)
         }
         Metronome.shared.stop()
@@ -360,20 +362,31 @@ public class ScalesModel : ObservableObject {
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
                     usleep(1000000 * UInt32(1.0))
                 }
-                //self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: false)
-                self.followScaleProcess(hands: scale.hands, onDone: {cancelled in
-                    self.setRunningProcess(.none)
-                })
+
+                self.exerciseBadge = Badge.getRandomExerciseBadge()
+                let soundHandler:SoundEventHandlerProtocol
+                if Settings.shared.enableMidiConnnections {
+                    soundHandler = MIDISoundEventHandler(scale: scale)
+                    self.midiTestHander = soundHandler as? MIDISoundEventHandler
+                }
+                else {
+                    soundHandler = AcousticSoundEventHandler(scale: scale)
+                }
+                self.soundEventHandlers.append(soundHandler)
+                
+                let followProcess = FollowScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
+                followProcess.start(soundHandler: soundHandler)
+                if !Settings.shared.enableMidiConnnections {
+                    self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
+                }
             }
         }
         
         if [.leadingTheScale].contains(setProcess) {
-//            badgeBank.setShow(true)
-//            badgeBank.setTotalCorrect(0)
-//            badgeBank.setTotalIncorrect(0)
             let soundHandler:SoundEventHandlerProtocol
             if Settings.shared.enableMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
+                self.midiTestHander = soundHandler as? MIDISoundEventHandler
             }
             else {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
@@ -454,110 +467,110 @@ public class ScalesModel : ObservableObject {
     
     ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note
-    func followScaleProcess(hands:[Int], onDone:((_ cancelled:Bool)->Void)?) {
-        
-        DispatchQueue.global(qos: .background).async { [self] in
-            class KeyboardSemaphore {
-                let keyboard:PianoKeyboardModel
-                let semaphore:DispatchSemaphore
-                init(keyboard:PianoKeyboardModel, semaphore:DispatchSemaphore) {
-                    self.keyboard = keyboard
-                    self.semaphore = semaphore
-                }
-            }
-            var keyboardSemaphores:[KeyboardSemaphore] = []
-            if scale.hands.count == 1 {
-                let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                keyboardSemaphores.append(KeyboardSemaphore(keyboard: keyboard, semaphore: DispatchSemaphore(value: 0)))
-            }
-            else {
-                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRH, semaphore: DispatchSemaphore(value: 0)))
-                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLH, semaphore: DispatchSemaphore(value: 0)))
-            }
-            
-            var cancelled = false
-            
-            ///Listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
-            ///appmode is None at start since its set (for publish)  in main thread
-            DispatchQueue.global(qos: .background).async {
-                while true {
-                    sleep(1)
-                    if self.runningProcess != .followingScale {
-                        cancelled = true
-                        for keyboardSemaphore in keyboardSemaphores {
-                            keyboardSemaphore.semaphore.signal()
-                            keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: nil)
-                        }
-                        break
-                    }
-                }
-            }
-            
-            var scaleIndex = 0
-            var inScaleCount = 0
-            
-            while true {
-                if scaleIndex >= self.scale.getScaleNoteCount() {
-                    break
-                }
-                ///Add a semaphore to detect when the expected keyboard key is played
-                for keyboardSemaphore in keyboardSemaphores {
-                    let keyboardNumber = keyboardSemaphore.keyboard.keyboardNumber - 1
-                    let note = self.scale.getScaleNoteState(handType: keyboardNumber == 0 ? .right : .left, index: scaleIndex)
-                    guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, segment:note.segments[0]) else {
-                        scaleIndex += 1
-                        continue
-                    }
-                    //currentMidis.append(note.midi)
-                    let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
-                    keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
-                    pianoKey.hilightKeyToFollow = .followThisNote
-                    keyboardSemaphore.keyboard.redraw()
-                    ///Listen for piano key pressed
-                    pianoKey.wasPlayedCallback = {
-                        keyboardSemaphore.semaphore.signal()
-                        inScaleCount += 1
-                        keyboardSemaphore.keyboard.redraw()
-                        pianoKey.wasPlayedCallback = nil
-                    }
-                }
-
-                ///Wait for the right key to be played and signalled on every keyboard
-
-                for keyboardSemaphore in keyboardSemaphores {
-                    if !cancelled && self.runningProcess == .followingScale {
-                        keyboardSemaphore.semaphore.wait()
-                    }
-                }
-                
-                if !cancelled {
-                    badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
-                }
-                if cancelled || self.runningProcess != .followingScale || scaleIndex >= self.scale.getScaleNoteCount() - 1 {
-                    //self.setSelectedScaleSegment(0)
-                    break
-                }
-                else {
-                    scaleIndex += 1
-                    let nextNote = self.scale.getScaleNoteState(handType: .right, index: scaleIndex)
-                    self.setSelectedScaleSegment(nextNote.segments[0])
-                }
-            }
-            self.audioManager.stopRecording()
-            self.setSelectedScaleSegment(0)
-
-            if inScaleCount > 2 {
-                var msg = "😊 Good job following the scale"
-                msg += "\nYou played \(inScaleCount) notes in the scale"
-                //msg += "\nYou played \(xxx) notes out of the scale"
-                ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
-            }
-
-            if let onDone = onDone {
-                onDone(true)
-            }
-        }
-    }
+//    func followScaleProcessOLD(hands:[Int], onDone:((_ cancelled:Bool)->Void)?) {
+//        
+//        DispatchQueue.global(qos: .background).async { [self] in
+//            class KeyboardSemaphore {
+//                let keyboard:PianoKeyboardModel
+//                let semaphore:DispatchSemaphore
+//                init(keyboard:PianoKeyboardModel, semaphore:DispatchSemaphore) {
+//                    self.keyboard = keyboard
+//                    self.semaphore = semaphore
+//                }
+//            }
+//            var keyboardSemaphores:[KeyboardSemaphore] = []
+//            if scale.hands.count == 1 {
+//                let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: keyboard, semaphore: DispatchSemaphore(value: 0)))
+//            }
+//            else {
+//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedRH, semaphore: DispatchSemaphore(value: 0)))
+//                keyboardSemaphores.append(KeyboardSemaphore(keyboard: PianoKeyboardModel.sharedLH, semaphore: DispatchSemaphore(value: 0)))
+//            }
+//            
+//            var cancelled = false
+//            
+//            ///Listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
+//            ///appmode is None at start since its set (for publish)  in main thread
+//            DispatchQueue.global(qos: .background).async {
+//                while true {
+//                    sleep(1)
+//                    if self.runningProcess != .followingScale {
+//                        cancelled = true
+//                        for keyboardSemaphore in keyboardSemaphores {
+//                            keyboardSemaphore.semaphore.signal()
+//                            keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: nil)
+//                        }
+//                        break
+//                    }
+//                }
+//            }
+//            
+//            var scaleIndex = 0
+//            var inScaleCount = 0
+//            
+//            while true {
+//                if scaleIndex >= self.scale.getScaleNoteCount() {
+//                    break
+//                }
+//                ///Add a semaphore to detect when the expected keyboard key is played
+//                for keyboardSemaphore in keyboardSemaphores {
+//                    let keyboardNumber = keyboardSemaphore.keyboard.keyboardNumber - 1
+//                    let note = self.scale.getScaleNoteState(handType: keyboardNumber == 0 ? .right : .left, index: scaleIndex)
+//                    guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi, segment:note.segments[0]) else {
+//                        scaleIndex += 1
+//                        continue
+//                    }
+//                    //currentMidis.append(note.midi)
+//                    let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
+//                    keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: keyIndex)
+//                    pianoKey.hilightKeyToFollow = .followThisNote
+//                    keyboardSemaphore.keyboard.redraw()
+//                    ///Listen for piano key pressed
+//                    pianoKey.wasPlayedCallback = {
+//                        keyboardSemaphore.semaphore.signal()
+//                        inScaleCount += 1
+//                        keyboardSemaphore.keyboard.redraw()
+//                        pianoKey.wasPlayedCallback = nil
+//                    }
+//                }
+//
+//                ///Wait for the right key to be played and signalled on every keyboard
+//
+//                for keyboardSemaphore in keyboardSemaphores {
+//                    if !cancelled && self.runningProcess == .followingScale {
+//                        keyboardSemaphore.semaphore.wait()
+//                    }
+//                }
+//                
+//                if !cancelled {
+//                    badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
+//                }
+//                if cancelled || self.runningProcess != .followingScale || scaleIndex >= self.scale.getScaleNoteCount() - 1 {
+//                    //self.setSelectedScaleSegment(0)
+//                    break
+//                }
+//                else {
+//                    scaleIndex += 1
+//                    let nextNote = self.scale.getScaleNoteState(handType: .right, index: scaleIndex)
+//                    self.setSelectedScaleSegment(nextNote.segments[0])
+//                }
+//            }
+//            self.audioManager.stopRecording()
+//            self.setSelectedScaleSegment(0)
+//
+//            if inScaleCount > 2 {
+//                var msg = "😊 Good job following the scale"
+//                msg += "\nYou played \(inScaleCount) notes in the scale"
+//                //msg += "\nYou played \(xxx) notes out of the scale"
+//                ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
+//            }
+//
+//            if let onDone = onDone {
+//                onDone(true)
+//            }
+//        }
+//    }
     
     ///Get tempo for 1/4 note
     func getTempo() -> Int {

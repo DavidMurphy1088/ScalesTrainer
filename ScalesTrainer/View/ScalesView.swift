@@ -267,7 +267,7 @@ struct ScalesView: View {
                     HStack()  {
                         let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
                         Button(action: {
-                            scalesModel.setRunningProcess(.followingScale)
+                            scalesModel.setRunningProcess(.followingScale, practiceChartCell: practiceChartCell)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                         }) {
                             Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -639,7 +639,8 @@ struct ScalesView: View {
                     }
                 }
             }
-            
+            Spacer()
+            TestInputView()
             Spacer()
         }
         //.inspection.inspect(inspection)

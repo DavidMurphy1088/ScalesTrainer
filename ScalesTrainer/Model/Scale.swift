@@ -213,8 +213,13 @@ public class Scale : Codable {
     }
     
     func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
-        //print("======== getScaleNoteState index:", index, handType, "count:", self.scaleNoteState[handType == .right ? 0 : 1].count)
-        return self.scaleNoteState[handType == .right ? 0 : 1][index]
+        let states = self.scaleNoteState[handType == .right ? 0 : 1]
+//        if index > states.count-1 {
+//            return nil
+//        }
+//        else {
+            return states[index]
+//        }
     }
     
     func getScaleNoteStates(handType:HandType) -> [ScaleNoteState] {

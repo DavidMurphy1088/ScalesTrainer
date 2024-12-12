@@ -164,7 +164,7 @@ class TabSelectionManager: ObservableObject {
 //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
                     
                     ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
+                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1])
 
                     let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
                     //testNotes.debug("Start")
@@ -295,8 +295,9 @@ struct ScalesTrainerApp: App {
                 }
             }
         }
-    }
 
+    }
+    
     func MainContentView() -> some View {
         TabView(selection: $tabSelectionManager.selectedTab) {
             if Settings.shared.isDeveloperMode() {

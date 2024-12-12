@@ -63,15 +63,15 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             }
         }
         badgeBank.setTotalCorrect(0)
-        exerciseState.numberToWin = (scalesModel.scale.getScaleNoteCount() * 1) / 4
-        exerciseState.setExerciseState("LeadScale-Start", .exerciseStarted)
+        exerciseState.numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 3)) / 4
+        exerciseState.setExerciseState("ExerciseStart", .exerciseStarted)
         //scale.debug444("")
     }
     
     func notifiedOfSound(midi:Int) {
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
         ///But badge matching requires that both LH and RH of the scale are matched, so send the midi again.
-        var callCount = self.midisWithOneKeyPress.contains(midi) ? 2 : 1
+        let callCount = self.midisWithOneKeyPress.contains(midi) ? 2 : 1
         for call in 0..<callCount {
             processSound(midi: midi, callNumber: call)
         }

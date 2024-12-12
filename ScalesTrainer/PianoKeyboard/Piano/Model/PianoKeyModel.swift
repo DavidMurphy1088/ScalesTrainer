@@ -42,8 +42,14 @@ public class PianoKeyModel: Identifiable, Hashable {
     var hilightKeyToFollow:PianoKeyHilightType = .none
     var hilightCallbackNotUSed: () -> Void = {}
 
-    var wasPlayedCallback:(()->Void)?
-    
+    private var playedCallback:(()->Void)?
+    func setCallbackFunction(fn:(()->Void)?) {
+        self.playedCallback = fn
+    }
+    func getCallbackFunction() -> (()->Void)? {
+        return self.playedCallback
+    }
+
     public var touchDown = false
     public var latched = false
     ///A keyboard may have keys played by both LH and RH - e.g. a contray motion keyboard
@@ -64,7 +70,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Set a keyboard key as playing.
     ///Also hilight the associated score note.
     public func setKeyPlaying() {
-        //print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
+        print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
         self.keyIsSounding = true
         DispatchQueue.global(qos: .background).async {
             usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
@@ -91,7 +97,7 @@ public class PianoKeyModel: Identifiable, Hashable {
 //                }
 //            }
 //        }
-        if let callback = self.wasPlayedCallback {
+        if let callback = self.playedCallback {
             callback()
         }
     }

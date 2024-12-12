@@ -33,7 +33,7 @@ public class Settings : Codable  {
     var boardGrade:Int?
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
-    var amplitudeFilter:Double = 0.04 //Trial and error - callibration screen is designed to calculate this. For the meantime, hard coded
+    var amplitudeFilter:Double
     var practiceChartGamificationOn = true
     var enableMidiConnnections = true
     var customTrinity = true
@@ -50,6 +50,11 @@ public class Settings : Codable  {
     private var wasLoaded = false
     
     init() {
+#if targetEnvironment(simulator)
+        self.amplitudeFilter = 0.04
+#else
+        self.amplitudeFilter = 0.04
+#endif
         load()
     }
     

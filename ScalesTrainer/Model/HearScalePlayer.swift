@@ -142,7 +142,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             waitBeatsForScale = Int(scaleNoteState.value * notesPerBeat) - 1
             if nextNoteIndex < self.scalesModel.scale.getScaleNoteCount() - 1 {
                 self.nextNoteIndex += 1
-                let nextNote = scale.getScaleNoteState(handType: .right, index: nextNoteIndex) //[0][nextNoteIndex]
+                let nextNote = scale.getScaleNoteState(handType: .right, index: nextNoteIndex)
                 scalesModel.setSelectedScaleSegment(nextNote.segments[0])
             }
             else {

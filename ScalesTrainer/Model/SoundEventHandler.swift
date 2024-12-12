@@ -150,6 +150,7 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         
+        print("======== AMP", amplitude)
         if aboveFilter {
             if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
                 consecutiveCount = 0
@@ -180,7 +181,6 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         if tapStatus == .none {
             self.hilightKeysAndStaff(midi: midi)
             if let notify = self.functionToNotify {
-                //notify(midi, .inScale)
                 notify(midi)
             }
         }
@@ -207,12 +207,12 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     }
     
     func sendTestMidiNotes(notes:TestMidiNotes) {
-        Logger.shared.log(self, "sending NoteSets \(notes) notify:\(self.functionToNotify != nil)")
         if let notify = self.functionToNotify {
             DispatchQueue.global(qos: .background).async {
                 for noteSet in notes.noteSets {
                     DispatchQueue.main.async {
                         for note in noteSet.notes {
+                            //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
                             notify(note)
                         }
                         usleep(UInt32(0.2 * 1000000))

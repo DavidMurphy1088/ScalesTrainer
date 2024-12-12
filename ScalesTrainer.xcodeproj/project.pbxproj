@@ -11,6 +11,8 @@
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
 		79064CA82D08349C002490A8 /* BadgeBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* BadgeBank.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
+		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
+		79064CAE2D0A9EA2002490A8 /* FollowScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */; };
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
@@ -142,6 +144,8 @@
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		79064CA72D08349C002490A8 /* BadgeBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeBank.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
+		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
+		79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowScaleProcess.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
@@ -483,6 +487,7 @@
 				799381782C75D1A400734FDE /* SettingsView.swift */,
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
+				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				79CF5D712BEE46C900454BB6 /* UserDetailsView.swift */,
 			);
@@ -527,6 +532,7 @@
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
+				79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -802,6 +808,7 @@
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* UserDetailsView.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
+				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				79064CA82D08349C002490A8 /* BadgeBank.swift in Sources */,
 				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
@@ -854,6 +861,7 @@
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
 				794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */,
 				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,
+				79064CAE2D0A9EA2002490A8 /* FollowScaleProcess.swift in Sources */,
 				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,
 				797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */,
 			);
