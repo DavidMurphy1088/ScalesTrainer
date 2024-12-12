@@ -32,7 +32,7 @@ enum RunningProcess {
         case .followingScale:
             return "Following Scale"
         case .leadingTheScale:
-            return "Practicing"
+            return "Leading Scale"
         case .recordingScale:
             return "Recording Scale"
        case .recordingScaleForAssessment:
@@ -57,17 +57,19 @@ enum SpinState {
 }
 
 public class ScalesModel : ObservableObject {
-    
     static public var shared = ScalesModel() //musicBoardGrade:
                                             //MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
-    //@Published var scores:[Score?] = [nil, nil]
     @Published var score:Score? = nil
     @Published var recordingIsPlaying = false
     @Published var synchedIsPlaying = false
+    
+    ///The overall score of the exercise
+    @ObservedObject private var exerciseState = ExerciseState.shared
+    @ObservedObject private var badgeBank = BadgeBank.shared
 
     var scoreHidden = false
     var metronomeTicker:MetronomeTicker? = nil
@@ -84,7 +86,8 @@ public class ScalesModel : ObservableObject {
     var tempoSettings:[String] = []
     @Published var tempoChangePublished = false
     var selectedTempoIndex = 5 //60=2
-        
+    var exerciseBadge:Badge?
+    
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
@@ -276,7 +279,7 @@ public class ScalesModel : ObservableObject {
         }
     }
 
-    func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
+    func setRunningProcess(_ setProcess: RunningProcess, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         if setProcess == self.runningProcess {
             return
         }
@@ -301,7 +304,7 @@ public class ScalesModel : ObservableObject {
         else {
             self.soundEventHandlers = []
             setUserMessage(heading: nil, msg: nil)
-            BadgeBank.shared.setShow(false)
+           // badgeBank. .setShow(false)
             self.setSelectedScaleSegment(0)
         }
         Metronome.shared.stop()
@@ -332,13 +335,13 @@ public class ScalesModel : ObservableObject {
         if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-            BadgeBank.shared.setTotalCorrect(0)
+            badgeBank.setTotalCorrect(0)
             setShowKeyboard(true)
             ///Play first note to start then wait some time.
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.getScaleNoteCount() > 0 {
                 if let sampler = self.audioManager.getSamplerForKeyboard() {
-                    BadgeBank.shared.setShow(true)
+                    //badgeBank.setShow(true)
                     
                     let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                     for hand in scale.hands {
@@ -365,9 +368,9 @@ public class ScalesModel : ObservableObject {
         }
         
         if [.leadingTheScale].contains(setProcess) {
-            BadgeBank.shared.setShow(true)
-            BadgeBank.shared.setTotalCorrect(0)
-            BadgeBank.shared.setTotalIncorrect(0)
+//            badgeBank.setShow(true)
+//            badgeBank.setTotalCorrect(0)
+//            badgeBank.setTotalIncorrect(0)
             let soundHandler:SoundEventHandlerProtocol
             if Settings.shared.enableMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
@@ -376,8 +379,8 @@ public class ScalesModel : ObservableObject {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
             }
             self.soundEventHandlers.append(soundHandler)
-            
-            let leadProcess = LeadScaleProcess(scalesModel: self, metronome: metronome)
+            self.exerciseBadge = Badge.getRandomExerciseBadge()
+            let leadProcess = LeadScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
             leadProcess.start(soundHandler: soundHandler)
             if !Settings.shared.enableMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
@@ -528,7 +531,7 @@ public class ScalesModel : ObservableObject {
                 }
                 
                 if !cancelled {
-                    BadgeBank.shared.setTotalCorrect(BadgeBank.shared.totalCorrect + 1)
+                    badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
                 }
                 if cancelled || self.runningProcess != .followingScale || scaleIndex >= self.scale.getScaleNoteCount() - 1 {
                     //self.setSelectedScaleSegment(0)

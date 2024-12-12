@@ -31,7 +31,6 @@ struct CellView: View {
     @State var navigateToScale = false
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
-    //@State var handPicked:HandType?
     
     let padding = 5.0
 
@@ -68,12 +67,13 @@ struct CellView: View {
     
     func handsView() -> some View {
         HStack {
-            Image("left_hand")
+            Image("hand_left")
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(.purple)
+                .opacity(0.5)
                 .scaledToFit()
-                .frame(height: 30)
+                .frame(height: 25)
             
             Button(action: {
                 //self.handPicked = .left
@@ -87,12 +87,13 @@ struct CellView: View {
                 }
             }
             .buttonStyle(.bordered)
-            Image("right_hand")
+            Image("hand_right")
                 .resizable()
                 .renderingMode(.template)
                 .foregroundColor(.purple)
+                .opacity(0.5)
                 .scaledToFit()
-                .frame(height: 30)
+                .frame(height: 25)
             Button(action: {
                 //self.handPicked = .right
                 setScale(hands:[0])
@@ -118,6 +119,57 @@ struct CellView: View {
                                                  scaleCustomisation:practiceCell.scale.scaleCustomisation)
     }
     
+    func starView() -> some View {
+        HStack {
+            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell), isActive: $navigateToScale) {
+            }.frame(width: 0.0)
+
+            HStack {
+                Button(action: {
+                    setHilighted(scale: practiceCell.scale)
+                }) {
+                    let name = practiceCell.isActive ? "star.fill" : "star"
+                    Image(systemName: name)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(Color(red: 1.0, green: 0.843, blue: 0.0))
+                        .frame(height: cellHeight * 0.4)
+                }
+                .padding(.vertical, 0)
+                .padding(.horizontal)
+            }
+            .padding(self.padding)
+            .padding(.vertical, 0)
+        }
+    }
+    
+    func getMinBadgeIndex() -> Int {
+        var min = self.practiceCell.badges.count - 5
+        if min < 0  {
+            min = 0
+        }
+        return min
+    }
+    
+    func badgeView() -> some View {
+        HStack {
+            ForEach(0..<practiceCell.badges.count, id: \.self) {index in
+                if index < self.getMinBadgeIndex() {
+                    if index == 0 {
+                        Text(" \(practiceCell.badges.count)..").font(.title2)
+                    }
+                }
+                else {
+                    Image(practiceCell.badges[index].imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 30)
+                }
+            }
+        }
+        .opacity(opacityValue)
+    }
+
     var body: some View {
         VStack {
             Button(action: {
@@ -153,41 +205,11 @@ struct CellView: View {
                 }
             }
             
+            //Spacer()
+            starView()
             Spacer()
-            HStack {
-                NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: practiceCell), isActive: $navigateToScale) {
-                }.frame(width: 0.0)
-
-                HStack {
-                    Button(action: {
-                        setHilighted(scale: practiceCell.scale)
-                    }) {
-                        let name = practiceCell.isActive ? "star.fill" : "star"
-                        Image(systemName: name)
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(Color(red: 1.0, green: 0.843, blue: 0.0))
-                            .frame(height: cellHeight * 0.4)
-                    }
-                    .padding(.vertical, 0)
-                    .padding(.horizontal)
-                }
-                .padding(self.padding)
-                .padding(.vertical, 0)
-            }
+            badgeView()
             
-            if Settings.shared.isDeveloperMode() {
-                if Settings.shared.practiceChartGamificationOn  {
-                    HStack {
-                        ForEach(0..<practiceCell.badgeCount, id: \.self) { index in
-                            Image("pet_dogface")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 30)
-                        }
-                    }
-                }
-            }
             Spacer()
             //.border(.red)
         }
@@ -315,6 +337,7 @@ struct PracticeChartView: View {
                                 withAnimation(.linear(duration: 1.0)) {
                                     cellOpacityValue = 1.0
                                 }
+                                practiceChart.saveToFile()
                             }
                         }) {
                             Text("Shuffle")

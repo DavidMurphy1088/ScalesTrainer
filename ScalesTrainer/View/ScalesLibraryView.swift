@@ -160,7 +160,7 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: true)
-                        NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: nil)) {
+                        NavigationLink(destination: ScalesView(practiceChartCell: nil)) {
                             HStack {
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
                                 Text("  \(name)  ").font(.title2).padding()
@@ -221,7 +221,7 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: false)
-                        NavigationLink(destination: ScalesView(initialRunProcess: nil, practiceChartCell: nil)) {
+                        NavigationLink(destination: ScalesView(practiceChartCell: nil)) {
                             HStack {
                                 //let name = scale.getScaleName(handFull: true, octaves: true)
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)

@@ -303,7 +303,7 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(initialRunProcess: nil, practiceChartCell: nil)
+                ScalesView(practiceChartCell: nil)
                 //TestView()
                 //FFTContentView()
                     .tabItem {

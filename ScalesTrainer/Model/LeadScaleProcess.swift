@@ -8,7 +8,8 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     var cancelled = false
     var nextExpectedNoteInScaleIndex:[HandType:Int]
     var nextExpectedScaleSegment:[HandType:Int]
-    let badges = BadgeBank.shared
+    let exerciseState:ExerciseState
+    let badgeBank:BadgeBank
     var lastMidi:Int? = nil
     var lastMidiScaleIndex:Int? = nil
     var notifyCount = 0
@@ -18,14 +19,18 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     let score:Score?
     var noteStack: [Int] = []
     var midisWithOneKeyPress: [Int] = []
-
-    init(scalesModel:ScalesModel, metronome:Metronome) {
+    let practiceChartCell:PracticeChartCell?
+    
+    init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
         self.scalesModel = scalesModel
+        self.exerciseState = ExerciseState.shared
+        self.badgeBank = BadgeBank.shared
         nextExpectedNoteInScaleIndex = [:]
         nextExpectedScaleSegment = [:]
         self.metronome = metronome
         self.scale = scalesModel.scale
         self.score = scalesModel.score
+        self.practiceChartCell = practiceChartCell
     }
     
     func metronomeStart() {
@@ -38,7 +43,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
     }
     
     func start(soundHandler:SoundEventHandlerProtocol) {
-        badges.clearMatches()
+        exerciseState.setTotalCorrect(0)
         scalesModel.scale.resetMatchedData()
         soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
         scalesModel.scale.resetMatchedData()
@@ -57,6 +62,9 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
                 midisWithOneKeyPress.append(scale.getScaleNoteState(handType: .left, index: 0).midi)
             }
         }
+        badgeBank.setTotalCorrect(0)
+        exerciseState.numberToWin = (scalesModel.scale.getScaleNoteCount() * 1) / 4
+        exerciseState.setExerciseState("LeadScale-Start", .exerciseStarted)
         //scale.debug444("")
     }
     
@@ -119,20 +127,30 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             noteState.matchedTime = Date()
             
             ///Decide if a badge was earned. For both hand scales both the LH and RH must be matched
-            var badgeEarned = false
+            var correctNotePlayed = false
             if scale.hands.count == 1 {
-                badgeEarned = true
+                correctNotePlayed = true
             }
             else {
                 if handForNote == .left {
-                    badgeEarned = scale.getScaleNoteState(handType: .right, index: matchedIndex).matchedTime != nil
+                    correctNotePlayed = scale.getScaleNoteState(handType: .right, index: matchedIndex).matchedTime != nil
                 }
                 else {
-                    badgeEarned = scale.getScaleNoteState(handType: .left, index: matchedIndex).matchedTime != nil
+                    correctNotePlayed = scale.getScaleNoteState(handType: .left, index: matchedIndex).matchedTime != nil
                 }
             }
-            if badgeEarned {
-                badges.setTotalCorrect(badges.totalCorrect + 1)
+            if correctNotePlayed {
+                badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
+                let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
+                exerciseState.setTotalCorrect(exerciseState.totalCorrect + 1)
+                let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
+                if !wonStateOld && wonStateNew {
+                    if let exerciseBadge = scalesModel.exerciseBadge {
+                        if let practiceChartCell = practiceChartCell {
+                            practiceChartCell.addBadge(badge: exerciseBadge)
+                        }
+                    }
+                }
             }
         }
         else {
@@ -172,6 +190,7 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
             if atEnd {
                 scalesModel.clearFunctionToNotify()
                 scalesModel.setRunningProcess(.none)
+                exerciseState.setExerciseState("LeadScale-Ended", exerciseState.state == .won ? .wonAndFinished : .lost)
             }
         }
     }
@@ -180,12 +199,10 @@ class LeadScaleProcess : MetronomeTimerNotificationProtocol {
         //self.start()
        
         DispatchQueue.global(qos: .background).async {
-            //BadgeBank.shared.clearMatches()
             sleep(1)
-            self.badges.clearMatches()
+            //self.badgeBank.clearMatches()
             self.scalesModel.scale.resetMatchedData()
             var lastSegment:Int? = nil
-            //metronome.DontUse_JustForDemo()
             let hand = 0
             let keyboard = hand == 0 ? PianoKeyboardModel.sharedRH : PianoKeyboardModel.sharedLH
             let midis =   [65, 67, 69, 70, 72, 74, 76, 77, 76, 74, 72, 70, 69, 67, 65] //FMAj RH

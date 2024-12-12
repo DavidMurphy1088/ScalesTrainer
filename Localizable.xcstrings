@@ -25,6 +25,9 @@
     " %lld" : {
 
     },
+    " %lld.." : {
+
+    },
     " =" : {
 
     },
@@ -147,9 +150,6 @@
 
     },
     "Badge Styles" : {
-
-    },
-    "Badges" : {
 
     },
     "C" : {
@@ -433,6 +433,9 @@
 
     },
     "Not in Scale" : {
+
+    },
+    "Note Badges" : {
 
     },
     "Octaves:" : {

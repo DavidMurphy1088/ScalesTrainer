@@ -1,5 +1,10 @@
-            - how to get badge to go up (state=2) when enought dons
-            - when contrary motion keybnoard no badges are ever awarded
+BadgeBank type holds the badges earned in some process. One badge per note play, updated in LeadTheScaleProcess. Make it shared instance
+BadgeBankView displays those badges for the scalesView.
+
+ExerciseScore - tracks the score and state of the exericise. State is used to control the position of the exercise badge. Make it shared instance
+
+Practice Chart Cell contains a badge bank. When a process finishes with a high enough score it can update the chart cell it came from with a badge
+A cellBadgeView would show thd badges for a cell
             
 --- UI TESTS ---
 Run UI Tests Correctly: Use Command + U or the Test Navigator to execute tests. *** Do not use the Run button (⌘R).***

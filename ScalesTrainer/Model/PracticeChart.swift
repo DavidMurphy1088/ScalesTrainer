@@ -4,29 +4,37 @@ import Foundation
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
     @Published var isActive: Bool = false
-    @Published var badgeCount:Int
+    @Published var badges:[Badge] = []
 
     var scale: Scale
     var hilighted: Bool = false
     var isLicensed:Bool = false
-    
+
     enum CodingKeys: String, CodingKey {
         case scale
         case hilighted
         case badges
     }
     
-    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false, badges:Int) {
+    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) { //}, badges:Int) {
         self.scale = scale
         self.hilighted = hilighted
         self.isActive = hilighted  // Set isActive based on enabled during initialization
-        self.badgeCount = badges
+        self.badges = []
         self.isLicensed = isLicensed
     }
     
-    func adjustBadges(delta:Int) {
+//    func setBadgesCount(count:Int) {
+//        DispatchQueue.main.async {
+//            //self.badgeCount += delta
+//            //self.badgeCount = count
+//            PracticeChart.shared.saveToFile()
+//        }
+//    }
+    
+    func addBadge(badge:Badge) {
         DispatchQueue.main.async {
-            self.badgeCount += delta
+            self.badges.append(badge)
             PracticeChart.shared.saveToFile()
         }
     }
@@ -35,7 +43,7 @@ class PracticeChartCell: ObservableObject, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         scale = try container.decode(Scale.self, forKey: .scale)
         hilighted = try container.decode(Bool.self, forKey: .hilighted)
-        badgeCount = try container.decode(Int.self, forKey: .badges)
+        badges = try container.decode([Badge].self, forKey: .badges)
         self.isActive = hilighted
     }
     
@@ -43,7 +51,7 @@ class PracticeChartCell: ObservableObject, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scale, forKey: .scale)
         try container.encode(hilighted, forKey: .hilighted)
-        try container.encode(badgeCount, forKey: .badges)
+        try container.encode(badges, forKey: .badges)
     }
     
     func setHilighted(way: Bool) {
@@ -77,7 +85,7 @@ class PracticeChart: Codable {
             if scaleCtr < scales.count {
                 for c in 0..<columnWidth {
                     if scaleCtr < scales.count {
-                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed(), badges: 0))
+                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()))
                         scaleCtr += 1
                     }
                     else {
@@ -112,7 +120,7 @@ class PracticeChart: Codable {
     func reset() {
         for row in rows {
             for cell in row {
-                cell.adjustBadges(delta: 0 - cell.badgeCount)
+                cell.badges = []
                 self.saveToFile()
             }
         }
@@ -151,14 +159,14 @@ class PracticeChart: Codable {
 
             ///Reset the chart's first column day
             self.firstColumnDayOfWeekNumber += 3
-            if self.firstColumnDayOfWeekNumber > 6 {
-                self.firstColumnDayOfWeekNumber -= 7
-                for row in self.rows {
-                    for cell in row {
-                        cell.badgeCount = 0
-                    }
-                }
-            }
+//            if self.firstColumnDayOfWeekNumber > 6 {
+//                self.firstColumnDayOfWeekNumber -= 7
+//                for row in self.rows {
+//                    for cell in row {
+//                        cell.badgeCount = 0
+//                    }
+//                }
+//            }
             self.saveToFile()
         }
     }

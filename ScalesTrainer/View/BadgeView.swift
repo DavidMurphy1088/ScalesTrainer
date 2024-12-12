@@ -1,80 +1,5 @@
 import SwiftUI
 
-class BadgeBank : ObservableObject {
-    static let shared = BadgeBank()
-    var numberToWin = 0
-    
-    enum BadgeState {
-        case offScreen
-        case visible
-        case won
-        case lost
-    }
-    
-    func badgePointsNeededToWin() -> Int {
-        //if Settings.shared.practiceChartGamificationOn {
-            return numberToWin - totalCorrect
-        //}
-        //else {
-            //return 0
-        //}
-    }
-    
-    @Published private(set) var badgeState: BadgeState = .offScreen
-    func setBadgeState(_ value:BadgeState) {
-        DispatchQueue.main.async {
-            self.badgeState = value
-        }
-    }
-    
-    @Published private(set) var totalCorrectPublished: Int = 0
-    var totalCorrect: Int = 0
-    func setTotalCorrect(_ value:Int) {
-        self.totalCorrect = value
-        DispatchQueue.main.async {
-            self.totalCorrectPublished = self.totalCorrect
-            if self.totalCorrect >= self.numberToWin {
-                self.badgeState = .won
-            }
-        }
-    }
-    
-    @Published private(set) var totalIncorrect: Int = 0
-    func setTotalIncorrect(_ value:Int) {
-        DispatchQueue.main.async {
-            self.totalIncorrect = value
-        }
-    }
-    
-    @Published private(set) var show: Bool = false
-    func setShow(_ value:Bool) {
-        DispatchQueue.main.async {
-            self.show = value
-        }
-    }
-    
-    @Published private(set) var matches:[Int] = []
-    func addMatch(_ value:Int) {
-        DispatchQueue.main.async {
-            self.matches.append(value)
-        }
-    }
-
-    func removeMatch() {
-        DispatchQueue.main.async {
-            if !self.matches.isEmpty {
-                self.matches.removeLast()
-            }
-        }
-    }
-
-    func clearMatches() {
-        DispatchQueue.main.async {
-            self.matches = []
-        }
-    }
-}
-
 struct HexagramShape: View {
     var size: CGFloat
     var offset: CGFloat
@@ -124,15 +49,21 @@ struct HexagramShape: View {
     }
 }
 
-struct BadgeView: View {
+///The badge view for the exercise view
+struct BadgesView: View {
+    @ObservedObject var badgeBank:BadgeBank
     let scale:Scale
-    @ObservedObject var bank = BadgeBank.shared
     @State private var size: CGFloat = 0
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
     @State var imageIds:[Int] = []
     @State var handType = HandType.right
+    
+    init(scale:Scale) {
+        self.badgeBank = BadgeBank.shared
+        self.scale = scale
+    }
     
     func imageName(imageSet:Int, n:Int) -> String {
         var name = ""
@@ -174,26 +105,23 @@ struct BadgeView: View {
     var body: some View {
         VStack {
             HStack {
-                //Text("\(scale.getScaleName(handFull: true))").font(.title)
-                Text("Badges").font(.title3)
-                Button(action: {
-                    bank.setShow(false)
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.blue)
-                }
+                Text("Note Badges").font(.title3)
+//                Button(action: {
+//                    badgeBank.setShow(false)
+//                }) {
+//                    Image(systemName: "xmark")
+//                        .foregroundColor(.blue)
+//                }
             }
             HStack(spacing: 10) {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                 let imWidth = CGFloat(40)
                 
-                //ForEach(0..<scale.scaleNoteState[handIndex].count, id: \.self) { scaleNoteNumber in
                 ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
-                    if scaleNoteNumber == BadgeBank.shared.totalCorrect - 1  {
+                    if scaleNoteNumber == badgeBank.totalCorrect - 1  {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
-                            //Text("\(n)").foregroundColor(.blue)
-                            if BadgeBank.shared.totalCorrect > 0 {
+                            if badgeBank.totalCorrect > 0 {
                                 if Settings.shared.badgeStyle == 0 {
                                     HexagramShape(size: size, offset: offset, color: c)
                                         .rotationEffect(Angle.degrees(rotationAngle))
@@ -225,10 +153,9 @@ struct BadgeView: View {
                     else {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
-                            //Text("\(n)").foregroundColor(.blue)
-                            if scaleNoteNumber < BadgeBank.shared.totalCorrect {
+                            if scaleNoteNumber < badgeBank.totalCorrect {
                                 if Settings.shared.badgeStyle == 0 {
-                                    HexagramShape(size: size, offset: offset, color: c).opacity(scaleNoteNumber < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                                    HexagramShape(size: size, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
                                 }
                                 else {
                                     Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
@@ -242,7 +169,7 @@ struct BadgeView: View {
                 }
             }
             Text("")
-            .onChange(of: BadgeBank.shared.totalCorrect, {
+            .onChange(of: badgeBank.totalCorrect, {
                 verticalOffset = -50
                 rotationAngle = 0
             })

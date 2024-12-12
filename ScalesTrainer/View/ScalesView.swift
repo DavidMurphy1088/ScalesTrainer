@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUI
 import CoreData
 import MessageUI
 import WebKit
@@ -41,13 +40,11 @@ struct MetronomeView: View {
 
 struct ScalesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
-    let initialRunProcess:RunningProcess?
+    //let initialRunProcess:RunningProcess?
     let practiceChartCell:PracticeChartCell?
-
     @ObservedObject private var scalesModel = ScalesModel.shared
-    @ObservedObject private var badgeBank = BadgeBank.shared
-    
-    //@StateObject private var orientationObserver = DeviceOrientationObserver()
+    @ObservedObject private var exerciseState = ExerciseState.shared
+
     let settings = Settings.shared
 
     @ObservedObject private var metronome = Metronome.shared
@@ -69,14 +66,13 @@ struct ScalesView: View {
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
-    @State var lastBadgeImage = 0
-    //let inspection = Inspection<ScalesView>() // For ViewInspector
+    @State var lastBadgeNumber = 0
     
     ///Practice Chart badge control
-    @State var practiceChartBadgeImage = Image("pet_dogface")
+    @State var exerciseBadge:Badge?
     
-    init(initialRunProcess:RunningProcess?, practiceChartCell:PracticeChartCell?) {
-        self.initialRunProcess = initialRunProcess
+    init(practiceChartCell:PracticeChartCell?) {
+        //self.initialRunProcess = initialRunProcess
         self.practiceChartCell = practiceChartCell
     }
 
@@ -174,14 +170,15 @@ struct ScalesView: View {
                         scalesModel.setRunningProcess(.none)
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
                             if Settings.shared.practiceChartGamificationOn {
-                                if badgeBank.badgeState == .won  {
-                                    //practiceChartCell?.adjustBadges(delta: 1)
+                                ///Stopped by user before exercise process stopped it
+                                if exerciseState.state == .won  {
+                                    exerciseState.setExerciseState("View StoppedWon", .wonAndFinished)
                                 }
                                 else {
-                                    badgeBank.setBadgeState(.lost)
+                                    exerciseState.setExerciseState("View lost", .lost)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    badgeBank.setBadgeState(.offScreen)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    exerciseState.setExerciseState("View restarted exercise", .exerciseNotStarted)
                                 }
                             }
                         }
@@ -261,21 +258,6 @@ struct ScalesView: View {
         }
     }
     
-    func setBadgeImage() -> Image {
-        //let names = ["pet_penguinface", "pet_catface","pet_dogface", "sea_creature_1", "sea_creature_2" ]
-        //let names = ["pet_dogface", "sea_creature_2", "pet_penguinface","badge_koala", "badge_tiger", "badge_giraffe" , "badge_camel" , "badge_owl"]
-        let names = ["badge_1", "badge_2", "badge_3", "badge_4", "badge_5", "badge_6", "badge_7", "badge_8"]
-        var r = 0
-        while true {
-            r = Int.random(in: 0...names.count-1)
-            if r != lastBadgeImage {
-                lastBadgeImage = r
-                break
-            }
-        }
-        return Image(names[r])
-    }
-    
     func SelectActionView() -> some View {
         VStack {
 
@@ -287,7 +269,6 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.setRunningProcess(.followingScale)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
-                            badgeBank.setBadgeState(.visible)
                         }) {
                             Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
@@ -315,13 +296,13 @@ struct ScalesView: View {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
                         Button(action: {
                             if scalesModel.runningProcessPublished == .leadingTheScale {
+                                //exerciseState.setExerciseState("start", .exerciseNotStarted)
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                practiceChartBadgeImage = setBadgeImage()
-                                scalesModel.setRunningProcess(.leadingTheScale)
+                                self.exerciseBadge = scalesModel.exerciseBadge
+                                scalesModel.setRunningProcess(.leadingTheScale, practiceChartCell: self.practiceChartCell)
                                 scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
-                                badgeBank.setBadgeState(.visible)
                             }
                         }) {
                             Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -500,19 +481,21 @@ struct ScalesView: View {
         return mailInfo
     }
     
-    func getBadgeMessage() -> String {
-        let remaining = badgeBank.badgePointsNeededToWin()
+    func getExerciseStatusMessage() -> String {
+        let remaining = exerciseState.pointsNeededToWin()
         var msg = ""
-        if badgeBank.badgeState == .won {
+        switch exerciseState.state {
+        case .won:
             msg = "😊 You Won Me 😊"
-        }
-        else {
+        case .exerciseStarted:
             if remaining == 1 {
                 msg = "Win me with one more correct note"
             }
             else {
-                msg = BadgeBank.shared.totalCorrect == 0 ? "Win me with just \(remaining) notes correct" : "Win me with \(remaining) more notes correct"
+                msg = exerciseState.totalCorrect == 0 ? "I'm the exercise badge. Win me with just \(remaining) notes correct" : "Win me with \(remaining) more notes correct"
             }
+        default:
+            msg = ""
         }
         return (msg)
     }
@@ -528,6 +511,24 @@ struct ScalesView: View {
         return canFit
     }
         
+    func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
+        ///All offsets are reltive to the last postion
+        if state == .exerciseNotStarted {
+            //return (0, UIScreen.main.bounds.height)
+            return (0, 300)
+        }
+        if state == .lost {
+            //return (0, UIScreen.main.bounds.height)
+            ///The image is rotated down so negative offset sends it down
+            return (0, UIScreen.main.bounds.height * -0.5)
+        }
+        if [.wonAndFinished].contains(state) {
+            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
+            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
+        }
+        return (0,0) //Exercise started
+    }
+    
     var body: some View {
         VStack {
             VStack(spacing: 0) {
@@ -603,52 +604,40 @@ struct ScalesView: View {
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if Settings.shared.practiceChartGamificationOn && badgeBank.show {
-                BadgeView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
-                //if Settings.shared.isDeveloperMode() {
-                    HStack {
-                        let msg = getBadgeMessage()
-                        Text(msg)
-                            .padding()
-                            .foregroundColor(.blue)
-                            .font(badgeBank.badgeState == .won ? .title : .title2)
-                            .opacity(badgeBank.badgeState == .offScreen ? 0.0 : 1.0)
-                            .zIndex(1) // Keeps it above other views
+            if [.exerciseStarted, .won].contains(exerciseState.state) {
+                BadgesView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
+            }
+            
+            if Settings.shared.practiceChartGamificationOn {
+                HStack {
+                    let msg = getExerciseStatusMessage()
+                    Text(msg)
+                        .padding()
+                        .foregroundColor(.blue)
+                        .font(exerciseState.state == .won ? .title : .title2)
+                    //.opacity(badgeBank.badgeState == .exerciseNotStarted ? 0.0 : 1.0)
+                        .zIndex(1) // Keeps it above other views
+                    
+                    ///Practice chart badge position is based on exercise state
+                    ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
+                    
+                    if let exerciseBadge = scalesModel.exerciseBadge {
+                        Image(exerciseBadge.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: UIScreen.main.bounds.height * 0.05)
                         
-                        self.practiceChartBadgeImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: UIScreen.main.bounds.height * 0.05)
-                        
-                            ///Appear state
-                            //.offset(y: badgeBank.badgeState == .offScreen ? 400 : 0)
-                            .rotationEffect(Angle(degrees: badgeBank.badgeState == .offScreen ? 180 : 0))
-                            .rotation3DEffect( //3D flip around its vertical axis
-                                Angle(degrees: badgeBank.badgeState == .offScreen ? 75 : 0),
-                                axis: (x: 0.0, y: 1.0, z: 0.0)
-                            )
-                            .animation(.easeInOut(duration: 1), value: badgeBank.badgeState)
-
-                            ///Won state
-                            .scaleEffect(badgeBank.badgeState == .won ? 1.5 : 1.0) //Change size
-                            .rotationEffect(Angle(degrees: badgeBank.badgeState == .won ? 360 : 0)) //Spin badge
-                            .rotation3DEffect( //3D flip around its vertical axis
-                                Angle(degrees: badgeBank.badgeState == .won ? 180 : 0),
-                                axis: (x: 0.0, y: 1.0, z: 0.0)
-                            )
-                            .animation(.easeInOut(duration: [.won].contains(badgeBank.badgeState) ? 2.0 : 0), value: badgeBank.badgeState)
-
-                            ///Lost state
-                            .rotationEffect(Angle(degrees: badgeBank.badgeState == .lost ? 180 : 0)) //Turn downwards
-                            //.animation(.easeInOut(duration: [.won,.lost].contains(badgeBank.badgeState) ? 2.0 : 1), value: badgeBank.badgeState)
-                            //.animation(.easeInOut(duration: 2), value: badgeBank.badgeState)
-                            .offset(y: badgeBank.badgeState == .lost ? 400 : 0) //send down
-                            //.animation(.easeInOut(duration: [.won,.lost].contains(badgeBank.badgeState) ? 2.0 : 1), value: badgeBank.badgeState)
-                            .animation(.easeInOut(duration: 2), value: badgeBank.badgeState)
-
-                            .opacity(badgeBank.badgeState == .offScreen ? 0.0 : 1.0)
+                        .offset(x: getBadgeOffset(state: exerciseState.state).0, y:getBadgeOffset(state: exerciseState.state).1)
+                        ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
+                        //                        .rotation3DEffect( //3D flip around its vertical axis
+                        //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
+                        //                            axis: (x: 0.0, y: 1.0, z: 0.0)
+                        //                        )
+                        .animation(.easeInOut(duration: 2), value: exerciseState.state)
+                        .rotationEffect(Angle(degrees: exerciseState.state == .lost ? 180 : 0))
+                        .opacity(exerciseState.state == .exerciseNotStarted ? 0.0 : 1.0)
                     }
-                //}
+                }
             }
             
             Spacer()
@@ -671,14 +660,12 @@ struct ScalesView: View {
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
-            //self.scalesModel.scale.debug111("SV")
             scalesModel.setResultInternal(nil, "ScalesView.onAppear")
             PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
                 PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale)
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    //let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.scaleNoteState[0][0].midi, segment: 0)
                     let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi, segment: 0)
                     if let middleKeyIndex = middleKeyIndex {
                         combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
@@ -690,16 +677,15 @@ struct ScalesView: View {
             }
             
             self.directionIndex = 0
-            if let process = initialRunProcess {
-                scalesModel.setRunningProcess(process)
-            }
+            //if let process = initialRunProcess {
+            //scalesModel.setRunningProcess(process, practiceChartCell: self.practiceChartCell)
+            //}
             self.numberOfOctaves = scalesModel.scale.octaves
             if let tempoIndex = scalesModel.tempoSettings.firstIndex(where: { $0.contains("\(scalesModel.scale.minTempo)") }) {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)
-            badgeBank.setShow(false)
-            badgeBank.numberToWin = (scalesModel.scale.getScaleNoteCount() * 3) / 4
+            exerciseState.setExerciseState("onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             //if scalesModel.scale.debugOn {
                 //scalesModel.scale.debug1("In View1", short: false)

@@ -177,6 +177,11 @@ struct ActivityModeView: View {
                 if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
                     PracticeChart.shared = savedChart
                     savedChart.adjustForStartDay()
+//                    for row in 0..<savedChart.rows.count {
+//                        for cell in 0..<savedChart.rows[row].count {
+//                            savedChart.rows[row][cell].setBadgesCount(count: 0)
+//                        }
+//                    }
                 }
                 else {
                     ///Create a new one for this board and grade
