@@ -222,7 +222,7 @@ public class Scale : Codable {
 //        }
     }
     
-    func getScaleNoteStates(handType:HandType) -> [ScaleNoteState] {
+    func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
         return self.scaleNoteState[handType == .right ? 0 : 1]
     }
 

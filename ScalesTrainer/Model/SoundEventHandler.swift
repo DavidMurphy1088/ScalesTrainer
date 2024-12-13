@@ -6,9 +6,8 @@ import AudioKitEX
 import Foundation
 import UIKit
 
+///A class that sends sounds events to exercise processes
 protocol SoundEventHandlerProtocol {
-//    init(scale:Scale)
-//    func setFunctionToNotify(functionToNotify: @escaping (Int, TapEventStatus) -> Void)
     func setFunctionToNotify(functionToNotify: ((Int) -> Void)?)
     func start()
     func stop()
@@ -17,7 +16,7 @@ protocol SoundEventHandlerProtocol {
 class SoundEventHandler  {
     let scale:Scale
     
-    ///The feature function that is called when a new MIDI notification arrives
+    ///The exercise function that is called when a new MIDI notification arrives
     //var functionToNotify: ((Int, TapEventStatus) -> Void)?
     var functionToNotify: ((Int) -> Void)?
 
@@ -31,81 +30,50 @@ class SoundEventHandler  {
     
     func stop() {
     }
+}
+
+///A class that generates sound events from the MIDI notifications to exercise processes
+///
+class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
+    func start() {
+        let midiManager = MIDIManager.shared
+        midiManager.installNotificationTarget(target: self.midiManagerNotificationTarget(msg:))
+        if let testMidiNotes = midiManager.testMidiNotes {
+            if testMidiNotes.scaleId == self.scale.id {
+                self.sendTestMidiNotes(notes: testMidiNotes)
+            }
+        }
+    }
+
+    ///Call the feature function that is specified when a new MIDI notification arrives
+    func midiManagerNotificationTarget(msg:MIDIMessage) {
+        //print("========== Handler NotificationTarget", msg.midi)
+        if let notify = self.functionToNotify {
+            notify(msg.midi)
+        }
+    }
     
-    ///Determine if the midi represents a keyboard key.
-    ///If its a key hilight and sound the key.
-    func hilightKeysAndStaff(midi:Int) {
-        class PossibleKeyPlayed {
-            let keyboard:PianoKeyboardModel
-            let keyIndex: Int
-            let inScale:Bool
-            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
-                self.keyIndex = keyIndex
-                self.inScale = inScale
-                self.keyboard = keyboard
-            }
-        }
-
-        let scalesModel = ScalesModel.shared
-        var keyboards:[PianoKeyboardModel] = []
-        if self.scale.getKeyboardCount() == 1 {
-            let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-            keyboards.append(keyboard)
-        }
-        else {
-            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
-                keyboards.append(combinedKeyboard)
-            }
-            else {
-                keyboards.append(PianoKeyboardModel.sharedLH)
-                keyboards.append(PianoKeyboardModel.sharedRH)
-            }
-        }
-
-        ///A MIDI heard may be in both the LH and RH keyboards.
-        ///Determine which keyboard the MIDI was played on
-        var possibleKeysPlayed:[PossibleKeyPlayed] = []
-        for i in 0..<keyboards.count {
-            let keyboard = keyboards[i]
-            if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: scalesModel.selectedScaleSegment) {
-                let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
-                //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
-                let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
-                possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
-            }
-        }
-        
-        if possibleKeysPlayed.count > 0 {
-            if keyboards.count == 1 {
-                let keyboard = keyboards[0]
-                let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
-                keyboardKey.setKeyPlaying()
-            }
-            else {
-                if possibleKeysPlayed.first(where: {$0.inScale == true}) == nil {
-                    ///Note played not in the scale
-                    ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
-                    if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
-                        let keyboard = outOfScale.keyboard
-                        let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
-                        keyboardKey.setKeyPlaying()
+    func sendTestMidiNotes(notes:TestMidiNotes) {
+        if let notify = self.functionToNotify {
+            DispatchQueue.global(qos: .background).async {
+                for noteSet in notes.noteSets {
+                    DispatchQueue.main.async {
+                        for note in noteSet.notes {
+                            //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
+                            notify(note)
+                        }
+                        usleep(UInt32(0.2 * 1000000))
                     }
-                }
-                else {
-                    ///Note played is in the scale
-                    ///New option for scale Lead in? - For all keys played show the played status only on one keyboard - RH or LH, not both
-                    ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
-                    for possibleKey in possibleKeysPlayed {
-                        let keyboard = possibleKey.keyboard
-                        let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
-                        keyboardKey.setKeyPlaying()
-                    }
+                    let noteSetDelay = UInt32(1000000 * notes.noteSetWait)
+                    usleep(noteSetDelay)
                 }
             }
         }
     }
 }
 
+///A class that generates sound events from the microphone to exercise processes
+///
 class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     let bufferSize = 4096
     var consecutiveCount = 0
@@ -150,7 +118,6 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         
-        print("======== AMP", amplitude)
         if aboveFilter {
             if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
                 consecutiveCount = 0
@@ -185,42 +152,78 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             }
         }
     }
-}
-
-class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
-    func start() {
-        let midiManager = MIDIManager.shared
-        midiManager.installNotificationTarget(target: self.MIDIManagerNotificationTarget(msg:))
-        if let testMidiNotes = midiManager.testMidiNotes {
-            if testMidiNotes.scaleId == self.scale.id {
-                self.sendTestMidiNotes(notes: testMidiNotes)
+    
+    ///Determine if the midi represents a keyboard key.
+    ///If its a key hilight and sound the key.
+    func hilightKeysAndStaff(midi:Int) {
+        class PossibleKeyPlayed {
+            let keyboard:PianoKeyboardModel
+            let keyIndex: Int
+            let inScale:Bool
+            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
+                self.keyIndex = keyIndex
+                self.inScale = inScale
+                self.keyboard = keyboard
             }
         }
-    }
 
-    ///Call the feature function that is specified when a new MIDI notification arrives
-    func MIDIManagerNotificationTarget(msg:MIDIMessage) {
-        //print("========== Handler NotificationTarget", msg.midi)
-        if let notify = self.functionToNotify {
-            notify(msg.midi)
+        let scalesModel = ScalesModel.shared
+        var keyboards:[PianoKeyboardModel] = []
+        if self.scale.getKeyboardCount() == 1 {
+            let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+            keyboards.append(keyboard)
         }
-    }
-    
-    func sendTestMidiNotes(notes:TestMidiNotes) {
-        if let notify = self.functionToNotify {
-            DispatchQueue.global(qos: .background).async {
-                for noteSet in notes.noteSets {
-                    DispatchQueue.main.async {
-                        for note in noteSet.notes {
-                            //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
-                            notify(note)
-                        }
-                        usleep(UInt32(0.2 * 1000000))
+        else {
+            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
+                keyboards.append(combinedKeyboard)
+            }
+            else {
+                keyboards.append(PianoKeyboardModel.sharedLH)
+                keyboards.append(PianoKeyboardModel.sharedRH)
+            }
+        }
+
+        ///A MIDI heard may be in both the LH and RH keyboards.
+        ///Determine which keyboard the MIDI was played on
+        var possibleKeysPlayed:[PossibleKeyPlayed] = []
+        for i in 0..<keyboards.count {
+            let keyboard = keyboards[i]
+            if let index = keyboard.getKeyIndexForMidi(midi: midi) {
+                let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
+                //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
+                let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
+                possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
+            }
+        }
+        
+        if possibleKeysPlayed.count > 0 {
+            if keyboards.count == 1 {
+                let keyboard = keyboards[0]
+                let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
+                keyboardKey.setKeyPlaying()
+            }
+            else {
+                if possibleKeysPlayed.first(where: {$0.inScale == true}) == nil {
+                    ///Note played not in the scale
+                    ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
+                    if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
+                        let keyboard = outOfScale.keyboard
+                        let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
+                        keyboardKey.setKeyPlaying()
                     }
-                    let noteSetDelay = UInt32(1000000 * notes.noteSetWait)
-                    usleep(noteSetDelay)
+                }
+                else {
+                    ///Note played is in the scale
+                    ///New option for scale Lead in? - For all keys played show the played status only on one keyboard - RH or LH, not both
+                    ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
+                    for possibleKey in possibleKeysPlayed {
+                        let keyboard = possibleKey.keyboard
+                        let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
+                        keyboardKey.setKeyPlaying()
+                    }
                 }
             }
         }
     }
 }
+

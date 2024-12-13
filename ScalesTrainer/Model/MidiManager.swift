@@ -10,7 +10,9 @@ class MIDIMessage {
     }
 }
 
-// Define 'midiReadProc' as a global function outside the class
+/// Define 'midiReadProc' as a global function outside the class.
+/// This function processes an incoming MIDI message.
+/// 
 func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: UnsafeMutableRawPointer?, srcConnRefCon: UnsafeMutableRawPointer?) {
     let midiManager = Unmanaged<MIDIManager>.fromOpaque(readProcRefCon!).takeUnretainedValue()
     
@@ -48,14 +50,7 @@ func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: Uns
                     let messageBytes = Array(data[index..<(index + messageLength)])
                     if let message:MIDIMessage = midiManager.parseMIDIMessage(messageBytes) {
                         //print("Received MIDI message: \(message)")
-                        //midiManager.receivedMessages.append(message)
                         midiManager.processMidiMessage(MIDImessage: message)
-                        //                        DispatchQueue.main.async {
-                        //                            if midiManager.receivedMessages.count > 15 {
-                        //                                midiManager.receivedMessages = []
-                        //                            }
-                        //                            midiManager.receivedMessages.append(message)
-                        //                        }
                     }
                     index += messageLength
                 } else {
@@ -162,13 +157,6 @@ class MIDIManager: ObservableObject {
             MIDIPortConnectSource(inputPort, src, nil)
             let desc = getSourceDescription(MIDIGetSource(i))
             Logger.shared.log(self, "Made connection to MIDI Source, name:\(desc)")
-        }
-    }
-    
-    func processMidiMessage(MIDImessage:MIDIMessage) {
-        //Logger.shared.log(self, "Received MIDI \(MIDImessage.midi)")
-        if let target = self.installedNotificationTarget {
-            target(MIDImessage)
         }
     }
     
@@ -314,14 +302,15 @@ class MIDIManager: ObservableObject {
         //return "Incomplete MIDI Message: \(bytes.map { String(format: "%02X", $0) }.joined(separator: " "))"
         return nil
     }
-
-//    func clear() {
-//        DispatchQueue.main.async {
-//            self.receivedMessages = []
-//        }
-//    }
     
-    /// ------------- Functions to descrive MIDI sources -------------
+    func processMidiMessage(MIDImessage:MIDIMessage) {
+        //print("============= MidiManger Received MIDI", MIDImessage.midi)
+        if let target = self.installedNotificationTarget {
+            target(MIDImessage)
+        }
+    }
+    
+    /// ------------- Functions to describe MIDI sources -------------
 
     /// Describes the properties of a given MIDIEndpointRef by printing its details.
     ///

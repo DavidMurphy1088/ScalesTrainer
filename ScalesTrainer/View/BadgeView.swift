@@ -58,7 +58,7 @@ struct BadgesView: View {
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
     @State var imageIds:[Int] = []
-    @State var handType = HandType.right
+    @State var handType = KeyboardType.right
     
     init(scale:Scale) {
         self.badgeBank = BadgeBank.shared
@@ -175,7 +175,7 @@ struct BadgesView: View {
             })
         }
         .onAppear() {
-            self.handType = HandType.right //scale.hand == 2 ? 0 : scale.hand
+            self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
             self.size = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteStates(handType: handType).count) * 1.7)
             ///Ensure not more than 2 concurrent same values
             for _ in 0..<scale.getScaleNoteStates(handType: handType).count {

@@ -5,7 +5,10 @@ import SwiftUI
 
 class ExerciseState : ObservableObject {
     static let shared = ExerciseState()
-    var numberToWin = 0
+    private(set) var numberToWin = 0
+    func setNumberToWin(_ n:Int) {
+        self.numberToWin = n
+    }
     
     enum State {
         case exerciseNotStarted
@@ -19,27 +22,44 @@ class ExerciseState : ObservableObject {
         return numberToWin - totalCorrect
     }
     
-    @Published private(set) var state: State = .exerciseNotStarted
-    func setExerciseState(_ ctx:String, _ value:ExerciseState.State) {
-        DispatchQueue.main.async {
-            print("==== state change ctx:", ctx, self.state, "-->", value)
+    @Published private(set) var statePublished:State = .exerciseNotStarted
+    private var state:State = .exerciseNotStarted
+    func setExerciseState(ctx:String, _ value:ExerciseState.State) {
+        if value != self.state {
+            print("====== ExerciseStat, state change ctx:[\(ctx)]", self.state, "-->", value)
             self.state = value
+            DispatchQueue.main.async {
+                self.statePublished = value
+            }
         }
+    }
+    func getState() -> State {
+        return self.state
     }
     
     @Published private(set) var totalCorrectPublished: Int = 0
     var totalCorrect: Int = 0
-    func setTotalCorrect(_ value:Int) {
-        self.totalCorrect = value
-        DispatchQueue.main.async {
-            self.totalCorrectPublished = self.totalCorrect
-            if self.state != .won {
-                if self.totalCorrect >= self.numberToWin {
-                    self.setExerciseState("ExerciseState - setTotalCorrect", .won)
+    func bumpTotalCorrect() {
+        print("====== ExerciseStat, setTotalCorrect", self.totalCorrect)
+        if totalCorrect < self.numberToWin {
+            self.totalCorrect += 1
+            if self.totalCorrect == self.numberToWin {
+                if ![.won, .wonAndFinished].contains(self.state) {
+                    if self.totalCorrect >= self.numberToWin {
+                        self.setExerciseState(ctx:"ExerciseState - SetTotalCorrect after points update \(self.totalCorrect),\(self.numberToWin)", .won)
+                    }
                 }
+            }
+
+            DispatchQueue.main.async {
+                self.totalCorrectPublished = self.totalCorrect
             }
         }
     }
+    func resetTotalCorrect() {
+        self.totalCorrect = 0
+    }
+
     
     @Published private(set) var totalIncorrect: Int = 0
     func setTotalIncorrect(_ value:Int) {

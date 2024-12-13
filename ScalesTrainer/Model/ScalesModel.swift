@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import Combine
 import SwiftUI
+import AudioKit
 
 ///None -> user can see finger numbers and tap virtual keyboard - notes are hilighted if in scale
 ///Practice -> user can use acoustic piano. keyboard display same as .none
@@ -63,7 +64,10 @@ public class ScalesModel : ObservableObject {
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
-    @Published var score:Score? = nil
+    @Published private var score1:Score? = nil
+    func getScore() -> Score? {
+        return self.score1
+    }
     @Published var recordingIsPlaying = false
     @Published var synchedIsPlaying = false
     
@@ -281,7 +285,30 @@ public class ScalesModel : ObservableObject {
             soundHandler.setFunctionToNotify(functionToNotify: nil)
         }
     }
-
+    
+    func showFollowKeyHilights(sampler:MIDISampler) {
+        for hand in scale.hands {
+            let midi = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0).midi
+            let keyboard:PianoKeyboardModel
+            if let combined = PianoKeyboardModel.sharedCombined {
+                keyboard = combined
+            }
+            else {
+                keyboard = hand == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+            }
+            
+            if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
+                let key = keyboard.pianoKeyModel[keyIndex]
+                //key.hilightCallback = {
+                //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                //}
+                key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
+                keyboard.redraw1()
+            }
+            sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+        }
+    }
+    
     func setRunningProcess(_ setProcess: RunningProcess, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         if setProcess == self.runningProcess {
             return
@@ -343,23 +370,9 @@ public class ScalesModel : ObservableObject {
             ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.getScaleNoteCount() > 0 {
                 if let sampler = self.audioManager.getSamplerForKeyboard() {
-                    //badgeBank.setShow(true)
-                    
-                    let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                    for hand in scale.hands {
-                        //let midi = self.scale.scaleNoteState[hand][0].midi
-                        let midi = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0).midi
-                        if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: 0) {
-                            let key = keyboard.pianoKeyModel[keyIndex]
-                            //key.hilightCallback = {
-                            //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                            //}
-                            key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
-                            keyboard.redraw1()
-                        }
-                        sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                    }
+                    ///Hilight the first key on each keyboard
                     ///Need delay to avoid the first note being 'heard' from this sampler playing note
+                    self.showFollowKeyHilights(sampler: sampler)
                     usleep(1000000 * UInt32(1.0))
                 }
 
@@ -775,8 +788,7 @@ public class ScalesModel : ObservableObject {
             ///Scores are @Published so set them here
             DispatchQueue.main.async {
                 self.tempoChangePublished = !self.tempoChangePublished
-                //self.scores = [scoreRH, scoreLH]
-                self.score = score
+                self.score1 = score
             }
         }
     }

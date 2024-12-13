@@ -171,20 +171,19 @@ struct ScalesView: View {
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
                             if Settings.shared.practiceChartGamificationOn {
                                 ///Stopped by user before exercise process stopped it
-                                if exerciseState.state == .won  {
-                                    exerciseState.setExerciseState("View StoppedWon", .wonAndFinished)
+                                if exerciseState.statePublished == .won  {
+                                    exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
                                 }
                                 else {
-                                    exerciseState.setExerciseState("View lost", .lost)
+                                    exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() LOST", .lost)
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                    exerciseState.setExerciseState("View restarted exercise", .exerciseNotStarted)
-                                }
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+//                                    exerciseState.setExerciseState(ctx: "View restarted exercise", .exerciseNotStarted)
+//                                }
                             }
                         }
                     }) {
                         Text("\(text)")
-                        //.padding().font(.title2).hilighted(backgroundColor: .blue)
                     }
                     .buttonStyle(.borderedProminent)
                 }
@@ -484,15 +483,17 @@ struct ScalesView: View {
     func getExerciseStatusMessage() -> String {
         let remaining = exerciseState.pointsNeededToWin()
         var msg = ""
-        switch exerciseState.state {
+        switch exerciseState.statePublished {
         case .won:
             msg = "😊 You Won Me 😊"
+        case .wonAndFinished:
+            msg = "😊 You Won 😊"
         case .exerciseStarted:
             if remaining == 1 {
                 msg = "Win me with one more correct note"
             }
             else {
-                msg = exerciseState.totalCorrect == 0 ? "I'm the exercise badge. Win me with just \(remaining) notes correct" : "Win me with \(remaining) more notes correct"
+                msg = exerciseState.totalCorrectPublished == 0 ? "I'm the exercise badge. Win me with just \(remaining) notes correct" : "Win me with \(remaining) more notes correct"
             }
         default:
             msg = ""
@@ -588,7 +589,7 @@ struct ScalesView: View {
             
             if staffCanFit() {
                 if scalesModel.showStaff {
-                    if let score = scalesModel.score {
+                    if let score = scalesModel.getScore() {
                         VStack {
                             ScoreView(score: score, widthPadding: false)
                         }
@@ -604,7 +605,7 @@ struct ScalesView: View {
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if [.exerciseStarted, .won].contains(exerciseState.state) {
+            if [.exerciseStarted, .won].contains(exerciseState.statePublished) {
                 BadgesView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
             }
             
@@ -614,7 +615,7 @@ struct ScalesView: View {
                     Text(msg)
                         .padding()
                         .foregroundColor(.blue)
-                        .font(exerciseState.state == .won ? .title : .title2)
+                        .font(exerciseState.statePublished == .won ? .title : .title2)
                     //.opacity(badgeBank.badgeState == .exerciseNotStarted ? 0.0 : 1.0)
                         .zIndex(1) // Keeps it above other views
                     
@@ -627,15 +628,15 @@ struct ScalesView: View {
                         .scaledToFit()
                         .frame(height: UIScreen.main.bounds.height * 0.05)
                         
-                        .offset(x: getBadgeOffset(state: exerciseState.state).0, y:getBadgeOffset(state: exerciseState.state).1)
+                        .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
                         ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
                         //                        .rotation3DEffect( //3D flip around its vertical axis
                         //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
                         //                            axis: (x: 0.0, y: 1.0, z: 0.0)
                         //                        )
-                        .animation(.easeInOut(duration: 2), value: exerciseState.state)
-                        .rotationEffect(Angle(degrees: exerciseState.state == .lost ? 180 : 0))
-                        .opacity(exerciseState.state == .exerciseNotStarted ? 0.0 : 1.0)
+                        .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
+                        .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
+                        .opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
                     }
                 }
             }
@@ -667,7 +668,7 @@ struct ScalesView: View {
             if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
                 PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale)
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi, segment: 0)
+                    let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi)
                     if let middleKeyIndex = middleKeyIndex {
                         combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
                     }
@@ -686,7 +687,7 @@ struct ScalesView: View {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)
-            exerciseState.setExerciseState("onAppear", .exerciseNotStarted)
+            exerciseState.setExerciseState(ctx: "ScalesView, onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             //if scalesModel.scale.debugOn {
                 //scalesModel.scale.debug1("In View1", short: false)

@@ -7,7 +7,7 @@ import Foundation
 import UIKit
 import Foundation
 
-class ScaleTapHandler : TapHandlerProtocol  {
+class ScaleTapHandlerUnused : TapHandlerProtocol  {
     let scalesModel = ScalesModel.shared
     let bufferSize:Int
     let amplitudeFilter:Double?

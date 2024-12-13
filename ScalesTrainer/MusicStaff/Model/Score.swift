@@ -2,6 +2,11 @@ import Foundation
 import AVKit
 import AVFoundation
 
+//public enum StaffType {
+//    case bass
+//    case treble
+//}
+
 public class RhythmTolerance {
     static func getTolerancePercent(_ setting:Int) -> Double {
 //        switch setting {
@@ -185,7 +190,7 @@ public class Score : ObservableObject {
         return getStaffHeight() * heightMult
     }
         
-    public func hilightStaffNote(segment: Int, midi: Int, handType:HandType) { //}-> StaffNote? {
+    public func hilightStaffNote(segment: Int, midi: Int, handType:HandType?) {
         let timeSlices = getAllTimeSlices()
         var staffNoteFound:StaffNote?
 
@@ -209,10 +214,6 @@ public class Score : ObservableObject {
                 break
             }
         }
-//        if let staffNoteFound = staffNoteFound {
-//            return staffNoteFound
-//        }
-//        return nil
     }
     
     public func createTimeSlice() -> TimeSlice {

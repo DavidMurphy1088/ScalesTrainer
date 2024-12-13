@@ -2,7 +2,6 @@ import AudioKit
 import SoundpipeAudioKit
 import Foundation
 import AVFoundation
-import Foundation
 import AudioKitEX
 import AudioToolbox
 

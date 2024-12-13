@@ -349,7 +349,7 @@ class TapsEventsAnalyser {
         if eventToProcess.tapMidi == scale.getMinMax(handIndex: handIndex).0  && midi == scale.getMinMax(handIndex: handIndex).0 {
 
             ///End of scale if the midi is the root and the root has already been played
-            if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: ascending ? 0 : 1) {
+            if let index = keyboard.getKeyIndexForMidi(midi: midi) {
                 let keyboardKey = keyboard.pianoKeyModel[index]
                 if keyboardKey.keyWasPlayedState.tappedTimeDescending != nil {
                     self.atEnd = true
@@ -390,7 +390,7 @@ class TapsEventsAnalyser {
         
         ///Update key tapped state
         
-        if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi, segment: ascending ? 0 : 1) {
+        if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi) {
             let keyboardKey = keyboard.pianoKeyModel[keyboardIndex]
             if self.ascending || atTop {
                 keyboardKey.keyWasPlayedState.tappedTimeAscending = eventToProcess.timestamp

@@ -17,6 +17,17 @@ public enum PianoKeyHilightType {
     case middleOfKeyboard
 }
 
+public enum KeyboardType {
+    case left
+    case right
+    case combined
+}
+
+public enum HandType {
+    case left
+    case right
+}
+
 public class PianoKeyModel: Identifiable, Hashable {
     public let id = UUID()
     ///ObservableObject - no point since the drawing of all keys is done by a single context struct that cannot listen to @Published
@@ -42,13 +53,16 @@ public class PianoKeyModel: Identifiable, Hashable {
     var hilightKeyToFollow:PianoKeyHilightType = .none
     var hilightCallbackNotUSed: () -> Void = {}
 
-    private var playedCallback:(()->Void)?
-    func setCallbackFunction(fn:(()->Void)?) {
-        self.playedCallback = fn
+    //private var playedCallback:(()->Void)?
+    ///Sometimes the single key needs to call more than one callback. e.g. the first note in a contrary motion scale starting on the same note.
+    ///The key will need to generate a press for the LH and RH separately
+    private var playedCallbacks:[(()->Void)?] = []
+    func addCallbackFunction(fn:(()->Void)?) {
+        self.playedCallbacks.append(fn)
     }
-    func getCallbackFunction() -> (()->Void)? {
-        return self.playedCallback
-    }
+//    func getCallbackFunction() -> (()->Void)? {
+//        return self.playedCallback
+//    }
 
     public var touchDown = false
     public var latched = false
@@ -70,7 +84,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Set a keyboard key as playing.
     ///Also hilight the associated score note.
     public func setKeyPlaying() {
-        print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
+        //print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
         self.keyIsSounding = true
         DispatchQueue.global(qos: .background).async {
             usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
@@ -82,23 +96,11 @@ public class PianoKeyModel: Identifiable, Hashable {
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
 
-        ///Update the score if its showing
-        ///The MIDI might be in both staves. e.g. first note of a contrary scale.
-//        if let score = scalesModel.score {
-//            let segment = self.scaleNoteState?.segments[0]
-//            if let segment = segment {
-//                if let staffNotePlayed:StaffNote = score.setStaffNotePlayed(handType: self.hand == 0 ? .right : .left, midi: self.midi, segment:segment) {
-//                    DispatchQueue.global(qos: .background).async {
-//                        usleep(UInt32(1000000 * self.keySoundingSeconds))
-//                        DispatchQueue.main.async {
-//                            staffNotePlayed.setShowIsPlaying(false)
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        if let callback = self.playedCallback {
-            callback()
+        if self.playedCallbacks.count > 0 {
+            if let callback = self.playedCallbacks[0] {
+                callback()
+                self.playedCallbacks.removeFirst()
+            }
         }
     }
 
@@ -117,7 +119,7 @@ public class PianoKeyModel: Identifiable, Hashable {
             ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
             //if ScalesModel.shared.scores.count > 0 {
                 //let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
-                if let score = ScalesModel.shared.score {
+                if let score = ScalesModel.shared.getScore() {
                     if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
                         let note:StaffNote = ts.entries[0] as! StaffNote
                         //if note.noteStaffPlacements.count > 0 {

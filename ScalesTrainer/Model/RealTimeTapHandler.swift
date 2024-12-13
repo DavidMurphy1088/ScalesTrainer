@@ -135,7 +135,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
             var possibleKeysPlayed:[PossibleKeyPlayed] = []
             for i in 0..<keyboards.count {
                 let keyboard = keyboards[i]
-                if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: scalesModel.selectedScaleSegment) {
+                if let index = keyboard.getKeyIndexForMidi(midi: midi) {
                     let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
                     //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
                     let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil

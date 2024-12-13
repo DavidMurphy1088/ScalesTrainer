@@ -502,7 +502,9 @@
 				79064CA72D08349C002490A8 /* BadgeBank.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
+				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
+				79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */,
 				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
@@ -531,8 +533,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
-				79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

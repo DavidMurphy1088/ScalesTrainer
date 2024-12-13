@@ -26,11 +26,6 @@ public enum AccidentalType {
     case flat
 }
 
-public enum HandType {
-    case left
-    case right
-}
-
 public enum QuaverBeamType {
     case none
     case start

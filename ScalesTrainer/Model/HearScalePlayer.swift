@@ -93,7 +93,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
 
             let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
             let keyboard = getKeyboard(hand: hand)
-            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi, segment:note.segments[0])
+            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
             
             if let keyIndex = keyIndex {
 
@@ -107,7 +107,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     }
                 }
                 
-                if let score = scalesModel.score {
+                if let score = scalesModel.getScore() {
                     score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
                 }
                 

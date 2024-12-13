@@ -22,8 +22,17 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public var hilightNotesOutsideScale = true
     
     var keyboardNumber:Int ////😡 the lowest value is 1. If changed to 0 remove all the ' -1' in the code that uses it
-    
-//    ///Set the 
+    func getKeyboardHandType() -> HandType? {
+        switch self.keyboardNumber {
+        case 1:
+            return .right
+        case 2:
+            return .left
+        default :
+            return nil
+        }
+    }
+//    ///Set the
 //    static func setKeysHilight(scale:Scale, midi:Int) {
 //        class PossibleKeyPlayed {
 //            let keyboard:PianoKeyboardModel
@@ -454,7 +463,8 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     ///Get the offset in the keyboard for the given midi
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
-    public func getKeyIndexForMidi(midi:Int, segment:Int?) -> Int? {
+    //public func getKeyIndexForMidi(midi:Int, segment1:Int?) -> Int? {
+    public func getKeyIndexForMidi(midi:Int) -> Int? {
         var keyNumber:PianoKeyModel?
         if false {
             //keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
