@@ -177,9 +177,6 @@ struct ScalesView: View {
                                 else {
                                     exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() LOST", .lost)
                                 }
-//                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-//                                    exerciseState.setExerciseState(ctx: "View restarted exercise", .exerciseNotStarted)
-//                                }
                             }
                         }
                     }) {
@@ -249,7 +246,7 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if Settings.shared.enableMidiConnnections {
+        if Settings.shared.useMidiConnnections {
             return true
         }
         else {
@@ -480,20 +477,23 @@ struct ScalesView: View {
         return mailInfo
     }
     
-    func getExerciseStatusMessage() -> String {
+    func getExerciseStatusMessage(badge:Badge) -> String {
         let remaining = exerciseState.pointsNeededToWin()
         var msg = ""
+        let name = badge.name
+        
         switch exerciseState.statePublished {
         case .won:
             msg = "😊 You Won Me 😊"
         case .wonAndFinished:
-            msg = "😊 You Won 😊"
+            msg = "😊 You Won \(name) 😊"
         case .exerciseStarted:
             if remaining == 1 {
                 msg = "Win me with one more correct note"
             }
             else {
-                msg = exerciseState.totalCorrectPublished == 0 ? "I'm the exercise badge. Win me with just \(remaining) notes correct" : "Win me with \(remaining) more notes correct"
+                msg = exerciseState.totalCorrectPublished == 0 ?    "Hi - I'm \(name)✋\nWin me with just \(remaining) correct notes" :
+                                                                    "Win me with \(remaining) more correct notes"
             }
         default:
             msg = ""
@@ -611,37 +611,40 @@ struct ScalesView: View {
             
             if Settings.shared.practiceChartGamificationOn {
                 HStack {
-                    let msg = getExerciseStatusMessage()
-                    Text(msg)
-                        .padding()
-                        .foregroundColor(.blue)
-                        .font(exerciseState.statePublished == .won ? .title : .title2)
-                    //.opacity(badgeBank.badgeState == .exerciseNotStarted ? 0.0 : 1.0)
-                        .zIndex(1) // Keeps it above other views
-                    
-                    ///Practice chart badge position is based on exercise state
-                    ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
-                    
                     if let exerciseBadge = scalesModel.exerciseBadge {
-                        Image(exerciseBadge.imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: UIScreen.main.bounds.height * 0.05)
+                        let msg = getExerciseStatusMessage(badge: exerciseBadge)
+                        Text(msg)
+                            .padding()
+                            .foregroundColor(.blue)
+                            .font(exerciseState.statePublished == .won ? .title : .title2)
+                        //.opacity(badgeBank.badgeState == .exerciseNotStarted ? 0.0 : 1.0)
+                            .zIndex(1) // Keeps it above other views
                         
-                        .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
+                        ///Practice chart badge position is based on exercise state
+                        ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
+                    
+                    
+                        Image(exerciseBadge.imageName)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: UIScreen.main.bounds.height * 0.05)
+                        
+                            .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
                         ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
                         //                        .rotation3DEffect( //3D flip around its vertical axis
                         //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
                         //                            axis: (x: 0.0, y: 1.0, z: 0.0)
                         //                        )
-                        .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
-                        .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
-                        .opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
+                            .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
+                            .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
+                            .opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
                     }
                 }
             }
-            Spacer()
-            TestInputView()
+            if Settings.shared.isDeveloperMode()  {
+                Spacer()
+                TestInputView()
+            }
             Spacer()
         }
         //.inspection.inspect(inspection)

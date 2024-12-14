@@ -54,8 +54,8 @@ public class PianoKeyModel: Identifiable, Hashable {
     var hilightCallbackNotUSed: () -> Void = {}
 
     //private var playedCallback:(()->Void)?
-    ///Sometimes the single key needs to call more than one callback. e.g. the first note in a contrary motion scale starting on the same note.
-    ///The key will need to generate a press for the LH and RH separately
+    ///Sometimes the single key needs to call more than one callback. e.g. the key for the first note in a contrary motion scale starting on the same note.
+    ///The key will need to generate a press for the LH and RH separately. 
     private var playedCallbacks:[(()->Void)?] = []
     func addCallbackFunction(fn:(()->Void)?) {
         self.playedCallbacks.append(fn)

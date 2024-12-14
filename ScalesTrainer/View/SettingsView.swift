@@ -30,8 +30,7 @@ struct SettingsView: View {
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
-    @State var enableMidiConnnections = false
-    //@State var metronomeSilent = false
+    @State var useMidiConnnections = false
     @State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
@@ -39,7 +38,6 @@ struct SettingsView: View {
     @State private var keyboardColor: Color = .white
     @State private var backgroundColor: Color = .white
     @State private var navigateToSelectBoard = false
-    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     @State private var selectedBackgroundColor: Color = .white
     @State var backgroundChange = 0
     
@@ -155,64 +153,39 @@ struct SettingsView: View {
                 })
             }
             
-            if false {
+            Spacer()
+            HStack {
                 Spacer()
-                HStack {
-                    Spacer()
-                    Toggle(isOn: $practiceChartGamificationOn) {
-                        Text("Gamification").font(.title2).padding(0)
-                    }
-                    .onChange(of: practiceChartGamificationOn, {
-                        settings.practiceChartGamificationOn = practiceChartGamificationOn
-                    })
-                    Spacer()
+                Toggle(isOn: $practiceChartGamificationOn) {
+                    Text("Gamification").font(.title2).padding(0)
                 }
-                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                .onChange(of: practiceChartGamificationOn, {
+                    settings.practiceChartGamificationOn = practiceChartGamificationOn
+                })
+                Spacer()
             }
-            
+            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+        
+            Spacer()
+            HStack {
+                Spacer()
+                Toggle(isOn: $useMidiConnnections) {
+                    Text("Use MIDI Connections").font(.title2).padding(0)
+                }
+                .onChange(of: useMidiConnnections, {
+                    settings.useMidiConnnections = useMidiConnnections
+                })
+                Spacer()
+            }
+            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
             ///Developer
             //if Settings.shared.isDeveloperMode() {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Toggle(isOn: $enableMidiConnnections) {
-                        Text("Enable MIDI Connections").font(.title2).padding(0)
-                    }
-                    .onChange(of: enableMidiConnnections, {
-                        settings.enableMidiConnnections = enableMidiConnnections
-                    })
-                    Spacer()
-                }
-                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
             //}
             
-//            if Settings.shared.isDeveloperMode() {
-//                Spacer()
-//                HStack {
-//                    Spacer()
-//                    Toggle(isOn: $metronomeSilent) {
-//                        Text("Metronome Silent").font(.title2).padding(0)
-//                    }
-//                    .onChange(of: metronomeSilent, {
-//                        settings.metronomeSilent = metronomeSilent
-//                    })
-//                    Spacer()
-//                }
-//                .frame(width: UIScreen.main.bounds.width * 0.30)
-//            }
-
-//            Spacer()
-//            HStack {
-//                Spacer()
-//                Button(action: {
-//                    settings.save()
-//                }) {
-//                    HStack {
-//                        Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                    }
-//                }
-//                Spacer()
-//            }
+            if self.useMidiConnnections {
+                let midis = MIDIManager.shared.getConnectedDevices()
+                Text("Connected to MIDI devices: \(midis)")
+            }
             Spacer()
         }
     }
@@ -265,7 +238,7 @@ struct SettingsView: View {
                 self.backingPresetNumber = settings.backingSamplerPreset
                 self.practiceChartGamificationOn = settings.practiceChartGamificationOn
                 self.badgeStyleNumber = settings.badgeStyle
-                self.enableMidiConnnections = settings.enableMidiConnnections
+                self.useMidiConnnections = settings.useMidiConnnections
             }
             .onDisappear() {
                 settings.save()

@@ -16,7 +16,7 @@ class PracticeChartCell: ObservableObject, Codable {
         case badges
     }
     
-    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) { //}, badges:Int) {
+    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) { 
         self.scale = scale
         self.hilighted = hilighted
         self.isActive = hilighted  // Set isActive based on enabled during initialization

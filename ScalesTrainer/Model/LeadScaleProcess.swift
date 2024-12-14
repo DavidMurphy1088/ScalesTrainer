@@ -4,17 +4,34 @@ import Combine
 import SwiftUI
 
 class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
-    var lastMidi:Int? = nil
-    var lastMidiScaleIndex:Int? = nil
-    var notifyCount = 0
-    var leadInShowing = false
-    var noteStack: [Int] = []
-
+    
+    class RequiredNote {
+        let midi:Int
+        let hand:HandType
+        var matched = false
+        init(midi:Int, hand:HandType) {
+            self.midi = midi
+            self.hand = hand
+        }
+    }
+    var requiredNotes:[RequiredNote] = []
+    
     override init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
         super.init(scalesModel: scalesModel, practiceChartCell: practiceChartCell, metronome: metronome)
     }
     
     func metronomeStart() {
+//        beatCount = 0
+//        nextNoteIndex = 0
+//        if let combined = PianoKeyboardModel.sharedCombined {
+//            combined.hilightNotesOutsideScale = false
+//        }
+//        else {
+//            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
+//            PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
+//        }
+//        
+//        self.backingChords = scale.getBackingChords()
     }
     
     func metronomeStop() {
@@ -25,25 +42,199 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
     
     override func start(soundHandler:SoundEventHandlerProtocol) {
         super.start(soundHandler: soundHandler)
-//        nextExpectedNoteInScaleIndex = [:]
-//        nextExpectedScaleSegment = [:]
-        lastMidi = nil
-        lastMidiScaleIndex = nil
-        notifyCount = 0
-        noteStack=[]
-        
-//        if scale.scaleMotion == .contraryMotion {
-//            if scale.getScaleNoteState(handType: .left, index: 0).midi == scale.getScaleNoteState(handType: .right, index: 0).midi {
-//                midisWithOneKeyPress.append(scale.getScaleNoteState(handType: .left, index: 0).midi)
-//            }
-//        }
-        //badgeBank.setTotalCorrect(0)
+//        lastMidi = nil
+//        lastMidiScaleIndex = nil
+//        notifyCount = 0
+//        noteStack=[]
         let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 3)) / 4
         exerciseState.setNumberToWin(numberToWin)
-        //exerciseState.setExerciseState("ExerciseStart", .exerciseStarted)
     }
     
-    //override 
+    override func notifyPlayedKey(midi: Int, hand:HandType?) {
+        if self.requiredNotes.count == 0 {
+            for h in scale.hands {
+                let hand = h==0 ? HandType.right : .left
+                if let expectedOffset = self.nextExpectedNoteForHandIndex[hand] {
+                    let expectedMidi = scale.getScaleNoteState(handType: hand, index: expectedOffset).midi
+                    self.requiredNotes.append(RequiredNote(midi: expectedMidi, hand: hand))
+                }
+            }
+        }
+        var matchedCount = 0
+        for requiredNote in requiredNotes {
+            if requiredNote.midi == midi && requiredNote.hand == hand {
+                requiredNote.matched = true
+            }
+            if requiredNote.matched {
+                matchedCount += 1
+            }
+        }
+        if matchedCount == scale.hands.count {
+            badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
+            for requiredNote in requiredNotes {
+                self.nextExpectedNoteForHandIndex[requiredNote.hand]! += 1
+            }
+            self.requiredNotes = []
+            let index = nextExpectedNoteForHandIndex[hand!]!
+            if index < scale.getScaleNoteCount() {
+                let scaleNote = scale.getScaleNoteState(handType: hand!, index: index)
+                scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
+            }
+            awardChartBadge()
+            _ = testForEndOfExercise()
+        }
+    }
+    
+//    func listenForKeys() {
+//        
+//        for hand in [HandType.left, HandType.right] {
+//            if let expectedIndex = self.nextExpectedNoteForHandIndex[hand] {
+//                var expectedNote = scale.getScaleNoteState(handType: hand, index: expectedIndex)
+//                if let keybord = PianoKeyboardModel.sharedCombined { ///contrary motion
+//                    if let keyboardIndex = keybord.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+//                        let key=keybord.pianoKeyModel[keyboardIndex]
+//                        key.setKeyPlaying()
+//                    }
+//                }
+//                else {
+//                    if let keyboardIndex = keyboard[handForNote]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+//                        let key=keyboard[handForNote]!.pianoKeyModel[keyboardIndex]
+//                        key.setKeyPlaying()
+//                    }
+//                }
+//
+//            }
+//        }
+//    }
+    
+//    func processSound1(midi:Int, callNumber:Int) {
+
+//        ///Determine which keyboard to press the key on
+//        var keyboard: [KeyboardType: PianoKeyboardModel] = [:]
+//        keyboard[.right] = PianoKeyboardModel.sharedRH
+//        keyboard[.left] = PianoKeyboardModel.sharedLH
+//
+//        if let handForNote = handForNote {
+//            ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
+//            if let keybord = PianoKeyboardModel.sharedCombined { ///contrary motion
+//                if let keyboardIndex = keybord.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+//                    let key=keybord.pianoKeyModel[keyboardIndex]
+//                    key.setKeyPlaying()
+//                }
+//            }
+//            else {
+//                if let keyboardIndex = keyboard[handForNote]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[handForNote]) {
+//                    let key=keyboard[handForNote]!.pianoKeyModel[keyboardIndex]
+//                    key.setKeyPlaying()
+//                }
+//            }
+//
+//            let matchedIndex = self.nextExpectedNoteInScaleIndex[handForNote]!
+//            var noteState = scale.getScaleNoteState(handType: handForNote, index: matchedIndex)
+//            noteState.matchedTime = Date()
+//
+//            ///Decide if a badge was earned. For both hand scales both the LH and RH must be matched
+//            var correctNotePlayed = false
+//            if scale.hands.count == 1 {
+//                correctNotePlayed = true
+//            }
+//            else {
+//                if handForNote == .left {
+//                    correctNotePlayed = scale.getScaleNoteState(handType: .right, index: matchedIndex).matchedTime != nil
+//                }
+//                else {
+//                    correctNotePlayed = scale.getScaleNoteState(handType: .left, index: matchedIndex).matchedTime != nil
+//                }
+//            }
+//            if correctNotePlayed {
+//                badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
+//                let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
+//                exerciseState.setTotalCorrect(exerciseState.totalCorrect + 1)
+//                let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
+//                if !wonStateOld && wonStateNew {
+//                    if let exerciseBadge = scalesModel.exerciseBadge {
+//                        if let practiceChartCell = practiceChartCell {
+//                            practiceChartCell.addBadge(badge: exerciseBadge)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            ///Midi not in scale - Press the keyboard key in whicher keyboard found first
+//            for hand in [KeyboardType.right, .left] {
+//                if let keyboardIndex = keyboard[hand]?.getKeyIndexForMidi(midi: midi, segment: self.nextExpectedScaleSegment[hand]) {
+//                    let key=keyboard[hand]!.pianoKeyModel[keyboardIndex]
+//                    key.setKeyPlaying()
+//                    break
+//                }
+//            }
+//        }
+//
+//        ///If the midi played was in the scale hilight the note on the score in the correct hand. If the scale is finished exit the process.
+//        if let handForNote = handForNote {
+//            let index = self.nextExpectedNoteInScaleIndex[handForNote]!
+//            if let score = score {
+//                let noteScaleState = scale.getScaleNoteState(handType: handForNote, index: index)
+//                score.hilightStaffNote(segment: noteScaleState.segments[0], midi: midi, handType: handForNote)
+//            }
+//
+//            ///Advance the hand that played a scale note
+//            if index < scale.getScaleNoteCount()  {
+//                self.nextExpectedNoteInScaleIndex[handForNote]! += 1
+//            }
+//
+//            ///Test for the end of the process - i.e. all notes matched.
+//            let atEnd:Bool
+//            if scale.hands.count == 1 {
+//                atEnd = self.nextExpectedNoteInScaleIndex[.left]! >= scale.getScaleNoteCount() ||
+//                self.nextExpectedNoteInScaleIndex[.right]! >= scale.getScaleNoteCount()
+//            }
+//            else {
+//                atEnd = self.nextExpectedNoteInScaleIndex[.left]! >= scale.getScaleNoteCount() &&
+//                        self.nextExpectedNoteInScaleIndex[.right]! >= scale.getScaleNoteCount()
+//            }
+//            if atEnd {
+//                scalesModel.clearFunctionToNotify()
+//                scalesModel.setRunningProcess(.none)
+//                exerciseState.setExerciseState("LeadScale-Ended", exerciseState.state == .won ? .wonAndFinished : .lost)
+//            }
+//        }
+//    }
+     
+    //func listenForKeyPresses() {
+        //        if let handForNote = handForNote {
+        //            let index = self.nextExpectedNoteInScaleIndex[handForNote]!
+        //            if let score = score {
+        //                let noteScaleState = scale.getScaleNoteState(handType: handForNote, index: index)
+        //                score.hilightStaffNote(segment: noteScaleState.segments[0], midi: midi, handType: handForNote)
+        //            }
+        //
+        //            ///Advance the hand that played a scale note
+        //            if index < scale.getScaleNoteCount()  {
+        //                self.nextExpectedNoteInScaleIndex[handForNote]! += 1
+        //            }
+        //
+        //            ///Test for the end of the process - i.e. all notes matched.
+        //            let atEnd:Bool
+        //            if scale.hands.count == 1 {
+        //                atEnd = self.nextExpectedNoteInScaleIndex[.left]! >= scale.getScaleNoteCount() ||
+        //                self.nextExpectedNoteInScaleIndex[.right]! >= scale.getScaleNoteCount()
+        //            }
+        //            else {
+        //                atEnd = self.nextExpectedNoteInScaleIndex[.left]! >= scale.getScaleNoteCount() &&
+        //                        self.nextExpectedNoteInScaleIndex[.right]! >= scale.getScaleNoteCount()
+        //            }
+        //            if atEnd {
+        //                scalesModel.clearFunctionToNotify()
+        //                scalesModel.setRunningProcess(.none)
+        //                exerciseState.setExerciseState("LeadScale-Ended", exerciseState.state == .won ? .wonAndFinished : .lost)
+        //            }
+        //        }
+
+    //}
+    
+    //override
 //    func processSound1(midi:Int, callNumber:Int) {
 //        //print("\n========== LEAD processMIDI call:", callNumber, midi, "Indexes:", self.nextExpectedNoteInScaleIndex[.left], self.nextExpectedNoteInScaleIndex[.right])
 //        

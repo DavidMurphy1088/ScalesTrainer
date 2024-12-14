@@ -378,7 +378,7 @@ public class ScalesModel : ObservableObject {
 
                 self.exerciseBadge = Badge.getRandomExerciseBadge()
                 let soundHandler:SoundEventHandlerProtocol
-                if Settings.shared.enableMidiConnnections {
+                if Settings.shared.useMidiConnnections {
                     soundHandler = MIDISoundEventHandler(scale: scale)
                     self.midiTestHander = soundHandler as? MIDISoundEventHandler
                 }
@@ -389,7 +389,7 @@ public class ScalesModel : ObservableObject {
                 
                 let followProcess = FollowScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
                 followProcess.start(soundHandler: soundHandler)
-                if !Settings.shared.enableMidiConnnections {
+                if !Settings.shared.useMidiConnnections {
                     self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
                 }
             }
@@ -397,7 +397,7 @@ public class ScalesModel : ObservableObject {
         
         if [.leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
-            if Settings.shared.enableMidiConnnections {
+            if Settings.shared.useMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
                 self.midiTestHander = soundHandler as? MIDISoundEventHandler
             }
@@ -408,7 +408,10 @@ public class ScalesModel : ObservableObject {
             self.exerciseBadge = Badge.getRandomExerciseBadge()
             let leadProcess = LeadScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
             leadProcess.start(soundHandler: soundHandler)
-            if !Settings.shared.enableMidiConnnections {
+            metronome.addProcessesToNotify(process: leadProcess)
+            metronome.setTicking(way: true)
+            metronome.start()
+            if !Settings.shared.useMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
             }
         }

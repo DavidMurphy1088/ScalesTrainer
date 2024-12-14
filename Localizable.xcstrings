@@ -71,7 +71,7 @@
     "%lld" : {
 
     },
-    "© 2024 Musicmaster Education LLC." : {
+    "© 2025 Musicmaster Education LLC." : {
 
     },
     "=%lld" : {
@@ -106,6 +106,9 @@
     },
     "4. Restart the Device" : {
 
+    },
+    "Activities" : {
+      "comment" : "Menu"
     },
     "Adjust:" : {
 
@@ -176,7 +179,7 @@
     "Choose your keyboard colour " : {
 
     },
-    "Connected to MIDI keyboards: %@" : {
+    "Connected to MIDI devices: %@" : {
 
     },
     "Correct Notes:%lld Errors:%lld" : {
@@ -205,9 +208,6 @@
 
     },
     "Email %@" : {
-
-    },
-    "Enable MIDI Connections" : {
 
     },
     "Ensure your email account supports sending emails and is not restricted (e.g., by parental controls or device management settings)." : {
@@ -332,6 +332,7 @@
     },
     "Home" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -625,9 +626,6 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -744,6 +742,9 @@
 
     },
     "Under Construction" : {
+
+    },
+    "Use MIDI Connections" : {
 
     },
     "Version %@" : {

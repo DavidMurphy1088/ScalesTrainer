@@ -10,10 +10,10 @@ class MIDIMessage {
     }
 }
 
-/// Define 'midiReadProc' as a global function outside the class.
+/// Define 'midiNotifyProc' as a global function outside the class.
 /// This function processes an incoming MIDI message.
 /// 
-func midiReadProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: UnsafeMutableRawPointer?, srcConnRefCon: UnsafeMutableRawPointer?) {
+func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: UnsafeMutableRawPointer?, srcConnRefCon: UnsafeMutableRawPointer?) {
     let midiManager = Unmanaged<MIDIManager>.fromOpaque(readProcRefCon!).takeUnretainedValue()
     
     let packetList = packetList.pointee
@@ -144,35 +144,90 @@ class MIDIManager: ObservableObject {
         self.installedNotificationTarget = target
     }
     
+
+    ///Determine which device a MIDI source comes from
+    ///
+    func getDeviceForSource(source: MIDIEndpointRef) -> String? {
+        var entity = MIDIEntityRef()
+        var device = MIDIDeviceRef()
+        
+        // Step 1: Get the parent entity of the source
+        let entityStatus = MIDIEndpointGetEntity(source, &entity)
+        if entityStatus != noErr {
+            //print("Failed to get parent entity. Error: \(entityStatus)")
+            return nil
+        }
+        
+        // Step 2: Get the parent device of the entity
+        let deviceStatus = MIDIEntityGetDevice(entity, &device)
+        if deviceStatus != noErr {
+            //print("Failed to get parent device. Error: \(deviceStatus)")
+            return nil
+        }
+        
+        // Step 3: Get the device name
+        var name: Unmanaged<CFString>?
+        let nameStatus = MIDIObjectGetStringProperty(device, kMIDIPropertyName, &name)
+        if nameStatus == noErr, let deviceName = name?.takeRetainedValue() {
+            return String(deviceName)
+        } else {
+            return nil
+        }
+    }
+
+    ///Creates a connection hub for the app to send and receive MIDI data to and from MIDI devices.
+    ///
     func createMIDIClientAndConnectSources() {
         MIDIClientCreate("Scales Academy" as CFString, nil, nil, &midiClient)
-        let status = MIDIInputPortCreate(midiClient, "Scales Academy" as CFString, midiReadProc, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()), &inputPort)
+        let status = MIDIInputPortCreate(midiClient, "Scales Academy" as CFString, midiNotifyProc, UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()), &inputPort)
         let name = inputPort.value
-        Logger.shared.log(self, "Connected listening port : \(name)")
+        //Logger.shared.log(self, "Connected listening port : \(name)")
 
-        ///Connect to MIDI sources
+        ///Connect to MIDI sources.
+        ///A device or entity can have one or more sources, which are the actual objects that transmit MIDI data.
+        ///
         let sourceCount = MIDIGetNumberOfSources()
         for i in 0..<sourceCount {
-            let src:MIDIEndpointRef = MIDIGetSource(i)
-            MIDIPortConnectSource(inputPort, src, nil)
+            let source:MIDIEndpointRef = MIDIGetSource(i)
+            MIDIPortConnectSource(inputPort, source, nil)
             let desc = getSourceDescription(MIDIGetSource(i))
-            Logger.shared.log(self, "Made connection to MIDI Source, name:\(desc)")
+            let device = getDeviceForSource(source: source)
+            Logger.shared.log(self, "Connected to MIDI device:\(device ?? "unknown"), source:\(desc)")
         }
+    }
+    
+    func getConnectedDevices() -> String {
+        let numberOfDevices = MIDIGetNumberOfDevices()
+        var list = ""
+        for i in 0..<numberOfDevices {
+            let device = MIDIGetDevice(i)
+            var name: Unmanaged<CFString>?
+            MIDIObjectGetStringProperty(device, kMIDIPropertyName, &name)
+            if let deviceName = name?.takeRetainedValue() {
+                //Logger.shared.log(self, "MIDI Device Found: \(deviceName)")
+                if list != "" {
+                    list += ", "
+                }
+                list += String(deviceName)
+            }
+        }
+        return list
     }
     
     func getSourceDescription(_ src:MIDIEndpointRef) -> String {
         var desc = ""
         let propertyKeys: [CFString] = [
             kMIDIPropertyDisplayName,
-            kMIDIPropertyName,
+            //kMIDIPropertyName,
             //kMIDIPropertyManufacturer,
-            kMIDIPropertyModel,
+            //kMIDIPropertyModel,
             kMIDIPropertyDriverOwner
         ]
         for key in propertyKeys {
             var propertyValue: Unmanaged<CFString>?
             let result = MIDIObjectGetStringProperty(src, key, &propertyValue)
             if result == noErr, let value = propertyValue?.takeUnretainedValue() as String? {
+                //let midiDesc = " [\(key):\(value)] "
                 let midiDesc = " [\(key):\(value)] "
                 desc += midiDesc
             }

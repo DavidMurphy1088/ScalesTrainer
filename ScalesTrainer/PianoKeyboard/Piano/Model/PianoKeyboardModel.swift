@@ -445,9 +445,14 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    public func clearAllFollowingKeyHilights(except:Int?) {
+    public func clearAllFollowingKeyHilights(except:[Int]?) {
         for i in 0..<numberOfKeys {
-            if except == nil || i != except {
+            if let except = except {
+                if !except.contains(i) {
+                    pianoKeyModel[i].hilightKeyToFollow = .none
+                }
+            }
+            else {
                 pianoKeyModel[i].hilightKeyToFollow = .none
             }
         }

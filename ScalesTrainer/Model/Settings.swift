@@ -35,7 +35,7 @@ public class Settings : Codable  {
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double
     var practiceChartGamificationOn = true
-    var enableMidiConnnections = true
+    var useMidiConnnections = false
     var customTrinity = true
     
     ///Default colors if not set by user
@@ -118,7 +118,7 @@ public class Settings : Codable  {
         //str += " BackgroundColour:\(self.backgroundColor)"
         str += " email:\(self.emailAddress)"
         str += " Gamification:\(self.practiceChartGamificationOn)"
-        str += " enableMIDI:\(self.enableMidiConnnections)"
+        str += " useMIDI:\(self.useMidiConnnections)"
         return str
     }
     
@@ -155,13 +155,14 @@ public class Settings : Codable  {
                     self.badgeStyle = loaded.badgeStyle
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
-                    self.enableMidiConnnections = loaded.enableMidiConnnections
+                    self.useMidiConnnections = loaded.useMidiConnnections
                     self.boardName = loaded.boardName
                     self.boardGrade = loaded.boardGrade
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
                     Logger.shared.log(self, "Settings loaded, \(toString())")
                     self.wasLoaded = true
                 } catch {
+                    self.wasLoaded = false
                     Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
                 }
             }

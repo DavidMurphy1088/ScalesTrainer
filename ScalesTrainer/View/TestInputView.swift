@@ -21,7 +21,7 @@ struct TestInputView: View {
     
     var body: some View {
         let b = 48
-        let accidentals = false
+        let accidentals = true
         let octaves = false
         let numbers = [b+0, b+2, b+4, b+5, b+7, b+9, b+11,   b+12, b+14, b+16, b+17, b+19, b+21, b+23, b+24]
         

@@ -89,7 +89,7 @@ struct LaunchScreenView: View {
                 VStack(alignment: .center) {
                     Text("Scales Academy").font(.title)
                     Text("")
-                    Text("© 2024 Musicmaster Education LLC.")//.font(.title3)
+                    Text("© 2025 Musicmaster Education LLC.")//.font(.title3)
                     //.position(x: geo.size.width * 0.5, y: geo.size.height * 0.85)
                     //.opacity(self.opacity.imageOpacity)
                     Text("Version \(appVersion())")
@@ -152,7 +152,7 @@ class TabSelectionManager: ObservableObject {
     
     func nextNavigationTab() {
         if Settings.shared.settingsExists() {
-            if Settings.shared.calibrationIsSet() {
+            //if Settings.shared.calibrationIsSet() {
                 if Settings.shared.isDeveloperMode() {
                     let hands = [0,1]
                     //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
@@ -164,7 +164,7 @@ class TabSelectionManager: ObservableObject {
 //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
                     
                     ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
 
                     let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
                     //testNotes.debug("Start")
@@ -173,15 +173,15 @@ class TabSelectionManager: ObservableObject {
                     selectedTab = 0
                 }
                 else {
-                    selectedTab = 1
+                    selectedTab = 20
                 }
-            }
-            else{
-                selectedTab = 5
-            }
+//            }
+//            else{
+//                selectedTab = 5
+//            }
         }
         else {
-            selectedTab = 20
+            selectedTab = 10
         }
     }
 }
@@ -229,9 +229,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             statusMsg = "unknown \(status)"
         }
         Logger.shared.log(self, "Microphone access:\(statusMsg))")
-        if Settings.shared.enableMidiConnnections {
+        if Settings.shared.useMidiConnnections {
             let midiManager = MIDIManager.shared
             midiManager.createMIDIClientAndConnectSources()
+            //midiManager.getConnectedDevices()
         }
         return true
     }
@@ -308,23 +309,23 @@ struct ScalesTrainerApp: App {
                 //TestView()
                 //FFTContentView()
                     .tabItem {
-                        Label("Home", systemImage: "house")
+                        Label("Activities", systemImage: "house")
                     }
                     .tag(1)
             }
             
-            HomeView()
-                .tabItem {
-                    Label(NSLocalizedString("Home", comment: "Menu"), systemImage: "house")
-                }
-                .tag(10)
-
             UserDetailsView()
                 .tabItem {
                     Label(NSLocalizedString("Grade", comment: "Menu"), systemImage: "graduationcap.fill")
                 }
-                .tag(20)
+                .tag(10)
                 .environmentObject(tabSelectionManager)
+
+            HomeView()
+                .tabItem {
+                    Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                }
+                .tag(20)
             
             SettingsView()
                 .tabItem {

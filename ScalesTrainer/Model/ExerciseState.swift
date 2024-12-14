@@ -58,6 +58,9 @@ class ExerciseState : ObservableObject {
     }
     func resetTotalCorrect() {
         self.totalCorrect = 0
+        DispatchQueue.main.async {
+            self.totalCorrectPublished = 0
+        }
     }
 
     
