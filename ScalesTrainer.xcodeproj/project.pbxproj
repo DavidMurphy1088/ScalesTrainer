@@ -114,7 +114,6 @@
 		79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* BadgeView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes */; };
-		79F6F9542CFE66E0008DB3D0 /* MidiNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */; };
 		79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E092CD4CD1700D636FB /* MidiManager.swift */; };
 		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
 		818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */; };
@@ -247,7 +246,6 @@
 		79E220ED2C856150004F64D8 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes; sourceTree = "<group>"; };
-		79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiNotificationHandler.swift; sourceTree = "<group>"; };
 		79F80E092CD4CD1700D636FB /* MidiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiManager.swift; sourceTree = "<group>"; };
 		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
 		E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -515,7 +513,6 @@
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
-				79F6F9532CFE66E0008DB3D0 /* MidiNotificationHandler.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
@@ -840,7 +837,6 @@
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */,
 				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,
-				79F6F9542CFE66E0008DB3D0 /* MidiNotificationHandler.swift in Sources */,
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
 				79F80E0A2CD4CD1700D636FB /* MidiManager.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
@@ -1087,7 +1083,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1122,7 +1118,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

@@ -17,7 +17,6 @@ class Badge : Encodable, Decodable {
     init(id:Int) {
         self.id = id
         imageName = Badge.imageNames[id]
-        print("========= BADGE INIT", id, imageName)
         //name = String(Badge.imageNames[id])+" "+Badge.names[id]
         name = Badge.names[id]
     }

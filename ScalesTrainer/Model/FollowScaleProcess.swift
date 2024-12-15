@@ -150,10 +150,9 @@ class ExerciseHandler  {
                 score.hilightStaffNote(segment: self.currentScoreSegment, midi: midi, handType: keyboard.getKeyboardHandType())
             }
         }
-        
 
-        print("======== ExerciseHandler, processSound ctr:\(self.soundEventCtr) ", "midi", midi,
-              "keyboard", keyToPlay?.keyboardModel.keyboardNumber ?? "NoKeyboard")
+//        print("======== ExerciseHandler, processSound ctr:\(self.soundEventCtr) ", "midi", midi,
+//              "keyboard", keyToPlay?.keyboardModel.keyboardNumber ?? "NoKeyboard")
         let hand:HandType?
         if callNumber == 1 {
             hand = .right

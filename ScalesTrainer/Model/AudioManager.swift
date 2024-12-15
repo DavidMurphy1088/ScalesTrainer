@@ -34,7 +34,7 @@ class AudioManager {
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
-        initAudioKit()
+        configureAudioKit(withMic: false)
     }
     
     func getSamplerForKeyboard() -> MIDISampler? {
@@ -45,10 +45,12 @@ class AudioManager {
         return self.samplerForKeyboard
     }
 
-    private func initAudioKit() {
+    private func configureAudioKit(withMic:Bool) {
         do {
             if self.audioEngine != nil {
-                return
+                self.audioEngine?.stop()
+                self.audioEngine?.output = nil
+                //return
             }
             self.audioEngine = AudioEngine()
             guard let engine = self.audioEngine else {
@@ -77,7 +79,7 @@ class AudioManager {
 
             self.mixer!.addInput(self.samplerForKeyboard!)
             self.mixer!.addInput(self.samplerForBacking!)
-            if oneInit {
+            if withMic {
                 self.mic = self.audioEngine?.input
                 self.tappableNodeA = Fader(mic!)
                 self.tappableNodeB = Fader(tappableNodeA!)
@@ -92,9 +94,9 @@ class AudioManager {
             engine.output = self.mixer
             
             try engine.start()
-            Logger.shared.log(self, "Started audio engine")
+            Logger.shared.log(self, "➡️ Configured AudioKit mic:\(withMic)")
         } catch {
-            Logger.shared.reportError(self, "Can't setup AudioKit \(error)")
+            Logger.shared.reportError(self, "Can't configure AudioKit \(error)")
         }
     }
     
@@ -107,49 +109,49 @@ class AudioManager {
             }
         })
         setSession()
-        
-        if oneInit {
-            //self.audioEngine
-        }
-        else {
-            ///Based on CookBook Tuner
-            self.audioEngine = AudioEngine()
-            
-            guard let engine = self.audioEngine else {
-                Logger.shared.reportError(self, "No engine")
-                return
-            }
-            guard let engineInput = engine.input else {
-                Logger.shared.reportError(self, "No input")
-                return
-            }
-            
-            self.mic = engineInput
-            self.tappableNodeA = Fader(mic!)
-            self.tappableNodeB = Fader(tappableNodeA!)
-            self.tappableNodeC = Fader(tappableNodeB!)
-            self.tappableNodeD = Fader(tappableNodeC!)
-            self.tappableNodeE = Fader(tappableNodeD!)
-            self.tappableNodeF = Fader(tappableNodeE!)
-            self.silencer = Fader(tappableNodeF!, gain: 0)
-            ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
-            ///The engine.output property represents the last Node in your signal chain that directs audio to the speakers.
-            ///BUT not creating the audio engine again casues an AudiEngine exception when the engine output is set
-            
-            //Old code created a new AudioEngine() but this then caused the play note and backing samplers to produce no sound since they were connected to the old engine
-            
-            print("===== ENGINE OUTPUT", engine.output)
-
-            //self.mixer!.addInput(silencer!) ///CRASH Mixer is already connected to engine outpout
-            //self.mixer!.addInput(tappableNodeA!) ///
-            //self.mixer!.addInput(mic!) ///
-            engine.output = self.silencer
-            
-            if soundEventHandlers.count > 4 {
-                Logger.shared.reportError(self, "Too many pitch tap handlers to install \(soundEventHandlers.count)")
-                return
-            }
-        }
+        self.configureAudioKit(withMic: true)
+//        if oneInit {
+//            //self.audioEngine
+//        }
+//        else {
+//            ///Based on CookBook Tuner
+//            self.audioEngine = AudioEngine()
+//            
+//            guard let engine = self.audioEngine else {
+//                Logger.shared.reportError(self, "No engine")
+//                return
+//            }
+//            guard let engineInput = engine.input else {
+//                Logger.shared.reportError(self, "No input")
+//                return
+//            }
+//            
+//            self.mic = engineInput
+//            self.tappableNodeA = Fader(mic!)
+//            self.tappableNodeB = Fader(tappableNodeA!)
+//            self.tappableNodeC = Fader(tappableNodeB!)
+//            self.tappableNodeD = Fader(tappableNodeC!)
+//            self.tappableNodeE = Fader(tappableNodeD!)
+//            self.tappableNodeF = Fader(tappableNodeE!)
+//            self.silencer = Fader(tappableNodeF!, gain: 0)
+//            ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
+//            ///The engine.output property represents the last Node in your signal chain that directs audio to the speakers.
+//            ///BUT not creating the audio engine again casues an AudiEngine exception when the engine output is set
+//            
+//            //Old code created a new AudioEngine() but this then caused the play note and backing samplers to produce no sound since they were connected to the old engine
+//            
+//            print("===== ENGINE OUTPUT", engine.output)
+//
+//            //self.mixer!.addInput(silencer!) ///CRASH Mixer is already connected to engine outpout
+//            //self.mixer!.addInput(tappableNodeA!) ///
+//            //self.mixer!.addInput(mic!) ///
+//            engine.output = self.silencer
+//            
+//            if soundEventHandlers.count > 4 {
+//                Logger.shared.reportError(self, "Too many pitch tap handlers to install \(soundEventHandlers.count)")
+//                return
+//            }
+//        }
         
         if oneInit {
             self.pitchTaps = []

@@ -103,7 +103,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
                     if process == .playingAlongWithScale {
-                        print("============= SAMPLER PLAY ", samplerForKeyboard, key.midi, velocity)
+                        //print("============= SAMPLER PLAY ", samplerForKeyboard, key.midi, velocity)
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
                     }
                 }
