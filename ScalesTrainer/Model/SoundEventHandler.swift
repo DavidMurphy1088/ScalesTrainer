@@ -115,7 +115,7 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter =  amplitude > AUValue(self.amplitudeFilter)
+        let aboveFilter = amplitude > AUValue(self.amplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         
         if aboveFilter {

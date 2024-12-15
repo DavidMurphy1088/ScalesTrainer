@@ -15,31 +15,32 @@ class AudioManager {
     private var samplerForKeyboard:MIDISampler?
     private var samplerForBacking:MIDISampler?
     private var mixer:Mixer?
-
-    var nodeRecorder: NodeRecorder?
-    var fader:Fader?
-    var mic:AudioEngine.InputNode? = nil
-    var recordedFileSequenceNum = 0
-    var blockTaps = false
-    var audioPlayer:AudioPlayer?
+    private var mic:AudioEngine.InputNode? = nil
     
     ///AudioKit Cookbook example
-    var pitchTaps: [PitchTap] = []
-    var tappableNodeA: Fader?
-    var tappableNodeB: Fader?
-    var tappableNodeC: Fader?
-    var tappableNodeD: Fader?
-    var tappableNodeE: Fader?
-    var tappableNodeF: Fader?
-    var silencer: Fader?
+    private var pitchTaps: [PitchTap] = []
+    private var tappableNodeA: Fader?
+    private var tappableNodeB: Fader?
+    private var tappableNodeC: Fader?
+    private var tappableNodeD: Fader?
+    private var tappableNodeE: Fader?
+    private var tappableNodeF: Fader?
+    private var silencer: Fader?
+    private let oneInit = false
+    
+    var recordedFileSequenceNum = 0
+    var audioPlayer:AudioPlayer?
+    var nodeRecorder: NodeRecorder?
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
         initAudioKit()
     }
+    
     func getSamplerForKeyboard() -> MIDISampler? {
         return self.samplerForKeyboard
     }
+    
     func getSamplerForBacking() -> MIDISampler? {
         return self.samplerForKeyboard
     }
@@ -71,10 +72,23 @@ class AudioManager {
             default: preset = 0
             }
             self.samplerForBacking = loadSampler(num: 1, preset: preset)
-
+            
             self.mixer = Mixer()
-            self.mixer!.addInput(samplerForKeyboard!)
-            self.mixer!.addInput(samplerForBacking!)
+
+            self.mixer!.addInput(self.samplerForKeyboard!)
+            self.mixer!.addInput(self.samplerForBacking!)
+            if oneInit {
+                self.mic = self.audioEngine?.input
+                self.tappableNodeA = Fader(mic!)
+                self.tappableNodeB = Fader(tappableNodeA!)
+                self.tappableNodeC = Fader(tappableNodeB!)
+                self.tappableNodeD = Fader(tappableNodeC!)
+                self.tappableNodeE = Fader(tappableNodeD!)
+                self.tappableNodeF = Fader(tappableNodeE!)
+                self.silencer = Fader(tappableNodeF!, gain: 0)
+                self.mixer!.addInput(silencer!)
+            }
+            
             engine.output = self.mixer
             
             try engine.start()
@@ -84,61 +98,88 @@ class AudioManager {
         }
     }
     
-//    func resetAudioKitOld() {
-//        if let sampler = self.samplerForKeyboard {
-//            sampler.stop()
+    func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandlerProtocol], recordAudio:Bool) {
+        ///It appears that we cannot both record the mic and install a tap on it at the same time
+        ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
+        checkMicPermission(completion: {granted in
+            if !granted {
+                Logger.shared.reportError(self, "No microphone permission")
+            }
+        })
+        setSession()
+        
+        if oneInit {
+            //self.audioEngine
+        }
+        else {
+            ///Based on CookBook Tuner
+            self.audioEngine = AudioEngine()
+            
+            guard let engine = self.audioEngine else {
+                Logger.shared.reportError(self, "No engine")
+                return
+            }
+            guard let engineInput = engine.input else {
+                Logger.shared.reportError(self, "No input")
+                return
+            }
+            
+            self.mic = engineInput
+            self.tappableNodeA = Fader(mic!)
+            self.tappableNodeB = Fader(tappableNodeA!)
+            self.tappableNodeC = Fader(tappableNodeB!)
+            self.tappableNodeD = Fader(tappableNodeC!)
+            self.tappableNodeE = Fader(tappableNodeD!)
+            self.tappableNodeF = Fader(tappableNodeE!)
+            self.silencer = Fader(tappableNodeF!, gain: 0)
+            ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
+            ///The engine.output property represents the last Node in your signal chain that directs audio to the speakers.
+            ///BUT not creating the audio engine again casues an AudiEngine exception when the engine output is set
+            
+            //Old code created a new AudioEngine() but this then caused the play note and backing samplers to produce no sound since they were connected to the old engine
+            
+            print("===== ENGINE OUTPUT", engine.output)
+
+            //self.mixer!.addInput(silencer!) ///CRASH Mixer is already connected to engine outpout
+            //self.mixer!.addInput(tappableNodeA!) ///
+            //self.mixer!.addInput(mic!) ///
+            engine.output = self.silencer
+            
+            if soundEventHandlers.count > 4 {
+                Logger.shared.reportError(self, "Too many pitch tap handlers to install \(soundEventHandlers.count)")
+                return
+            }
+        }
+        
+        if oneInit {
+            self.pitchTaps = []
+        }
+        self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
+                                                tapHandler: soundEventHandlers[0] as! AcousticSoundEventHandler,
+                                                asynch: true))
+//        if tapHandlers.count > 1 {
+//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
+//                                                    tapHandler: tapHandlers[1],
+//                                                    asynch: true))
 //        }
-//        
-//        setSession()
-//        if self.audioEngine == nil {
-//            ///Dont create a new engine every time. If every time at least process crashes - stopping a 'Follow the Scale' prematurely
-//            self.audioEngine = AudioEngine()
-//        }
-//        else {
-//            audioEngine!.stop() ///NO 👹
-//        }
-//        guard let engine = self.audioEngine else {
-//            Logger.shared.reportError(self, "No engine")
-//            return
-//        }
-//        var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
-//        //if self.keyboardMidiSampler == nil {
-//            self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
-//        //}
-//        //let preset:Int
-//        switch Settings.shared.backingSamplerPreset {
-//        case 1: preset = 28
-//        case 2: preset = 37
-//        case 3: preset = 49
-//        case 4: preset = 33
-//        case 5: preset = 39
-//        case 6: preset = 43
-//        case 7: preset = 2
-//        case 8: preset = 4
-//        default: preset = 0
-//        }
-//        
-//        if self.samplerForBacking == nil {
-//            self.samplerForBacking = loadSampler(num: 1, preset: preset)
-//        }
-//
-//        if self.mixer == nil {
-//            self.mixer = Mixer()
-//            if let sampler = self.samplerForKeyboard {
-//                self.mixer!.addInput(sampler)
-//            }
-//            if let sampler = self.samplerForBacking {
-//                self.mixer!.addInput(sampler)
-//            }
-//            engine.output = self.mixer
-//        }
-//        do {
-//            try engine.start()
-//        }
-//        catch {
-//            Logger.shared.reportError(self, "Error starting engine: \(error)")
-//        }
-//    }
+
+        for tap in self.pitchTaps {
+            tap.start()
+        }
+        
+        if oneInit {
+            self.audioEngine!.stop()
+        }
+        //else {
+            do {
+                ///As per the order in Cookbook Recorder example
+                try self.audioEngine!.start()
+            }
+            catch {
+                Logger.shared.reportError(self, "Error starting engine: \(error)")
+            }
+        //}
+    }
 
     func loadAudioPlayer(name:String) -> AVAudioPlayer? {
         let clapURL = Bundle.main.url(forResource: name, withExtension: "aiff")
@@ -188,78 +229,6 @@ class AudioManager {
         }
     }
     
-    
-    func startRecordingMicWithTapHandlers(soundEventHandlers:[SoundEventHandlerProtocol], recordAudio:Bool) {
-        ///It appears that we cannot both record the mic and install a tap on it at the same time
-        ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
-        checkMicPermission(completion: {granted in
-            if !granted {
-                Logger.shared.reportError(self, "No microphone permission")
-            }
-        })
-        setSession()
-        
-        ///Based on CookBook Tuner
-        self.audioEngine = AudioEngine()
-        guard let engine = self.audioEngine else {
-            Logger.shared.reportError(self, "No engine")
-            return
-        }
-        guard let engineInput = engine.input else {
-            Logger.shared.reportError(self, "No input")
-            return
-        }
-
-        self.mic = engineInput
-        
-        if true { 
-            self.tappableNodeA = Fader(mic!)
-            self.tappableNodeB = Fader(tappableNodeA!)
-            self.tappableNodeC = Fader(tappableNodeB!)
-            self.tappableNodeD = Fader(tappableNodeC!)
-            self.tappableNodeE = Fader(tappableNodeD!)
-            self.tappableNodeF = Fader(tappableNodeE!)
-            self.silencer = Fader(tappableNodeF!, gain: 0)
-            ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
-            engine.output = self.silencer
-        }
-        
-        if soundEventHandlers.count > 4 {
-            Logger.shared.reportError(self, "Too many pitch tap handlers to install \(soundEventHandlers.count)")
-            return
-        }
-        self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
-                                                tapHandler: soundEventHandlers[0] as! AcousticSoundEventHandler,
-                                                asynch: true))
-//        if tapHandlers.count > 1 {
-//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeB!,
-//                                                    tapHandler: tapHandlers[1],
-//                                                    asynch: true))
-//        }
-//        if tapHandlers.count > 2 {
-//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeC!,
-//                                                    tapHandler: tapHandlers[2],
-//                                                    asynch: true))
-//        }
-//        if tapHandlers.count > 3 {
-//            self.pitchTaps.append(installTapHandler(node: self.tappableNodeD!,
-//                                                    tapHandler: tapHandlers[3],
-//                                                    asynch: true))
-//        }
-
-        for tap in self.pitchTaps {
-            tap.start()
-        }
-        
-        do {
-            ///As per the order in Cookbook Recorder example
-            try engine.start()
-        }
-        catch {
-            Logger.shared.reportError(self, "Error starting engine: \(error)")
-        }
-    }
-    
     func startRecordingMicToRecord() {
         checkMicPermission(completion: {granted in
             if !granted {
@@ -270,7 +239,7 @@ class AudioManager {
         setSession()
         
         ///Based on CookBook Tuner
-        self.audioEngine = AudioEngine()
+        //self.audioEngine = AudioEngine()
         guard let engine = self.audioEngine else {
             Logger.shared.reportError(self, "No engine")
             return
@@ -331,22 +300,6 @@ class AudioManager {
         }
     }
     
-//    private func loadSampler() -> MIDISampler? {
-//        do {
-//            let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
-//            let sampler = MIDISampler()
-//            let preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpinao = 0
-//            try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-//            //Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
-//            //showPresets()
-//            return sampler
-//        }
-//        catch {
-//            Logger.shared.reportError(self, "loadSampler:"+error.localizedDescription)
-//            return nil
-//        }
-//    }
-    
     private func loadSampler(num:Int, preset:Int) -> MIDISampler? {
         do {
             let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
@@ -362,21 +315,21 @@ class AudioManager {
         }
     }
     
-    func showPresets() {
-        let presetRange = 0..<128
-        for preset in presetRange {
-            do {
-                let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
-                let sampler = MIDISampler()
-                try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-                // Log the successfully loaded preset number
-                print("Loaded preset: \(preset) from sound font \(samplerFileName)")
-            } catch {
-                // If the preset can't be loaded, skip and continue
-                print("Preset \(preset) not found or failed to load.")
-            }
-        }
-    }
+//    func showPresets() {
+//        let presetRange = 0..<128
+//        for preset in presetRange {
+//            do {
+//                let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
+//                let sampler = MIDISampler()
+//                try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
+//                // Log the successfully loaded preset number
+//                print("Loaded preset: \(preset) from sound font \(samplerFileName)")
+//            } catch {
+//                // If the preset can't be loaded, skip and continue
+//                print("Preset \(preset) not found or failed to load.")
+//            }
+//        }
+//    }
     
     ///Return a list of tap events recorded previously in a file
     func readTestDataFile() -> [TapEventSet] {
@@ -476,15 +429,13 @@ class AudioManager {
     
     func installTapHandler(node:Node, tapHandler:AcousticSoundEventHandler, asynch : Bool) -> PitchTap {
         let installedTap = PitchTap(node, bufferSize:UInt32(tapHandler.getBufferSize())) { pitch, amplitude in
-            if !self.blockTaps {
-                if asynch {
-                    DispatchQueue.main.async {
-                        tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
-                    }
-                }
-                else {
+            if asynch {
+                DispatchQueue.main.async {
                     tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
                 }
+            }
+            else {
+                tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
             }
         }
         return installedTap
@@ -516,7 +467,6 @@ extension AudioManager: PianoKeyboardDelegate {
     }
 
     func pianoKeyUp(_ keyNumber: Int) {
-        //sampler.stopNote(UInt8(keyNumber), onChannel: 0)
         if let sampler = samplerForKeyboard {
             sampler.stop()
         }

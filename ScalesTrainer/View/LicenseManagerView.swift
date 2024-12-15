@@ -188,7 +188,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     }
     
     public func isLicensed() -> Bool {
-        //return true
+        return true
         if emailIsLicensed(email: Settings.shared.emailAddress) {
             return true
         }
