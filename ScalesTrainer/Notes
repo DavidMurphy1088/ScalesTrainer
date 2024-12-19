@@ -1,15 +1,21 @@
+IS IT ONLY FOLLOW OR LEAD TOO?
 
--- check record still workls
+BaseTap.swift:removeTap():145:The tapped node isn't attached to the engine (BaseTap.swift:removeTap():145)
+BaseTap.swift:start():76:The tapped node isn't attached to the engine (BaseTap.swift:start():76)
+<0x10716da40> Gesture: System gesture gate timed out.
 
--- test all on acoustic
-            
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[NSIndexPath objectForKey:]: unrecognized selector sent to instance 0x8000000000000000'
+
+*** First throw call stack:
+(0x183ee87cc 0x1811bb2e4 0x183fee8c8 0x183e86b08 0x183e86430 0x182569344 0x103223974 0x1032233a8 0x1032230cc 0x102f4541c 0x1030b8b54 0x102f34928 0x1061e8a30 0x1061ea71c 0x1061fade8 0x1061fa9a4 0x183ebc204 0x183eb9440 0x183eb8830 0x1cfe981c4 0x186a1eeb0 0x186acd5b4 0x188621f98 0x188602664 0x188605490 0x103210bb8 0x103210c68 0x1a98a6ec8)
+libc++abi: terminating due to uncaught exception of type NSException
+ 
 --- UI TESTS ---
 Run UI Tests Correctly: Use Command + U or the Test Navigator to execute tests. *** Do not use the Run button (⌘R).***
 
 --- NOTES ---
 Translucent background https://www.remove.bg/
 
-        
 colors
         https://coolors.co/993955-ae76a6-a3c3d9-ccd6eb-e9ecf5
 

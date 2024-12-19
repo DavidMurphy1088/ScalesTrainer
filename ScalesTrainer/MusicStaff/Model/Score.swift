@@ -151,7 +151,6 @@ public class Score : ObservableObject {
     public var studentFeedback:StudentFeedback? = nil
     public var tempo:Int?
     
-    //public var lineSpacing = UIDevice.current.userInterfaceIdiom == .phone ? 6.0 : 10.0
     ///NB Changing this needs changes to getBraceHeight() for alignment
     public var lineSpacing:Double
 
@@ -222,7 +221,7 @@ public class Score : ObservableObject {
         self.scoreEntries.append(ts)
         if self.scoreEntries.count > 16 {
             if UIDevice.current.userInterfaceIdiom == .phone {
-                ///With too many note on the stave 
+                ///With too many notes on the stave
                 lineSpacing = lineSpacing * 0.95
             }
         }
@@ -245,11 +244,7 @@ public class Score : ObservableObject {
         }
         return count + 1
     }
-    
-    public func setLineSpacing(spacing:Double) {
-        self.lineSpacing = spacing
-    }
-    
+        
     public func getTotalStaffLineCount() -> Int {
         return self.totalStaffLineCount
     }

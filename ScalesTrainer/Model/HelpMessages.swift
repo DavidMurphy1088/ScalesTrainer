@@ -44,7 +44,7 @@ class HelpMessages {
         m += "\n\n➤ The number of clicks for the lead in can be adjusted in Settings."
         m += "\n\n➤ Make sure you use the correct fingering."
         m += "\n\n➤ When you can play along confidently, try playing along without the finger numbers displayed."
-        messages["Play Along With"] = m
+        messages["Play Along"] = m
         
         m = "Record your playing and then listen back to it."
         m += "\n\n➤ Focus on playing evenly."

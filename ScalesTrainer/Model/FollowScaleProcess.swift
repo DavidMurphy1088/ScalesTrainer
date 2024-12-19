@@ -3,8 +3,12 @@ import AVFoundation
 import Combine
 import SwiftUI
 
+protocol ExerciseHandlerProtocol: AnyObject {
+    func applySerialLock() -> Bool
+}
+
 ///Base class to handle exercises
-class ExerciseHandler  {
+class ExerciseHandler : ExerciseHandlerProtocol  {
     var midisWithOneKeyPress: [Int] = []
     let scale:Scale
     let scalesModel:ScalesModel
@@ -17,6 +21,8 @@ class ExerciseHandler  {
     var soundEventCtr = 0
     var currentScoreSegment = 0
     var cancelled = false
+    //var soundNotificationProcessingStarted = false
+    let accessQueue = DispatchQueue(label: "ExerciseHandlerQueue")
     
     init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
         self.scalesModel = scalesModel
@@ -39,7 +45,7 @@ class ExerciseHandler  {
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
-        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 3)) / 4
+        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 4)) / 4
         exerciseState.setNumberToWin(numberToWin)
         if scale.scaleMotion == .contraryMotion {
             if scale.getScaleNoteState(handType: .left, index: 0).midi == scale.getScaleNoteState(handType: .right, index: 0).midi {
@@ -50,14 +56,25 @@ class ExerciseHandler  {
         cancelled = false
         soundHandler.start()
     }
-
+    
+    func applySerialLock() -> Bool {
+        return false
+    }
+    
     ///Called by sound handler on receipt of new sound
     func notifiedOfSound(midi:Int) {
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
         ///But note based badge matching requires that both LH and RH of the scale are matched, so send the midi again.
         let callCount = midisWithOneKeyPress.contains(midi) ? 2 : 1
         for call in 0..<callCount {
-            processSound(midi: midi, callNumber: call)
+            if self.applySerialLock() {
+                accessQueue.sync {
+                    processSound(midi: midi, callNumber: call)
+                }
+            }
+            else {
+                processSound(midi: midi, callNumber: call)
+            }
         }
     }
     
@@ -69,99 +86,104 @@ class ExerciseHandler  {
     ///The specific exercise sets the callback on the key to have its code executed once the key is set playing.
     ///
     public func processSound(midi:Int, callNumber:Int) {
-        ///Does the received midi match with the expected note in any hand?
-        var handMatchingExpectedScaleNote:HandType?
-        var handsToSearch:[HandType] = []
-        if scale.hands.count == 1 {
-            handsToSearch.append(scale.hands[0] == 0 ? .right : .left)
-        }
-        else {
-            handsToSearch.append(.left)
-            handsToSearch.append(.right)
-        }
-        ///Determine which hand the next expected note was played if possible.
-        ///If the note played matches exactly the note expected for a given hand assume that hand played it.
-        for hand in handsToSearch {
-            if let nextExpectedIndex = self.nextExpectedNoteForHandIndex[hand] {
-                if nextExpectedIndex < scale.getScaleNoteCount() {
-                    let nextExpected = scale.getScaleNoteState(handType: hand, index: nextExpectedIndex)
-                    if midi == nextExpected.midi {
-                        handMatchingExpectedScaleNote = hand
-                        break
-                    }
-                }
-            }
-        }
-
-        ///Make the list of possible keyboards
-        
-        var keyToPlay:PianoKeyModel? = nil
-        var keyboards: [KeyboardType: PianoKeyboardModel] = [:]
-        
-        if let combined = PianoKeyboardModel.sharedCombined {
-            keyboards[.combined] = combined
-        }
-        else {
-            ///Only consider keyboards that are visible for this scale.
-            if scale.hands.contains(0) {
-                keyboards[.right] = PianoKeyboardModel.sharedRH
-            }
-            if scale.hands.contains(1) {
-                keyboards[.left] = PianoKeyboardModel.sharedLH
-            }
-        }
-
-        ///Determine which keyboard to press the key on
-        
-        if let handForNote = handMatchingExpectedScaleNote {
-            ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
-            let keyboard:PianoKeyboardModel
-            if PianoKeyboardModel.sharedCombined != nil {
-                ///contrary motion
-                keyboard = keyboards[.combined]!
+            //if self.soundNotificationProcessingStarted {
+                //Logger.shared.reportError(self, "🙄🙄🙄🙄🙄🙄🙄🙄 LAST NOTE PROCESSING DID NOT FINISH call:\(callNumber) midi:\(midi)")
+            //}
+            //self.soundNotificationProcessingStarted = true
+            ///Does the received midi match with the expected note in any hand?
+            var handMatchingExpectedScaleNote:HandType?
+            var handsToSearch:[HandType] = []
+            if scale.hands.count == 1 {
+                handsToSearch.append(scale.hands[0] == 0 ? .right : .left)
             }
             else {
-                keyboard = (handForNote == .right ? keyboards[.right] : keyboards[.left])!
+                handsToSearch.append(.left)
+                handsToSearch.append(.right)
             }
-            if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi) {
-                keyToPlay=keyboard.pianoKeyModel[keyboardIndex]
-                if let noteState = keyToPlay?.scaleNoteState {
-                    self.currentScoreSegment = noteState.segments[0]
-                }
-            }
-        }
-        else {
-            for keyboardType in keyboards.keys {
-                if let keyboard:PianoKeyboardModel = keyboards[keyboardType] {
-                    if let index = keyboard.getKeyIndexForMidi(midi: midi) {
-                        keyToPlay=keyboard.pianoKeyModel[index]
+            ///Determine which hand the next expected note was played if possible.
+            ///If the note played matches exactly the note expected for a given hand assume that hand played it.
+            for hand in handsToSearch {
+                if let nextExpectedIndex = self.nextExpectedNoteForHandIndex[hand] {
+                    if nextExpectedIndex < scale.getScaleNoteCount() {
+                        let nextExpected = scale.getScaleNoteState(handType: hand, index: nextExpectedIndex)
+                        if midi == nextExpected.midi {
+                            handMatchingExpectedScaleNote = hand
+                            break
+                        }
                     }
                 }
             }
-        }
-        
-        ///Play the keyboard key and determine which staff to hilight the key on.
-        
-        if let keyToPlay = keyToPlay {
-            keyToPlay.setKeyPlaying()
-            if let score = scalesModel.getScore() {
-                let keyboard = keyToPlay.keyboardModel
-                ///NB - The combined keyboard has no hand type
-                score.hilightStaffNote(segment: self.currentScoreSegment, midi: midi, handType: keyboard.getKeyboardHandType())
+            
+            ///Make the list of possible keyboards
+            
+            var keyToPlay:PianoKeyModel? = nil
+            var keyboards: [KeyboardType: PianoKeyboardModel] = [:]
+            
+            if let combined = PianoKeyboardModel.sharedCombined {
+                keyboards[.combined] = combined
             }
-        }
-
-//        print("======== ExerciseHandler, processSound ctr:\(self.soundEventCtr) ", "midi", midi,
-//              "keyboard", keyToPlay?.keyboardModel.keyboardNumber ?? "NoKeyboard")
-        let hand:HandType?
-        if callNumber == 1 {
-            hand = .right
-        }
-        else {
-            hand = handMatchingExpectedScaleNote
-        }
-        notifyPlayedKey(midi: midi, hand: hand)
-        self.soundEventCtr += 1
+            else {
+                ///Only consider keyboards that are visible for this scale.
+                if scale.hands.contains(0) {
+                    keyboards[.right] = PianoKeyboardModel.sharedRH
+                }
+                if scale.hands.contains(1) {
+                    keyboards[.left] = PianoKeyboardModel.sharedLH
+                }
+            }
+            
+            ///Determine which keyboard to press the key on
+            
+            if let handForNote = handMatchingExpectedScaleNote {
+                ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
+                let keyboard:PianoKeyboardModel
+                if PianoKeyboardModel.sharedCombined != nil {
+                    ///contrary motion
+                    keyboard = keyboards[.combined]!
+                }
+                else {
+                    keyboard = (handForNote == .right ? keyboards[.right] : keyboards[.left])!
+                }
+                if let keyboardIndex = keyboard.getKeyIndexForMidi(midi: midi) {
+                    keyToPlay=keyboard.pianoKeyModel[keyboardIndex]
+                    if let noteState = keyToPlay?.scaleNoteState {
+                        self.currentScoreSegment = noteState.segments[0]
+                    }
+                }
+            }
+            else {
+                for keyboardType in keyboards.keys {
+                    if let keyboard:PianoKeyboardModel = keyboards[keyboardType] {
+                        if let index = keyboard.getKeyIndexForMidi(midi: midi) {
+                            keyToPlay=keyboard.pianoKeyModel[index]
+                        }
+                    }
+                }
+            }
+            
+            ///Play the keyboard key and determine which staff to hilight the key on.
+            
+            if let keyToPlay = keyToPlay {
+                keyToPlay.setKeyPlaying()
+                if let score = scalesModel.getScore() {
+                    let keyboard = keyToPlay.keyboardModel
+                    ///NB - The combined keyboard has no hand type
+                    score.hilightStaffNote(segment: self.currentScoreSegment, midi: midi, handType: keyboard.getKeyboardHandType())
+                }
+            }
+            
+            //        print("======== ExerciseHandler, processSound ctr:\(self.soundEventCtr) ", "midi", midi,
+            //              "keyboard", keyToPlay?.keyboardModel.keyboardNumber ?? "NoKeyboard")
+            let hand:HandType?
+            if callNumber == 1 {
+                hand = .right
+            }
+            else {
+                hand = handMatchingExpectedScaleNote
+            }
+            notifyPlayedKey(midi: midi, hand: hand)
+            self.soundEventCtr += 1
+            //self.soundNotificationProcessingStarted = false
     }
     
     func awardChartBadge() {
@@ -250,7 +272,7 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
             }
         }
         
-        ///Setup to listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
+        ///Allow Cancel - Setup to listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
         ///appmode is None at start since its set (for publish)  in main thread
         DispatchQueue.global(qos: .background).async {
             while true {
@@ -266,6 +288,12 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
             }
         }
         listenForKeyPresses()
+    }
+    
+    ///The nextExpectedNoteForHandIndexneeds dictionary has to be thread-safe. 
+    ///Its updated when the correct key is pressed (the semaphore signalled) and read in a differrent thread.
+    override func applySerialLock() -> Bool {
+        return true
     }
     
     ///Setup DispatchSemaphores on each keyboard to wait for the expected key on that keyboard.
@@ -331,7 +359,9 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
                     if !self.cancelled && self.scalesModel.runningProcess == .followingScale {
                         keyboardSemaphore.semaphore.wait()
                         //print("============= ➡️ end wait \(keyboardSemaphore.id)")
-                        self.nextExpectedNoteForHandIndex[keyboardSemaphore.keyboard.keyboardNumber==1 ? .right : .left]! += 1
+                        accessQueue.sync {
+                            self.nextExpectedNoteForHandIndex[keyboardSemaphore.keyboard.keyboardNumber==1 ? .right : .left]! += 1
+                        }
                     }
                 }
                //print("============= Follow received all expected notes ...")

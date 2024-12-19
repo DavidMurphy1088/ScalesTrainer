@@ -1,15 +1,23 @@
 import Foundation
 
-class BoardAndGrade: Codable, Identifiable {
+class MusicBoardAndGrade: Codable, Identifiable {
+    static var shared:MusicBoardAndGrade? //(board: MusicBoard(name: ""), grade: 0)
     let board:MusicBoard
     let grade:Int
     var scales:[Scale]
+    var practiceChart:PracticeChart? = nil
 
     init(board:MusicBoard, grade:Int) {
         self.board = board
         self.grade = grade
         self.scales = []
-        self.scales = self.setScales()
+        self.scales = MusicBoardAndGrade.setScales(boardName: board.name, grade: grade)
+        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
+            self.practiceChart = chart
+        }
+        else {
+            self.practiceChart = PracticeChart(scales: self.scales, columnWidth: 3, minorScaleType: 0)
+        }
     }
     
     enum CodingKeys: String, CodingKey {
@@ -23,9 +31,53 @@ class BoardAndGrade: Codable, Identifiable {
         board = MusicBoard(name: boardName)
         grade = try container.decode(Int.self, forKey: .grade)
         self.scales = []
-        self.scales = self.setScales()
+        self.scales = MusicBoardAndGrade.setScales(boardName: board.name, grade: grade)
+        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
+            self.practiceChart = chart
+        }
+        else {
+            self.practiceChart = PracticeChart(scales: self.scales, columnWidth: 3, minorScaleType: 0)
+        }
     }
     
+    func getFileName() -> String {
+        return "_"+self.board.name+"_"+String(self.grade)
+    }
+    
+    func loadPracticeChartFromFile(board:String, grade:Int) -> PracticeChart? {
+        let decoder = JSONDecoder()
+        do {
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to load PracticeChart - file not found")
+                return nil
+            }
+            
+            let url = dir.appendingPathComponent(getFileName())
+            let data = try Data(contentsOf: url)  // Read the data from the file
+            let chart = try decoder.decode(PracticeChart.self, from: data)
+            for r in 0..<chart.rows.count {
+                let row:[PracticeChartCell] = chart.rows[r]
+                for chartCell in row {
+                    chartCell.isLicensed = false
+                    if LicenceManager.shared.isLicensed() {
+                        chartCell.isLicensed = true
+                    }
+                    else {
+                        if r == 0 {
+                            chartCell.isLicensed = true
+                        }
+                    }
+                }
+            }
+            Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) DayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
+            chart.adjustForStartDay()
+            return chart
+         } catch {
+            Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
+            return nil
+        }
+    }
+
     func encode(to encoder: Encoder) throws {
         ///Dont try to encode all the scale info - causes crash
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -47,18 +99,49 @@ class BoardAndGrade: Codable, Identifiable {
         name += ", Grade " + String(grade) + " Piano"
         return name
     }
-    
-    func getFileName() -> String {
-        var name = self.board.name
-        name += "=grade_"+String(grade)
-        return name
-    }
 
     func getScales() -> [Scale] {
         return self.scales
     }
     
-    func scalesTrinity(grade:Int) -> [Scale] {
+    func savePracticeChartToFile() {
+        guard let practiceChart = self.practiceChart else {
+            return
+        }
+        do {
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to save PracticeChart")
+                return
+            }
+            let url = dir.appendingPathComponent(getFileName())
+            if let data = practiceChart.convertToJSON() {
+                try data.write(to: url)  // Write the data to the file
+                Logger.shared.log(self, "Saved PracticeChart for Board:\(self.board) Grade:\(self.grade) ➡️ to \(url) size:\(data.count)")
+            }
+            else {
+                Logger.shared.log(self, "Cannot convert PracticeChart")
+            }
+        } catch {
+            Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
+        }
+    }
+    
+    func deleteFile() {
+        do {
+            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                Logger.shared.reportError(self, "Failed to save PracticeChart")
+                return
+            }
+            let url = dir.appendingPathComponent(getFileName())
+            try FileManager.default.removeItem(at: url)
+            Logger.shared.log(self, "PracticeChart deleted: \(url.path)")
+        } catch {
+            Logger.shared.reportError(self, "Failed to delete PracticeChart \(error)")
+        }
+    }
+
+
+    static func scalesTrinity(grade:Int) -> [Scale] {
         
         var scales:[Scale] = []
         
@@ -272,7 +355,7 @@ class BoardAndGrade: Codable, Identifiable {
         return scales
     }
     
-    func scalesABRSM(grade:Int) -> [Scale] {
+    static func scalesABRSM(grade:Int) -> [Scale] {
         var scales:[Scale] = []
         
         if grade == 1 {
@@ -356,9 +439,9 @@ class BoardAndGrade: Codable, Identifiable {
         return scales
     }
 
-    func setScales() -> [Scale] {
+    static func setScales(boardName:String, grade:Int) -> [Scale] {
         var scales:[Scale] = []
-        switch self.board.name {
+        switch boardName {
         case "Trinity":
             return scalesTrinity(grade:grade)
         case "ABRSM":
@@ -375,7 +458,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
     let name:String
     var fullName:String
     var imageName:String
-    var gradesOffered:[BoardAndGrade]
+    var gradesOffered:[Int]
 
     static func getSupportedBoards() -> [MusicBoard] {
         var result:[MusicBoard] = []
@@ -398,15 +481,15 @@ class MusicBoard : Identifiable, Codable, Hashable {
         
         switch name {
         case "Trinity":
-            gradesOffered.append(BoardAndGrade(board: self, grade: 1))
-            gradesOffered.append(BoardAndGrade(board: self, grade: 2))
-            gradesOffered.append(BoardAndGrade(board: self, grade: 3))
-            gradesOffered.append(BoardAndGrade(board: self, grade: 4))
-            gradesOffered.append(BoardAndGrade(board: self, grade: 5))
+            gradesOffered.append(1)
+            gradesOffered.append(2)
+            gradesOffered.append(3)
+            gradesOffered.append(4)
+            gradesOffered.append(5)
 
         case "ABRSM":
-            gradesOffered.append(BoardAndGrade(board: self, grade: 1))
-            gradesOffered.append(BoardAndGrade(board: self, grade: 2))
+            gradesOffered.append(1)
+            gradesOffered.append(2)
         default:
             gradesOffered = []
         }

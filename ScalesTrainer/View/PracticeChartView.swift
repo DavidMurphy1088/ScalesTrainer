@@ -67,44 +67,47 @@ struct CellView: View {
     
     func handsView() -> some View {
         HStack {
-            Image("hand_left")
-                .resizable()
-                .renderingMode(.template)
-                .foregroundColor(.purple)
-                .opacity(0.5)
-                .scaledToFit()
-                .frame(height: 25)
-            
             Button(action: {
-                //self.handPicked = .left
                 setScale(hands: [1])
                 if practiceCell.isLicensed {
                     navigateToScale = true
                 }
             }) {
                 HStack {
-                    Text("Left Hand").font(.body)
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        //Text("Left Hand").font(.body)
+                        Text("Left").font(.body)
+                    }
+                    Image("hand_left")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(.purple)
+                        .opacity(0.5)
+                        .scaledToFit()
+                        .frame(height: 25)
                 }
             }
             .buttonStyle(.bordered)
-            Image("hand_right")
-                .resizable()
-                .renderingMode(.template)
-                .foregroundColor(.purple)
-                .opacity(0.5)
-                .scaledToFit()
-                .frame(height: 25)
             Button(action: {
-                //self.handPicked = .right
                 setScale(hands:[0])
                 if practiceCell.isLicensed {
                     navigateToScale = true
                 }
             }) {
-                let label = practiceCell.scale.getScaleName(handFull: true)
-                HStack {
-                    Text("Right Hand").font(.callout)
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    HStack {
+                        //Text("Right Hand").font(.callout)
+                        Text("Right").font(.callout)
+                    }
                 }
+                Image("hand_right")
+                    .resizable()
+                    .renderingMode(.template)
+                    .foregroundColor(.purple)
+                    .opacity(0.5)
+                    .scaledToFit()
+                    .frame(height: 25)
+
             }
             .buttonStyle(.bordered)
         }
@@ -153,10 +156,13 @@ struct CellView: View {
     
     func badgeView() -> some View {
         HStack {
+            if practiceCell.badges.count > 0 {
+                Text(" \(practiceCell.badges.count)").font(.title2)
+            }
             ForEach(0..<practiceCell.badges.count, id: \.self) {index in
                 if index < self.getMinBadgeIndex() {
                     if index == 0 {
-                        Text(" \(practiceCell.badges.count)..").font(.title2)
+                        Text("..").font(.title2)
                     }
                 }
                 else {
@@ -323,7 +329,12 @@ struct PracticeChartView: View {
                         Button(action: {
                             self.showHands.toggle()
                         }) {
-                            Text(self.showHands ? "Hide Hands" : "Show Hands")
+                            if UIDevice.current.userInterfaceIdiom == .phone {
+                                Text(self.showHands ? "Hide" : "Hands")
+                            }
+                            else {
+                                Text(self.showHands ? "Hide Hands" : "Show Hands")
+                            }
                         }
                         .buttonStyle(.bordered)
                         //.padding()
@@ -337,7 +348,7 @@ struct PracticeChartView: View {
                                 withAnimation(.linear(duration: 1.0)) {
                                     cellOpacityValue = 1.0
                                 }
-                                practiceChart.saveToFile()
+                                MusicBoardAndGrade.shared?.savePracticeChartToFile()
                             }
                         }) {
                             Text("Shuffle")
@@ -351,7 +362,7 @@ struct PracticeChartView: View {
 //                                practiceChart.deleteFile()
 //                            }) {
 //                                Text("Delete")
-//                            }
+//                            }spinW
 //                            .buttonStyle(.bordered)
 //                            //.padding()
 //                        }
@@ -359,7 +370,9 @@ struct PracticeChartView: View {
                     }
                 }
                 .commonFrameStyle()
-                
+//                Button("Trigger Exit") {
+//                    navigationState2.navigationChildIsActive = false
+//                }
                 ScrollView(.vertical) {
                     VStack(spacing: 0) {
                         
@@ -405,14 +418,21 @@ struct PracticeChartView: View {
         .commonFrameStyle()
         
         .onAppear() {
+            if let chart = MusicBoardAndGrade.shared?.practiceChart {
+                self.practiceChart = chart
+            }
             minorTypeIndex = practiceChart.minorScaleType
         }
         .onDisappear() {
-            practiceChart.saveToFile()
         }
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Practice Chart")
         }
+//        .onChange(of: navigationState2.navigationChildIsActive) { shouldExitToParent in
+//            if shouldExitToParent {
+//                //navigationState2.shouldExitToParent = false // Reset to prevent navigation loop
+//            }
+//        }
     }
 }
 

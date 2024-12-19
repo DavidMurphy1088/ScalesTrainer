@@ -51,6 +51,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     var midi: Int
     
     var hilightKeyToFollow:PianoKeyHilightType = .none
+    
     var hilightCallbackNotUSed: () -> Void = {}
 
     //private var playedCallback:(()->Void)?
@@ -84,22 +85,24 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Set a keyboard key as playing.
     ///Also hilight the associated score note.
     public func setKeyPlaying() {
-        //print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
-        self.keyIsSounding = true
-        DispatchQueue.global(qos: .background).async {
-            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
-            DispatchQueue.main.async {
-                self.keyIsSounding = false
-                self.keyboardModel.redraw()
+        if true {
+            //print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
+            self.keyIsSounding = true
+            DispatchQueue.global(qos: .background).async {
+                usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+                DispatchQueue.main.async {
+                    self.keyIsSounding = false
+                    self.keyboardModel.redraw()
+                }
             }
-        }
-        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
-        self.keyboardModel.redraw()
-
-        if self.playedCallbacks.count > 0 {
-            if let callback = self.playedCallbacks[0] {
-                callback()
-                self.playedCallbacks.removeFirst()
+            ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+            self.keyboardModel.redraw()
+            
+            if self.playedCallbacks.count > 0 {
+                if let callback = self.playedCallbacks[0] {
+                    callback()
+                    self.playedCallbacks.removeFirst()
+                }
             }
         }
     }

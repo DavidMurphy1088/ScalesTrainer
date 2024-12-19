@@ -3,7 +3,6 @@ import CoreData
 import MessageUI
 
 public struct ScoreView: View {
-    //@Environment(\.horizontalSizeClass) var horizontalSizeClass
     @ObservedObject var score:Score
     let widthPadding:Bool
     @State private var dragOffset = CGSize.zero
@@ -41,6 +40,9 @@ public struct ScoreView: View {
                 ForEach(score.getStaffs(), id: \.self.id) { staff in
                     StaffView(score: score, staff: staff, widthPadding: widthPadding)
                         .frame(height: score.getStaffHeight())
+                }
+                if score.staffs.count == 1 {
+                    Text(" ")
                 }
             }
             .overlay(

@@ -324,22 +324,18 @@ struct ScalesView: View {
                 
                 Spacer()
                 HStack {
-                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play Along" : "Play Along With"
-                    //                Button(scalesModel.runningProcessPublished == .playingAlongWithScale ? "Stop Playing Along" : NSLocalizedString("Play Along", comment: "Menu")) {
-                    //                    scalesModel.setRunningProcess(.playingAlongWithScale)
-                    //                    scalesModel.setProcessInstructions("Play along with the scale as its played")
-                    //                }
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
                     Button(action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
                         scalesModel.setProcessInstructions("Play along with the scale as its played")
                     }) {
-                        Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        Text(title)
                     }
                     .buttonStyle(.bordered)
                     
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         Button(action: {
-                            showHelp("Play Along With")
+                            showHelp("Play Along")
                         }) {
                             VStack {
                                 Image(systemName: "questionmark.circle")
@@ -355,7 +351,7 @@ struct ScalesView: View {
                 
                 Spacer()
                 HStack {
-                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Rec\u{200B}ord" : "Record"
                     Button(action: {
                         if scalesModel.runningProcessPublished == .recordingScale {
                             scalesModel.setRunningProcess(.none)
@@ -365,7 +361,7 @@ struct ScalesView: View {
                         }
                         
                     }) {
-                        Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        Text(title)
                     }
                     .buttonStyle(.bordered)
                     
@@ -414,7 +410,7 @@ struct ScalesView: View {
                 if scalesModel.scale.getBackingChords() != nil {
                     Spacer()
                     HStack {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track" //"Backing Track\nHarmony"
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Back\u{200B}ing" : "Backing Track" 
                         Button(action: {
                             if scalesModel.runningProcessPublished == .backingOn {
                                 scalesModel.setRunningProcess(.none)
@@ -445,9 +441,7 @@ struct ScalesView: View {
                 }
                 Spacer()
             }
-//            if UIDevice.current.userInterfaceIdiom != .phone {
-//                Text("")
-//            }
+
         }
     }
     
@@ -486,7 +480,8 @@ struct ScalesView: View {
         case .won:
             msg = "😊 You Won Me 😊"
         case .wonAndFinished:
-            msg = "😊 You Won \(name) 😊"
+            ///msg = "😊 You Won \(name) 😊"
+            msg = "😊 You Won 😊"
         case .exerciseStarted:
             if remaining == 1 {
                 msg = "Win me with one more correct note"
@@ -513,20 +508,24 @@ struct ScalesView: View {
     }
         
     func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
-        ///All offsets are reltive to the last postion
+        ///All offsets are relative to the last postion
         if state == .exerciseNotStarted {
             //return (0, UIScreen.main.bounds.height)
             return (0, 300)
         }
+//        if state == .exerciseStarted {
+//            //return (0, UIScreen.main.bounds.height)
+//            return (0, 0)
+//        }
         if state == .lost {
             //return (0, UIScreen.main.bounds.height)
             ///The image is rotated down so negative offset sends it down
             return (0, UIScreen.main.bounds.height * -0.5)
         }
-        if [.wonAndFinished].contains(state) {
-            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
-            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
-        }
+//        if [.wonAndFinished].contains(state) {
+//            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
+//            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
+//        }
         return (0,0) //Exercise started
     }
     
@@ -612,38 +611,43 @@ struct ScalesView: View {
             if Settings.shared.practiceChartGamificationOn {
                 HStack {
                     if let exerciseBadge = scalesModel.exerciseBadge {
-                        let msg = getExerciseStatusMessage(badge: exerciseBadge)
-                        Text(msg)
-                            .padding()
-                            .foregroundColor(.blue)
-                            .font(exerciseState.statePublished == .won ? .title : .title2)
-                        //.opacity(badgeBank.badgeState == .exerciseNotStarted ? 0.0 : 1.0)
-                            .zIndex(1) // Keeps it above other views
-                        
-                        ///Practice chart badge position is based on exercise state
-                        ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
-                    
-                    
-                        Image(exerciseBadge.imageName)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: UIScreen.main.bounds.height * 0.05)
-                        
-                            .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
-                        ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
-                        //                        .rotation3DEffect( //3D flip around its vertical axis
-                        //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
-                        //                            axis: (x: 0.0, y: 1.0, z: 0.0)
-                        //                        )
-                            .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
-                            .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
-                            .opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
+                        //if true || [ExerciseState.State.wonAndFinished, ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
+                            let msg = getExerciseStatusMessage(badge: exerciseBadge)
+                            Text(msg)
+                                .padding()
+                                .foregroundColor(.blue)
+                                .font(exerciseState.statePublished == .won ? .title : .title2)
+                                .opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
+                                .zIndex(1) // Keeps it above other views
+                            
+                            ///Practice chart badge position is based on exercise state
+                            ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
+                            
+                            Image(exerciseBadge.imageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: UIScreen.main.bounds.height * 0.05)
+                            
+                                .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
+                                ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
+                                //                        .rotation3DEffect( //3D flip around its vertical axis
+                                //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
+                                //                            axis: (x: 0.0, y: 1.0, z: 0.0)
+                                //                        )
+                                .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
+                                .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
+                                //.opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
+                                .opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
+
+                        //}
                     }
                 }
             }
             if Settings.shared.isDeveloperMode()  {
-                Spacer()
-                TestInputView()
+                if Settings.shared.useMidiConnnections {
+                    Spacer()
+                    TestInputView()
+                }
             }
             Spacer()
         }

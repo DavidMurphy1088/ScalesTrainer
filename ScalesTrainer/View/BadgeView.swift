@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HexagramShape: View {
-    var size: CGFloat
+    var size1: CGFloat
     var offset: CGFloat
     var color:Color
     
@@ -9,9 +9,9 @@ struct HexagramShape: View {
         ZStack {
             // Bottom (inverted) triangle filled with red
             Path { path in
-                let halfSize = size / 2
+                let halfSize = size1 / 2
                 let height = sqrt(3) * halfSize
-                let center = CGPoint(x: size, y: size)
+                let center = CGPoint(x: size1, y: size1)
                 
                 let bottomTrianglePoints = [
                     CGPoint(x: center.x, y: center.y + height / 2 + offset),
@@ -28,9 +28,9 @@ struct HexagramShape: View {
             
             // Top (upright) triangle filled with blue
             Path { path in
-                let halfSize = size / 2
+                let halfSize = size1 / 2
                 let height = sqrt(3) * halfSize
-                let center = CGPoint(x: size, y: size)
+                let center = CGPoint(x: size1, y: size1)
                 
                 let topTrianglePoints = [
                     CGPoint(x: center.x, y: center.y - height / 2 - offset),
@@ -45,7 +45,7 @@ struct HexagramShape: View {
             }
             .fill(color)
         }
-        .frame(width: size * 2, height: size * 2)
+        .frame(width: size1 * 2, height: size1 * 2)
     }
 }
 
@@ -53,7 +53,7 @@ struct HexagramShape: View {
 struct BadgesView: View {
     @ObservedObject var badgeBank:BadgeBank
     let scale:Scale
-    @State private var size: CGFloat = 0
+    @State private var badgeIconSize: CGFloat = 0
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -50
@@ -102,6 +102,15 @@ struct BadgesView: View {
         return name
     }
     
+    func getDotSpace() -> CGFloat {
+        if ScalesModel.shared.scale.octaves > 1 {
+            return UIDevice.current.userInterfaceIdiom == .phone ? 4 : 10
+        }
+        else {
+            return 10
+        }
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -113,7 +122,7 @@ struct BadgesView: View {
 //                        .foregroundColor(.blue)
 //                }
             }
-            HStack(spacing: 10) {
+            HStack(spacing: getDotSpace()) {
                 let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                 let imWidth = CGFloat(40)
                 
@@ -123,7 +132,7 @@ struct BadgesView: View {
                             Text("⊙").foregroundColor(.blue)
                             if badgeBank.totalCorrect > 0 {
                                 if Settings.shared.badgeStyle == 0 {
-                                    HexagramShape(size: size, offset: offset, color: c)
+                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c)
                                         .rotationEffect(Angle.degrees(rotationAngle))
                                     .offset(y: verticalOffset)
                                     .onAppear {
@@ -148,14 +157,14 @@ struct BadgesView: View {
                                 }
                             }
                         }
-                        .frame(width:size, height: size)
+                        .frame(width:badgeIconSize, height: badgeIconSize)
                     }
                     else {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             if scaleNoteNumber < badgeBank.totalCorrect {
                                 if Settings.shared.badgeStyle == 0 {
-                                    HexagramShape(size: size, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
+                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
                                 }
                                 else {
                                     Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
@@ -164,7 +173,7 @@ struct BadgesView: View {
                                 }
                             }
                         }
-                        .frame(width:size, height: size)//.opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                        .frame(width:badgeIconSize, height: badgeIconSize)//.opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
                     }
                 }
             }
@@ -176,7 +185,8 @@ struct BadgesView: View {
         }
         .onAppear() {
             self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
-            self.size = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteStates(handType: handType).count) * 1.7)
+            //self.size1 = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteStates(handType: handType).count) * 1.7)
+            self.badgeIconSize = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteCount()) * 1.7)
             ///Ensure not more than 2 concurrent same values
             for _ in 0..<scale.getScaleNoteStates(handType: handType).count {
                 var newValue: Int

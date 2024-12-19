@@ -286,6 +286,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
+    ///Show the key hilights for the Follow task
     func showFollowKeyHilights(sampler:MIDISampler) {
         for hand in scale.hands {
             let midi = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0).midi
@@ -408,9 +409,11 @@ public class ScalesModel : ObservableObject {
             self.exerciseBadge = Badge.getRandomExerciseBadge()
             let leadProcess = LeadScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
             leadProcess.start(soundHandler: soundHandler)
-            metronome.addProcessesToNotify(process: leadProcess)
-            metronome.setTicking(way: true)
-            metronome.start()
+//            if !Settings.shared.isDeveloperMode() {
+//                metronome.addProcessesToNotify(process: leadProcess)
+//                metronome.setTicking(way: true)
+//                metronome.start()
+//            }
             if !Settings.shared.useMidiConnnections {
                 self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
             }

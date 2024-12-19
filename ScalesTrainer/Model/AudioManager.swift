@@ -94,7 +94,7 @@ class AudioManager {
             engine.output = self.mixer
             
             try engine.start()
-            Logger.shared.log(self, "➡️ Configured AudioKit mic:\(withMic)")
+            Logger.shared.log(self, "Configured AudioKit mic:\(withMic)")
         } catch {
             Logger.shared.reportError(self, "Can't configure AudioKit \(error)")
         }

@@ -26,6 +26,7 @@
 		79312DB72C118B41005FDE8B /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB62C118B41005FDE8B /* HelpView.swift */; };
 		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
+		793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */ = {isa = PBXBuildFile; fileRef = 793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */; };
 		793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
@@ -85,7 +86,7 @@
 		79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */; };
 		79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C65D6F2CDED7AC00467597 /* StaffClef.swift */; };
 		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
-		79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoard.swift */; };
+		79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */; };
 		79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD012C128F0200770C10 /* PracticeJournalView.swift */; };
 		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
 		79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB56202C599D9F00BB328F /* PracticeChart.swift */; };
@@ -158,6 +159,7 @@
 		79312DB62C118B41005FDE8B /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
+		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
 		793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMusicBoardView.swift; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
@@ -219,7 +221,7 @@
 		79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesLibraryView.swift; sourceTree = "<group>"; };
 		79C65D6F2CDED7AC00467597 /* StaffClef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffClef.swift; sourceTree = "<group>"; };
 		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
-		79C8ACFF2C127D8400770C10 /* MusicBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoard.swift; sourceTree = "<group>"; };
+		79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoardAndGrade.swift; sourceTree = "<group>"; };
 		79C8AD012C128F0200770C10 /* PracticeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalView.swift; sourceTree = "<group>"; };
 		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		79CB56202C599D9F00BB328F /* PracticeChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChart.swift; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 				79BA2BC32CD387AB00CA68B4 /* Resources */,
 				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
 				79DA82232BCCEA6A008AC492 /* View */,
+				793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */,
 			);
 			path = ScalesTrainer;
 			sourceTree = "<group>";
@@ -513,7 +516,7 @@
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F80E092CD4CD1700D636FB /* MidiManager.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
-				79C8ACFF2C127D8400770C10 /* MusicBoard.swift */,
+				79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
 				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
 				790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */,
@@ -704,6 +707,7 @@
 				79EAB8772C8737B400255FC6 /* Notes in Resources */,
 				79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
+				793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -821,7 +825,7 @@
 				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
 				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
-				79C8AD002C127D8400770C10 /* MusicBoard.swift in Sources */,
+				79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */,
 				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
 				797013972BEE3E45009F85D6 /* StemView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,

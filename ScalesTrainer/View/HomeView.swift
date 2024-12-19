@@ -49,9 +49,9 @@ struct TitleView: View {
         }
         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
         .onAppear() {
-            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
-            }
+//            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+//                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
+//            }
         }
     }
 }
@@ -99,6 +99,7 @@ struct FamousQuotesView: View {
 struct ActivityModeView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     //@StateObject private var orientationObserver = DeviceOrientationObserver()
+    let musicBoardAndGrade:MusicBoardAndGrade
     @State var menuOptionsLeft:[ActivityMode] = []
     //@State var menuOptionsRight:[ActivityMode] = []
     @State var helpShowing = false
@@ -113,14 +114,13 @@ struct ActivityModeView: View {
             let overlay = Circle().stroke(Color.black, lineWidth: 2)
             
             Spacer()
-            if menuOptionsLeft.count > 0 {
-                let activityMode = menuOptionsLeft[0]
-                NavigationLink(destination: getView(activityMode: activityMode)) {
+            if let practiceChart = musicBoardAndGrade.practiceChart {
+                NavigationLink(destination: PracticeChartView(practiceChart: practiceChart)
+                ) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        //if UIDevice.current.userInterfaceIdiom != .phone || !orientationObserver.orientation.isAnyLandscape {
                         if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
                             ///Image wont scale reasonably when too little space
-                            Image(menuOptionsLeft[0].imageName)
+                            Image("home_practice_chart_1")
                                 .resizable()
                                 .scaledToFit()
                                 .clipShape(Circle())  // Clips the image to a circular shape
@@ -128,21 +128,19 @@ struct ActivityModeView: View {
                                 .overlay(overlay)
                             //.border(.red)
                         }
-                        Text(activityMode.name)
+                        Text("Practice Chart")
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
                     }
                     .padding()
                 }
-            }
-            
-            Spacer()
-            if menuOptionsLeft.count > 1 {
-                let activityMode = menuOptionsLeft[1]
-                NavigationLink(destination: getView(activityMode: activityMode)) {
+                
+                Spacer()
+                NavigationLink(destination: SpinWheelView(practiceChart: practiceChart)
+                               //, isActive: $navigationState2.navigationChildIsActive
+                ) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        //if UIDevice.current.userInterfaceIdiom != .phone || !orientationObserver.orientation.isAnyLandscape {
                         if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
-                            Image(activityMode.imageName)
+                            Image("home_scales_wheel_1")
                                 .resizable()
                                 .scaledToFit()
                                 .clipShape(Circle())
@@ -150,7 +148,7 @@ struct ActivityModeView: View {
                                 .overlay(overlay)
                             //.border(.red)
                         }
-                        Text(activityMode.name)
+                        Text("Spin The Scale Wheel")
                             .font(.custom("Noteworthy-Bold", size: 32)).padding()
                     }
                     .padding()
@@ -159,7 +157,6 @@ struct ActivityModeView: View {
 
             Spacer()
         }
-        //.background()
         .commonFrameStyle()
         .sheet(isPresented: $helpShowing) {
             if let topic = ScalesModel.shared.helpTopic {
@@ -168,64 +165,50 @@ struct ActivityModeView: View {
         }
     
         .onAppear() {
-            menuOptionsLeft = []
-            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-                if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
-                    PracticeChart.shared = savedChart
-                    savedChart.adjustForStartDay()
-//                    for row in 0..<savedChart.rows.count {
-//                        for cell in 0..<savedChart.rows[row].count {
-//                            savedChart.rows[row][cell].setBadgesCount(count: 0)
-//                        }
-//                    }
-                }
-                else {
-                    ///Create a new one for this board and grade
-                    PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
-                }
-            }
-            let practiceChart = PracticeChart.shared
-            menuOptionsLeft.append(ActivityMode(name: "Practice Chart",
-                                                view: AnyView(PracticeChartView(practiceChart: practiceChart)),
-                                                imageName: "home_practice_chart_1"))
-            
-            menuOptionsLeft.append(ActivityMode(name: "Spin The Scale Wheel",
-                                                view: AnyView(SpinWheelView()),
-                                                imageName: "home_scales_wheel_1"))
-            
-            //if Settings.shared.developerModeOn {
-//                menuOptionsLeft.append(ActivityMode(name: "Scales Library",
-//                                                        view: AnyView(ScalesLibraryView()),
-//                                                        imageName: "home_pick_any_scale_1"))
-            //}
-            
-            //menuOptionsRight.append(ActivityMode(name: "Why Practice Scales", view: AnyView(FamousQuotesView()), imageName: "home_why_learn_scales_1"))
-            //menuOptionsLeft.append(ActivityMode(name: "Understanding Scales", view: AnyView(UnderstandingScalesView()), imageName: "home_understanding_scales_1"))
-
+//            menuOptionsLeft = []
+//            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+//                if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
+//                    PracticeChart.shared = savedChart
+//                    savedChart.adjustForStartDay()
+////                    for row in 0..<savedChart.rows.count {
+////                        for cell in 0..<savedChart.rows[row].count {
+////                            savedChart.rows[row][cell].setBadgesCount(count: 0)
+////                        }
+////                    }
+//                }
+//                else {
+//                    ///Create a new one for this board and grade
+//                    PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
+//                }
+//            }
+//            let practiceChart = PracticeChart.shared
         }
     }
 }
 
+
 struct HomeView: View {
     @State var scaleGroupsSheet = false
-    //let midiManager = MIDIManager.shared
+    
     var body: some View {
         VStack {
             NavigationView {
                 VStack {
                     Spacer()
                     TitleView(screenName: "Scales Academy", showGrade: true)
-                    if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-                        ActivityModeView()
+                    if let musicBoardAndGrade = MusicBoardAndGrade.shared {
+                        ActivityModeView(musicBoardAndGrade: musicBoardAndGrade)
                     }
                     else {
-                        Text("Please select your music grade")
+                        Text("No music grade").padding()
+                        Text("Please select your music grade").padding()
                     }
                     Spacer()
                 }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        
     }
     
 }

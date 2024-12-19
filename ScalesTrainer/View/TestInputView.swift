@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TestInputView: View {
     let midiManager = MIDIManager.shared
+    let octaves = 2 //UIDevice.current.userInterfaceIdiom == .phone ? 1 : 2
     
     func noteTapped(_ midiNumber:Int) {
         let msg = MIDIMessage(messageType: 0, midi: midiNumber)
@@ -19,44 +20,54 @@ struct TestInputView: View {
         return StaffNote.getNoteName(midiNum: midi)
     }
     
+    func getNumbers() -> [Int] {
+        let b = octaves > 1 ? 48 : 60
+        var numbers = [b+0, b+2, b+4, b+5, b+7, b+9, b+11, b+12]
+        if octaves > 1 {
+            numbers.append(contentsOf: [b+14, b+16, b+17, b+19, b+21, b+23, b+24])
+        }
+        return numbers
+    }
+    
     var body: some View {
         let b = 48
         let accidentals = true
-        let octaves = false
-        let numbers = [b+0, b+2, b+4, b+5, b+7, b+9, b+11,   b+12, b+14, b+16, b+17, b+19, b+21, b+23, b+24]
+        let showOctaveLower = UIDevice.current.userInterfaceIdiom == .phone ? false : true
         
         VStack {
             Text("Base \(b)")
             HStack {
                 if accidentals {
                     Text("......")
-                    ForEach(numbers, id: \.self) { midi in
-                        //Button("\(midi+1)") {
-                        Button("\(noteName(midi))") {
+                    ForEach(getNumbers(), id: \.self) { midi in
+                        Button(action: {
                             noteTapped(midi+1)
                             if ScalesModel.shared.scale.hands.count > 1 {
-                                if octaves {
+                                if showOctaveLower {
                                     noteTapped(midi-12+1)
                                 }
                             }
+                        }) {
+                            Text("\(noteName(midi))").font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
-                        .padding()
+                        .padding(UIDevice.current.userInterfaceIdiom == .phone ? 3 : 10)
                         .border(Color.black)
                     }
                 }
             }
             HStack {
-                ForEach(numbers, id: \.self) { midi in
-                    Button("\(noteName(midi))") {
-                    //Button("\(names[midi-60])") {
+                ForEach(getNumbers(), id: \.self) { midi in
+                    Button(action: {
                         noteTapped(midi)
                         if ScalesModel.shared.scale.hands.count > 1 {
-                            if octaves {
+                            if showOctaveLower {
                                 noteTapped(midi-12)
                             }
                         }
+                    }) {
+                        Text("\(noteName(midi))").font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
-                    .padding()
+                    .padding(UIDevice.current.userInterfaceIdiom == .phone ? 3 : 10)
                     .border(Color.black)
                 }
             }

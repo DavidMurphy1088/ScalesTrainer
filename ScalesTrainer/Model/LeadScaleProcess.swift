@@ -21,17 +21,6 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
-//        beatCount = 0
-//        nextNoteIndex = 0
-//        if let combined = PianoKeyboardModel.sharedCombined {
-//            combined.hilightNotesOutsideScale = false
-//        }
-//        else {
-//            PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = false
-//            PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
-//        }
-//        
-//        self.backingChords = scale.getBackingChords()
     }
     
     func metronomeStop() {
@@ -46,8 +35,7 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
 //        lastMidiScaleIndex = nil
 //        notifyCount = 0
 //        noteStack=[]
-        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 3)) / 4
-        exerciseState.setNumberToWin(numberToWin)
+
     }
     
     override func notifyPlayedKey(midi: Int, hand:HandType?) {

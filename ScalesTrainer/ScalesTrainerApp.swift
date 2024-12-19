@@ -151,37 +151,32 @@ class TabSelectionManager: ObservableObject {
     }
     
     func nextNavigationTab() {
-        if Settings.shared.settingsExists() {
-            //if Settings.shared.calibrationIsSet() {
-                if Settings.shared.isDeveloperMode() {
-                    let hands = [0,1]
-                    //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
-                    
-//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-//                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
-
-//                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
-//                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
-                    
-                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                        scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
-
-                    let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
-                    //testNotes.debug("Start")
-                    //MIDIManager.shared.setTestMidiNotesNotes(testNotes)
-
-                    selectedTab = 0
-                }
-                else {
-                    selectedTab = 20
-                }
-//            }
-//            else{
-//                selectedTab = 5
-//            }
+        //if Settings.shared.calibrationIsSet() {
+        if Settings.shared.isDeveloperMode() {
+            let hands = [0,1]
+            //scaleCustomisation:ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false),
+            
+            //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+            //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
+            
+            //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
+            //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+            
+            ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                                                     scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0])
+            
+            let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
+            //testNotes.debug("Start")
+            //MIDIManager.shared.setTestMidiNotesNotes(testNotes)
+            selectedTab = 0
         }
         else {
-            selectedTab = 10
+            if MusicBoardAndGrade.shared == nil {
+                selectedTab = 10
+            }
+            else {
+                selectedTab = 20
+            }
         }
     }
 }
@@ -247,6 +242,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+///Used for an indepenet view to back out a navigations tack
+//class NavigationState2: ObservableObject {
+//    @Published var navigationChildIsActive: Bool = false
+//    func setNavigationChildIsActive(_ state:Bool) {
+//        print("====================== NavigationState2, navigationChildIsActive", state)
+//        self.navigationChildIsActive = state
+//    }
+//}
+
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -254,27 +258,27 @@ struct ScalesTrainerApp: App {
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
-
+    
     init() {
-        #if os(iOS)
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
-                try AVAudioSession.sharedInstance().setActive(true)
-            } catch let err {
-                Logger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
-            }
-        #endif
+#if os(iOS)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let err {
+            Logger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
+        }
+#endif
     }
     
-    static func runningInXcode1() -> Bool {
-        let running = ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
-        return running
-        //return false
-    }
+    //    static func runningInXcode1() -> Bool {
+    //        let running = ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
+    //        return running
+    //        //return false
+    //    }
     
-//    func getDataLoadedStatus() -> RequestStatus {
-//        return .waiting //self.exampleData.dataStatus
-//    }
+    //    func getDataLoadedStatus() -> RequestStatus {
+    //        return .waiting //self.exampleData.dataStatus
+    //    }
     
     var body: some Scene {
         WindowGroup {
@@ -285,7 +289,6 @@ struct ScalesTrainerApp: App {
                 }
                 else {
                     if launchScreenState.state != .finished {
-                        //LaunchScreenView(launchTimeSecs: 4.5)
                         LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
                     }
                 }
@@ -296,7 +299,6 @@ struct ScalesTrainerApp: App {
                 }
             }
         }
-
     }
     
     func MainContentView() -> some View {
@@ -320,7 +322,7 @@ struct ScalesTrainerApp: App {
                 }
                 .tag(10)
                 .environmentObject(tabSelectionManager)
-
+            
             HomeView()
                 .tabItem {
                     Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
@@ -346,7 +348,7 @@ struct ScalesTrainerApp: App {
                 }
                 .tag(50)
                 .environmentObject(tabSelectionManager)
-
+            
             if Settings.shared.isDeveloperMode() {
                 LogView()
                     .tabItem {
@@ -362,29 +364,29 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(60)
                     .environmentObject(tabSelectionManager)
-
+                
                 MIDIView()
                     .tabItem {
                         Label(NSLocalizedString("MIDITest", comment: "Menu"), systemImage: "brakesignal.dashed")
                     }
                     .tag(62)
                     .environmentObject(tabSelectionManager)
-            
+                
                 CalibrationView()
                     .tabItem {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
                     .tag(70)
                     .environmentObject(tabSelectionManager)
-
+                
                 ScalesLibraryView()
                     .tabItem {
                         Label("ScaleLibrary", systemImage: "book.pages")
                     }
                     .tag(80)
                     .environmentObject(tabSelectionManager)
-
-
+                
+                
                 DeveloperView()
                     .tabItem {
                         Label("Dev", systemImage: "book.pages")
@@ -395,3 +397,4 @@ struct ScalesTrainerApp: App {
         }
     }
 }
+

@@ -25,9 +25,6 @@
     " %lld" : {
 
     },
-    " %lld.." : {
-
-    },
     " =" : {
 
     },
@@ -57,6 +54,9 @@
 
     },
     "." : {
+
+    },
+    ".." : {
 
     },
     "......" : {
@@ -294,6 +294,12 @@
     "Hand:" : {
 
     },
+    "Hands" : {
+
+    },
+    "Hide" : {
+
+    },
     "Hide Fingers" : {
       "comment" : "LegendView",
       "localizations" : {
@@ -395,6 +401,9 @@
         }
       }
     },
+    "Left" : {
+
+    },
     "Left Hand" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -439,6 +448,9 @@
     "No" : {
 
     },
+    "No music grade" : {
+
+    },
     "Not in Scale" : {
 
     },
@@ -459,6 +471,7 @@
     },
     "Play Along" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -478,6 +491,9 @@
 
     },
     "Please select your music grade" : {
+
+    },
+    "Practice Chart" : {
 
     },
     "Purchase" : {
@@ -522,6 +538,9 @@
     "Restore Subscriptions" : {
 
     },
+    "Right" : {
+
+    },
     "Right Hand" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -534,6 +553,9 @@
       }
     },
     "Save Configuration" : {
+
+    },
+    "SC" : {
 
     },
     "Scale" : {
@@ -585,16 +607,10 @@
     "Select" : {
 
     },
-    "Select Music Board" : {
-
-    },
     "Select Value" : {
 
     },
     "Select Your Music Board" : {
-
-    },
-    "Select Your Piano Grade" : {
 
     },
     "Send us a message about an issue or a new feature" : {
@@ -630,6 +646,9 @@
 
     },
     "Sorry, no subscription is available yet" : {
+
+    },
+    "Spin The Scale Wheel" : {
 
     },
     "Start Analysis" : {

@@ -7,11 +7,11 @@ import AudioKit
 
 public class SettingsPublished : ObservableObject {
     static var shared = SettingsPublished()
-    @Published var boardAndGrade:BoardAndGrade?
+    @Published var boardAndGrade:MusicBoardAndGrade?
     @Published var grade:Int?
     @Published var firstName = ""
     
-    func setBoardAndGrade(boardAndGrade:BoardAndGrade) {
+    func setBoardAndGrade(boardAndGrade:MusicBoardAndGrade) {
         DispatchQueue.main.async {
             self.boardAndGrade = boardAndGrade
             self.grade = boardAndGrade.grade
@@ -29,8 +29,8 @@ public class Settings : Codable  {
     static var shared = Settings()
     var firstName = ""
     var emailAddress = ""
-    var boardName:String? = "Trinity"
-    var boardGrade:Int?
+    var musicBoardName:String? = nil
+    var musicBoardGrade:Int?
     var defaultOctaves = 2
     var scaleLeadInBeatCountIndex:Int = 2
     var amplitudeFilter:Double
@@ -47,23 +47,23 @@ public class Settings : Codable  {
     var requiredConsecutiveCount = 2
     var badgeStyle = 0
     
-    private var wasLoaded = false
-    
     init() {
 #if targetEnvironment(simulator)
         self.amplitudeFilter = 0.04
 #else
         self.amplitudeFilter = 0.04
 #endif
-        load()
+        if loadFromFile() {
+            if let name = self.musicBoardName {
+                if let grade = self.musicBoardGrade {
+                    MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: name), grade: grade)
+                }
+            }
+        }
     }
     
     public func isDeveloperMode() -> Bool {
         return self.firstName.range(of: "dev", options: .caseInsensitive) != nil
-    }
-    
-    public func settingsExists() -> Bool {
-       return wasLoaded
     }
     
     public func getLeadInBeats() -> Int {
@@ -94,22 +94,22 @@ public class Settings : Codable  {
         return nil
     }
     
-    func getBoardAndGrade() -> BoardAndGrade? {
-        if let boardName = self.boardName {
-            let board = MusicBoard(name: boardName)
-            if let grade = self.boardGrade {
-                let boardAndGrade = BoardAndGrade(board: board, grade: grade)
-                return boardAndGrade
-            }
-        }
-        return nil
-    }
+//    func getBoardAndGrade() -> MusicBoardAndGrade? {
+//        if let boardName = self.musicBoardName {
+//            let board = MusicBoard(name: boardName)
+//            if let grade = self.musicBoardGrade {
+//                let boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
+//                return boardAndGrade
+//            }
+//        }
+//        return nil
+//    }
     
     func toString() -> String {
         var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
         str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
         str += " FirstName:\(self.firstName)"
-        str += " Board/Grade:\(self.boardName)/\(self.boardGrade)"
+        str += " Board/Grade:\(self.musicBoardName)/\(self.musicBoardGrade)"
         str += " Octaves:\(self.defaultOctaves)"
         str += " KeyboardColor:\(self.keyboardColor)"
         str += " BackingMidi:\(self.backingSamplerPreset)"
@@ -126,9 +126,8 @@ public class Settings : Codable  {
         guard let str = toJSON() else {
             return
         }
-        //Logger.shared.log(self, "Setting saved, \(toString())")
         UserDefaults.standard.set(str, forKey: "settings")
-        self.wasLoaded = true
+        Logger.shared.log(self, "Setting saved ➡️, \(toString())")
     }
     
     func getName() -> String {
@@ -137,7 +136,7 @@ public class Settings : Codable  {
         return name1
     }
     
-    func load() {
+    func loadFromFile() -> Bool {
         if let jsonData = UserDefaults.standard.string(forKey: "settings") {
             if let data = jsonData.data(using: .utf8) {
                 do {
@@ -156,13 +155,12 @@ public class Settings : Codable  {
                     self.backgroundColor = loaded.backgroundColor
                     self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
                     self.useMidiConnnections = loaded.useMidiConnnections
-                    self.boardName = loaded.boardName
-                    self.boardGrade = loaded.boardGrade
+                    self.musicBoardName = loaded.musicBoardName
+                    self.musicBoardGrade = loaded.musicBoardGrade
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
-                    Logger.shared.log(self, "Settings loaded, \(toString())")
-                    self.wasLoaded = true
+                    Logger.shared.log(self, "Settings loaded ⬅️, \(toString())")
+                    return true
                 } catch {
-                    self.wasLoaded = false
                     Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
                 }
             }
@@ -170,6 +168,7 @@ public class Settings : Codable  {
         else {
             Logger.shared.log(self, "No settings file")
         }
+        return false
     }
     
     func setKeyboardColor(_ color: Color) {

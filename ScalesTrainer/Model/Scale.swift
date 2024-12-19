@@ -75,13 +75,13 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
         case .arpeggioDiminished:
             return "Diminished Arpeggio"
         case .arpeggioDominantSeventh:
-            return "Dominant Seventh Arpeggio"
+            return "Dominant 7th Arpeggio"
         case .arpeggioMajorSeventh:
-            return "Major Seventh Arpeggio"
+            return "Major 7th Arpeggio"
         case .arpeggioMinorSeventh:
             return "Minor Seventh Arpeggio"
         case .arpeggioDiminishedSeventh:
-            return "Diminished Seventh Arpeggio"
+            return "Diminished 7th Arpeggio"
         case .arpeggioHalfDiminished:
             return "Half Diminished Arpeggio"
         case .chromatic:
@@ -1286,7 +1286,7 @@ public class Scale : Codable {
                 name += ", " + handName
             }
             if self.hands.count == 2 {
-                name += handFull ? ", Both Hands" : " RH,LF"
+                name += handFull ? ", Both Hands" : " RH,LH"
             }
         }
         if let octaves = octaves {
@@ -1311,39 +1311,6 @@ public class Scale : Codable {
         return name
     }
 
-//    static func getTypeName(type:ScaleType) -> String {
-//        var name = ""
-//        switch type {
-//        case ScaleType.major:
-//            name = "Major"
-//        case ScaleType.naturalMinor:
-//            name = "Minor"
-//        case ScaleType.harmonicMinor:
-//            name = "Harmonic Minor"
-//        case .melodicMinor:
-//            name = "Melodic Minor"
-//        case .arpeggioMajor:
-//            name = "Major Arpeggio"
-//        case .arpeggioMinor:
-//            name = "Minor Arpeggio"
-//        case .arpeggioDiminished:
-//            name = "Diminished Arpeggio"
-//        case .arpeggioMajorSeventh:
-//            name = "Major Seventh Arpeggio"
-//        case .arpeggioDominantSeventh:
-//            name = "Dominant Seventh Arpeggio"
-//        case .arpeggioDiminishedSeventh:
-//            name = "Diminished Seventh Arpeggio"
-//        case .arpeggioMinorSeventh:
-//            name = "Minor Seventh Arpeggio"
-//        case .arpeggioHalfDiminished:
-//            name = "Half Diminished Arpeggio"
-////        case .chromatic:
-////            name = "Chromatic"
-//        }
-//        return name
-//    }
-    
     static func getScaleType(name:String) -> ScaleType {
         switch name {
         case "Natural Minor":
@@ -1361,15 +1328,15 @@ public class Scale : Codable {
         case "Minor Arpeggio":
             return ScaleType.arpeggioMinor
             
-        case "Dominant Seventh Arpeggio":
+        case "Dominant 7th Arpeggio":
             return ScaleType.arpeggioDominantSeventh
-        case "Major Seventh Arpeggio":
+        case "Major 7th Arpeggio":
             return ScaleType.arpeggioMajorSeventh
-        case "Minor Seventh Arpeggio":
+        case "Minor 7th Arpeggio":
             return ScaleType.arpeggioMinorSeventh
         case "Diminished Arpeggio":
             return ScaleType.arpeggioDiminished
-        case "Diminished Seventh Arpeggio":
+        case "Diminished 7th Arpeggio":
             return ScaleType.arpeggioDiminishedSeventh
         case "Half Diminished Arpeggio":
             return ScaleType.arpeggioHalfDiminished

@@ -20,14 +20,14 @@ struct UserDetailsView: View {
 
     let width = UIScreen.main.bounds.width * 0.7
     
-    func setSelectedGrade() -> Int? {
-        if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-            return boardAndGrade.grade
-        }
-        else {
-            return nil
-        }
-    }
+//    func setSelectedGrade() -> Int? {
+//        if let boardAndGrade = Settings.shared.getBoardAndGrade() {
+//            return boardAndGrade.grade
+//        }
+//        else {
+//            return nil
+//        }
+//    }
     
     var body: some View {
         NavigationStack {
@@ -64,19 +64,20 @@ struct UserDetailsView: View {
                     })
                     
                     Spacer()
-                    if MusicBoard.getSupportedBoards().count == 1 {
-                        Button(action: {
-                            navigateToSelectGrade = true
-                        }) {
-                            HStack {
-                                Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
-                            }
-                        }
-                        .navigationDestination(isPresented: $navigateToSelectGrade) {
-                            SelectBoardGradesView(inBoard: MusicBoard(name: MusicBoard.getSupportedBoards()[0].name), inGrade: publishedSettings.grade)
-                        }
-                    }
-                    else {
+//                    if MusicBoard.getSupportedBoards().count == 1 {
+//                        Button(action: {
+//                            navigateToSelectGrade = true
+//                        }) {
+//                            HStack {
+//                                Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                            }
+//                        }
+//                        .navigationDestination(isPresented: $navigateToSelectGrade) {
+//                            SelectBoardGradesView(inBoard: MusicBoard(name: MusicBoard.getSupportedBoards()[0].name), inGrade: publishedSettings.grade)
+//                                .environmentObject(navigationState2)
+//                        }
+//                    }
+//                    else {
                         Button(action: {
                             navigateToSelectBoard = true
                         }) {
@@ -85,9 +86,9 @@ struct UserDetailsView: View {
                             }
                         }
                         .navigationDestination(isPresented: $navigateToSelectBoard) {
-                            SelectMusicBoardView(inBoard: Settings.shared.getBoardAndGrade()?.board)
+                            SelectMusicBoardView(inBoard: MusicBoardAndGrade.shared?.board)
                         }
-                    }
+//                    }
 
 //                    Spacer()
 //                    Button(action: {
@@ -110,7 +111,8 @@ struct UserDetailsView: View {
 
                 }
                 .onDisappear() {
-                    settings.save()
+                    ///Called on downward navigation from this view as well as view exit
+                    Settings.shared.save() //User name (above) is in settings
                 }
             }
         }
