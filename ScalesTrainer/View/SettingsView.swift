@@ -70,124 +70,129 @@ struct SettingsView: View {
     }
     
     func DetailedCustomSettingsView() -> some View {
-        VStack {
+        NavigationView {
             VStack {
-                HStack {
-                    //Spacer()
-                    Text("Choose your background colour ").font(.title2).padding(0)
-                    ///Force a repaint on color change with published self.backgroundChange
-                    ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
-                        .padding()
-                        .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                            Settings.shared.setBackgroundColor(newColor)
-                            self.backgroundChange += 1
+                VStack {
+                    HStack {
+                        //Spacer()
+                        Text("Choose your background colour ").font(.title2).padding(0)
+                        ///Force a repaint on color change with published self.backgroundChange
+                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
+                            .padding()
+                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
+                                Settings.shared.setBackgroundColor(newColor)
+                                self.backgroundChange += 1
+                            }
+                            .labelsHidden()
+                        //Spacer()
+                    }
+                    HStack {
+                        //Spacer()
+                        VStack {
+                            SetKeyboardColourView(parentColor: $keyboardColor)
                         }
-                        .labelsHidden()
-                    //Spacer()
+                        //.padding()
+                        .onChange(of: keyboardColor, {
+                            Settings.shared.setKeyboardColor(keyboardColor)
+                        })
+                        .hilighted(backgroundColor: .gray)
+                        .frame(width: UIScreen.main.bounds.size.width * 0.9,
+                               //height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                               height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
+                        
+                        //Spacer()
+                    }
                 }
+                .padding(.vertical, 0)
+                //.padding(.vertical, 0)
+                //.border(Color.red)
+                
+                ///Lead in count
+                Spacer()
                 HStack {
-                    //Spacer()
-                    VStack {
-                        SetKeyboardColourView(parentColor: $keyboardColor)
+                    Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
+                    Picker("Select Value", selection: $leadInBarCount) {
+                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+                            Text("\(scalesModel.scaleLeadInCounts[index])")
+                        }
                     }
-                    //.padding()
-                    .onChange(of: keyboardColor, {
-                        Settings.shared.setKeyboardColor(keyboardColor)
+                    //.disabled(!self.metronomeOn)
+                    .pickerStyle(.menu)
+                    .onChange(of: leadInBarCount, {
+                        settings.scaleLeadInBeatCountIndex = leadInBarCount
                     })
-                    .hilighted(backgroundColor: .gray)
-                    .frame(width: UIScreen.main.bounds.size.width * 0.9,
-                           //height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
-                           height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
-
-                    //Spacer()
                 }
-            }
-            .padding(.vertical, 0)
-            //.padding(.vertical, 0)
-            //.border(Color.red)
-        
-            ///Lead in count
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
-                Picker("Select Value", selection: $leadInBarCount) {
-                    ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                        Text("\(scalesModel.scaleLeadInCounts[index])")
+                
+                ///Backing sampler
+                Spacer()
+                HStack {
+                    Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
+                    Picker("Select Value", selection: $backingPresetNumber) {
+                        ForEach(0..<8) { number in
+                            Text("\(backingSoundName(number))")
+                        }
                     }
+                    .pickerStyle(.menu)
+                    .onChange(of: backingPresetNumber, {
+                        settings.backingSamplerPreset = backingPresetNumber
+                        //AudioManager.shared.resetAudioKit()
+                    })
                 }
-                //.disabled(!self.metronomeOn)
-                .pickerStyle(.menu)
-                .onChange(of: leadInBarCount, {
-                    settings.scaleLeadInBeatCountIndex = leadInBarCount
-                })
-            }
-            
-            ///Backing sampler
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
-                Picker("Select Value", selection: $backingPresetNumber) {
-                    ForEach(0..<8) { number in
-                        Text("\(backingSoundName(number))")
+                
+                ///Badges
+                Spacer()
+                HStack {
+                    Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
+                    Picker("Select Value", selection: $badgeStyleNumber) {
+                        ForEach(0..<5) { number in
+                            Text("\(badgeStyle(number))")
+                        }
                     }
+                    .pickerStyle(.menu)
+                    .onChange(of: badgeStyleNumber, {
+                        settings.badgeStyle = badgeStyleNumber
+                    })
                 }
-                .pickerStyle(.menu)
-                .onChange(of: backingPresetNumber, {
-                    settings.backingSamplerPreset = backingPresetNumber
-                    //AudioManager.shared.resetAudioKit()
-                })
-            }
-            
-            ///Badges
-            Spacer()
-            HStack {
-                Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
-                Picker("Select Value", selection: $badgeStyleNumber) {
-                    ForEach(0..<5) { number in
-                        Text("\(badgeStyle(number))")
+                
+                Spacer()
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $practiceChartGamificationOn) {
+                        Text("Gamification").font(.title2).padding(0)
                     }
+                    .onChange(of: practiceChartGamificationOn, {
+                        settings.practiceChartGamificationOn = practiceChartGamificationOn
+                    })
+                    Spacer()
                 }
-                .pickerStyle(.menu)
-                .onChange(of: badgeStyleNumber, {
-                    settings.badgeStyle = badgeStyleNumber
-                })
-            }
-            
-            Spacer()
-            HStack {
+                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                
                 Spacer()
-                Toggle(isOn: $practiceChartGamificationOn) {
-                    Text("Gamification").font(.title2).padding(0)
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $useMidiConnnections) {
+                        Text("Use MIDI Connections").font(.title2).padding(0)
+                    }
+                    .onChange(of: useMidiConnnections, {
+                        settings.useMidiConnnections = useMidiConnnections
+                    })
+                    Spacer()
                 }
-                .onChange(of: practiceChartGamificationOn, {
-                    settings.practiceChartGamificationOn = practiceChartGamificationOn
-                })
-                Spacer()
-            }
-            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-        
-            Spacer()
-            HStack {
-                Spacer()
-                Toggle(isOn: $useMidiConnnections) {
-                    Text("Use MIDI Connections").font(.title2).padding(0)
+                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                
+                if useMidiConnnections {
+                    VStack(spacing: 20) {
+                        NavigationLink("MIDI Connections", destination: MIDIView())
+                        //Text("Hello, SwiftUI!")
+                    }
+                    .navigationTitle("Settings") // Title for the navigation bar
                 }
-                .onChange(of: useMidiConnnections, {
-                    settings.useMidiConnnections = useMidiConnnections
-                })
+                
                 Spacer()
             }
-            .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-            ///Developer
-            //if Settings.shared.isDeveloperMode() {
-            //}
-            
-            if self.useMidiConnnections {
-                let midis = MIDIManager.shared.getConnectedDevices()
-                Text("Connected to MIDI devices: \(midis)")
-            }
-            Spacer()
+            .commonFrameStyle()
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     func backingSoundName(_ n:Int) -> String {

@@ -60,6 +60,9 @@ public class Settings : Codable  {
                 }
             }
         }
+        if self.useMidiConnnections {
+            MIDIManager.shared.setupMIDI()
+        }
     }
     
     public func isDeveloperMode() -> Bool {

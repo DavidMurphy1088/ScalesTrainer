@@ -224,11 +224,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             statusMsg = "unknown \(status)"
         }
         Logger.shared.log(self, "Microphone access:\(statusMsg))")
-        if Settings.shared.useMidiConnnections {
-            let midiManager = MIDIManager.shared
-            midiManager.createMIDIClientAndConnectSources()
-            //midiManager.getConnectedDevices()
-        }
+
         return true
     }
     
@@ -304,14 +300,16 @@ struct ScalesTrainerApp: App {
     func MainContentView() -> some View {
         TabView(selection: $tabSelectionManager.selectedTab) {
             if Settings.shared.isDeveloperMode() {
-                //MIDIView()
+
+                MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(practiceChartCell: nil)
+                //ScalesView(practiceChartCell: nil)
                 //TestView()
                 //FFTContentView()
                     .tabItem {
-                        Label("Activities", systemImage: "house")
+                        //Label("Activities", systemImage: "house")
+                        Label("MIDI", systemImage: "house")
                     }
                     .tag(1)
             }
@@ -365,12 +363,6 @@ struct ScalesTrainerApp: App {
                     .tag(60)
                     .environmentObject(tabSelectionManager)
                 
-                MIDIView()
-                    .tabItem {
-                        Label(NSLocalizedString("MIDITest", comment: "Menu"), systemImage: "brakesignal.dashed")
-                    }
-                    .tag(62)
-                    .environmentObject(tabSelectionManager)
                 
                 CalibrationView()
                     .tabItem {

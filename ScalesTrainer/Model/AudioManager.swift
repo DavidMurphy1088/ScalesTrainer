@@ -50,7 +50,6 @@ class AudioManager {
             if self.audioEngine != nil {
                 self.audioEngine?.stop()
                 self.audioEngine?.output = nil
-                //return
             }
             self.audioEngine = AudioEngine()
             guard let engine = self.audioEngine else {

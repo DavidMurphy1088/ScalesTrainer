@@ -161,6 +161,9 @@
     "Base %lld" : {
 
     },
+    "Bluetooth MIDI Devices" : {
+
+    },
     "C" : {
 
     },
@@ -179,7 +182,7 @@
     "Choose your keyboard colour " : {
 
     },
-    "Connected to MIDI devices: %@" : {
+    "Connected MIDI Sources" : {
 
     },
     "Correct Notes:%lld Errors:%lld" : {
@@ -202,6 +205,9 @@
 
     },
     "Dev" : {
+
+    },
+    "Disconnect All" : {
 
     },
     "Email" : {
@@ -427,8 +433,11 @@
     "MessageUs" : {
       "comment" : "Menu"
     },
-    "MIDITest" : {
-      "comment" : "Menu"
+    "MIDI" : {
+
+    },
+    "MIDI Connections" : {
+
     },
     "min. " : {
 
@@ -500,9 +509,6 @@
 
     },
     "Purchase in progress. Please standby..." : {
-
-    },
-    "Received MIDI Messages" : {
 
     },
     "Record the Scale" : {
@@ -598,6 +604,9 @@
     "Scales Library" : {
 
     },
+    "Scan MIDI Devices" : {
+
+    },
     "Screen A" : {
 
     },
@@ -652,9 +661,6 @@
 
     },
     "Start Analysis" : {
-
-    },
-    "Start MIDI" : {
 
     },
     "Start Recording" : {

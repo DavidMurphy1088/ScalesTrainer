@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app uses Bluetooth to connect to MIDI devices.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -9,6 +11,6 @@
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-		<string>This app uses Bluetooth to connect to MIDI devices.</string>
+	<string>This app uses Bluetooth to connect to MIDI devices.</string>
 </dict>
 </plist>
