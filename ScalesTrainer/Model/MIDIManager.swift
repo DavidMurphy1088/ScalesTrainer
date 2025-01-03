@@ -359,6 +359,7 @@ private let midiSetupNotifyProc: MIDINotifyProc = { (message, refCon) in
         Logger.shared.log(MIDIManager.shared, "MIDI Object Added")
         // Cast the message to MIDIObjectAddRemoveNotification to access 'child'
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
+        //what is this 👹- it causes connection fails...
         midiManager.handleDeviceAdded(notification.child)
         
     case .msgObjectRemoved:

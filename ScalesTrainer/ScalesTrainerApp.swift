@@ -301,15 +301,15 @@ struct ScalesTrainerApp: App {
         TabView(selection: $tabSelectionManager.selectedTab) {
             if Settings.shared.isDeveloperMode() {
 
-                MIDIView()
+                //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                //ScalesView(practiceChartCell: nil)
+                ScalesView(practiceChartCell: nil)
                 //TestView()
                 //FFTContentView()
                     .tabItem {
-                        //Label("Activities", systemImage: "house")
-                        Label("MIDI", systemImage: "house")
+                        Label("Activities", systemImage: "house")
+                        //Label("MIDI", systemImage: "house")
                     }
                     .tag(1)
             }
@@ -348,6 +348,14 @@ struct ScalesTrainerApp: App {
                 .environmentObject(tabSelectionManager)
             
             if Settings.shared.isDeveloperMode() {
+                MIDIView()
+                    .tabItem {
+                        Label("MIDI", systemImage: "house")
+                    }
+                    .tag(89)
+                    .accessibilityIdentifier("app_log")
+                    .environmentObject(tabSelectionManager)
+
                 LogView()
                     .tabItem {
                         Label("Log", systemImage: "book.pages")

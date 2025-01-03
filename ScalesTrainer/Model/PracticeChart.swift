@@ -155,29 +155,29 @@ class PracticeChart: Codable {
         let calendar = Calendar.current
         let todaysDayNumber = calendar.component(.weekday, from: currentDate) - 1
         
-        while true {
-            let dayDiff = todaysDayNumber - self.firstColumnDayOfWeekNumber
-            if [0,1,2].contains(dayDiff) {
-                ///Hilight the column for today
-                self.todaysColumn = dayDiff
-                break
-            }
+        //while true {
+        let dayDiff = todaysDayNumber - self.firstColumnDayOfWeekNumber
+        if [0,1,2].contains(dayDiff) {
+            ///Hilight the column for today
+            self.todaysColumn = dayDiff
+        }
+        else {
             if [-6,-5].contains(dayDiff) {
                 ///Hilight the column for today
                 self.todaysColumn = 7 + dayDiff
-                break
             }
-
-            ///Reset the chart's first column day
-            self.firstColumnDayOfWeekNumber += 3
-//            if self.firstColumnDayOfWeekNumber > 6 {
-//                self.firstColumnDayOfWeekNumber -= 7
-//                for row in self.rows {
-//                    for cell in row {
-//                        cell.badgeCount = 0
+            else {
+                ///Reset the chart's first column day
+                self.firstColumnDayOfWeekNumber += 3
+                if self.firstColumnDayOfWeekNumber > 6 {
+                    self.firstColumnDayOfWeekNumber -= 7
+//                    for row in self.rows {
+//                        for cell in row {
+//                            cell.badgeCount = 0
+//                        }
 //                    }
-//                }
-//            }
+                }
+            }
         }
     }
     

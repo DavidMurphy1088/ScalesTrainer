@@ -115,6 +115,7 @@
 		79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* BadgeView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
+		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
 		79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */; };
 		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
 		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
@@ -251,6 +252,7 @@
 		79E220ED2C856150004F64D8 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
+		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
 		79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
 		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
@@ -559,6 +561,7 @@
 				793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */,
 				79F6CD742D14020200FF2681 /* MidiNotes */,
 				79EAB8762C8737B400255FC6 /* Notes_General */,
+				79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -712,6 +715,7 @@
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
+				79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */,
 				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,

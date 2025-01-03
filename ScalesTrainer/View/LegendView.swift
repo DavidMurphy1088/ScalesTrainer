@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HideandShowView: View {
+struct HideAndShowView: View {
     @ObservedObject var logger = Logger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     var body: some View {

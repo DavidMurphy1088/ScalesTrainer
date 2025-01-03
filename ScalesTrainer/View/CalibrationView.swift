@@ -212,7 +212,7 @@ public struct CalibrationView: View {
             self.requiredConsecutiveCount = Settings.shared.requiredConsecutiveCount
         }
         .onDisappear() {
-            self.audioManager.stopRecording()
+            self.audioManager.stopListening()
         }
         .sheet(isPresented: $showingTapData) {
             TapDataView(keyboardModel: PianoKeyboardModel.sharedRH)

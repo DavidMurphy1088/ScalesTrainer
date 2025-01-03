@@ -51,7 +51,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         self.backingChords = scale.getBackingChords()
     }
     
-    func playBacking() {
+    private func playBacking() {
         guard let sampler = audioManager.getSamplerForBacking() else {
             return
         }

@@ -58,6 +58,7 @@ enum SpinState {
 }
 
 public class ScalesModel : ObservableObject {
+//public actor ScalesModel : ObservableObject {
     static public var shared = ScalesModel() //musicBoardGrade:
                                             //MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
     private(set) var scale:Scale
@@ -75,6 +76,8 @@ public class ScalesModel : ObservableObject {
     @ObservedObject private var exerciseState = ExerciseState.shared
     @ObservedObject private var badgeBank = BadgeBank.shared
 
+    private let setProcessLock = NSLock()
+    
     var scoreHidden = false
     var metronomeTicker:MetronomeTicker? = nil
     
@@ -232,17 +235,6 @@ public class ScalesModel : ObservableObject {
 
     @Published private(set) var recordedAudioFile:AVAudioFile?
     func setRecordedAudioFile(_ file: AVAudioFile?) {
-//        if let audioFile = self.recordedAudioFile {
-//            let fileURL = audioFile.url
-//            let fileManager = FileManager.default
-//            do {
-//                if fileManager.fileExists(atPath: fileURL.path) {
-//                    try fileManager.removeItem(at: fileURL)
-//                }
-//            } catch {
-//                Logger.shared.reportError(self, "Cant delete audio file file: \(error)")
-//            }
-//        }
         DispatchQueue.main.async {
             self.recordedAudioFile = file
         }
@@ -314,9 +306,13 @@ public class ScalesModel : ObservableObject {
         if setProcess == self.runningProcess {
             return
         }
+        setProcessLock.lock()
+        defer {
+            setProcessLock.unlock()
+        }
         Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
-            self.audioManager.stopRecording()
+            self.audioManager.stopListening()
             if self.runningProcess == .syncRecording {
                 DispatchQueue.main.async {
                     self.synchedIsPlaying = false
@@ -337,7 +333,11 @@ public class ScalesModel : ObservableObject {
             setUserMessage(heading: nil, msg: nil)
             self.setSelectedScaleSegment(0)
         }
+
+        Metronome.shared.setLeadingIn(way: false)
         Metronome.shared.stop()
+        Metronome.shared.setTicking(way: false)
+
         self.runningProcess = setProcess
         DispatchQueue.main.async {
             self.runningProcessPublished = self.runningProcess
@@ -391,7 +391,7 @@ public class ScalesModel : ObservableObject {
                 let followProcess = FollowScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
                 followProcess.start(soundHandler: soundHandler)
                 if !Settings.shared.useMidiConnnections {
-                    self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
+                    self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
                 }
             }
         }
@@ -415,24 +415,26 @@ public class ScalesModel : ObservableObject {
 //                metronome.start()
 //            }
             if !Settings.shared.useMidiConnnections {
-                self.audioManager.startRecordingMicWithTapHandlers(soundEventHandlers: self.soundEventHandlers, recordAudio: false)
+                self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
             }
         }
         
         if [.playingAlongWithScale].contains(setProcess) {
+            self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlongWithScale))
             metronome.setTicking(way: true)
             metronome.start()
         }
         
         if [.backingOn].contains(setProcess) {
+            self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
             metronome.setTicking(way: true)
             metronome.start()
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
-            self.audioManager.startRecordingMicToRecord()
+            self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
             metronome.setTicking(way: true)
             metronome.start()
             //metronome.addProcessesToNotify(process: RecordScaleProcess())
@@ -479,10 +481,6 @@ public class ScalesModel : ObservableObject {
             }
         }
     }
-    
-//    func isMetronomeTicking() -> Bool {
-//        return self.metronomeTicker != nil
-//    }
     
     ///Allow user to follow notes hilighted on the keyboard.
     ///Wait till user hits correct key before moving to and highlighting the next note

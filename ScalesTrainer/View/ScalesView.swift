@@ -17,7 +17,6 @@ struct MetronomeView: View {
     var body: some View {
         let beat = (metronome.timerTickerCountPublished % 4) + 1
         Button(action: {
-            //scalesModel.setMetronomeTicking(way: !scalesModel.isMetronomeTicking())
             metronome.setTicking(way: !metronome.isMetronomeTicking())
             if metronome.isMetronomeTicking() {
                 metronome.start()
@@ -82,7 +81,8 @@ struct ScalesView: View {
     }
     
     func SelectScaleParametersView() -> some View {
-        HStack {            
+        HStack {       
+            MetronomeView()
             HStack(spacing: 0) {
                 let compoundTime = scalesModel.scale.timeSignature.top % 3 == 0
                 Image(compoundTime ? "crotchetDotted" : "crotchet")
@@ -188,7 +188,7 @@ struct ScalesView: View {
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    MetronomeView()
+                    //MetronomeView()
                     //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
                     ///1.0.11 recording now has no lead in
                     let text = "Stop Recording The Scale"
@@ -534,19 +534,16 @@ struct ScalesView: View {
             VStack(spacing: 0) {
                 ScaleTitleView(scale: scalesModel.scale)
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-                    //.padding(.vertical)
                     .padding(.horizontal, 0)
                 HStack {
                     Spacer()
-                    if scalesModel.runningProcessPublished == .none {
+                    //if scalesModel.runningProcessPublished == .none {
                         SelectScaleParametersView()
                         .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-                        //.padding()
-                    }
+                    //}
                     if UIDevice.current.userInterfaceIdiom != .phone {
-                        HideandShowView()
+                        HideAndShowView()
                         .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-                        //.padding()
                     }
                     Spacer()
                 }
