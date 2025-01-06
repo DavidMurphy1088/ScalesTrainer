@@ -40,9 +40,8 @@ struct TitleView: View {
             Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             if showGrade {
                 HStack {
-                    if let board = settingsPublished.boardAndGrade {
-                        Text("\(board.getFullName())").font(.title2)
-                        //Text("\(board.getGradeName())").font(.title2)
+                    if let boardAndGrade = settingsPublished.boardAndGrade {
+                        Text("\(boardAndGrade.getFullName())").font(.title2)
                     }
                 }
             }

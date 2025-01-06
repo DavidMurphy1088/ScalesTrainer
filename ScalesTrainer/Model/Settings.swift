@@ -161,6 +161,9 @@ public class Settings : Codable  {
                     self.musicBoardName = loaded.musicBoardName
                     self.musicBoardGrade = loaded.musicBoardGrade
                     SettingsPublished.shared.setFirstName(firstName: self.firstName)
+                    if let board = self.musicBoardName, let grade = self.musicBoardGrade {
+                        SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade(board: MusicBoard(name: board), grade: grade))
+                    }
                     Logger.shared.log(self, "Settings loaded ⬅️, \(toString())")
                     return true
                 } catch {

@@ -89,8 +89,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
 
         let samplerForKeyboard = audioManager.getSamplerForKeyboard()
-        for hand in scale.hands { 
-
+        
+        for hand in scale.hands {
             let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
@@ -99,12 +99,17 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
 
                 if self.waitBeatsForScale == 0 {
                     let key=keyboard.pianoKeyModel[keyIndex]
+                    ///Hilight the keyboard key and score note for the note.
                     key.setKeyPlaying()
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
                     if process == .playingAlongWithScale {
-                        //print("============= SAMPLER PLAY ", samplerForKeyboard, key.midi, velocity)
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                        let wait = note.value >= 1 ? 0.7 : 0.3
+                        DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                            samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
+                            //print("Executed after 0.5 seconds on the main queue.")
+                        }
                     }
                 }
                 

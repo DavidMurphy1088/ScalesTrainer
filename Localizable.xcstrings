@@ -41,14 +41,18 @@
         }
       }
     },
-    " legato" : {
-
-    },
     " Spin The Wheel " : {
 
     },
-    ", mf," : {
-
+    ", %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : ", %1$@, %2$@"
+          }
+        }
+      }
     },
     "?" : {
 
@@ -64,6 +68,16 @@
     },
     "%@" : {
 
+    },
+    "%@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
     },
     "%@, min. " : {
 
@@ -651,6 +665,9 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -746,7 +763,7 @@
         }
       }
     },
-    "This subscription provides you with access to all Sales Academy content." : {
+    "This subscription provides you with access to all Scales Academy content." : {
 
     },
     "Thumb Under" : {

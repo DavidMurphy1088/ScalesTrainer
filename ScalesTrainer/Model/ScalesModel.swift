@@ -58,13 +58,13 @@ enum SpinState {
 }
 
 public class ScalesModel : ObservableObject {
-//public actor ScalesModel : ObservableObject {
-    static public var shared = ScalesModel() //musicBoardGrade:
-                                            //MusicBoardGrade(board: MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "")))
+    static public var shared = ScalesModel() 
+
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
     @Published var isPracticing = false
+    
     @Published private var score1:Score? = nil
     func getScore() -> Score? {
         return self.score1
@@ -263,7 +263,7 @@ public class ScalesModel : ObservableObject {
     //init(musicBoardGrade:MusicBoardGrade) {
     init() {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
-                          minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                          minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
         self.calibrationTapHandler = nil
         DispatchQueue.main.async {
             //PianoKeyboardModel.shared1.configureKeyboardForScale(scale: self.scale, handIndex: self.scale.hands[0])
@@ -627,16 +627,23 @@ public class ScalesModel : ObservableObject {
         for i in 0..<scale.getScaleNoteCount() {
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
-                ///The bar line not currenlty visible but it might be added to add space around notes
+                ///The bar line is not currenlty visible but it might be added to add space around notes
                 ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
                 ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor appears to imply invisible bar lines when setting accidentals.
                 ///But their melodic minor does not imply invisible bar lines - nightmare 🥵 ....
-                if ![ScaleType.melodicMinor].contains(scale.scaleType) {
+                ///04Jan2025 - 
+                ///Trin Grade 1, D Min Harmonic assumes there is a barline - see the 2nd C#
+                ///Trin Grade 1, D Min Melodic assumes there is not a barline - see the C natural
+                ///This diff my require change in custom scale properties to add or not bar LinearGradient
+                ///Latest code adds a maxLookback value that might work to resolve all this mess 🤔
+                
+                //if ![ScaleType.melodicMinor].contains(scale.scaleType) {
                     if true {
-                        score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
+                        //score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
+                        score.addBarLine(visibleOnStaff: true, forStaffSpacing: isBrokenChord)
                         totalBarValue = 0.0
                     }
-                }
+                //}
             }
             
             let ts = score.createTimeSlice()
@@ -716,6 +723,7 @@ public class ScalesModel : ObservableObject {
 
         ///Create the required display staffs (one for the each hand) and position the required notes in them.
         ///Group all notes within a clef and then set their stem characteristics according to the clef just before them. i.e. obey clef switching
+        //score.debug111("----MODEL", withBeam: false, toleranceLevel: 0)
         
         for handType in handTypes {
             var startStemCharacteristicsIndex = 0
@@ -737,9 +745,8 @@ public class ScalesModel : ObservableObject {
                 if let timeSlice = scoreEntry as? TimeSlice {
                     //for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning)
+                        staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning, maxAccidentalLoopback: scale.scaleCustomisation?.maxAccidentalLookback)
                         staffNote.clef = clefForPositioning
-
                     }
                 }
             }
@@ -756,18 +763,21 @@ public class ScalesModel : ObservableObject {
     func setScale(scale:Scale) {
         ///Deep copy to ensure reset of the scale segments
         self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion,
-                                   minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, ctx: "ScalesModel")
+                                   minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, 
+                                   dynamicTypes: scale.dynamicTypes,
+                                   articulationTypes: scale.articulationTypes,
+                                   ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], ctx:String="", 
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], 
+                               dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
                                scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleByRootAndType to:root:\(name)")
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: octaves,
                           hands: hands,
-                          minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                          minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                           scaleCustomisation: scaleCustomisation,
                           debug1: debug1)
         setKeyboardAndScore(scale: scale)
@@ -799,7 +809,7 @@ public class ScalesModel : ObservableObject {
     
     func configureKeyboards(scale:Scale, ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScaleAndScore to:\(name) ctx:\(ctx)")
+        Logger.shared.log(self, "🎹 setScaleAndScore to:\(name) ctx:\(ctx) ID:\(scale.id)")
         self.scale = scale
         
         if let combinedKeyboard = PianoKeyboardModel.sharedCombined {

@@ -171,11 +171,11 @@ class PracticeChart: Codable {
                 self.firstColumnDayOfWeekNumber += 3
                 if self.firstColumnDayOfWeekNumber > 6 {
                     self.firstColumnDayOfWeekNumber -= 7
-//                    for row in self.rows {
-//                        for cell in row {
-//                            cell.badgeCount = 0
-//                        }
-//                    }
+                    for row in self.rows {
+                        for cell in row {
+                            cell.badges = []
+                        }
+                    }
                 }
             }
         }
@@ -224,7 +224,7 @@ class PracticeChart: Codable {
                     if oldTypes.contains(chartCell.scale.scaleType) {
                         chartCell.scale = Scale(scaleRoot: chartCell.scale.scaleRoot, scaleType: newType, scaleMotion: chartCell.scale.scaleMotion,
                                                 octaves: chartCell.scale.octaves, hands: chartCell.scale.hands, minTempo: chartCell.scale.minTempo,
-                                                dynamicType: chartCell.scale.dynamicType, articulationType: chartCell.scale.articulationType)
+                                                dynamicTypes: chartCell.scale.dynamicTypes, articulationTypes: chartCell.scale.articulationTypes)
                     }
                 //}
             }

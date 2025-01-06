@@ -246,17 +246,14 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///default staff offset based on the written accidental. e.g. a note at MIDI 75 would be defaulted to show as E ♭ in C major but may be speciifed to show as D# by a written
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
-    //func setNotePlacementAndAccidental(score:Score, staff:Staff) {
-    func setNotePlacementAndAccidental(score:Score, clef:StaffClef) {
-
-        var barAlreadyHasNote = score.getNotesForLastBar(clef: clef, pitch:self.midiNumber).count > 1
+    func setNotePlacementAndAccidental(score:Score, clef:StaffClef, maxAccidentalLoopback:Int?) {
         let defaultNotePlacement = clef.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }
-
+        
         if let writtenAccidental = self.writtenAccidental {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental
@@ -269,62 +266,88 @@ public class StaffNote : TimeSliceEntry, Comparable {
             }
         }
         else {
-            //Determine if the note's accidental is implied by the key signature
-            //Or a note has to have a natural accidental to offset the key signature
-
-            let keySignatureHasNote = clef.score.key.hasKeySignatureNote(note: self.midiNumber)
-
-            if let defaultAccidental = defaultNotePlacement.accidental {
-                if !keySignatureHasNote {
-                    if !barAlreadyHasNote {
-                        offsetAccidental = defaultAccidental
-                    }
-                }
-            }
-            else {
-                ///Check if the key signature causes show should be a nautural accidental to be required
-                let keySignatureHasNote:Bool
-                if clef.score.key.keySig.flats.count > 0 {
-                    keySignatureHasNote = self.midiNumber > 0 && clef.score.key.hasKeySignatureNote(note: self.midiNumber - 1)
-                }
-                else {
-                    keySignatureHasNote = clef.score.key.hasKeySignatureNote(note: self.midiNumber + 1)
-                }
-                if keySignatureHasNote {
-                    if !barAlreadyHasNote {
-                        offsetAccidental = 0
-                    }
-                }
-            }
-            ///Determine if an accidental for this note is required to cancel the accidental of a previous note in the bar at the same offset.
-            ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
+            offsetAccidental = defaultNotePlacement.accidental
             
-            var lastNoteAtOffset:StaffNote? = nil
-            //var barPreviousNotes = score.getNotesForLastBar(staff: staff, pitch:nil)
-            var barPreviousNotes = score.getNotesForLastBar(clef: clef, pitch:nil)
-            if barPreviousNotes.count > 1 {
-                ///Dont consider current note
-                barPreviousNotes.removeFirst()
+            ///Look back from this note for notes previous in the bar whose accidentals might affect which accidental this note should show
+            ///e.g. we have a b flat in the bar already and a b natural arrives. The 2nd note needs a natural accidental
+            ///Trinity ignores previous note accidentals if the previous note is too far back.
+            
+            let stop = 83
+            if self.midiNumber == stop {
+                print("==========", self.timeSlice.sequence, self.midiNumber, self.noteStaffPlacement.offsetFromStaffMidline, self.noteStaffPlacement.accidental ?? "_", "maxLoopback:", maxAccidentalLoopback ?? "_")
+                print("     =====", "00", defaultNotePlacement.offsetFromStaffMidline, defaultNotePlacement.accidental ?? "_")
             }
+            var barPreviousNotes = score.getPreviousNotesInBar(clef: clef, sequence: self.timeSlice.sequence, pitch: nil).reversed()
+
+            var lookback = 0
+            let maxAccidentalLookback:Int = maxAccidentalLoopback == nil ? Int.max : maxAccidentalLoopback!
+            var matchedAccidental = false
+            
+            ///Adjust this note's accidental to counter a previous note's accidental if the note was at the same staff offset but a different MIDI.
+            ///If the MIDI is the same as the previous note at the staff offset, set this note's accidental to nil since it's accidental conveys from the previous note.
+            ///This code must take priority over subsequent accidental determinations.
             for prevNote in barPreviousNotes {
                 if prevNote.noteStaffPlacement.offsetFromStaffMidline == offsetFromMiddle {
-                    if prevNote.noteStaffPlacement.accidental != nil {
-                        lastNoteAtOffset = prevNote
-                        break
+                    if let lastAccidental = prevNote.noteStaffPlacement.accidental {
+                        if prevNote.midiNumber > self.midiNumber {
+                            offsetAccidental = lastAccidental - 1
+                            matchedAccidental = true
+                            break
+                        }
+                        if prevNote.midiNumber < self.midiNumber {
+                            offsetAccidental = lastAccidental + 1
+                            matchedAccidental = true
+                            break
+                        }
+                        if prevNote.midiNumber == self.midiNumber {
+                            offsetAccidental = nil
+                            matchedAccidental = true
+                            break
+                        }
                     }
                 }
             }
-            if let lastNoteAtOffset = lastNoteAtOffset {
-                if let lastAccidental = lastNoteAtOffset.noteStaffPlacement.accidental {
-                    if lastNoteAtOffset.midiNumber > self.midiNumber {
-                        offsetAccidental = lastAccidental - 1
+            
+            ///If not already matched, adjust the note's accidental based on the key signature
+            if !matchedAccidental {
+                ///Use no accidental since the key signature has it
+                if clef.score.key.hasKeySignatureNote(note: self.midiNumber) {
+                    offsetAccidental = nil
+                    matchedAccidental = true
+                }
+                ///Use the natural accidental to differentiate note from the key signature
+                if clef.score.key.keySig.flats.count > 0 {
+                    if clef.score.key.hasKeySignatureNote(note: self.midiNumber-1) {
+                        offsetAccidental = 0
+                        matchedAccidental = true
                     }
-                    if lastNoteAtOffset.midiNumber < self.midiNumber {
-                        offsetAccidental = lastAccidental + 1
+                }
+                if clef.score.key.keySig.sharps.count > 0 {
+                    if clef.score.key.hasKeySignatureNote(note: self.midiNumber+1) {
+                        offsetAccidental = 0
+                        matchedAccidental = true
                     }
+                }
+            }
+            
+            if !matchedAccidental {
+                for prevNote in barPreviousNotes {
+                    ///If a nearby previous note is the same MIDI rely on its accidental and make the accidental for the current note nil.
+                    ///If previous same MIDI note is too far back let the default accidental by added to this note.
+                    ///Trinity adds accidentals back to notes already shown with accidentals if the previous note was too far back.
+                    ///This distance is set using a scale customisation.
+                    if prevNote.midiNumber == self.midiNumber {
+                        if lookback < maxAccidentalLookback {
+                            offsetAccidental = nil
+                            break
+                        }
+                    }
+                    
+                    lookback += 1
                 }
             }
         }
+        
         let placement = NoteStaffPlacement(noteValue: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental)
         self.noteStaffPlacement = placement
         //self.debug("setNoteDisplayCharacteristics")

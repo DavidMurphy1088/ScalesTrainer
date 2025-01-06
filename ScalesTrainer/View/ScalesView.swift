@@ -29,7 +29,7 @@ struct MetronomeView: View {
                 Image("metronome-left")
                     .resizable()
                     .scaledToFit()
-                    .scaleEffect(x: beat % 2 == 0 ? -1 : 1, y: 1)
+                    .scaleEffect(x: beat/2 % 2 == 0 ? -1 : 1, y: 1)
                     //.animation(.easeInOut(duration: 0.1), value: beat)
             }
             .frame(width: UIScreen.main.bounds.size.width * 0.04)
@@ -699,6 +699,7 @@ struct ScalesView: View {
         }
         
         .onDisappear {
+            metronome.stop()
             metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization

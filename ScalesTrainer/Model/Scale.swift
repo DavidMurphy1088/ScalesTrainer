@@ -8,13 +8,29 @@ enum ScaleShape : Codable {
     case brokenChord
 }
 
-public enum DynamicType: String, CaseIterable, Comparable, Codable {
+public enum DynamicType: String, CaseIterable, Comparable, Codable, CustomStringConvertible {
+    case p = "p"
     case mf = "mf"
+    case f = "f"
     
-    var description: String {
+    public var description: String {
         switch self {
         case .mf:
             return "Mezzo-Forte"
+        case .p:
+            return "Piano"
+        case .f:
+            return "Forte"
+        }
+    }
+    public var descriptionShort: String {
+        switch self {
+        case .mf:
+            return "mf"
+        case .p:
+            return "p"
+        case .f:
+            return "f"
         }
     }
 
@@ -26,10 +42,13 @@ public enum DynamicType: String, CaseIterable, Comparable, Codable {
 
 public enum ArticulationType: CaseIterable, Comparable, Codable {
     case legato
+    case staccato
     var description: String {
         switch self {
         case .legato:
             return "Legato"
+        case .staccato:
+            return "Staccato"
         }
     }
 }
@@ -75,15 +94,15 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
         case .arpeggioDiminished:
             return "Diminished Arpeggio"
         case .arpeggioDominantSeventh:
-            return "Dominant 7th Arpeggio"
+            return "Dom 7th Arpeggio"
         case .arpeggioMajorSeventh:
             return "Major 7th Arpeggio"
         case .arpeggioMinorSeventh:
-            return "Minor Seventh Arpeggio"
+            return "Minor 7th Arpeggio"
         case .arpeggioDiminishedSeventh:
-            return "Diminished 7th Arpeggio"
+            return "Dim 7th Arpeggio"
         case .arpeggioHalfDiminished:
-            return "Half Diminished Arpeggio"
+            return "Half Dim Arpeggio"
         case .chromatic:
             return "Chromatic"
         case .brokenChordMajor:
@@ -127,11 +146,13 @@ public class ScaleCustomisation : Codable {
     let startMidiLH:Int?
     let startMidiRH:Int?
     let clefSwitch:Bool?
+    let maxAccidentalLookback:Int?
     
-    init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil) {
+    init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil,  maxAccidentalLookback:Int? = nil) {
         self.startMidiRH = startMidiRH
         self.startMidiLH = startMidiLH
         self.clefSwitch = clefSwitch
+        self.maxAccidentalLookback = maxAccidentalLookback
     }
 }
 
@@ -179,8 +200,8 @@ public class Scale : Codable {
     var octaves:Int
     let hands:[Int]
     let minTempo:Int
-    let dynamicType:DynamicType
-    let articulationType:ArticulationType
+    let dynamicTypes:[DynamicType]
+    let articulationTypes:[ArticulationType]
     var scaleType:ScaleType
     var scaleMotion:ScaleMotion
     var scaleShapeForFingering:ScaleShape
@@ -191,48 +212,34 @@ public class Scale : Codable {
     let debugOn:Bool
     var scaleCustomisation:ScaleCustomisation? = nil
     
-    public init() {
-        self.scaleRoot = ScaleRoot(name: "")
-        self.scaleNoteState = []
-        octaves = 0
-        hands = []
-        minTempo = 0
-        dynamicType = .mf
-        articulationType = .legato
-        scaleType = .major
-        scaleMotion = .similarMotion
-        scaleShapeForFingering = .scale
-        notesPerSegment = 0
-        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-            self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
-        }
-        else {
-            self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
-        }
-        self.debugOn = false
-    }
-    
-    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
-        let states = self.scaleNoteState[handType == .right ? 0 : 1]
-//        if index > states.count-1 {
-//            return nil
+//    public init() {
+//        self.scaleRoot = ScaleRoot(name: "")
+//        self.scaleNoteState = []
+//        octaves = 0
+//        hands = []
+//        minTempo = 0
+//        dynamicTypes = []
+//        articulationTypes = []
+//        scaleType = .major
+//        scaleMotion = .similarMotion
+//        scaleShapeForFingering = .scale
+//        notesPerSegment = 0
+//        if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+//            self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
 //        }
 //        else {
-            return states[index]
+//            self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
 //        }
-    }
+//        self.debugOn = false
+//    }
     
-    func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
-        return self.scaleNoteState[handType == .right ? 0 : 1]
-    }
-
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
-                minTempo:Int, dynamicType:DynamicType, articulationType:ArticulationType, 
+                minTempo:Int, dynamicTypes:[DynamicType], articulationTypes:[ArticulationType],
                 scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
-        self.dynamicType = dynamicType
-        self.articulationType = articulationType
+        self.dynamicTypes = dynamicTypes
+        self.articulationTypes = articulationTypes
         self.octaves = octaves
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
@@ -241,8 +248,8 @@ public class Scale : Codable {
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
         
-        if self.debugOn {
-            //print("============== Scale Init", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves)
+        if let custom = scaleCustomisation  {
+            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
         }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
@@ -566,6 +573,65 @@ public class Scale : Codable {
         }
         Scale.createCount += 1
     }
+
+    func getTitle() -> String {
+        var title = ""
+        let arpeggio = self.scaleType.description.localizedCaseInsensitiveContains("arpeggio")
+        if arpeggio {
+            title = self.scaleType.description + " on " + self.scaleRoot.name
+        }
+        else {
+            title = self.scaleRoot.name + " " + self.scaleType.description
+        }
+        return title
+    }
+    
+    func getDynamicsDescription(long:Bool) -> String {
+        var desc = ""
+        var d = 0
+        for dynamic in self.dynamicTypes {
+            if d > 0 {
+                desc += " or "
+            }
+            if long {
+                desc += String(dynamic.description)
+            }
+            else {
+                desc += String(dynamic.descriptionShort)
+            }
+            d += 1
+        }
+        return desc
+    }
+    
+    func getArticulationsDescription() -> String {
+        var desc = ""
+        var d = 0
+        for articulationType in articulationTypes {
+            if d > 0 {
+                desc += " or "
+            }
+            desc += String(articulationType.description)
+            d += 1
+        }
+        return desc
+    }
+
+    
+    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
+        let states = self.scaleNoteState[handType == .right ? 0 : 1]
+//        if index > states.count-1 {
+//            return nil
+//        }
+//        else {
+            return states[index]
+//        }
+    }
+    
+    func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
+        return self.scaleNoteState[handType == .right ? 0 : 1]
+    }
+
     
     func setChromaticFingerBreaks(hand:Int) {
         let midway = self.scaleNoteState[hand].count / 2
@@ -680,7 +746,7 @@ public class Scale : Codable {
     
     func makeNewScale(offset:Int) -> Scale {
         let scale = Scale(scaleRoot: self.scaleRoot, scaleType: self.scaleType, scaleMotion: self.scaleMotion, octaves: self.octaves, hands: self.hands,
-                          minTempo: self.minTempo, dynamicType: self.dynamicType, articulationType: self.articulationType)
+                          minTempo: self.minTempo, dynamicTypes: self.dynamicTypes, articulationTypes: self.articulationTypes)
         for handIndex in [0,1] {
             for note in scale.scaleNoteState[handIndex] {
                 note.midi += offset
@@ -795,7 +861,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug444(_ msg:String, short:Bool=false)  {
+    func debug4(_ msg:String, short:Bool=false)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {
@@ -1273,20 +1339,20 @@ public class Scale : Codable {
                     switch self.hands[0] {
                     case 0: handName = "Right Hand"
                     case 1: handName = "Left Hand"
-                    default: handName = "Both Hands"
+                    default: handName = "Together"
                     }
                 }
                 else {
                     switch self.hands[0] {
                     case 0: handName = "RH"
                     case 1: handName = "LH"
-                    default: handName = "Both"
+                    default: handName = "Together"
                     }
                 }
                 name += ", " + handName
             }
-            if self.hands.count == 2 {
-                name += handFull ? ", Both Hands" : " RH,LH"
+            else {
+                name += handFull ? ", Together" : " Together"
             }
         }
         if let octaves = octaves {
@@ -1302,12 +1368,22 @@ public class Scale : Codable {
         if showTempo {
             name += "\(self.minTempo) BPM, "
         }
-
-        name += "\(self.dynamicType.description)"
-        name += ", \(self.articulationType.description)"
-//        if self.scaleMotion == .contraryMotion {
-//            name += ", Contrary Motion"
-//        }
+        var d = 0
+        for dynamicType in self.dynamicTypes {
+            if d > 0 {
+                name += ","
+            }
+            name += "\(dynamicType.description)"
+            d += 1
+        }
+        d = 0
+        for articulationType in self.articulationTypes {
+            if d > 0 {
+                name += ","
+            }
+            name += "\(articulationType.description)"
+            d += 1
+        }
         return name
     }
 

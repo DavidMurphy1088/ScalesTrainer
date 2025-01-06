@@ -118,7 +118,9 @@ struct CellView: View {
         ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType,
                                                  scaleMotion: practiceCell.scale.scaleMotion,
                                                  minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
-                                                 hands: hands, ctx: "PracticeChart",
+                                                 hands: hands, dynamicTypes: practiceCell.scale.dynamicTypes, 
+                                                 articulationTypes: practiceCell.scale.articulationTypes,
+                                                 ctx: "PracticeChart",
                                                  scaleCustomisation:practiceCell.scale.scaleCustomisation)
     }
     

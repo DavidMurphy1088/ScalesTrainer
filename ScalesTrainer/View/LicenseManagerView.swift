@@ -570,7 +570,7 @@ public struct LicenseManagerView: View {
                     }
                 }
                 .padding()
-                Text("This subscription provides you with access to all Sales Academy content.").font(.title2).padding().padding().padding()
+                Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
             }
             else {
                 Text("Available Subscriptions").font(.title).padding()

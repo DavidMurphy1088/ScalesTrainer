@@ -149,206 +149,234 @@ class MusicBoardAndGrade: Codable, Identifiable {
             let minTempo = 70
             let brokenChordTempo = 50
             let octaves = 1
+            let dynamicTypes = [DynamicType.mf]
+            let articulationTypes = [ArticulationType.legato]
+            ///Trinity reinserts accidentals for note 'm' even after a previous note 'n' has the same MIDI when 'n exceeds some note distance from 'm'
+            let maxAccidentalLoopbackCustomisation = ScaleCustomisation(maxAccidentalLookback: 1)
+            
             ///Row 1
             if false && Settings.shared.isDeveloperMode() {
-                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             }
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes, scaleCustomisation: maxAccidentalLoopbackCustomisation))
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Row 2
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes, scaleCustomisation: maxAccidentalLoopbackCustomisation))
             
             ///Row 3
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Row 4
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Row 5
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Row 6
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .brokenChordMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .brokenChordMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: brokenChordTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
         }
         
         if grade == 2 {
             let minTempo = 80
             let arpeggioTempo = 60
-            
+            let dynamicTypes = [DynamicType.f, .p]
+            let dynamicTypesArpgeggio = [DynamicType.mf]
             let octaves = 2
+            let articulationTypes = [ArticulationType.legato]
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
         }
         
         if grade == 3 {
             let minTempo = 90
             let arpeggioTempo = 70
-
+            let dynamicTypes = [DynamicType.f, .p]
+            let dynamicTypesArpgeggio = [DynamicType.mf]
+            let articulationTypes = [ArticulationType.legato]
+            
             let octaves = 2
             ///Both hands
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 51, startMidiLH: 39)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
             
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                 scaleCustomisation: ScaleCustomisation(startMidiRH: 66, startMidiLH: 54)))
             
             ///Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 51)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiLH: 39)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
         }
         
         if grade == 4 {
             let minTempo = 100
             let arpeggioTempo = 80
-            
+            let dynamicTypes = [DynamicType.f, .p]
+            let articulationTypes = [ArticulationType.legato, .staccato]
+            let articulationTypesArpeggio = [ArticulationType.legato]
             let octaves = 2
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 52, startMidiLH: 40)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 52)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio,
                                 scaleCustomisation: ScaleCustomisation(startMidiLH: 40)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
             
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                 scaleCustomisation: ScaleCustomisation(startMidiRH: 56, startMidiLH: 44, clefSwitch: false)))
         }
 
         if grade == 5 {
             let minTempo = 110
             let arpeggioTempo = 90
+            let dynamicTypes = [DynamicType.f, .p]
+            let articulationTypes = [ArticulationType.legato, .staccato]
             
             let octaves = 2
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch: false)))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 67, startMidiLH: 55, clefSwitch: false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: arpeggioTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato,
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false), debug1: true))
         }
 
@@ -357,90 +385,94 @@ class MusicBoardAndGrade: Codable, Identifiable {
     
     static func scalesABRSM(grade:Int) -> [Scale] {
         var scales:[Scale] = []
+        let dynamicTypes = [DynamicType.mf]
+        let articulationTypes = [ArticulationType.legato]
         
         if grade == 1 {
             let minTempo = 60
             let octaves = 1
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
         }
         
         if grade == 2 {
             let minTempo = 70
             let octaves = 2
+            let articulationTypes = [ArticulationType.legato]
+            
             ///Both hands
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
             ///Contrary
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Chromatic
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Arpgeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             
             ///Arpgeggios Minor
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
-                                minTempo: minTempo, dynamicType: .mf, articulationType: .legato))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
         }
         
         return scales
     }
 
     static func setScales(boardName:String, grade:Int) -> [Scale] {
-        var scales:[Scale] = []
+        let scales:[Scale] = []
         switch boardName {
         case "Trinity":
             return scalesTrinity(grade:grade)
@@ -449,8 +481,6 @@ class MusicBoardAndGrade: Codable, Identifiable {
         default:
             return scales
         }
-
-        return scales
     }
 }
 

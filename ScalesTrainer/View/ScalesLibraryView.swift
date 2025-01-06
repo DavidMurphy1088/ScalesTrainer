@@ -63,7 +63,7 @@ struct ScalesLibraryView: View {
             }
             
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMajor]), scaleType: scaleType, scaleMotion: scaleMotion,
-                          octaves: self.indexOctave+1, hands: hands, minTempo: tempo, dynamicType: .mf, articulationType: .legato)
+                          octaves: self.indexOctave+1, hands: hands, minTempo: tempo, dynamicTypes: [.mf], articulationTypes: [.legato])
         }
         else {
             switch typeIndexMinor {
@@ -98,10 +98,11 @@ struct ScalesLibraryView: View {
                 scaleMotion = .contraryMotion
             }
             scale = Scale(scaleRoot: ScaleRoot(name: rootsMajor[rootIndexMinor]), scaleType: scaleType, scaleMotion: scaleMotion, octaves: self.indexOctave+1,
-                          hands: hands, minTempo: tempo, dynamicType: .mf, articulationType: .legato)
+                          hands: hands, minTempo: tempo, dynamicTypes: [.mf], articulationTypes: [.legato])
         }
         ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
-                                                 scaleMotion: scale.scaleMotion, minTempo: tempo, octaves: scale.octaves, hands: scale.hands, ctx: "Library")
+                                                 scaleMotion: scale.scaleMotion, minTempo: tempo, octaves: scale.octaves, hands: scale.hands,
+                                                 dynamicTypes: [.mf], articulationTypes: [.legato], ctx: "Library")
         return scale
     }
     

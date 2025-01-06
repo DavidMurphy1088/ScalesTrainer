@@ -25,8 +25,13 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
         let metronome = Metronome.shared
         let notesPerClick = metronome.getNotesPerClick()
-        if timerTickerNumber % notesPerClick == 0 {
-            metronomeAudioPlayerLow!.play()
+        ///1.0.20 play the tick on every note but make the offbeat zero volume.
+        ///This fixes the limp when some notes were played with a metronome tick and some played with it. In that case the 2nd note played was about 10% more duration than the first.
+        if true || timerTickerNumber % notesPerClick == 0 {
+            if let player = metronomeAudioPlayerLow {
+                player.volume = timerTickerNumber % notesPerClick == 0 ? 0.1 : 0.0
+                player.play()
+            }
             self.tickNum += 1
             metronome.setTimerTickerCountPublished(count: self.tickNum)
         }

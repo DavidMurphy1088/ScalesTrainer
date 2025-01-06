@@ -117,7 +117,7 @@ struct SpinWheelView: View {
             let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoots[selectedScaleRoot]),
                               scaleType: getTypes()[self.selectedScaleType], scaleMotion: .similarMotion,
                               octaves: Settings.shared.defaultOctaves, hands: hands,
-                              minTempo: 90, dynamicType: .mf, articulationType: .legato)
+                              minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
             let _ = ScalesModel.shared.setScale(scale: scale)
         }
     }
@@ -126,9 +126,9 @@ struct SpinWheelView: View {
         VStack {
             TitleView(screenName: "Spin The Scales Wheel", showGrade: true).commonFrameStyle()
             VStack {
-                let handSizeFactor = 0.25
-                let rootSizeFactor = 0.40
-                let arrowPos = UIScreen.main.bounds.width * (orientationInfo.isPortrait ? 0.94 : 0.76)
+                //let handSizeFactor = 0.25
+                //let rootSizeFactor = 0.40
+                //let arrowPos = UIScreen.main.bounds.width * (orientationInfo.isPortrait ? 0.94 : 0.76)
                 ZStack {
                         SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize)
                         /// Fixed arrow

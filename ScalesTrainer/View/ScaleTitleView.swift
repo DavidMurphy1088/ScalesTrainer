@@ -4,13 +4,14 @@ import SwiftUI
 
 struct ScaleTitleView: View {
     let scale:Scale
+    @EnvironmentObject var orientationInfo: OrientationInfo
     
     func getHelp(topic:String) -> String? {
         return HelpMessages.shared.messages[topic] ?? ""
     }
     
     func getTitle() -> String {
-        var title = scale.scaleRoot.name + " " + scale.scaleType.description
+        var title = scale.getTitle()
         if scale.scaleMotion == .contraryMotion {
             title += " in Contrary Motion"
         }
@@ -20,13 +21,13 @@ struct ScaleTitleView: View {
                 switch scale.hands[0] {
                 case 0: handName = "RH"
                 case 1: handName = "LH"
-                default: handName = "Both Hands"
+                default: handName = "Together"
                 }
             }
             else {
-                handName = "Both Hands"
+                handName = " Together"
             }
-            title += " " + handName
+            title += "," + handName
         }
         if scale.octaves > 1 {
             title += ", \(scale.octaves) Octaves"
@@ -49,31 +50,41 @@ struct ScaleTitleView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
-                        ///Center it
+                    ///Center it
                         .padding(.bottom, 4)
                     Text("=\(scale.minTempo)").padding(.horizontal, 0)
-                    Text(", mf,").italic().padding(.horizontal, 0)
-                    Text(" legato").padding(.horizontal, 0)
+                }
+                HStack {
+                    Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
                 }
             }
             .font(.body)
         }
         else {
-            HStack(spacing: 0) {
-                Text("\(getTitle()), min. ").padding(.horizontal, 0)
-                Image(compoundTime ? "crotchetDotted" : "crotchet")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
-                ///Center it
-                    .padding(.bottom, 8)
+            VStack {
+                HStack(spacing: 0) {
+                    Text("\(getTitle()), min. ").padding(.horizontal, 0)
+                    Image(compoundTime ? "crotchetDotted" : "crotchet")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+                    ///Center it
+                        .padding(.bottom, 8)
                     //.padding(.top, 8)
-                Text("=\(scale.minTempo)").padding(.horizontal, 0)
-                Text(", mf,").italic().padding(.horizontal, 0)
-                Text(" legato").padding(.horizontal, 0)
+                    Text("=\(scale.minTempo)").padding(.horizontal, 0)
+                    if !orientationInfo.isPortrait {
+                        Text(", \(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
+                    }
+                }
+                if orientationInfo.isPortrait {
+                    HStack {
+                        Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
+                    }
+                }
             }
             //.font(.body)
-            .font(.title)
+            ///Large ttitle font overflows on long titles
+            .font(.title2)
         }
     }
 }

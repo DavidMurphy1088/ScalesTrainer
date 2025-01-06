@@ -119,7 +119,6 @@
 		79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */; };
 		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
 		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
-		79F80E0A2CD4CD1700D636FB /* MidiManagerOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E092CD4CD1700D636FB /* MidiManagerOld.swift */; };
 		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
 		818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */; };
 /* End PBXBuildFile section */
@@ -256,7 +255,6 @@
 		79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
 		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
-		79F80E092CD4CD1700D636FB /* MidiManagerOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MidiManagerOld.swift; sourceTree = "<group>"; };
 		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
 		E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -508,6 +506,7 @@
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
 				79064CA72D08349C002490A8 /* BadgeBank.swift */,
+				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
@@ -521,7 +520,7 @@
 				794D49472BCD15AE0005A173 /* Logger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
-				79F80E092CD4CD1700D636FB /* MidiManagerOld.swift */,
+				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
 				797DBBB12C621FDA009A54C9 /* MIDIModel.swift */,
 				79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */,
 				79CB56202C599D9F00BB328F /* PracticeChart.swift */,
@@ -540,8 +539,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
-				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -866,7 +863,6 @@
 				79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */,
 				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
-				79F80E0A2CD4CD1700D636FB /* MidiManagerOld.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
 				79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */,
 				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,

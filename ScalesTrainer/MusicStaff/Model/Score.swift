@@ -155,9 +155,9 @@ public class Score : ObservableObject {
     public var lineSpacing:Double
 
     private var totalStaffLineCount:Int = 0
-    static var accSharp = "\u{266f}"
-    static var accNatural = "\u{266e}"
-    static var accFlat = "\u{266d}"
+//    static var accSharp1 = "\u{266f}"
+//    static var accNatural1 = "\u{266e}"
+//    static var accFlat = "\u{266d}"
     public var label:String? = nil
     public var heightPaddingEnabled:Bool
     let showTempoVariation:Bool = false
@@ -300,7 +300,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug111(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug11(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.getKeyName(withType: true)
               //"StaffCount", self.staffs.count,
@@ -874,8 +874,7 @@ public class Score : ObservableObject {
         return totalDuration
     }
     
-    //func getNotesForLastBar(staff:Staff, pitch:Int? = nil) -> [StaffNote] {
-    func getNotesForLastBar(clef:StaffClef, pitch:Int? = nil) -> [StaffNote] {
+    func getNotesForLastBarOLD(clef:StaffClef, pitch:Int? = nil) -> [StaffNote] {
         var notes:[StaffNote] = []
         for entry in self.scoreEntries.reversed() {
             if entry is BarLine {
@@ -886,6 +885,35 @@ public class Score : ObservableObject {
                 if ts.getTimeSliceNotesForClef(clef: clef).count > 0 {
                     if let note = ts.entries[0] as? StaffNote {
                         if let pitch = pitch {
+                            if note.midiNumber == pitch {
+                                notes.append(note)
+                            }
+                        }
+                        else {
+                            notes.append(note)
+                        }
+                    }
+                }
+            }
+        }
+        return notes
+    }
+    
+    func getPreviousNotesInBar(clef:StaffClef, sequence:Int, pitch:Int?) -> [StaffNote] {
+        var notes:[StaffNote] = []
+        for entry in self.scoreEntries {
+            if entry.sequence >= sequence {
+                break
+            }
+            if entry is BarLine {
+                notes = []
+            }
+            if let ts = entry as? TimeSlice {
+                let clefNotes = ts.getTimeSliceNotesForClef(clef: clef)
+                if clefNotes.count > 0 {
+                    let note = clefNotes[0] as StaffNote
+                    if note.timeSlice.sequence < sequence {
+                        if let givenPitch = pitch {
                             if note.midiNumber == pitch {
                                 notes.append(note)
                             }

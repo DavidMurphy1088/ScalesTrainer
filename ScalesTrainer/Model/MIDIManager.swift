@@ -3,6 +3,15 @@ import CoreMIDI
 
 // MARK: - MIDIObjectType Enumeration
 
+class MIDIMessage {
+    let messageType:Int
+    let midi:Int
+    init(messageType:Int, midi:Int) {
+        self.messageType = messageType
+        self.midi = midi
+    }
+}
+
 //enum MIDIObjectType: UInt32 {
 //    case other = 0
 //    case device = 1
@@ -377,3 +386,64 @@ extension Notification.Name {
     static let midiDeviceChanged = Notification.Name("midiDeviceChanged")
     static let midiConnectionError = Notification.Name("midiConnectionError")
 }
+
+///A package of test notes to replay in automated testing.
+///Can be generated from a scale under test
+class TestMidiNotes {
+    class NoteSet {
+        var notes:[Int]
+        init(_ notes:[Int]) {
+            self.notes = notes
+        }
+    }
+    var noteSets:[NoteSet]
+    let noteSetWait:Double
+    let scaleId:UUID?
+    
+    init(_ noteSets:[NoteSet], noteWait:Double) {
+        self.noteSets = noteSets
+        self.noteSetWait = noteWait
+        self.scaleId = nil
+    }
+    
+    func debug(_ ctx:String) {
+        var msg = ""
+        for noteSet in noteSets {
+            for note in noteSet.notes {
+                msg += " \(note)"
+            }
+            msg += ", "
+        }
+        print("==== NoteSet Debug \(ctx)", msg)
+    }
+    
+    init(scale:Scale, hands:[Int], noteSetWait:Double) {
+        let totalNotes = scale.getScaleNoteCount()
+        self.noteSetWait = noteSetWait
+        self.noteSets = []
+        self.scaleId = scale.id
+        
+        for n in 0..<totalNotes {
+            var noteSet:[Int] = []
+            for hand in hands {
+                let midi = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: n).midi
+                ///When contrary starting and ending LH and RH on same note the student will only play one note. So only generate that note, not one for each hand
+                if scale.scaleMotion == .contraryMotion && hands.count > 1 {
+                    if hand == 0 {
+                        noteSet.append(midi)
+                    }
+                    else {
+                        if n > 0 && n < scale.getScaleNoteCount() - 1 {
+                            noteSet.append(midi)
+                        }
+                    }
+                }
+                else {
+                    noteSet.append(midi)
+                }
+            }
+            self.noteSets.append(NoteSet(noteSet))
+        }
+    }
+}
+
