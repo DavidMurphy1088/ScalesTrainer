@@ -716,7 +716,7 @@ public class ScalesModel : ObservableObject {
             
             let staffNote = entries[noteIndex] as! StaffNote
             ///Consider the note's placement in the current clef layout
-            let clef = StaffClef(score: score, clefType: currentClefType)
+            let clef = StaffClef(scale: scale, score: score, clefType: currentClefType)
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
         }
@@ -729,7 +729,7 @@ public class ScalesModel : ObservableObject {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var clefForPositioning = handType == .right ? StaffClef(score: score, clefType: .treble) : StaffClef(score: score, clefType: .bass)
+            var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score, clefType: .bass)
 
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
@@ -771,7 +771,7 @@ public class ScalesModel : ObservableObject {
 
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], 
                                dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
-                               scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
+                               scaleCustomisation:ScaleCustomisation? = nil, debugOn:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
@@ -779,7 +779,7 @@ public class ScalesModel : ObservableObject {
                           hands: hands,
                           minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                           scaleCustomisation: scaleCustomisation,
-                          debug1: debug1)
+                          debugOn: debugOn)
         setKeyboardAndScore(scale: scale)
     }
 

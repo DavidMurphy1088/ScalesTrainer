@@ -497,14 +497,15 @@ struct ScalesView: View {
     }
     
     func staffCanFit() -> Bool {
-        var canFit = true
-        if self.scalesModel.scale.hands.count > 1 {
-            //if UIDevice.current.userInterfaceIdiom == .phone && !orientationObserver.orientation.isPortrait {
-            if UIDevice.current.userInterfaceIdiom == .phone && !orientationInfo.isPortrait {
-                canFit = false
-            }
-        }
-        return canFit
+//        var canFit = true
+//        if self.scalesModel.scale.hands.count > 1 {
+//            //if UIDevice.current.userInterfaceIdiom == .phone && !orientationObserver.orientation.isPortrait {
+//            if UIDevice.current.userInterfaceIdiom == .phone && !orientationInfo.isPortrait {
+//                canFit = false
+//            }
+//        }
+//        return canFit
+        return  true
     }
         
     func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
@@ -587,7 +588,7 @@ struct ScalesView: View {
                 if scalesModel.showStaff {
                     if let score = scalesModel.getScore() {
                         VStack {
-                            ScoreView(score: score, widthPadding: false)
+                            ScoreView(scale: ScalesModel.shared.scale, score: score, barLayoutPositions: score.barLayoutPositions, widthPadding: false)
                         }
                         .commonFrameStyle(backgroundColor: Color.white)
                     }

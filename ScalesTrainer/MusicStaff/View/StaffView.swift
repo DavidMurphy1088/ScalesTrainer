@@ -107,20 +107,21 @@ struct ClefView: View {
 
     var body: some View {
         HStack {
+
             if staff.handType == HandType.right {
-                VStack {
-                    Text("\u{1d11e}")
-                        .foregroundColor(.black)
-                        .font(.system(size: CGFloat(score.lineSpacing * 10)))
-                        .padding(.top, 0.0)
-                        .padding(.bottom, score.lineSpacing * 1.0)
-                }
-                //.border(Color.red)
+                Image("clef_treble")
+                    .resizable()
+                    .renderingMode(.template)
+                    //.foregroundColor(entry.getColor(staff: staff))
+                    .scaledToFit()
             }
             else {
-                Text("\u{1d122}")
-                    .foregroundColor(.black)
-                    .font(.system(size: CGFloat(Double(score.lineSpacing) * 6.5)))
+
+                Image("clef_bass")
+                    .resizable()
+                    .renderingMode(.template)
+                    //.foregroundColor(entry.getColor(staff: staff))
+                    .scaledToFit()
             }
         }
         //.border(Color.green)
@@ -160,8 +161,10 @@ struct KeySignatureView: View {
 }
 
 public struct StaffView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
+    let scale:Scale
     @ObservedObject var score:Score
-    //@ObservedObject
+    let scoreView:ScoreView
     var staff:Staff
     let widthPadding:Bool
     
@@ -173,10 +176,12 @@ public struct StaffView: View {
     var entryPositions:[Double] = []
     var totalDuration = 0.0
     
-    init (score:Score, staff:Staff, widthPadding:Bool) {
+    init (scale:Scale, score:Score, staff:Staff, scoreView:ScoreView, widthPadding:Bool) {
+        self.scale = scale
         self.score = score
         self.staff = staff
         self.widthPadding = widthPadding
+        self.scoreView = scoreView
     }
     
     func clefWidth() -> Double {
@@ -229,6 +234,11 @@ public struct StaffView: View {
         return offsets
     }
     
+    func getClefWidthAdjust(lineSpacing:Double) -> Double {
+        //UIScreen.main.boundsU.width
+        return lineSpacing * 4.2
+    }
+    
     public var body: some View {
         ZStack {
             StaffLinesView(score:score, staff: staff, widthPadding: widthPadding)
@@ -236,8 +246,11 @@ public struct StaffView: View {
                 .padding([.leading, .trailing], widthPadding ? score.lineSpacing * 4 : 0)
             HStack(spacing: 0) {
                 if staff.linesInStaff != 1 {
+                    let w:Double = getClefWidthAdjust(lineSpacing: score.lineSpacing)
                     ClefView(score:score, staff: staff)
-                        .frame(height: score.getStaffHeight())
+                    //.frame(height: score.getStaffHeight() * 0.6)
+                    ///Both clefs MUST have the same width to ensure notes and bar lines of on both staves exactly align
+                        .frame(width: w) //, height: score.getStaffHeight())
                         .padding([.leading], widthPadding ? score.lineSpacing * 1 : 0)
                     //.border(Color.red)
                     if score.key.keySig.accidentalCount > 0 {
@@ -247,13 +260,13 @@ public struct StaffView: View {
                     }
                 }
                 
-                if score.timeSignature.visible {
+                //if score.timeSignature.visible {
                     TimeSignatureView(staff: staff, timeSignature: score.timeSignature, lineSpacing: score.lineSpacing, clefWidth: clefWidth()/1.0)
                         .frame(height: score.getStaffHeight())
                     //    .border(Color.red)
-                }
+                //}
 
-                ScoreEntriesView(score: score, staff: staff)
+                ScoreEntriesView(score: score, staff: staff, scoreView: scoreView)
                     .frame(height: score.getStaffHeight())
                     .coordinateSpace(name: "StaffNotesView")
             }

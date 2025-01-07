@@ -101,7 +101,7 @@ public struct CalibrationView: View {
 //                .commonFrameStyle(backgroundColor: .clear).padding()
 
             if let score = scalesModel.getScore() {
-                ScoreView(score: score, widthPadding: false).padding()
+                ScoreView(scale: ScalesModel.shared.scale, score: score, barLayoutPositions: score.barLayoutPositions, widthPadding: false).padding()
             }
             
             if !playingScale {

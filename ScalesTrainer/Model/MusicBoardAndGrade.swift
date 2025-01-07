@@ -377,7 +377,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false), debug1: true))
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false)))
         }
 
         return scales

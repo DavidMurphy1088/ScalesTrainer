@@ -439,7 +439,7 @@ public class Score : ObservableObject {
         for i in 0..<self.scoreEntries.count {
             if self.scoreEntries[i] is TimeSlice {
                 if atValuePosition == totalValue {
-                    self.scoreEntries.insert(StaffClef(score: self, clefType: clefType), at: i)
+                    self.scoreEntries.insert(StaffClef(scale: scale, score: self, clefType: clefType), at: i)
                     break
                 }
                 let timeslice = self.scoreEntries[i] as! TimeSlice
@@ -620,7 +620,7 @@ public class Score : ObservableObject {
 
         var timeSlicesUnderBeam:[TimeSlice] = []
         let linesForFullStemLength = 3.5
-        
+
         ///Group quavers under quaver beams
         for scoreEntryIndex in startEntryIndex...endEntryIndex {
             let scoreEntry = self.scoreEntries[scoreEntryIndex]

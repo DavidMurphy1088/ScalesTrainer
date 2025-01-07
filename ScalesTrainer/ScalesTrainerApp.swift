@@ -162,9 +162,9 @@ class TabSelectionManager: ObservableObject {
             //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
             //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
             if true {
-                ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .harmonicMinor,
-                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0,1],
-                                                         dynamicTypes: [.mf], articulationTypes: [.legato])
+                ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "G#"), scaleType: .harmonicMinor,
+                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0],
+                                                         dynamicTypes: [.mf], articulationTypes: [.legato], debugOn: true)
             }
             else {
                 ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,

@@ -110,34 +110,16 @@ struct StaffNoteView: View {
     }
     
     func getAccidental(accidental:Int) -> String {
-//        if false {
-//            ///requires quite a bit of work in staff placement to get the accidental correct
-//            ///for scales (thus far) if an acciental is specified for note display (given the key) that accidental will always be a natural e.g. harmonic and melodic minor scales
-//            if accidental < 0 {
-//                return "\u{266D}"
-//            }
-//            else {
-//                if accidental > 0 {
-//                    return "\u{266F}"
-//                }
-//                else {
-//                    return "\u{266E}"
-//                }
-//            }
-//        }
-//        else {
-            if accidental == 0 {
-                return "\u{266E}" //natural
-            }
-            else {
-                if accidental > 0 {
-                    return "\u{266F}"
-                }
-                else {
-                    return "\u{266D}"
-                }
-            }
-//        }
+        switch accidental {
+        case 1:
+            return "\u{266F}" //#
+        case 2:
+            return "\u{1D12A}" // double sharp
+        case -1:
+            return "\u{266D}" //♭
+        default:
+            return "\u{266E}" //natural
+        }
     }
     
     func sizeMultiplier() -> Double {

@@ -235,7 +235,7 @@ public class Scale : Codable {
     
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
                 minTempo:Int, dynamicTypes:[DynamicType], articulationTypes:[ArticulationType],
-                scaleCustomisation:ScaleCustomisation? = nil, debug1:Bool = false) {
+                scaleCustomisation:ScaleCustomisation? = nil, debugOn:Bool = false) {
         self.scaleRoot = scaleRoot
         self.minTempo = minTempo
         self.dynamicTypes = dynamicTypes
@@ -243,13 +243,16 @@ public class Scale : Codable {
         self.octaves = octaves
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
-        self.debugOn = debug1
+        self.debugOn = debugOn
         scaleNoteState = []
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
         
         if let custom = scaleCustomisation  {
             print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
+        }
+        if debugOn {
+            
         }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)

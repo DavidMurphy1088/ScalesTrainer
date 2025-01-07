@@ -4,22 +4,22 @@ import CoreData
 struct ScoreEntriesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     var noteLayoutPositions:NoteLayoutPositions
-    @ObservedObject var barLayoutPositions:BarLayoutPositions
     @ObservedObject var score:Score
     @ObservedObject var staff:Staff
+    let scoreView:ScoreView
     
     static var viewNum:Int = 0
-    //let noteOffsetsInStaffByKey1:NoteOffsetsInStaffByKey
     let viewNum:Int
     
-    init(score:Score, staff:Staff) {
+    init(score:Score, staff:Staff, scoreView:ScoreView) {
         self.score = score
         self.staff = staff
         self.noteLayoutPositions = staff.noteLayoutPositions
-        self.barLayoutPositions = score.barLayoutPositions
+        //self.barLayoutPositions = score.barLayoutPositions
         ScoreEntriesView.viewNum += 1
         self.viewNum = ScoreEntriesView.viewNum
         //self.noteOffsetsInStaffByKey1 = NoteOffsetsInStaffByKey(keyType: score.key.type == .major ? .major : .minor)
+        self.scoreView = scoreView
     }
     
 //    ///Return the start and end points for the quaver beam based on the note postions that were reported
@@ -64,28 +64,27 @@ struct ScoreEntriesView: View {
     func quaverBeamView(line: (CGPoint, CGPoint), startNote:StaffNote, endNote:StaffNote, lineSpacing: Double) -> some View {
         ZStack {
             if startNote.timeSlice.sequence == endNote.timeSlice.sequence {
-                //let l = log(startNote, endNote)
                 //An unpaired quaver
                 let height = lineSpacing * 4.5
                 let width = height / 3.0
                 let flippedHeightOffset = startNote.midiNumber > 71 ? height / 2.0 : 0.0
-                getQuaverImage(note:startNote)
-                    .resizable()
-                    .renderingMode(.template)
-                    .foregroundColor(startNote.getColor(staff: staff))
-                    .scaledToFit()
-                    .frame(height: height)
-                    .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset)
-                
-                if endNote.getValue() == StaffNote.VALUE_SEMIQUAVER {
-                    getQuaverImage(note:startNote)
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundColor(startNote.getColor(staff: staff))
-                        .scaledToFit()
-                        .frame(height: height)
-                        .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset + lineSpacing)
-                }
+//                getQuaverImage(note:startNote)
+//                    .resizable()
+//                    .renderingMode(.template)
+//                    .foregroundColor(startNote.getColor(staff: staff))
+//                    .scaledToFit()
+//                    .frame(height: height)
+//                    .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset)
+//                
+//                if endNote.getValue() == StaffNote.VALUE_SEMIQUAVER {
+//                    getQuaverImage(note:startNote)
+//                        .resizable()
+//                        .renderingMode(.template)
+//                        .foregroundColor(startNote.getColor(staff: staff))
+//                        .scaledToFit()
+//                        .frame(height: height)
+//                        .position(x: line.0.x + width / 3.0 , y: line.1.y + height / 3.5 - flippedHeightOffset + lineSpacing)
+//                }
             }
             else {
                 //A paired quaver
@@ -130,7 +129,6 @@ struct ScoreEntriesView: View {
                                         .onChange(of: self.orientationInfo.isPortrait, {
                                             self.updateQuaverBeamsLayouts(timeSlice: timeSlice, frame: geometry.frame(in: .named("NotePositioningStack")))
                                         })
-                                        
                                         .onAppear {
                                             self.updateQuaverBeamsLayouts(timeSlice: timeSlice, frame: geometry.frame(in: .named("NotePositioningStack")))
                                         }
@@ -151,12 +149,12 @@ struct ScoreEntriesView: View {
                                         .frame(height: score.getStaffHeight())
                                         .onAppear {
                                             let barLine = entry as! BarLine
-                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
+                                            score.barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onAppear")
                                         }
-                                        .onChange(of: score.lineSpacing) { oldValue, newValue in
-                                            let barLine = entry as! BarLine
-                                            barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
-                                        }
+//                                        .onChange(of: score.lineSpacing) { oldValue, newValue in
+//                                            let barLine = entry as! BarLine
+//                                            score.barLayoutPositions.storePosition(barLine: barLine, rect: geometry.frame(in: .named("ScoreView")), ctx: "onChange")
+//                                        }
                                 }
                             }
                         }
