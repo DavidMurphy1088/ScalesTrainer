@@ -96,8 +96,8 @@ struct FamousQuotesView: View {
 }
 
 struct ActivityModeView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
-    //@StateObject private var orientationObserver = DeviceOrientationObserver()
     let musicBoardAndGrade:MusicBoardAndGrade
     @State var menuOptionsLeft:[ActivityMode] = []
     //@State var menuOptionsRight:[ActivityMode] = []
@@ -114,7 +114,8 @@ struct ActivityModeView: View {
             
             Spacer()
             if let practiceChart = musicBoardAndGrade.practiceChart {
-                NavigationLink(destination: PracticeChartView(practiceChart: practiceChart)
+                NavigationLink(destination: PracticeChartView(practiceChart: practiceChart),
+                               isActive: $tabSelectionManager.isPracticeChartActive
                 ) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
                         if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
@@ -135,7 +136,8 @@ struct ActivityModeView: View {
                 
                 Spacer()
                 NavigationLink(destination: SpinWheelView(practiceChart: practiceChart)
-                               //, isActive: $navigationState2.navigationChildIsActive
+                    .environmentObject(orientationInfo)
+                               , isActive: $tabSelectionManager.isSpinWheelActive
                 ) {
                     VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
                         if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
@@ -185,8 +187,8 @@ struct ActivityModeView: View {
     }
 }
 
-
 struct HomeView: View {
+    @EnvironmentObject var orientationInfo: OrientationInfo
     @State var scaleGroupsSheet = false
     
     var body: some View {
@@ -197,6 +199,7 @@ struct HomeView: View {
                     TitleView(screenName: "Scales Academy", showGrade: true)
                     if let musicBoardAndGrade = MusicBoardAndGrade.shared {
                         ActivityModeView(musicBoardAndGrade: musicBoardAndGrade)
+                            .environmentObject(orientationInfo)
                     }
                     else {
                         Text("No music grade").padding()
@@ -207,7 +210,6 @@ struct HomeView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        
     }
     
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SpinWheelView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel = ScalesModel.shared
     @State var practiceChart:PracticeChart // = boardAndGrade.practiceChart
@@ -36,10 +37,18 @@ struct SpinWheelView: View {
         var res:[String] = []
 
         for scale in practiceChart.getScales() {
-            var name = scale.getScaleName(handFull: false)
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                ///push outward from wheel center to avoid overcrowding
-                name = "         " + scale.abbreviateFileName(name: name)
+            var name = ""
+            if let customisation = scale.scaleCustomisation {
+                if let customName = customisation.customScaleNameWheel {
+                    name = customName
+                }
+            }
+            if name.count == 0 {
+                name = scale.getScaleName(handFull: false)
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    ///push outward from wheel center to avoid overcrowding
+                    name = "         " + scale.abbreviateFileName(name: name)
+                }
             }
             res.append(name)
         }

@@ -265,10 +265,6 @@ public class ScalesModel : ObservableObject {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
                           minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
         self.calibrationTapHandler = nil
-        DispatchQueue.main.async {
-            //PianoKeyboardModel.shared1.configureKeyboardForScale(scale: self.scale, handIndex: self.scale.hands[0])
-            //PianoKeyboardModel.sharedLeftHand.configureKeyboardForScale(scale: self.scale, handIndex: 1)
-        }
     }
     
     func clearFunctionToNotify() {
@@ -598,11 +594,36 @@ public class ScalesModel : ObservableObject {
     }
     
     func createScore(scale:Scale) -> Score {
+        
+        func addFinalRests(timeSig:TimeSignature, barValue:Double) {
+            ///Add rests as required to fill the last bar
+            var values:[Double] = []
+            if timeSig.top == 4 {
+                if barValue == 1 {
+                    values = [1.0, 2.0]
+                }
+                if barValue == 2 {
+                    values = [2.0]
+                }
+                if barValue == 3 {
+                    values = [1.0]
+                }
+
+            }
+            for v in values {
+                let ts = score.createTimeSlice()
+                for handType in handTypes {
+                    let rest = Rest(timeSlice: ts, value: v, segments: [])
+                    ts.addRest(rest: rest)
+                }
+            }
+         }
+        
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
         let keySignature:KeySignature
-        if [.chromatic].contains(scale.scaleType) {
+        if [.chromatic, .arpeggioDiminishedSeventh].contains(scale.scaleType) {
             keySignature = KeySignature(keyName: "C", keyType: .major)
         }
         else {
@@ -618,7 +639,7 @@ public class ScalesModel : ObservableObject {
         
         ///Add the required number of staves to the score depending on the number of hands
         
-        var totalBarValue = 0.0
+        var totalBarValue  = 0.0
         let mult = timeSig.bottom == 8 ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
         let maxBarValue:Double = Double(timeSig.top) * mult
         let handTypes:[HandType] = scale.hands.count > 1 ? [HandType.right,HandType.left] : [scale.hands[0] == 0 ? .right : .left]
@@ -636,14 +657,8 @@ public class ScalesModel : ObservableObject {
                 ///Trin Grade 1, D Min Melodic assumes there is not a barline - see the C natural
                 ///This diff my require change in custom scale properties to add or not bar LinearGradient
                 ///Latest code adds a maxLookback value that might work to resolve all this mess 🤔
-                
-                //if ![ScaleType.melodicMinor].contains(scale.scaleType) {
-                    if true {
-                        //score.addBarLine(visibleOnStaff: false, forStaffSpacing: isBrokenChord)
-                        score.addBarLine(visibleOnStaff: true, forStaffSpacing: isBrokenChord)
-                        totalBarValue = 0.0
-                    }
-                //}
+                score.addBarLine(visibleOnStaff: true, forStaffSpacing: isBrokenChord)
+                totalBarValue = 0.0
             }
             
             let ts = score.createTimeSlice()
@@ -651,6 +666,7 @@ public class ScalesModel : ObservableObject {
             ///The note for each hand is added to the one single TimeSlice
             for handType in handTypes {
                 let noteState = scale.getScaleNoteState(handType: handType, index: i)
+                //let noteValue = i < scale.getScaleNoteCount()-1 ? noteState.value : 1.0
                 let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, handType:handType, segments: noteState.segments)
                 note.setValue(value: noteState.value)
                 ts.addNote(n: note)
@@ -663,6 +679,7 @@ public class ScalesModel : ObservableObject {
             }
         }
         
+        addFinalRests(timeSig: timeSig, barValue: totalBarValue)
         score.setTimesliceStartAtValues()
         
         ///Insert clefs into the score as ScoreEntries (not Timeslices) where necessary to reduce too many ledger lines.
@@ -723,7 +740,7 @@ public class ScalesModel : ObservableObject {
 
         ///Create the required display staffs (one for the each hand) and position the required notes in them.
         ///Group all notes within a clef and then set their stem characteristics according to the clef just before them. i.e. obey clef switching
-        //score.debug111("----MODEL", withBeam: false, toleranceLevel: 0)
+        ///score.debug111("----MODEL", withBeam: false, toleranceLevel: 0)
         
         for handType in handTypes {
             var startStemCharacteristicsIndex = 0
@@ -783,7 +800,7 @@ public class ScalesModel : ObservableObject {
         setKeyboardAndScore(scale: scale)
     }
 
-    private func setKeyboardAndScore(scale:Scale) {
+    public func setKeyboardAndScore(scale:Scale) {
         ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScale to:\(name)")
@@ -796,39 +813,42 @@ public class ScalesModel : ObservableObject {
         else {
             self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
         }
-
-        self.configureKeyboards(scale: scale, ctx: "setScale")
-        DispatchQueue.main.async {
+        
+        ///10Jan2025 - changed to ensure keyboard key view has score to be able to set its note names
+        //self.configureKeyboards(scale: scale, ctx: "setScale")
+        //DispatchQueue.main.async {
             ///Scores are @Published so set them here
-            DispatchQueue.main.async {
+            //DispatchQueue.main.async {
                 self.tempoChangePublished = !self.tempoChangePublished
                 self.score1 = score
-            }
-        }
+            //}
+        //}
+        self.configureKeyboards(scale: scale, ctx: "setScale")
     }
     
     func configureKeyboards(scale:Scale, ctx:String) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "🎹 setScaleAndScore to:\(name) ctx:\(ctx) ID:\(scale.id)")
         self.scale = scale
-        
-        if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
-            combinedKeyboard.resetLinkScaleFingersToKeyboardKeys()
-            combinedKeyboard.configureKeyboardForScale(scale: scale, handType: .right)
-            self.setSelectedScaleSegment(0)
-            let middleKey = combinedKeyboard.pianoKeyModel.count / 2
-            combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying()
-            combinedKeyboard.redraw()
-        }
-        else {
-            ///Set the single RH and RH keyboard
-            PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
-            PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
-            PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, handType: .right)
-            PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, handType: .left)
-            self.setSelectedScaleSegment(0)
-            PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.redraw()
+        if let score = self.getScore() {
+            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
+                combinedKeyboard.resetLinkScaleFingersToKeyboardKeys()
+                combinedKeyboard.configureKeyboardForScale(scale: scale, score: score, handType: .right)
+                self.setSelectedScaleSegment(0)
+                let middleKey = combinedKeyboard.pianoKeyModel.count / 2
+                combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying()
+                combinedKeyboard.redraw()
+            }
+            else {
+                ///Set the single RH and RH keyboard
+                PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
+                PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
+                PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, score: score, handType: .right)
+                PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, score: score, handType: .left)
+                self.setSelectedScaleSegment(0)
+                PianoKeyboardModel.sharedRH.redraw()
+                PianoKeyboardModel.sharedLH.redraw()
+            }
         }
     }
 

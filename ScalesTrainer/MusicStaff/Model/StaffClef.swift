@@ -146,41 +146,52 @@ public class NoteOffsetsInScaleByKey {
                 let accStr = offsetAndAccidental[1]
                 accidental = Int(accStr)
             }
-            let placement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: offset, accidental: accidental)
-            //var custom = false
+            let placement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: offset, accidental: accidental, allowModify: true)
+            
+            ///Overide the default accidentals for special cases.
+            ///e.g. Block modification of 'unusual' required accidental notation
+            ///e.g. F# minor requires F natural to be shown as E# which is returned as the default placement
+            ///This flag (allowModify) will cause subsequent processing to not modify the accidental or placement settings
             if [.harmonicMinor, .melodicMinor].contains(scale.scaleType) {
-                ///Block modification of 'unusual' required accidental notation
-                ///e.g. F# minor requires F natural to be shown as E# which is returned as the default placement
                 if scale.scaleRoot.name == "F#" && noteValue % 12 == 5 {
-                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1)
+                    if scale.debugOn {
+                        if noteValue == 65 {
+                            
+                        }
+                    }
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
                     customPlacement.accidental = 1
-                    customPlacement.allowModify = false
                     return customPlacement
                 }
                 if scale.scaleRoot.name == "C#" && noteValue % 12 == 0 {
-                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1)
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
                     customPlacement.accidental = 1
-                    customPlacement.allowModify = false
                     return customPlacement
                 }
                 if scale.scaleRoot.name == "G#" {
                     if noteValue % 12 == 7 {
-                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1)
+                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
                         customPlacement.accidental = 2 //double sharp
-                        customPlacement.allowModify = false
                         return customPlacement
                     }
                     if noteValue % 12 == 5 {
-                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1)
-                        customPlacement.accidental = 1 //double sharp
-                        customPlacement.allowModify = false
+                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
+                        customPlacement.accidental = 1
                         return customPlacement
                     }
                 }
             }
-            //if !custom {
-                return placement
-            //}
+            ///Ensure dim 7th is notated as minor 3rd on top of minor 3rd
+            if scale.scaleType == .arpeggioDiminishedSeventh {
+                if noteValue % 12 == 8 {
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline+1, allowModify: false)
+                    customPlacement.accidental = -1
+                    return customPlacement
+
+                }
+            }
+            
+            return placement
         }
         else {
             Logger.shared.reportError(self, "Invalid data at row:\(scaleDegree), col:\(keyNum)")
@@ -229,8 +240,8 @@ public class StaffClef : ScoreEntry {
         }
         let placement = NoteStaffPlacement(midi: note.midiNumber,
                                            offsetFroMidLine: defaultPlacement.offsetFromStaffMidline,
-                                           accidental: defaultPlacement.accidental)
-        placement.allowModify = defaultPlacement.allowModify
+                                           accidental: defaultPlacement.accidental, allowModify: defaultPlacement.allowModify)
+        //placement.allowModify = defaultPlacement.allowModify
         return placement
     }
     
@@ -329,7 +340,7 @@ public class StaffClef : ScoreEntry {
         
         for midiValue in 0...highestNoteValue {
             //Fix - longer? - offset should be from middle C, notes should be displayed on both staffs from a single traversal of the score's timeslices
-            let placement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0)
+            let placement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, allowModify: true)
             noteStaffPlacement.append(placement)
             if midiValue < middleNoteValue - 6 * StaffNote.OCTAVE || midiValue >= middleNoteValue + 6 * StaffNote.OCTAVE {
                 continue

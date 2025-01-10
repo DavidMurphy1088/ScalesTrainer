@@ -146,12 +146,15 @@ struct DeveloperView: View {
 
 class TabSelectionManager: ObservableObject {
     @Published var selectedTab: Int = 0
+    ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
+    @Published var isPracticeChartActive: Bool = false
+    @Published var isSpinWheelActive: Bool = false
+
     init() {
         nextNavigationTab()
     }
     
     func nextNavigationTab() {
-        //if Settings.shared.calibrationIsSet() {
         if Settings.shared.isDeveloperMode() {
             let hands = [0,1]
             let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
@@ -161,21 +164,20 @@ class TabSelectionManager: ObservableObject {
             
             //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
             //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+            ScalesModel.shared = ScalesModel()
+            let scalesModel = ScalesModel.shared
             if true {
-                ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "G#"), scaleType: .harmonicMinor,
-                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "G#"), scaleType: .melodicMinor,
+                                                         scaleMotion: .similarMotion, minTempo: 70, octaves: 1, hands: [0,1],
                                                          dynamicTypes: [.mf], articulationTypes: [.legato], debugOn: true)
             }
             else {
-                ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,
-                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,
+                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [1],
                                                          dynamicTypes: [.mf], articulationTypes: [.legato],
                                                          scaleCustomisation: scaleCustomisation)
             }
-            
-            let testNotes = TestMidiNotes(scale: ScalesModel.shared.scale, hands: hands, noteSetWait: 1.5)
-            //testNotes.debug("Start")
-            //MIDIManager.shared.setTestMidiNotesNotes(testNotes)
+
             selectedTab = 0
         }
         else {
@@ -211,12 +213,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
         
-        //Make navigation titles at top larger font
-//        let appearance = UINavigationBarAppearance()
-//        appearance.titleTextAttributes = [.font : UIFont.systemFont(ofSize: 24, weight: .bold)]
-//        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-//        UINavigationBar.appearance().standardAppearance = appearance
-        
         let status = AVCaptureDevice.authorizationStatus(for: .audio)
         var statusMsg = ""
         switch status {
@@ -245,15 +241,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
     }
 }
-
-///Used for an indepenet view to back out a navigations tack
-//class NavigationState2: ObservableObject {
-//    @Published var navigationChildIsActive: Bool = false
-//    func setNavigationChildIsActive(_ state:Bool) {
-//        print("====================== NavigationState2, navigationChildIsActive", state)
-//        self.navigationChildIsActive = state
-//    }
-//}
 
 @main
 struct ScalesTrainerApp: App {
@@ -334,6 +321,7 @@ struct ScalesTrainerApp: App {
                     Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
                 }
                 .tag(20)
+                .environmentObject(tabSelectionManager)
             
             SettingsView()
                 .tabItem {
@@ -347,6 +335,7 @@ struct ScalesTrainerApp: App {
                     Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                 }
                 .tag(40)
+                .environmentObject(tabSelectionManager)
             
             FeatureReportView()
                 .tabItem {

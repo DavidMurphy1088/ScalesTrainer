@@ -11,23 +11,31 @@ struct ScaleTitleView: View {
     }
     
     func getTitle() -> String {
-        var title = scale.getTitle()
-        if scale.scaleMotion == .contraryMotion {
-            title += " in Contrary Motion"
+        var title = ""
+        if let customisation = scale.scaleCustomisation {
+            if let custonName = customisation.customScaleName {
+                title = custonName
+            }
         }
-        else {
-            var handName = ""
-            if scale.hands.count == 1 {
-                switch scale.hands[0] {
-                case 0: handName = "RH"
-                case 1: handName = "LH"
-                default: handName = "Together"
-                }
+        if title.count == 0 {
+            title = scale.getTitle()
+            if scale.scaleMotion == .contraryMotion {
+                title += " in Contrary Motion"
             }
             else {
-                handName = " Together"
+                var handName = ""
+                if scale.hands.count == 1 {
+                    switch scale.hands[0] {
+                    case 0: handName = "RH"
+                    case 1: handName = "LH"
+                    default: handName = "Together"
+                    }
+                }
+                else {
+                    handName = " Together"
+                }
+                title += "," + handName
             }
-            title += "," + handName
         }
         if scale.octaves > 1 {
             title += ", \(scale.octaves) Octaves"

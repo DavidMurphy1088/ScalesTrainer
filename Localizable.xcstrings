@@ -221,7 +221,7 @@
     "Dev" : {
 
     },
-    "Disconnect All" : {
+    "Disconnect All MIDI Sources" : {
 
     },
     "Email" : {
@@ -618,7 +618,7 @@
     "Scales Library" : {
 
     },
-    "Scan MIDI Devices" : {
+    "Scan and connect MIDI Sources" : {
 
     },
     "Screen A" : {

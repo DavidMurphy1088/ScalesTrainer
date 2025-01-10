@@ -32,24 +32,8 @@ struct BTMIDIPanelViewControllerWrapper: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: CABTMIDICentralViewController, context: Context) {
         // No updates needed
     }
-    
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator(self)
-//    }
-//    
-//    class Coordinator: NSObject, CABTMIDICentralViewControllerDelegate {
-//        var parent: BTMIDIPanelViewControllerWrapper
-//        
-//        init(_ parent: BTMIDIPanelViewControllerWrapper) {
-//            self.parent = parent
-//        }
-//        
-//        func midiCentralViewControllerDidFinish(_ controller: CABTMIDICentralViewController) {
-//            parent.presentationMode.wrappedValue.dismiss()
-//        }
-//    }
-}
 
+}
 
 struct MIDIView: View {
     @ObservedObject var midiManager = MIDIManager.shared
@@ -57,7 +41,6 @@ struct MIDIView: View {
     
     var body: some View {
         VStack {
-            
             Text("Connected MIDI Sources")
                 .font(.title)
                 .padding()
@@ -79,7 +62,7 @@ struct MIDIView: View {
             Button(action: {
                 midiManager.scanMIDISources()
             }) {
-                Text("Scan MIDI Devices")
+                Text("Scan and connect MIDI Sources")
             }
             .padding()
             .sheet(isPresented: $showingBTMIDIPanel) {
@@ -89,7 +72,7 @@ struct MIDIView: View {
             Button(action: {
                 midiManager.disconnectAll()
             }) {
-                Text("Disconnect All")
+                Text("Disconnect All MIDI Sources")
             }
             .padding()
 

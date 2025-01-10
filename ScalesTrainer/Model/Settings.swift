@@ -130,7 +130,7 @@ public class Settings : Codable  {
             return
         }
         UserDefaults.standard.set(str, forKey: "settings")
-        Logger.shared.log(self, "Setting saved ➡️, \(toString())")
+        Logger.shared.log(self, "Setting saved, \(toString())")
     }
     
     func getName() -> String {
@@ -164,7 +164,7 @@ public class Settings : Codable  {
                     if let board = self.musicBoardName, let grade = self.musicBoardGrade {
                         SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade(board: MusicBoard(name: board), grade: grade))
                     }
-                    Logger.shared.log(self, "Settings loaded ⬅️, \(toString())")
+                    Logger.shared.log(self, "Settings loaded, \(toString())")
                     return true
                 } catch {
                     Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)

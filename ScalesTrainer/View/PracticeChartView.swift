@@ -47,10 +47,6 @@ struct CellView: View {
         }
     }
     
-    func determineNumberOfBadges() -> Int {
-        return Int.random(in: 0..<3)
-    }
-    
     func setHilighted(scale:Scale) {
         for row in practiceChart.rows {
             for chartCell in row {
@@ -159,7 +155,7 @@ struct CellView: View {
     func badgeView() -> some View {
         HStack {
             if practiceCell.badges.count > 0 {
-                Text(" \(practiceCell.badges.count)").font(.title2)
+                Text(" \(practiceCell.badges.count)").font(.custom("MarkerFelt-Wide", size: 24)).foregroundColor(.purple).bold() //.font(.title2)
             }
             ForEach(0..<practiceCell.badges.count, id: \.self) {index in
                 if index < self.getMinBadgeIndex() {
@@ -177,7 +173,24 @@ struct CellView: View {
         }
         .opacity(opacityValue)
     }
-
+    
+    func getName() -> String {
+        var cellName = ""
+        let scale = practiceCell.scale
+        if scale.scaleType == .chromatic {
+            
+        }
+        if let customisation = scale.scaleCustomisation {
+            if let name = customisation.customScaleName {
+                cellName = name
+            }
+        }
+        if cellName.count == 0 {
+            cellName = practiceCell.scale.getScaleName(handFull: true)
+        }
+        return cellName
+    }
+    
     var body: some View {
         VStack {
             Button(action: {
@@ -190,9 +203,8 @@ struct CellView: View {
                     self.licenceRequiredMessage = "A subscription is required to access \n" + practiceCell.scale.getScaleName(handFull: true)
                 }
             }) {
-                let label = practiceCell.scale.getScaleName(handFull: true)
                 HStack {
-                    Text(label)
+                    Text(getName())
                         .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
                         .foregroundColor(practiceCell.isLicensed ? .blue : .gray)
                         .opacity(opacityValue)
@@ -249,7 +261,8 @@ struct PracticeChartView: View {
     @State private var helpShowing = false
     @State private var cellOpacityValue: Double = 1.0
     @State private var showHands = false
-    
+    @State var minorScaleTypes:[String] = []
+
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
         self.daysOfWeek = getDaysOfWeek()
@@ -287,7 +300,6 @@ struct PracticeChartView: View {
             let cellHeight: CGFloat = screenHeight / 12.0
             
             let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
-            let minorScaleTypes:[String] = ["Harmonic", "Natural", "Melodic"]
             
             VStack {
                 VStack(spacing: 0) {
@@ -307,11 +319,12 @@ struct PracticeChartView: View {
                             let newType:ScaleType
                             switch minorTypeIndex {
                             case 0:newType = .harmonicMinor
-                            case 1:newType = .naturalMinor
-                            default:newType = .melodicMinor
+                            case 1:newType = .melodicMinor
+                            default:newType = .naturalMinor
                             }
                             practiceChart.minorScaleType = minorTypeIndex
                             practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
+                            MusicBoardAndGrade.shared?.savePracticeChartToFile()
                             self.reloadTrigger = !self.reloadTrigger
                         })
                         Text("\(self.redrawCounter)").opacity(0.0).padding(0)
@@ -420,8 +433,11 @@ struct PracticeChartView: View {
         .commonFrameStyle()
         
         .onAppear() {
-            if let chart = MusicBoardAndGrade.shared?.practiceChart {
-                self.practiceChart = chart
+            if let boardAndGrade = MusicBoardAndGrade.shared {
+                if let chart = boardAndGrade.practiceChart {
+                    self.practiceChart = chart
+                    self.minorScaleTypes = boardAndGrade.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
+                }
             }
             minorTypeIndex = practiceChart.minorScaleType
         }

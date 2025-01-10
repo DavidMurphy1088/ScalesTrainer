@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 
 struct SelectBoardGradesView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let inBoard:MusicBoard
     @State private var isOn = [Bool](repeating: false, count: 12)
     let width = 0.7
@@ -15,7 +16,6 @@ struct SelectBoardGradesView: View {
             .padding()
             Spacer()
             List {
-                //ForEach(inBoard.gradesOffered) {gradeOffered in
                 ForEach(inBoard.gradesOffered, id: \.self) { number in
                     HStack {
                         let name = "Grade " + String(number) + " Piano"
@@ -42,15 +42,15 @@ struct SelectBoardGradesView: View {
             for i in 0..<isOn.count {
                 isOn[i] = false
             }
-//            if let grade = self.inGrade {
-//                isOn[grade] = true
-//            }
             if let grade = MusicBoardAndGrade.shared?.grade {
                 isOn[grade] = true
             }
         }
         .onDisappear() {
             if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
+                ///Force all views dependendent on grade to close since they show the previous grade
+                tabSelectionManager.isSpinWheelActive = false
+                tabSelectionManager.isPracticeChartActive = false
                 Settings.shared.musicBoardGrade = gradeIndex
                 Settings.shared.musicBoardName = inBoard.name
                 MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)

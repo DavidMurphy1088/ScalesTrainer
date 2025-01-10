@@ -12,13 +12,6 @@ class MIDIMessage {
     }
 }
 
-//enum MIDIObjectType: UInt32 {
-//    case other = 0
-//    case device = 1
-//    case entity = 2
-//    case source = 3
-//    // case destination = 4 // Not needed since we're only handling sources
-//}
 enum MIDIObjectType: Int32 {
     case other = 0
     case device = 1
@@ -104,7 +97,6 @@ func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: U
 
 class MIDIManager : ObservableObject {
     static let shared = MIDIManager()
-    //@Published var devicesPublished:[String] = []
     @Published var connectionsPublished:[String] = []
 
     private var midiClient: MIDIClientRef = 0
@@ -153,7 +145,6 @@ class MIDIManager : ObservableObject {
     
     func scanMIDISources() {
         self.disconnectAll()
-
         let numSources = MIDIGetNumberOfSources()
         for i in 0..<numSources {
             let source = MIDIGetSource(i)
@@ -161,18 +152,23 @@ class MIDIManager : ObservableObject {
                 connectToSource(source)
             }
         }
+        ///Clients should usually use MIDIGetNumberOfSources, MIDIGetSource,
+        ///MIDIGetNumberOfDestinations and MIDIGetDestination, rather iterating through devices and
+        ///entities to locate endpoints.
+        ///let numberOfDevices = MIDIGetNumberOfDevices()
     }
-    
+
     private func connectToSource(_ source: MIDIEndpointRef) {
         let name = getDeviceName(from: source)
         let result = MIDIPortConnectSource(inputPort, source, nil)
+        
         if result != noErr {
             log.reportError(self, "Failed to connect to source \(name): \(result)")
             notifyUser(ofError: "Failed to connect to MIDI Source: \(name)")
             return
         }
         connectedSources.insert(source)
-        log.log(self, "🥶 Connected to source: \(name)")
+        log.log(self, "Connected to MIDI source. Name:\(name), id:\(source.description)")
         DispatchQueue.main.async {
             self.connectionsPublished.append(name)
         }
@@ -181,7 +177,7 @@ class MIDIManager : ObservableObject {
         NotificationCenter.default.post(name: .midiDeviceChanged, object: nil)
     }
     
-    private func disconnectFromSource(_ source: MIDIEndpointRef) {
+   private func disconnectFromSource(_ source: MIDIEndpointRef) {
         let name = getDeviceName(from: source)
         let result = MIDIPortDisconnectSource(inputPort, source)
         if result != noErr {
@@ -204,37 +200,42 @@ class MIDIManager : ObservableObject {
         return "Unknown"
     }
     
+    ///https://developer.apple.com/documentation/coremidi/midiobjectref
+    ///This function disabled 8Jan2025. Cant figure out how to determine type of endpoint and connection attempt always fails.
     func handleDeviceAdded(_ endpoint: MIDIObjectRef) {
+        //Logger.shared.log(self, "Device Added. ObjectRef:\(endpoint)")
+        //let type = getMIDIObjectType(endpoint)
         //let type = getMIDIObjectType(endpoint)
         //if type == .source {
-            let source = MIDIEndpointRef(endpoint)
-            if !connectedSources.contains(source) {
-                connectToSource(source)
-            }
-        //}
+//            let source = MIDIEndpointRef(endpoint)
+//            if !connectedSources.contains(source) {
+//                connectToSource(source)
+//            }
+//        //}
     }
     
     func handleDeviceRemoved(_ endpoint: MIDIObjectRef) {
+        //Logger.shared.log(self, "Device Added. ObjectRef:\(endpoint)")
         //let type = getMIDIObjectType(endpoint)
         //if type == .source { // Direct comparison without rawValue
-            let source = MIDIEndpointRef(endpoint)
-            if connectedSources.contains(source) {
-                disconnectFromSource(source)
-            }
+//            let source = MIDIEndpointRef(endpoint)
+//            if connectedSources.contains(source) {
+//                disconnectFromSource(source)
+//            }
         //}
     }
     
-    private func getMIDIObjectType(_ midiObject: MIDIObjectRef) -> MIDIObjectType? {
-        var objectType: Int32 = 0
-        let kMIDIPropertyType = "type" as CFString
-        let result = MIDIObjectGetIntegerProperty(midiObject, kMIDIPropertyType, &objectType)
-        if result == noErr {
-            return MIDIObjectType(rawValue: objectType)
-        } else {
-            log.reportError(self, "Error retrieving MIDI object type: \(result)")
-            return nil
-        }
-    }
+//   private func getMIDIObjectType(_ midiObject: MIDIObjectRef) -> MIDIObjectType? {
+//        var objectType: Int32 = 0
+//        //let kMIDIPropertyType = "type" as CFString
+//        let result = MIDIObjectGetIntegerProperty(midiObject, kMIDIPropertyUniqueID, &objectType)
+//        if result == noErr {
+//            return MIDIObjectType(rawValue: objectType)
+//        } else {
+//            log.reportError(self, "Error retrieving MIDI object type: \(result)")
+//            return nil
+//        }
+//    }
     
     func disconnectAll() {
         for source in connectedSources {
@@ -358,22 +359,22 @@ struct MIDIObjectAddRemoveNotification {
     var parent: MIDIObjectRef
 }
 
+///Setup callbacks to handle new and removed MIDI connections while the app is running.
 private let midiSetupNotifyProc: MIDINotifyProc = { (message, refCon) in
     guard let refCon = refCon else {
         return
     }
     let midiManager = Unmanaged<MIDIManager>.fromOpaque(refCon).takeUnretainedValue()
-    switch message.pointee.messageID {
+    let messageID = message.pointee.messageID
+
+    switch messageID {
     case .msgObjectAdded:
         Logger.shared.log(MIDIManager.shared, "MIDI Object Added")
-        // Cast the message to MIDIObjectAddRemoveNotification to access 'child'
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
-        //what is this 👹- it causes connection fails...
         midiManager.handleDeviceAdded(notification.child)
         
     case .msgObjectRemoved:
         Logger.shared.log(MIDIManager.shared, "MIDI Object Removed")
-        // Cast the message to MIDIObjectAddRemoveNotification to access 'child'
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
         midiManager.handleDeviceRemoved(notification.child)
         
@@ -381,6 +382,7 @@ private let midiSetupNotifyProc: MIDINotifyProc = { (message, refCon) in
         break
     }
 }
+
 
 extension Notification.Name {
     static let midiDeviceChanged = Notification.Name("midiDeviceChanged")

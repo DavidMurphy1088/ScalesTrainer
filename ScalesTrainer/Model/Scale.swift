@@ -147,12 +147,19 @@ public class ScaleCustomisation : Codable {
     let startMidiRH:Int?
     let clefSwitch:Bool?
     let maxAccidentalLookback:Int?
-    
-    init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil,  maxAccidentalLookback:Int? = nil) {
+    let customScaleName:String?
+    let customScaleNameWheel:String?
+    let removeKeySig:Bool?
+
+    init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil, maxAccidentalLookback:Int? = nil,
+          customScaleName:String? = nil,  customScaleNameWheel:String? = nil, removeKeySig:Bool? = nil) {
         self.startMidiRH = startMidiRH
         self.startMidiLH = startMidiLH
         self.clefSwitch = clefSwitch
         self.maxAccidentalLookback = maxAccidentalLookback
+        self.customScaleName = customScaleName
+        self.customScaleNameWheel = customScaleNameWheel
+        self.removeKeySig = removeKeySig
     }
 }
 
@@ -211,7 +218,7 @@ public class Scale : Codable {
     let timeSignature:TimeSignature
     let debugOn:Bool
     var scaleCustomisation:ScaleCustomisation? = nil
-    
+
 //    public init() {
 //        self.scaleRoot = ScaleRoot(name: "")
 //        self.scaleNoteState = []
@@ -248,12 +255,12 @@ public class Scale : Codable {
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
         
-        if let custom = scaleCustomisation  {
-            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
-        }
-        if debugOn {
-            
-        }
+//        if let custom = scaleCustomisation  {
+//            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
+//        }
+//        if debugOn {
+//            
+//        }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
@@ -531,22 +538,23 @@ public class Scale : Codable {
                 lastNote = note
             }
             if let lastNote = lastNote {
-                if self.scaleType == .chromatic {
-                    ///Only required to match Trinity  🥵
-                    lastNote.value = 1.0
-                }
-                else {
-                    let lastBarTotal = barValue - lastNote.value
-                    let lastNoteValue:Int
-                    ///Last note for C time must be minum for backing to synchronise with scale on loop #2 of scale/backing
-                    if false && Settings.shared.customTrinity {
-                        lastNoteValue = 1
-                    }
-                    else {
-                        lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
-                    }
-                    lastNote.value = Double(lastNoteValue)
-                }
+                lastNote.value = 1.0
+//                if self.scaleType == .chromatic {
+//                    ///Only required to match Trinity  🥵
+//                    lastNote.value = 1.0
+//                }
+//                else {
+//                    let lastBarTotal = barValue - lastNote.value
+//                    let lastNoteValue:Int
+//                    ///Last note for C time must be minum for backing to synchronise with scale on loop #2 of scale/backing
+//                    if false && Settings.shared.customTrinity {
+//                        lastNoteValue = 1
+//                    }
+//                    else {
+//                        lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
+//                    }
+//                    lastNote.value = Double(lastNoteValue)
+//                }
             }
         }
         
@@ -572,7 +580,7 @@ public class Scale : Codable {
             }
         }
         if self.debugOn {
-            //self.debug11("end create", short: false)
+            //self.debug4("end create", short: false)
         }
         Scale.createCount += 1
     }
@@ -623,18 +631,20 @@ public class Scale : Codable {
     
     func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
         let states = self.scaleNoteState[handType == .right ? 0 : 1]
-//        if index > states.count-1 {
-//            return nil
-//        }
-//        else {
-            return states[index]
-//        }
+        return states[index]
     }
     
     func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
         return self.scaleNoteState[handType == .right ? 0 : 1]
     }
 
+    ///Return the remaining number of beats for a specified time signature for the scale's last bar. Remaining is the full bar minus the scale's last note value.l
+    func getRemainingBeatsInLastBar(timeSignature:TimeSignature) -> Int {
+        let totalValue = self.getTotalNoteValueInScale(handIndex: 0)
+        let lastBarTotalValue = Int(totalValue) % timeSignature.top
+        let remaining = timeSignature.top - lastBarTotalValue
+        return remaining
+    }
     
     func setChromaticFingerBreaks(hand:Int) {
         let midway = self.scaleNoteState[hand].count / 2
@@ -834,13 +844,8 @@ public class Scale : Codable {
         ///Transpose to scale's key
         var transposedChords = BackingChords(scaleType: self.scaleType)
         var rootPitch:Int
-//        if false && self.hands.count > 1 {   ///Temporarily try same pitch for LH
-//            rootPitch = self.scaleNoteState[1][0].midi
-//        }
-//        else {
-            //rootPitch = self.scaleNoteState[hands[0]][0].midi
         rootPitch = self.scaleNoteState[0][0].midi
-        //}
+        
         for backingChord in backingChords.chords {
             var pitches = Array(backingChord.pitches)
             for i in 0..<pitches.count {
@@ -864,7 +869,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug4(_ msg:String, short:Bool=false)  {
+    func debug5(_ msg:String, short:Bool=false)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {
@@ -1355,7 +1360,7 @@ public class Scale : Codable {
                 name += ", " + handName
             }
             else {
-                name += handFull ? ", Together" : " Together"
+                name += handFull ? ", Together" : ", Together"
             }
         }
         if let octaves = octaves {

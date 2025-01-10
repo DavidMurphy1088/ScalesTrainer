@@ -11,7 +11,7 @@ public struct ClassicStyle {
     let keyColor: Color
     let hand:Int
     let scale:Scale
-    let blackNoteYHeightMult:Double
+    let blackNoteFingerNumberHeight:Double
     
     public let naturalKeySpace: CGFloat
 
@@ -36,7 +36,7 @@ public struct ClassicStyle {
         self.keyColor = keyColor
         self.scale = scale
         //self.blackNoteYHeightMult = orientationObserver.orientation.isAnyLandscape ? 0.50 : 0.80
-        self.blackNoteYHeightMult = orientationObserver.isPortrait ? 0.80 : 0.50
+        self.blackNoteFingerNumberHeight = orientationObserver.isPortrait ? 0.50 : 0.50
     }
 
     public func naturalColor(_ down: Bool) -> Color {
@@ -162,7 +162,7 @@ public struct ClassicStyle {
                     if key.finger.count > 0 {
                         if key.midi != 60 {
                             context.draw(
-                                Text(key.name)
+                                Text(key.getName())
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
                                     .foregroundColor(keyModel.midi == 60 ? .blue : .black),
                                 at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
@@ -274,7 +274,7 @@ public struct ClassicStyle {
                     if scalesModel.showFingers {
                         if key.finger.count > 0 {
                             context.draw(
-                                Text(key.name)
+                                Text(key.getName())
                                 //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
                                     .foregroundColor(.white),
@@ -309,7 +309,7 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         
                         //let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-                        let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * self.blackNoteYHeightMult)
+                        let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * self.blackNoteFingerNumberHeight)
                         let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
                         if false {
                             ///White background for finger number on a black key

@@ -260,27 +260,55 @@ public class Score : ObservableObject {
         return result
     }
     
-    public func getTimeSliceForMidi(midi:Int, occurence:Int) -> TimeSlice? {
+//    public func getTimeSliceForMidi(midi:Int, occurence:Int) -> (TimeSlice?, ClefType?) {
+//        let ts = getAllTimeSlices()
+//        var cnt = 0
+//        var result:TimeSlice?
+//        var clef:StaffClef?
+//        for timeSlice in ts {
+//            //for staffType in [StaffType.treble, StaffType.bass] {
+//            for handType in [HandType.right,HandType.left] {
+//                let ns = timeSlice.getTimeSliceNotes(handType:handType)
+//                if ns.count > 0 {
+//                    let note = ns[0]
+//                    if note.midiNumber == midi {
+//                        if cnt == occurence {
+//                            result = timeSlice
+//                            break
+//                        }
+//                        cnt += 1
+//                    }
+//                }
+//            }
+//        }
+//        return result
+//    }
+    
+    public func getNoteAndClefForMidi(midi:Int, handType:HandType, occurence:Int) -> (StaffNote?, StaffClef?) {
         let ts = getAllTimeSlices()
         var cnt = 0
-        var result:TimeSlice?
-        for timeSlice in ts {
-            //for staffType in [StaffType.treble, StaffType.bass] {
-            for handType in [HandType.right,HandType.left] {
+        var result:StaffNote?
+        var clef:StaffClef?
+        for entry in self.scoreEntries {
+            if entry is TimeSlice {
+                let timeSlice = entry as! TimeSlice
                 let ns = timeSlice.getTimeSliceNotes(handType:handType)
                 if ns.count > 0 {
                     let note = ns[0]
                     if note.midiNumber == midi {
                         if cnt == occurence {
-                            result = timeSlice
+                            result = note
                             break
                         }
                         cnt += 1
                     }
                 }
             }
+            if entry is StaffClef {
+                clef = entry as! StaffClef
+            }
         }
-        return result
+        return (result, clef)
     }
     
     public func getTimeSlicesForBar(bar:Int) -> [TimeSlice] {
@@ -300,7 +328,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug11(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug1(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.getKeyName(withType: true)
               //"StaffCount", self.staffs.count,
@@ -333,12 +361,10 @@ public class Score : ObservableObject {
                                 "[clef:", note.clef?.clefType ?? "_","]",
                                 "[offset:", String(note.noteStaffPlacement.offsetFromStaffMidline),"]",
                                 "[segments:", note.segments,"]",
-                                //"[duration:", timeSlice.tapDurationNormalised ?? "_","]",
                                 "[direction", note.stemDirection,"]",
                                 "[stemLength", note.stemLength,"]",
                                 "[accidental", note.writtenAccidental ?? 0,"]",
                                 "[beamType:", note.beamType,"]",
-                                //"[beamEndNoteSeq:", note.beamEndNote?.timeSlice.sequence ?? "_",
                                 "]")
                         }
                         else {
@@ -350,14 +376,13 @@ public class Score : ObservableObject {
                             print(" [Note Value:", String(format: "%.2f", note.getValue()),"]", timeSlice.sequence, terminator: "")
                             print(" [Segments:", note.segments,"]", timeSlice.sequence, terminator: "")
                             print(" [status]",timeSlice.statusTag, terminator: "")
-                            //print(" [beat]",timeSlice.valuePoint, timeSlice.sequence, terminator: "")
-                            //print(" [writtenAccidental:",note.writtenAccidental ?? "","]", t.sequence, terminator: "")
                             
                             let note = timeSlice.entries[entryIndex] as! StaffNote
                             print("\thand:", note.handType, terminator: "")
                             print(",\toffset:", note.noteStaffPlacement.offsetFromStaffMidline, terminator: "")
                             print(", accidental:", note.noteStaffPlacement.accidental ?? " ", terminator: "")
-                            
+                            print(", allowModify:", note.noteStaffPlacement.allowModify, terminator: "")
+
                             //print("[Staff:",note.staffNum,"]" t.sequence, terminator: "")
                             print()
                         }
@@ -380,32 +405,6 @@ public class Score : ObservableObject {
             }
         }
     }
-
-//    public func getLastTimeSlice1() -> TimeSlice? {
-//        var ts:TimeSlice?
-//        for index in stride(from: scoreEntries.count - 1, through: 0, by: -1) {
-//            let element = scoreEntries[index]
-//            if element is TimeSlice {
-//                ts = element as? TimeSlice
-//                break
-//            }
-//        }
-//        return ts
-//    }    
-    
-//    public func getLastNoteTimeSlice() -> TimeSlice? {
-//        var result:TimeSlice?
-//        for index in stride(from: scoreEntries.count - 1, through: 0, by: -1) {
-//            let entry = scoreEntries[index]
-//            if let ts = entry as? TimeSlice {
-//                if ts.getTimeSliceNotes().count > 0 {
-//                    result = ts
-//                    break
-//                }
-//            }
-//        }
-//        return result
-//    }
 
     public func updateStaffs() {
         for staff in staffs {
@@ -468,19 +467,6 @@ public class Score : ObservableObject {
         }
         return totalOffsets <= 0 ? StemDirection.up: StemDirection.down
     }
-    
-//    func addStemAndBeamCharaceteristics(staff:Staff) {
-//        guard let timeSlice = self.getLastNoteTimeSlice() else {
-//            return
-//        }
-//        if timeSlice.entries.count == 0 {
-//            return
-//        }
-//        setTimesliceStartAtValues()
-//        if timeSlice.entries[0] is StaffNote {
-//            addStemCharaceteristics(staff: staff)
-//        }
-//    }
     
     ///For each time slice calculate its beat number in its bar
     func setTimesliceStartAtValues() {
@@ -841,63 +827,38 @@ public class Score : ObservableObject {
 //        return false
 //    }
     
-    public func getTrailingRestsDuration(index:Int) -> Double {
-        var totalDuration = 0.0
-        if index < self.scoreEntries.count {
-            for i in index..<self.scoreEntries.count {
-                if let ts = self.self.scoreEntries[i] as? TimeSlice {
-                    if ts.entries.count > 0 {
-                        if let rest = ts.entries[0] as? Rest {
-                            totalDuration += rest.getValue()
-                        }
-                        else {
-                            break
-                        }
-                    }
-                }
-            }
-        }
-        return totalDuration
-    }
+//    public func getTrailingRestsDuration(index:Int) -> Double {
+//        var totalDuration = 0.0
+//        if index < self.scoreEntries.count {
+//            for i in index..<self.scoreEntries.count {
+//                if let ts = self.self.scoreEntries[i] as? TimeSlice {
+//                    if ts.entries.count > 0 {
+//                        if let rest = ts.entries[0] as? Rest {
+//                            totalDuration += rest.getValue()
+//                        }
+//                        else {
+//                            break
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return totalDuration
+//    }
     
-    public func getEndRestsDuration() -> Double {
-        var totalDuration = 0.0
-        for e in self.getAllTimeSlices().reversed() {
-            if e.getTimeSliceEntries(notesOnly: false).count > 0 {
-                let entry = e.getTimeSliceEntries(notesOnly: false)[0]
-                if entry is StaffNote {
-                    break
-                }
-                totalDuration += entry.getValue()
-            }
-        }
-        return totalDuration
-    }
-    
-    func getNotesForLastBarOLD(clef:StaffClef, pitch:Int? = nil) -> [StaffNote] {
-        var notes:[StaffNote] = []
-        for entry in self.scoreEntries.reversed() {
-            if entry is BarLine {
-                break
-            }
-            if let ts = entry as? TimeSlice {
-                //if ts.getTimeSliceNotes(handType: clef.clefType).count > 0 {
-                if ts.getTimeSliceNotesForClef(clef: clef).count > 0 {
-                    if let note = ts.entries[0] as? StaffNote {
-                        if let pitch = pitch {
-                            if note.midiNumber == pitch {
-                                notes.append(note)
-                            }
-                        }
-                        else {
-                            notes.append(note)
-                        }
-                    }
-                }
-            }
-        }
-        return notes
-    }
+//    public func getEndRestsDuration() -> Double {
+//        var totalDuration = 0.0
+//        for e in self.getAllTimeSlices().reversed() {
+//            if e.getTimeSliceEntries(notesOnly: false).count > 0 {
+//                let entry = e.getTimeSliceEntries(notesOnly: false)[0]
+//                if entry is StaffNote {
+//                    break
+//                }
+//                totalDuration += entry.getValue()
+//            }
+//        }
+//        return totalDuration
+//    }
     
     func getPreviousNotesInBar(clef:StaffClef, sequence:Int, pitch:Int?) -> [StaffNote] {
         var notes:[StaffNote] = []

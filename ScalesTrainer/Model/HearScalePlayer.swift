@@ -89,14 +89,15 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
 
         let samplerForKeyboard = audioManager.getSamplerForKeyboard()
-        
+
         for hand in scale.hands {
             let note = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
+
             let keyboard = getKeyboard(hand: hand)
             let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
             
             if let keyIndex = keyIndex {
-
+                
                 if self.waitBeatsForScale == 0 {
                     let key=keyboard.pianoKeyModel[keyIndex]
                     ///Hilight the keyboard key and score note for the note.
@@ -111,10 +112,9 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                             //print("Executed after 0.5 seconds on the main queue.")
                         }
                     }
-                }
-                
-                if let score = scalesModel.getScore() {
-                    score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
+                    if let score = scalesModel.getScore() {
+                        score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
+                    }
                 }
                 
                 if scale.hands.count == 1 || hand == 0 {
@@ -152,6 +152,9 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 scalesModel.setSelectedScaleSegment(nextNote.segments[0])
             }
             else {
+                if let score = scalesModel.getScore() {
+                    waitBeatsForScale += scale.getRemainingBeatsInLastBar(timeSignature: score.timeSignature) * Int(notesPerBeat)
+                }
                 scalesModel.setSelectedScaleSegment(0)
                 self.nextNoteIndex = 0
             }

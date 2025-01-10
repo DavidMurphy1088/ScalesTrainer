@@ -45,10 +45,11 @@ public class NoteStaffPlacement {
     public var accidental: Int?
     var allowModify = true
     
-    init(midi:Int, offsetFroMidLine:Int, accidental:Int?=nil) {
+    init(midi:Int, offsetFroMidLine:Int, accidental:Int?=nil, allowModify:Bool) {
         self.midi = midi
         self.offsetFromStaffMidline = offsetFroMidLine
         self.accidental = accidental
+        self.allowModify = allowModify
     }
 }
 
@@ -73,7 +74,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     
     ///Placements for the note on treble and bass staff
     //var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
-    var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0)
+    var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, allowModify: true)
 
     ///Quavers in a beam have either a start, middle or end beam type. A standlone quaver type has type beamEnd. A non quaver has beam type none.
     public var beamType:QuaverBeamType = .none
@@ -250,17 +251,14 @@ public class StaffNote : TimeSliceEntry, Comparable {
     ///accidentail. In that case the note must shift down 1 unit of offset.
     ///
     func setNotePlacementAndAccidental(score:Score, clef:StaffClef, maxAccidentalLoopback:Int?) {
-        let stop = 65
-        if self.midiNumber == stop {
-            
-        }
         let defaultNotePlacement = clef.getNoteViewPlacement(note: self)
         var offsetFromMiddle = defaultNotePlacement.offsetFromStaffMidline
         var offsetAccidental:Int? = nil
         if self.isOnlyRhythmNote {
             offsetFromMiddle = 0
         }
-        
+        if self.midiNumber == 65 {
+        }
         if let writtenAccidental = self.writtenAccidental {
             //Content provided a specific accidental
             offsetAccidental = writtenAccidental
@@ -309,10 +307,10 @@ public class StaffNote : TimeSliceEntry, Comparable {
                     }
                 }
             }
-            if self.midiNumber == stop {
+//            if self.midiNumber == stop {
 //                print("==========", self.timeSlice.sequence, self.midiNumber, self.noteStaffPlacement.offsetFromStaffMidline, self.noteStaffPlacement.accidental ?? "_", "maxLoopback:", maxAccidentalLoopback ?? "_")
 //                print("     =====", "00", defaultNotePlacement.offsetFromStaffMidline, defaultNotePlacement.accidental ?? "_")
-            }
+//            }
             
             ///If not already matched, adjust the note's accidental based on the key signature
             if !matchedAccidental {
@@ -354,11 +352,9 @@ public class StaffNote : TimeSliceEntry, Comparable {
                     lookback += 1
                 }
             }
-            let placement = NoteStaffPlacement(midi: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental)
+            let placement = NoteStaffPlacement(midi: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental, allowModify: defaultNotePlacement.allowModify)
             self.noteStaffPlacement = placement
-            
-        }
-        
+        }        
         //self.debug("setNoteDisplayCharacteristics")
     }
 }
