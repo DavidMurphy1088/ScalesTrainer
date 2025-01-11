@@ -270,11 +270,16 @@ public struct ClassicStyle {
                 
                 ///------------- Back notes - Note name -----
                 ///On iPhone too many keys results in overlapping key names. So dont show the black key key names.
-                if scale.getScaleNoteCount() < 16 { //}|| UIDevice.current.userInterfaceIdiom != .phone {
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                //if scale.getScaleNoteCount() <= 16 { //}|| UIDevice.current.userInterfaceIdiom != .phone {
                     if scalesModel.showFingers {
                         if key.finger.count > 0 {
+                            if key.midi == 54 {
+                            }
+                            let str = key.getName()
                             context.draw(
-                                Text(key.getName())
+                                Text("\(key.getName())")
+                                //Text(key.getName())
                                 //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
                                     .foregroundColor(.white),

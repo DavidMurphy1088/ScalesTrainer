@@ -617,7 +617,81 @@ public class ScalesModel : ObservableObject {
                     ts.addRest(rest: rest)
                 }
             }
-         }
+        }
+        
+        ///"Rule for chromatics is you must use at least one of every line and space but no more than two.
+        ///All chromatics are notated in key sig "C".
+        ///You should use the --perfect 4th and perfect 5th -- above the base when you get to those pitches.
+        ///This requires that the accidentals used for each note should match the accidental required for the first note.
+        ///E.g. in D chromatic there must be a G (perfect 4th above) and an A (perfect 5th above)."
+        func adjustPlacementsForChromatic(score:Score, handType:HandType) {
+            func isWhiteKey(midi:Int) -> Bool {
+                let offset = midi % 12
+                return [0,2,4,5,7,9,11].contains(offset)
+            }
+
+            var firstAccidental:Int? = nil
+            var ctr = 0
+            var lastAccidentalOffset:Int? = nil
+            
+            for entry in score.scoreEntries {
+                if entry is BarLine {
+                    lastAccidentalOffset = nil
+                }
+                if entry is TimeSlice {
+                    let timeSlice = entry as! TimeSlice
+                    for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
+                        if staffNote.handType == handType {
+
+                            let placement = staffNote.noteStaffPlacement
+                            //if ctr == 0 {
+                            if firstAccidental == nil {
+                                firstAccidental = placement.accidental
+                            }
+                            if staffNote.midiNumber == 55 {
+                                
+                            }
+                            if isWhiteKey(midi: staffNote.midiNumber) {
+                                placement.accidental = nil
+                                staffNote.noteStaffPlacement = placement
+                                if let lastAccidentalOffset = lastAccidentalOffset {
+                                    if placement.offsetFromStaffMidline == lastAccidentalOffset {
+                                        placement.accidental = 0
+                                    }
+                                }
+                                placement.placementSetByKeySignature = false
+                                lastAccidentalOffset = nil
+                            }
+                            else {
+                                placement.placementSetByKeySignature = false
+                                lastAccidentalOffset = nil
+                                if placement.accidental != nil && placement.accidental != firstAccidental {
+                                    if placement.accidental == -1 {
+                                        placement.offsetFromStaffMidline -= 1
+                                        placement.accidental = 1
+                                        staffNote.noteStaffPlacement = placement
+                                        placement.placementSetByKeySignature = false
+                                        lastAccidentalOffset = placement.offsetFromStaffMidline
+                                    }
+                                    else {
+                                        if placement.accidental == 1 {
+                                            placement.offsetFromStaffMidline += 1
+                                            placement.accidental = -1
+                                            staffNote.noteStaffPlacement = placement
+                                            placement.placementSetByKeySignature = false
+                                            lastAccidentalOffset = placement.offsetFromStaffMidline
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                        ctr += 1
+                    }
+                }
+            }
+            //score.debug1("", handType: handType, withBeam: false, toleranceLevel: 0)
+        }
         
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
@@ -760,19 +834,24 @@ public class ScalesModel : ObservableObject {
                     }
                 }
                 if let timeSlice = scoreEntry as? TimeSlice {
-                    //for entry in timeSlice.getTimeSliceEntries(notesOnly: true) {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
                         staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning, maxAccidentalLoopback: scale.scaleCustomisation?.maxAccidentalLookback)
                         staffNote.clef = clefForPositioning
                     }
                 }
             }
-            
+            if scale.scaleType == .chromatic {
+                adjustPlacementsForChromatic(score:score, handType: handType)
+            }
+
             ///Do stem characteristics for the last remaining group of notes
             score.addStemCharacteristics(handType: handType, clef: clefForPositioning,
                                          startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
 
-            //score.debug11("Score create", withBeam: true, toleranceLevel: 0)
+            //score.debug1("Score create", handType: nil, withBeam: true, toleranceLevel: 0)
+        }
+        if scale.debugOn {
+            //score.debug1("ScalesMode", handType: nil, withBeam: false, toleranceLevel: 0)
         }
         return score
     }

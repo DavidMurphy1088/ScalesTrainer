@@ -122,7 +122,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         return lhs.keyboardNumber == rhs.keyboardNumber
     }
 
-    public func join(score:Score, fromKeyboard:PianoKeyboardModel, scale:Scale) -> PianoKeyboardModel {
+    public func join(score:Score, fromKeyboard:PianoKeyboardModel, scale:Scale, handType:HandType) -> PianoKeyboardModel {
         let merged = PianoKeyboardModel(keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
         var offset = 0
         var keyCount = 0
@@ -141,28 +141,18 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             if key.midi >= lowestRHInScaleKey.midi {
                 break
             }
-            let newModel = PianoKeyModel(scale:scale, score:score, keyboardModel: merged, keyIndex: offset, midi: key.midi)
-            newModel.hand = 1
+            let newModel = PianoKeyModel(scale:scale, score:score, keyboardModel: merged, keyIndex: offset, midi: key.midi, handType: key.handType)
             offset += 1
             newModel.setState(state: key.scaleNoteState)
             merged.pianoKeyModel.append(newModel)
-            //keyedMidis.append(key.midi)
             keyCount += 1
         }
-        //keyedMidis.removeLast()
-        //var firstInScaleFound = false
         
         for key in fromKeyboard.pianoKeyModel {
-//            if !firstInScaleFound {
-//                if key.scaleNoteState != nil {
-//                    firstInScaleFound = true
-//                }
-//            }
             if key.midi < lowestRHInScaleKey.midi {
                 continue
             }
-            let newModel = PianoKeyModel(scale:scale, score:score, keyboardModel: merged, keyIndex: offset, midi: key.midi)
-            newModel.hand = 0
+            let newModel = PianoKeyModel(scale:scale, score:score, keyboardModel: merged, keyIndex: offset, midi: key.midi, handType: key.handType)
             offset += 1
             newModel.setState(state: key.scaleNoteState)
             merged.pianoKeyModel.append(newModel)
@@ -174,17 +164,9 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             merged.keyRects.append(newRect)
         }
         for rect in fromKeyboard.keyRects {
-//            if keyedMidis.contains(key.midi) {
-//                continue
-//            }
-
             let newRect = CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height)
             merged.keyRects.append(newRect)
         }
-//        for touch in self.touches {
-//            let newTouch = CGPoint(x: touch.x, y: touch.y)
-//            merged.touches.append(newTouch)
-//        }
 
         merged.firstKeyMidi = self.firstKeyMidi
         merged.keyboardAudioManager = AudioManager.shared
@@ -293,7 +275,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         self.pianoKeyModel = []
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         for i in 0..<numberOfKeys {
-            let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
+            let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
         }
         self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType)
@@ -302,12 +284,12 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 //        }
     }
     
-    func configureKeyboardForScaleStartView(scale:Scale, score:Score, start:Int, numberOfKeys:Int, scaleStartMidi:Int) {
+    func configureKeyboardForScaleStartView(scale:Scale, score:Score, start:Int, numberOfKeys:Int, scaleStartMidi:Int, handType:HandType) {
         self.pianoKeyModel = []
         self.keyRects = Array(repeating: .zero, count: numberOfKeys)
         self.firstKeyMidi = start
         for i in 0..<numberOfKeys {
-            let pianoKeyModel = PianoKeyModel(scale:scale, score: score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i)
+            let pianoKeyModel = PianoKeyModel(scale:scale, score: score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
             if pianoKeyModel.midi == scaleStartMidi {
                 let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1, segment: [0])
@@ -344,13 +326,13 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func debug4(_ ctx:String) {
+    func debug1(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {
             for i in 0..<numberOfKeys {
                 let key = self.pianoKeyModel[i]
-                print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.hand, "midi:", key.midi, terminator: "")
+                print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.handType, "midi:", key.midi, terminator: "")
 
 //                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {

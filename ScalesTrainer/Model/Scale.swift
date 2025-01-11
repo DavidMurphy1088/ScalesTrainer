@@ -580,7 +580,7 @@ public class Scale : Codable {
             }
         }
         if self.debugOn {
-            //self.debug4("end create", short: false)
+            //self.debug5("end create", short: false)
         }
         Scale.createCount += 1
     }
@@ -869,7 +869,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug5(_ msg:String, short:Bool=false)  {
+    func debug1(_ msg:String, short:Bool=false)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {

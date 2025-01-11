@@ -91,13 +91,13 @@ public class NoteOffsetsInScaleByKey {
             noteOffsetByKey.append("0     0    0    0    0    0    0     0     0    0,1  0    0")    //C
             noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
             noteOffsetByKey.append("1     1,1  1    1    1    1    1     1     1,1  1    1    1")    //D
-            noteOffsetByKey.append("1,-1  2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
+            noteOffsetByKey.append("1,1  2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
             noteOffsetByKey.append("2     2,1  2    2,1  2    2    2     2     2,1  2    2,1  2")    //E
             noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
-            noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
+            noteOffsetByKey.append("4,-1  4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
             noteOffsetByKey.append("4     4,1  4    4    4    4    4     4     4    4,1  4    4")    //G
             //noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭
-            noteOffsetByKey.append("4,1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭ //Trinity needs G# not A ♭
+            noteOffsetByKey.append("5,-1  5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭ //Trinity needs G# not A ♭
             noteOffsetByKey.append("5     5,1  5    5,1  5    5    5     5     5,1  5    5    5")    //A
             noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    6,-1  6,-1  6    6,0  6    5,1")  //A#, B♭
             noteOffsetByKey.append("6     6,1  6    6,1  6    6,1  6     6     6,1  6    6,1  6")    //B
@@ -127,7 +127,9 @@ public class NoteOffsetsInScaleByKey {
             Logger.shared.reportError(self, "Invalid key \(scaleDegree)")
             return nil
         }
-
+        if scale.debugOn && noteValue == 63 {
+            
+        }
         let scaleDegreeComponentsLine = noteOffsetByKey[scaleDegree].components(separatedBy: " ")
         var scaleDegreeComponentsList:[String] = []
         for component in scaleDegreeComponentsLine {
@@ -146,7 +148,7 @@ public class NoteOffsetsInScaleByKey {
                 let accStr = offsetAndAccidental[1]
                 accidental = Int(accStr)
             }
-            let placement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: offset, accidental: accidental, allowModify: true)
+            let placement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: offset, accidental: accidental, placementSetByKeySignature: true)
             
             ///Overide the default accidentals for special cases.
             ///e.g. Block modification of 'unusual' required accidental notation
@@ -154,28 +156,23 @@ public class NoteOffsetsInScaleByKey {
             ///This flag (allowModify) will cause subsequent processing to not modify the accidental or placement settings
             if [.harmonicMinor, .melodicMinor].contains(scale.scaleType) {
                 if scale.scaleRoot.name == "F#" && noteValue % 12 == 5 {
-                    if scale.debugOn {
-                        if noteValue == 65 {
-                            
-                        }
-                    }
-                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementSetByKeySignature: false)
                     customPlacement.accidental = 1
                     return customPlacement
                 }
                 if scale.scaleRoot.name == "C#" && noteValue % 12 == 0 {
-                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementSetByKeySignature: false)
                     customPlacement.accidental = 1
                     return customPlacement
                 }
                 if scale.scaleRoot.name == "G#" {
                     if noteValue % 12 == 7 {
-                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
+                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementSetByKeySignature: false)
                         customPlacement.accidental = 2 //double sharp
                         return customPlacement
                     }
                     if noteValue % 12 == 5 {
-                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, allowModify: false)
+                        var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementSetByKeySignature: false)
                         customPlacement.accidental = 1
                         return customPlacement
                     }
@@ -184,10 +181,9 @@ public class NoteOffsetsInScaleByKey {
             ///Ensure dim 7th is notated as minor 3rd on top of minor 3rd
             if scale.scaleType == .arpeggioDiminishedSeventh {
                 if noteValue % 12 == 8 {
-                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline+1, allowModify: false)
+                    var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline+1, placementSetByKeySignature: false)
                     customPlacement.accidental = -1
                     return customPlacement
-
                 }
             }
             
@@ -240,7 +236,7 @@ public class StaffClef : ScoreEntry {
         }
         let placement = NoteStaffPlacement(midi: note.midiNumber,
                                            offsetFroMidLine: defaultPlacement.offsetFromStaffMidline,
-                                           accidental: defaultPlacement.accidental, allowModify: defaultPlacement.allowModify)
+                                           accidental: defaultPlacement.accidental, placementSetByKeySignature: defaultPlacement.placementSetByKeySignature)
         //placement.allowModify = defaultPlacement.allowModify
         return placement
     }
@@ -340,7 +336,7 @@ public class StaffClef : ScoreEntry {
         
         for midiValue in 0...highestNoteValue {
             //Fix - longer? - offset should be from middle C, notes should be displayed on both staffs from a single traversal of the score's timeslices
-            let placement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, allowModify: true)
+            let placement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, placementSetByKeySignature: true)
             noteStaffPlacement.append(placement)
             if midiValue < middleNoteValue - 6 * StaffNote.OCTAVE || midiValue >= middleNoteValue + 6 * StaffNote.OCTAVE {
                 continue
@@ -351,12 +347,17 @@ public class StaffClef : ScoreEntry {
                 offsetFromTonic = 12 + offsetFromTonic
             }
             //if scale.debugOn {
-                if midiValue == 65 {
-                }
+//                if midiValue == 65 {
+//                }
             //}
             guard let notePlacement = noteOffsetsInScaleByKey.getValue(scale: scale, noteValue: midiValue, scaleDegree: offsetFromTonic, keyNum: keyNumber) else {
                 Logger.shared.reportError(self, "No note offset data for note \(midiValue)")
                 break
+            }
+            if notePlacement.placementSetByKeySignature == false {
+                if Settings.shared.isDeveloperMode() {
+                    Logger.shared.reportError(self, "====================================== ALLLOW MODIFY ON \(self.scale.getTitle())")
+                }
             }
             var offsetFromMidLine = notePlacement.offsetFromStaffMidline
 
@@ -374,7 +375,7 @@ public class StaffClef : ScoreEntry {
             offsetFromMidLine += self.clefType == .treble ? 1 : -1
             placement.offsetFromStaffMidline = offsetFromMidLine
             placement.accidental = notePlacement.accidental
-            placement.allowModify = notePlacement.allowModify
+            placement.placementSetByKeySignature = notePlacement.placementSetByKeySignature
             noteStaffPlacement[midiValue] = placement
         }
     }

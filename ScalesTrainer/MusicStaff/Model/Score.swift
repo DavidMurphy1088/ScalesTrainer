@@ -328,7 +328,7 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug1(_ ctx:String, withBeam:Bool, toleranceLevel:Int) {
+    public func debug2(_ ctx:String, handType:HandType?, withBeam:Bool, toleranceLevel:Int) {
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tKey", key.getKeyName(withType: true)
               //"StaffCount", self.staffs.count,
@@ -352,39 +352,41 @@ public class Score : ObservableObject {
                 for entryIndex in 0..<timeSlice.entries.count {
                     let entry = timeSlice.entries[entryIndex]
                     if let note = entry as? StaffNote {
-                        if withBeam {
-                            print(
-                                //"type:", type(of: timeSlice.entries[0]),
-                                "  midi:", note.midiNumber,
-                                //"valuePoint:", String(format: "%.2f", timeSlice.valuePoint),
-                                "[value:", String(format: "%.2f", timeSlice.getValue()),"]",
-                                "[clef:", note.clef?.clefType ?? "_","]",
-                                "[offset:", String(note.noteStaffPlacement.offsetFromStaffMidline),"]",
-                                "[segments:", note.segments,"]",
-                                "[direction", note.stemDirection,"]",
-                                "[stemLength", note.stemLength,"]",
-                                "[accidental", note.writtenAccidental ?? 0,"]",
-                                "[beamType:", note.beamType,"]",
-                                "]")
-                        }
-                        else {
+                        if handType == nil || note.handType == handType {
+                            //                        if withBeam {
+                            //                            print(
+                            //                                //"type:", type(of: timeSlice.entries[0]),
+                            //                                "  midi:", note.midiNumber,
+                            //                                //"valuePoint:", String(format: "%.2f", timeSlice.valuePoint),
+                            //                                "[value:", String(format: "%.2f", timeSlice.getValue()),"]",
+                            //                                "[clef:", note.clef?.clefType ?? "_","]",
+                            //                                "[offset:", String(note.noteStaffPlacement.offsetFromStaffMidline),"]",
+                            //                                "[segments:", note.segments,"]",
+                            //                                "[direction", note.stemDirection,"]",
+                            //                                "[stemLength", note.stemLength,"]",
+                            //                                "[accidental", note.writtenAccidental ?? 0,"]",
+                            //                                "[beamType:", note.beamType,"]",
+                            //                                "]")
+                            //                        }
+                            //                        else {
                             print("  ", terminator: "")
                             print("Note#", String(format: "%2d", entryIndex), terminator: "")
                             //print(" [type:", type(of: timeSlice.entries[0]), "]", terminator: "")
-                            print(" [midi:",note.midiNumber, "]", terminator: "")
+                            print(" midi:",note.midiNumber, terminator: "")
                             //print(" [TapDuration Seconds:",String(format: "%.4f", timeSlice.tapDurationNormalised ?? 0),"]", timeSlice.sequence, terminator: "")
-                            print(" [Note Value:", String(format: "%.2f", note.getValue()),"]", timeSlice.sequence, terminator: "")
-                            print(" [Segments:", note.segments,"]", timeSlice.sequence, terminator: "")
-                            print(" [status]",timeSlice.statusTag, terminator: "")
+                            print(" Note Value:", String(format: "%.2f", note.getValue()), timeSlice.sequence, terminator: "")
+                            print(" Segments:", note.segments, timeSlice.sequence, terminator: "")
+                            //print(" status",timeSlice.statusTag, terminator: "")
                             
                             let note = timeSlice.entries[entryIndex] as! StaffNote
                             print("\thand:", note.handType, terminator: "")
-                            print(",\toffset:", note.noteStaffPlacement.offsetFromStaffMidline, terminator: "")
+                            print(", toffset:", note.noteStaffPlacement.offsetFromStaffMidline, terminator: "")
                             print(", accidental:", note.noteStaffPlacement.accidental ?? " ", terminator: "")
-                            print(", allowModify:", note.noteStaffPlacement.allowModify, terminator: "")
-
+                            print(", allowModify:", note.noteStaffPlacement.placementSetByKeySignature, terminator: "")
+                            
                             //print("[Staff:",note.staffNum,"]" t.sequence, terminator: "")
                             print()
+                            //                        }
                         }
                     }
                     else {

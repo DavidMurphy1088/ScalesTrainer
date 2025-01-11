@@ -43,13 +43,13 @@ public class NoteStaffPlacement {
     let midi:Int
     public var offsetFromStaffMidline:Int
     public var accidental: Int?
-    var allowModify = true
+    var placementSetByKeySignature = true
     
-    init(midi:Int, offsetFroMidLine:Int, accidental:Int?=nil, allowModify:Bool) {
+    init(midi:Int, offsetFroMidLine:Int, accidental:Int?=nil, placementSetByKeySignature:Bool) {
         self.midi = midi
         self.offsetFromStaffMidline = offsetFroMidLine
         self.accidental = accidental
-        self.allowModify = allowModify
+        self.placementSetByKeySignature = placementSetByKeySignature
     }
 }
 
@@ -74,7 +74,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     
     ///Placements for the note on treble and bass staff
     //var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
-    var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, allowModify: true)
+    var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, placementSetByKeySignature: true)
 
     ///Quavers in a beam have either a start, middle or end beam type. A standlone quaver type has type beamEnd. A non quaver has beam type none.
     public var beamType:QuaverBeamType = .none
@@ -328,7 +328,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
                 }
                 if clef.score.key.keySig.sharps.count > 0 {
                     if clef.score.key.hasKeySignatureNote(note: self.midiNumber+1) {
-                        if defaultNotePlacement.allowModify {
+                        if !defaultNotePlacement.placementSetByKeySignature {
                             offsetAccidental = 0
                             matchedAccidental = true
                         }
@@ -352,7 +352,8 @@ public class StaffNote : TimeSliceEntry, Comparable {
                     lookback += 1
                 }
             }
-            let placement = NoteStaffPlacement(midi: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental, allowModify: defaultNotePlacement.allowModify)
+            let placement = NoteStaffPlacement(midi: midiNumber, offsetFroMidLine: offsetFromMiddle, accidental: offsetAccidental,
+                                               placementSetByKeySignature: defaultNotePlacement.placementSetByKeySignature)
             self.noteStaffPlacement = placement
         }        
         //self.debug("setNoteDisplayCharacteristics")
