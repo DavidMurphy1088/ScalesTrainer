@@ -98,6 +98,7 @@ public struct ClassicStyle {
             let playingMidiRadius = naturalWidth * 0.5
             
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
+
                 guard key.isNatural else {
                     continue
                 }
@@ -208,16 +209,20 @@ public struct ClassicStyle {
                     }
                 }
                 xpos += naturalXIncr
-                viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
+                if index < viewModel.keyRects1.count {
+                    viewModel.keyRects1[index] = rect.offsetBy(dx: xg, dy: yg)
+                }
+                
             }
 
-            // -------------------------- Sharps/Flat keys ---------------------------
+            // -------------------------- Black keys ---------------------------
             
             let sfKeyWidth = naturalWidth * sfKeyWidthMultiplier
             let sfKeyHeight = height * sfKeyHeightMultiplier
             xpos = 0.0
 
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
+
                 if key.isNatural {
                     xpos += naturalXIncr
                     continue
@@ -269,22 +274,23 @@ public struct ClassicStyle {
                 ))
                 
                 ///------------- Back notes - Note name -----
-                ///On iPhone too many keys results in overlapping key names. So dont show the black key key names.
+                ///On iPhone or long scales many keys results in overlapping key names. So dont show the black key key names.
                 if UIDevice.current.userInterfaceIdiom != .phone {
-                //if scale.getScaleNoteCount() <= 16 { //}|| UIDevice.current.userInterfaceIdiom != .phone {
-                    if scalesModel.showFingers {
-                        if key.finger.count > 0 {
-                            if key.midi == 54 {
+                    if scale.getScaleNoteCount() <= 24 || self.orientationObserver.isPortrait {
+                        if scalesModel.showFingers {
+                            if key.finger.count > 0 {
+                                if key.midi == 54 {
+                                }
+                                let str = key.getName()
+                                context.draw(
+                                    Text("\(key.getName())")
+                                    //Text(key.getName())
+                                    //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
+                                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
+                                        .foregroundColor(.white),
+                                    at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
+                                )
                             }
-                            let str = key.getName()
-                            context.draw(
-                                Text("\(key.getName())")
-                                //Text(key.getName())
-                                //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
-                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
-                                    .foregroundColor(.white),
-                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                            )
                         }
                     }
                 }
@@ -334,8 +340,9 @@ public struct ClassicStyle {
                         )
                     }
                 }
-                
-                viewModel.keyRects[index] = rect.offsetBy(dx: xg, dy: yg)
+                if index < viewModel.keyRects1.count {
+                    viewModel.keyRects1[index] = rect.offsetBy(dx: xg, dy: yg)
+                }
             }
         }
     }

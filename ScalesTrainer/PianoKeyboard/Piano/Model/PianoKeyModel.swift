@@ -114,45 +114,46 @@ public class PianoKeyModel: Identifiable, Hashable {
         keyOffsetFromLowestKey + self.keyboardModel.firstKeyMidi
     }
 
-    func getNameDefault() -> String {
-            ///Use the keysignature to determine whether the black notes are shown as sharps or flats
-            ///Chromatic - use the above rule - e.g. D chromatic shows black notes as sharps (since D Maj KeySig has sharps), F chromatic shows black notes as flats
-            let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh, .brokenChordMajor].contains(scale.scaleType)
-            let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor) //KeySignature(scalesModel.scale.scaleType.)
-            var showSharps = ks.accidentalType == .sharp
-//            if [.melodicMinor, .harmonicMinor].contains(scale.scaleType) {
-//
-//                ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
-//                //if ScalesModel.shared.scores.count > 0 {
-//                    //let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
-//                    if let score = ScalesModel.shared.getScore() {
-//                        if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
-//                            let note:StaffNote = ts.entries[0] as! StaffNote
-//                            //if note.noteStaffPlacements.count > 0 {
-//                            if note.noteStaffPlacement.accidental == 1 {
-//                                showSharps = true
-//                            }
-//                            //}
-//                        }
-//                    }
-//                //}
-//            }
-            return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
-        }
+    ///Use the keysignature to determine whether the black notes are shown as sharps or flats
+    ///Chromatic - use the above rule - e.g. D chromatic shows black notes as sharps (since D Maj KeySig has sharps), F chromatic shows black notes as flats
+//    func getNameDefault() -> String {
+////      let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh, .brokenChordMajor].contains(scale.scaleType)
+////      let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor)
+//        let ks = self.score.key
+//        var showSharps = !(ks.keySig.flats.count > 0)
+////            if [.melodicMinor, .harmonicMinor].contains(scale.scaleType) {
+////
+////                ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
+////                //if ScalesModel.shared.scores.count > 0 {
+////                    //let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
+////                    if let score = ScalesModel.shared.getScore() {
+////                        if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
+////                            let note:StaffNote = ts.entries[0] as! StaffNote
+////                            //if note.noteStaffPlacements.count > 0 {
+////                            if note.noteStaffPlacement.accidental == 1 {
+////                                showSharps = true
+////                            }
+////                            //}
+////                        }
+////                    }
+////                //}
+////            }
+//            return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
+//        }
     
     func getName() -> String {
-        var handType = self.handType
-        var (staffNote, staffClef) = score.getNoteAndClefForMidi(midi: self.midi, handType: handType, occurence: 0)
-        var name = ""
-
+        let handType = self.handType
+        let (staffNote, staffClef) = score.getNoteAndClefForMidi(midi: self.midi, handType: handType, occurence: 0)
+        var name = String(self.midi)
         if let staffNote = staffNote {
-            if staffNote.noteStaffPlacement.placementSetByKeySignature == true {
-                name = getNameDefault()
-            }
-            else {
-                name = getNameCustom(staffNote: staffNote, staffClef: staffClef, handType: handType)
-            }
+//            if false && staffNote.noteStaffPlacement.placementCanBeSetByKeySignature == true {
+//                name = getNameDefault()
+//            }
+//            else {
+                name = getNameFromStaffNote(staffNote: staffNote, staffClef: staffClef, handType: handType)
+//           }
         }
+        //name =
         return name
     }
     
@@ -160,10 +161,16 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///The staff notation is the canonical representation since it contains any customisations for note name and accidental display.
     ///The notes name is derived from the note's offset on the stave.
     ///A staff may have had a clef switch in that applies to the key's note.
-    func getNameCustom(staffNote:StaffNote, staffClef:StaffClef?, handType:HandType) -> String {
+    func getNameFromStaffNote(staffNote:StaffNote, staffClef:StaffClef?, handType:HandType) -> String {
+        func isWhiteKey(midi:Int) -> Bool {
+            let offset = midi % 12
+            return [0,2,4,5,7,9,11].contains(offset)
+        }
+
         var name = ""
-        let handIndex:Int
-        
+        if self.midi == 64 || self.midi == 63{
+        }
+
         ///Check if the bass staff has a treble clef switched in
         let clefType:ClefType
         if let staffClef = staffClef {
@@ -211,6 +218,13 @@ public class PianoKeyModel: Identifiable, Hashable {
         }
         if placement.accidental == -1 {
             name += "♭"
+        }
+        if placement.accidental == nil {
+            if !isWhiteKey(midi: staffNote.midi) {
+                let ks = self.score.key
+                var showSharps = !(ks.keySig.flats.count > 0)
+                name += showSharps ? "#" : "♭"
+            }
         }
         return name
     }

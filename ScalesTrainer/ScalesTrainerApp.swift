@@ -157,19 +157,24 @@ class TabSelectionManager: ObservableObject {
     func nextNavigationTab() {
         if Settings.shared.isDeveloperMode() {
             let hands = [0,1]
-            let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
+            //let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
             
             //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
             //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
             
             //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
             //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+            let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
+                                                   customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
+                                                   customScaleNameWheel: "Chrom Contrary, LH C, RH E")
             ScalesModel.shared = ScalesModel()
             let scalesModel = ScalesModel.shared
             if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
-                                                         scaleMotion: .contraryMotion, minTempo: 70, octaves: 1, hands: [0,1],
-                                                         dynamicTypes: [.mf], articulationTypes: [.legato], debugOn: true)
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0,1],
+                                                dynamicTypes: [.mf], articulationTypes: [.legato],
+                                                //scaleCustomisation: scaleCustomisation,
+                                                debugOn: true)
             }
             else {
                 scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,

@@ -67,7 +67,7 @@ struct ScoreEntriesView: View {
                 //An unpaired quaver
                 let height = lineSpacing * 4.5
                 let width = height / 3.0
-                let flippedHeightOffset = startNote.midiNumber > 71 ? height / 2.0 : 0.0
+                let flippedHeightOffset = startNote.midi > 71 ? height / 2.0 : 0.0
 //                getQuaverImage(note:startNote)
 //                    .resizable()
 //                    .renderingMode(.template)

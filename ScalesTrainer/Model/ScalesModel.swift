@@ -593,6 +593,7 @@ public class ScalesModel : ObservableObject {
         return Int(selected) ?? 60
     }
     
+    ///Add the required scales notes to the score as timeslices.
     func createScore(scale:Scale) -> Score {
         
         func addFinalRests(timeSig:TimeSignature, barValue:Double) {
@@ -608,7 +609,7 @@ public class ScalesModel : ObservableObject {
                 if barValue == 3 {
                     values = [1.0]
                 }
-
+                
             }
             for v in values {
                 let ts = score.createTimeSlice()
@@ -619,79 +620,70 @@ public class ScalesModel : ObservableObject {
             }
         }
         
-        ///"Rule for chromatics is you must use at least one of every line and space but no more than two.
-        ///All chromatics are notated in key sig "C".
-        ///You should use the --perfect 4th and perfect 5th -- above the base when you get to those pitches.
-        ///This requires that the accidentals used for each note should match the accidental required for the first note.
-        ///E.g. in D chromatic there must be a G (perfect 4th above) and an A (perfect 5th above)."
-        func adjustPlacementsForChromatic(score:Score, handType:HandType) {
-            func isWhiteKey(midi:Int) -> Bool {
-                let offset = midi % 12
-                return [0,2,4,5,7,9,11].contains(offset)
-            }
-
-            var firstAccidental:Int? = nil
-            var ctr = 0
-            var lastAccidentalOffset:Int? = nil
-            
-            for entry in score.scoreEntries {
-                if entry is BarLine {
-                    lastAccidentalOffset = nil
-                }
-                if entry is TimeSlice {
-                    let timeSlice = entry as! TimeSlice
-                    for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        if staffNote.handType == handType {
-
-                            let placement = staffNote.noteStaffPlacement
-                            //if ctr == 0 {
-                            if firstAccidental == nil {
-                                firstAccidental = placement.accidental
-                            }
-                            if staffNote.midiNumber == 55 {
-                                
-                            }
-                            if isWhiteKey(midi: staffNote.midiNumber) {
-                                placement.accidental = nil
-                                staffNote.noteStaffPlacement = placement
-                                if let lastAccidentalOffset = lastAccidentalOffset {
-                                    if placement.offsetFromStaffMidline == lastAccidentalOffset {
-                                        placement.accidental = 0
-                                    }
-                                }
-                                placement.placementSetByKeySignature = false
-                                lastAccidentalOffset = nil
-                            }
-                            else {
-                                placement.placementSetByKeySignature = false
-                                lastAccidentalOffset = nil
-                                if placement.accidental != nil && placement.accidental != firstAccidental {
-                                    if placement.accidental == -1 {
-                                        placement.offsetFromStaffMidline -= 1
-                                        placement.accidental = 1
-                                        staffNote.noteStaffPlacement = placement
-                                        placement.placementSetByKeySignature = false
-                                        lastAccidentalOffset = placement.offsetFromStaffMidline
-                                    }
-                                    else {
-                                        if placement.accidental == 1 {
-                                            placement.offsetFromStaffMidline += 1
-                                            placement.accidental = -1
-                                            staffNote.noteStaffPlacement = placement
-                                            placement.placementSetByKeySignature = false
-                                            lastAccidentalOffset = placement.offsetFromStaffMidline
-                                        }
-                                    }
-                                }
-                            }
-                            
-                        }
-                        ctr += 1
-                    }
-                }
-            }
-            //score.debug1("", handType: handType, withBeam: false, toleranceLevel: 0)
-        }
+        
+//        func adjustPlacementsForChromaticOLD(score:Score, handType:HandType) {
+//            func isWhiteKey(midi:Int) -> Bool {
+//                let offset = midi % 12
+//                return [0,2,4,5,7,9,11].contains(offset)
+//            }
+//            
+//            var firstAccidental:Int? = nil
+//            var ctr = 0
+//            var lastAccidentalOffset:Int? = nil
+//            
+//            for entry in score.scoreEntries {
+//                if entry is BarLine {
+//                    lastAccidentalOffset = nil
+//                }
+//                if entry is TimeSlice {
+//                    let timeSlice = entry as! TimeSlice
+//                    for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
+//                        if staffNote.handType == handType {
+//                            let placement = staffNote.noteStaffPlacement
+//                            if firstAccidental == nil {
+//                                firstAccidental = placement.accidental
+//                            }
+//                            if isWhiteKey(midi: staffNote.midiNumber) {
+//                                placement.accidental = nil
+//                                staffNote.noteStaffPlacement = placement
+//                                if let lastAccidentalOffset = lastAccidentalOffset {
+//                                    if placement.offsetFromStaffMidline == lastAccidentalOffset {
+//                                        placement.accidental = 0
+//                                    }
+//                                }
+//                                placement.placementCanBeSetByKeySignature = false
+//                                lastAccidentalOffset = nil
+//                            }
+//                            else {
+//                                placement.placementCanBeSetByKeySignature = false
+//                                lastAccidentalOffset = nil
+//                                if placement.accidental != nil && placement.accidental != firstAccidental {
+//                                    if placement.accidental == -1 {
+//                                        placement.offsetFromStaffMidline -= 1
+//                                        placement.accidental = 1
+//                                        staffNote.noteStaffPlacement = placement
+//                                        placement.placementCanBeSetByKeySignature = false
+//                                        lastAccidentalOffset = placement.offsetFromStaffMidline
+//                                    }
+//                                    else {
+//                                        if placement.accidental == 1 {
+//                                            placement.offsetFromStaffMidline += 1
+//                                            placement.accidental = -1
+//                                            staffNote.noteStaffPlacement = placement
+//                                            placement.placementCanBeSetByKeySignature = false
+//                                            lastAccidentalOffset = placement.offsetFromStaffMidline
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            
+//                        }
+//                        ctr += 1
+//                    }
+//                }
+//            }
+//            score.debug2(ctx:"ScalesModel.AdjustforChromatic hand\(handType) END ", handType: handType, withBeam: false, toleranceLevel: 0)
+//        }
         
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
@@ -704,15 +696,13 @@ public class ScalesModel : ObservableObject {
             keySignature = KeySignature(keyName: scale.scaleRoot.name, keyType: staffKeyType)
         }
         let staffKey = StaffKey(type: staffKeyType, keySig: keySignature)
-
         let timeSigVisible = false //isBrokenChord ? false : true
         let timeSig = scale.timeSignature
-        let score = Score(scale: scale, key: staffKey, 
+        let score = Score(scale: scale, key: staffKey,
                           timeSignature: TimeSignature(top: timeSig.top, bottom: timeSig.bottom, visible: timeSigVisible),
-                          linesPerStaff: 5)
+                          linesPerStaff: 5, debugOn: scale.debugOn)
         
         ///Add the required number of staves to the score depending on the number of hands
-        
         var totalBarValue  = 0.0
         let mult = timeSig.bottom == 8 ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUARTER
         let maxBarValue:Double = Double(timeSig.top) * mult
@@ -726,11 +716,11 @@ public class ScalesModel : ObservableObject {
                 ///13Oct24 Update - presence of the bar line causes melodic minor scale accidentals to differ from Trinity which appears to assume that all scale notes in in one bar only.
                 ///29Oct24 Update - better to have harmonic minor match for Grade 1 Trinity. Trinity harmonic minor appears to imply invisible bar lines when setting accidentals.
                 ///But their melodic minor does not imply invisible bar lines - nightmare 🥵 ....
-                ///04Jan2025 - 
+                ///04Jan2025 -
                 ///Trin Grade 1, D Min Harmonic assumes there is a barline - see the 2nd C#
                 ///Trin Grade 1, D Min Melodic assumes there is not a barline - see the C natural
                 ///This diff my require change in custom scale properties to add or not bar LinearGradient
-                ///Latest code adds a maxLookback value that might work to resolve all this mess 🤔
+                ///10Jan2025 - Both agree now to use bar lines even though Trinity dont.
                 score.addBarLine(visibleOnStaff: true, forStaffSpacing: isBrokenChord)
                 totalBarValue = 0.0
             }
@@ -740,7 +730,6 @@ public class ScalesModel : ObservableObject {
             ///The note for each hand is added to the one single TimeSlice
             for handType in handTypes {
                 let noteState = scale.getScaleNoteState(handType: handType, index: i)
-                //let noteValue = i < scale.getScaleNoteCount()-1 ? noteState.value : 1.0
                 let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, handType:handType, segments: noteState.segments)
                 note.setValue(value: noteState.value)
                 ts.addNote(n: note)
@@ -769,7 +758,7 @@ public class ScalesModel : ObservableObject {
         var offsetsInGroup:[Int] = []
         let offsetsAboveLimit = 8
         let offsetsBelowLimit = -7
-
+        
         for tsIndex in 0..<timeSlices.count {
             ///Determine if a clef switch is required based on the notes in the group. If yes, insert the Clef in the score to 1) display and 2) set the right clef for subsequent note layout
             ///Consider a clef change only at a bar start
@@ -811,47 +800,151 @@ public class ScalesModel : ObservableObject {
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
         }
-
+        
+        ///==================================================================================================================
         ///Create the required display staffs (one for the each hand) and position the required notes in them.
         ///Group all notes within a clef and then set their stem characteristics according to the clef just before them. i.e. obey clef switching
-        ///score.debug111("----MODEL", withBeam: false, toleranceLevel: 0)
+        ///==================================================================================================================
+
+        ///Adjust this note's accidental to counter a previous note in the bar's accidental if the note was at the same staff offset but a different MIDI.
+        ///If the MIDI is the same as the previous note at the staff offset, set this note's accidental to nil since it's accidental conveys from the previous note.
+        ///If the note has an accidental but the key signature includes the accidental dont show the accidental on the note.
+        func checkInBar(clef:StaffClef, note:StaffNote, barNotes:[StaffNote]) {
+            let notePlacement = note.noteStaffPlacement
+            var matchedAccidental = false
+            
+            for prevNote in barNotes {
+                if prevNote.noteStaffPlacement.offsetFromStaffMidline == notePlacement.offsetFromStaffMidline {
+                    if let lastAccidental = prevNote.noteStaffPlacement.accidental {
+                        if prevNote.midi > note.midi {
+                            notePlacement.accidental = lastAccidental - 1
+                            matchedAccidental = true
+                            break
+                        }
+                        if prevNote.midi < note.midi {
+                            notePlacement.accidental = lastAccidental + 1
+                            matchedAccidental = true
+                            break
+                        }
+                        if prevNote.midi == note.midi {
+                            notePlacement.accidental = nil
+                            matchedAccidental = true
+                            break
+                        }
+                    }
+                }
+            }
+            if matchedAccidental {
+                return
+            }
+            ///If not already matched, adjust the note's accidental based on the key signature
+            if !matchedAccidental {
+                ///Use no accidental since the key signature has it
+                if clef.score.key.hasKeySignatureNote(note: note.midi) {
+                    notePlacement.accidental = nil
+                    matchedAccidental = true
+                }
+                ///Use the natural accidental to differentiate note from the key signature
+                if clef.score.key.keySig.flats.count > 0 {
+                    if clef.score.key.hasKeySignatureNote(note: note.midi-1) {
+                        if notePlacement.placementCanBeSetByKeySignature {
+                            notePlacement.accidental = 0
+                            matchedAccidental = true
+                        }
+                    }
+                }
+                if clef.score.key.keySig.sharps.count > 0 {
+                    if clef.score.key.hasKeySignatureNote(note: note.midi+1) {
+                        if notePlacement.placementCanBeSetByKeySignature {
+                            notePlacement.accidental = 0
+                            matchedAccidental = true
+                        }
+                    }
+                }
+            }
+        }
+        
+        ///Rule for chromatics is you must use at least one of every line and space but no more than two. All chromatics are notated in key sig "C".
+        ///You should use the --perfect 4th and perfect 5th -- above the base when you get to those pitches.
+        ///This requires that the accidentals used for each note should match the accidental required for the first note.
+        ///E.g. in D chromatic there must be a G (perfect 4th above) and an A (perfect 5th above)."
+        ///These adjustments are made after the the note's default placements have been made on the staff.
+        ///Use the first accidental found to apply to subsequent notes that need accidentals
+        func adjustPlacementForChromatic(staffNote:StaffNote, firstAccidental:Int?) {
+            let placement = staffNote.noteStaffPlacement
+            if placement.accidental != nil && placement.accidental != firstAccidental {
+                if placement.accidental == -1 {
+                    placement.offsetFromStaffMidline -= 1
+                    placement.accidental = 1
+                    staffNote.noteStaffPlacement = placement
+                    placement.placementCanBeSetByKeySignature = false
+                    //lastAccidentalOffset = placement.offsetFromStaffMidline
+                }
+                else {
+                    if placement.accidental == 1 {
+                        placement.offsetFromStaffMidline += 1
+                        placement.accidental = -1
+                        staffNote.noteStaffPlacement = placement
+                        placement.placementCanBeSetByKeySignature = false
+                        //lastAccidentalOffset = placement.offsetFromStaffMidline
+                    }
+                }
+            }
+        }
+
+        var firstAccidental:Int? = nil ///Use same accidental for both staffs. e,g, chromatic LH start E, RH start C
         
         for handType in handTypes {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
             var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score, clefType: .bass)
-
+            var notesInBar:[StaffNote] = []
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
                 if let staffClef = scoreEntry as? StaffClef {
                     ///Set stem characteristics for all the notes in the previous clef
                     if staff.handType == .left {
-                        //score.debug11("hand \(hand) staff:\(staff.type) \(scoreEntryIndex)", withBeam: false, toleranceLevel: 0)
                         score.addStemCharacteristics(handType: handType, clef: clefForPositioning, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: scoreEntryIndex)
                         startStemCharacteristicsIndex = scoreEntryIndex
                         clefForPositioning = staffClef //Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
                     }
                 }
+                if let bar = scoreEntry as? BarLine {
+                    notesInBar = []
+                }
+                
+                ///Determine the placement and accidentals for each note in the score.
                 if let timeSlice = scoreEntry as? TimeSlice {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        staffNote.setNotePlacementAndAccidental(score:score, clef:clefForPositioning, maxAccidentalLoopback: scale.scaleCustomisation?.maxAccidentalLookback)
-                        staffNote.clef = clefForPositioning
+                        if staffNote.midi == 61 {
+                        }
+                        staffNote.noteStaffPlacement = clefForPositioning.getNoteViewPlacement(note: staffNote)
+                        if firstAccidental == nil {
+                            if staffNote.noteStaffPlacement.accidental != nil {
+                                firstAccidental = staffNote.noteStaffPlacement.accidental
+                            }
+                        }
+                        if scale.scaleType == .chromatic {
+                            adjustPlacementForChromatic(staffNote: staffNote, firstAccidental: firstAccidental)
+                        }
+                        checkInBar(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
+                        notesInBar.append(staffNote)
                     }
                 }
             }
+            //score.debug2(ctx: "ScalesModel.createScore \(handType) DONE OFFSETS", handType: nil)
+
             if scale.scaleType == .chromatic {
-                adjustPlacementsForChromatic(score:score, handType: handType)
+                //adjustPlacementsForChromatic1(score:score, handType: handType)
             }
 
             ///Do stem characteristics for the last remaining group of notes
             score.addStemCharacteristics(handType: handType, clef: clefForPositioning,
                                          startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
-
-            //score.debug1("Score create", handType: nil, withBeam: true, toleranceLevel: 0)
-        }
-        if scale.debugOn {
-            //score.debug1("ScalesMode", handType: nil, withBeam: false, toleranceLevel: 0)
+            //if score.debugOn {
+                score.debug2(ctx: "ScalesModel.createScore \(handType) END", handType: nil)
+            //}
         }
         return score
     }
@@ -865,7 +958,7 @@ public class ScalesModel : ObservableObject {
                                    ctx: "ScalesModel")
     }
 
-    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int], 
+    func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int],
                                dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
                                scaleCustomisation:ScaleCustomisation? = nil, debugOn:Bool = false) {
         let name = scale.getScaleName(handFull: true, octaves: true)

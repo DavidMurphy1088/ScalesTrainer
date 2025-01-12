@@ -153,7 +153,8 @@ public class Score : ObservableObject {
     
     ///NB Changing this needs changes to getBraceHeight() for alignment
     public var lineSpacing:Double
-
+    var debugOn:Bool
+    
     private var totalStaffLineCount:Int = 0
 //    static var accSharp1 = "\u{266f}"
 //    static var accNatural1 = "\u{266e}"
@@ -162,7 +163,7 @@ public class Score : ObservableObject {
     public var heightPaddingEnabled:Bool
     let showTempoVariation:Bool = false
     
-    public init(scale:Scale, key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true) {
+    public init(scale:Scale, key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true, debugOn:Bool) {
         self.id = UUID()
         self.scale = scale
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -176,6 +177,7 @@ public class Score : ObservableObject {
         self.key = key
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
+        self.debugOn = debugOn
     }
     
     func getBraceHeight() -> Double {
@@ -197,7 +199,7 @@ public class Score : ObservableObject {
             let ts = timeSlices[i]
             let timeSliceNotes = ts.getTimeSliceNotes(handType: handType)
             for staffNote in timeSliceNotes {
-                if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
+                if staffNote.midi == midi && staffNote.segments[0] == segment {
                     staffNote.setShowIsPlaying(true)
                     staffNoteFound = staffNote
                     DispatchQueue.global(qos: .background).async {
@@ -295,7 +297,7 @@ public class Score : ObservableObject {
                 let ns = timeSlice.getTimeSliceNotes(handType:handType)
                 if ns.count > 0 {
                     let note = ns[0]
-                    if note.midiNumber == midi {
+                    if note.midi == midi {
                         if cnt == occurence {
                             result = note
                             break
@@ -328,30 +330,40 @@ public class Score : ObservableObject {
         return result
     }
 
-    public func debug2(_ ctx:String, handType:HandType?, withBeam:Bool, toleranceLevel:Int) {
+    public func debug2(ctx:String, handType:HandType?, midiFilter1:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
+//        if !self.debugOn {
+//            return
+//        }
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
-        print("\nSCORE DEBUG =====", ctx, "\tKey", key.getKeyName(withType: true)
-              //"StaffCount", self.staffs.count,
-//                "toleranceLevel:\(toleranceLevel)",
-//                "toleranceLevel:\(tolerance)"
-        )
+        print("\nSCORE DEBUG =====", ctx, "\tScale", scale.getTitle())
+        let midiFilter = [60, 62, 63,64]
+        
         for entry in self.scoreEntries {
-            if let timeSlice = entry as? BarLine {
-                print("------------- Bar line", timeSlice.sequence)
-                continue
-            }
-            if let timeSlice = entry as? StaffClef {
-                print("------------- Staff Clef", timeSlice.sequence, timeSlice.clefType)
-                continue
+            if midiFilter == nil {
+                if let timeSlice = entry as? BarLine {
+                    print("------------- Bar line", timeSlice.sequence)
+                    continue
+                }
+                if let timeSlice = entry as? StaffClef {
+                    print("------------- Staff Clef", timeSlice.sequence, timeSlice.clefType)
+                    continue
+                }
             }
 
             if let timeSlice = entry as? TimeSlice {
-                print("TimeSlice, ", terminator: "")
-                print("Seq", String(format: "%2d", timeSlice.sequence), terminator: "")
-                print()
+                var hdrDone = false
                 for entryIndex in 0..<timeSlice.entries.count {
                     let entry = timeSlice.entries[entryIndex]
                     if let note = entry as? StaffNote {
+                        if midiFilter != nil && !midiFilter.contains(note.midi) {
+                            continue
+                        }
+                        if !hdrDone {
+                            print("TimeSlice, ", terminator: "")
+                            print("Seq", String(format: "%2d", timeSlice.sequence), terminator: "")
+                            print()
+                            hdrDone = true
+                        }
                         if handType == nil || note.handType == handType {
                             //                        if withBeam {
                             //                            print(
@@ -372,7 +384,7 @@ public class Score : ObservableObject {
                             print("  ", terminator: "")
                             print("Note#", String(format: "%2d", entryIndex), terminator: "")
                             //print(" [type:", type(of: timeSlice.entries[0]), "]", terminator: "")
-                            print(" midi:",note.midiNumber, terminator: "")
+                            print(" midi:",note.midi, terminator: "")
                             //print(" [TapDuration Seconds:",String(format: "%.4f", timeSlice.tapDurationNormalised ?? 0),"]", timeSlice.sequence, terminator: "")
                             print(" Note Value:", String(format: "%.2f", note.getValue()), timeSlice.sequence, terminator: "")
                             print(" Segments:", note.segments, timeSlice.sequence, terminator: "")
@@ -382,7 +394,7 @@ public class Score : ObservableObject {
                             print("\thand:", note.handType, terminator: "")
                             print(", toffset:", note.noteStaffPlacement.offsetFromStaffMidline, terminator: "")
                             print(", accidental:", note.noteStaffPlacement.accidental ?? " ", terminator: "")
-                            print(", allowModify:", note.noteStaffPlacement.placementSetByKeySignature, terminator: "")
+                            print(", allowModify:", note.noteStaffPlacement.placementCanBeSetByKeySignature, terminator: "")
                             
                             //print("[Staff:",note.staffNum,"]" t.sequence, terminator: "")
                             print()
@@ -390,18 +402,19 @@ public class Score : ObservableObject {
                         }
                     }
                     else {
-                        //let rest = t.
-                        print("  Seq", timeSlice.sequence,
-                              "[Type:", type(of: timeSlice.entries[0]), "]",
-                              "[Rest:","R ", "]",
-                              "[TapDuration Seconds:",String(format: "%.4f", timeSlice.tapDurationNormalised ?? 0),"]",
-                              "[NoteValue:", timeSlice.getValue(),"]",
-                              "[Status]",timeSlice.statusTag,
-                              "[StartAtValue]",timeSlice.valuePoint,
-                              "[Beat]",timeSlice.valuePointInBar,
-                              "[WrittenAccidental:","_","]",
-                              "[Staff:","_","]"
-                        )
+                        if midiFilter1 != nil {
+                            print("  Seq", timeSlice.sequence,
+                                  "[Type:", type(of: timeSlice.entries[0]), "]",
+                                  "[Rest:","R ", "]",
+                                  "[TapDuration Seconds:",String(format: "%.4f", timeSlice.tapDurationNormalised ?? 0),"]",
+                                  "[NoteValue:", timeSlice.getValue(),"]",
+                                  "[Status]",timeSlice.statusTag,
+                                  "[StartAtValue]",timeSlice.valuePoint,
+                                  "[Beat]",timeSlice.valuePointInBar,
+                                  "[WrittenAccidental:","_","]",
+                                  "[Staff:","_","]"
+                            )
+                        }
                     }
                 }
             }
@@ -877,7 +890,7 @@ public class Score : ObservableObject {
                     let note = clefNotes[0] as StaffNote
                     if note.timeSlice.sequence < sequence {
                         if let givenPitch = pitch {
-                            if note.midiNumber == pitch {
+                            if note.midi == pitch {
                                 notes.append(note)
                             }
                         }

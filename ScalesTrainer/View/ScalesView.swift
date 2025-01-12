@@ -133,7 +133,8 @@ struct ScalesView: View {
     func getStopButtonText(process: RunningProcess) -> String {
         let text:String
         if metronome.isLeadingIn {
-            text = "  Leading In  \(metronome.timerTickerCountPublished)"
+            ///2 ticks per beat
+            text = "  Leading In  \((metronome.timerTickerCountPublished / 2) + 1)"
         }
         else {
             switch process {
@@ -497,15 +498,15 @@ struct ScalesView: View {
     }
     
     func staffCanFit() -> Bool {
-//        var canFit = true
-//        if self.scalesModel.scale.hands.count > 1 {
-//            //if UIDevice.current.userInterfaceIdiom == .phone && !orientationObserver.orientation.isPortrait {
-//            if UIDevice.current.userInterfaceIdiom == .phone && !orientationInfo.isPortrait {
-//                canFit = false
-//            }
-//        }
-//        return canFit
-        return  true
+        var canFit = true
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            if scalesModel.scale.scaleType == .chromatic && 
+                scalesModel.scale.scaleMotion == .contraryMotion &&
+                scalesModel.scale.octaves > 1 {
+                canFit = false
+            }
+        }
+        return canFit
     }
         
     func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
@@ -672,7 +673,7 @@ struct ScalesView: View {
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
                 if let score = scalesModel.getScore() {
-                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.join(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale, handType: .right)
+                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale, handType: .right)
                 }
                 if let combined = PianoKeyboardModel.sharedCombined {
                     let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi)
@@ -697,8 +698,11 @@ struct ScalesView: View {
             exerciseState.setExerciseState(ctx: "ScalesView, onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             //if scalesModel.scale.debugOn {
-                //scalesModel.scale.debug1("In View1", short: false)
+            //scalesModel.scale.debug1("In View1", short: false)
             //}
+            if let score = scalesModel.getScore() {
+                //score.debug2(ctx: "ScalesView.onAppear", handType: nil)
+            }
         }
         
         .onDisappear {
