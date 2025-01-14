@@ -276,7 +276,7 @@ public struct ClassicStyle {
                 ///------------- Back notes - Note name -----
                 ///On iPhone or long scales many keys results in overlapping key names. So dont show the black key key names.
                 if UIDevice.current.userInterfaceIdiom != .phone {
-                    if scale.getScaleNoteCount() <= 24 || self.orientationObserver.isPortrait {
+                    if scale.getScaleNoteCount() <= 24{ //} || !self.orientationObserver.isPortrait {
                         if scalesModel.showFingers {
                             if key.finger.count > 0 {
                                 if key.midi == 54 {

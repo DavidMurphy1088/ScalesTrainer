@@ -87,7 +87,6 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         if leadingIn {
             return
         }
-
         let samplerForKeyboard = audioManager.getSamplerForKeyboard()
 
         for hand in scale.hands {

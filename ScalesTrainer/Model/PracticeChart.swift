@@ -208,17 +208,17 @@ class PracticeChart: Codable {
         return result
     }
     
-    func changeScaleTypes(oldTypes:[ScaleType], newType:ScaleType) {
+    func changeScaleTypes(selectedTypes:[ScaleType], selectedMotions:[ScaleMotion], newType:ScaleType) {
         for row in rows {
             for chartCell in row {
-                //if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
-                    if oldTypes.contains(chartCell.scale.scaleType) {
+                if selectedTypes.contains(chartCell.scale.scaleType) {
+                    if selectedMotions.contains(chartCell.scale.scaleMotion) {
                         chartCell.scale = Scale(scaleRoot: chartCell.scale.scaleRoot, scaleType: newType, scaleMotion: chartCell.scale.scaleMotion,
                                                 octaves: chartCell.scale.octaves, hands: chartCell.scale.hands, minTempo: chartCell.scale.minTempo,
                                                 dynamicTypes: chartCell.scale.dynamicTypes, articulationTypes: chartCell.scale.articulationTypes,
                                                 scaleCustomisation: chartCell.scale.scaleCustomisation)
                     }
-                //}
+                }
             }
         }
     }

@@ -17,7 +17,6 @@ class Metronome:ObservableObject {
     @Published private(set) var isLeadingIn:Bool = false
     @Published var timerTickerCountPublished = 0
     
-    
     public var timerTickerCount = 0
     private let scalesModel = ScalesModel.shared
     private var tickTimer:AnyCancellable?

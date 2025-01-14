@@ -160,7 +160,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             keyCount += 1
         }
         
-        print("=========== CONNBB", highestLHInScaleKey.midi, lowestRHInScaleKey.midi)
         ///Need to fill the gap between the LH and RH if the RH scales doesnt exactly follow on from the LH scale. e.g. Gr 5 chromatic LH start C, Rh start E
         if highestLHInScaleKey.midi != lowestRHInScaleKey.midi {
             if let lastKey = lastKey {
@@ -200,7 +199,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         merged.keyboardAudioManager = AudioManager.shared
         return merged
     }
-    
     
     func clearAllKeyWasPlayedState(besidesID:UUID? = nil) {
         if let last = self.pianoKeyModel.first(where: { $0.keyWasPlayedState.tappedTimeAscending != nil || $0.keyWasPlayedState.tappedTimeDescending != nil}) {
@@ -271,6 +269,8 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             lowestKeyMidi -= 1
         case "G":
             lowestKeyMidi -= 2
+        case "G#":
+            lowestKeyMidi -= 2
         case "A♭":
             lowestKeyMidi -= 3
         case "A":
@@ -288,6 +288,9 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         numKeys += 2
         if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 4
+        }
+        if ["G#"].contains(self.scalesModel.scale.scaleRoot.name) {
+            numKeys += 1
         }
         if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
             numKeys += 6

@@ -89,9 +89,10 @@ public class NoteOffsetsInScaleByKey {
         if keyType == .major {
             //  Key                 C     D♭   D    E♭   E    F    G♭    G     A♭   A    B♭   B
             noteOffsetByKey.append("0     0    0    0    0    0    0     0     0    0,1  0    0")    //C
-            noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
+            //noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
+            noteOffsetByKey.append("1,-1  1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
             noteOffsetByKey.append("1     1,1  1    1    1    1    1     1     1,1  1    1    1")    //D
-            noteOffsetByKey.append("1,1  2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
+            noteOffsetByKey.append("1,1   2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
             noteOffsetByKey.append("2     2,1  2    2,1  2    2    2     2     2,1  2    2,1  2")    //E
             noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
             noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
@@ -129,9 +130,7 @@ public class NoteOffsetsInScaleByKey {
             Logger.shared.reportError(self, "Invalid key \(scaleDegree)")
             return nil
         }
-        if scale.debugOn && noteValue == 63 {
-            
-        }
+
         let scaleDegreeComponentsLine = noteOffsetByKey[scaleDegree].components(separatedBy: " ")
         var scaleDegreeComponentsList:[String] = []
         for component in scaleDegreeComponentsLine {

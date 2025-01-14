@@ -92,7 +92,7 @@ public class ScalesModel : ObservableObject {
 
     var tempoSettings:[String] = []
     @Published var tempoChangePublished = false
-    var selectedTempoIndex = 5 //60=2
+    var selectedTempoIndex = 0 //5 //60=2
     var exerciseBadge:Badge?
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]

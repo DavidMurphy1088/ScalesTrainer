@@ -15,7 +15,7 @@ struct MetronomeView: View {
     @ObservedObject var metronome = Metronome.shared
     
     var body: some View {
-        let beat = (metronome.timerTickerCountPublished % 4) + 1
+        let beat = (metronome.timerTickerCountPublished % 4) + 1 
         Button(action: {
             metronome.setTicking(way: !metronome.isMetronomeTicking())
             if metronome.isMetronomeTicking() {
@@ -134,7 +134,7 @@ struct ScalesView: View {
         let text:String
         if metronome.isLeadingIn {
             ///2 ticks per beat
-            text = "  Leading In  \((metronome.timerTickerCountPublished / 2) + 1)"
+            text = "  Leading In  " //\((metronome.timerTickerCountPublished / 2) + 1)"
         }
         else {
             switch process {
@@ -501,7 +501,7 @@ struct ScalesView: View {
         var canFit = true
         if UIDevice.current.userInterfaceIdiom == .phone {
             if scalesModel.scale.scaleType == .chromatic && 
-                scalesModel.scale.scaleMotion == .contraryMotion &&
+                //scalesModel.scale.scaleMotion == .contraryMotion &&
                 scalesModel.scale.octaves > 1 {
                 canFit = false
             }

@@ -323,7 +323,8 @@ struct PracticeChartView: View {
                             default:newType = .naturalMinor
                             }
                             practiceChart.minorScaleType = minorTypeIndex
-                            practiceChart.changeScaleTypes(oldTypes: [.harmonicMinor, .naturalMinor, .melodicMinor], newType: newType)
+                            practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
+                                                           selectedMotions:[.similarMotion], newType: newType)
                             MusicBoardAndGrade.shared?.savePracticeChartToFile()
                             self.reloadTrigger = !self.reloadTrigger
                         })
