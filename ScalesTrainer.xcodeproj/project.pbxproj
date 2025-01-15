@@ -48,7 +48,6 @@
 		79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC12BDBB41100A27531 /* Home_3_60.m4a */; };
 		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
 		79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79566AD52CB9259C00581A57 /* BackingChords.swift */; };
-		795CDF4B2D023F02002D8F9D /* ScalesStarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
 		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
@@ -65,6 +64,7 @@
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
 		7985635D2C0349BF008BAC79 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* Settings.swift */; };
+		798D27D72D37B1A9004485A3 /* StaffTest1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D27D62D37B1A9004485A3 /* StaffTest1.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
@@ -184,7 +184,6 @@
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
 		795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarTests.swift; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
@@ -201,6 +200,7 @@
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
 		7985635C2C0349BF008BAC79 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		798D27D62D37B1A9004485A3 /* StaffTest1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffTest1.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
@@ -334,7 +334,7 @@
 		795CDF492D023F02002D8F9D /* ScalesStarTests */ = {
 			isa = PBXGroup;
 			children = (
-				795CDF4A2D023F02002D8F9D /* ScalesStarTests.swift */,
+				798D27D62D37B1A9004485A3 /* StaffTest1.swift */,
 			);
 			path = ScalesStarTests;
 			sourceTree = "<group>";
@@ -650,7 +650,7 @@
 				TargetAttributes = {
 					795CDF472D023F02002D8F9D = {
 						CreatedOnToolsVersion = 15.2;
-						TestTargetID = 79DA82112BCCE95F008AC492;
+						LastSwiftMigration = 1520;
 					};
 					79B2BFF92D02CA830062F891 = {
 						CreatedOnToolsVersion = 15.2;
@@ -779,7 +779,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				795CDF4B2D023F02002D8F9D /* ScalesStarTests.swift in Sources */,
+				798D27D72D37B1A9004485A3 /* StaffTest1.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,7 +906,7 @@
 		795CDF4E2D023F02002D8F9D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
@@ -917,16 +917,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
 			};
 			name = Debug;
 		};
 		795CDF4F2D023F02002D8F9D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
@@ -939,7 +939,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
 			};
 			name = Release;
 		};

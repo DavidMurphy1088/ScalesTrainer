@@ -224,6 +224,10 @@ public class StaffClef : ScoreEntry {
         self.setPlacements(scale: scale)
     }
     
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
     ///The placement tells a note how to display itself
     ///Note offset from middle of staff is dependendent on the staff
     func getNoteViewPlacement(note:StaffNote) -> NoteStaffPlacement {

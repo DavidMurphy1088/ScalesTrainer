@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashable {
+public class TimeSliceEntry : ObservableObject, Encodable, Identifiable, Equatable, Hashable {
     @Published public var showIsPlaying:Bool = false
     public let id = UUID()
     
@@ -20,6 +20,14 @@ public class TimeSliceEntry : ObservableObject, Identifiable, Equatable, Hashabl
         self.segments = segments
     }
     
+    public func encode(to encoder: Encoder) throws {
+        enum CodingKeys: String, CodingKey {
+            case value
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(value, forKey: .value)
+    }
+
     public static func == (lhs: TimeSliceEntry, rhs: TimeSliceEntry) -> Bool {
         return lhs.id == rhs.id
     }

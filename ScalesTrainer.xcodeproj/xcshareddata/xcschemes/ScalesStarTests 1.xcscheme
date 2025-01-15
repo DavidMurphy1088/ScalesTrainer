@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1520"
-   version = "2.2">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <AutocreatedTestPlanReference>
-            </AutocreatedTestPlanReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -29,9 +18,9 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "79B2BFF92D02CA830062F891"
-               BuildableName = "ScalesStarUITests.xctest"
-               BlueprintName = "ScalesStarUITests"
+               BlueprintIdentifier = "795CDF472D023F02002D8F9D"
+               BuildableName = "ScalesStarTests.xctest"
+               BlueprintName = "ScalesStarTests"
                ReferencedContainer = "container:ScalesTrainer.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -41,16 +30,22 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "1"
+      launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <LocationScenarioReference
-         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
-         referenceType = "1">
-      </LocationScenarioReference>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "79DA82112BCCE95F008AC492"
+            BuildableName = "ScalesStar.app"
+            BlueprintName = "ScalesStar"
+            ReferencedContainer = "container:ScalesTrainer.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -61,9 +56,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "79B2BFF92D02CA830062F891"
-            BuildableName = "ScalesStarUITests.xctest"
-            BlueprintName = "ScalesStarUITests"
+            BlueprintIdentifier = "79DA82112BCCE95F008AC492"
+            BuildableName = "ScalesStar.app"
+            BlueprintName = "ScalesStar"
             ReferencedContainer = "container:ScalesTrainer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

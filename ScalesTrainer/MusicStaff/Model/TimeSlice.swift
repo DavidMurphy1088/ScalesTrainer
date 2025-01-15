@@ -37,6 +37,19 @@ public class TimeSlice : ScoreEntry {
     public init(score:Score) {
         self.score = score
         self.entries = []
+        super.init()
+    }
+    public override func encode(to encoder: Encoder) throws {
+        enum CodingKeys: String, CodingKey {
+            case entries
+        }
+
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(entries, forKey: .entries)
+    }
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
     
     public func getValue() -> Double {

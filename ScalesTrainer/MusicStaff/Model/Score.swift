@@ -48,7 +48,7 @@ public class RhythmTolerance {
     }
 }
 
-public class ScoreEntry : ObservableObject, Identifiable, Hashable {
+public class ScoreEntry : ObservableObject, Codable, Identifiable, Hashable {
     public let id = UUID()
     var sequence:Int = 0
 
@@ -134,7 +134,7 @@ public class StudentFeedback : ObservableObject {
     public var rhythmTolerance:Int? = nil
 }
 
-public class Score : ObservableObject {
+public class Score : ObservableObject, Encodable {
     let id:UUID
     
     private let scale:Scale
@@ -178,6 +178,14 @@ public class Score : ObservableObject {
         barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
         self.debugOn = debugOn
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        enum CodingKeys: String, CodingKey {
+            case scoreEntries
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(scoreEntries, forKey: .scoreEntries)
     }
     
     func getBraceHeight() -> Double {

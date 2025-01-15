@@ -8,7 +8,13 @@ public class BarLine : ScoreEntry {
     init(visibleOnStaff:Bool, forStaffSpacing: Bool) {
         self.visibleOnStaff = visibleOnStaff
         self.forStaffSpacing = forStaffSpacing
+        super.init()
     }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
 }
 
 public class Rest : TimeSliceEntry {
@@ -39,7 +45,7 @@ public enum StemDirection {
     case down
 }
 
-public class NoteStaffPlacement {
+public class NoteStaffPlacement : Encodable {
     let midi:Int
     public var offsetFromStaffMidline:Int
     public var accidental: Int?
@@ -109,6 +115,16 @@ public class StaffNote : TimeSliceEntry, Comparable {
         self.beamType = note.beamType
     }
     
+    public override func encode(to encoder: Encoder) throws {
+        enum CodingKeys: String, CodingKey {
+            case midi
+            case noteStaffPlacement
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(midi, forKey: .midi)
+        try container.encode(noteStaffPlacement, forKey: .noteStaffPlacement)
+    }
+
     public func setIsOnlyRhythm(way: Bool) {
         self.isOnlyRhythmNote = way
         if self.isOnlyRhythmNote {

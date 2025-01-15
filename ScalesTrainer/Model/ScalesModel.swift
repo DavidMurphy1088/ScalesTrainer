@@ -620,71 +620,6 @@ public class ScalesModel : ObservableObject {
             }
         }
         
-        
-//        func adjustPlacementsForChromaticOLD(score:Score, handType:HandType) {
-//            func isWhiteKey(midi:Int) -> Bool {
-//                let offset = midi % 12
-//                return [0,2,4,5,7,9,11].contains(offset)
-//            }
-//            
-//            var firstAccidental:Int? = nil
-//            var ctr = 0
-//            var lastAccidentalOffset:Int? = nil
-//            
-//            for entry in score.scoreEntries {
-//                if entry is BarLine {
-//                    lastAccidentalOffset = nil
-//                }
-//                if entry is TimeSlice {
-//                    let timeSlice = entry as! TimeSlice
-//                    for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-//                        if staffNote.handType == handType {
-//                            let placement = staffNote.noteStaffPlacement
-//                            if firstAccidental == nil {
-//                                firstAccidental = placement.accidental
-//                            }
-//                            if isWhiteKey(midi: staffNote.midiNumber) {
-//                                placement.accidental = nil
-//                                staffNote.noteStaffPlacement = placement
-//                                if let lastAccidentalOffset = lastAccidentalOffset {
-//                                    if placement.offsetFromStaffMidline == lastAccidentalOffset {
-//                                        placement.accidental = 0
-//                                    }
-//                                }
-//                                placement.placementCanBeSetByKeySignature = false
-//                                lastAccidentalOffset = nil
-//                            }
-//                            else {
-//                                placement.placementCanBeSetByKeySignature = false
-//                                lastAccidentalOffset = nil
-//                                if placement.accidental != nil && placement.accidental != firstAccidental {
-//                                    if placement.accidental == -1 {
-//                                        placement.offsetFromStaffMidline -= 1
-//                                        placement.accidental = 1
-//                                        staffNote.noteStaffPlacement = placement
-//                                        placement.placementCanBeSetByKeySignature = false
-//                                        lastAccidentalOffset = placement.offsetFromStaffMidline
-//                                    }
-//                                    else {
-//                                        if placement.accidental == 1 {
-//                                            placement.offsetFromStaffMidline += 1
-//                                            placement.accidental = -1
-//                                            staffNote.noteStaffPlacement = placement
-//                                            placement.placementCanBeSetByKeySignature = false
-//                                            lastAccidentalOffset = placement.offsetFromStaffMidline
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            
-//                        }
-//                        ctr += 1
-//                    }
-//                }
-//            }
-//            score.debug2(ctx:"ScalesModel.AdjustforChromatic hand\(handType) END ", handType: handType, withBeam: false, toleranceLevel: 0)
-//        }
-        
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
         let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
@@ -744,6 +679,8 @@ public class ScalesModel : ObservableObject {
         
         addFinalRests(timeSig: timeSig, barValue: totalBarValue)
         score.setTimesliceStartAtValues()
+        
+        ///===== Clef inserts ====
         
         ///Insert clefs into the score as ScoreEntries (not Timeslices) where necessary to reduce too many ledger lines.
         ///Clefs are inserted prior to a quaver group of notes if any note in that group requires too many ledger lines using the staff's current clef
@@ -813,7 +750,7 @@ public class ScalesModel : ObservableObject {
             let notePlacement = note.noteStaffPlacement
             var matchedAccidental = false
             
-            for prevNote in barNotes {
+            for prevNote in barNotes.reversed() {
                 if prevNote.noteStaffPlacement.offsetFromStaffMidline == notePlacement.offsetFromStaffMidline {
                     if let lastAccidental = prevNote.noteStaffPlacement.accidental {
                         if prevNote.midi > note.midi {
@@ -831,6 +768,9 @@ public class ScalesModel : ObservableObject {
                             matchedAccidental = true
                             break
                         }
+                    }
+                    else {
+                        break
                     }
                 }
             }
@@ -917,8 +857,6 @@ public class ScalesModel : ObservableObject {
                 ///Determine the placement and accidentals for each note in the score.
                 if let timeSlice = scoreEntry as? TimeSlice {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        if staffNote.midi == 61 {
-                        }
                         staffNote.noteStaffPlacement = clefForPositioning.getNoteViewPlacement(note: staffNote)
                         if firstAccidental == nil {
                             if staffNote.noteStaffPlacement.accidental != nil {
@@ -927,6 +865,8 @@ public class ScalesModel : ObservableObject {
                         }
                         if scale.scaleType == .chromatic {
                             adjustPlacementForChromatic(staffNote: staffNote, firstAccidental: firstAccidental)
+                        }
+                        if staffNote.midi == 78 {
                         }
                         checkInBar(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
                         notesInBar.append(staffNote)
@@ -978,6 +918,14 @@ public class ScalesModel : ObservableObject {
         Logger.shared.log(self, "setScale to:\(name)")
         
         let score = self.createScore(scale: scale)
+        do {
+            let jsonData = try JSONEncoder().encode(score)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                //print("JSON String:\n\n \(jsonString)")
+            }
+        } catch {
+            Logger.shared.reportError(self, "Error encoding user: \(error)")
+        }
         
         if scale.timeSignature.top == 3 {
             self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
