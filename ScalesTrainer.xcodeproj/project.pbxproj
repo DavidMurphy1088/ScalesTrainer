@@ -64,7 +64,8 @@
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
 		7985635D2C0349BF008BAC79 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* Settings.swift */; };
-		798D27D72D37B1A9004485A3 /* StaffTest1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D27D62D37B1A9004485A3 /* StaffTest1.swift */; };
+		79891CD22D38D21F009405C3 /* ScalesStarTests1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD12D38D21F009405C3 /* ScalesStarTests1.swift */; };
+		79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD82D38D278009405C3 /* ScoreTest.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
@@ -75,8 +76,15 @@
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
-		79B2BFFD2D02CA830062F891 /* ScalesStarUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B2BFFC2D02CA830062F891 /* ScalesStarUITests.swift */; };
-		79B2BFFF2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B2BFFE2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift */; };
+		79B072EE2D37C2D200CD6F2B /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */; };
+		79B072F02D37C2D200CD6F2B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072EF2D37C2D200CD6F2B /* FirebaseAuth */; };
+		79B072F22D37C2D200CD6F2B /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F12D37C2D200CD6F2B /* FirebaseCore */; };
+		79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F32D37C2D200CD6F2B /* FirebaseDatabase */; };
+		79B072F62D37C2D200CD6F2B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F52D37C2D200CD6F2B /* FirebaseFirestore */; };
+		79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F72D37C2D200CD6F2B /* FirebaseStorage */; };
+		79B072FA2D37C42000CD6F2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */; };
+		79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B072FD2D37C76D00CD6F2B /* Firebase.swift */; };
+		79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B073012D37C98E00CD6F2B /* Firebase.plist */; };
 		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
 		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
@@ -124,14 +132,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		795CDF4C2D023F02002D8F9D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 79DA820A2BCCE95F008AC492 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 79DA82112BCCE95F008AC492;
-			remoteInfo = ScalesStar;
-		};
-		79B2C0002D02CA830062F891 /* PBXContainerItemProxy */ = {
+		79891CD32D38D21F009405C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 79DA820A2BCCE95F008AC492 /* Project object */;
 			proxyType = 1;
@@ -183,7 +184,6 @@
 		79552FC12BDBB41100A27531 /* Home_3_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_3_60.m4a; sourceTree = "<group>"; };
 		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
 		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
-		795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
 		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
@@ -200,7 +200,9 @@
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
 		7985635C2C0349BF008BAC79 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		798D27D62D37B1A9004485A3 /* StaffTest1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffTest1.swift; sourceTree = "<group>"; };
+		79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests1.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		79891CD12D38D21F009405C3 /* ScalesStarTests1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarTests1.swift; sourceTree = "<group>"; };
+		79891CD82D38D278009405C3 /* ScoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreTest.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
@@ -211,7 +213,9 @@
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
-		79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		79B072FD2D37C76D00CD6F2B /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
+		79B073012D37C98E00CD6F2B /* Firebase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Firebase.plist; sourceTree = "<group>"; };
 		79B2BFFC2D02CA830062F891 /* ScalesStarUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarUITests.swift; sourceTree = "<group>"; };
 		79B2BFFE2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesStarUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
@@ -260,14 +264,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		795CDF452D023F02002D8F9D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		79B2BFF72D02CA830062F891 /* Frameworks */ = {
+		79891CCC2D38D21F009405C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -281,7 +278,13 @@
 				79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */,
 				79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */,
 				794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */,
+				79B072F62D37C2D200CD6F2B /* FirebaseFirestore in Frameworks */,
 				79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */,
+				79B072EE2D37C2D200CD6F2B /* FirebaseAppCheck in Frameworks */,
+				79B072F02D37C2D200CD6F2B /* FirebaseAuth in Frameworks */,
+				79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */,
+				79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */,
+				79B072F22D37C2D200CD6F2B /* FirebaseCore in Frameworks */,
 				818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -331,14 +334,6 @@
 			path = AudioFiles;
 			sourceTree = "<group>";
 		};
-		795CDF492D023F02002D8F9D /* ScalesStarTests */ = {
-			isa = PBXGroup;
-			children = (
-				798D27D62D37B1A9004485A3 /* StaffTest1.swift */,
-			);
-			path = ScalesStarTests;
-			sourceTree = "<group>";
-		};
 		7970138D2BEE3DE0009F85D6 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -364,6 +359,15 @@
 				797013932BEE3E45009F85D6 /* TimeSliceView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		79891CD02D38D21F009405C3 /* ScalesStarTests1 */ = {
+			isa = PBXGroup;
+			children = (
+				79891CD12D38D21F009405C3 /* ScalesStarTests1.swift */,
+				79891CD82D38D278009405C3 /* ScoreTest.swift */,
+			);
+			path = ScalesStarTests1;
 			sourceTree = "<group>";
 		};
 		79B2BFFB2D02CA830062F891 /* ScalesStarUITests */ = {
@@ -416,13 +420,13 @@
 		79DA82092BCCE95F008AC492 = {
 			isa = PBXGroup;
 			children = (
-				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
-				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
-				795CDF492D023F02002D8F9D /* ScalesStarTests */,
-				79B2BFFB2D02CA830062F891 /* ScalesStarUITests */,
-				79DA82132BCCE95F008AC492 /* Products */,
-				DDA3121AEE7C45E54101ED2B /* Pods */,
 				29591435A11F915AD3A16C39 /* Frameworks */,
+				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
+				DDA3121AEE7C45E54101ED2B /* Pods */,
+				79DA82132BCCE95F008AC492 /* Products */,
+				79891CD02D38D21F009405C3 /* ScalesStarTests1 */,
+				79B2BFFB2D02CA830062F891 /* ScalesStarUITests */,
+				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
 			);
 			sourceTree = "<group>";
 		};
@@ -430,8 +434,7 @@
 			isa = PBXGroup;
 			children = (
 				79DA82122BCCE95F008AC492 /* ScalesStar.app */,
-				795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */,
-				79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */,
+				79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -444,6 +447,8 @@
 				79C0D2532BE30E7B0036CC91 /* Data */,
 				7943AE602BD6539500E94AC7 /* Games */,
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
+				79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */,
+				79B073012D37C98E00CD6F2B /* Firebase.plist */,
 				79DA822C2BCCED24008AC492 /* Model */,
 				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
 				79F6CD792D167B7800FF2681 /* Notes */,
@@ -511,6 +516,7 @@
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
+				79B072FD2D37C76D00CD6F2B /* Firebase.swift */,
 				79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */,
 				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
@@ -575,43 +581,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		795CDF472D023F02002D8F9D /* ScalesStarTests */ = {
+		79891CCE2D38D21F009405C3 /* ScalesStarTests1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 795CDF502D023F02002D8F9D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */;
+			buildConfigurationList = 79891CD52D38D21F009405C3 /* Build configuration list for PBXNativeTarget "ScalesStarTests1" */;
 			buildPhases = (
-				795CDF442D023F02002D8F9D /* Sources */,
-				795CDF452D023F02002D8F9D /* Frameworks */,
-				795CDF462D023F02002D8F9D /* Resources */,
+				79891CCB2D38D21F009405C3 /* Sources */,
+				79891CCC2D38D21F009405C3 /* Frameworks */,
+				79891CCD2D38D21F009405C3 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				795CDF4D2D023F02002D8F9D /* PBXTargetDependency */,
+				79891CD42D38D21F009405C3 /* PBXTargetDependency */,
 			);
-			name = ScalesStarTests;
-			productName = ScalesStarTests;
-			productReference = 795CDF482D023F02002D8F9D /* ScalesStarTests.xctest */;
+			name = ScalesStarTests1;
+			productName = ScalesStarTests1;
+			productReference = 79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		79B2BFF92D02CA830062F891 /* ScalesStarUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 79B2C0042D02CA830062F891 /* Build configuration list for PBXNativeTarget "ScalesStarUITests" */;
-			buildPhases = (
-				79B2BFF62D02CA830062F891 /* Sources */,
-				79B2BFF72D02CA830062F891 /* Frameworks */,
-				79B2BFF82D02CA830062F891 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				79B2C0012D02CA830062F891 /* PBXTargetDependency */,
-			);
-			name = ScalesStarUITests;
-			packageProductDependencies = (
-			);
-			productName = ScalesStarUITests;
-			productReference = 79B2BFFA2D02CA830062F891 /* ScalesStarUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		79DA82112BCCE95F008AC492 /* ScalesStar */ = {
 			isa = PBXNativeTarget;
@@ -633,6 +619,12 @@
 				79DA822A2BCCEB8B008AC492 /* AudioKitUI */,
 				79DA82352BCCF260008AC492 /* AudioKitEX */,
 				794D49522BCD28CC0005A173 /* SoundpipeAudioKit */,
+				79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */,
+				79B072EF2D37C2D200CD6F2B /* FirebaseAuth */,
+				79B072F12D37C2D200CD6F2B /* FirebaseCore */,
+				79B072F32D37C2D200CD6F2B /* FirebaseDatabase */,
+				79B072F52D37C2D200CD6F2B /* FirebaseFirestore */,
+				79B072F72D37C2D200CD6F2B /* FirebaseStorage */,
 			);
 			productName = ScalesTrainer;
 			productReference = 79DA82122BCCE95F008AC492 /* ScalesStar.app */;
@@ -648,11 +640,7 @@
 				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					795CDF472D023F02002D8F9D = {
-						CreatedOnToolsVersion = 15.2;
-						LastSwiftMigration = 1520;
-					};
-					79B2BFF92D02CA830062F891 = {
+					79891CCE2D38D21F009405C3 = {
 						CreatedOnToolsVersion = 15.2;
 						TestTargetID = 79DA82112BCCE95F008AC492;
 					};
@@ -678,27 +666,20 @@
 				79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
 				79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */,
 				794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
+				79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 79DA82132BCCE95F008AC492 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				79DA82112BCCE95F008AC492 /* ScalesStar */,
-				795CDF472D023F02002D8F9D /* ScalesStarTests */,
-				79B2BFF92D02CA830062F891 /* ScalesStarUITests */,
+				79891CCE2D38D21F009405C3 /* ScalesStarTests1 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		795CDF462D023F02002D8F9D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		79B2BFF82D02CA830062F891 /* Resources */ = {
+		79891CCD2D38D21F009405C3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -714,12 +695,14 @@
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
 				79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */,
 				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
+				79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				79F6CD752D14020200FF2681 /* MidiNotes in Resources */,
 				790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
+				79B072FA2D37C42000CD6F2B /* GoogleService-Info.plist in Resources */,
 				790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */,
 				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
@@ -775,20 +758,12 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		795CDF442D023F02002D8F9D /* Sources */ = {
+		79891CCB2D38D21F009405C3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				798D27D72D37B1A9004485A3 /* StaffTest1.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		79B2BFF62D02CA830062F891 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				79B2BFFD2D02CA830062F891 /* ScalesStarUITests.swift in Sources */,
-				79B2BFFF2D02CA830062F891 /* ScalesStarUITestsLaunchTests.swift in Sources */,
+				79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */,
+				79891CD22D38D21F009405C3 /* ScalesStarTests1.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -838,6 +813,7 @@
 				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,
 				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
 				796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */,
+				79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
 				79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */,
@@ -890,93 +866,49 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		795CDF4D2D023F02002D8F9D /* PBXTargetDependency */ = {
+		79891CD42D38D21F009405C3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 79DA82112BCCE95F008AC492 /* ScalesStar */;
-			targetProxy = 795CDF4C2D023F02002D8F9D /* PBXContainerItemProxy */;
-		};
-		79B2C0012D02CA830062F891 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 79DA82112BCCE95F008AC492 /* ScalesStar */;
-			targetProxy = 79B2C0002D02CA830062F891 /* PBXContainerItemProxy */;
+			targetProxy = 79891CD32D38D21F009405C3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		795CDF4E2D023F02002D8F9D /* Debug */ = {
+		79891CD62D38D21F009405C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
 			};
 			name = Debug;
 		};
-		795CDF4F2D023F02002D8F9D /* Release */ = {
+		79891CD72D38D21F009405C3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		79B2C0022D02CA830062F891 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = X9VDGR7PQ7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ScalesStar;
-			};
-			name = Debug;
-		};
-		79B2C0032D02CA830062F891 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = X9VDGR7PQ7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ScalesStar;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
 			};
 			name = Release;
 		};
@@ -1172,20 +1104,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		795CDF502D023F02002D8F9D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */ = {
+		79891CD52D38D21F009405C3 /* Build configuration list for PBXNativeTarget "ScalesStarTests1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				795CDF4E2D023F02002D8F9D /* Debug */,
-				795CDF4F2D023F02002D8F9D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		79B2C0042D02CA830062F891 /* Build configuration list for PBXNativeTarget "ScalesStarUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				79B2C0022D02CA830062F891 /* Debug */,
-				79B2C0032D02CA830062F891 /* Release */,
+				79891CD62D38D21F009405C3 /* Debug */,
+				79891CD72D38D21F009405C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1219,6 +1142,14 @@
 				minimumVersion = 5.6.1;
 			};
 		};
+		79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.7.0;
+			};
+		};
 		79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AudioKit/AudioKit.git";
@@ -1250,6 +1181,36 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
 			productName = SoundpipeAudioKit;
+		};
+		79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		79B072EF2D37C2D200CD6F2B /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		79B072F12D37C2D200CD6F2B /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		79B072F32D37C2D200CD6F2B /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		79B072F52D37C2D200CD6F2B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		79B072F72D37C2D200CD6F2B /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		79DA82272BCCEB70008AC492 /* AudioKit */ = {
 			isa = XCSwiftPackageProductDependency;

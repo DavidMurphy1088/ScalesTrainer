@@ -338,7 +338,7 @@ public class Score : ObservableObject, Encodable {
         return result
     }
 
-    public func debug2(ctx:String, handType:HandType?, midiFilter1:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
+    public func debug1(ctx:String, handType:HandType?, midiFilter1:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
 //        if !self.debugOn {
 //            return
 //        }

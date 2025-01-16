@@ -106,10 +106,7 @@ public class Logger : ObservableObject {
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: false, msg, valueIn: val * 100))
         }
     }
-    
 }
-
-
 
 class LogExportViewController: UIViewController, MFMailComposeViewControllerDelegate {
     

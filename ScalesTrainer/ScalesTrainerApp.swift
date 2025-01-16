@@ -5,6 +5,11 @@ import SwiftUI
 import Foundation
 import StoreKit
 
+import Firebase
+import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
+
 enum LaunchScreenStep {
     case firstStep
     case secondStep
@@ -110,15 +115,38 @@ struct LaunchScreenView: View {
 struct DeveloperView: View {
     let scalesModel = ScalesModel.shared
     @State var showingTapData = false
-
+    let email = "Fred1@gmail.com"
+    @State private var password = "Password1"
+    @State private var isLoggedIn = false
+    @State var status = ""
+    let logger = Logger.shared
+    @State var ctr = 0
+    let firebase = Firebase.shared
+    
     var body: some View {
         VStack {
             Spacer()
-//            Button("READ_TEST_DATA") {
-//                scalesModel.setRunningProcess(.recordScaleWithFileData)
-//            }.padding()
-            //if scalesModel.tapHandlerEventSetPublished  {
 
+            Button("Firebase Signin") {
+                firebase.signIn(email: email, pwd: password)
+            }
+            Spacer()
+            
+            Button(action: {
+                //firebase.writeDataToRealtimeDatabase(key: "TESTVIEW", jsonString: "FRED", callback: nil)
+            }) {
+                Text("Firebase Write")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+
+            Spacer()
+            
+            Text(status)
+            
+            Spacer()
             Button("Show Tap Data") {
                 //self.showScaleStart()
                 showingTapData = true
@@ -137,6 +165,9 @@ struct DeveloperView: View {
 //                }
 //            }
             Spacer()
+        }
+        .onAppear() {
+            status = "Firebase not connected"
         }
         .sheet(isPresented: $showingTapData) {
             TapDataView(keyboardModel: PianoKeyboardModel.sharedRH)
@@ -212,6 +243,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         LicenceManager.shared.requestProducts() ///Get products
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
+        FirebaseApp.configure()
         if !Settings.shared.isDeveloperMode() {
             LicenceManager.shared.getFreeLicenses()
         }

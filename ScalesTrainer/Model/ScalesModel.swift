@@ -15,6 +15,12 @@ enum MicTappingMode {
     case onWithRecordingScale
 }
 
+public enum UnitTestMode {
+    case none
+    case save
+    case test
+}
+
 enum RunningProcess {
     case none
     case followingScale
@@ -883,7 +889,7 @@ public class ScalesModel : ObservableObject {
             score.addStemCharacteristics(handType: handType, clef: clefForPositioning,
                                          startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: score.scoreEntries.count - 1)
             //if score.debugOn {
-                score.debug2(ctx: "ScalesModel.createScore \(handType) END", handType: nil)
+                //score.debug2(ctx: "ScalesModel.createScore \(handType) END", handType: nil)
             //}
         }
         return score
@@ -900,7 +906,8 @@ public class ScalesModel : ObservableObject {
 
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int],
                                dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
-                               scaleCustomisation:ScaleCustomisation? = nil, debugOn:Bool = false) {
+                               scaleCustomisation:ScaleCustomisation? = nil, 
+                               debugOn:Bool = false, callback: ((Scale, Score) -> Void)? = nil) {
         let name = scale.getScaleName(handFull: true, octaves: true)
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
@@ -909,22 +916,17 @@ public class ScalesModel : ObservableObject {
                           minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                           scaleCustomisation: scaleCustomisation,
                           debugOn: debugOn)
-        setKeyboardAndScore(scale: scale)
+        setKeyboardAndScore(scale: scale, callback:callback)
     }
 
-    public func setKeyboardAndScore(scale:Scale) {
+    public func setKeyboardAndScore(scale:Scale, callback: ((Scale, Score) -> Void)?) {
         ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
         let name = scale.getScaleName(handFull: true, octaves: true)
         Logger.shared.log(self, "setScale to:\(name)")
         
         let score = self.createScore(scale: scale)
-        do {
-            let jsonData = try JSONEncoder().encode(score)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                //print("JSON String:\n\n \(jsonString)")
-            }
-        } catch {
-            Logger.shared.reportError(self, "Error encoding user: \(error)")
+        if let callback = callback {
+            callback(scale, score)
         }
         
         if scale.timeSignature.top == 3 {
