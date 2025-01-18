@@ -872,8 +872,12 @@ public class ScalesModel : ObservableObject {
                         if scale.scaleType == .chromatic {
                             adjustPlacementForChromatic(staffNote: staffNote, firstAccidental: firstAccidental)
                         }
-                        if staffNote.midi == 78 {
-                        }
+                        ///Only to test regression works...
+                        //if scale.debugOn {
+                            //if staffNote.midi == 62 {
+                                //staffNote.midi = 63
+                            //}
+                        //}
                         checkInBar(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
                         notesInBar.append(staffNote)
                     }
@@ -908,7 +912,7 @@ public class ScalesModel : ObservableObject {
                                dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
                                scaleCustomisation:ScaleCustomisation? = nil, 
                                debugOn:Bool = false, callback: ((Scale, Score) -> Void)? = nil) {
-        let name = scale.getScaleName(handFull: true, octaves: true)
+        //let name = scale.getScaleName(handFull: true, octaves: true)
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: octaves,
@@ -921,8 +925,8 @@ public class ScalesModel : ObservableObject {
 
     public func setKeyboardAndScore(scale:Scale, callback: ((Scale, Score) -> Void)?) {
         ///This assumes a new scale as input. This method does not re-initialize the scale segments. i.e. cannot be used for a scale that was already used
-        let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "setScale to:\(name)")
+        //let name = scale.getScaleName(handFull: true, octaves: true)
+        //Logger.shared.log(self, "setScale to:\(name)")
         
         let score = self.createScore(scale: scale)
         if let callback = callback {
@@ -949,8 +953,7 @@ public class ScalesModel : ObservableObject {
     }
     
     func configureKeyboards(scale:Scale, ctx:String) {
-        let name = scale.getScaleName(handFull: true, octaves: true)
-        Logger.shared.log(self, "🎹 setScaleAndScore to:\(name) ctx:\(ctx) ID:\(scale.id)")
+        //let name = scale.getScaleName(handFull: true, octaves: true)
         self.scale = scale
         if let score = self.getScore() {
             if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
@@ -996,7 +999,7 @@ public class ScalesModel : ObservableObject {
         let minute = calendar.component(.minute, from: Date())
         let device = UIDevice.current
         let modelName = device.model
-        var keyName = scale.getScaleName(handFull: true)
+        var keyName = scale.getScaleStorageKey()
         keyName = keyName.replacingOccurrences(of: " ", with: "")
         var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
         fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.getScaleNoteState(handType: .right, index: 0).midi) + "_" + modelName

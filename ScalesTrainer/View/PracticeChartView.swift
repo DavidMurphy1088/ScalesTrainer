@@ -19,6 +19,8 @@ struct BlankCellView: View {
 struct CellView: View {
     let column:Int
     let practiceChart:PracticeChart
+    @Binding var scalesInChart: [String]
+    
     @ObservedObject var practiceCell: PracticeChartCell
     var cellWidth:CGFloat
     var cellHeight:CGFloat
@@ -31,7 +33,7 @@ struct CellView: View {
     @State var navigateToScale = false
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
-    
+
     let padding = 5.0
 
     func getColor() -> Color {
@@ -92,7 +94,6 @@ struct CellView: View {
             }) {
                 if UIDevice.current.userInterfaceIdiom != .phone {
                     HStack {
-                        //Text("Right Hand").font(.callout)
                         Text("Right").font(.callout)
                     }
                 }
@@ -191,6 +192,12 @@ struct CellView: View {
         return cellName
     }
     
+    ///Does this chart cell have its scale in the known-correct list
+    func isCorrectSet() -> Bool {
+        let name = practiceCell.scale.getScaleStorageKey()
+        return self.scalesInChart.contains(name)
+    }
+    
     var body: some View {
         VStack {
             Button(action: {
@@ -229,9 +236,28 @@ struct CellView: View {
             starView()
             Spacer()
             badgeView()
-            
+            if Settings.shared.isDeveloperMode() {
+                Button(action: {
+                    if !isCorrectSet() {
+                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
+                            Firebase.shared.writeKnownCorrect(scale: practiceCell.scale, score: score, board: practiceChart.board, grade: self.practiceChart.grade)
+                        })
+                        //self.isCorrectSet = true
+                    }
+                    else {
+                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
+                            let key = practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
+                            Firebase.shared.deleteFromRealtimeDatabase(board: practiceChart.board, grade: self.practiceChart.grade, key: key,
+                                                                       callback:{_ in })
+                        })
+                    }
+                }) {
+                    let correctSet = self.isCorrectSet()
+                    Text(correctSet ? "Delete Correct" : "Set Correct").foregroundColor(correctSet ? .black : .red)
+                }
+                .buttonStyle(.bordered)
+            }
             Spacer()
-            //.border(.red)
         }
         .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
@@ -240,7 +266,8 @@ struct CellView: View {
             RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
         )
         .onAppear() {
-            //self.handPicked = nil
+            let scaleName = self.practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
+            //self.isCorrectSet = self.scalesInChart.contains(scaleName)
         }
         .alert(isPresented: $showLicenceRequiredScale) {
             Alert(
@@ -262,7 +289,8 @@ struct PracticeChartView: View {
     @State private var cellOpacityValue: Double = 1.0
     @State private var showHands = false
     @State var minorScaleTypes:[String] = []
-
+    @State var scalesInChart:[String] = []
+    
     init(practiceChart:PracticeChart) {
         self.practiceChart = practiceChart
         self.daysOfWeek = getDaysOfWeek()
@@ -415,7 +443,7 @@ struct PracticeChartView: View {
                             HStack(spacing: 0) {
                                 ForEach(0..<practiceChart.columns, id: \.self) { column in
                                     if column < practiceChart.rows[row].count {
-                                        CellView(column: column, practiceChart: practiceChart, practiceCell: practiceChart.rows[row][column],
+                                        CellView(column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
                                                  cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
                                         .padding(cellPadding)
                                     }
@@ -441,6 +469,11 @@ struct PracticeChartView: View {
                 }
             }
             minorTypeIndex = practiceChart.minorScaleType
+            if Settings.shared.isDeveloperMode() {
+                Firebase.shared.readAllScales(board: self.practiceChart.board, grade:self.practiceChart.grade) { scalesAndScores in
+                    self.scalesInChart = scalesAndScores.map { $0.0 }
+                }
+            }
         }
         .onDisappear() {
         }

@@ -215,6 +215,9 @@
     "Current Amplitude Filter:%@" : {
 
     },
+    "Delete Correct" : {
+
+    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -648,6 +651,9 @@
     "Send us the app's log file" : {
 
     },
+    "Set Correct" : {
+
+    },
     "Settings" : {
       "comment" : "Menu",
       "localizations" : {
@@ -768,6 +774,9 @@
           }
         }
       }
+    },
+    "TEST" : {
+
     },
     "This subscription provides you with access to all Scales Academy content." : {
 

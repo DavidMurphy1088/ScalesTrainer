@@ -18,17 +18,15 @@ public class Firebase  {
 //        }
     }
      
-    func writeToRealtimeDatabase(key:String, data: [String: Any], callback: ((String) -> Void)?) {
+    func writeToRealtimeDatabase(board:String, grade:Int, key:String, data: [String: Any], callback: ((String) -> Void)?) {
         let database = Database.database().reference() // Reference to the root of the database
-
-        database.child("SCALES").child("Trinity_Grade1").child(key).setValue(data) { error, ref in
+        database.child("SCALES").child("\(board)_\(grade)").child(key).setValue(data) { error, ref in
             if let error = error {
-                self.logger.reportError(self, "🥵🥵🥵🥵🥵🥵🥵🥵🥵🥵 Error writing to database: \(error.localizedDescription)")
+                self.logger.reportError(self, "Error writing to database: \(error.localizedDescription)")
                 if let callback {
-                    callback("error")
+                    callback("error:\(error.localizedDescription)")
                 }
             } else {
-                self.logger.log(self, "🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯🔯 🔯🔯🔯🔯🔯 Data written successfully!")
                 if let callback = callback {
                     callback("OK")
                 }
@@ -36,62 +34,27 @@ public class Firebase  {
         }
     }
     
-//    func readAllUsers(callback: ((String) -> Void)?) {
-//        let db = Firestore.firestore() // Get a Firestore reference
-//
-//        db.child("SCALES").getDocuments { (querySnapshot, error) in
-//            if let error = error {
-//                print("Error getting documents: \(error.localizedDescription)")
-//            } else {
-//                for document in querySnapshot!.documents {
-//                    let data = document.data() // Dictionary of the document data
-//                    print("====➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️", data)
-//
-////                    let name = data["name"] as? String ?? "No name"
-////                    let age = data["age"] as? Int ?? 0
-////                    let email = data["email"] as? String ?? "No email"
-////                    print("User: \(name), Age: \(age), Email: \(email)")
-//                }
-//            }
-//            if let callback = callback {
-//                callback("OK")
-//            }
-//
-//        }
-//    }
+    func deleteFromRealtimeDatabase(board:String, grade:Int, key:String, callback: ((String) -> Void)?) {
+        let database = Database.database().reference()
+        database.child("SCALES").child("\(board)_\(grade)").child(key).removeValue { error, _ in
+            if let error = error {
+                self.logger.reportError(self, "Error deleting from database: \(error.localizedDescription)")
+                if let callback {
+                    callback("error:\(error.localizedDescription)")
+                }
+            } else {
+                if let callback = callback {
+                    callback("OK")
+                }
+            }
+        }
+    }
     
-//    func readAllScales(callback: (([(String,String)]) -> Void)?)  {
-//        let database = Database.database().reference() // Get a reference to the database
-//
-//        database.child("SCALES").child("Trinity_Grade1").observeSingleEvent(of: .value) { snapshot in
-//            var result:[(String,String)] = []
-//            if let scalesData = snapshot.value as? [String: Any] {
-//                for (scaleKey, scaleDetails) in scalesData {
-//                    print("Scale: \(scaleKey)")
-//                    if let details = scaleDetails as? [String: Any] {
-//                        print("Details: \(details)")
-//                        let staffJSON = details["staff"]
-//                        if let callback = callback {
-//                           //callback(staffJSON)
-//                        }
-//                    }
-//                }
-//            } else {
-//                print("No data found at SCALES node.")
-//            }
-//            if let callback = callback {
-//                //callback("OK")
-//            }
-//
-//        } withCancel: { error in
-//            print("Error reading data: \(error.localizedDescription)")
-//        }
-//    }
-    
-    func readAllScales(completion: @escaping ([(String, String)]) -> Void) {
+    ///Return the scale key and staff JSON for each scale in the grade
+    func readAllScales(board:String, grade:Int, completion: @escaping ([(String, String)]) -> Void) {
         let database = Database.database().reference() // Get a reference to the database
 
-        database.child("SCALES").child("Trinity_Grade1").observeSingleEvent(of: .value) { snapshot in
+        database.child("SCALES").child("\(board)_\(grade)").observeSingleEvent(of: .value) { snapshot in
             var result: [(String, String)] = [] // Array to store the result
 
             if let scalesData = snapshot.value as? [String: Any] {
@@ -102,19 +65,50 @@ public class Firebase  {
                     }
                 }
             } else {
-                print("No data found at SCALES node.")
+                //print("No data found at SCALES node.")
             }
-
-            // Call the completion handler with the result
             completion(result)
-
         } withCancel: { error in
             print("Error reading data: \(error.localizedDescription)")
             // Return an empty array in case of error
             completion([])
         }
     }
-
+    
+    func writeKnownCorrect(scale:Scale, score:Score, board:String, grade:Int) {
+        func completedCallback1(_ x:String) {
+            print("================ WRITE CALLBACK", x)
+        }
+        do {
+            let scoreData = try JSONEncoder().encode(score)
+            //score.debug1(ctx: "", handType: nil)
+            //print(scoreData)
+            let jsonString = String(data: scoreData, encoding: .utf8)
+            print (jsonString)
+            
+            if let scoreJSON = String(data: scoreData, encoding: .utf8) {
+                let scaleKey = scale.getScaleStorageKey()
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium // Choose a predefined date style
+                formatter.timeStyle = .short // Choose a predefined time style
+                let formattedDate = formatter.string(from: Date())
+                var version = ""
+                if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                   let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                    version = "Version \(appVersion) (Build \(buildNumber))"
+                }
+                let staffData: [String: Any] = [
+                    "version": version,
+                    "date": formattedDate ,
+                    "staff": scoreJSON,
+                   // "octaves": scale.octaves
+                ]
+                self.writeToRealtimeDatabase(board: board, grade: grade, key: scaleKey, data:staffData, callback: completedCallback1)
+           }
+        } catch {
+            logger.reportError(self, "Error encoding user: \(error)")
+        }
+    }
 
 }
 

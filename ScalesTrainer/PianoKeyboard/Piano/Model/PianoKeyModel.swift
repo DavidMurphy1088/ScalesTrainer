@@ -222,7 +222,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         if placement.accidental == nil {
             if !isWhiteKey(midi: staffNote.midi) {
                 let ks = self.score.key
-                var showSharps = !(ks.keySig.flats.count > 0)
+                let showSharps = !(ks.keySig.flats.count > 0)
                 name += showSharps ? "#" : "♭"
             }
         }

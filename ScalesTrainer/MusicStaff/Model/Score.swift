@@ -59,7 +59,15 @@ public class ScoreEntry : ObservableObject, Codable, Identifiable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+
+    public func encode(to encoder: Encoder) throws {
+        enum CodingKeys: String, CodingKey {
+            case sequence
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(sequence, forKey: .sequence)
+    }
+
     public func getTimeSliceEntries(notesOnly:Bool?) -> [TimeSliceEntry] {
         var result:[TimeSliceEntry] = []
         if self is TimeSlice {
@@ -156,9 +164,6 @@ public class Score : ObservableObject, Encodable {
     var debugOn:Bool
     
     private var totalStaffLineCount:Int = 0
-//    static var accSharp1 = "\u{266f}"
-//    static var accNatural1 = "\u{266e}"
-//    static var accFlat = "\u{266d}"
     public var label:String? = nil
     public var heightPaddingEnabled:Bool
     let showTempoVariation:Bool = false
@@ -183,9 +188,13 @@ public class Score : ObservableObject, Encodable {
     public func encode(to encoder: Encoder) throws {
         enum CodingKeys: String, CodingKey {
             case scoreEntries
+            case ledgerLines
+            case tempo
         }
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scoreEntries, forKey: .scoreEntries)
+        try container.encode(ledgerLineCount, forKey: .ledgerLines)
+        try container.encode(tempo, forKey: .tempo)
     }
     
     func getBraceHeight() -> Double {
@@ -338,13 +347,13 @@ public class Score : ObservableObject, Encodable {
         return result
     }
 
-    public func debug1(ctx:String, handType:HandType?, midiFilter1:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
+    public func debug11(ctx:String, handType:HandType?, midiFilter:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
 //        if !self.debugOn {
 //            return
 //        }
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         print("\nSCORE DEBUG =====", ctx, "\tScale", scale.getTitle())
-        let midiFilter = [60, 62, 63,64]
+        //let midiFilter = nil //[60, 62, 63,64]
         
         for entry in self.scoreEntries {
             if midiFilter == nil {
@@ -363,9 +372,9 @@ public class Score : ObservableObject, Encodable {
                 for entryIndex in 0..<timeSlice.entries.count {
                     let entry = timeSlice.entries[entryIndex]
                     if let note = entry as? StaffNote {
-                        if midiFilter != nil && !midiFilter.contains(note.midi) {
-                            continue
-                        }
+//                        if midiFilter != nil && !midiFilter.contains(note.midi) {
+//                            continue
+//                        }
                         if !hdrDone {
                             print("TimeSlice, ", terminator: "")
                             print("Seq", String(format: "%2d", timeSlice.sequence), terminator: "")
@@ -410,7 +419,7 @@ public class Score : ObservableObject, Encodable {
                         }
                     }
                     else {
-                        if midiFilter1 != nil {
+                        //if midiFilter1 != nil {
                             print("  Seq", timeSlice.sequence,
                                   "[Type:", type(of: timeSlice.entries[0]), "]",
                                   "[Rest:","R ", "]",
@@ -422,7 +431,7 @@ public class Score : ObservableObject, Encodable {
                                   "[WrittenAccidental:","_","]",
                                   "[Staff:","_","]"
                             )
-                        }
+                        //}
                     }
                 }
             }

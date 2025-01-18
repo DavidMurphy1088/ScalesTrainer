@@ -1,10 +1,9 @@
 import Foundation
 import SwiftUI
 
-public class TimeSliceEntry : ObservableObject, Encodable, Identifiable, Equatable, Hashable {
+public class TimeSliceEntry : ObservableObject, Codable, Identifiable, Equatable, Hashable {
     @Published public var showIsPlaying:Bool = false
     public let id = UUID()
-    
     ///Hand is needed to now which staff to place the note into
     let handType:HandType
     
@@ -13,21 +12,35 @@ public class TimeSliceEntry : ObservableObject, Encodable, Identifiable, Equatab
     public var valueNormalized:Double? = nil
     let segments:[Int]
     
+    enum CodingKeys: String, CodingKey {
+        case timeSlice
+        case value
+    }
+
     init(timeSlice:TimeSlice, value:Double, handType:HandType, segments:[Int]) {
         self.timeSlice = timeSlice
         self.value = value
         self.handType = handType
         self.segments = segments
     }
-    
+
+    ///NB - not called for a class that is derived from this one. e.g. StaffNote
     public func encode(to encoder: Encoder) throws {
-        enum CodingKeys: String, CodingKey {
-            case value
-        }
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(value, forKey: .value)
+        ///Dont encode the parent - causes infinite loop
+        //try container.encode(timeSlice, forKey: .timeSlice)
     }
-
+    
+    public required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let value = try container.decode(String.self, forKey: .value)
+        let timeslice = try container.decode(String.self, forKey: .value)
+        self.handType = .left
+        self.segments = []
+    }
+    
     public static func == (lhs: TimeSliceEntry, rhs: TimeSliceEntry) -> Bool {
         return lhs.id == rhs.id
     }

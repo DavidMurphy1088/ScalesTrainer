@@ -8,7 +8,7 @@ import XCTest
 final class ScoreTest: XCTestCase {
     let logger = Logger.shared
     let firebase = Firebase.shared
-
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -18,10 +18,181 @@ final class ScoreTest: XCTestCase {
             FirebaseApp.configure()
         }
     }
+    
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func areJSONObjectsEqual(goodJSON: String, testJSON: String) -> Bool {
+        guard let data1 = goodJSON.data(using: .utf8),
+              let data2 = testJSON.data(using: .utf8) else {
+            return false
+        }
+        
+        do {
+            // Deserialize JSON strings into objects
+            let object1 = try JSONSerialization.jsonObject(with: data1, options: [])
+            let object2 = try JSONSerialization.jsonObject(with: data2, options: [])
+            
+            // Compare the deserialized objects
+            if areJSONStructuresEqual(level: 0, object1, object2) {
+                return true
+            }
+            else {
+                return false
+            }
+        } catch {
+            XCTFail("Error parsing JSON: \(error)")
+            return false
+        }
+    }
+    
+    func areJSONStructuresEqual(level:Int, _ obj1: Any, _ obj2: Any) -> Bool {
+        if let dict1 = obj1 as? [String: Any], let dict2 = obj2 as? [String: Any] {
+            var match = true
+            if dict1.keys != dict2.keys {
+                match = false
+            }
+            if match {
+                for key in dict1.keys {
+                    if !areJSONStructuresEqual(level:level+1,dict1[key], dict2[key]) {
+                        if level == 4 {
+                            print("======= \(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
+                        }
+                        else {
+                            print("======= \(level) ♦️ DICT key:\(key) ") //" dict2[key])
+                        }
+                        match = false
+                        break
+                    }
+                }
+            }
+            return match
 
+        } else if let array1 = obj1 as? [Any], let array2 = obj2 as? [Any] {
+            var match = true
+            if array1.count != array2.count {
+                match = false
+            }
+            if match {
+                var ctr = 0
+                for i in 0..<array1.count {
+                    if !areJSONStructuresEqual(level:level+1, array1[i], array2[i]) {
+                        print("======= \(level) ♦️ ARRAY ctr:\(i)") //, array1[i], array2[i])
+                        match = false
+                        break
+                    }
+                }
+            }
+            return match
+        } else {
+            // Compare primitive values (String, Number, Bool, etc.)
+            if "\(obj1)" == "\(obj2)" {
+                //print("=====PRIMITVE \(level) \(key) 🟢", obj1, obj2)
+                return true
+            }
+            else {
+                //print("=====PRIMITVE \(level) \(key)❗️", obj1, obj2)
+                return false
+            }
+        }
+    }
+
+    func getBoardScales(musicBoard:MusicBoard) -> [(Int, Scale)] {
+        var result:[(Int, Scale)] = []
+        for grade in musicBoard.gradesOffered {
+            let scales = MusicBoardAndGrade.scalesTrinity(grade: grade)
+            for scale in scales {
+                result.append((grade, scale))
+            }
+        }
+        return result
+    }
+    
+    func processBoard(musicBoard:MusicBoard, gradeFilter:[Int]) {
+        let grades = musicBoard.gradesOffered
+        var totalMissingCnt = 0
+        var totalProcessedCnt = 0
+        var totalMatchedCnt = 0
+        var totalMismatchedCnt = 0
+        
+        for grade in grades {
+            if gradeFilter.count > 0 {
+                if !gradeFilter.contains(grade) {
+                    continue
+                }
+            }
+            
+            ///Read the stored known-correct scales for this grade
+            let readExpectation = self.expectation(description: "Firebase read")
+            var storedKnownCorrect:[String: String] = [:]
+            firebase.readAllScales(board: musicBoard.name, grade:grade) { result in
+                for (scaleKey, staffJSON) in result {
+                    storedKnownCorrect[scaleKey] =  staffJSON
+                }
+                readExpectation.fulfill()
+            }
+            waitForExpectations(timeout: 15, handler: nil)
+
+             ///Compare the score/staff just generated against the stored correct version
+            func compareStaff(_ scale:Scale, _ score:Score) {
+                let scaleKey = scale.getScaleStorageKey()
+                if let correctScoreJSON = storedKnownCorrect[scaleKey] {
+                    do {
+                        let scoreData = try JSONEncoder().encode(score)
+                        if let scoreJSON = String(data: scoreData, encoding: .utf8) {
+                            ///Cant just compare JSON strings since the order of children is arbitrary (and could be different for otherwise equal JSON structures)
+                            if areJSONObjectsEqual(goodJSON: correctScoreJSON, testJSON: scoreJSON) {
+                                logger.log(self, "✅ \(scaleKey)")
+                                totalMatchedCnt += 1
+                            }
+                            else {
+                                totalMismatchedCnt += 1
+                                logger.log(self, "🥵🥵🥵 \(scaleKey) failed")
+                            }
+                        }
+                    } catch {
+                        XCTFail("Error encoding user: \(error)")
+                    }
+                }
+                else {
+                    XCTFail("No stored scale")
+                }
+            }
+            
+            ///Generate the scale scores and compare to the known good ones
+            let musicBoardAndGrade = MusicBoardAndGrade(board: musicBoard, grade: grade)
+            let scalesModel = ScalesModel.shared
+
+            ///Compare all the scales in this grade
+            logger.log(self, "➡️➡️➡️ Testing \(musicBoard.name) grade \(grade)")
+            for scale in musicBoardAndGrade.enumerateAllScales() {
+                let scaleKey = scale.getScaleStorageKey()
+                if storedKnownCorrect.keys.contains(scaleKey) {
+                    scalesModel.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
+                                                      scaleMotion: scale.scaleMotion, minTempo: 40, octaves: scale.octaves, hands: scale.hands,
+                                                      dynamicTypes: [.mf], articulationTypes: [.legato],
+                                                      debugOn: false, callback: compareStaff)
+                }
+                else {
+                    totalMissingCnt += 1
+                    logger.log(self, "🥵 \(scaleKey) - missing correct version to test against")
+                }
+                totalProcessedCnt += 1
+//                if ctr > 3 {
+//                    break
+//                }
+            }
+            
+            if totalMissingCnt > 0 || totalMismatchedCnt > 0 {
+                XCTFail("🥵🥵🥵🥵🥵🥵 Mismatched:\(totalMismatchedCnt) Missing:\(totalMissingCnt) Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
+            }
+            else {
+                logger.log(self, "✅✅✅✅✅✅ Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
+            }
+        }
+    }
+    
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
@@ -29,49 +200,10 @@ final class ScoreTest: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
-        let expectation = self.expectation(description: "Firebase write")
-        func completedCallback(_ x:String) {
-            expectation.fulfill()
-        }
-
-        func writeScaleCallback(_ scale:Scale, _ score:Score) {
-            do {
-                let scoreData = try JSONEncoder().encode(score)
-                if let scoreJSON = String(data: scoreData, encoding: .utf8) {
-                    let scaleKey = scale.scaleRoot.name + "_" + scale.scaleType.description + "_" + String(scale.octaves) + " "
-                    let staffData: [String: Any] = [
-                        "staff": scoreJSON, "octaves": scale.octaves]
-                    firebase.writeToRealtimeDatabase(key: scaleKey, data:staffData, callback: completedCallback)
-               }
-            } catch {
-                logger.reportError(self, "Error encoding user: \(error)")
-            }
-        }
-        
-        func readScales() {
-            firebase.readAllScales { result in
-                print("Received scales:")
-                for (scaleKey, staffJSON) in result {
-                    print("READ Scale Key: \(scaleKey)") //, Staff JSON: \(staffJSON)")
-                }
-            }
-        }
-
-        let scalesModel = ScalesModel.shared
-        let write = false
-        if write {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major,
-                                              scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
-                                              dynamicTypes: [.mf], articulationTypes: [.legato],
-                                              debugOn: true, callback: writeScaleCallback)
-        }
-        else {
-            readScales()
-        }
-        waitForExpectations(timeout: 15, handler: nil)
-        print("===============================➡️➡️")
+        var writtenStaffData = ""
+        let musicBoard = MusicBoard(name: "Trinity")
+        processBoard(musicBoard: musicBoard, gradeFilter: [4,5])
     }
-
     
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

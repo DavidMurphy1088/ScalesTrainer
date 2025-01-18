@@ -169,7 +169,7 @@ public class NoteOffsetsInScaleByKey {
                 if scale.scaleRoot.name == "G#" {
                     if noteValue % 12 == 7 {
                         var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementCanBeSetByKeySignature: false)
-                        customPlacement.accidental = 2 //double sharp
+                        customPlacement.accidental = 2 //double sharp 
                         return customPlacement
                     }
                     if noteValue % 12 == 5 {
@@ -361,8 +361,8 @@ public class StaffClef : ScoreEntry {
             if notePlacement.placementCanBeSetByKeySignature == false {
                 if Settings.shared.isDeveloperMode() {
                     if notePlacement.midi > 50 && notePlacement.midi < 80 {
-                        print("===========================🐱🐱🐱🐱 DISALLLOW MODIFY ON \(self.scale.getTitle())",
-                              "midi", notePlacement.midi, notePlacement.offsetFromStaffMidline, notePlacement.accidental)
+//                        print("===========================🐱🐱🐱🐱 DISALLLOW MODIFY ON \(self.scale.getTitle())",
+//                              "midi", notePlacement.midi, notePlacement.offsetFromStaffMidline, notePlacement.accidental)
                     }
                 }
             }

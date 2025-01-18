@@ -130,7 +130,7 @@ public class Settings : Codable  {
             return
         }
         UserDefaults.standard.set(str, forKey: "settings")
-        Logger.shared.log(self, "Setting saved, \(toString())")
+        //Logger.shared.log(self, "Setting saved, \(toString())")
     }
     
     func getName() -> String {

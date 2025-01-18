@@ -205,7 +205,7 @@ class TabSelectionManager: ObservableObject {
                                                 scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
-                                                debugOn: true)
+                                                debugOn: false)
             }
             else {
                 scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,

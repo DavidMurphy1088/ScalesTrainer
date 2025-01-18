@@ -39,13 +39,15 @@ public class TimeSlice : ScoreEntry {
         self.entries = []
         super.init()
     }
+    
     public override func encode(to encoder: Encoder) throws {
         enum CodingKeys: String, CodingKey {
-            case entries
+            case timeSliceSequence
+            case timeSliceEntries
         }
-
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(entries, forKey: .entries)
+        try container.encode(sequence, forKey: .timeSliceSequence)
+        try container.encode(entries, forKey: .timeSliceEntries)
     }
 
     required init(from decoder: Decoder) throws {

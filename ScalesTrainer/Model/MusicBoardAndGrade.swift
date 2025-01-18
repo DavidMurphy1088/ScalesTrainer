@@ -16,7 +16,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             self.practiceChart = chart
         }
         else {
-            self.practiceChart = PracticeChart(scales: self.scales, columnWidth: 3, minorScaleType: 0)
+            self.practiceChart = PracticeChart(board: board.name, grade:grade, scales: self.scales, columnWidth: 3, minorScaleType: 0)
         }
     }
     
@@ -36,7 +36,8 @@ class MusicBoardAndGrade: Codable, Identifiable {
             self.practiceChart = chart
         }
         else {
-            self.practiceChart = PracticeChart(scales: self.scales, columnWidth: 3, minorScaleType: 0)
+            self.practiceChart = PracticeChart(board: boardName, grade:grade, scales: self.scales,
+                                               columnWidth: 3, minorScaleType: 0)
         }
     }
     
@@ -48,7 +49,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
         let decoder = JSONDecoder()
         do {
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                Logger.shared.reportError(self, "Failed to load PracticeChart - file not found")
+                Logger.shared.log(self, "Failed to load PracticeChart - file not found")
                 return nil
             }
             
@@ -139,10 +140,23 @@ class MusicBoardAndGrade: Codable, Identifiable {
             Logger.shared.reportError(self, "Failed to delete PracticeChart \(error)")
         }
     }
-
-
+    
+    ///List the scales and include melodics and harmonic minors
+    func enumerateAllScales() -> [Scale] {
+        var allScales:[Scale] = []
+        for scale in self.scales {
+            allScales.append(scale)
+            if scale.scaleMotion == .similarMotion {
+                if scale.scaleType == .harmonicMinor {
+                    let melodicScale = Scale(scaleRoot: scale.scaleRoot, scaleType: .melodicMinor, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, minTempo: scale.minTempo, dynamicTypes: scale.dynamicTypes, articulationTypes: scale.articulationTypes)
+                    allScales.append(melodicScale)
+                }
+            }
+        }
+        return allScales
+    }
+    
     static func scalesTrinity(grade:Int) -> [Scale] {
-        
         var scales:[Scale] = []
         
         if grade == 1 {

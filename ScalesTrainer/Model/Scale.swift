@@ -857,7 +857,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug1(_ msg:String, short:Bool=false)  {
+    func debug2(_ msg:String, short:Bool=false)  {
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
         
         func getValue(_ value:Double?) -> String {
@@ -1238,9 +1238,6 @@ public class Scale : Codable {
             for f in 0..<fingers.count-1 {
                 self.scaleNoteState[1][f].finger = fingers[f]
             }
-            if debugOn{
-                self.debug1("")
-            }
             handled = true
         }
 
@@ -1326,7 +1323,7 @@ public class Scale : Codable {
                 f += 1
             }
             if debugOn {
-                self.debug1("applyFingerPatternToScaleStart")
+                //self.debug1("applyFingerPatternToScaleStart")
             }
 
             if startsOnBlack {
@@ -1373,7 +1370,6 @@ public class Scale : Codable {
                 ctr += 1
             }
         }
-        
     }
     
     func getRequiredValuePerBar() -> Int {
@@ -1381,9 +1377,18 @@ public class Scale : Codable {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
 
-    func getScaleName(handFull:Bool, octaves:Bool? = nil) -> String { //}, octaves:Bool, tempo:Bool, dynamic:Bool, articulation:Bool)  {
+    ///Firebase Realtime causes exception with a label with a '#'
+    func getScaleStorageKey() -> String {
+        var key = self.getScaleName(handFull: false, motion: true, octaves: true)
+        key = key.replacingOccurrences(of: "#", with: "Sharp")
+        key = key.replacingOccurrences(of: " ", with: "_")
+        key = key.replacingOccurrences(of: ",", with: "")
+        return key
+    }
+    
+    func getScaleName(handFull:Bool, motion:Bool? = nil, octaves:Bool? = nil) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        if scaleMotion == .contraryMotion {
+        if scaleMotion == .contraryMotion || motion == true {
             name += ", " + scaleMotion.description
         }
         if self.scaleMotion != .contraryMotion {

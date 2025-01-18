@@ -25,6 +25,10 @@ public class Rest : TimeSliceEntry {
     public init(r:Rest) {
         super.init(timeSlice: r.timeSlice, value: r.getValue(), handType: r.handType, segments: r.segments)
     }
+    
+    public required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
 }
 
 public enum AccidentalType {
@@ -81,7 +85,6 @@ public class StaffNote : TimeSliceEntry, Comparable {
     public var clef:StaffClef? = nil ///The clef that this note is prefixed by. e.g. in LH staff that clef might still be the treble clef
     
     ///Placements for the note on treble and bass staff
-    //var noteStaffPlacements:[NoteStaffPlacement?] = [nil, nil]
     var noteStaffPlacement:NoteStaffPlacement = NoteStaffPlacement(midi: 0, offsetFroMidLine: 0, placementCanBeSetByKeySignature: true)
 
     ///Quavers in a beam have either a start, middle or end beam type. A standlone quaver type has type beamEnd. A non quaver has beam type none.
@@ -114,7 +117,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
         self.isOnlyRhythmNote = note.isOnlyRhythmNote
         self.beamType = note.beamType
     }
-    
+        
     public override func encode(to encoder: Encoder) throws {
         enum CodingKeys: String, CodingKey {
             case midi
@@ -123,6 +126,10 @@ public class StaffNote : TimeSliceEntry, Comparable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(midi, forKey: .midi)
         try container.encode(noteStaffPlacement, forKey: .noteStaffPlacement)
+    }
+
+    public required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
 
     public func setIsOnlyRhythm(way: Bool) {

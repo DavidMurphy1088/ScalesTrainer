@@ -5,15 +5,17 @@ import Foundation
 class PracticeChartCell: ObservableObject, Codable {
     @Published var isActive: Bool = false
     @Published var badges:[Badge] = []
+//    var isCorrectSet:Bool = false
 
     var scale: Scale
     var hilighted: Bool = false
     var isLicensed:Bool = false
-
+    
     enum CodingKeys: String, CodingKey {
         case scale
         case hilighted
         case badges
+        case isCorrectSet
     }
     
     init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) { 
@@ -23,15 +25,7 @@ class PracticeChartCell: ObservableObject, Codable {
         self.badges = []
         self.isLicensed = isLicensed
     }
-    
-//    func setBadgesCount(count:Int) {
-//        DispatchQueue.main.async {
-//            //self.badgeCount += delta
-//            //self.badgeCount = count
-//            PracticeChart.shared.saveToFile()
-//        }
-//    }
-    
+        
     func addBadge(badge:Badge) {
         DispatchQueue.main.async {
             self.badges.append(badge)
@@ -51,6 +45,7 @@ class PracticeChartCell: ObservableObject, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scale, forKey: .scale)
         try container.encode(hilighted, forKey: .hilighted)
+        //try container.encode(isCorrectSet, forKey: .isCorrectSet)
         try container.encode(badges, forKey: .badges)
     }
     
@@ -63,14 +58,17 @@ class PracticeChartCell: ObservableObject, Codable {
 }
 
 class PracticeChart: Codable {
+    var board:String
+    var grade:Int
     var columns: Int
     var rows: [[PracticeChartCell]]
     var minorScaleType: Int
     var firstColumnDayOfWeekNumber:Int
     var todaysColumn:Int
     
-    init(scales:[Scale], columnWidth:Int, minorScaleType:Int) {
-        //self.boardAndGrade = boardAndGrade
+    init(board:String, grade:Int, scales:[Scale], columnWidth:Int, minorScaleType:Int) {
+        self.board = board
+        self.grade = grade
         self.columns = 3
         self.rows = []
         let scales:[Scale] = scales // = self.boardAndGrade.getScales()
@@ -80,7 +78,7 @@ class PracticeChart: Codable {
         while true {
             var rowCells:[PracticeChartCell]=[]
             if scaleCtr < scales.count {
-                for c in 0..<columnWidth {
+                for _ in 0..<columnWidth {
                     if scaleCtr < scales.count {
                         rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()))
                         scaleCtr += 1
@@ -100,16 +98,14 @@ class PracticeChart: Codable {
         let calendar = Calendar.current
         self.firstColumnDayOfWeekNumber = calendar.component(.weekday, from: currentDate) - 1
         self.todaysColumn = 0
-        //debug1("Init")
     }
     
     func convertToJSON() -> Data? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
-
         do {
             let data = try encoder.encode(self)
-            let jsonString = String(data: data, encoding: .utf8)
+            //let jsonString = String(data: data, encoding: .utf8)
             return data
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
@@ -123,7 +119,7 @@ class PracticeChart: Codable {
             let row = self.self.rows[r]
             for c in 0..<row.count {
                 let cell = self.rows[r][c]
-                print(r, c, "cell \(cell.scale.getScaleName(handFull: false))")
+                print(r, c, "cell \(cell.scale.getScaleStorageKey())")
             }
         }
     }
@@ -131,7 +127,7 @@ class PracticeChart: Codable {
     func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
         for cells in rows {
             for row in cells {
-                if row.scale.getScaleName(handFull: false) == scale.getScaleName(handFull: false) {
+                if row.scale.getScaleStorageKey() == scale.getScaleStorageKey() {
                     return row
                 }
             }

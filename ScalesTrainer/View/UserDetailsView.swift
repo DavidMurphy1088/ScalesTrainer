@@ -20,14 +20,11 @@ struct UserDetailsView: View {
 
     let width = UIScreen.main.bounds.width * 0.7
     
-//    func setSelectedGrade() -> Int? {
-//        if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-//            return boardAndGrade.grade
-//        }
-//        else {
-//            return nil
-//        }
-//    }
+    var body1: some View {
+        VStack {
+            Text("TEST")
+        }
+    }
     
     var body: some View {
         NavigationStack {
