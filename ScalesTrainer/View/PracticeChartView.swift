@@ -240,13 +240,14 @@ struct CellView: View {
                 Button(action: {
                     if !isCorrectSet() {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
+                            score.debug11(ctx: "", handType: .none)
                             Firebase.shared.writeKnownCorrect(scale: practiceCell.scale, score: score, board: practiceChart.board, grade: self.practiceChart.grade)
                         })
                         //self.isCorrectSet = true
                     }
                     else {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
-                            let key = practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
+                            let key = practiceCell.scale.getScaleStorageKey()
                             Firebase.shared.deleteFromRealtimeDatabase(board: practiceChart.board, grade: self.practiceChart.grade, key: key,
                                                                        callback:{_ in })
                         })

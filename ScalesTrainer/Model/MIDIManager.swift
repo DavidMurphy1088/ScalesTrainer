@@ -423,7 +423,7 @@ class TestMidiNotes {
         let totalNotes = scale.getScaleNoteCount()
         self.noteSetWait = noteSetWait
         self.noteSets = []
-        self.scaleId = scale.id
+        self.scaleId = UUID() // = was = scale.id 🥵🥵🥵🥵🥵🥵🥵🥵🥵 but having "id" in scale serialisationm wrecks regression tests
         
         for n in 0..<totalNotes {
             var noteSet:[Int] = []

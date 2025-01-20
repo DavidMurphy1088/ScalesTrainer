@@ -236,6 +236,7 @@ public class StaffClef : ScoreEntry {
             defaultPlacement = noteStaffPlacement[0]
         }
         else {
+            //this is wrong for Gr 1, D chromo, ascending G#
             defaultPlacement = noteStaffPlacement[note.midi]
         }
         let placement = NoteStaffPlacement(midi: note.midi,

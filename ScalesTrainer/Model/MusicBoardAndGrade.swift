@@ -148,7 +148,8 @@ class MusicBoardAndGrade: Codable, Identifiable {
             allScales.append(scale)
             if scale.scaleMotion == .similarMotion {
                 if scale.scaleType == .harmonicMinor {
-                    let melodicScale = Scale(scaleRoot: scale.scaleRoot, scaleType: .melodicMinor, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, minTempo: scale.minTempo, dynamicTypes: scale.dynamicTypes, articulationTypes: scale.articulationTypes)
+                    let melodicScale = Scale(scaleRoot: scale.scaleRoot, scaleType: .melodicMinor, scaleMotion: scale.scaleMotion, octaves: scale.octaves, hands: scale.hands, minTempo: scale.minTempo, dynamicTypes: scale.dynamicTypes, articulationTypes: scale.articulationTypes,
+                                             scaleCustomisation: scale.scaleCustomisation, debugOn: scale.debugOn)
                     allScales.append(melodicScale)
                 }
             }

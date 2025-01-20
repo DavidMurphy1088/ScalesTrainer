@@ -5,7 +5,6 @@ import CoreData
 public struct StemView: View {
     @ObservedObject var score: Score
     @State var staff: Staff
-    //@State var clef: StaffClef
     @State var notePositionLayout: NoteLayoutPositions
     var notes: [StaffNote]
 

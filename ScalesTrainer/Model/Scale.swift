@@ -164,7 +164,7 @@ public class ScaleCustomisation : Codable {
 }
 
 public class ScaleNoteState : Codable {
-    var id = UUID()
+    //let id = UUID()
     let sequence:Int
     var midi:Int
     var value:Double
@@ -180,6 +180,33 @@ public class ScaleNoteState : Codable {
     ///Most notes have one segment. The top of the scale has the up and down segment.
     var segments:[Int]
     
+    enum CodingKeys: String, CodingKey {
+        case sequence
+        case midi
+        case value
+        case valueNormalized
+        case finger
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(sequence, forKey: .sequence)
+        try container.encode(midi, forKey: .midi)
+        try container.encode(finger, forKey: .finger)
+        try container.encode(value, forKey: .value)
+        try container.encode(valueNormalized, forKey: .valueNormalized)
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.sequence = try container.decode(Int.self, forKey: .sequence)
+        self.midi = try container.decode(Int.self, forKey: .midi)
+        self.finger = try container.decode(Int.self, forKey: .finger)
+        self.value = try container.decode(Double.self, forKey: .value)
+        self.valueNormalized = try container.decode(Double.self, forKey: .valueNormalized)
+        self.segments = []
+    }
+
     init(sequence: Int, midi:Int, value:Double, segment:[Int]) {
         self.sequence = sequence
         self.midi = midi
@@ -199,7 +226,7 @@ public class ScaleNoteState : Codable {
 }
 
 public class Scale : Codable {
-    var id = UUID()
+    //let id = UUID() ///Dont use - wrecks serialisation !
     static var createCount = 0
     private(set) var scaleRoot:ScaleRoot
     private var scaleNoteState:[[ScaleNoteState]]
@@ -216,7 +243,7 @@ public class Scale : Codable {
     ///e.g. a maj scale is octaves * 8 beats. A broken chord has 3 beats since the keyboard fingering needs to be refreshed for each new inverted chord arpeggio
     var notesPerSegment:Int
     let timeSignature:TimeSignature
-    let debugOn:Bool
+    var debugOn:Bool
     var scaleCustomisation:ScaleCustomisation? = nil
     
     public init(scaleRoot:ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion,octaves:Int, hands:[Int],
@@ -238,9 +265,9 @@ public class Scale : Codable {
 //        if let custom = scaleCustomisation  {
 //            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
 //        }
-//        if debugOn {
-//            
-//        }
+        if debugOn {
+            
+        }
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
@@ -519,29 +546,14 @@ public class Scale : Codable {
             }
             if let lastNote = lastNote {
                 lastNote.value = 1.0
-//                if self.scaleType == .chromatic {
-//                    ///Only required to match Trinity  🥵
-//                    lastNote.value = 1.0
-//                }
-//                else {
-//                    let lastBarTotal = barValue - lastNote.value
-//                    let lastNoteValue:Int
-//                    ///Last note for C time must be minum for backing to synchronise with scale on loop #2 of scale/backing
-//                    if false && Settings.shared.customTrinity {
-//                        lastNoteValue = 1
-//                    }
-//                    else {
-//                        lastNoteValue = self.getRequiredValuePerBar() - (Int(barValue))
-//                    }
-//                    lastNote.value = Double(lastNoteValue)
-//                }
             }
         }
         
         ///Fingering
         for hand in [0,1] {
-
             setFingers(hand: hand)
+            
+            ///Set finger breaks - thumb under etc
             if self.scaleType == .chromatic {
                 ///Chromatic fingering is usually 1,3 whereas finger breaks for other scales are determined by a break in the finger number in the finger sequence.
                 setChromaticFingerBreaks(hand: hand)
@@ -560,6 +572,7 @@ public class Scale : Codable {
                 }
             }
         }
+        
         if self.debugOn {
             //self.debug5("end create", short: false)
         }
@@ -857,8 +870,12 @@ public class Scale : Codable {
         return out
     }
     
-    func debug2(_ msg:String, short:Bool=false)  {
-        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves, "motion:", self.scaleMotion, "id:", self.id)
+    func debug22(_ msg:String, short:Bool=false)  {
+        if !self.debugOn {
+            return
+        }
+        print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves,
+              "motion:", self.scaleMotion)
         
         func getValue(_ value:Double?) -> String {
             if value == nil {
@@ -983,7 +1000,7 @@ public class Scale : Codable {
     }
     
     ///Calculate finger sequence breaks
-    ///Set descending as key one below ascending break key
+    ///Set descending as the key one below ascending break key
     private func setFingerBreaks(hand:Int) {
         for note in self.scaleNoteState[hand] {
             note.keyboardColourType = .none
@@ -1062,7 +1079,7 @@ public class Scale : Codable {
     func setFingers(hand:Int) {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
-        var fullyManual:Scale? = nil
+        var fingeringSpecifiedByNote:[Int]? =  nil
         
         ///Regular scale
         
@@ -1093,7 +1110,7 @@ public class Scale : Codable {
                     ///Cannot use any formula since the melodic down direction changes white note to black and forces a new fingering throughout the descending.
                     ///Not required for G# harmonic (or major)
                     if hand == 1 {
-                        fullyManual = self
+                        fingeringSpecifiedByNote = [3,2,1, 4,3,2,1,  3,2,1, 4,3,2,1, 2,  3,1, 2,3,1, 2,3,4,1, 2,3,1,  2,3]
                     }
                 }
                 leftHandLastFingerJump = 0
@@ -1176,7 +1193,12 @@ public class Scale : Codable {
                 fingers = hand == 0 ? "412" : "241"
             case "B♭":
                 if [.major, .arpeggioMajor].contains(scaleType) {
-                    fingers = hand == 0 ? "412" : "312"
+                    if hand == 0 {
+                        fingeringSpecifiedByNote = [2, 1,2,4, 1,2,4, 2,1, 4,2,1,2]
+                    }
+                    else {
+                        fingeringSpecifiedByNote = [3,2,1,  3,2,1, 2,  1,2,3, 1,2,3]
+                    }
                 }
                 else {
                     if debugOn {
@@ -1221,7 +1243,9 @@ public class Scale : Codable {
         }
         
         /// Set fingering now given the finger sequence 
-        
+        if self.debugOn {
+        }
+
         var handled = false
         if scaleType == .chromatic {
             applyChromaticFingers()
@@ -1232,12 +1256,17 @@ public class Scale : Codable {
             handled = true
         }
         
-        if let fullyManual = fullyManual {
-            ///G# melodic minor
-            let fingers = [3,2,1, 4,3,2,1,  3,2,1, 4,3,2,1, 2,  3,1, 2,3,1, 2,3,4,1, 2,3,1,  2,3]
-            for f in 0..<fingers.count-1 {
-                self.scaleNoteState[1][f].finger = fingers[f]
+        ///Fingering is simply the fingers in the specified array
+        if let fingeringSpecifiedByNote = fingeringSpecifiedByNote {
+            if self.debugOn {
             }
+            if fingeringSpecifiedByNote.count != self.scaleNoteState[hand].count {
+                fatalError("Wrong fingering count. Specified:\(fingeringSpecifiedByNote.count) scale:\(scaleNoteState[hand].count)")
+            }
+            for f in 0..<fingeringSpecifiedByNote.count {
+                self.scaleNoteState[hand][f].finger = fingeringSpecifiedByNote[f]
+            }
+            //self.debug22("")
             handled = true
         }
 
@@ -1289,12 +1318,9 @@ public class Scale : Codable {
             if debugOn {
             }
             var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
-            //14Jan2025 - makes wrong for Gr 5, B♭, min apreggio, RH top note
             if scaleShapeForFingering == .arpgeggio {
-                if !["B♭"].contains(self.scaleRoot.name) {
-                    if highNoteFinger < 5 {
-                        highNoteFinger += 1
-                    }
+                if highNoteFinger < 5 {
+                    highNoteFinger += 1
                 }
             }
             scaleNoteState[hand][halfway].finger = highNoteFinger

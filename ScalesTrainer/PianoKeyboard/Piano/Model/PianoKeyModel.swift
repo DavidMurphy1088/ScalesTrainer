@@ -146,21 +146,15 @@ public class PianoKeyModel: Identifiable, Hashable {
         let (staffNote, staffClef) = score.getNoteAndClefForMidi(midi: self.midi, handType: handType, occurence: 0)
         var name = String(self.midi)
         if let staffNote = staffNote {
-//            if false && staffNote.noteStaffPlacement.placementCanBeSetByKeySignature == true {
-//                name = getNameDefault()
-//            }
-//            else {
-                name = getNameFromStaffNote(staffNote: staffNote, staffClef: staffClef, handType: handType)
-//           }
+            name = getNameFromStaffNote(staffNote: staffNote, staffClef: staffClef, handType: handType)
         }
-        //name =
         return name
     }
     
-    ///Get the key name and accidentals from the staff note that it represents.
+    ///Get the keyboard key name and any accidental required in the name from the staff note that it represents.
     ///The staff notation is the canonical representation since it contains any customisations for note name and accidental display.
-    ///The notes name is derived from the note's offset on the stave.
-    ///A staff may have had a clef switch in that applies to the key's note.
+    ///The note's name is derived from the note's offset on the stave.
+    ///NB - A staff may have had a previous clef switch that must apply to the key's note name.
     func getNameFromStaffNote(staffNote:StaffNote, staffClef:StaffClef?, handType:HandType) -> String {
         func isWhiteKey(midi:Int) -> Bool {
             let offset = midi % 12
@@ -168,8 +162,6 @@ public class PianoKeyModel: Identifiable, Hashable {
         }
 
         var name = ""
-        if self.midi == 64 || self.midi == 63{
-        }
 
         ///Check if the bass staff has a treble clef switched in
         let clefType:ClefType

@@ -51,17 +51,20 @@ public class Firebase  {
     }
     
     ///Return the scale key and staff JSON for each scale in the grade
-    func readAllScales(board:String, grade:Int, completion: @escaping ([(String, String)]) -> Void) {
+    func readAllScales(board:String, grade:Int, completion: @escaping ([(String, String, String)]) -> Void) {
         let database = Database.database().reference() // Get a reference to the database
 
         database.child("SCALES").child("\(board)_\(grade)").observeSingleEvent(of: .value) { snapshot in
-            var result: [(String, String)] = [] // Array to store the result
+            var result: [(String, String, String)] = [] // Array to store the result
 
             if let scalesData = snapshot.value as? [String: Any] {
                 for (scaleKey, scaleDetails) in scalesData {
-                    if let details = scaleDetails as? [String: Any],
-                       let staffJSON = details["staff"] as? String {
-                        result.append((scaleKey, staffJSON)) // Append scaleKey and staffJSON to result
+                    if let details = scaleDetails as? [String: Any] {
+                        let staffJSON = details["staff"] as? String
+                        let scaleJSON = details["scale"] as? String
+                        if let staffJSON = staffJSON, let scaleJSON = scaleJSON {
+                            result.append((scaleKey, staffJSON, scaleJSON)) 
+                        }
                     }
                 }
             } else {
@@ -69,25 +72,26 @@ public class Firebase  {
             }
             completion(result)
         } withCancel: { error in
-            print("Error reading data: \(error.localizedDescription)")
-            // Return an empty array in case of error
+            self.logger.reportError(self, "Error reading known-correct data, error:\(error.localizedDescription)")
             completion([])
         }
     }
     
+    ///Write the known-correct scale and score to the cloud Firebase Realtime db
     func writeKnownCorrect(scale:Scale, score:Score, board:String, grade:Int) {
         func completedCallback1(_ x:String) {
-            print("================ WRITE CALLBACK", x)
         }
         do {
+            ///Scale
+            let scaleKey = scale.getScaleStorageKey()
+            let scaleData = try JSONEncoder().encode(scale)
+            let scaleJSON = String(data: scaleData, encoding: .utf8)
+            //print("==========WRITE\n", scaleJSON ?? "")
+            /// Score
             let scoreData = try JSONEncoder().encode(score)
-            //score.debug1(ctx: "", handType: nil)
-            //print(scoreData)
-            let jsonString = String(data: scoreData, encoding: .utf8)
-            print (jsonString)
-            
-            if let scoreJSON = String(data: scoreData, encoding: .utf8) {
-                let scaleKey = scale.getScaleStorageKey()
+            let scoreJSON = String(data: scoreData, encoding: .utf8)
+                
+            if let scoreJSON = scoreJSON, let scaleJSON = scaleJSON {
                 let formatter = DateFormatter()
                 formatter.dateStyle = .medium // Choose a predefined date style
                 formatter.timeStyle = .short // Choose a predefined time style
@@ -101,10 +105,14 @@ public class Firebase  {
                     "version": version,
                     "date": formattedDate ,
                     "staff": scoreJSON,
-                   // "octaves": scale.octaves
+                    "scale": scaleJSON
                 ]
                 self.writeToRealtimeDatabase(board: board, grade: grade, key: scaleKey, data:staffData, callback: completedCallback1)
-           }
+            }
+            else {
+                logger.reportError(self, "Cannot encode score to JSON  \(scaleKey)")
+            }
+            
         } catch {
             logger.reportError(self, "Error encoding user: \(error)")
         }

@@ -39,9 +39,11 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.midiManagerNotificationTarget(msg:))
         if let testMidiNotes = midiManager.testMidiNotes {
-            if testMidiNotes.scaleId == self.scale.id {
-                self.sendTestMidiNotes(notes: testMidiNotes)
-            }
+            //if testMidiNotes.scaleId == self.scale.id {
+                if true {
+                    self.sendTestMidiNotes(notes: testMidiNotes)
+                }
+            //}
         }
     }
 

@@ -776,7 +776,8 @@ public class ScalesModel : ObservableObject {
                         }
                     }
                     else {
-                        break
+                        ///Dont break - keep going since the absense of an accidental on this note does not mean there will be an earlier one whose accidental needs overriding
+                       //break
                     }
                 }
             }
@@ -817,6 +818,7 @@ public class ScalesModel : ObservableObject {
         ///These adjustments are made after the the note's default placements have been made on the staff.
         ///Use the first accidental found to apply to subsequent notes that need accidentals
         func adjustPlacementForChromatic(staffNote:StaffNote, firstAccidental:Int?) {
+            //return 
             let placement = staffNote.noteStaffPlacement
             if placement.accidental != nil && placement.accidental != firstAccidental {
                 if placement.accidental == -1 {
@@ -863,6 +865,8 @@ public class ScalesModel : ObservableObject {
                 ///Determine the placement and accidentals for each note in the score.
                 if let timeSlice = scoreEntry as? TimeSlice {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
+                        if staffNote.midi == 72 {
+                        }
                         staffNote.noteStaffPlacement = clefForPositioning.getNoteViewPlacement(note: staffNote)
                         if firstAccidental == nil {
                             if staffNote.noteStaffPlacement.accidental != nil {
@@ -884,10 +888,6 @@ public class ScalesModel : ObservableObject {
                 }
             }
             //score.debug2(ctx: "ScalesModel.createScore \(handType) DONE OFFSETS", handType: nil)
-
-            if scale.scaleType == .chromatic {
-                //adjustPlacementsForChromatic1(score:score, handType: handType)
-            }
 
             ///Do stem characteristics for the last remaining group of notes
             score.addStemCharacteristics(handType: handType, clef: clefForPositioning,

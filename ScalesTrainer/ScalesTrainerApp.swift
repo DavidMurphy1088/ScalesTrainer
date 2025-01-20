@@ -201,11 +201,11 @@ class TabSelectionManager: ObservableObject {
             ScalesModel.shared = ScalesModel()
             let scalesModel = ScalesModel.shared
             if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic,
-                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor,
+                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 2, hands: [0],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
-                                                debugOn: false)
+                                                debugOn: true)
             }
             else {
                 scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,

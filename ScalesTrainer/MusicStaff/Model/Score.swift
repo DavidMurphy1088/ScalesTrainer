@@ -188,13 +188,13 @@ public class Score : ObservableObject, Encodable {
     public func encode(to encoder: Encoder) throws {
         enum CodingKeys: String, CodingKey {
             case scoreEntries
-            case ledgerLines
-            case tempo
+            //case ledgerLines
+           // case tempo
         }
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(scoreEntries, forKey: .scoreEntries)
-        try container.encode(ledgerLineCount, forKey: .ledgerLines)
-        try container.encode(tempo, forKey: .tempo)
+        //try container.encode(ledgerLineCount, forKey: .ledgerLines)
+        //try container.encode(tempo, forKey: .tempo)
     }
     
     func getBraceHeight() -> Double {
@@ -362,7 +362,7 @@ public class Score : ObservableObject, Encodable {
                     continue
                 }
                 if let timeSlice = entry as? StaffClef {
-                    print("------------- Staff Clef", timeSlice.sequence, timeSlice.clefType)
+                    print("------------- Staff Clef sequence:", timeSlice.sequence, "clefType:", timeSlice.clefType)
                     continue
                 }
             }
@@ -594,7 +594,6 @@ public class Score : ObservableObject, Encodable {
         
         func setStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
             let staffNotes = timeSlice.getTimeSliceNotes(handType: handType)
-            //let stemDirection = StemDirection.up
             let stemDirection = getStemDirection(clef: clef, notes: staffNotes)
             
             for note in staffNotes {

@@ -56,10 +56,13 @@ final class ScoreTest: XCTestCase {
             if match {
                 for key in dict1.keys {
                     if !areJSONStructuresEqual(level:level+1,dict1[key], dict2[key]) {
-                        if level == 4 {
+                        if [4,3].contains(level) {
                             print("======= \(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
                         }
                         else {
+                            if level == 0 {
+                                
+                            }
                             print("======= \(level) ♦️ DICT key:\(key) ") //" dict2[key])
                         }
                         match = false
@@ -109,7 +112,7 @@ final class ScoreTest: XCTestCase {
         return result
     }
     
-    func processBoard(musicBoard:MusicBoard, gradeFilter:[Int]) {
+    func processBoard(musicBoard:MusicBoard, gradeFilter:[Int], typeFilter:[ScaleType]) {
         let grades = musicBoard.gradesOffered
         var totalMissingCnt = 0
         var totalProcessedCnt = 0
@@ -125,10 +128,11 @@ final class ScoreTest: XCTestCase {
             
             ///Read the stored known-correct scales for this grade
             let readExpectation = self.expectation(description: "Firebase read")
-            var storedKnownCorrect:[String: String] = [:]
+            ///Dictionary keyed with JSON data for score and scale
+            var storedKnownCorrect:[String: (String, String)] = [:]
             firebase.readAllScales(board: musicBoard.name, grade:grade) { result in
-                for (scaleKey, staffJSON) in result {
-                    storedKnownCorrect[scaleKey] =  staffJSON
+                for (scaleKey, staffJSON, scaleJSON) in result {
+                    storedKnownCorrect[scaleKey] =  (staffJSON, scaleJSON)
                 }
                 readExpectation.fulfill()
             }
@@ -137,21 +141,51 @@ final class ScoreTest: XCTestCase {
              ///Compare the score/staff just generated against the stored correct version
             func compareStaff(_ scale:Scale, _ score:Score) {
                 let scaleKey = scale.getScaleStorageKey()
-                if let correctScoreJSON = storedKnownCorrect[scaleKey] {
+                var correctScoreJSON:String? = nil
+                var correctScaleJSON:String? = nil
+                if let dictionaryData = storedKnownCorrect[scaleKey] {
+                    correctScoreJSON = dictionaryData.0
+                    correctScaleJSON = dictionaryData.1
+                }
+                if let correctScoreJSON = correctScoreJSON, let correctScaleJSON = correctScaleJSON {
                     do {
-                        let scoreData = try JSONEncoder().encode(score)
-                        if let scoreJSON = String(data: scoreData, encoding: .utf8) {
-                            ///Cant just compare JSON strings since the order of children is arbitrary (and could be different for otherwise equal JSON structures)
-                            if areJSONObjectsEqual(goodJSON: correctScoreJSON, testJSON: scoreJSON) {
-                                logger.log(self, "✅ \(scaleKey)")
+                        ///Cant just compare JSON strings since the order of children is arbitrary (and could be different for otherwise equal JSON structures)
+                        let scoreUnderTestData = try JSONEncoder().encode(score)
+                        var errors = false
+                        if let scoreUnderTestJSON = String(data: scoreUnderTestData, encoding: .utf8) {
+                            if areJSONObjectsEqual(goodJSON: correctScoreJSON, testJSON: scoreUnderTestJSON) {
+                                //logger.log(self, "✅ SCORE \(scaleKey)")
                                 totalMatchedCnt += 1
                             }
                             else {
                                 totalMismatchedCnt += 1
-                                logger.log(self, "🥵🥵🥵 \(scaleKey) failed")
+                                logger.log(self, "❌ SCORE \(scaleKey) failed")
+                                logger.log(self, "❌ SCALE \(scaleKey) failed")
+                                errors = true
+                                //print("==================CORRECT\n", correctScoreJSON, "\n")
+                                //print("==================TESTING\n", scoreUnderTestJSON)
+
                             }
                         }
-                    } catch {
+                        
+                        let scaleUnderTestData = try JSONEncoder().encode(scale)
+                        if let scaleUnderTestJSON = String(data: scaleUnderTestData, encoding: .utf8) {
+                            if areJSONObjectsEqual(goodJSON: correctScaleJSON, testJSON: scaleUnderTestJSON) {
+                                //logger.log(self, "✅ SCALE \(scaleKey)")
+                                totalMatchedCnt += 1
+                            }
+                            else {
+                                totalMismatchedCnt += 1
+                                logger.log(self, "❌ SCALE \(scaleKey) failed")
+                                //print("==================CORRECT\n", correctScaleJSON, "\n")
+                                //print("==================TESTING\n", scaleUnderTestJSON)
+                                errors = true
+                            }
+                        }
+                        if !errors {
+                            logger.log(self, "✅ SCALE \(scaleKey)")
+                        }
+                     } catch {
                         XCTFail("Error encoding user: \(error)")
                     }
                 }
@@ -167,12 +201,19 @@ final class ScoreTest: XCTestCase {
             ///Compare all the scales in this grade
             logger.log(self, "➡️➡️➡️ Testing \(musicBoard.name) grade \(grade)")
             for scale in musicBoardAndGrade.enumerateAllScales() {
+                if typeFilter.count > 0 {
+                    if !typeFilter.contains(scale.scaleType) {
+                        continue
+                    }
+                }
                 let scaleKey = scale.getScaleStorageKey()
                 if storedKnownCorrect.keys.contains(scaleKey) {
                     scalesModel.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
-                                                      scaleMotion: scale.scaleMotion, minTempo: 40, octaves: scale.octaves, hands: scale.hands,
+                                                      scaleMotion: scale.scaleMotion, minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands,
                                                       dynamicTypes: [.mf], articulationTypes: [.legato],
-                                                      debugOn: false, callback: compareStaff)
+                                                      scaleCustomisation: scale.scaleCustomisation,
+                                                      //debugOn: false, //DONT SET IT since it causes a match fail with the correct scale
+                                                      callback: compareStaff)
                 }
                 else {
                     totalMissingCnt += 1
@@ -183,13 +224,12 @@ final class ScoreTest: XCTestCase {
 //                    break
 //                }
             }
-            
-            if totalMissingCnt > 0 || totalMismatchedCnt > 0 {
-                XCTFail("🥵🥵🥵🥵🥵🥵 Mismatched:\(totalMismatchedCnt) Missing:\(totalMissingCnt) Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
-            }
-            else {
-                logger.log(self, "✅✅✅✅✅✅ Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
-            }
+        }
+        if totalMissingCnt > 0 || totalMismatchedCnt > 0 {
+            XCTFail("🥵🥵🥵🥵🥵🥵 Mismatched:\(totalMismatchedCnt) Missing:\(totalMissingCnt) Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
+        }
+        else {
+            logger.log(self, "✅✅✅✅✅✅ Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
         }
     }
     
@@ -202,7 +242,7 @@ final class ScoreTest: XCTestCase {
         
         var writtenStaffData = ""
         let musicBoard = MusicBoard(name: "Trinity")
-        processBoard(musicBoard: musicBoard, gradeFilter: [4,5])
+        processBoard(musicBoard: musicBoard, gradeFilter: [], typeFilter: [.arpeggioMajor, .arpeggioMinor])
     }
     
     func testPerformanceExample() throws {
