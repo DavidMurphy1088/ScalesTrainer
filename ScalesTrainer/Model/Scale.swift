@@ -690,60 +690,6 @@ public class Scale : Codable {
             }
         }
     }
-
-//    func setChromaticFingerBreaksOld(hand:Int) {
-//        var whiteCount = 0
-//        let midway = self.scaleNoteState[hand].count / 2
-//        for i in 0..<midway {
-//            let scaleNote = self.scaleNoteState[hand][i]
-//            if hand == 0 {
-//                if i > 0 && scaleNote.isWhiteKey() {
-//                    scaleNote.fingerSequenceBreak = whiteCount == 0 ? true : false
-//                    whiteCount += 1
-//                }
-//                else {
-//                    whiteCount = 0
-//                    scaleNote.fingerSequenceBreak = false
-//                }
-//            }
-//            else {
-//                if scaleNote.isWhiteKey() {
-//                    scaleNote.fingerSequenceBreak = scaleMotion == .contraryMotion ? true : false
-//                    whiteCount += 1
-//                }
-//                else {
-//                    whiteCount = 0
-//                    if i > 0 {
-//                        ///finger over
-//                        scaleNote.fingerSequenceBreak = scaleMotion == .contraryMotion ? false : true
-//                    }
-//                }
-//            }
-//        }
-//        for i in midway+1..<self.scaleNoteState[hand].count {
-//            let scaleNote = self.scaleNoteState[hand][i]
-//            if hand == 0 { //}|| scaleMotion == .contraryMotion {
-//                if scaleNote.isWhiteKey() {
-//                    scaleNote.fingerSequenceBreak = false
-//                    whiteCount += 1
-//                }
-//                else {
-//                    whiteCount = 0
-//                    scaleNote.fingerSequenceBreak = true
-//                }
-//            }
-//            else {
-//                if scaleNote.isWhiteKey() {
-//                    scaleNote.fingerSequenceBreak = whiteCount == 0 ? true : false
-//                    whiteCount += 1
-//                }
-//                else {
-//                    whiteCount = 0
-//                    scaleNote.fingerSequenceBreak = false
-//                }
-//            }
-//        }
-//    }
     
     func getHighestSegment() -> Int {
         var max = 0
@@ -1080,7 +1026,9 @@ public class Scale : Codable {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
         var fingeringSpecifiedByNote:[Int]? =  nil
-        
+        if self.debugOn {
+            
+        }
         ///Regular scale
         
         if scaleShapeForFingering == .scale {
@@ -1137,6 +1085,9 @@ public class Scale : Codable {
                 }
                 else {
                     fingers = hand == 0 ? "2312341" : "3123412"
+                    if hand == 0 {
+                        fingeringSpecifiedByNote = [2,3,1,  2,3,1,  2,3,4, 1,2,3, 1,2,3, 2,1,  3,2,1, 4,3,2,1, 3,2,1, 3,2  ]
+                    }
                 }
             default:
                 fingers = "1231234"
@@ -1169,8 +1120,8 @@ public class Scale : Codable {
                 }
             case "E":
                 if [.major, .arpeggioMajor].contains(scaleType) {
-                    leftHandLastFingerJump = 2
-                    fingers = hand == 0 ? "123" : "123"
+                    //leftHandLastFingerJump =
+                    fingers = hand == 0 ? "123" : "124"
                 }
                 else {
                     fingers = hand == 0 ? "123" : "124"
@@ -1404,7 +1355,7 @@ public class Scale : Codable {
     }
 
     ///Firebase Realtime causes exception with a label with a '#'
-    func getScaleStorageKey() -> String {
+    func getScaleIdentificationKey() -> String {
         var key = self.getScaleName(handFull: false, motion: true, octaves: true)
         key = key.replacingOccurrences(of: "#", with: "Sharp")
         key = key.replacingOccurrences(of: " ", with: "_")

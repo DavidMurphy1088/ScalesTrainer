@@ -5,21 +5,29 @@ import Foundation
 class PracticeChartCell: ObservableObject, Codable {
     @Published var isActive: Bool = false
     @Published var badges:[Badge] = []
-//    var isCorrectSet:Bool = false
-
+    
+    let board:String
+    let grade:Int
+    var scaleIDKey:String
     var scale: Scale
     var hilighted: Bool = false
     var isLicensed:Bool = false
     
     enum CodingKeys: String, CodingKey {
-        case scale
+        case board
+        case grade
+        case scaleIDKey
         case hilighted
         case badges
         case isCorrectSet
     }
     
-    init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) { 
-        self.scale = scale
+    //init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) {
+    init(board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, hilighted: Bool = false) {
+        self.board = board
+        self.grade = grade
+        self.scaleIDKey = scaleIDKey
+        self.scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey)!
         self.hilighted = hilighted
         self.isActive = hilighted  // Set isActive based on enabled during initialization
         self.badges = []
@@ -35,15 +43,25 @@ class PracticeChartCell: ObservableObject, Codable {
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        scale = try container.decode(Scale.self, forKey: .scale)
+        board = try container.decode(String.self, forKey: .board)
+        grade = try container.decode(Int.self, forKey: .grade)
+        scaleIDKey = try container.decode(String.self, forKey: .scaleIDKey)
         hilighted = try container.decode(Bool.self, forKey: .hilighted)
         badges = try container.decode([Badge].self, forKey: .badges)
         self.isActive = hilighted
+        if let scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey) {
+            self.scale = scale
+        }
+        else {
+            fatalError("PracticeChartCell - no scale for board:\(board), grade:\(grade) scaleKey:\(scaleIDKey)")
+        }
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(scale, forKey: .scale)
+        try container.encode(board, forKey: .board)
+        try container.encode(grade, forKey: .grade)
+        try container.encode(scaleIDKey, forKey: .scaleIDKey)
         try container.encode(hilighted, forKey: .hilighted)
         //try container.encode(isCorrectSet, forKey: .isCorrectSet)
         try container.encode(badges, forKey: .badges)
@@ -66,21 +84,23 @@ class PracticeChart: Codable {
     var firstColumnDayOfWeekNumber:Int
     var todaysColumn:Int
     
-    init(board:String, grade:Int, scales:[Scale], columnWidth:Int, minorScaleType:Int) {
+    init(board:String, grade:Int, columnWidth:Int, minorScaleType:Int) {
         self.board = board
         self.grade = grade
         self.columns = 3
         self.rows = []
-        let scales:[Scale] = scales // = self.boardAndGrade.getScales()
         self.minorScaleType = minorScaleType
         
         var scaleCtr = 0
+        let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
         while true {
             var rowCells:[PracticeChartCell]=[]
             if scaleCtr < scales.count {
                 for _ in 0..<columnWidth {
                     if scaleCtr < scales.count {
-                        rowCells.append(PracticeChartCell(scale: scales[scaleCtr], isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()))
+                        rowCells.append(PracticeChartCell(board:self.board, grade:self.grade,
+                                                          scaleIDKey: scales[scaleCtr].getScaleIdentificationKey(),
+                                                          isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()))
                         scaleCtr += 1
                     }
                     else {
@@ -119,7 +139,7 @@ class PracticeChart: Codable {
             let row = self.self.rows[r]
             for c in 0..<row.count {
                 let cell = self.rows[r][c]
-                print(r, c, "cell \(cell.scale.getScaleStorageKey())")
+                print(r, c, "cell \(cell.scale.getScaleIdentificationKey())")
             }
         }
     }
@@ -127,7 +147,7 @@ class PracticeChart: Codable {
     func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
         for cells in rows {
             for row in cells {
-                if row.scale.getScaleStorageKey() == scale.getScaleStorageKey() {
+                if row.scale.getScaleIdentificationKey() == scale.getScaleIdentificationKey() {
                     return row
                 }
             }
@@ -213,6 +233,7 @@ class PracticeChart: Codable {
                                                 octaves: chartCell.scale.octaves, hands: chartCell.scale.hands, minTempo: chartCell.scale.minTempo,
                                                 dynamicTypes: chartCell.scale.dynamicTypes, articulationTypes: chartCell.scale.articulationTypes,
                                                 scaleCustomisation: chartCell.scale.scaleCustomisation)
+                        chartCell.scaleIDKey = chartCell.scale.getScaleIdentificationKey()
                     }
                 }
             }

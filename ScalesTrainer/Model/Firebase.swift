@@ -83,7 +83,7 @@ public class Firebase  {
         }
         do {
             ///Scale
-            let scaleKey = scale.getScaleStorageKey()
+            let scaleKey = scale.getScaleIdentificationKey()
             let scaleData = try JSONEncoder().encode(scale)
             let scaleJSON = String(data: scaleData, encoding: .utf8)
             //print("==========WRITE\n", scaleJSON ?? "")

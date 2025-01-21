@@ -140,7 +140,7 @@ final class ScoreTest: XCTestCase {
 
              ///Compare the score/staff just generated against the stored correct version
             func compareStaff(_ scale:Scale, _ score:Score) {
-                let scaleKey = scale.getScaleStorageKey()
+                let scaleKey = scale.getScaleIdentificationKey()
                 var correctScoreJSON:String? = nil
                 var correctScaleJSON:String? = nil
                 if let dictionaryData = storedKnownCorrect[scaleKey] {
@@ -155,7 +155,6 @@ final class ScoreTest: XCTestCase {
                         if let scoreUnderTestJSON = String(data: scoreUnderTestData, encoding: .utf8) {
                             if areJSONObjectsEqual(goodJSON: correctScoreJSON, testJSON: scoreUnderTestJSON) {
                                 //logger.log(self, "✅ SCORE \(scaleKey)")
-                                totalMatchedCnt += 1
                             }
                             else {
                                 totalMismatchedCnt += 1
@@ -172,19 +171,21 @@ final class ScoreTest: XCTestCase {
                         if let scaleUnderTestJSON = String(data: scaleUnderTestData, encoding: .utf8) {
                             if areJSONObjectsEqual(goodJSON: correctScaleJSON, testJSON: scaleUnderTestJSON) {
                                 //logger.log(self, "✅ SCALE \(scaleKey)")
-                                totalMatchedCnt += 1
+                                //totalMatchedCnt += 1
                             }
                             else {
                                 totalMismatchedCnt += 1
                                 logger.log(self, "❌ SCALE \(scaleKey) failed")
-                                //print("==================CORRECT\n", correctScaleJSON, "\n")
-                                //print("==================TESTING\n", scaleUnderTestJSON)
+                                print("==================CORRECT\n\n", correctScaleJSON, "\n")
+                                print("==================TESTING\n\n", scaleUnderTestJSON)
                                 errors = true
                             }
                         }
                         if !errors {
                             logger.log(self, "✅ SCALE \(scaleKey)")
+                            totalMatchedCnt += 1
                         }
+                        
                      } catch {
                         XCTFail("Error encoding user: \(error)")
                     }
@@ -206,11 +207,11 @@ final class ScoreTest: XCTestCase {
                         continue
                     }
                 }
-                let scaleKey = scale.getScaleStorageKey()
+                let scaleKey = scale.getScaleIdentificationKey()
                 if storedKnownCorrect.keys.contains(scaleKey) {
                     scalesModel.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
                                                       scaleMotion: scale.scaleMotion, minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands,
-                                                      dynamicTypes: [.mf], articulationTypes: [.legato],
+                                                      dynamicTypes: scale.dynamicTypes, articulationTypes: scale.articulationTypes,
                                                       scaleCustomisation: scale.scaleCustomisation,
                                                       //debugOn: false, //DONT SET IT since it causes a match fail with the correct scale
                                                       callback: compareStaff)
@@ -242,7 +243,7 @@ final class ScoreTest: XCTestCase {
         
         var writtenStaffData = ""
         let musicBoard = MusicBoard(name: "Trinity")
-        processBoard(musicBoard: musicBoard, gradeFilter: [], typeFilter: [.arpeggioMajor, .arpeggioMinor])
+        processBoard(musicBoard: musicBoard, gradeFilter: [3], typeFilter: [])
     }
     
     func testPerformanceExample() throws {

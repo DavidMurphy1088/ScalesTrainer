@@ -206,7 +206,7 @@ struct ScalesView: View {
                 Spacer()
                 VStack {
                     //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-                    let name = scalesModel.scale.getScaleStorageKey()
+                    let name = scalesModel.scale.getScaleIdentificationKey()
                     Text("Recording \(name)").font(.title).padding()
                     //ScaleStartView()
                     RecordingIsUnderwayView()

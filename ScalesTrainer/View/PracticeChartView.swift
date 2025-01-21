@@ -194,7 +194,7 @@ struct CellView: View {
     
     ///Does this chart cell have its scale in the known-correct list
     func isCorrectSet() -> Bool {
-        let name = practiceCell.scale.getScaleStorageKey()
+        let name = practiceCell.scale.getScaleIdentificationKey()
         return self.scalesInChart.contains(name)
     }
     
@@ -247,7 +247,7 @@ struct CellView: View {
                     }
                     else {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
-                            let key = practiceCell.scale.getScaleStorageKey()
+                            let key = practiceCell.scale.getScaleIdentificationKey()
                             Firebase.shared.deleteFromRealtimeDatabase(board: practiceChart.board, grade: self.practiceChart.grade, key: key,
                                                                        callback:{_ in })
                         })

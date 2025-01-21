@@ -4,19 +4,16 @@ class MusicBoardAndGrade: Codable, Identifiable {
     static var shared:MusicBoardAndGrade? //(board: MusicBoard(name: ""), grade: 0)
     let board:MusicBoard
     let grade:Int
-    var scales:[Scale]
     var practiceChart:PracticeChart? = nil
-
+    
     init(board:MusicBoard, grade:Int) {
         self.board = board
         self.grade = grade
-        self.scales = []
-        self.scales = MusicBoardAndGrade.setScales(boardName: board.name, grade: grade)
         if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
             self.practiceChart = chart
         }
         else {
-            self.practiceChart = PracticeChart(board: board.name, grade:grade, scales: self.scales, columnWidth: 3, minorScaleType: 0)
+            self.practiceChart = PracticeChart(board: board.name, grade:grade, columnWidth: 3, minorScaleType: 0)
         }
     }
     
@@ -24,20 +21,17 @@ class MusicBoardAndGrade: Codable, Identifiable {
         case boardName
         case grade
     }
-        
+    
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let boardName = try container.decode(String.self, forKey: .boardName)
         board = MusicBoard(name: boardName)
         grade = try container.decode(Int.self, forKey: .grade)
-        self.scales = []
-        self.scales = MusicBoardAndGrade.setScales(boardName: board.name, grade: grade)
         if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
             self.practiceChart = chart
         }
         else {
-            self.practiceChart = PracticeChart(board: boardName, grade:grade, scales: self.scales,
-                                               columnWidth: 3, minorScaleType: 0)
+            self.practiceChart = PracticeChart(board: boardName, grade:grade, columnWidth: 3, minorScaleType: 0)
         }
     }
     
@@ -49,13 +43,21 @@ class MusicBoardAndGrade: Codable, Identifiable {
         let decoder = JSONDecoder()
         do {
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                Logger.shared.log(self, "Failed to load PracticeChart - file not found")
+                if let notRegression = ProcessInfo.processInfo.environment["NOT_RUNNING_REGRESSION"] {
+                    Logger.shared.log(self, "Failed to load PracticeChart - file not found")
+                }
                 return nil
             }
-            
             let url = dir.appendingPathComponent(getFileName())
-            let data = try Data(contentsOf: url)  // Read the data from the file
-            let chart = try decoder.decode(PracticeChart.self, from: data)
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: url.path) {
+                return nil
+            }
+            let urlData = try Data(contentsOf: url)  // Read the data from the file
+//            if let stringData = String(data: urlData, encoding: .utf8) {
+//                    print("================= String:\n\n \(stringData)")
+//            }
+            let chart = try decoder.decode(PracticeChart.self, from: urlData)
             for r in 0..<chart.rows.count {
                 let row:[PracticeChartCell] = chart.rows[r]
                 for chartCell in row {
@@ -73,12 +75,12 @@ class MusicBoardAndGrade: Codable, Identifiable {
             Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) DayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
             chart.adjustForStartDay()
             return chart
-         } catch {
+        } catch {
             Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
             return nil
         }
     }
-
+    
     func encode(to encoder: Encoder) throws {
         ///Dont try to encode all the scale info - causes crash
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -88,11 +90,11 @@ class MusicBoardAndGrade: Codable, Identifiable {
     
     func getGradeName() -> String {
         //if let grade = self.grade {
-            return "Grade " + String(grade) + " Piano"
-//        }
-//        else {
-//            return ""
-//        }
+        return "Grade " + String(grade) + " Piano"
+        //        }
+        //        else {
+        //            return ""
+        //        }
     }
     
     func getFullName() -> String {
@@ -100,10 +102,10 @@ class MusicBoardAndGrade: Codable, Identifiable {
         name += ", Grade " + String(grade) + " Piano"
         return name
     }
-
-    func getScales() -> [Scale] {
-        return self.scales
-    }
+    
+    //    func getScales() -> [Scale] {
+    //        return self.scales
+    //    }
     
     func savePracticeChartToFile() {
         guard let practiceChart = self.practiceChart else {
@@ -144,7 +146,8 @@ class MusicBoardAndGrade: Codable, Identifiable {
     ///List the scales and include melodics and harmonic minors
     func enumerateAllScales() -> [Scale] {
         var allScales:[Scale] = []
-        for scale in self.scales {
+        //for scale in self.scales {
+        for scale in MusicBoardAndGrade.getScales(boardName: board.name, grade: grade) {
             allScales.append(scale)
             if scale.scaleMotion == .similarMotion {
                 if scale.scaleType == .harmonicMinor {
@@ -249,7 +252,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
@@ -283,7 +286,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                scaleCustomisation: ScaleCustomisation(startMidiRH: 66, startMidiLH: 54)))
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 66, startMidiLH: 54)))
             
             ///Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
@@ -321,7 +324,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 52, startMidiLH: 40)))
@@ -340,7 +343,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch:false)))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
@@ -351,9 +354,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                scaleCustomisation: ScaleCustomisation(startMidiRH: 56, startMidiLH: 44, clefSwitch: false)))
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 56, startMidiLH: 44, clefSwitch: false)))
         }
-
+        
         if grade == 5 {
             let minTempo = 110
             let arpeggioTempo = 90
@@ -370,7 +373,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
@@ -381,16 +384,16 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G#"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(clefSwitch: false)))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 67, startMidiLH: 55, clefSwitch: false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                          scaleCustomisation: ScaleCustomisation(customScaleName: "Diminished 7th Arpeggio, Starting on B, Hands together",
-                                                                 customScaleNameWheel: "Dim 7th Arp on B, Hands together",
-                                                                 removeKeySig: true)))
-
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "Diminished 7th Arpeggio, Starting on B, Hands together",
+                                                                       customScaleNameWheel: "Dim 7th Arp on B, Hands together",
+                                                                       removeKeySig: true)))
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
@@ -398,13 +401,13 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
                                                                        customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
                                                                        customScaleNameWheel: "Chrom Contrary, LH C, RH E")))
-//            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves-1, hands: [0,1],
-//                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [ArticulationType.legato],
-//                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
-//                                                                       customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
-//                                                                       customScaleNameWheel: "Chrom Contrary, LH C, RH E")))
+            //            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves-1, hands: [0,1],
+            //                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [ArticulationType.legato],
+            //                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
+            //                                                                       customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
+            //                                                                       customScaleNameWheel: "Chrom Contrary, LH C, RH E")))
         }
-
+        
         return scales
     }
     
@@ -461,7 +464,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-
+            
             ///Contrary
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
@@ -486,7 +489,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-
+            
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
@@ -495,8 +498,8 @@ class MusicBoardAndGrade: Codable, Identifiable {
         
         return scales
     }
-
-    static func setScales(boardName:String, grade:Int) -> [Scale] {
+    
+    static func getScales(boardName:String, grade:Int) -> [Scale] {
         let scales:[Scale] = []
         switch boardName {
         case "Trinity":
@@ -506,6 +509,33 @@ class MusicBoardAndGrade: Codable, Identifiable {
         default:
             return scales
         }
+    }
+    
+    static func getScale(boardName:String, grade:Int, scaleKey:String) -> Scale? {
+        let scales = MusicBoardAndGrade.getScales(boardName: boardName, grade: grade)
+        for gradeScale in scales {
+            var scalesToSearch:[Scale] = [gradeScale]
+            ///Board grades are defined with harmonic minors but the melodic minor might be requested also look for that.
+            if gradeScale.scaleType == ScaleType.harmonicMinor {
+                var melodicScale = Scale(scaleRoot: gradeScale.scaleRoot, scaleType: .melodicMinor, scaleMotion: gradeScale.scaleMotion,
+                                     octaves: gradeScale.octaves, hands: gradeScale.hands, minTempo: gradeScale.minTempo,
+                                     dynamicTypes: gradeScale.dynamicTypes, articulationTypes: gradeScale.articulationTypes,
+                                     scaleCustomisation: gradeScale.scaleCustomisation)
+                var naturalScale = Scale(scaleRoot: gradeScale.scaleRoot, scaleType: .naturalMinor, scaleMotion: gradeScale.scaleMotion,
+                                     octaves: gradeScale.octaves, hands: gradeScale.hands, minTempo: gradeScale.minTempo,
+                                     dynamicTypes: gradeScale.dynamicTypes, articulationTypes: gradeScale.articulationTypes,
+                                     scaleCustomisation: gradeScale.scaleCustomisation)
+                scalesToSearch.append(melodicScale)
+                scalesToSearch.append(naturalScale)
+            }
+            for scale in scalesToSearch {
+                let key = scale.getScaleIdentificationKey()
+                if key == scaleKey {
+                    return scale
+                }
+            }
+        }
+        return nil
     }
 }
 

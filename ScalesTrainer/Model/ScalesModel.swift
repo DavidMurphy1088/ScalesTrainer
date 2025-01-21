@@ -999,7 +999,7 @@ public class ScalesModel : ObservableObject {
         let minute = calendar.component(.minute, from: Date())
         let device = UIDevice.current
         let modelName = device.model
-        var keyName = scale.getScaleStorageKey()
+        var keyName = scale.getScaleIdentificationKey()
         keyName = keyName.replacingOccurrences(of: " ", with: "")
         var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
         fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.getScaleNoteState(handType: .right, index: 0).midi) + "_" + modelName

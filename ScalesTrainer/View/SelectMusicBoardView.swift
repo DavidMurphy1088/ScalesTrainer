@@ -6,7 +6,21 @@ struct SelectBoardGradesView: View {
     let inBoard:MusicBoard
     @State private var isOn = [Bool](repeating: false, count: 12)
     let width = 0.7
-
+    
+    func updateBoardGrade(gradeIndex:Int) {
+//if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
+            ///Force all views dependendent on grade to close since they show the previous grade
+            tabSelectionManager.isSpinWheelActive = false
+            tabSelectionManager.isPracticeChartActive = false
+            Settings.shared.musicBoardGrade = gradeIndex
+            Settings.shared.musicBoardName = inBoard.name
+            MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
+            Settings.shared.save()
+            MusicBoardAndGrade.shared?.savePracticeChartToFile()
+            SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
+        //}
+    }
+    
     var body: some View {
         VStack {
             VStack {
@@ -22,13 +36,14 @@ struct SelectBoardGradesView: View {
                         Text(name).background(Color.clear).padding()
                         Spacer()
                         Toggle("", isOn: $isOn[number])
-                        .onChange(of: isOn[number]) { old, value in
-                            if value {
+                        .onChange(of: isOn[number]) { oldWasOn, newWasOn in
+                            if newWasOn {
                                 for j in 0..<isOn.count {
                                     if j != number {
                                         isOn[j] = false
                                     }
                                 }
+                                self.updateBoardGrade(gradeIndex: number)
                             }
                         }
                     }
@@ -47,17 +62,17 @@ struct SelectBoardGradesView: View {
             }
         }
         .onDisappear() {
-            if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
-                ///Force all views dependendent on grade to close since they show the previous grade
-                tabSelectionManager.isSpinWheelActive = false
-                tabSelectionManager.isPracticeChartActive = false
-                Settings.shared.musicBoardGrade = gradeIndex
-                Settings.shared.musicBoardName = inBoard.name
-                MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
-                Settings.shared.save()
-                MusicBoardAndGrade.shared?.savePracticeChartToFile()
-                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
-            }
+//            if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
+//                ///Force all views dependendent on grade to close since they show the previous grade
+//                tabSelectionManager.isSpinWheelActive = false
+//                tabSelectionManager.isPracticeChartActive = false
+//                Settings.shared.musicBoardGrade = gradeIndex
+//                Settings.shared.musicBoardName = inBoard.name
+//                MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
+//                Settings.shared.save()
+//                MusicBoardAndGrade.shared?.savePracticeChartToFile()
+//                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
+//            }
         }
     }
 }
