@@ -22,7 +22,6 @@ class PracticeChartCell: ObservableObject, Codable {
         case isCorrectSet
     }
     
-    //init(scale: Scale, isLicensed:Bool, hilighted: Bool = false) {
     init(board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, hilighted: Bool = false) {
         self.board = board
         self.grade = grade

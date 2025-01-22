@@ -1025,6 +1025,7 @@ public class Scale : Codable {
     func setFingers(hand:Int) {
         var fingers = ""
         var leftHandLastFingerJump = 1 ///For LH - what finger jump between scale note 0 and 1. in Alberts arpeggio LH difference between leftmost two finger numbers.
+        var rightHandLastFingerJump = 1 ///For RH - what finger jump for highest note.
         var fingeringSpecifiedByNote:[Int]? =  nil
         if self.debugOn {
             
@@ -1154,6 +1155,7 @@ public class Scale : Codable {
                 else {
                     if debugOn {
                     }
+                    rightHandLastFingerJump = 0 ///Match Trinity forr Gr 5
                     fingers = hand == 0 ? "231" : "312"
                 }
             case "E♭":
@@ -1239,7 +1241,7 @@ public class Scale : Codable {
                 }
             }
             if hand == 0 {
-                ///All RH scales and arpggeios starting on black note have first fimger = 2
+                ///All RH scales and arpggeios starting on black note have first finger = 2
                 ///But only the first, after that revert to the regular fingering from the pattern.
                 for n in 0..<scaleNoteState[0].count-1 {
                     let state = self.scaleNoteState[0][n]
@@ -1271,7 +1273,7 @@ public class Scale : Codable {
             var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
             if scaleShapeForFingering == .arpgeggio {
                 if highNoteFinger < 5 {
-                    highNoteFinger += 1
+                   highNoteFinger += rightHandLastFingerJump
                 }
             }
             scaleNoteState[hand][halfway].finger = highNoteFinger

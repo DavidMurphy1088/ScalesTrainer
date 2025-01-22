@@ -49,20 +49,35 @@ struct CellView: View {
         }
     }
     
+//    func setHilightedOLD(scale:Scale) {
+//        for row in practiceChart.rows {
+//            for chartCell in row {
+//                if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
+//                    if chartCell.scale.hands == scale.hands {
+//                        if chartCell.scale.scaleType == scale.scaleType {
+//                            chartCell.setHilighted(way: !chartCell.hilighted)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
     func setHilighted(scale:Scale) {
         for row in practiceChart.rows {
             for chartCell in row {
-                if chartCell.scale.scaleRoot.name == scale.scaleRoot.name {
-                    if chartCell.scale.hands == scale.hands {
-                        if chartCell.scale.scaleType == scale.scaleType {
+                if chartCell.scale.getScaleIdentificationKey() == scale.getScaleIdentificationKey(){
+                    //if chartCell.scale.hands == scale.hands {
+                        //if chartCell.scale.scaleType == scale.scaleType {
                             chartCell.setHilighted(way: !chartCell.hilighted)
-                        }
-                    }
+                        //}
+                    //}
                 }
             }
         }
     }
     
+
     func handsView() -> some View {
         HStack {
             Button(action: {

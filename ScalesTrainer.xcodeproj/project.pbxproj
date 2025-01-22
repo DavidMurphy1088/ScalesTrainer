@@ -164,6 +164,7 @@
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
 		793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMusicBoardView.swift; sourceTree = "<group>"; };
+		794180902D40E2E900FE149B /* ScalesStar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScalesStar.entitlements; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
 		794A9FC42C2B73770001297E /* ScaleIntervals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleIntervals.swift; sourceTree = "<group>"; };
@@ -417,6 +418,7 @@
 		79DA82092BCCE95F008AC492 = {
 			isa = PBXGroup;
 			children = (
+				794180902D40E2E900FE149B /* ScalesStar.entitlements */,
 				29591435A11F915AD3A16C39 /* Frameworks */,
 				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
 				DDA3121AEE7C45E54101ED2B /* Pods */,
@@ -1033,8 +1035,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1042,12 +1045,15 @@
 				INFOPLIST_FILE = ScalesTrainer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1068,8 +1074,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1077,12 +1084,15 @@
 				INFOPLIST_FILE = ScalesTrainer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

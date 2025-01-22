@@ -11,6 +11,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var waitBeatsForScale = 0
     var waitBeatsForBacking = 0
     let audioManager = AudioManager.shared
+    let metronome = Metronome.shared
     
     let scalesModel = ScalesModel.shared
     var nextNoteIndex = 0
@@ -105,10 +106,13 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     let velocity:UInt8 = 64
                     if process == .playingAlongWithScale {
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
-                        let wait = note.value >= 1 ? 0.7 : 0.3
-                        DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
-                            samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
-                            //print("Executed after 0.5 seconds on the main queue.")
+                        //let wait = note.value >= 1 ? 0.7 : 0.3
+                        if let noteValue = key.scaleNoteState?.value {
+                            let tempo = Double(scalesModel.getTempo())
+                            let wait = noteValue * (60.0 / tempo) * 1.0
+                            DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                                samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
+                            }
                         }
                     }
                     if let score = scalesModel.getScore() {
