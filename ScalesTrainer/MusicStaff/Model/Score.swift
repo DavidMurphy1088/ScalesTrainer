@@ -303,33 +303,67 @@ public class Score : ObservableObject, Encodable {
 //        return result
 //    }
     
-    public func getNoteAndClefForMidi(midi:Int, handType:HandType, occurence:Int) -> (StaffNote?, StaffClef?) {
+//    public func getNoteAndClefForMidi(midi:Int, handType:HandType, occurence:Int) -> (StaffNote?, StaffClef?) {
+//        let ts = getAllTimeSlices()
+//        var cnt = 0
+//        var result:StaffNote?
+//        var clef:StaffClef?
+//        for entry in self.scoreEntries {
+//            if entry is TimeSlice {
+//                let timeSlice = entry as! TimeSlice
+//                let ns = timeSlice.getTimeSliceNotes(handType:handType)
+//                if ns.count > 0 {
+//                    let note = ns[0]
+//                    if note.midi == midi {
+//                        if cnt == occurence {
+//                            result = note
+//                            break
+//                        }
+//                        cnt += 1
+//                    }
+//                }
+//            }
+//            if entry is StaffClef {
+//                clef = entry as! StaffClef
+//            }
+//        }
+//        return (result, clef)
+//    }
+
+    public func getNoteAndClefForMidi(midi:Int, handType:HandType) -> (StaffNote?, StaffClef?) {
         let ts = getAllTimeSlices()
-        var cnt = 0
-        var result:StaffNote?
-        var clef:StaffClef?
+        var result:StaffNote? = nil
+        var lastClef:StaffClef?
+        if midi == 65 {
+            
+        }
         for entry in self.scoreEntries {
             if entry is TimeSlice {
                 let timeSlice = entry as! TimeSlice
-                let ns = timeSlice.getTimeSliceNotes(handType:handType)
-                if ns.count > 0 {
-                    let note = ns[0]
+                let notes = timeSlice.getTimeSliceNotes(handType:handType)
+                for note in notes {
                     if note.midi == midi {
-                        if cnt == occurence {
-                            result = note
-                            break
-                        }
-                        cnt += 1
+                        result = note
+                        break
                     }
                 }
             }
+            if result != nil {
+                break
+            }
             if entry is StaffClef {
-                clef = entry as! StaffClef
+                let clef = entry as! StaffClef
+                if handType == .left {
+                    lastClef = clef
+                }
+                else {
+                    ///lastClef =
+                }
             }
         }
-        return (result, clef)
+        return (result, lastClef)
     }
-    
+
     public func getTimeSlicesForBar(bar:Int) -> [TimeSlice] {
         var result:[TimeSlice] = []
         var barNum = 0
@@ -347,7 +381,7 @@ public class Score : ObservableObject, Encodable {
         return result
     }
 
-    public func debug11(ctx:String, handType:HandType?, midiFilter:Int? = nil, withBeam:Bool=false, toleranceLevel:Int=0) {
+    public func debug1(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
 //        if !self.debugOn {
 //            return
 //        }
@@ -407,11 +441,12 @@ public class Score : ObservableObject, Encodable {
                             print(" Segments:", note.segments, timeSlice.sequence, terminator: "")
                             //print(" status",timeSlice.statusTag, terminator: "")
                             
-                            let note = timeSlice.entries[entryIndex] as! StaffNote
                             print("\thand:", note.handType, terminator: "")
                             print(", toffset:", note.noteStaffPlacement.offsetFromStaffMidline, terminator: "")
                             print(", accidental:", note.noteStaffPlacement.accidental ?? " ", terminator: "")
                             print(", allowModify:", note.noteStaffPlacement.placementCanBeSetByKeySignature, terminator: "")
+                            let staffNote:StaffNote = timeSlice.entries[entryIndex] as! StaffNote
+                            print(", stemLen:", staffNote.stemLength, terminator: "")
                             
                             //print("[Staff:",note.staffNum,"]" t.sequence, terminator: "")
                             print()
@@ -464,7 +499,7 @@ public class Score : ObservableObject, Encodable {
         self.scoreEntries.append(barLine)
     }
     
-    public func addStaffClef(clefType:ClefType, atValuePosition:Double) {
+    public func addStaffClef(clefType:ClefType, handType:HandType, atValuePosition:Double) {
         //let clef = StaffClef(score:self, clefType: clefType, isVisible: isVisible)
         var totalValue = 0.0
         for i in 0..<self.scoreEntries.count {
@@ -526,7 +561,7 @@ public class Score : ObservableObject, Encodable {
         }
     }
     
-    private func determineStemDirections(clef:StaffClef, notesUnderBeam:[StaffNote], linesForFullStemLength:Double) {
+    private func setStemLengthsAndDirections(clef:StaffClef, notesUnderBeam:[StaffNote], linesForFullStemLength:Double) {
         ///Determine if the quaver group has up or down stems based on the overall staff placement of the group
         var totalOffset = 0
         for note in notesUnderBeam {
@@ -536,10 +571,12 @@ public class Score : ObservableObject, Encodable {
         
         ///Set each note's beam type and calculate the nett above r below the staff line for the quaver group (for the subsequnet stem up or down decison)
         let startNote = notesUnderBeam[0]
-        let startPlacement = clef.getNoteViewPlacement(note: startNote)
+        //let startPlacement = clef.getNoteViewPlacement(note: startNote)
+        let startPlacement = startNote.noteStaffPlacement
 
         let endNote = notesUnderBeam[notesUnderBeam.count - 1]
-        let endPlacement = clef.getNoteViewPlacement(note: endNote)
+        //let endPlacement = clef.getNoteViewPlacement(note: endNote)
+        let endPlacement = endNote.noteStaffPlacement
 
         var beamSlope:Double = Double(endPlacement.offsetFromStaffMidline - startPlacement.offsetFromStaffMidline)
         beamSlope = beamSlope / Double(notesUnderBeam.count - 1)
@@ -549,7 +586,7 @@ public class Score : ObservableObject, Encodable {
         //The number of staff lines for a full stem length
         
         var minStemLength = linesForFullStemLength
-        
+
         for i in 0..<notesUnderBeam.count {
             let note = notesUnderBeam[i]
             if i == 0 {
@@ -562,8 +599,8 @@ public class Score : ObservableObject, Encodable {
                     note.stemLength = linesForFullStemLength
                 }
                 else {
-                    //note.beamType = .middle
-                    let placement = clef.getNoteViewPlacement(note: note)
+                    //let placement = clef.getNoteViewPlacement(note: note)
+                    let placement = note.noteStaffPlacement
                     ///adjust the stem length according to where the note is positioned vs. where the beam slope position requires
                     let stemDiff = Double(placement.offsetFromStaffMidline) - requiredBeamPosition
                     note.stemLength = linesForFullStemLength + (stemDiff / 2.0 * (totalOffset > 0 ? 1.0 : -1.0))
@@ -604,8 +641,9 @@ public class Score : ObservableObject, Encodable {
             }
         }
         
-        ///Set the beam states of the notes and empty the notes under beam bucket
-        func setNotesUnderBeam(timeSlicesUnderBeam:[TimeSlice], linesForFullStemLength:Double) -> [TimeSlice] {
+        ///Set the beam states of the notes under the current quaver beam since  new beam is starting.
+        ///Then empty the notes under the current beam.
+        func setNoteStemsUnderBeam(timeSlicesUnderBeam:[TimeSlice], linesForFullStemLength:Double) -> [TimeSlice] {
             if timeSlicesUnderBeam.count == 0 {
                 return []
             }
@@ -642,12 +680,12 @@ public class Score : ObservableObject, Encodable {
         for scoreEntryIndex in startEntryIndex...endEntryIndex {
             let scoreEntry = self.scoreEntries[scoreEntryIndex]
             guard scoreEntry is TimeSlice else {
-                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             let timeSlice = scoreEntry as! TimeSlice
             if timeSlice.getTimeSliceNotes(handType: handType).count == 0 {
-                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             
@@ -655,12 +693,12 @@ public class Score : ObservableObject, Encodable {
 
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
                 setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
-                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             
             if timeSlice.valuePointInBar == 0 {
-                timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam.append(timeSlice)
             }
             else {
@@ -672,7 +710,7 @@ public class Score : ObservableObject, Encodable {
                 }
             }
         }
-        timeSlicesUnderBeam = setNotesUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+        timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
         
         ///Join up adjoining beams where possible. Existing beams only span one main beat and can be joined in some cases
         if false { ///10Nov2024 - does not appear to do anything?
@@ -733,7 +771,7 @@ public class Score : ObservableObject, Encodable {
                 notesUnderBeam.append(note)
                 if note.beamType == .end {
                     //let staff = self.staffs[note.staffType == .treble ? 0 : 1]
-                    determineStemDirections(clef:clef, notesUnderBeam: notesUnderBeam, linesForFullStemLength: linesForFullStemLength)
+                    setStemLengthsAndDirections(clef:clef, notesUnderBeam: notesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                     notesUnderBeam = []
                 }
             }

@@ -78,6 +78,8 @@ public class Firebase  {
     }
     
     ///Write the known-correct scale and score to the cloud Firebase Realtime db
+    ///Write the score for note placements, note accidentals, clef swaps etc
+    ///Write the scale to record fingering.
     func writeKnownCorrect(scale:Scale, score:Score, board:String, grade:Int) {
         func completedCallback1(_ x:String) {
         }

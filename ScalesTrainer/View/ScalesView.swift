@@ -41,6 +41,7 @@ struct ScalesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     //let initialRunProcess:RunningProcess?
     let practiceChartCell:PracticeChartCell?
+    let practiseModeOnly:Bool
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var exerciseState = ExerciseState.shared
 
@@ -70,9 +71,9 @@ struct ScalesView: View {
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
     
-    init(practiceChartCell:PracticeChartCell?) {
-        //self.initialRunProcess = initialRunProcess
+    init(practiceChartCell:PracticeChartCell?, practiseModeOnly:Bool) {
         self.practiceChartCell = practiceChartCell
+        self.practiseModeOnly = practiseModeOnly
     }
 
     func showHelp(_ topic:String) {
@@ -101,8 +102,6 @@ struct ScalesView: View {
             .pickerStyle(.menu)
             .padding(.horizontal, 0)
 
-            
-            //Spacer()
             Text(LocalizedStringResource("Viewing\nDirection"))
             Picker("Select Value", selection: $directionIndex) {
                 ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
@@ -266,6 +265,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.setRunningProcess(.followingScale, practiceChartCell: practiceChartCell)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                            self.directionIndex = 0
                         }) {
                             Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
@@ -293,7 +293,6 @@ struct ScalesView: View {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
                         Button(action: {
                             if scalesModel.runningProcessPublished == .leadingTheScale {
-                                //exerciseState.setExerciseState("start", .exerciseNotStarted)
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
@@ -301,6 +300,7 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.leadingTheScale, practiceChartCell: self.practiceChartCell)
                                 scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                             }
+                            self.directionIndex = 0
                         }) {
                             Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
@@ -329,6 +329,7 @@ struct ScalesView: View {
                     Button(action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
                         scalesModel.setProcessInstructions("Play along with the scale as its played")
+                        self.directionIndex = 0
                     }) {
                         Text(title)
                     }
@@ -534,7 +535,7 @@ struct ScalesView: View {
     var body: some View {
         VStack {
             VStack(spacing: 0) {
-                ScaleTitleView(scale: scalesModel.scale)
+                ScaleTitleView(scale: scalesModel.scale, practiseModeOnly: practiseModeOnly)
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     .padding(.horizontal, 0)
                 HStack {

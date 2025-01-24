@@ -31,6 +31,7 @@ struct CellView: View {
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScale = false
+    @State var practiseModeOnly = false
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
 
@@ -84,6 +85,7 @@ struct CellView: View {
                 setScale(hands: [1])
                 if practiceCell.isLicensed {
                     navigateToScale = true
+                    practiseModeOnly = true
                 }
             }) {
                 HStack {
@@ -105,6 +107,7 @@ struct CellView: View {
                 setScale(hands:[0])
                 if practiceCell.isLicensed {
                     navigateToScale = true
+                    practiseModeOnly = true
                 }
             }) {
                 if UIDevice.current.userInterfaceIdiom != .phone {
@@ -138,7 +141,7 @@ struct CellView: View {
     
     func starView() -> some View {
         HStack {
-            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell), isActive: $navigateToScale) {
+            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell, practiseModeOnly: practiseModeOnly), isActive: $navigateToScale) {
             }.frame(width: 0.0)
 
             HStack {
@@ -219,6 +222,7 @@ struct CellView: View {
                 setScale(hands: practiceCell.scale.hands)
                 if practiceCell.isLicensed {
                     navigateToScale = true
+                    practiseModeOnly = false
                 }
                 else {
                     self.showLicenceRequiredScale = true
@@ -255,7 +259,7 @@ struct CellView: View {
                 Button(action: {
                     if !isCorrectSet() {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
-                            score.debug11(ctx: "", handType: .none)
+                            //score.debug11(ctx: "", handType: .none)
                             Firebase.shared.writeKnownCorrect(scale: practiceCell.scale, score: score, board: practiceChart.board, grade: self.practiceChart.grade)
                         })
                         //self.isCorrectSet = true

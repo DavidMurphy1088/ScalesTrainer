@@ -176,8 +176,8 @@ final class ScoreTest: XCTestCase {
                             else {
                                 totalMismatchedCnt += 1
                                 logger.log(self, "❌ SCALE \(scaleKey) failed")
-                                print("==================CORRECT\n\n", correctScaleJSON, "\n")
-                                print("==================TESTING\n\n", scaleUnderTestJSON)
+                                //print("==================CORRECT\n\n", correctScaleJSON, "\n")
+                                //print("==================TESTING\n\n", scaleUnderTestJSON)
                                 errors = true
                             }
                         }
@@ -221,9 +221,6 @@ final class ScoreTest: XCTestCase {
                     logger.log(self, "🥵 \(scaleKey) - missing correct version to test against")
                 }
                 totalProcessedCnt += 1
-//                if ctr > 3 {
-//                    break
-//                }
             }
         }
         if totalMissingCnt > 0 || totalMismatchedCnt > 0 {

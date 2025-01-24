@@ -42,7 +42,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     /// The note in the scale to which the key currently maps. The mapping changes between ascending and descending
     //private(set) var scaleNoteState:ScaleNoteState?
     private(set) var scaleNoteState:ScaleNoteState?
-
+    
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
@@ -55,22 +55,18 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     var hilightCallbackNotUSed: () -> Void = {}
 
-    //private var playedCallback:(()->Void)?
-    ///Sometimes the single key needs to call more than one callback. e.g. the key for the first note in a contrary motion scale starting on the same note.
-    ///The key will need to generate a press for the LH and RH separately. 
-    private var playedCallbacks:[(()->Void)?] = []
-    func addCallbackFunction(fn:(()->Void)?) {
-        self.playedCallbacks.append(fn)
-    }
-//    func getCallbackFunction() -> (()->Void)? {
-//        return self.playedCallback
-//    }
-
     public var touchDown = false
     public var latched = false
     ///A keyboard may have keys played by both LH and RH - e.g. a contray motion keyboard
     let handType:HandType
-
+    
+    ///Sometimes the single key needs to call more than one callback. e.g. the key for the first note in a contrary motion scale starting on the same note.
+    ///The key will need to generate a press for the LH and RH separately.
+    private var playedCallbacks:[(()->Void)?] = []
+    func addCallbackFunction(fn:(()->Void)?) {
+        self.playedCallbacks.append(fn)
+    }
+    
     init(scale:Scale, score:Score, keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int, handType:HandType) {
         self.scale = scale
         self.score = score
@@ -80,7 +76,7 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.midi = midi
         self.handType = handType
     }
-
+    
     public func setState(state: ScaleNoteState?) {
         self.scaleNoteState = state
     }
@@ -109,41 +105,14 @@ public class PianoKeyModel: Identifiable, Hashable {
             }
         }
     }
-
+    
     public var noteMidiNumber: Int {
         keyOffsetFromLowestKey + self.keyboardModel.firstKeyMidi
     }
-
-    ///Use the keysignature to determine whether the black notes are shown as sharps or flats
-    ///Chromatic - use the above rule - e.g. D chromatic shows black notes as sharps (since D Maj KeySig has sharps), F chromatic shows black notes as flats
-//    func getNameDefault() -> String {
-////      let major = [.major, .arpeggioDominantSeventh, .arpeggioMajor, .arpeggioMajorSeventh, .brokenChordMajor].contains(scale.scaleType)
-////      let ks = KeySignature(keyName: scale.scaleRoot.name, keyType: major ? .major : .minor)
-//        let ks = self.score.key
-//        var showSharps = !(ks.keySig.flats.count > 0)
-////            if [.melodicMinor, .harmonicMinor].contains(scale.scaleType) {
-////
-////                ///A black note for a raised 7th or 6th should be shown as a sharp or flat based on how the corresponding staff note is displayed. (with a sharp or with a flat)
-////                //if ScalesModel.shared.scores.count > 0 {
-////                    //let scoreIndex = self.keyboardModel == PianoKeyboardModel.sharedRH ? 0 : 1
-////                    if let score = ScalesModel.shared.getScore() {
-////                        if let ts = score.getTimeSliceForMidi(midi: self.midi, occurence: 0) {
-////                            let note:StaffNote = ts.entries[0] as! StaffNote
-////                            //if note.noteStaffPlacements.count > 0 {
-////                            if note.noteStaffPlacement.accidental == 1 {
-////                                showSharps = true
-////                            }
-////                            //}
-////                        }
-////                    }
-////                //}
-////            }
-//            return NoteName.name(for: noteMidiNumber, showSharps: showSharps)
-//        }
     
     func getName() -> String {
         let handType = self.handType
-        let (staffNote, staffClef) = score.getNoteAndClefForMidi(midi: self.midi, handType: handType, occurence: 0)
+        let (staffNote, staffClef) = score.getNoteAndClefForMidi(midi: self.midi, handType: handType)
         var name = String(self.midi)
         if let staffNote = staffNote {
             name = getNameFromStaffNote(staffNote: staffNote, staffClef: staffClef, handType: handType)

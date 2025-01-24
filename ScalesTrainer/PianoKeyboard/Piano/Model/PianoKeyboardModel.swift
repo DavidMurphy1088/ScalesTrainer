@@ -355,7 +355,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
         print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
         if self.pianoKeyModel.count > 0 {

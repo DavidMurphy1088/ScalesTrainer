@@ -201,15 +201,15 @@ class TabSelectionManager: ObservableObject {
             ScalesModel.shared = ScalesModel()
             let scalesModel = ScalesModel.shared
             if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor,
-                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 2, hands: [0],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .chromatic,
+                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
                                                 debugOn: true)
             }
             else {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E"), scaleType: .melodicMinor,
-                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [1],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F#"), scaleType: .melodicMinor,
+                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
                                                          dynamicTypes: [.mf], articulationTypes: [.legato],
                                                          scaleCustomisation: scaleCustomisation)
             }
@@ -336,7 +336,7 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(practiceChartCell: nil)
+                ScalesView(practiceChartCell: nil, practiseModeOnly: false)
                 //TestView()
                 //FFTContentView()
                     .tabItem {

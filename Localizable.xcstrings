@@ -91,6 +91,9 @@
     "=%lld" : {
 
     },
+    "=%lld, " : {
+
+    },
     "⊙" : {
 
     },
@@ -651,6 +654,9 @@
     "Send us the app's log file" : {
 
     },
+    "Separate Hand Practise Only" : {
+
+    },
     "Set Correct" : {
 
     },
@@ -675,6 +681,9 @@
 
     },
     "Shuffle" : {
+
+    },
+    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {

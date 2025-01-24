@@ -152,9 +152,9 @@ public class NoteOffsetsInScaleByKey {
             let placement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: offset, accidental: accidental, placementCanBeSetByKeySignature: true)
             
             ///Overide the default accidentals for special cases.
-            ///e.g. Block modification of 'unusual' required accidental notation
+            ///e.g. Do modification of 'unusual' required accidental notation when required.
             ///e.g. F# minor requires F natural to be shown as E# which is returned as the default placement
-            ///This flag (allowModify) will cause subsequent processing to not modify the accidental or placement settings
+            ///The flag (allowModify) will cause subsequent processing to not modify the accidental or placement settings
             if [.harmonicMinor, .melodicMinor].contains(scale.scaleType) {
                 if scale.scaleRoot.name == "F#" && noteValue % 12 == 5 {
                     var customPlacement = NoteStaffPlacement(midi: noteValue, offsetFroMidLine: placement.offsetFromStaffMidline-1, placementCanBeSetByKeySignature: false)
@@ -214,7 +214,7 @@ public class StaffClef : ScoreEntry {
     init(scale:Scale, score:Score, clefType:ClefType) {
         self.scale = scale
         self.score = score
-        self.clefType = clefType        
+        self.clefType = clefType     
         self.lowestNoteValue = 20 //MIDI C0
         self.highestNoteValue = 107 //MIDI B7
         self.middleNoteValue = clefType == ClefType.treble ? 71 : StaffNote.MIDDLE_C - StaffNote.OCTAVE + 2

@@ -132,7 +132,7 @@ class PracticeChart: Codable {
         }
     }
     
-    func debug11(_ ctx:String) {
+    func debug1(_ ctx:String) {
         print("====== DEUBG Chart Debug", ctx)
         for r in 0..<self.rows.count {
             let row = self.self.rows[r]

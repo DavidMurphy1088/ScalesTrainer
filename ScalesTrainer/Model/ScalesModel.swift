@@ -721,7 +721,7 @@ public class ScalesModel : ObservableObject {
                         if highest != nil && lowest != nil {
                             if (highest! > offsetsAboveLimit && currentClefType == .bass) || (lowest! < offsetsBelowLimit && currentClefType == .treble) {
                                 let newClefType:ClefType = currentClefType == .bass ? .treble : .bass
-                                score.addStaffClef(clefType: newClefType, atValuePosition: lastGroupStart)
+                                score.addStaffClef(clefType: newClefType, handType: .left, atValuePosition: lastGroupStart)
                                 currentClefType = newClefType
                             }
                         }
@@ -738,7 +738,7 @@ public class ScalesModel : ObservableObject {
             }
             
             let staffNote = entries[noteIndex] as! StaffNote
-            ///Consider the note's placement in the current clef layout
+            ///Analyse the note's placement in the current clef layout
             let clef = StaffClef(scale: scale, score: score, clefType: currentClefType)
             let placement = clef.getNoteViewPlacement(note: staffNote)
             offsetsInGroup.append(placement.offsetFromStaffMidline)
@@ -818,7 +818,7 @@ public class ScalesModel : ObservableObject {
         ///These adjustments are made after the the note's default placements have been made on the staff.
         ///Use the first accidental found to apply to subsequent notes that need accidentals
         func adjustPlacementForChromatic(staffNote:StaffNote, firstAccidental:Int?) {
-            //return 
+            //return
             let placement = staffNote.noteStaffPlacement
             if placement.accidental != nil && placement.accidental != firstAccidental {
                 if placement.accidental == -1 {
@@ -846,7 +846,8 @@ public class ScalesModel : ObservableObject {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score, clefType: .bass)
+            var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score,
+                                                                                                                                                   clefType: .bass)
             var notesInBar:[StaffNote] = []
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
@@ -865,7 +866,7 @@ public class ScalesModel : ObservableObject {
                 ///Determine the placement and accidentals for each note in the score.
                 if let timeSlice = scoreEntry as? TimeSlice {
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        if staffNote.midi == 72 {
+                        if staffNote.midi == 67 {
                         }
                         staffNote.noteStaffPlacement = clefForPositioning.getNoteViewPlacement(note: staffNote)
                         if firstAccidental == nil {

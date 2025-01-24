@@ -34,7 +34,6 @@ public enum DynamicType: String, CaseIterable, Comparable, Codable, CustomString
         }
     }
 
-    // Required for Comparable
     public static func < (lhs: DynamicType, rhs: DynamicType) -> Bool {
         return lhs.rawValue < rhs.rawValue
     }
@@ -46,9 +45,9 @@ public enum ArticulationType: CaseIterable, Comparable, Codable {
     var description: String {
         switch self {
         case .legato:
-            return "Legato"
+            return "legato"
         case .staccato:
-            return "Staccato"
+            return "staccato"
         }
     }
 }
@@ -503,7 +502,7 @@ public class Scale : Codable {
         }
         
         ///Now adjust MIDIs for contrary motion if required - downwards direction, contrary
-        if true && scaleMotion == .contraryMotion {
+        if scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
             let middleIndex = (scaleNoteState[1].count / 2) + 1
@@ -573,9 +572,6 @@ public class Scale : Codable {
             }
         }
         
-        if self.debugOn {
-            //self.debug5("end create", short: false)
-        }
         Scale.createCount += 1
     }
 
@@ -598,7 +594,7 @@ public class Scale : Codable {
             if d > 0 {
                 desc += " or "
             }
-            if long {
+            if false && long {
                 desc += String(dynamic.description)
             }
             else {
@@ -810,13 +806,13 @@ public class Scale : Codable {
     
     func abbreviateFileName(name:String) -> String {
         var out = name
-        out = out.replacingOccurrences(of: "Harmonic", with: "H")
+        out = out.replacingOccurrences(of: "Harmonic", with: "Harm")
         out = out.replacingOccurrences(of: "Motion", with: "")
         out = out.replacingOccurrences(of: "Broken", with: "Br. ")
         return out
     }
     
-    func debug22(_ msg:String, short:Bool=false)  {
+    func debug1(_ msg:String, short:Bool=false)  {
         if !self.debugOn {
             return
         }
@@ -1031,6 +1027,7 @@ public class Scale : Codable {
             
         }
         ///Regular scale
+        let defaultfingers = "1231234"
         
         if scaleShapeForFingering == .scale {
             ///Note that for LH finger the given pattern goes from high to low notes (reversed)
@@ -1044,7 +1041,17 @@ public class Scale : Codable {
                     fingers = hand == 0 ? "2341231" : "4123123"
                 }
                 else {
-                    fingers = hand == 0 ? "3412312" : "4123123"
+                    if scaleType == .harmonicMinor {
+                        fingers = hand == 0 ? "3412312" : "4123123"
+                    }
+                    else {
+                        if hand == 0 {
+                            fingeringSpecifiedByNote = [2,3,1,2,  3,4,1,2,  3,1,2,3,  4,1,3,2,  1,3,2,1, 4,3,2,1,  3,2,1,3, 2]
+                        }
+                        else {
+                            fingers = "4123123"
+                        }
+                    }
                 }
             case "G♭":
                 if scaleType == .major {
@@ -1053,6 +1060,11 @@ public class Scale : Codable {
                 else {
                     fingers = hand == 0 ? "2312341" : "4123123"
                 }
+//            case "F#":
+//                ///Variants beside melodic minor can default
+//                if scaleType == .melodicMinor {
+//                    fingers = hand == 0 ? "2312341" : "4123123"
+//                }
             case "G#":
                 fingers = hand == 0 ? "3412312" : "212341231234123"
                 if scaleType == .melodicMinor {
@@ -1091,8 +1103,11 @@ public class Scale : Codable {
                     }
                 }
             default:
-                fingers = "1231234"
+                fingers = ""
             }
+        }
+        if fingers.count == 0 {
+            fingers = defaultfingers
         }
                 
         ///Three note arpeggio
@@ -1211,28 +1226,23 @@ public class Scale : Codable {
         
         ///Fingering is simply the fingers in the specified array
         if let fingeringSpecifiedByNote = fingeringSpecifiedByNote {
-            if self.debugOn {
-            }
             if fingeringSpecifiedByNote.count != self.scaleNoteState[hand].count {
                 fatalError("Wrong fingering count. Specified:\(fingeringSpecifiedByNote.count) scale:\(scaleNoteState[hand].count)")
             }
             for f in 0..<fingeringSpecifiedByNote.count {
                 self.scaleNoteState[hand][f].finger = fingeringSpecifiedByNote[f]
             }
-            //self.debug22("")
             handled = true
         }
 
         if !handled {
-            ///Apply the finger patterns for ascending and descending. The finger pattern used is the pattern for the right hand ascending.
+            ///Apply the regular (as defined above) finger patterns for ascending and descending. The finger pattern used is the pattern for the right hand ascending.
             ///For LH ascending the pattern is applied to the middle of the LH scale. For LH contrary motion its applied to the start of the LH scale (the highest note)
             let halfway = scaleNoteState[hand].count / 2
             if hand == 0 {
                 applyFingerPatternToScaleStart(halfway: halfway)
             }
             if hand == 1 {
-                if self.debugOn {
-                }
                 if scaleMotion == .similarMotion {
                     applyFingerPatternToScaleMiddle(halfway: halfway)
                 }
@@ -1240,19 +1250,35 @@ public class Scale : Codable {
                     applyFingerPatternToScaleStart(halfway: halfway)
                 }
             }
-            if hand == 0 {
+            
+            if self.debugOn {
+                
+            }
+            ///For scales starting on a black note adjust the first and last finger to 2
+            if hand == 0 || (hand == 1 && self.scaleMotion == .contraryMotion) {
                 ///All RH scales and arpggeios starting on black note have first finger = 2
                 ///But only the first, after that revert to the regular fingering from the pattern.
                 for n in 0..<scaleNoteState[0].count-1 {
-                    let state = self.scaleNoteState[0][n]
+                    let state = self.scaleNoteState[hand][n]
                     if state.isWhiteKey() {
                        break
                     }
                     else {
                         state.finger = 2 + n
+                        let lastNote = self.scaleNoteState[hand].count-n-1
+                        self.scaleNoteState[hand][lastNote].finger = 2 + n
                     }
                 }
             }
+            if hand == 1 && (self.scaleMotion != .contraryMotion){
+                ///All LH scales and arpggeios highest on a black note have first finger 2 on that high note
+                let state = self.scaleNoteState[hand][halfway]
+                let startsOnBlack = !state.isWhiteKey()
+                if startsOnBlack {
+                    scaleNoteState[hand][halfway].finger = 2
+                }
+            }
+            
         }
         
         func setFinger(hand:Int, index:Int, finger:Int) {
@@ -1290,25 +1316,20 @@ public class Scale : Codable {
         func applyFingerPatternToScaleMiddle(halfway:Int) {
             ///RULE: All LH scales starting on a black note have finger 2 as their highest note.
             let firstNote = self.scaleNoteState[hand][0]
-            let startsOnBlack = !firstNote.isWhiteKey()
             var f = 0
             ///For LH - start at the start of the LH scale then count forwards through fingers pattern. Work backwards down the scale and then mirror the fingering around the high note.
             for i in stride(from: halfway, through: 0, by: -1) {
-                //for i in stride(from: halfway, to: 0, by: -1) {
                 scaleNoteState[hand][i].finger = stringIndexToInt(index: f, fingers: fingers)
                 if ![.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
                     scaleNoteState[hand][i + 2*f].finger = stringIndexToInt(index: f, fingers: fingers)
                 }
                 f += 1
             }
-            if debugOn {
-                //self.debug1("applyFingerPatternToScaleStart")
-            }
 
-            if startsOnBlack {
+            //if startsOnBlack {
                 ///Highest note
-                scaleNoteState[hand][halfway].finger = 2
-            }
+//                scaleNoteState[hand][halfway].finger = 2
+            //}
             
             if leftHandLastFingerJump > 0  {
                 ///Adjust last note played

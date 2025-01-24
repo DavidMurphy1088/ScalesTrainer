@@ -4,6 +4,8 @@ import SwiftUI
 
 struct ScaleTitleView: View {
     let scale:Scale
+    let practiseModeOnly:Bool
+    
     @EnvironmentObject var orientationInfo: OrientationInfo
     
     func getHelp(topic:String) -> String? {
@@ -34,7 +36,7 @@ struct ScaleTitleView: View {
                 else {
                     handName = " Together"
                 }
-                title += "," + handName
+                title += ", " + handName
             }
         }
         if scale.octaves > 1 {
@@ -51,7 +53,9 @@ struct ScaleTitleView: View {
         let compoundTime = scale.timeSignature.top % 3 == 0
         if UIDevice.current.userInterfaceIdiom == .phone {
             VStack {
-                Text("\(getTitle())").padding(.horizontal, 0)
+                //HStack {
+                    Text("\(getTitle())").padding(.horizontal, 0)
+                //}
                 HStack(spacing: 0) {
                     Text("min. ").padding(.horizontal, 0)
                     Image(compoundTime ? "crotchetDotted" : "crotchet")
@@ -60,10 +64,11 @@ struct ScaleTitleView: View {
                         .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
                     ///Center it
                         .padding(.bottom, 4)
-                    Text("=\(scale.minTempo)").padding(.horizontal, 0)
-                }
-                HStack {
+                    Text("=\(scale.minTempo), ").padding(.horizontal, 0)
                     Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
+                }
+                if practiseModeOnly {
+                    Text("Separate Hand Practise Only").padding(.horizontal, 0).italic().foregroundColor(.white)
                 }
             }
             .font(.body)
@@ -80,15 +85,18 @@ struct ScaleTitleView: View {
                         .padding(.bottom, 8)
                     //.padding(.top, 8)
                     Text("=\(scale.minTempo)").padding(.horizontal, 0)
-                    if !orientationInfo.isPortrait {
+                    //if !orientationInfo.isPortrait {
                         Text(", \(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
-                    }
+                    //}
                 }
-                if orientationInfo.isPortrait {
-                    HStack {
-                        Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
-                    }
+                if practiseModeOnly {
+                    Text("Separate Hand Practise Only").padding(.horizontal, 0).italic().foregroundColor(.white)
                 }
+//                if orientationInfo.isPortrait {
+//                    HStack {
+//                        Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
+//                    }
+//                }
             }
             //.font(.body)
             ///Large ttitle font overflows on long titles
