@@ -150,10 +150,13 @@ public class Score : ObservableObject, Encodable {
     public var key:StaffKey
     
     @Published public var scoreEntries:[ScoreEntry] = []
+    
     public var staffs:[Staff] = [] ///0 is treble, 1 is bass
 
-    @Published public var barLayoutPositions:BarLayoutPositions
-
+    //@Published public var barLayoutPositions:BarLayoutPositions
+    @Published var barPositionsUpdates = 0
+    var barLayoutPositions:BarLayoutPositions
+    
     let ledgerLineCount =  2 //3//4 is required to represent low E
     
     public var studentFeedback:StudentFeedback? = nil

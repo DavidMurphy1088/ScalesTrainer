@@ -1,7 +1,7 @@
-//import Foundation
 import SwiftUI
 import CoreData
 
+///Draw the stem for a timeslice - either a note or a group of notes in a chord
 public struct StemView: View {
     @ObservedObject var score: Score
     @State var staff: Staff
@@ -88,7 +88,6 @@ public struct StemView: View {
                                         path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength() - inErrorAjdust))))
                                     }
                                     .stroke(staffNotes[0].getColor(staff: staff), lineWidth: 1.5)
-                                        
                                 }
                             }
                         }

@@ -18,19 +18,14 @@ public class NoteLayoutPositions { //}: ObservableObject {
     init() {
         self.id = UUID()
     }
-
-//    public func getPositions1() -> [(StaffNote, CGRect)] {
-//        //noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence })
-//        var result:[(StaffNote, CGRect)] = []
-//        let notes = positions.keys.sorted(by: { $0.timeSlice.sequence < $1.timeSlice.sequence })
-//        for n in notes {
-//            let rect:CGRect = positions[n]!
-//            let newNote = StaffNote(note: n)
-//            result.append((newNote, rect))
-//        }
-//        return result
-//    }
-
+    
+    func debug(_ ctx:String) {
+        print ("=============== NoteLayoutPos", ctx)
+        for k in positions.keys {
+            print(k, positions[k] ?? "")
+        }
+    }
+    
     func getPositionForSequence(sequence:Int) -> CGRect? {
         for k in positions.keys {
             if k.timeSlice.sequence == sequence {
@@ -40,35 +35,89 @@ public class NoteLayoutPositions { //}: ObservableObject {
         return nil
     }
 
-    public func storePosition(onAppear:Bool, notes: [StaffNote], rect: CGRect) {
+    public func storePosition(mode:Int, notes: [StaffNote], rect: CGRect) -> Bool {
         if notes.count > 0 {
             if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
+                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
+                //if !self.positions.keys.contains(notes[0]) {
+                    let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
+                    //DispatchQueue.main.async {
+                    ///Make sure this fires after all other UI is rendered
+                    ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
+                    //sleep(UInt32(0.25))
+                    //sleep(UInt32(0.5))
+                    self.positions[notes[0]] = rectCopy
+                    return true
+                //}
+            }
+        }
+        return false
+    }
+}
+
+public class BarLayoutPositions {
+    public var positions:[BarLine: CGRect] = [:]
+    var id:UUID
+    static var nextId = 0
+
+    init() {
+        self.id = UUID()
+    }
+
+//    func getPositionForSequence(sequence:Int) -> CGRect? {
+//        for k in positions.keys {
+//            if k.timeSlice.sequence == sequence {
+//                return positions[k]
+//            }
+//        }
+//        return nil
+//    }
+
+    public func storePosition(mode:Int, barLine: BarLine, rect: CGRect) {
+        //if notes.count > 0 {
+            //if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
+                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
                 let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
                 //DispatchQueue.main.async {
                     ///Make sure this fires after all other UI is rendered
                     ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
                     //sleep(UInt32(0.25))
                     //sleep(UInt32(0.5))
-                self.positions[notes[0]] = rectCopy
-            }
-        }
+                self.positions[barLine] = rectCopy
+            //}
+        //}
     }
 }
 
-public class BarLayoutPositions : ObservableObject {
-    @Published public var positions:[BarLine: CGRect] = [:]
-    
-    public init() {
-    }
-    
-    public func storePosition(barLine:BarLine, rect: CGRect, ctx:String) {
-        //print("============= storePosition, store barline COUNT:", self.positions.count, "BARLINE", barLine.id, "RECT", rect)
-        DispatchQueue.main.async {
-            let rectCopy = rect
-            self.positions[barLine] = rectCopy
-        }
-    }
-}
+//public class BarLayoutPositions : ObservableObject {
+//    @Published public var positions:[BarLine: CGRect] = [:]
+//    
+//    public init() {
+//    }
+//    
+//    public func storeBarLinePositionOld(barLine:BarLine, rect: CGRect, ctx:String) {
+//        //print("============= storePosition, store barline COUNT:", self.positions.count, "BARLINE", barLine.id, "RECT", rect)
+//        DispatchQueue.main.async {
+//            let rectCopy = rect
+//            self.positions[barLine] = rectCopy
+//        }
+//    }
+//
+//    public func storeBarLinePosition(onAppear:Bool, notes: [StaffNote], rect: CGRect) {
+//        if notes.count > 0 {
+//            if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
+//                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
+//                let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
+//                //DispatchQueue.main.async {
+//                    ///Make sure this fires after all other UI is rendered
+//                    ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
+//                    //sleep(UInt32(0.25))
+//                    //sleep(UInt32(0.5))
+//                self.positions[notes[0]] = rectCopy
+//            }
+//        }
+//    }
+//}
 
 class StaffPlacementsByKey {
     var staffPlacement:[NoteStaffPlacement] = []
@@ -351,19 +400,13 @@ public class StaffClef : ScoreEntry {
             if offsetFromTonic < 0 {
                 offsetFromTonic = 12 + offsetFromTonic
             }
-            //if scale.debugOn {
-//                if midiValue == 65 {
-//                }
-            //}
-            guard let notePlacement = noteOffsetsInScaleByKey.getDefaultPlacement(scale: scale, noteValue: midiValue, scaleDegree: offsetFromTonic, keyNum: keyNumber) else {
+           guard let notePlacement = noteOffsetsInScaleByKey.getDefaultPlacement(scale: scale, noteValue: midiValue, scaleDegree: offsetFromTonic, keyNum: keyNumber) else {
                 Logger.shared.reportError(self, "No note offset data for note \(midiValue)")
                 break
             }
             if notePlacement.placementCanBeSetByKeySignature == false {
                 if Settings.shared.isDeveloperMode() {
                     if notePlacement.midi > 50 && notePlacement.midi < 80 {
-//                        print("===========================🐱🐱🐱🐱 DISALLLOW MODIFY ON \(self.scale.getTitle())",
-//                              "midi", notePlacement.midi, notePlacement.offsetFromStaffMidline, notePlacement.accidental)
                     }
                 }
             }

@@ -744,10 +744,10 @@ public class ScalesModel : ObservableObject {
             offsetsInGroup.append(placement.offsetFromStaffMidline)
         }
         
-        ///==================================================================================================================
+        ///------------------------------------------------------------------------------------------------
         ///Create the required display staffs (one for the each hand) and position the required notes in them.
         ///Group all notes within a clef and then set their stem characteristics according to the clef just before them. i.e. obey clef switching
-        ///==================================================================================================================
+        ///------------------------------------------------------------------------------------------------
 
         ///Adjust this note's accidental to counter a previous note in the bar's accidental if the note was at the same staff offset but a different MIDI.
         ///If the MIDI is the same as the previous note at the staff offset, set this note's accidental to nil since it's accidental conveys from the previous note.

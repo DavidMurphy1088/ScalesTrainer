@@ -5,7 +5,8 @@ import MessageUI
 public struct ScoreView: View {
     let scale:Scale
     @ObservedObject var score:Score
-    @ObservedObject var barLayoutPositions:BarLayoutPositions
+    //@ObservedObject 
+    var barLayoutPositions:BarLayoutPositions
     let widthPadding:Bool
     @State private var dragOffset = CGSize.zero
     @State var logCtr = 0
@@ -49,14 +50,14 @@ public struct ScoreView: View {
             .overlay(
                 ///For a hands-together staff bar lines must extend between the staves
                 ZStack {
-                    if scale.hands.count > 1 {
-                        let xDelta = UIScreen.main.bounds.width * 0.015
+                    if scale.hands.count > 1 && score.barPositionsUpdates >= 0 {
+                        let delta = UIScreen.main.bounds.width * 0.015
                         let height = score.lineSpacing * 12 //UIScreen.main.bounds.height * 0.09
                         ForEach(score.barLayoutPositions.positions.map { $0.key }, id: \.self) { barLine in
                             if let rect = score.barLayoutPositions.positions[barLine] {
                                 Path { path in
-                                    path.move(to: CGPoint(x: rect.midX - xDelta, y: rect.midY + 0))
-                                    path.addLine(to: CGPoint(x: rect.midX - (xDelta * 1.0), y: rect.midY + height))
+                                    path.move(to: CGPoint(x: rect.midX - delta, y: rect.midY + 0))
+                                    path.addLine(to: CGPoint(x: rect.midX - (delta * 1.0), y: rect.midY + height))
                                 }
                                 .stroke(Color.black, lineWidth: 1)
                             }

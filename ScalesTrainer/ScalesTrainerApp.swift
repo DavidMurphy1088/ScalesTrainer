@@ -201,7 +201,7 @@ class TabSelectionManager: ObservableObject {
             ScalesModel.shared = ScalesModel()
             let scalesModel = ScalesModel.shared
             if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .chromatic,
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
                                                 scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
