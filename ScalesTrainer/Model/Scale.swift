@@ -505,29 +505,35 @@ public class Scale : Codable {
         if scaleMotion == .contraryMotion {
             ///The left hand start has to be the RH start pitch. The LH is switched from ascending then descending to descending then ascending.
             ///So interchange the two halves of the scale.
-            let middleIndex = (scaleNoteState[1].count / 2) + 1
-            let firstPart = scaleNoteState[1].prefix(middleIndex)
-            let secondPart = scaleNoteState[1].suffix(middleIndex)
-
-            scaleNoteState[1] = []
+            if self.debugOn {
+                
+            }
+            let leftHand = 1
+            let middleIndex = (scaleNoteState[leftHand].count / 2) + 1
+            let firstPart = scaleNoteState[leftHand].prefix(middleIndex)
+            let secondPart = scaleNoteState[leftHand].suffix(middleIndex)
+            let segmentsOfBottomNote = scaleNoteState[leftHand][middleIndex-1].segments
+            
+            scaleNoteState[leftHand] = []
             var seq = 0
             ///For octaves > 1 the top of the left hand scale is higher than the start of the right hand scale. So remove that overlap.
             let leftOverlapWithRight = octaves == 1 ? 0 : 12
             for state in secondPart {
                 ///Need deep copy
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: state.midi - leftOverlapWithRight, value: state.value, segment: [0]))
-                //segmentCounter += 1
+                scaleNoteState[leftHand].append(ScaleNoteState(sequence: seq, midi: state.midi - leftOverlapWithRight, value: state.value, segment: [0]))
             }
             seq = 0
             for i in 1..<firstPart.count {
-                scaleNoteState[1].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi - leftOverlapWithRight, value: firstPart[i].value, segment: [1]))
+                scaleNoteState[leftHand].append(ScaleNoteState(sequence: seq, midi: firstPart[i].midi - leftOverlapWithRight, value: firstPart[i].value, segment: [1]))
             }
             ///The last note value is now in the middle of the scale ... so exchange it
-            let lastNoteValue = scaleNoteState[1][middleIndex - 1].value
-            let firstNoteValue = scaleNoteState[1][0].value
-            scaleNoteState[1][middleIndex - 1].value = firstNoteValue
-            let lastNoteIndex = scaleNoteState[1].count-1
-            scaleNoteState[1][lastNoteIndex].value = lastNoteValue
+            let lastNoteValue = scaleNoteState[leftHand][middleIndex - 1].value
+            let firstNoteValue = scaleNoteState[leftHand][0].value
+            scaleNoteState[leftHand][middleIndex - 1].value = firstNoteValue
+            let lastNoteIndex = scaleNoteState[leftHand].count-1
+            scaleNoteState[leftHand][lastNoteIndex].value = lastNoteValue
+            ///In the LH previously, the highest note had segments 1 and 2. Now those segments have to be moved to the new lowest note (for the turnaround)
+            scaleNoteState[leftHand][middleIndex-1].segments = segmentsOfBottomNote.map { $0 }
         }
         
         ///Set last note value
@@ -575,17 +581,7 @@ public class Scale : Codable {
         Scale.createCount += 1
     }
 
-    func getTitle() -> String {
-        var title = ""
-        let arpeggio = self.scaleType.description.localizedCaseInsensitiveContains("arpeggio")
-        if arpeggio {
-            title = self.scaleType.description + " on " + self.scaleRoot.name
-        }
-        else {
-            title = self.scaleRoot.name + " " + self.scaleType.description
-        }
-        return title
-    }
+
     
     func getDynamicsDescription(long:Bool) -> String {
         var desc = ""
@@ -779,6 +775,9 @@ public class Scale : Codable {
         if [.brokenChordMajor, .brokenChordMinor].contains(scaleType) {
             backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
         }
+        if [.arpeggioDiminished, .arpeggioDiminishedSeventh, .arpeggioMajor, .arpeggioMinor, .arpeggioMajorSeventh, .arpeggioMinorSeventh].contains(scaleType) {
+            backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
+        }
 
         guard let backingChords = backingChords else {
             return nil
@@ -812,9 +811,9 @@ public class Scale : Codable {
         return out
     }
     
-    func debug1(_ msg:String, short:Bool=false)  {
+    func debug11(_ msg:String, short:Bool=false)  {
         if !self.debugOn {
-            return
+            //return
         }
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves,
               "motion:", self.scaleMotion)

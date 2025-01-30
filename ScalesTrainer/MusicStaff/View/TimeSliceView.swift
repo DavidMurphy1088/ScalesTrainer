@@ -45,21 +45,42 @@ public struct StaffClefView: View {
         self.staffClef = staffClef
         self.staff = staff
         self.isTransparent = staff.handType == .left
+        
     }
         
+    func getClefSize(clefType:ClefType) -> Double {
+        var size = 0.0
+        if staffClef.clefType == .treble {
+            size = score.lineSpacing * 8
+        }
+        else {
+            size = score.lineSpacing * 5
+            //size = UIDevice.current.userInterfaceIdiom == .phone ? 4.0 : 5.0
+        }
+        if score.getScale().getScaleNoteCount() > 32 {
+            size = size * 0.75 ///2 octave chromatic
+        }
+        else {
+            if score.getScale().getScaleNoteCount() > 24 {
+                //size = size * 0.85 ///2 octave scale
+            }
+        }
+        return size
+    }
+    
     public var body: some View {
         VStack {
             if staffClef.clefType == .treble {
                 Text("\u{1d11e}")
                     .foregroundColor(isTransparent ? .black : .clear)
-                    .font(.system(size: CGFloat(score.lineSpacing * 8)))
+                    .font(.system(size: CGFloat(getClefSize(clefType: staffClef.clefType))))
                     .padding(.top, 0.0)
                     .padding(.bottom, score.lineSpacing * 1.0)
             }
             else {
                 Text("\u{1d122}")
                     .foregroundColor(isTransparent ? .black : .clear)
-                    .font(.system(size: CGFloat(Double(score.lineSpacing) * 5.0)))
+                    .font(.system(size: CGFloat(getClefSize(clefType: staffClef.clefType))))
             }
         }
         .frame(minWidth: Double(score.lineSpacing)  * 1.1)
@@ -174,11 +195,8 @@ struct StaffNoteView: View {
 
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
 
-            ////let noteValueUnDotted = note.isDotted() ? note.getValue() * 2.0/3.0 : note.getValue()
             let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
 
-            //if note.staffNum == staff.staffNum  {
-            //if timeSlice.showIsPlaying {
             if note.showIsPlaying {
                 NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
             }
@@ -186,10 +204,12 @@ struct StaffNoteView: View {
             if let accidental = accidental {
                 let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
                 Text(getAccidental(accidental: accidental))
-                    .font(.system(size: lineSpacing * 3.0))
-                    .frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
-                    .position(x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
-                              y: noteEllipseMidpoint + yOffset)
+                    //.font(.system(size: lineSpacing * 3.0)).bold()
+                    .font(.system(size: lineSpacing * 2.5)).bold()
+                    //.frame(width: noteWidth * 1.0, height: CGFloat(Double(lineSpacing) * 1.0))
+                    .position(
+                        x: noteFrameWidth/2 - lineSpacing * (timeSlice.anyNotesRotated() ? 3.0 : 1.2), //3.0 : 1.5
+                        y: noteEllipseMidpoint + yOffset)
                     .foregroundColor(note.getColor(staff: staff))
             }
             if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted ) {

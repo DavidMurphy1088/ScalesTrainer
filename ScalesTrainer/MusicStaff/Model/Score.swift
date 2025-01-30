@@ -154,8 +154,8 @@ public class Score : ObservableObject, Encodable {
     public var staffs:[Staff] = [] ///0 is treble, 1 is bass
 
     //@Published public var barLayoutPositions:BarLayoutPositions
-    @Published var barPositionsUpdates = 0
-    var barLayoutPositions:BarLayoutPositions
+    //@Published var barPositionsUpdates = 0
+    //var barLayoutPositions:BarLayoutPositions
     
     let ledgerLineCount =  2 //3//4 is required to represent low E
     
@@ -178,12 +178,13 @@ public class Score : ObservableObject, Encodable {
             self.lineSpacing = 8.0
         }
         else {
-            self.lineSpacing = scale.hands.count > 1 ? 8.0 : 10
+            //29Jan2025 - Other calculations elsewhere have to be micro adjusted if lineSpacing changes. Best to leave it constant
+            self.lineSpacing = 8.0 //scale.hands.count > 1 ? 8.0 : 10
         }
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
-        barLayoutPositions = BarLayoutPositions()
+        //barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
         self.debugOn = debugOn
     }
@@ -199,14 +200,17 @@ public class Score : ObservableObject, Encodable {
         //try container.encode(ledgerLineCount, forKey: .ledgerLines)
         //try container.encode(tempo, forKey: .tempo)
     }
-    
+    func getScale() -> Scale {
+        return self.scale
+    }
     func getBraceHeight() -> Double {
         let heightMult:Double
+        ///NB This needs to be changed if staff height is changed
         if UIDevice.current.userInterfaceIdiom == .phone {
-            heightMult = scale.hands.count > 1 ? 1.47 : 1.54
+            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
         }
         else {
-            heightMult = scale.hands.count > 1 ? 1.47 : 1.54
+            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
         }
         return getStaffHeight() * heightMult
     }
@@ -252,8 +256,7 @@ public class Score : ObservableObject, Encodable {
 
     public func getStaffHeight() -> Double {
         //let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
-        ///9Nov24 - Trinity E minor LH broken chords needs 3 ledger lines aboave staff ☹️
-        let height = Double(getTotalStaffLineCount() + 2) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
+        let height = Double(getTotalStaffLineCount() + 5) * self.lineSpacing ///Jan2025 Bad case Trinity Gr5, G Harmonic minor
         return height
     }
     
@@ -384,12 +387,12 @@ public class Score : ObservableObject, Encodable {
         return result
     }
 
-    public func debug1(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
+    public func debug11(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
 //        if !self.debugOn {
 //            return
 //        }
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
-        print("\nSCORE DEBUG =====", ctx, "\tScale", scale.getTitle())
+        print("\nSCORE DEBUG =====", ctx, "\tScale", scale.scaleRoot, scale.scaleType.description)
         //let midiFilter = nil //[60, 62, 63,64]
         
         for entry in self.scoreEntries {

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ScaleTitleView: View {
     let scale:Scale
-    let practiseModeOnly:Bool
+    let practiceModeHand:HandType?
     
     @EnvironmentObject var orientationInfo: OrientationInfo
     
@@ -12,7 +12,30 @@ struct ScaleTitleView: View {
         return HelpMessages.shared.messages[topic] ?? ""
     }
     
-    func getTitle() -> String {
+    func getTitle(practiceModeHand:HandType?) -> String {
+        func getHandName() -> String? {
+            var handName:String? = nil
+            if scale.hands.count == 1 {
+                switch scale.hands[0] {
+                case 0: handName = "RH"
+                case 1: handName = "LH"
+                default: handName = "Together"
+                }
+            }
+            else {
+                if let practiceHand = practiceModeHand {
+                    switch practiceHand {
+                    case .right: handName = "RH"
+                    default: handName = "LH"
+                    }
+                }
+                else {
+                    handName = "Together"
+                }
+            }
+            return handName
+        }
+        
         var title = ""
         if let customisation = scale.scaleCustomisation {
             if let custonName = customisation.customScaleName {
@@ -20,22 +43,11 @@ struct ScaleTitleView: View {
             }
         }
         if title.count == 0 {
-            title = scale.getTitle()
+            title = scale.scaleRoot.name + " " + scale.scaleType.description
             if scale.scaleMotion == .contraryMotion {
                 title += " in Contrary Motion"
             }
-            else {
-                var handName = ""
-                if scale.hands.count == 1 {
-                    switch scale.hands[0] {
-                    case 0: handName = "RH"
-                    case 1: handName = "LH"
-                    default: handName = "Together"
-                    }
-                }
-                else {
-                    handName = " Together"
-                }
+            if let handName = getHandName() {
                 title += ", " + handName
             }
         }
@@ -54,7 +66,7 @@ struct ScaleTitleView: View {
         if UIDevice.current.userInterfaceIdiom == .phone {
             VStack {
                 //HStack {
-                    Text("\(getTitle())").padding(.horizontal, 0)
+                    Text("\(getTitle(practiceModeHand: practiceModeHand))").padding(.horizontal, 0)
                 //}
                 HStack(spacing: 0) {
                     Text("min. ").padding(.horizontal, 0)
@@ -67,8 +79,8 @@ struct ScaleTitleView: View {
                     Text("=\(scale.minTempo), ").padding(.horizontal, 0)
                     Text("\(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
                 }
-                if practiseModeOnly {
-                    Text("Separate Hand Practise Only").padding(.horizontal, 0).italic().foregroundColor(.white)
+                if practiceModeHand != nil {
+                    Text("Separate Hand Practice Only").padding(.horizontal, 0).italic().foregroundColor(.white)
                 }
             }
             .font(.body)
@@ -76,7 +88,7 @@ struct ScaleTitleView: View {
         else {
             VStack {
                 HStack(spacing: 0) {
-                    Text("\(getTitle()), min. ").padding(.horizontal, 0)
+                    Text("\(getTitle(practiceModeHand: practiceModeHand)), min. ").padding(.horizontal, 0)
                     Image(compoundTime ? "crotchetDotted" : "crotchet")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -89,8 +101,8 @@ struct ScaleTitleView: View {
                         Text(", \(scale.getDynamicsDescription(long: true)), \(scale.getArticulationsDescription())").italic().padding(.horizontal, 0)
                     //}
                 }
-                if practiseModeOnly {
-                    Text("Separate Hand Practise Only").padding(.horizontal, 0).italic().foregroundColor(.white)
+                if practiceModeHand != nil {
+                    Text("Separate Hand Practice Only").padding(.horizontal, 0).italic().foregroundColor(.white)
                 }
 //                if orientationInfo.isPortrait {
 //                    HStack {

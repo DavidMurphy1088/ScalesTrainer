@@ -128,7 +128,7 @@ struct DeveloperView: View {
             Spacer()
 
             Button("Firebase Signin") {
-                firebase.signIn(email: email, pwd: password)
+//                firebase.signIn(email: email, pwd: password)
             }
             Spacer()
             
@@ -202,7 +202,7 @@ class TabSelectionManager: ObservableObject {
             let scalesModel = ScalesModel.shared
             if true {
                 scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                                scaleMotion: .similarMotion, minTempo: 40, octaves: 1, hands: [0],
+                                                scaleMotion: .contraryMotion, minTempo: 80, octaves: 1, hands: [1],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
                                                 debugOn: true)
@@ -271,12 +271,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            //return .portrait // Lock to portrait on iPhone
-            return [.portrait, .landscapeLeft, .landscapeRight]
+            //return [.portrait, .landscapeLeft, .landscapeRight]
+            return [.portrait]
         } else {
             return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
         }
     }
+    
 }
 
 @main
@@ -336,7 +337,7 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(practiceChartCell: nil, practiseModeOnly: false)
+                ScalesView(practiceChartCell: nil, practiceModeHand: nil)
                 //TestView()
                 //FFTContentView()
                     .tabItem {

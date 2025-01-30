@@ -41,7 +41,7 @@ struct ScalesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     //let initialRunProcess:RunningProcess?
     let practiceChartCell:PracticeChartCell?
-    let practiseModeOnly:Bool
+    let practiceModeHand:HandType?
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var exerciseState = ExerciseState.shared
 
@@ -71,9 +71,9 @@ struct ScalesView: View {
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
     
-    init(practiceChartCell:PracticeChartCell?, practiseModeOnly:Bool) {
+    init(practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
         self.practiceChartCell = practiceChartCell
-        self.practiseModeOnly = practiseModeOnly
+        self.practiceModeHand = practiceModeHand
     }
 
     func showHelp(_ topic:String) {
@@ -535,7 +535,7 @@ struct ScalesView: View {
     var body: some View {
         VStack {
             VStack(spacing: 0) {
-                ScaleTitleView(scale: scalesModel.scale, practiseModeOnly: practiseModeOnly)
+                ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
                     .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
                     .padding(.horizontal, 0)
                 HStack {
@@ -590,7 +590,7 @@ struct ScalesView: View {
                 if scalesModel.showStaff {
                     if let score = scalesModel.getScore() {
                         VStack {
-                            ScoreView(scale: ScalesModel.shared.scale, score: score, barLayoutPositions: score.barLayoutPositions, widthPadding: false)
+                            ScoreView(scale: ScalesModel.shared.scale, score: score)
                         }
                         .commonFrameStyle(backgroundColor: Color.white)
                     }
@@ -699,7 +699,7 @@ struct ScalesView: View {
             exerciseState.setExerciseState(ctx: "ScalesView, onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             //if scalesModel.scale.debugOn {
-            //scalesModel.scale.debug1("In View1", short: false)
+                //scalesModel.scale.debug1("In View1", short: false)
             //}
             if let score = scalesModel.getScore() {
                 //score.debug2(ctx: "ScalesView.onAppear", handType: nil)

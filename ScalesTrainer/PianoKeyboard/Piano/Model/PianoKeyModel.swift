@@ -39,7 +39,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Tracks keyboard key presses as a process like recording a scale is underway
     var keyWasPlayedState:PianoKeyPlayedState
     
-    /// The note in the scale to which the key currently maps. The mapping changes between ascending and descending
+    ///The note in the scale to which the key currently maps. The mapping changes between ascending and descending
     //private(set) var scaleNoteState:ScaleNoteState?
     private(set) var scaleNoteState:ScaleNoteState?
     

@@ -2,9 +2,8 @@ import SwiftUI
 import CoreData
 
 struct ScoreEntriesView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
-    var noteLayoutPositions:NoteLayoutPositions
-    //var barLayoutPositions:BarLayoutPositions
+    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+
     @ObservedObject var score:Score
     @ObservedObject var staff:Staff
     let scoreView:ScoreView
@@ -15,16 +14,13 @@ struct ScoreEntriesView: View {
     init(score:Score, staff:Staff, scoreView:ScoreView) {
         self.score = score
         self.staff = staff
-        self.noteLayoutPositions = staff.noteLayoutPositions
-        //self.barLayoutPositions = score.barLayoutPositions
         ScoreEntriesView.viewNum += 1
         self.viewNum = ScoreEntriesView.viewNum
-        //self.noteOffsetsInStaffByKey1 = NoteOffsetsInStaffByKey(keyType: score.key.type == .major ? .major : .minor)
         self.scoreView = scoreView
     }
     
-//    ///Return the start and end points for the quaver beam based on the note postions that were reported
-    func getBeamLine(endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
+    ///Return the start and end points for the quaver beam based on the note postions that were reported
+    func getBeamLine(noteLayoutPositions:NoteLayoutPositions, endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
         let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
         let stemLength = max(startNote.stemLength, endNote.stemLength) * score.lineSpacing
         //let endNotePos = noteLayoutPositions.positions[endNote]
@@ -38,7 +34,6 @@ struct ScoreEntriesView: View {
             let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
             let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
             
-            //start note
             let startNotePos = noteLayoutPositions.positions[startNote]
             if let startNotePos = startNotePos {
                 let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
@@ -51,12 +46,10 @@ struct ScoreEntriesView: View {
                 return (p1, p2)
             }
         }
-        print("============== ScoreEntriesView, getBeamLine", "🥵🥵🥵🥵🥵NONE")
         return nil
     }
     
     func getQuaverImage(note:StaffNote) -> Image {
-        //return Image(note.midiNumber > 71 ? "quaver_arm_flipped_grayscale" : "quaver_arm_grayscale")
         return Image("")
     }
     
@@ -67,7 +60,6 @@ struct ScoreEntriesView: View {
                 let height = lineSpacing * 4.5
                 let width = height / 3.0
                 let flippedHeightOffset = startNote.midi > 71 ? height / 2.0 : 0.0
-
             }
             else {
                 //A paired quaver
@@ -80,102 +72,75 @@ struct ScoreEntriesView: View {
         }
     }
         
-    func log(_ s:String, printIt:Bool) -> Bool {
-        if (false && printIt) {
-            print("=========== ScoreEntriesView", s)
-        }
+    func log(_ s:String) -> Bool {
+        //print("=========== ScoreEntriesView", self.score.lineSpacing)
         return true
     }
-//    func resetQuaverBeamsLayouts() {
-//        print("==========🟢🟢reset")
-//        noteLayoutPositions.positions = [:]
-//    }
-    func updateQuaverBeamsLayouts(mode:Int, timeSlice:TimeSlice, frame:CGRect) {
-        ///Update note layout positions so the view can draw in quaver beams in the exact right x,y positions
-        if noteLayoutPositions.storePosition(mode:mode, notes: timeSlice.getTimeSliceNotes(handType: staff.handType), rect: frame) {
-            DispatchQueue.main.async {
-//                let notes = timeSlice.getTimeSliceNotes(handType: .right) //♦️♦️♦️♦️♦️♦️♦️ Temporary ./...
-//                if notes.count > 0 && notes[0].midi == 80 {
-//                    print("==========🟢updateQuaverBeamsLayouts", "mode:", mode, "updateCount:", "pos:", frame.midX, "upd:", staff.notePositionsUpdates)
-//                }
-                ///Ensure note layout updates are published for subsequent drawing of quaver beams
-                staff.notePositionsUpdates += 1
-                //            if notes.count > 0 && notes[0].midi == 80 {
-                //                print("==========updateQuaverBeamsLayouts DISPATCHED", onAppear, staff.beamUpdates)
-                //            }
-            }
-        }
-    }
     
-    func updateBarPostionsLayouts(mode:Int, barLine:BarLine, frame:CGRect) {
-        score.barLayoutPositions.storePosition(mode:mode, barLine: barLine, rect: frame)
-        DispatchQueue.main.async {
-            score.barPositionsUpdates += 1
-        }
-    }
-    
-    struct TimeSlicePositionPreferenceKey: PreferenceKey {
-        // Store tuples of (TimeSlice, Anchor<CGPoint>)
-        static var defaultValue: [(timeSlice: TimeSlice, position: Anchor<CGPoint>)] = []
+    struct TimeSlicePositionPreferenceKeyOLD: PreferenceKey {
+        static var defaultValue: [(timeSlice: TimeSlice,
+                                   position: Anchor<CGRect>,
+                                  isPortrait: Bool)] = []
 
-        static func reduce(value: inout [(timeSlice: TimeSlice, position: Anchor<CGPoint>)],
-                           nextValue: () -> [(timeSlice: TimeSlice, position: Anchor<CGPoint>)]) {
+        static func reduce(
+            value: inout [(timeSlice: TimeSlice, position: Anchor<CGRect>, isPortrait: Bool)],
+            nextValue: () -> [(timeSlice: TimeSlice, position: Anchor<CGRect>, isPortrait: Bool)]
+        ) {
             value.append(contentsOf: nextValue())
         }
     }
     
-    func convert(prefs: [(timeSlice: TimeSlice, position: Anchor<CGPoint>)], proxy:GeometryProxy) -> Bool {
-        noteLayoutPositions.debug("1")
-        for pref in prefs {
-            let ts:TimeSlice = pref.timeSlice
-            noteLayoutPositions.positions = [:]
-            if ts.entries.count > 0 {
-                if let note:StaffNote = ts.entries[0] as? StaffNote {
-                    let pos = proxy[pref.position]
-                    noteLayoutPositions.positions[note] = CGRect(origin: pos, size: CGSize(width: 1, height: 1))
-                }
+    struct TimeSlicePositionPreferenceKey: PreferenceKey {
+        static var defaultValue: [(scoreEntry: ScoreEntry,
+                                   position: Anchor<CGRect>,
+                                   isPortrait: Bool)] = []
+
+        static func reduce(
+            value: inout [(scoreEntry: ScoreEntry, position: Anchor<CGRect>, isPortrait: Bool)],
+            nextValue: () -> [(scoreEntry: ScoreEntry, position: Anchor<CGRect>, isPortrait: Bool)]
+        ) {
+            value.append(contentsOf: nextValue())
+        }
+    }
+
+    func getNoteWidth() -> Double {
+        var noteWidth = score.lineSpacing * 1.1
+        if score.getScale().getScaleNoteCount() > 32 { //Chromatic has many notes
+            if self.orientation.isPortrait {
+                noteWidth = noteWidth * 0.85
+            }
+            else {
+                noteWidth = noteWidth * 1.0
             }
         }
-        noteLayoutPositions.debug("2")
-        return true
+        return noteWidth
     }
     
     var body: some View {
         ZStack {
-            let noteWidth = score.lineSpacing * 1.1 * (self.orientationInfo.isPortrait ? 1.0 : 1.0)
+            let noteWidth = getNoteWidth()
+            
             HStack(spacing: 0) { //HStack - score entries display along the staff
                 ForEach(score.scoreEntries) { entry in
                     ZStack {
                         if entry is TimeSlice {
                             let timeSlice = entry as! TimeSlice
                             ZStack { // Each note frame in the timeslice shares the same same vertical space
-                                TimeSliceView(staff: staff,
-                                              timeSlice: timeSlice,
-                                              noteWidth: noteWidth,
-                                              lineSpacing: score.lineSpacing,
-                                              isPortrait: self.orientationInfo.isPortrait)
-                                .anchorPreference(
-                                    key: TimeSlicePositionPreferenceKey.self,
-                                    value: .center,
-                                    transform: { [ (timeSlice, $0) ] } // Store the TimeSlice and its anchor
-                                )
-                                .background(GeometryReader { geometry in
-                                    ///Record and store the note's position so we can later draw its stems which will be drawn with different stem lengths if the note is under a quaver beam.
-                                    Color.clear
-                                        .onAppear {
-                                            self.updateQuaverBeamsLayouts(mode:0, timeSlice: timeSlice, frame: geometry.frame(in: .named("NotePositioningStack")))
-                                        }
-                                        .onChange(of: geometry.size) { oldSize, newSize in
-                                            self.updateQuaverBeamsLayouts(mode:1, timeSlice: timeSlice,
-                                                                          frame: geometry.frame(in: .named("NotePositioningStack")))
-                                        }
-                                })
+                                GeometryReader { proxy in
+                                    TimeSliceView(staff: staff,
+                                                  timeSlice: timeSlice,
+                                                  noteWidth: noteWidth,
+                                                  lineSpacing: score.lineSpacing,
+                                                  isPortrait: self.orientation.isPortrait)
                                     
-                                StemView(score:score,
-                                         staff:staff,
-                                         notePositionLayout: noteLayoutPositions,
-                                         notes: timeSlice.getTimeSliceNotes(handType: staff.handType))
-                                //.border(Color.blue, width: 2)
+                                    .anchorPreference(
+                                        key: TimeSlicePositionPreferenceKey.self,
+                                        value: .bounds,
+                                        transform: { anchor in
+                                            [(scoreEntry: timeSlice, position: anchor, orientation.isPortrait)]
+                                        }
+                                    )
+                                }
                             }
                         }
                         
@@ -184,180 +149,151 @@ struct ScoreEntriesView: View {
                             if barLine.visibleOnStaff || barLine.forStaffSpacing {
                                 GeometryReader { geometry in
                                     BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)
-                                        .background(GeometryReader { geometry in
-                                            ///Record and store the bar's postion. A bar line must later be drawn at the same position that covers both staffs in the score.
-                                            Color.clear
-                                            ///Adding the below breaks quaver beams
-//                                                .onAppear {
-//                                                    self.updateBarPostionsLayouts(mode: 0, barLine: barLine, frame: geometry.frame(in: .named("ScoreView")))
-//                                                }
-//                                                .onChange(of: geometry.size) { oldSize, newSize in
-//                                                    self.updateBarPostionsLayouts(mode: 1, barLine: barLine, frame: geometry.frame(in: .named("ScoreView")))
-//                                                }
-                                        })
-
+                                        .anchorPreference(
+                                            key: TimeSlicePositionPreferenceKey.self,
+                                            value: .bounds,
+                                            transform: { anchor in
+                                                [(scoreEntry: barLine, position: anchor, orientation.isPortrait)]
+                                            }
+                                        )
                                 }
                             }
                         }
-                        if entry is StaffClef {
-                            //let clef = entry as! StaffClef
-                            StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
+                        if log("clefView") {
+                            if entry is StaffClef {
+                                StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
+                            }
                         }
                     }
-                    .coordinateSpace(name: "VStack")
-//                    .onChange(of: self.orientationInfo.isPortrait, {
-//                        self.resetQuaverBeamsLayouts()
-//                    })
-
-                    //IMPORTANT - keep this coordinateSpace name since the quaver beam code needs to know exactly the note view width
                 }
 
                 ///Spacing before end of staff
                 //Text("\(staff.beamUpdates)")
-                Text(" ")
-                    .frame(width:1.5 * noteWidth)
+                Text(" ").frame(width:1.5 * noteWidth)
             }
             
-            ///NEW fix for quaver beams
-//            .overlayPreferenceValue(TimeSlicePositionPreferenceKey.self) { anchors in
-//                GeometryReader { geo in
-//                    if convert(prefs:anchors, proxy: geo) {
-//                        ZStack {
-//                            ForEach(noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence }), id: \.key.id) {
-//                                endNote, endNotePos1 in
-//                                if endNote.beamType == .end || endNote.beamType == .none {
-//                                    let startNote = endNote.getBeamStartNote(score: score, staff: staff, np:noteLayoutPositions)
-//                                    if let line = getBeamLine(endNote: endNote,
-//                                                              noteWidth: noteWidth,
-//                                                              startNote: startNote) {
-//                                        if log("----- Draw quaver beam \(line.0)", printIt: endNote.beamType == .end) {
-//                                            quaverBeamView(line: line, startNote: startNote, endNote: endNote, lineSpacing: score.lineSpacing)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        .padding(.horizontal, 0)
-//                    }
-//                        
-//                }
-//                    GeometryReader { proxy in
-//                        Path { path in
-//                            for (index, anchorInfo) in anchors.enumerated() {
-////                                // Resolve the anchor to a CGPoint
-////                                let position1 = proxy[anchorInfo.position]
-////                                let timeSlice:TimeSlice = anchorInfo.timeSlice
-////                                let ts = timeSlice.entries as [TimeSliceEntry]
-////                                if let note = ts[0] as! StaffNote
-////                                print("=========", timeSlice.sequence, note.midi)
-////                                if timeSlice.getTimeSliceNotes(handType: .right).count > 0 {
-////                                    let endNote = timeSlice.getTimeSliceNotes(handType: .right)[0]
-////                                    if endNote.beamType == .end || endNote.beamType == .none {
-////                                        for (index, anchorInfo) in anchors.enumerated() {
-////                                            let timeSlice:TimeSlice = anchorInfo.timeSlice
-////                                            if timeSlice.getTimeSliceNotes(handType: .right).count > 0 {
-////                                                let note = timeSlice.getTimeSliceNotes(handType: .right)[0]
-////                                                //let p:Anchor<CGPoint> = anchorInfo.position
-////                                                let point = proxy[anchorInfo.position]
-////                                                noteLayoutPositions.positions[note] = CGRect(origin: point, size: CGSize(width: 1, height: 1))
-////                                            }
-////                                        }
-////                                        let startNote = endNote.getBeamStartNote(score: score, staff: staff, np:noteLayoutPositions)
-////                                        if let line = getBeamLine(endNote: endNote,
-////                                                                  noteWidth: noteWidth,
-////                                                                  startNote: startNote) {
-////                                            if log("----- Draw quaver beam \(line.0)", printIt: endNote.beamType == .end) {
-////                                                quaverBeamView(line: line, startNote: startNote, endNote: endNote, lineSpacing: score.lineSpacing)
-////                                            }
-////                                        }
-////                                    }
-//////
-//////                                    // Connect the time slices with lines
-//////                                    if index == 0 {
-//////                                    path.move(to: position)
-//////                                } else {
-//////                                    path.addLine(to: position)
-//////                                }
-////                            }
-////
-////                                // Optional: Print or use the TimeSlice for debugging
-////                                //print("TimeSlice \(timeSlice.description) is at \(position)")
-//                            }
-//                        }
-//                        .stroke(Color.red, lineWidth: 2)
-//                    }
-//                }
-            .coordinateSpace(name: "NotePositioningStack")
-
-            ///---------- Quaver beams ------------
-            ///Draw quaver stems and beams over quavers that are beamed together.
-            ///Staff noteLayoutPositions has recorded the position of each note to enable drawing the quaver beam.
-            ///OLD quaver beams
-        
-            GeometryReader { geo in
-                ZStack {
-                    ForEach(noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence }), id: \.key.id) {
-                        endNote, endNotePos1 in
-                            if endNote.beamType == .end || endNote.beamType == .none {
-                                let startNote = endNote.getBeamStartNote(score: score, staff: staff, np:noteLayoutPositions)
-                                if let line = getBeamLine(endNote: endNote,
+            ///Quaver beams, note stems and dual-staff bar lines are drawn using the note positions that were recorded in the anchorPositions
+            .overlayPreferenceValue(TimeSlicePositionPreferenceKey.self) { anchorPositions in
+                GeometryReader { geo in
+                    let noteLayoutPositions = NoteLayoutPositions(scale:score.getScale(), handType: staff.handType, prefs:anchorPositions, proxy: geo)
+                    ZStack {
+                        ForEach(noteLayoutPositions.positions.sorted(by: { $0.key.timeSlice.sequence < $1.key.timeSlice.sequence }), id: \.key.id) {
+                            note, notePosition in
+                            if note.beamType == .end || note.beamType == .none {
+                                let startNote = note.getBeamStartNote(score: score, staff: staff, np:noteLayoutPositions)
+                                
+                                if let line = getBeamLine(noteLayoutPositions: noteLayoutPositions,
+                                                          endNote: note,
                                                           noteWidth: noteWidth,
                                                           startNote: startNote) {
-                                    //if log("----- Draw quaver beam \(line.0)", printIt: endNote.beamType == .end) {
-                                        quaverBeamView(line: line, startNote: startNote, endNote: endNote, lineSpacing: score.lineSpacing)
-                                    //}
+                                    quaverBeamView(line: line, startNote: startNote, endNote: note, lineSpacing: score.lineSpacing)
                                 }
                             }
+
+                            StemView(
+                                notePosition: notePosition,
+                                notes: [note],
+                                notePositionsLayout: noteLayoutPositions,
+                                geoWidth: geo.size.width,
+                                geoHeight: geo.size.height
+                            )
+                            //Circle().frame(width: 7, height: 7).foregroundColor(.purple).position(x: notePosition.midX, y: notePosition.midY)
+                        }
+                        ///Bar lines must cover both staves
+                        if score.getStaffs().count > 1 {
+                            ForEach(Array(anchorPositions.enumerated()), id: \.offset) { index, anchor in
+                                if anchor.scoreEntry is BarLine {
+                                    let pos: CGRect = geo[anchor.position]
+                                    let y = staff.handType
+                                    Path { path in
+                                        path.move(to: CGPoint(x: pos.midX, y: pos.midY))
+                                        path.addLine(to: CGPoint(x: pos.midX, y: staff.handType == .right ? pos.maxY : 0))
+                                    }
+                                    .stroke(Color.black, lineWidth: 1)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 0)
+                }
+            }
+            .coordinateSpace(name: "NotePositioningStack")
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            ///This forces the view to reload.
+            orientation = UIDevice.current.orientation
+        }
+        .id(orientation.isPortrait)
+    }
+    
+    ///----------------------------- Stem View ------------------------------
+    ///26Jan2025 When the device rotates, the GeometryReader recalculates its size and position, which can lead to changes in the coordinate space.
+    ///This code must be in the the ScoreEntriesView to ensure that it executes in the same view-body co-ordinate space as the the notes were drawn in.
+    ///If this code lives in a different View struct there is no way to ensure the co-ordinate space that the stems are drawn in is the same co-ordinate space as where the notes were drawn in.
+    
+    func getStemLength(notes:[StaffNote]) -> Double {
+        var len = 0.0
+        if notes.count > 0 {
+            len = notes[0].stemLength * score.lineSpacing
+        }
+        return len
+    }
+    
+    func midPointXOffset(notes:[StaffNote], staff:Staff, stemDirection:Double) -> Double {
+        let delta = stemDirection * -1.0
+        return (stemDirection * -1.0 * getNoteWidth() - delta)
+    }
+    
+    func StemView(notePosition: CGRect, notes: [StaffNote], notePositionsLayout: NoteLayoutPositions, geoWidth:Double, geoHeight:Double) -> some View {
+        ZStack {
+            let staffNotes = notes// getStaffNotes(staff: staff)
+            if staffNotes.count > 0 {
+                if staffNotes.count <= 1 {
+                    ///Draw in the stem lines for all notes under the current stem line if this is one.
+                    ///For a group of notes under a quaver beam the the stem direction (and later length...) is determined by only one note in the group
+                    let startBeamNote = staffNotes[0].getBeamStartNote(score: score, staff: staff, np: notePositionsLayout)
+                    let inErrorAjdust = 0.0 //notes.notes[0].noteTag == .inError ? lineSpacing.lineSpacing/2.0 : 0
+                    if startBeamNote.getValue() != StaffNote.VALUE_WHOLE {
+                        //if startNote.debug("VIEW staff:\(staff.staffNum)") {
+                        //Note this code eventually has to go adjust the stem length for notes under a quaver beam
+                        //3.5 lines is a full length stem
+                        let stemDirection = startBeamNote.stemDirection == .up ? -1.0 : 1.0
+                        let midX = notePosition.midX + (midPointXOffset(notes: notes, staff: staff, stemDirection: stemDirection)) / 2.0
+                        let midY = geoHeight / 2.0
+                        let offsetY = CGFloat(notes[0].noteStaffPlacement.offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust
+                        //Test- Circle().frame(width: 7, height: 7).foregroundColor(.purple).position(x: notePosition.midX, y: notePosition.midY)
+                        Path { path in
+                            path.move(to: CGPoint(x: midX, y: midY - offsetY))
+                            path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength(notes: notes) - inErrorAjdust))))
+                        }
+                        .stroke(notes[0].getColor(staff: staff), lineWidth: 1.5)
                     }
                 }
-                .padding(.horizontal, 0)
+                else {
+                    ///This code assumes the stem for a chord wont (yet) be under a quaver beam
+                    ZStack {
+                        ForEach(staffNotes) { note in
+                            let stemDirection = note.stemDirection == .up ? -1.0 : 1.0
+                            let midX:Double = (geoWidth + (midPointXOffset(notes: staffNotes, staff: staff, stemDirection: stemDirection))) / 2.0
+                            let midY = geoHeight / 2.0
+                            let inErrorAjdust = 0.0 //note.noteTag == .inError ? lineSpacing.lineSpacing/2.0 : 0
+
+                            if note.getValue() != StaffNote.VALUE_WHOLE {
+                                //if let placement = notes[0].noteStaffPlacement {
+                                let offsetY = CGFloat(note.noteStaffPlacement.offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust
+                                Path { path in
+                                    path.move(to: CGPoint(x: midX, y: midY - offsetY))
+                                    path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength(notes: notes) - inErrorAjdust))))
+                                }
+                                .stroke(staffNotes[0].getColor(staff: staff), lineWidth: 1.5)
+                            }
+                        }
+                    }
+                }
             }
-//            .padding(.horizontal, 0)
-        }
-        .coordinateSpace(name: "ZStack0")
-        .onAppear() {
         }
     }
     
-//    func getNote(entry:ScoreEntry) -> StaffNote? {
-//        if entry is TimeSlice {
-//            let notes = entry.getTimeSliceNotes()
-//            if notes.count > 0 {
-//                return notes[0]
-//            }
-//        }
-//        return nil
-//    }
-//
-//    ///Return the start and end points for te quaver beam based on the note postions that were reported
-//    func getBeamLine(endNote:Note, noteWidth:Double, startNote:Note, stemLength:Double) -> (CGPoint, CGPoint)? {
-//        let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
-//        if [StatusTag.rhythmError].contains(startNote.timeSlice.statusTag) {
-//            return nil
-//        }
-//        let endNotePos = noteLayoutPositions.positions[endNote]
-//        if let endNotePos = endNotePos {
-//            let xEndMid = endNotePos.origin.x + endNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
-//            let yEndMid = endNotePos.origin.y + endNotePos.size.height / 2.0
-//
-//            let endPitchOffset = endNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
-//            let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
-//            let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
-//
-//            //start note
-//            let startNotePos = noteLayoutPositions.positions[startNote]
-//            if let startNotePos = startNotePos {
-//                let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0) - noteWidth/.0
-//                let yStartMid = startNotePos.origin.y + startNotePos.size.height / 2.0
-//                let startPitchOffset = startNote.getNoteDisplayCharacteristics(staff: staff).offsetFromStaffMidline
-//                let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * score.lineSpacing * -0.5)
-//                let yStartNoteStemTip = yStartNoteMiddle + stemLength * stemDirection
-//                let p1 = CGPoint(x:5, y: yEndNoteStemTip)
-//                let p2 = CGPoint(x:xStartMid, y:yStartNoteStemTip)
-//                return (p1, p2)
-//            }
-//        }
-//        return nil
-//    }
+
 }
 

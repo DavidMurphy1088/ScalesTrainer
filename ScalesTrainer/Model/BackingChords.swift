@@ -90,11 +90,31 @@ class BackingChords {
 
                 //Tonic I
                 chords.append(BackingChord(pitches: [0,isMinor ? 3 : 4], value: 2.0, offset: octaveOffset))
-
             }
         }
-//        if [.arpeggioDiminished, .arpeggioMajor, .arpeggioMinor, .arpeggioMajorSeventh, .arpeggioMinorSeventh].contains(scaleType) {
-//        }
+        
+        if [.arpeggioDiminished, .arpeggioMajor, .arpeggioMinor, .arpeggioMajorSeventh, .arpeggioMinorSeventh].contains(scaleType) {
+            let minor = [.arpeggioMinor, .arpeggioMinorSeventh].contains(scaleType)
+            for _ in 0..<3 {
+                chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+            }
+            chords.append(BackingChord(pitches: [0], value: 2.0, offset: octaveOffset))
+        }
+        if [.arpeggioDiminishedSeventh].contains(scaleType) {
+            let minor = true //[.arpeggioMinor, .arpeggioMinorSeventh].contains(scaleType)
+            for _ in 0..<4 {
+                chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+            }
+            chords.append(BackingChord(pitches: [0], value: 4.0, offset: octaveOffset))
+        }
+
+        ///Broekn chords - Trinity, Grade 1 only
         if [.brokenChordMajor].contains(scaleType) {
             let value = 1.0 / 3.0
             let octaveOffset = 0

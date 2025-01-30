@@ -239,7 +239,7 @@ struct SpinWheelView: View {
                 if scalesModel.spinStatePublished == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
-                    NavigationLink(destination: ScalesView(practiceChartCell: nil, practiseModeOnly: false)) {
+                    NavigationLink(destination: ScalesView(practiceChartCell: nil, practiceModeHand: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()
                             .font(.title2)

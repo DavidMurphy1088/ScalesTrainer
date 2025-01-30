@@ -31,7 +31,7 @@ struct CellView: View {
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScale = false
-    @State var practiseModeOnly = false
+    @State var practiceModeHand:HandType? = nil
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
 
@@ -85,7 +85,7 @@ struct CellView: View {
                 setScale(hands: [1])
                 if practiceCell.isLicensed {
                     navigateToScale = true
-                    practiseModeOnly = true
+                    practiceModeHand = .left
                 }
             }) {
                 HStack {
@@ -107,7 +107,7 @@ struct CellView: View {
                 setScale(hands:[0])
                 if practiceCell.isLicensed {
                     navigateToScale = true
-                    practiseModeOnly = true
+                    practiceModeHand = .right
                 }
             }) {
                 if UIDevice.current.userInterfaceIdiom != .phone {
@@ -141,7 +141,7 @@ struct CellView: View {
     
     func starView() -> some View {
         HStack {
-            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell, practiseModeOnly: practiseModeOnly), isActive: $navigateToScale) {
+            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell, practiceModeHand: practiceModeHand), isActive: $navigateToScale) {
             }.frame(width: 0.0)
 
             HStack {
@@ -222,7 +222,7 @@ struct CellView: View {
                 setScale(hands: practiceCell.scale.hands)
                 if practiceCell.isLicensed {
                     navigateToScale = true
-                    practiseModeOnly = false
+                    practiceModeHand = nil
                 }
                 else {
                     self.showLicenceRequiredScale = true

@@ -4,8 +4,8 @@ import AVFoundation
 
 public class Staff : ObservableObject, Identifiable {
     @Published var publishUpdate = 0
-    @Published var notePositionsUpdates = 0
-    @Published public var noteLayoutPositions:NoteLayoutPositions
+    //@Published var notePositionsUpdates = 0
+    //@Published public var noteLayoutPositions:NoteLayoutPositions
     
     public let id = UUID()
     let score:Score
@@ -16,7 +16,7 @@ public class Staff : ObservableObject, Identifiable {
         self.score = score
         self.handType = handType
         self.linesInStaff = linesInStaff
-        self.noteLayoutPositions = NoteLayoutPositions()
+        //self.noteLayoutPositions = NoteLayoutPositions()
         //self.setPlacements()
     }
     

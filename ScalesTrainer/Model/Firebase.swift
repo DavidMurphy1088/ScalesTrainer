@@ -7,15 +7,31 @@ public class Firebase  {
     public static var shared = Firebase()
     let logger = Logger.shared
     
-    func signIn(email:String, pwd:String) {
-        ///Not required, the info provides everything required
-//        Auth.auth().signIn(withEmail: email, password: pwd) { result, error in
-//            if let error = error {
-//                self.logger.reportError(self, "Error signing in: \(error.localizedDescription)")
-//            } else {
-//                self.logger.log(self, "Firebase Successfully signed in")
-//            }
-//        }
+    init() {
+        var username:String? = nil
+        var pwd:String? = nil
+        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+           let plist = NSDictionary(contentsOfFile: path) {
+            if let apiKey = plist["PWD"] as? String {
+                pwd = apiKey
+            }
+            if let apiKey = plist["USERNAME"] as? String {
+                username = apiKey
+            }
+        }
+        if username == nil || pwd == nil {
+            Logger.shared.reportError(self, "No user for Firebase RealTime DB")
+        }
+        signIn(username: username!, pwd: pwd!)
+    }
+
+    func signIn(username:String, pwd:String) {
+        Auth.auth().signIn(withEmail: username, password: pwd) { authResult, error in
+           if let error = error {
+               Logger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
+                return
+            }
+         }
     }
      
     func writeToRealtimeDatabase(board:String, grade:Int, key:String, data: [String: Any], callback: ((String) -> Void)?) {

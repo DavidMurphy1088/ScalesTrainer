@@ -3,27 +3,38 @@ import SwiftUI
 
 //https://mammothmemory.net/music/sheet-music/reading-music/treble-clef-and-bass-clef.html
 
-///Used to record view positions of notes as they are drawn by a view so that a 2nd drawing pass can draw quaver beams to the right points
-///Jan18, 2024 Original version had positions as Published but this causes warning of updating publishable variable during view drawing
-///Have now made postions not published and NoteLayoutPostions not observable.
-///This assumes that all notes will be drawn and completed (and their postions recorded) by the time the quaver beam is drawn furhter down in ScoreEntriesView but this assumption seems to hold.
-///This approach makes the whole drawing of quaver beams much simpler - as long as the assumption holds always.
-
-public class NoteLayoutPositions { //}: ObservableObject {
-    //@Published
+///Jan 2025 - Map an array of position anchors to a dictionary with positions relative to the geometry proxy
+public class NoteLayoutPositions {
     public var positions:[StaffNote: CGRect] = [:]
-    var id:UUID
-    static var nextId = 0
 
-    init() {
-        self.id = UUID()
+    init(scale:Scale, handType:HandType, prefs: [(scoreEntry: ScoreEntry, position: Anchor<CGRect>, isPortrait:Bool)], proxy:GeometryProxy) {
+        positions = [:]
+        for pref in prefs {
+            if let ts:TimeSlice = pref.scoreEntry as? TimeSlice {
+                if ts.entries.count > 0 {
+                    let noteIndex = scale.hands.count == 1 ? 0 : (handType == .right ? 0 : 1)
+                    if let note:StaffNote = ts.entries[noteIndex] as? StaffNote {
+                        let pos = proxy[pref.position]
+                        positions[note] = pos
+                    }
+                }
+            }
+        }
+//        if ctx.count > 0 {
+//            noteLayoutPositions.debug("\(ctx) After Convert", handType: handType)
+//        }
     }
     
-    func debug(_ ctx:String) {
+    func debug1(_ ctx:String, handType:HandType) -> Bool {
         print ("=============== NoteLayoutPos", ctx)
+        var ctr = 0
         for k in positions.keys {
-            print(k, positions[k] ?? "")
+            if let pos = positions[k] {
+                print(ctr, String(format: "%02d", k.timeSlice.sequence), "midi:", k.midi, "xy:", String(format: "%.2f", pos.midX), String(format: "%.2f", pos.midY))
+            }
+            ctr += 1
         }
+        return true
     }
     
     func getPositionForSequence(sequence:Int) -> CGRect? {
@@ -33,25 +44,6 @@ public class NoteLayoutPositions { //}: ObservableObject {
             }
         }
         return nil
-    }
-
-    public func storePosition(mode:Int, notes: [StaffNote], rect: CGRect) -> Bool {
-        if notes.count > 0 {
-            if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
-                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
-                //if !self.positions.keys.contains(notes[0]) {
-                    let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
-                    //DispatchQueue.main.async {
-                    ///Make sure this fires after all other UI is rendered
-                    ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
-                    //sleep(UInt32(0.25))
-                    //sleep(UInt32(0.5))
-                    self.positions[notes[0]] = rectCopy
-                    return true
-                //}
-            }
-        }
-        return false
     }
 }
 

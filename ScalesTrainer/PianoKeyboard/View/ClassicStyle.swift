@@ -171,7 +171,7 @@ public struct ClassicStyle {
                         }
                     }
                 }
-                
+
                 /// ----------- Playing the note ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
@@ -279,8 +279,6 @@ public struct ClassicStyle {
                     if scale.getScaleNoteCount() <= 24{ //} || !self.orientationObserver.isPortrait {
                         if scalesModel.showFingers {
                             if key.finger.count > 0 {
-                                if key.midi == 54 {
-                                }
                                 let str = key.getName()
                                 context.draw(
                                     Text("\(key.getName())")
