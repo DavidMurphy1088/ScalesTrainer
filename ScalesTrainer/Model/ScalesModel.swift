@@ -628,7 +628,7 @@ public class ScalesModel : ObservableObject {
         
         let isBrokenChord = [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType)
         
-        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor].contains(scale.scaleType) ? .major : .minor
+        let staffKeyType:StaffKey.StaffKeyType = [.major, .arpeggioMajor, .arpeggioDominantSeventh, .arpeggioMajorSeventh, .chromatic, .brokenChordMajor, .trinityBrokenTriad].contains(scale.scaleType) ? .major : .minor
         let keySignature:KeySignature
         if [.chromatic, .arpeggioDiminishedSeventh].contains(scale.scaleType) {
             keySignature = KeySignature(keyName: "C", keyType: .major)
@@ -651,6 +651,7 @@ public class ScalesModel : ObservableObject {
         
         ///Add LH and RH notes played at the same time to the same TimeSlice and add bar lines.
         for i in 0..<scale.getScaleNoteCount() {
+            //if [2,4].contains(i) ||
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line is not currenlty visible but it might be added to add space around notes

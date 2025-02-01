@@ -102,6 +102,7 @@ struct ActivityModeView: View {
     @State var menuOptionsLeft:[ActivityMode] = []
     //@State var menuOptionsRight:[ActivityMode] = []
     @State var helpShowing = false
+    //@State private var isNavigationActive = false
     let shade = 8.0
     
     func getView(activityMode: ActivityMode) -> some View {
@@ -109,80 +110,84 @@ struct ActivityModeView: View {
     }
     
     var body: some View {
-        VStack {
-            let overlay = Circle().stroke(Color.black, lineWidth: 2)
-            
-            Spacer()
-            if let practiceChart = musicBoardAndGrade.practiceChart {
-                NavigationLink(destination: PracticeChartView(practiceChart: practiceChart),
-                               isActive: $tabSelectionManager.isPracticeChartActive
-                ) {
-                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
-                            ///Image wont scale reasonably when too little space
-                            Image("home_practice_chart_1")
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(Circle())  // Clips the image to a circular shape
-                                .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                                .overlay(overlay)
-                            //.border(.red)
-                        }
-                        Text("Practice Chart")
-                            .font(.custom("Noteworthy-Bold", size: 32)).padding()
-                    }
-                    .padding()
-                }
+        //NavigationStack {
+            VStack {
+                let overlay = Circle().stroke(Color.black, lineWidth: 2)
                 
                 Spacer()
-                NavigationLink(destination: SpinWheelView(practiceChart: practiceChart)
-                    .environmentObject(orientationInfo)
-                               , isActive: $tabSelectionManager.isSpinWheelActive
-                ) {
-                    VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                        if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
-                            Image("home_scales_wheel_1")
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(Circle())
-                                .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                                .overlay(overlay)
-                            //.border(.red)
-                        }
-                        Text("Spin The Scale Wheel")
-                            .font(.custom("Noteworthy-Bold", size: 32)).padding()
+                if let practiceChart = musicBoardAndGrade.practiceChart {
+                    // Invisible NavigationLink that activates when isNavigationActive becomes true.
+                    NavigationLink(
+                        destination: PracticeChartView(practiceChart: practiceChart),
+                        isActive: $tabSelectionManager.isPracticeChartActive
+                    ) {
+                        EmptyView()
                     }
-                    .padding()
+                    
+                    Button(action: {
+                        practiceChart.adjustForStartDay()
+                        tabSelectionManager.isPracticeChartActive = true
+                    }) {
+                        VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+                            if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                                ///Image wont scale reasonably when too little space
+                                Image("home_practice_chart_1")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(Circle())  // Clips the image to a circular shape
+                                    .frame(width: UIScreen.main.bounds.size.width * 0.35)
+                                    .overlay(overlay)
+                                //.border(.red)
+                            }
+                            Text("Practice Chart")
+                                .font(.custom("Noteworthy-Bold", size: 32)).padding()
+                        }
+                        .padding()
+                        
+                    }
+//                    .navigationDestination(isPresented: $tabSelectionManager.isPracticeChartActive) {
+//                        PracticeChartView(practiceChart: practiceChart)
+//                    }
+                    
+                    Spacer()
+                    NavigationLink(
+                        destination: SpinWheelView(practiceChart: practiceChart),
+                        isActive: $tabSelectionManager.isSpinWheelActive
+                    ) {
+                        EmptyView()
+                    }
+                    Button(action: {
+                        tabSelectionManager.isSpinWheelActive = true
+                    }) {
+                        VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
+                            if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                                Image("home_scales_wheel_1")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(Circle())
+                                    .frame(width: UIScreen.main.bounds.size.width * 0.35)
+                                    .overlay(overlay)
+                                //.border(.red)
+                            }
+                            Text("Spin The Scale Wheel")
+                                .font(.custom("Noteworthy-Bold", size: 32)).padding()
+                        }
+                        .padding()
+                    }
+//                    .navigationDestination(isPresented: $tabSelectionManager.isSpinWheelActive) {
+//                        SpinWheelView(practiceChart: practiceChart)
+//                    }
+                }
+                Spacer()
+            }
+            .commonFrameStyle()
+            .sheet(isPresented: $helpShowing) {
+                if let topic = ScalesModel.shared.helpTopic {
+                    HelpView(topic: topic)
                 }
             }
-
-            Spacer()
-        }
-        .commonFrameStyle()
-        .sheet(isPresented: $helpShowing) {
-            if let topic = ScalesModel.shared.helpTopic {
-                HelpView(topic: topic)
-           }
-        }
-    
+        //}
         .onAppear() {
-//            menuOptionsLeft = []
-//            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-//                if let savedChart = PracticeChart.loadPracticeChartFromFile(boardAndGrade: boardAndGrade)  {
-//                    PracticeChart.shared = savedChart
-//                    savedChart.adjustForStartDay()
-////                    for row in 0..<savedChart.rows.count {
-////                        for cell in 0..<savedChart.rows[row].count {
-////                            savedChart.rows[row][cell].setBadgesCount(count: 0)
-////                        }
-////                    }
-//                }
-//                else {
-//                    ///Create a new one for this board and grade
-//                    PracticeChart.shared = PracticeChart(boardAndGrade: boardAndGrade, columnWidth: 3, minorScaleType: 0)
-//                }
-//            }
-//            let practiceChart = PracticeChart.shared
         }
     }
 }

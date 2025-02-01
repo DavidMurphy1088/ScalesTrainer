@@ -54,8 +54,8 @@ public struct StaffClefView: View {
             size = score.lineSpacing * 8
         }
         else {
-            size = score.lineSpacing * 5
-            //size = UIDevice.current.userInterfaceIdiom == .phone ? 4.0 : 5.0
+            size = score.lineSpacing * 5 ///31Jan2025 Too big, loose the ':'
+            size = score.lineSpacing * 4
         }
         if score.getScale().getScaleNoteCount() > 32 {
             size = size * 0.75 ///2 octave chromatic
@@ -81,6 +81,7 @@ public struct StaffClefView: View {
                 Text("\u{1d122}")
                     .foregroundColor(isTransparent ? .black : .clear)
                     .font(.system(size: CGFloat(getClefSize(clefType: staffClef.clefType))))
+                    //.padding()
             }
         }
         .frame(minWidth: Double(score.lineSpacing)  * 1.1)

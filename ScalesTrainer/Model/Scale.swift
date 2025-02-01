@@ -71,6 +71,8 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
     case brokenChordMinor
     case chromatic
     
+    case trinityBrokenTriad
+    
     func isMajor() -> Bool {
         return self == .major || self == .arpeggioMajor || self == .arpeggioDominantSeventh || self == .arpeggioMajorSeventh
         || self == .chromatic || self == .brokenChordMajor
@@ -108,6 +110,8 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
             return "Major Broken Chord"
         case .brokenChordMinor:
             return "Minor Broken Chord"
+        case .trinityBrokenTriad:
+            return "Broken Triad"
         }
     }
 }
@@ -241,7 +245,7 @@ public class Scale : Codable {
     ///A segment is the number of beats that can be rendered before the keyboard needs to be refreshed
     ///e.g. a maj scale is octaves * 8 beats. A broken chord has 3 beats since the keyboard fingering needs to be refreshed for each new inverted chord arpeggio
     var notesPerSegment:Int
-    let timeSignature:TimeSignature
+    var timeSignature:TimeSignature
     var debugOn:Bool
     var scaleCustomisation:ScaleCustomisation? = nil
     
@@ -264,16 +268,14 @@ public class Scale : Codable {
 //        if let custom = scaleCustomisation  {
 //            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
 //        }
-        if debugOn {
-            
-        }
+
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
         else {
             self.timeSignature = TimeSignature(top: 4, bottom: 4, visible: true)
         }
-
+        
         ///Determine scale start note
         ///https://musescore.com/user/27091525/scores/6509601
         ///
@@ -357,7 +359,10 @@ public class Scale : Codable {
         if [.chromatic].contains(self.scaleType) {
             notesPerSegment = (self.octaves *  12) + 1
         }
-         
+        if [.trinityBrokenTriad].contains(self.scaleType) {
+            notesPerSegment = 3
+        }
+
         ///Set midi values in scale
 
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
@@ -416,11 +421,19 @@ public class Scale : Codable {
         for handIndex in [0,1] {
             var sequence = 0
             var nextMidi = getStartMidi(hand: handIndex, midi: firstMidi)
-            let scaleOffsetsForHand:[Int]
-            scaleOffsetsForHand = scaleOffsets
+            //scaleOffsetsForHand =
             
             self.scaleNoteState.append([])
-
+            if self.scaleType == .trinityBrokenTriad {
+                scaleNoteState[handIndex].append(ScaleNoteState(sequence: 0, midi: nextMidi, value: 0.5, segment: [0]))
+                scaleNoteState[handIndex].append(ScaleNoteState(sequence: 1, midi: nextMidi+4, value: 0.5, segment: [0]))
+                scaleNoteState[handIndex].append(ScaleNoteState(sequence: 2, midi: nextMidi+7, value: 0.5, segment: [0,1]))
+                scaleNoteState[handIndex].append(ScaleNoteState(sequence: 3, midi: nextMidi+4, value: 0.5, segment: [1]))
+                scaleNoteState[handIndex].append(ScaleNoteState(sequence: 4, midi: nextMidi, value: 0.5, segment: [1]))
+                continue
+            }
+            
+            let scaleOffsetsForHand:[Int] = scaleOffsets
             for oct in 0..<octaves {
                 for i in 0..<scaleOffsetsForHand.count {
                     var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
@@ -443,7 +456,7 @@ public class Scale : Codable {
                 }
                 ///Add top note
                 if oct == octaves - 1 {
-                    var noteValue = scaleNoteValue //Settings.shared.getSettingsNoteValueFactor()
+                    var noteValue = scaleNoteValue
                     if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) && sequence == 9 {
                         noteValue *= 3
                     }
@@ -467,8 +480,11 @@ public class Scale : Codable {
         let up = Array(scaleNoteState)
         var ctr = 0
         var lastMidi = 0
-
-        for handIndex in [0,1] {
+        var hands:[Int] = [0,1]
+        if self.scaleType == .trinityBrokenTriad {
+            hands = []
+        }
+        for handIndex in hands {
             var segmentCounter = 0
             var sequence = 0
             
@@ -580,8 +596,6 @@ public class Scale : Codable {
         
         Scale.createCount += 1
     }
-
-
     
     func getDynamicsDescription(long:Bool) -> String {
         var desc = ""
@@ -752,8 +766,11 @@ public class Scale : Codable {
             scaleOffsets = [4, 3, -3,   3, 5, -5,   5, 4, -4]
         case .brokenChordMinor:
             scaleOffsets = [3, 4, -4,   4, 5, -5,   5, 3, -3]
+            
+        case .trinityBrokenTriad:
+            scaleOffsets = [4,3,-3,-4, 0]
         }
-        
+
         return scaleOffsets
     }
     
@@ -1222,7 +1239,11 @@ public class Scale : Codable {
             applyBrokenChordFingers()
             handled = true
         }
-        
+        if [.trinityBrokenTriad].contains(scaleType) {
+            fingeringSpecifiedByNote = [1,2,4, 2,1]
+            handled = true
+        }
+
         ///Fingering is simply the fingers in the specified array
         if let fingeringSpecifiedByNote = fingeringSpecifiedByNote {
             if fingeringSpecifiedByNote.count != self.scaleNoteState[hand].count {
@@ -1250,9 +1271,6 @@ public class Scale : Codable {
                 }
             }
             
-            if self.debugOn {
-                
-            }
             ///For scales starting on a black note adjust the first and last finger to 2
             if hand == 0 || (hand == 1 && self.scaleMotion == .contraryMotion) {
                 ///All RH scales and arpggeios starting on black note have first finger = 2

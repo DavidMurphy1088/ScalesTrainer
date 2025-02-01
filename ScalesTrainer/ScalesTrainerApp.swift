@@ -175,6 +175,46 @@ struct DeveloperView: View {
     }
 }
 
+///------------------------------------------------------------
+
+//class BackgroundTaskManager: ObservableObject {
+//    private var timer: Timer?
+//    private var startDate: Date
+//    private var loopCtr: Int = 0
+//    
+//    init() {
+//        startDate = Date()
+//        startTimer()
+//    }
+//
+//    private func startTimer() {
+//        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+//            self?.performTask()
+//        }
+//    }
+//
+//    ///Reload the practice chart on day or month change. The active day column must change on day of mon change.
+//    private func performTask() {
+//        DispatchQueue.global(qos: .background).async { [weak self] in
+//            guard let self = self else { return }
+//            let calendar = Calendar.current
+//            let startDay = calendar.component(.day, from: self.startDate)
+//            let currentDay = calendar.component(.day, from: Date())
+//            loopCtr += 1
+//            if loopCtr > 3 || currentDay != startDay {
+//                DispatchQueue.main.async {
+//                    exit(0)
+//                }
+//            } else {
+//                print("Day-of-month remains the same (\(currentDay)) at \(Date()).")
+//            }
+//        }
+//    }
+//    deinit {
+//        timer?.invalidate()
+//    }
+//}
+
 class TabSelectionManager: ObservableObject {
     @Published var selectedTab: Int = 0
     ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
@@ -201,8 +241,8 @@ class TabSelectionManager: ObservableObject {
             ScalesModel.shared = ScalesModel()
             let scalesModel = ScalesModel.shared
             if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                                scaleMotion: .contraryMotion, minTempo: 80, octaves: 1, hands: [1],
+                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .trinityBrokenTriad,
+                                                scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
                                                 dynamicTypes: [.mf], articulationTypes: [.legato],
                                                 //scaleCustomisation: scaleCustomisation,
                                                 debugOn: true)
@@ -277,7 +317,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
         }
     }
-    
 }
 
 @main
@@ -286,6 +325,7 @@ struct ScalesTrainerApp: App {
     @StateObject private var tabSelectionManager = TabSelectionManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @StateObject private var orientationInfo = OrientationInfo()
+    //@StateObject private var backgroundTaskManager = BackgroundTaskManager()
     let launchTimeSecs = 3.0
     
     init() {
@@ -298,16 +338,6 @@ struct ScalesTrainerApp: App {
         }
 #endif
     }
-    
-    //    static func runningInXcode1() -> Bool {
-    //        let running = ProcessInfo.processInfo.environment["RUNNING_FROM_XCODE"] != nil
-    //        return running
-    //        //return false
-    //    }
-    
-    //    func getDataLoadedStatus() -> RequestStatus {
-    //        return .waiting //self.exampleData.dataStatus
-    //    }
     
     var body: some Scene {
         WindowGroup {
@@ -341,7 +371,7 @@ struct ScalesTrainerApp: App {
                 //TestView()
                 //FFTContentView()
                     .tabItem {
-                        Label("Activities", systemImage: "house")
+                        Label("SCALE", systemImage: "house")
                         //Label("MIDI", systemImage: "house")
                     }
                     .tag(1)

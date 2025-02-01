@@ -8,17 +8,15 @@ struct SelectBoardGradesView: View {
     let width = 0.7
     
     func updateBoardGrade(gradeIndex:Int) {
-//if let gradeIndex = isOn.firstIndex(where: { $0 == true }) {
-            ///Force all views dependendent on grade to close since they show the previous grade
-            tabSelectionManager.isSpinWheelActive = false
-            tabSelectionManager.isPracticeChartActive = false
-            Settings.shared.musicBoardGrade = gradeIndex
-            Settings.shared.musicBoardName = inBoard.name
-            MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
-            Settings.shared.save()
-            MusicBoardAndGrade.shared?.savePracticeChartToFile()
-            SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
-        //}
+        ///Force all views dependendent on grade to close since they show the previous grade
+        tabSelectionManager.isSpinWheelActive = false
+        tabSelectionManager.isPracticeChartActive = false
+        Settings.shared.musicBoardGrade = gradeIndex
+        Settings.shared.musicBoardName = inBoard.name
+        MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
+        Settings.shared.save()
+        MusicBoardAndGrade.shared?.savePracticeChartToFile()
+        SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
     }
     
     var body: some View {
@@ -86,12 +84,9 @@ struct SelectMusicBoardView: View {
 
     var body: some View {
         VStack {
-            // Title Section
             VStack {
                 TitleView(screenName: "Scales Academy", showGrade: true)
                     .commonFrameStyle()
-//                Text("Select Music Board")
-//                    .font(.title).
             }
             .commonFrameStyle()
             .padding()
@@ -100,7 +95,7 @@ struct SelectMusicBoardView: View {
             
             List {
                 ForEach(Array(MusicBoard.getSupportedBoards().enumerated()), id: \.element.id) { index, board in
-                    ///Send in the board chosen in the navigation. If that board is the same board already set in the setting boardAndGrade also send in the grade so that the grade selectedion preslects it.
+                    ///Send in the board chosen in the navigation. If that board is the same board already set in the setting boardAndGrade also send in the grade so that the grade selection preslects it.
                     NavigationLink(destination: SelectBoardGradesView(inBoard: board)) {
                         HStack {
                             VStack(alignment: .leading) {
@@ -129,12 +124,8 @@ struct SelectMusicBoardView: View {
         }
         //.frame(width: UIScreen.main.bounds.width * width, height: UIScreen.main.bounds.height * 0.8)
         .onAppear() {
-//            if let boardAndGrade = MusicBoardAndGrade.shared {
-//                self.alreadySetGradeForBoard[boardAndGrade.board] = boardAndGrade.grade
-//            }
         }
         .onDisappear {
-            
         }
     }
 }

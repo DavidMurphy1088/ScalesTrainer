@@ -100,17 +100,6 @@ final class ScoreTest: XCTestCase {
             }
         }
     }
-
-    func getBoardScales(musicBoard:MusicBoard) -> [(Int, Scale)] {
-        var result:[(Int, Scale)] = []
-        for grade in musicBoard.gradesOffered {
-            let scales = MusicBoardAndGrade.scalesTrinity(grade: grade)
-            for scale in scales {
-                result.append((grade, scale))
-            }
-        }
-        return result
-    }
     
     func processBoard(musicBoard:MusicBoard, gradeFilter:[Int], typeFilter:[ScaleType]) {
         let grades = musicBoard.gradesOffered

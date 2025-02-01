@@ -109,14 +109,14 @@ public class StaffNote : TimeSliceEntry, Comparable {
         self.writtenAccidental = writtenAccidental
     }
     
-    public init(note:StaffNote) {
-        self.midi = note.midi
-        super.init(timeSlice:note.timeSlice, value: note.getValue(), handType: note.handType, segments: note.segments)
-        self.timeSlice.sequence = note.timeSlice.sequence
-        self.writtenAccidental = note.writtenAccidental
-        self.isOnlyRhythmNote = note.isOnlyRhythmNote
-        self.beamType = note.beamType
-    }
+//    public init(note:StaffNote) {
+//        self.midi = note.midi
+//        super.init(timeSlice:note.timeSlice, value: note.getValue(), handType: note.handType, segments: note.segments)
+//        self.timeSlice.sequence = note.timeSlice.sequence
+//        self.writtenAccidental = note.writtenAccidental
+//        self.isOnlyRhythmNote = note.isOnlyRhythmNote
+//        self.beamType = note.beamType
+//    }
         
     public override func encode(to encoder: Encoder) throws {
         enum CodingKeys: String, CodingKey {

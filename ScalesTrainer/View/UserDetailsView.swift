@@ -20,12 +20,6 @@ struct UserDetailsView: View {
 
     let width = UIScreen.main.bounds.width * 0.7
     
-    var body1: some View {
-        VStack {
-            Text("TEST")
-        }
-    }
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -87,16 +81,6 @@ struct UserDetailsView: View {
                         }
 //                    }
 
-//                    Spacer()
-//                    Button(action: {
-//                        settings.save()
-//                        tabSelectionManager.selectedTab = 10
-//                    }) {
-//                        HStack {
-//                            Text("Save Settings").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                        }
-//                    }
-                    
                     Spacer()
                 }
                 .commonFrameStyle()

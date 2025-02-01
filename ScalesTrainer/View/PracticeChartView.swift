@@ -500,17 +500,13 @@ struct PracticeChartView: View {
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Practice Chart")
         }
-//        .onChange(of: navigationState2.navigationChildIsActive) { shouldExitToParent in
-//            if shouldExitToParent {
-//                //navigationState2.shouldExitToParent = false // Reset to prevent navigation loop
-//            }
-//        }
+
     }
 }
 
-struct InnerHeightPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = .zero
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
+//struct InnerHeightPreferenceKey: PreferenceKey {
+//    static let defaultValue: CGFloat = .zero
+//    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+//        value = nextValue()
+//    }
+//}

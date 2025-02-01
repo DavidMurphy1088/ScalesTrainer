@@ -133,13 +133,7 @@
     "Amplitude: %.4f" : {
 
     },
-    "Are you sure you want to go back?" : {
-
-    },
     "Available Subscriptions" : {
-
-    },
-    "Back" : {
 
     },
     "Back %@" : {
@@ -221,6 +215,9 @@
     "Delete Correct" : {
 
     },
+    "Detected Note: %@" : {
+
+    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -243,6 +240,9 @@
 
     },
     "FFT Analyzer" : {
+
+    },
+    "File Pitch Detection" : {
 
     },
     "Finger Number" : {
@@ -300,10 +300,10 @@
         }
       }
     },
-    "Gamification" : {
+    "Frequency: %.2f Hz" : {
 
     },
-    "Go to Screen B" : {
+    "Gamification" : {
 
     },
     "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
@@ -465,6 +465,9 @@
     "MIDI Connections" : {
 
     },
+    "MIDI Note: %lld" : {
+
+    },
     "min. " : {
 
     },
@@ -478,9 +481,6 @@
 
     },
     "New Amplitude Filter:%@" : {
-
-    },
-    "No" : {
 
     },
     "No music grade" : {
@@ -516,10 +516,10 @@
         }
       }
     },
-    "Play Recording" : {
+    "Play The Scale" : {
 
     },
-    "Play The Scale" : {
+    "Playing recorded scales and detecting pitch..." : {
 
     },
     "Please enter your first name" : {
@@ -607,6 +607,9 @@
         }
       }
     },
+    "SCALE" : {
+
+    },
     "Scale:" : {
 
     },
@@ -631,12 +634,6 @@
 
     },
     "Scan and connect MIDI Sources" : {
-
-    },
-    "Screen A" : {
-
-    },
-    "Screen B" : {
 
     },
     "Select" : {
@@ -671,9 +668,6 @@
         }
       }
     },
-    "Show Alert" : {
-
-    },
     "Show Hands" : {
 
     },
@@ -681,6 +675,9 @@
 
     },
     "Shuffle" : {
+
+    },
+    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
@@ -695,9 +692,6 @@
     "Start Analysis" : {
 
     },
-    "Start Recording" : {
-
-    },
     "Stats: %@" : {
 
     },
@@ -708,9 +702,6 @@
 
     },
     "Stop Hearing" : {
-
-    },
-    "Stop Playback" : {
 
     },
     "Stop Playing" : {
@@ -726,9 +717,6 @@
           }
         }
       }
-    },
-    "Stop Recording" : {
-
     },
     "Stop Recording Scale" : {
 
@@ -778,9 +766,6 @@
         }
       }
     },
-    "TEST" : {
-
-    },
     "This subscription provides you with access to all Scales Academy content." : {
 
     },
@@ -825,12 +810,6 @@
           }
         }
       }
-    },
-    "Warning" : {
-
-    },
-    "Yes" : {
-
     },
     "Your current subscription is " : {
 

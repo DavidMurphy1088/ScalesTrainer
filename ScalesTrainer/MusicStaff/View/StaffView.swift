@@ -82,7 +82,6 @@ struct ClefView: View {
 
     var body: some View {
         HStack {
-
             if staff.handType == HandType.right {
                 Image("clef_treble")
                     .resizable()
@@ -91,12 +90,14 @@ struct ClefView: View {
                     .scaledToFit()
             }
             else {
-
-                Image("clef_bass")
-                    .resizable()
-                    .renderingMode(.template)
-                    //.foregroundColor(entry.getColor(staff: staff))
-                    .scaledToFit()
+                VStack {
+                    Image("clef_bass")
+                        .resizable()
+                        .renderingMode(.template)
+                        .padding(.top, 0.1 * score.lineSpacing)
+                        .padding(.bottom, 0.5 * score.lineSpacing)
+                        .scaledToFit()
+                }
             }
         }
         //.border(Color.green)

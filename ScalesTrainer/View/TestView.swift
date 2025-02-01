@@ -1,395 +1,157 @@
-import SwiftUI
-import AudioKit
-import AVFoundation
-import CSoundpipeAudioKit
-import AudioKit
-import SoundpipeAudioKit
-import Foundation
-import AVFoundation
-import Foundation
-import AudioKitEX
-import Speech
-import SwiftUI
-
-struct ScreenA: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Screen A")
-                    .font(.largeTitle)
-                
-                NavigationLink(destination: ScreenB()) {
-                    Text("Go to Screen B")
-                }
-            }
-            .navigationBarTitle("Screen A", displayMode: .inline)
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
-    }
-}
-
-struct ScreenB: View {
-    @Environment(\.presentationMode) var presentationMode
-    
-    @State private var showAlert = false
-
-    var body: some View {
-        VStack {
-            Text("Screen B")
-                .font(.largeTitle)
-            
-            Button(action: {
-                self.showAlert = true
-            }) {
-                Text("Show Alert")
-            }
-            .padding()
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Warning"), message: Text("Are you sure you want to go back?"), primaryButton: .default(Text("Yes")) {
-                    // Handle action when user taps Yes
-                    self.presentationMode.wrappedValue.dismiss()
-                }, secondaryButton: .cancel(Text("No")))
-            }
-        }
-        .navigationBarBackButtonHidden(true) // Hide default back button
-        .navigationBarItems(leading: Button(action: {
-            self.showAlert = true // Show alert when custom back button is tapped
-        }) {
-            Image(systemName: "chevron.left")
-            Text("Back")
-        })
-        .navigationBarTitle("Screen B", displayMode: .inline)
-        .onDisappear {
-            self.showAlert = false // Reset alert state when leaving Screen B
-        }
-    }
-}
-
-
-class AudioRecorder: ObservableObject {
-    var engine: AudioEngine?
-    var mic: AudioEngine.InputNode?
-    var recorder: NodeRecorder?
-    var player: AudioPlayer?
-    var file: AVAudioFile?
-    var installedTap:BaseTap?
-    
-    func setupEngine(start:Bool) {
-        engine = AudioEngine()
-        mic = engine?.input
-        if let mic = mic {
-            do {
-                // Initialize the recorder with the microphone as the input
-                recorder = try NodeRecorder(node: mic)
-                let silentMixer = Mixer(mic)
-                silentMixer.volume = 0.0 // Mute the microphone input
-                engine?.output = silentMixer
-                if start {
-                    try engine?.start()
-                }
-                print("Audio engine started")
-            } catch {
-                print("AudioKit Error during setup: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    func startRecording1() {
-        engine = AudioEngine()
-        mic = engine?.input
-        guard let mic = mic else {
-            return
-        }
-        do {
-            recorder = try NodeRecorder(node: mic)
-            let silentMixer = Mixer(mic)
-            silentMixer.volume = 0.0 // Mute the microphone input
-            engine?.output = silentMixer
-            //try engine?.start()
-            //print("Audio engine started")
-        } catch {
-            print("AudioKit Error during setup: \(error.localizedDescription)")
-        }
-        
-        //let audioManager = AudioManager.shared
-        //let tapHandler = ScaleTapHandler(amplitudeFilter: Settings.shared.amplitudeFilter, hilightPlayingNotes: false)
-        installedTap = PitchTap(mic, bufferSize:UInt32(1024)) { pitch, amplitude in
-            DispatchQueue.main.async {
-                print("Inside tap....")
-            }
-        }
-        do {
-            try engine?.start()
-            try recorder?.record()
-            if let tap = self.installedTap {
-                tap.start()
-            }
-            print("Recording started")
-        } catch {
-            print("Recording Error: \(error.localizedDescription)")
-        }
-    }
-
-    func startRecording() {
-        engine = AudioEngine()
-        mic = engine?.input
-        guard let mic = mic else {
-            return
-        }
-        
-        do {
-            // Initialize the recorder with the mic node
-            recorder = try NodeRecorder(node: mic)
-            
-            // Create a silent mixer to mute the microphone input in the output
-            let silentMixer = Mixer(mic)
-            //silentMixer.volume = 0.0
-            engine?.output = silentMixer
-            
-            // Setup the pitch tap with a separate mixer
-            //let tapMixer = Mixer(mic)
-            if true {
-                installedTap = PitchTap(mic, bufferSize: UInt32(1024)) { pitch, amplitude in
-                    DispatchQueue.main.async {
-                        print("Inside tap....", pitch, amplitude)
-                    }
-                }
-            }
-            else {
-//                let audioManager = AudioManager.shared
-//                let tapHandler = PracticeTapHandler(amplitudeFilter: 0, hilightPlayingNotes: true, logTaps: true)
-//                audioManager.installTapHandler(node: silentMixer,
-//                                               tapBufferSize: AudioManager.shared.tapBufferSize,
-//                                  tapHandler: tapHandler,
-//                                  asynch: true)
-//                installedTap = audioManager.installedTap
-            }
-            
-            // Start the audio engine
-            try engine?.start()
-            print("Audio engine started")
-            
-            // Start recording
-            try recorder?.record()
-            print("Recording started")
-            
-            // Start the tap
-            if let tap = installedTap {
-                tap.start()
-                print("Tap started")
-            }
-        } catch {
-            print("Error: \(error.localizedDescription)")
-        }
-    }
-
-    func stopRecording() {
-        if let tap = installedTap {
-            tap.stop()
-        }
-        //do {
-            recorder?.stop()
-            print("Recording stopped")
-            if let file = recorder?.audioFile {
-                self.file = file
-                print("Recorded file: \(file.url)")
-                print("File length: \(file.length) frames")
-                setupPlayer(url: file.url)
-            } else {
-                print("No audio file found after stopping recording")
-            }
-        //} catch {
-            //print("Error stopping recording: \(error.localizedDescription)")
-        //}
-        engine?.stop()
-    }
-
-
-//    func stopRecording() {
-//        do {
-//            try recorder?.stop()
-//            print("Recording stopped")
-//            if let file = recorder?.audioFile {
-//                self.file = file
-//                print("Recorded file: \(file.url)")
-//                print("File length: \(file.length) frames")
-//                setupPlayer(url: file.url)
-//            } else {
-//                print("No audio file found after stopping recording")
-//            }
-//            engine?.stop()
-//        } catch {
-//            print("Stop Recording Error: \(error.localizedDescription)")
+//import SwiftUI
+//import AVFoundation
+//import AudioKit
+//import AudioKitEX
+//import SoundpipeAudioKit
+//
+///// A helper class that loads an audio file, plays it, and uses PitchTap to detect pitch using median filtering.
+//class FilePitchDetector: ObservableObject {
+//    let engine = AudioEngine()
+//    var audioPlayer: AudioPlayer!  // Audio player for the recorded file.
+//    var pitchTap: PitchTap!
+//    
+//    @Published var currentPitch: Double = 0.0
+//    @Published var currentNote: String = "—"
+//    @Published var currentMIDINote: Int = 0  // Stores the current MIDI note number.
+//    
+//    // Variables to track note changes.
+//    private var previousMIDINote: Int?
+//    private var lastNoteChangeTime: Date?
+//    
+//    // Buffer for smoothing: store recent pitch values.
+//    private var pitchBuffer: [Double] = []
+//    private let bufferSize = 5  // Experiment with this value.
+//    
+//    /// Computes the median of an array of Double values.
+//    private func median(of array: [Double]) -> Double? {
+//        let sorted = array.sorted()
+//        guard !sorted.isEmpty else { return nil }
+//        let count = sorted.count
+//        if count % 2 == 1 {
+//            return sorted[count / 2]
+//        } else {
+//            return (sorted[count/2 - 1] + sorted[count/2]) / 2.0
 //        }
 //    }
-
-    func setupPlayer(url: URL) {
-        do {
-            let audioFile = try AVAudioFile(forReading: url)
-            player = AudioPlayer(file: audioFile)
-            player?.volume = 1.0  // Set volume to maximum
-            engine?.output = player
-        } catch {
-            print("Player Setup Error: \(error.localizedDescription)")
-        }
-    }
-
-    func startPlayback() {
-        do {
-            try engine?.start()
-            player?.play()
-            print("Playback started")
-        } catch {
-            print("Playback Error: \(error.localizedDescription)")
-        }
-    }
-
-    func stopPlayback() {
-        player?.stop()
-
-        engine?.stop()
-        print("Playback stopped")
-
-    }
-}
-//struct TestView1: View {
-//    let scale:PracticeJournalScale
 //    
 //    init() {
-//        let model = ScalesModel.shared
-//        let root = ScaleRoot(name: "C")
-//        let scaleType = ScaleType.major
-//        scale = PracticeJournalScale(scaleRoot: root, scaleType: scaleType)
-//        model.setScaleByRootAndType(scaleRoot: root, scaleType: scaleType, octaves: 1, hand: 0, ctx: "TestView init")
-//        model.setRunningProcess(.none)
+//        do {
+//            // 1. Load the audio file "scale.wav" from the app bundle.
+//            guard let fileURL = Bundle.main.url(forResource: "scale_4_oct", withExtension: "wav") else {
+//                fatalError("Audio file 'scale.wav' not found in the bundle.")
+//            }
+//            let audioFile = try AVAudioFile(forReading: fileURL)
+//            
+//            // 2. Create an AudioPlayer with the loaded file.
+//            audioPlayer = AudioPlayer(file: audioFile)
+//            audioPlayer.isLooping = false  // Change to true if you want the file to loop.
+//            
+//            // 3. Set the audioPlayer as the engine’s output.
+//            engine.output = audioPlayer
+//            
+//            // 4. Create a PitchTap on the audioPlayer node.
+//            pitchTap = PitchTap(audioPlayer, handler: { [weak self] pitchValues, amplitudeValues in
+//                guard let self = self,
+//                      let pitch = pitchValues.first, pitch > 0,
+//                      let amplitude = amplitudeValues.first, amplitude > 0.1
+//                else {
+//                    return
+//                }
+//                
+//                // Append the new pitch value to the buffer and maintain its size.
+//                self.pitchBuffer.append(Double(pitch))
+//                if self.pitchBuffer.count > self.bufferSize {
+//                    self.pitchBuffer.removeFirst()
+//                }
+//                
+//                // Compute the median pitch from the buffer.
+//                guard let medianPitch = self.median(of: self.pitchBuffer) else { return }
+//                
+//                // Compute the MIDI note using the formula:
+//                // MIDI note = 69 + 12 * log2(frequency / 440)
+//                let midiNote = 69 + 12 * log2(medianPitch / 440.0)
+//                let roundedMIDINote = Int(round(midiNote))
+//                let noteName = FilePitchDetector.frequencyToNoteName(frequency: medianPitch)
+//                
+//                DispatchQueue.main.async {
+//                    self.currentPitch = medianPitch
+//                    self.currentNote = noteName
+//                    self.currentMIDINote = roundedMIDINote
+//                    
+//                    let now = Date()
+//                    if let previous = self.previousMIDINote, let lastChange = self.lastNoteChangeTime {
+//                        if previous != roundedMIDINote {
+//                            let elapsed = now.timeIntervalSince(lastChange)
+//                            // Only update if the new note remains stable for at least 0.1 seconds.
+//                            if elapsed >= 0.1 {
+//                                print("Detected note: \(noteName) (MIDI: \(roundedMIDINote)) - elapsed: \(String(format: "%.2f", elapsed)) seconds since last change")
+//                                self.lastNoteChangeTime = now
+//                                self.previousMIDINote = roundedMIDINote
+//                            }
+//                        }
+//                    } else {
+//                        // First detection.
+//                        self.previousMIDINote = roundedMIDINote
+//                        self.lastNoteChangeTime = now
+//                        print("Detected note: \(noteName) (MIDI: \(roundedMIDINote)) - initial detection")
+//                    }
+//                }
+//            })
+//            pitchTap.start()
+//            
+//            // 5. Start the audio engine.
+//            try engine.start()
+//            
+//            // 6. Begin playback of the audio file.
+//            audioPlayer.play()
+//        } catch {
+//            print("Error initializing FilePitchDetector: \(error.localizedDescription)")
+//        }
 //    }
-//    var body: some View {
-//        ScalesView()
+//    
+//    deinit {
+//        engine.stop()
+//    }
+//    
+//    /// Converts a frequency (in Hz) to a note name (e.g., "A4").
+//    static func frequencyToNoteName(frequency: Double) -> String {
+//        let midiNote = 69 + 12 * log2(frequency / 440.0)
+//        let roundedNote = Int(round(midiNote))
+//        
+//        let noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+//        let noteIndex = roundedNote % 12
+//        let octave = (roundedNote / 12) - 1
+//        
+//        return "\(noteNames[noteIndex])\(octave)"
 //    }
 //}
-
-
-import SwiftUI
-
-struct FaceView: View {
-    let eyesY: CGFloat
-    let mouthOffsetY: CGFloat
-    let mouthPath: Path
-    
-    var body: some View {
-        ZStack {
-            // Face Circle
-            Circle()
-                .stroke(Color.black, lineWidth: 2)
-                .frame(width: 80, height: 80)
-            
-            // Left Eye
-            Circle()
-                .fill(Color.black)
-                .frame(width: 10, height: 10)
-                .offset(x: -15, y: eyesY)
-            
-            // Right Eye
-            Circle()
-                .fill(Color.black)
-                .frame(width: 10, height: 10)
-                .offset(x: 15, y: eyesY)
-            
-            // Mouth
-            mouthPath
-                .stroke(Color.black, lineWidth: 2)
-                .offset(y: mouthOffsetY)
-        }
-    }
-}
-
-struct TestViewFaces: View {
-    var body: some View {
-        HStack(spacing: 20) {
-            FaceView(eyesY: -10, mouthOffsetY: 500, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -10))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -5))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: -2))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addLine(to: CGPoint(x: 70, y: 0))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 2))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 5))
-            })
-            
-            FaceView(eyesY: -10, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 10))
-            })
-            
-            FaceView(eyesY: -15, mouthOffsetY: 10, mouthPath: Path { path in
-                path.move(to: CGPoint(x: 30, y: 0))
-                path.addQuadCurve(to: CGPoint(x: 70, y: 0), control: CGPoint(x: 50, y: 15))
-            })
-        }
-        .padding()
-    }
-}
-
-struct TestView: View {
-    @ObservedObject var audioRecorder = AudioRecorder()
-
-    var body: some View {
-        VStack {
-//            Button(action: {
-//                getSheet(sheetName: "MTFreeLicenses", context: "Licenses", loadFunction: LicenceManager.shared.loadEmailLicenses)
-//            }) {
-//                Text("GoogleAPI")
-//            }
-//            .padding()
-            
-            
-            Button(action: {
-                audioRecorder.startRecording()
-            }) {
-                Text("Start Recording")
-            }
-            .padding()
-
-            Button(action: {
-                audioRecorder.stopRecording()
-            }) {
-                Text("Stop Recording")
-            }
-            .padding()
-
-            Button(action: {
-                audioRecorder.startPlayback()
-            }) {
-                Text("Play Recording")
-            }
-            .padding()
-
-            Button(action: {
-                audioRecorder.stopPlayback()
-            }) {
-                Text("Stop Playback")
-            }
-            .padding()
-        }
-    }
-}
+//
+//struct TestView: View {
+//    @StateObject private var pitchDetector = FilePitchDetector()
+//    
+//    var body: some View {
+//        VStack(spacing: 30) {
+//            Text("File Pitch Detection")
+//                .font(.title)
+//                .padding(.top, 40)
+//            
+//            Text("Frequency: \(pitchDetector.currentPitch, specifier: "%.2f") Hz")
+//                .font(.headline)
+//            
+//            Text("Detected Note: \(pitchDetector.currentNote)")
+//                .font(.largeTitle)
+//                .bold()
+//            
+//            Text("MIDI Note: \(pitchDetector.currentMIDINote)")
+//                .font(.title2)
+//            
+//            Spacer()
+//            
+//            Text("Playing recorded scales and detecting pitch...")
+//                .multilineTextAlignment(.center)
+//                .padding()
+//        }
+//        .padding()
+//    }
+//}
+//

@@ -11,6 +11,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
         self.grade = grade
         if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
             self.practiceChart = chart
+            ///Testing only - to test adjust chart's hilighted 'today' column
+//            self.practiceChart?.firstColumnDayOfWeekNumber -= 1
+//            savePracticeChartToFile()
         }
         else {
             self.practiceChart = PracticeChart(board: board.name, grade:grade, columnWidth: 3, minorScaleType: 0)
@@ -54,9 +57,6 @@ class MusicBoardAndGrade: Codable, Identifiable {
                 return nil
             }
             let urlData = try Data(contentsOf: url)  // Read the data from the file
-//            if let stringData = String(data: urlData, encoding: .utf8) {
-//                    print("================= String:\n\n \(stringData)")
-//            }
             let chart = try decoder.decode(PracticeChart.self, from: urlData)
             for r in 0..<chart.rows.count {
                 let row:[PracticeChartCell] = chart.rows[r]
@@ -72,7 +72,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                     }
                 }
             }
-            Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) DayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
+            Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
             chart.adjustForStartDay()
             return chart
         } catch {
@@ -88,14 +88,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
         try container.encode(grade, forKey: .grade)
     }
     
-    func getGradeName() -> String {
-        //if let grade = self.grade {
-        return "Grade " + String(grade) + " Piano"
-        //        }
-        //        else {
-        //            return ""
-        //        }
-    }
+//    func getGradeName() -> String {
+//        return "Grade " + String(grade) + " Piano"
+//    }
     
     func getFullName() -> String {
         var name = self.board.name
@@ -103,15 +98,12 @@ class MusicBoardAndGrade: Codable, Identifiable {
         return name
     }
     
-    //    func getScales() -> [Scale] {
-    //        return self.scales
-    //    }
-    
     func savePracticeChartToFile() {
         guard let practiceChart = self.practiceChart else {
             return
         }
         do {
+            //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 Logger.shared.reportError(self, "Failed to save PracticeChart")
                 return
@@ -162,7 +154,26 @@ class MusicBoardAndGrade: Codable, Identifiable {
     
     static func scalesTrinity(grade:Int) -> [Scale] {
         var scales:[Scale] = []
-        
+        if grade == 0 {
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [1],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .trinityBrokenTriad, scaleMotion: .similarMotion, octaves: 1, hands: [0],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .trinityBrokenTriad, scaleMotion: .similarMotion, octaves: 1, hands: [1],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 1, hands: [0],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 1, hands: [1],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .trinityBrokenTriad, scaleMotion: .similarMotion, octaves: 1, hands: [0],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .trinityBrokenTriad, scaleMotion: .similarMotion, octaves: 1, hands: [1],
+                                minTempo: 60, dynamicTypes: [.mf], articulationTypes: [.legato]))
+        }
+
         if grade == 1 {
             let minTempo = 70
             let brokenChordTempo = 50
@@ -566,6 +577,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
         
         switch name {
         case "Trinity":
+            gradesOffered.append(0)
             gradesOffered.append(1)
             gradesOffered.append(2)
             gradesOffered.append(3)

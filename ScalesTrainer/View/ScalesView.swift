@@ -500,13 +500,14 @@ struct ScalesView: View {
     
     func staffCanFit() -> Bool {
         var canFit = true
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            if scalesModel.scale.scaleType == .chromatic && 
+        ///01Feb2025 - decided chromatic cant display well on any device or orientation
+        //if UIDevice.current.userInterfaceIdiom == .phone {
+            if scalesModel.scale.scaleType == .chromatic &&
                 //scalesModel.scale.scaleMotion == .contraryMotion &&
                 scalesModel.scale.octaves > 1 {
                 canFit = false
             }
-        }
+        //}
         return canFit
     }
         

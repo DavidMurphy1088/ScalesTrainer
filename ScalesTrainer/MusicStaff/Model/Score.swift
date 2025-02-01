@@ -635,7 +635,7 @@ public class Score : ObservableObject, Encodable {
     ///endEntryIndex is inclusive
     public func addStemCharacteristics(handType:HandType, clef:StaffClef, startEntryIndex:Int, endEntryIndex:Int) {
         
-        func setStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
+        func setBeamTypeAndStem(timeSlice:TimeSlice, beamType:QuaverBeamType, linesForFullStemLength:Double) {
             let staffNotes = timeSlice.getTimeSliceNotes(handType: handType)
             let stemDirection = getStemDirection(clef: clef, notes: staffNotes)
             
@@ -656,18 +656,18 @@ public class Score : ObservableObject, Encodable {
             for i in 0..<timeSlicesUnderBeam.count {
                 if i == 0 {
                     if timeSlicesUnderBeam.count == 1 {
-                        setStem(timeSlice: timeSlicesUnderBeam[i], beamType: .none, linesForFullStemLength: linesForFullStemLength)
+                        setBeamTypeAndStem(timeSlice: timeSlicesUnderBeam[i], beamType: .none, linesForFullStemLength: linesForFullStemLength)
                     }
                     else {
-                        setStem(timeSlice: timeSlicesUnderBeam[i], beamType: .start, linesForFullStemLength: linesForFullStemLength)
+                        setBeamTypeAndStem(timeSlice: timeSlicesUnderBeam[i], beamType: .start, linesForFullStemLength: linesForFullStemLength)
                     }
                 }
                 else {
                     if i == timeSlicesUnderBeam.count - 1 {
-                        setStem(timeSlice: timeSlicesUnderBeam[i], beamType: .end, linesForFullStemLength: linesForFullStemLength)
+                        setBeamTypeAndStem(timeSlice: timeSlicesUnderBeam[i], beamType: .end, linesForFullStemLength: linesForFullStemLength)
                     }
                     else {
-                        setStem(timeSlice: timeSlicesUnderBeam[i], beamType: .middle, linesForFullStemLength: linesForFullStemLength)
+                        setBeamTypeAndStem(timeSlice: timeSlicesUnderBeam[i], beamType: .middle, linesForFullStemLength: linesForFullStemLength)
                     }
                 }
             }
@@ -683,6 +683,7 @@ public class Score : ObservableObject, Encodable {
         let linesForFullStemLength = 3.5
 
         ///Group quavers under quaver beams
+        var ctr = 0
         for scoreEntryIndex in startEntryIndex...endEntryIndex {
             let scoreEntry = self.scoreEntries[scoreEntryIndex]
             guard scoreEntry is TimeSlice else {
@@ -698,12 +699,12 @@ public class Score : ObservableObject, Encodable {
             let note = timeSlice.getTimeSliceNotes(handType: handType)[0] //.entries[handIndex]
 
             if ![StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(note.getValue())  {
-                setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
+                setBeamTypeAndStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 continue
             }
             
-            if timeSlice.valuePointInBar == 0 {
+            if timeSlice.valuePointInBar == 0 { //|| timeSlicesUnderBeam.count == 2 {
                 timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
                 timeSlicesUnderBeam.append(timeSlice)
             }
@@ -712,52 +713,53 @@ public class Score : ObservableObject, Encodable {
                     timeSlicesUnderBeam.append(timeSlice)
                 }
                 else {
-                    setStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
+                    setBeamTypeAndStem(timeSlice: timeSlice, beamType: .none, linesForFullStemLength: linesForFullStemLength)
                 }
             }
+            ctr += 1
         }
         timeSlicesUnderBeam = setNoteStemsUnderBeam(timeSlicesUnderBeam: timeSlicesUnderBeam, linesForFullStemLength: linesForFullStemLength)
         
         ///Join up adjoining beams where possible. Existing beams only span one main beat and can be joined in some cases
-        if false { ///10Nov2024 - does not appear to do anything?
-            var lastNote:StaffNote? = nil
-            for scoreEntryIndex in startEntryIndex...endEntryIndex {
-                let scoreEntry = self.scoreEntries[scoreEntryIndex]
-                guard let timeSlice = scoreEntry as? TimeSlice else {
-                    lastNote = nil
-                    continue
-                }
-                if timeSlice.getTimeSliceNotes(handType: handType).count == 0 {
-                    lastNote = nil
-                    continue
-                }
-                let note = timeSlice.getTimeSliceNotes(handType: handType)[0]
-                if note.beamType == .none {
-                    lastNote = nil
-                    continue
-                }
-                if false {
-                    if note.beamType == .start {
-                        if let lastNote = lastNote {
-                            if lastNote.beamType == .end {
-                                var timeSigAllowsJoin = true
-                                if timeSignature.top == 4 {
-                                    /// 4/4 beats after 2nd cannot join to earlier beats
-                                    let beat = Int(note.timeSlice.valuePointInBar)
-                                    let startBeat = Int(lastNote.timeSlice.valuePointInBar)
-                                    timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
-                                }
-                                if timeSigAllowsJoin {
-                                    lastNote.beamType = .middle
-                                    note.beamType = .middle
-                                }
-                            }
-                        }
-                    }
-                }
-                lastNote = note
-            }
-        }
+//        if false { ///10Nov2024 - does not appear to do anything?
+//            var lastNote:StaffNote? = nil
+//            for scoreEntryIndex in startEntryIndex...endEntryIndex {
+//                let scoreEntry = self.scoreEntries[scoreEntryIndex]
+//                guard let timeSlice = scoreEntry as? TimeSlice else {
+//                    lastNote = nil
+//                    continue
+//                }
+//                if timeSlice.getTimeSliceNotes(handType: handType).count == 0 {
+//                    lastNote = nil
+//                    continue
+//                }
+//                let note = timeSlice.getTimeSliceNotes(handType: handType)[0]
+//                if note.beamType == .none {
+//                    lastNote = nil
+//                    continue
+//                }
+//                if false {
+//                    if note.beamType == .start {
+//                        if let lastNote = lastNote {
+//                            if lastNote.beamType == .end {
+//                                var timeSigAllowsJoin = true
+//                                if timeSignature.top == 4 {
+//                                    /// 4/4 beats after 2nd cannot join to earlier beats
+//                                    let beat = Int(note.timeSlice.valuePointInBar)
+//                                    let startBeat = Int(lastNote.timeSlice.valuePointInBar)
+//                                    timeSigAllowsJoin = beat < 2 || (startBeat >= 2)
+//                                }
+//                                if timeSigAllowsJoin {
+//                                    lastNote.beamType = .middle
+//                                    note.beamType = .middle
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                lastNote = note
+//            }
+//        }
         
         ///Determine stem directions for each quaver beam
         
