@@ -1115,7 +1115,12 @@ public class Scale : Codable {
                 else {
                     fingers = hand == 0 ? "2312341" : "3123412"
                     if hand == 0 {
-                        fingeringSpecifiedByNote = [2,3,1,  2,3,1,  2,3,4, 1,2,3, 1,2,3, 2,1,  3,2,1, 4,3,2,1, 3,2,1, 3,2  ]
+                        if scaleType == .melodicMinor {
+                            fingeringSpecifiedByNote = [2,3,1,2,  3,4,1,2,  3,1,2,3,  4,1,3,2,  1,3,2,1,  4,3,2,1, 3,2,1,3, 2]
+                        }
+                        else {
+                            fingeringSpecifiedByNote = [2,3,1,  2,3,1,  2,3,4, 1,2,3, 1,2,3, 2,1,  3,2,1, 4,3,2,1, 3,2,1, 3,2  ]
+                        }
                     }
                 }
             default:

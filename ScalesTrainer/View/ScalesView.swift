@@ -261,13 +261,15 @@ struct ScalesView: View {
                 Spacer()
                 if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     HStack()  {
-                        let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
+//                        let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
+
                         Button(action: {
                             scalesModel.setRunningProcess(.followingScale, practiceChartCell: practiceChartCell)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                             self.directionIndex = 0
                         }) {
-                            Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         .buttonStyle(.bordered)
                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -302,7 +304,7 @@ struct ScalesView: View {
                             }
                             self.directionIndex = 0
                         }) {
-                            Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         .buttonStyle(.bordered)
                         .accessibilityIdentifier("button_lead")
@@ -331,7 +333,7 @@ struct ScalesView: View {
                         scalesModel.setProcessInstructions("Play along with the scale as its played")
                         self.directionIndex = 0
                     }) {
-                        Text(title)
+                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     .buttonStyle(.bordered)
                     
@@ -353,7 +355,7 @@ struct ScalesView: View {
                 
                 Spacer()
                 HStack {
-                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Rec\u{200B}ord" : "Record"
+                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
                     Button(action: {
                         if scalesModel.runningProcessPublished == .recordingScale {
                             scalesModel.setRunningProcess(.none)
@@ -363,7 +365,7 @@ struct ScalesView: View {
                         }
                         
                     }) {
-                        Text(title)
+                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     .buttonStyle(.bordered)
                     
@@ -389,7 +391,7 @@ struct ScalesView: View {
                         Button(action: {
                             AudioManager.shared.playRecordedFile()
                         }) {
-                            Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         .buttonStyle(.bordered)
                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -412,7 +414,7 @@ struct ScalesView: View {
                 if scalesModel.scale.getBackingChords() != nil {
                     Spacer()
                     HStack {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Back\u{200B}ing" : "Backing Track" 
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
                         Button(action: {
                             if scalesModel.runningProcessPublished == .backingOn {
                                 scalesModel.setRunningProcess(.none)
@@ -421,7 +423,7 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.backingOn)
                             }
                         }) {
-                            Text(title)//.font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         .buttonStyle(.bordered)
                         

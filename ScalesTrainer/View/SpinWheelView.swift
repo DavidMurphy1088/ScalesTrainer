@@ -1,5 +1,12 @@
 import SwiftUI
 
+enum SpinState {
+    case notStarted
+    case selectedBet
+    case spinning
+    case spunAndStopped
+}
+
 struct SegmentView: View {
     let index: Int
     let total: Int
@@ -85,7 +92,8 @@ struct SpinWheelView: View {
     @State private var selectedScaleType = 0
     @State private var selectedScaleRoot = 0
     @State private var selectedHand = 0
-
+    @State var spinState:SpinState = .notStarted
+    
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
         for scale in practiceChart.getScales() {
@@ -140,7 +148,7 @@ struct SpinWheelView: View {
             rotation += totalRotations + randomAngle
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState(.spunAndStopped)
+            self.spinState = .spunAndStopped
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             
@@ -177,7 +185,7 @@ struct SpinWheelView: View {
             rotation += totalRotations + randomAngle
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
-            scalesModel.setSpinState(.spunAndStopped)
+            self.spinState = .spunAndStopped
             // Adjust to ensure the rotation ends at a random position
             rotation = rotation.truncatingRemainder(dividingBy: 360)
             // Determine which segment is at the top
@@ -219,7 +227,7 @@ struct SpinWheelView: View {
                 }
                 .edgesIgnoringSafeArea(.all)
                 
-                if [SpinState.notStarted, SpinState.selectedBet].contains(scalesModel.spinState) {
+                if [SpinState.notStarted, SpinState.selectedBet].contains(self.spinState) {
                     HStack {
                         Spacer()
                         VStack {
@@ -236,7 +244,7 @@ struct SpinWheelView: View {
                     }
                 }
 
-                if scalesModel.spinStatePublished == SpinState.spunAndStopped {
+                if self.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
                     NavigationLink(destination: ScalesView(practiceChartCell: nil, practiceModeHand: nil)) {
@@ -251,7 +259,7 @@ struct SpinWheelView: View {
             .commonFrameStyle()
         }
         .onAppear() {
-            scalesModel.setSpinState(.notStarted)
+            self.spinState = .notStarted
             if let chart = MusicBoardAndGrade.shared?.practiceChart {
                 self.practiceChart = chart
             }

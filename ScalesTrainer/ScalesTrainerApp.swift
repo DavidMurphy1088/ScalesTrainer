@@ -313,6 +313,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if UIDevice.current.userInterfaceIdiom == .phone {
             //return [.portrait, .landscapeLeft, .landscapeRight]
             return [.portrait]
+            //return [.landscape]
         } else {
             return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
         }
@@ -367,8 +368,9 @@ struct ScalesTrainerApp: App {
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(practiceChartCell: nil, practiceModeHand: nil)
+                //ScalesView(practiceChartCell: nil, practiceModeHand: nil)
                 //TestView()
+                FFTView()
                 //FFTContentView()
                     .tabItem {
                         Label("SCALE", systemImage: "house")

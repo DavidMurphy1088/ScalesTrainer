@@ -130,10 +130,19 @@
     "Adjust:" : {
 
     },
+    "Amp: %@" : {
+
+    },
     "Amplitude: %.4f" : {
 
     },
+    "Are you sure you want to go back?" : {
+
+    },
     "Available Subscriptions" : {
+
+    },
+    "Back" : {
 
     },
     "Back %@" : {
@@ -215,9 +224,6 @@
     "Delete Correct" : {
 
     },
-    "Detected Note: %@" : {
-
-    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -240,9 +246,6 @@
 
     },
     "FFT Analyzer" : {
-
-    },
-    "File Pitch Detection" : {
 
     },
     "Finger Number" : {
@@ -300,10 +303,13 @@
         }
       }
     },
-    "Frequency: %.2f Hz" : {
+    "Freq: %@ Hz" : {
 
     },
     "Gamification" : {
+
+    },
+    "Go to Screen B" : {
 
     },
     "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
@@ -465,7 +471,7 @@
     "MIDI Connections" : {
 
     },
-    "MIDI Note: %lld" : {
+    "MIDI: %@" : {
 
     },
     "min. " : {
@@ -481,6 +487,12 @@
 
     },
     "New Amplitude Filter:%@" : {
+
+    },
+    "Next: %lld" : {
+
+    },
+    "No" : {
 
     },
     "No music grade" : {
@@ -516,10 +528,10 @@
         }
       }
     },
-    "Play The Scale" : {
+    "Play Recording" : {
 
     },
-    "Playing recorded scales and detecting pitch..." : {
+    "Play The Scale" : {
 
     },
     "Please enter your first name" : {
@@ -636,19 +648,25 @@
     "Scan and connect MIDI Sources" : {
 
     },
+    "Screen A" : {
+
+    },
+    "Screen B" : {
+
+    },
     "Select" : {
 
     },
     "Select Value" : {
 
     },
-    "Select Your Music Board" : {
-
-    },
     "Send us a message about an issue or a new feature" : {
 
     },
     "Send us the app's log file" : {
+
+    },
+    "Sensitivity: %.3f" : {
 
     },
     "Separate Hand Practice Only" : {
@@ -668,6 +686,9 @@
         }
       }
     },
+    "Show Alert" : {
+
+    },
     "Show Hands" : {
 
     },
@@ -675,9 +696,6 @@
 
     },
     "Shuffle" : {
-
-    },
-    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
@@ -692,6 +710,9 @@
     "Start Analysis" : {
 
     },
+    "Start Recording" : {
+
+    },
     "Stats: %@" : {
 
     },
@@ -702,6 +723,9 @@
 
     },
     "Stop Hearing" : {
+
+    },
+    "Stop Playback" : {
 
     },
     "Stop Playing" : {
@@ -717,6 +741,9 @@
           }
         }
       }
+    },
+    "Stop Recording" : {
+
     },
     "Stop Recording Scale" : {
 
@@ -744,6 +771,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "节奏"
+          }
+        }
+      }
+    },
+    "Tempo: %.2f notes/sec, Smoothing: %.2f" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tempo: %1$.2f notes/sec, Smoothing: %2$.2f"
           }
         }
       }
@@ -810,6 +847,12 @@
           }
         }
       }
+    },
+    "Warning" : {
+
+    },
+    "Yes" : {
+
     },
     "Your current subscription is " : {
 

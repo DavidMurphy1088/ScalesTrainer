@@ -402,7 +402,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "Diminished 7th Arpeggio, Starting on B, Hands together",
-                                                                       customScaleNameWheel: "Dim 7th Arp on B, Hands Together",
+                                                                       customScaleNameWheel: "Dim 7th Arp on B, Together",
                                                                        removeKeySig: true)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
@@ -577,7 +577,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
         
         switch name {
         case "Trinity":
-            gradesOffered.append(0)
+            //gradesOffered.append(0) ///initial
             gradesOffered.append(1)
             gradesOffered.append(2)
             gradesOffered.append(3)

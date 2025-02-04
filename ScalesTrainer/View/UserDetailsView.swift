@@ -21,81 +21,62 @@ struct UserDetailsView: View {
     let width = UIScreen.main.bounds.width * 0.7
     
     var body: some View {
-        NavigationStack {
+        //NavigationStack {
+        VStack {
+            TitleView(screenName: "Name and Grade", showGrade: true).commonFrameStyle()
+
             VStack {
-                TitleView(screenName: "Name and Grade", showGrade: true).commonFrameStyle()
-
-                VStack {
-                    Spacer()
-                    VStack() {
-                        Text("Please enter your first name").padding()
-                        TextField("First name", text: $firstName)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                        //.border(Color.gray)
-                        //.padding()
-                    }
-                    .onChange(of: firstName, {
-                        settings.firstName = firstName
-                        SettingsPublished.shared.firstName = firstName
-                    })
-                    
-                    Spacer()
-                    VStack() {
-                        Text("Optional Email").padding()
-                        TextField("Email", text: $emailAddress)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                    }
-                    .onChange(of: emailAddress, {
-                        settings.emailAddress = emailAddress
-                        //SettingsPublished.shared = firstName
-                    })
-                    
-                    Spacer()
-//                    if MusicBoard.getSupportedBoards().count == 1 {
-//                        Button(action: {
-//                            navigateToSelectGrade = true
-//                        }) {
-//                            HStack {
-//                                Text("Select Your Piano Grade").padding().font(.title2).hilighted(backgroundColor: .blue)
-//                            }
-//                        }
-//                        .navigationDestination(isPresented: $navigateToSelectGrade) {
-//                            SelectBoardGradesView(inBoard: MusicBoard(name: MusicBoard.getSupportedBoards()[0].name), inGrade: publishedSettings.grade)
-//                                .environmentObject(navigationState2)
-//                        }
-//                    }
-//                    else {
-                        Button(action: {
-                            navigateToSelectBoard = true
-                        }) {
-                            HStack {
-                                Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
-                            }
-                        }
-                        .navigationDestination(isPresented: $navigateToSelectBoard) {
-                            SelectMusicBoardView(inBoard: MusicBoardAndGrade.shared?.board)
-                        }
-//                    }
-
-                    Spacer()
-                }
-                .commonFrameStyle()
-                .padding()
                 Spacer()
-
-                //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
-                .onAppear() {
-
+                VStack() {
+                    Text("Please enter your first name").padding()
+                    TextField("First name", text: $firstName)
+                        .padding()
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: UIScreen.main.bounds.width * 0.5)
                 }
-                .onDisappear() {
-                    ///Called on downward navigation from this view as well as view exit
-                    Settings.shared.save() //User name (above) is in settings
+                .onChange(of: firstName, {
+                    settings.firstName = firstName
+                    SettingsPublished.shared.firstName = firstName
+                })
+                
+                Spacer()
+                VStack() {
+                    Text("Optional Email").padding()
+                    TextField("Email", text: $emailAddress)
+                        .padding()
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: UIScreen.main.bounds.width * 0.5)
                 }
+                .onChange(of: emailAddress, {
+                    settings.emailAddress = emailAddress
+                })
+                
+//                Spacer()
+//                Button(action: {
+//                    navigateToSelectBoard = true
+//                }) {
+//                    HStack {
+//                        Text("Select Your Music Board").padding().font(.title2).hilighted(backgroundColor: .blue)
+//                    }
+//                }
+//                .navigationDestination(isPresented: $navigateToSelectBoard) {
+//                    SelectMusicBoardView(inBoard: MusicBoardAndGrade.shared?.board)
+//                }
+
+                Spacer()
+                SelectBoardGradesView(inBoard: MusicBoard(name: "Trinity"))
+                Spacer()
             }
+            .commonFrameStyle()
+//            .padding()
+//            Spacer()
+            //.frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.8)
+        }
+        .onAppear() {
+        }
+        .onDisappear() {
+            ///Called on downward navigation from this view as well as view exit
+            Settings.shared.save() //User name (above) is in settings
         }
     }
 }

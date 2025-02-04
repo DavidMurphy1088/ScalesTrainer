@@ -30,7 +30,9 @@ struct ScaleTitleView: View {
                     }
                 }
                 else {
-                    handName = "Together"
+                    if scale.scaleMotion != .contraryMotion {
+                        handName = "Together"
+                    }
                 }
             }
             return handName

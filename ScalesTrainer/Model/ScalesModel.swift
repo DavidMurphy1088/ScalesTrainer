@@ -56,13 +56,6 @@ enum RunningProcess {
     }
 }
 
-enum SpinState {
-    case notStarted
-    case selectedBet
-    case spinning
-    case spunAndStopped
-}
-
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel() 
 
@@ -130,14 +123,16 @@ public class ScalesModel : ObservableObject {
         self.tapEventSet = value
     }
 
-    @Published private(set) var spinStatePublished:SpinState = .notStarted
-    private(set) var spinState:SpinState = .notStarted
-    func setSpinState(_ value:SpinState) {
-        self.spinState = value
-        DispatchQueue.main.async {
-            self.spinStatePublished = value
-        }
-    }
+//    @Published private(set) var spinStatePublished:SpinState = .notStarted
+//    private(set) var spinState:SpinState = .notStarted
+//    func setSpinState(_ value:SpinState, publish:Bool) {
+//        self.spinState = value
+//        if publish {
+//            DispatchQueue.main.async {
+//                self.spinStatePublished = value
+//            }
+//        }
+//    }
 
     ///Speech
     @Published var speechListenMode = false

@@ -73,6 +73,7 @@
 		799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */; };
 		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
+		799DC8422D5190BB007008A5 /* FFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DC8412D5190BB007008A5 /* FFTView.swift */; };
 		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
 		79AF165C2D4E1D18003033E4 /* scale_4_oct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */; };
@@ -212,6 +213,7 @@
 		799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
 		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
+		799DC8412D5190BB007008A5 /* FFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTView.swift; sourceTree = "<group>"; };
 		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
 		79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scale_4_oct.wav; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				79CF5D712BEE46C900454BB6 /* UserDetailsView.swift */,
+				799DC8412D5190BB007008A5 /* FFTView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -856,6 +859,7 @@
 				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */,
 				79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */,
+				799DC8422D5190BB007008A5 /* FFTView.swift in Sources */,
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,

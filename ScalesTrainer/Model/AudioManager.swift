@@ -195,7 +195,7 @@ class AudioManager {
 //            }
 //        })
 //        setSession()
-//        
+//
 //        ///Based on CookBook Tuner
 //        //self.audioEngine = AudioEngine()
 //        guard let engine = self.audioEngine else {
@@ -421,7 +421,7 @@ extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
         if let sampler = samplerForKeyboard {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
-        }        
+        }
     }
 
     func pianoKeyUp(_ keyNumber: Int) {

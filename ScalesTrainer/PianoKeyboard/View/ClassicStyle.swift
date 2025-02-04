@@ -140,8 +140,23 @@ public struct ClassicStyle {
                     endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
                 ))
 
+                /// ----------- Note name ----------
+
+                if scalesModel.showFingers {
+                    if key.finger.count > 0 {
+                        context.draw(
+                            Text(key.getName())
+                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
+                            //.foregroundColor(keyModel.midi == 60 ? .blue : .black),
+                            .foregroundColor(.black),
+                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
+                        )
+                    }
+                }
+                
                 /// ----------- Middle C Note name ----------
-                if key.midi == 60 {
+                /// If the keyName is not "C" (e.g. its B#) Dont overwrite it.
+                if key.midi == 60 && key.getName() != "B#" {
                     let circleRadius:Double = UIDevice.current.userInterfaceIdiom == .phone ? 10 : 12
                     let y = UIDevice.current.userInterfaceIdiom == .phone ? circleRadius * 1.0 : circleRadius / 2 + 2
                     let circle = CGRect(x: Double(Int(rect.midX)) - circleRadius, // * 2,
@@ -156,20 +171,6 @@ public struct ClassicStyle {
                         .foregroundColor(.blue),
                         at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
                     )
-                }
-                
-                /// ----------- Note name ----------
-                if scalesModel.showFingers {
-                    if key.finger.count > 0 {
-                        if key.midi != 60 {
-                            context.draw(
-                                Text(key.getName())
-                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
-                                    .foregroundColor(keyModel.midi == 60 ? .blue : .black),
-                                at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                            )
-                        }
-                    }
                 }
 
                 /// ----------- Playing the note ----------
