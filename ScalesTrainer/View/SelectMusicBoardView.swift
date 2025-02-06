@@ -11,12 +11,12 @@ struct SelectBoardGradesView: View {
         ///Force all views dependendent on grade to close since they show the previous grade
         tabSelectionManager.isSpinWheelActive = false
         tabSelectionManager.isPracticeChartActive = false
-        Settings.shared.musicBoardGrade = gradeIndex
-        Settings.shared.musicBoardName = inBoard.name
+        Settings.shared.setUserGrade(gradeIndex)
+        //Settings.shared.getCurrentUser().board = inBoard.name
         MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: self.inBoard.name), grade: gradeIndex)
         Settings.shared.save()
         MusicBoardAndGrade.shared?.savePracticeChartToFile()
-        SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
+        //SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade.shared!)
     }
     
     var body: some View {

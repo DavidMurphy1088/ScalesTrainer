@@ -7,215 +7,174 @@ import AudioKit
 
 public class SettingsPublished : ObservableObject {
     static var shared = SettingsPublished()
-    @Published var boardAndGrade:MusicBoardAndGrade?
+    @Published var board:String? 
     @Published var grade:Int?
-    @Published var firstName = ""
+    @Published var name = ""
     
-    func setBoardAndGrade(boardAndGrade:MusicBoardAndGrade) {
+    func setBoardAndGrade(board:String, grade:Int?) {
         DispatchQueue.main.async {
-            self.boardAndGrade = boardAndGrade
-            self.grade = boardAndGrade.grade
+            self.board = board
+            self.grade = grade
         }
     }
     
-    func setFirstName(firstName:String) {
-        DispatchQueue.main.async {
-            self.firstName = firstName
-        }
-    }
+//    func setFirstName(firstName:String) {
+//        DispatchQueue.main.async {
+//            self.name = firstName
+//        }
+//    }
 }
 
-public class Settings : Codable  {
-    static var shared = Settings()
-    var firstName = ""
-    var emailAddress = ""
-    var musicBoardName:String? = nil
-    var musicBoardGrade:Int?
-    var defaultOctaves = 2
-    var scaleLeadInBeatCountIndex:Int = 2
-    var amplitudeFilter:Double
-    var practiceChartGamificationOn = true
-    var useMidiConnnections = false
-    var customTrinity = true
-    
-    ///Default colors if not set by user
-    //private var keyboardColor:[Double] = [1.0, 1.0, 1.0, 1.0]
-    private var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
-    private var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
-    
-    var backingSamplerPreset:Int = 0 //2 //default is Moog, 0=Piano
-    var requiredConsecutiveCount = 2
-    var badgeStyle = 0
-    
-    init() {
-#if targetEnvironment(simulator)
-        self.amplitudeFilter = 0.04
-#else
-        self.amplitudeFilter = 0.04
-#endif
-        if loadFromFile() {
-            if let name = self.musicBoardName {
-                if let grade = self.musicBoardGrade {
-                    MusicBoardAndGrade.shared = MusicBoardAndGrade(board: MusicBoard(name: name), grade: grade)
-                }
+class User {
+    let settingsPublished = SettingsPublished.shared
+
+    class UserSettings {
+        var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
+        var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
+        var leadInCOunt:Int = 0
+        var backingSamplerPreset:Int = 0
+        var badgeStyle = 0
+        var practiceChartGamificationOn = true
+        var useMidiConnnections = false
+        var scaleLeadInBeatCountIndex:Int = 2
+        
+        public func getLeadInBeats() -> Int {
+            switch scaleLeadInBeatCountIndex {
+            case 1:
+                return 2
+            case 2:
+                return 4
+            default:
+                return 0
             }
         }
-        if self.useMidiConnnections {
-            MIDIManager.shared.setupMIDI()
+        
+        func isCustomColor() -> Bool {
+            return keyboardColor.contains{ $0 != 1.0 }
+        }
+
+        ///Default colors if not set by user
+        func getBackgroundColor() -> Color {
+            let red = CGFloat(self.backgroundColor[0])
+            let green = CGFloat(self.backgroundColor[1])
+            let blue = CGFloat(self.backgroundColor[2])
+            let alpha = CGFloat(self.backgroundColor[3])
+            let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+            return Color(uiColor)
+        }
+        
+        func getKeyboardColor() -> Color {
+            let red = CGFloat(self.keyboardColor[0])
+            let green = CGFloat(self.keyboardColor[1])
+            let blue = CGFloat(self.keyboardColor[2])
+            let alpha = CGFloat(self.keyboardColor[3])
+            let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+            return Color(uiColor)
+        }
+        
+        func setBackgroundColor(_ color: Color) {
+            let uiColor = UIColor(color)
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            var alpha: CGFloat = 0
+            uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            self.backgroundColor = [Double(red), Double(green), Double(blue), Double(alpha)]
+        }
+        func setKeyboardColor(_ color: Color) {
+            let uiColor = UIColor(color)
+            var red: CGFloat = 0
+            var green: CGFloat = 0
+            var blue: CGFloat = 0
+            var alpha: CGFloat = 0
+            uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+            self.keyboardColor = [Double(red), Double(green), Double(blue), Double(alpha)]
         }
     }
     
-    public func isDeveloperMode() -> Bool {
-        return self.firstName.range(of: "dev", options: .caseInsensitive) != nil
-    }
-    
-    public func getLeadInBeats() -> Int {
-        switch scaleLeadInBeatCountIndex {
-        case 1:
-            return 2
-        case 2:
-            return 4
-        default:
-            return 0
-        }
-    }
-    
-    public func calibrationIsSet() -> Bool {
-       return amplitudeFilter > 0
+    var name:String
+    var email:String
+    var board:String?
+    var grade:Int?
+    var settings:UserSettings
+
+    init() {
+        self.name = ""
+        self.email = ""
+        self.board = nil
+        self.grade = nil
+        self.settings = UserSettings()
     }
 
-    private func toJSON() -> String? {
-        do {
-            let jsonEncoder = JSONEncoder()
-            let jsonData = try jsonEncoder.encode(self)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                return jsonString
-            }
-        } catch {
-            Logger.shared.reportError(self, "save:" + error.localizedDescription)
-        }
-        return nil
-    }
+}
+
+class Settings {
+    static var shared = Settings()
     
-//    func getBoardAndGrade() -> MusicBoardAndGrade? {
-//        if let boardName = self.musicBoardName {
-//            let board = MusicBoard(name: boardName)
-//            if let grade = self.musicBoardGrade {
-//                let boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
-//                return boardAndGrade
-//            }
-//        }
-//        return nil
-//    }
+    var currentUser:User?
+    var users:[User]
+    private var currentUserIndex = 0
     
-    func toString() -> String {
-        var str = "Settings amplitudeFilter:\(String(format: "%.4f", self.amplitudeFilter)) "
-        str += " LeadIn:\(self.scaleLeadInBeatCountIndex)"
-        str += " FirstName:\(self.firstName)"
-        str += " Board/Grade:\(self.musicBoardName)/\(self.musicBoardGrade)"
-        str += " Octaves:\(self.defaultOctaves)"
-        str += " KeyboardColor:\(self.keyboardColor)"
-        str += " BackingMidi:\(self.backingSamplerPreset)"
-        str += " RequiredConsecutiveCount:\(self.requiredConsecutiveCount)"
-        str += " BadgeStyle:\(self.badgeStyle)"
-        //str += " BackgroundColour:\(self.backgroundColor)"
-        str += " email:\(self.emailAddress)"
-        str += " Gamification:\(self.practiceChartGamificationOn)"
-        str += " useMIDI:\(self.useMidiConnnections)"
-        return str
+    var isDeveloperMode = false
+    var requiredConsecutiveCount = 2
+    var defaultOctaves = 2
+    var amplitudeFilter:Double
+    let settingsPublished = SettingsPublished.shared
+    
+    init() {
+        self.users = []
+        self.currentUser = nil
+//#if targetEnvironment(simulator)
+        self.amplitudeFilter = 0.04
     }
     
     func save() {
-        guard let str = toJSON() else {
-            return
-        }
-        UserDefaults.standard.set(str, forKey: "settings")
-        //Logger.shared.log(self, "Setting saved, \(toString())")
-    }
-    
-    func getName() -> String {
-        let name = firstName
-        let name1 = name + (name.count>0 ? "'s" : "")
-        return name1
     }
     
     func loadFromFile() -> Bool {
-        if let jsonData = UserDefaults.standard.string(forKey: "settings") {
-            if let data = jsonData.data(using: .utf8) {
-                do {
-                    let jsonDecoder = JSONDecoder()
-                    let decoded = try jsonDecoder.decode(Settings.self, from: data)
-                    let loaded = decoded
-                    self.amplitudeFilter = loaded.amplitudeFilter
-                    self.firstName = loaded.firstName
-                    self.emailAddress = loaded.emailAddress
-                    self.scaleLeadInBeatCountIndex = loaded.scaleLeadInBeatCountIndex
-                    self.defaultOctaves = loaded.defaultOctaves
-                    self.keyboardColor = loaded.keyboardColor
-                    self.backingSamplerPreset = loaded.backingSamplerPreset
-                    self.requiredConsecutiveCount = loaded.requiredConsecutiveCount
-                    self.badgeStyle = loaded.badgeStyle
-                    self.backgroundColor = loaded.backgroundColor
-                    self.practiceChartGamificationOn  = loaded.practiceChartGamificationOn
-                    self.useMidiConnnections = loaded.useMidiConnnections
-                    self.musicBoardName = loaded.musicBoardName
-                    self.musicBoardGrade = loaded.musicBoardGrade
-                    SettingsPublished.shared.setFirstName(firstName: self.firstName)
-                    if let board = self.musicBoardName, let grade = self.musicBoardGrade {
-                        SettingsPublished.shared.setBoardAndGrade(boardAndGrade: MusicBoardAndGrade(board: MusicBoard(name: board), grade: grade))
-                    }
-                    Logger.shared.log(self, "Settings loaded, \(toString())")
-                    return true
-                } catch {
-                    Logger.shared.reportError(self, "Settings found but not loaded, data format has changed:" + error.localizedDescription)
-                }
+        return true
+    }
+    
+    func addUser(user:User) {
+        self.users.append(user)
+        updatePublished()
+    }
+    
+    func setUserGrade(_ grade:Int) {
+        self.getCurrentUser().grade = grade
+        updatePublished()
+    }
+    
+    func setUserName(_ name:String) {
+        self.getCurrentUser().name = name
+        updatePublished()
+    }
+    
+    private func updatePublished() {
+        let user = self.getCurrentUser()
+        if user.name.count > 0 {
+            DispatchQueue.main.async {
+                self.settingsPublished.name = user.name
+                self.settingsPublished.board = user.board
+                self.settingsPublished.grade = user.grade
             }
         }
-        else {
-            Logger.shared.log(self, "No settings file")
+    }
+    
+    func getCurrentUser() -> User {
+        if users.count == 0 {
+            return User()
         }
-        return false
+        return users[currentUserIndex]
     }
     
-    func setKeyboardColor(_ color: Color) {
-        let uiColor = UIColor(color)
-        var red: CGFloat = 0
-        var green: CGFloat = 0
-        var blue: CGFloat = 0
-        var alpha: CGFloat = 0
-        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        self.keyboardColor = [Double(red), Double(green), Double(blue), Double(alpha)]
-    }
-    
-    func getKeyboardColor1() -> Color {
-        let red = CGFloat(self.keyboardColor[0])
-        let green = CGFloat(self.keyboardColor[1])
-        let blue = CGFloat(self.keyboardColor[2])
-        let alpha = CGFloat(self.keyboardColor[3])
-        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
-        return Color(uiColor)
-    }
-    
-    func setBackgroundColor(_ color: Color) {
-        let uiColor = UIColor(color)
-        var red: CGFloat = 0
-        var green: CGFloat = 0
-        var blue: CGFloat = 0
-        var alpha: CGFloat = 0
-        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        self.backgroundColor = [Double(red), Double(green), Double(blue), Double(alpha)]
+    public func isDeveloperMode1() -> Bool {
+        if users.count == 0 {
+            return false
+        }
+        let user = self.getCurrentUser()
+        return user.name.range(of: "dev", options: .caseInsensitive) != nil
     }
 
-    func getBackgroundColor() -> Color {
-        let red = CGFloat(self.backgroundColor[0])
-        let green = CGFloat(self.backgroundColor[1])
-        let blue = CGFloat(self.backgroundColor[2])
-        let alpha = CGFloat(self.backgroundColor[3])
-        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
-        return Color(uiColor)
-    }
-    
-    func isCustomColor() -> Bool {
-        return keyboardColor.contains{ $0 != 1.0 }
-    }
 }
+

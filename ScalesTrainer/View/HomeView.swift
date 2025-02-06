@@ -27,8 +27,8 @@ struct TitleView: View {
     let showGrade:Bool
     
     func getTitle() -> String {
-        var name = self.settingsPublished.firstName
-        if self.settingsPublished.firstName.count > 0 {
+        var name = self.settingsPublished.name
+        if self.settingsPublished.name.count > 0 {
             name += "'s "
         }
         name += screenName
@@ -40,17 +40,16 @@ struct TitleView: View {
             Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             if showGrade {
                 HStack {
-                    if let boardAndGrade = settingsPublished.boardAndGrade {
-                        Text("\(boardAndGrade.getFullName())").font(.title2)
-                    }
+                    //if let boardAndGrade = settingsPublished.boardAndGrade {
+                        Text("FIX").font(.title2)
+                        //Text("\(boardAndGrade.getFullName())").font(.title2)
+                    //}
                 }
             }
         }
         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
         .onAppear() {
-//            if let boardAndGrade = Settings.shared.getBoardAndGrade() {
-//                SettingsPublished.shared.setBoardAndGrade(boardAndGrade: boardAndGrade)
-//            }
+
         }
     }
 }

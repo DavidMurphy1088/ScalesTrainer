@@ -136,13 +136,7 @@
     "Amplitude: %.4f" : {
 
     },
-    "Are you sure you want to go back?" : {
-
-    },
     "Available Subscriptions" : {
-
-    },
-    "Back" : {
 
     },
     "Back %@" : {
@@ -188,6 +182,9 @@
 
     },
     "Calibration" : {
+
+    },
+    "Cancel" : {
 
     },
     "Choose your background colour " : {
@@ -276,7 +273,13 @@
     "Firebase Write" : {
 
     },
+    "first name" : {
+
+    },
     "First name" : {
+
+    },
+    "FIX" : {
 
     },
     "Follow the Scale" : {
@@ -309,9 +312,6 @@
     "Gamification" : {
 
     },
-    "Go to Screen B" : {
-
-    },
     "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
 
     },
@@ -328,6 +328,9 @@
           }
         }
       }
+    },
+    "Grade %lld" : {
+
     },
     "Hand:" : {
 
@@ -486,13 +489,16 @@
     "Motion:" : {
 
     },
+    "Name and Grade" : {
+
+    },
     "New Amplitude Filter:%@" : {
 
     },
-    "Next: %lld" : {
+    "New User Profile" : {
 
     },
-    "No" : {
+    "Next: %lld" : {
 
     },
     "No music grade" : {
@@ -528,10 +534,10 @@
         }
       }
     },
-    "Play Recording" : {
+    "Play The Scale" : {
 
     },
-    "Play The Scale" : {
+    "Please enter the first name" : {
 
     },
     "Please enter your first name" : {
@@ -648,12 +654,6 @@
     "Scan and connect MIDI Sources" : {
 
     },
-    "Screen A" : {
-
-    },
-    "Screen B" : {
-
-    },
     "Select" : {
 
     },
@@ -686,9 +686,6 @@
         }
       }
     },
-    "Show Alert" : {
-
-    },
     "Show Hands" : {
 
     },
@@ -696,6 +693,9 @@
 
     },
     "Shuffle" : {
+
+    },
+    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
@@ -710,9 +710,6 @@
     "Start Analysis" : {
 
     },
-    "Start Recording" : {
-
-    },
     "Stats: %@" : {
 
     },
@@ -723,9 +720,6 @@
 
     },
     "Stop Hearing" : {
-
-    },
-    "Stop Playback" : {
 
     },
     "Stop Playing" : {
@@ -741,9 +735,6 @@
           }
         }
       }
-    },
-    "Stop Recording" : {
-
     },
     "Stop Recording Scale" : {
 
@@ -847,12 +838,6 @@
           }
         }
       }
-    },
-    "Warning" : {
-
-    },
-    "Yes" : {
-
     },
     "Your current subscription is " : {
 

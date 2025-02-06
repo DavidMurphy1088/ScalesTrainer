@@ -63,7 +63,7 @@
 		797013972BEE3E45009F85D6 /* StemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013922BEE3E45009F85D6 /* StemView.swift */; };
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
-		7985635D2C0349BF008BAC79 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* Settings.swift */; };
+		7985635D2C0349BF008BAC79 /* SettingsOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* SettingsOLD.swift */; };
 		79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD82D38D278009405C3 /* ScoreTest.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
@@ -126,6 +126,7 @@
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
 		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
+		79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3F58B2D5363C700D6BAA3 /* Settings.swift */; };
 		79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */; };
 		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
 		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
@@ -202,7 +203,7 @@
 		797013922BEE3E45009F85D6 /* StemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StemView.swift; sourceTree = "<group>"; };
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
-		7985635C2C0349BF008BAC79 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		7985635C2C0349BF008BAC79 /* SettingsOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOLD.swift; sourceTree = "<group>"; };
 		79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests1.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79891CD82D38D278009405C3 /* ScoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreTest.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
@@ -260,6 +261,7 @@
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
 		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
+		79F3F58B2D5363C700D6BAA3 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
 		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
@@ -544,7 +546,8 @@
 				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
 				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
-				7985635C2C0349BF008BAC79 /* Settings.swift */,
+				79F3F58B2D5363C700D6BAA3 /* Settings.swift */,
+				7985635C2C0349BF008BAC79 /* SettingsOLD.swift */,
 				79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
@@ -791,10 +794,11 @@
 				79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
 				799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */,
+				79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */,
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
 				79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */,
 				79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */,
-				7985635D2C0349BF008BAC79 /* Settings.swift in Sources */,
+				7985635D2C0349BF008BAC79 /* SettingsOLD.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */,
 				79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */,

@@ -131,7 +131,7 @@ struct BadgesView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             if badgeBank.totalCorrect > 0 {
-                                if Settings.shared.badgeStyle == 0 {
+                                if Settings.shared.getCurrentUser().settings.badgeStyle == 0 {
                                     HexagramShape(size1: badgeIconSize, offset: offset, color: c)
                                         .rotationEffect(Angle.degrees(rotationAngle))
                                     .offset(y: verticalOffset)
@@ -143,7 +143,7 @@ struct BadgesView: View {
                                     }
                                 }
                                 else {
-                                    Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
+                                    Image(self.imageName(imageSet: Settings.shared.getCurrentUser().settings.badgeStyle, n: scaleNoteNumber))
                                     .resizable()
                                     .frame(width: imWidth)
                                     .rotationEffect(Angle.degrees(rotationAngle))
@@ -163,11 +163,11 @@ struct BadgesView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             if scaleNoteNumber < badgeBank.totalCorrect {
-                                if Settings.shared.badgeStyle == 0 {
+                                if Settings.shared.getCurrentUser().settings.badgeStyle == 0 {
                                     HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
                                 }
                                 else {
-                                    Image(self.imageName(imageSet: Settings.shared.badgeStyle, n: scaleNoteNumber))
+                                    Image(self.imageName(imageSet: Settings.shared.getCurrentUser().settings.badgeStyle, n: scaleNoteNumber))
                                         .resizable()
                                         .frame(width: imWidth)
                                 }

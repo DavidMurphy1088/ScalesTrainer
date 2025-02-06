@@ -396,12 +396,7 @@ public class StaffClef : ScoreEntry {
                 Logger.shared.reportError(self, "No note offset data for note \(midiValue)")
                 break
             }
-            if notePlacement.placementCanBeSetByKeySignature == false {
-                if Settings.shared.isDeveloperMode() {
-                    if notePlacement.midi > 50 && notePlacement.midi < 80 {
-                    }
-                }
-            }
+
             var offsetFromMidLine = notePlacement.offsetFromStaffMidline
 
             var octave:Int

@@ -184,7 +184,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             let maxAccidentalLoopbackCustomisation = ScaleCustomisation(maxAccidentalLookback: 1)
             
             ///Row 1
-            if false && Settings.shared.isDeveloperMode() {
+            if false && Settings.shared.isDeveloperMode1() {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))

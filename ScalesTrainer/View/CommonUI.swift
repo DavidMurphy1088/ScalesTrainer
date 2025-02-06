@@ -59,7 +59,7 @@ struct Hilighted: ViewModifier {
 }
 
 extension View {
-    func commonFrameStyle(backgroundColor: Color = Settings.shared.getBackgroundColor(),
+    func commonFrameStyle(backgroundColor: Color = Settings.shared.getCurrentUser().settings.getBackgroundColor(),
                           cornerRadius: CGFloat = 10,
                           borderColor: Color = .blue,
                           borderWidth: CGFloat = 1) -> some View {

@@ -80,7 +80,7 @@ struct SettingsView: View {
                         ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
                             .padding()
                             .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                                Settings.shared.setBackgroundColor(newColor)
+                                Settings.shared.getCurrentUser().settings.setBackgroundColor(newColor)
                                 self.backgroundChange += 1
                             }
                             .labelsHidden()
@@ -93,7 +93,7 @@ struct SettingsView: View {
                         }
                         //.padding()
                         .onChange(of: keyboardColor, {
-                            Settings.shared.setKeyboardColor(keyboardColor)
+                            Settings.shared.getCurrentUser().settings.setKeyboardColor(keyboardColor)
                         })
                         .hilighted(backgroundColor: .gray)
                         .frame(width: UIScreen.main.bounds.size.width * 0.9,
@@ -119,7 +119,7 @@ struct SettingsView: View {
                     //.disabled(!self.metronomeOn)
                     .pickerStyle(.menu)
                     .onChange(of: leadInBarCount, {
-                        settings.scaleLeadInBeatCountIndex = leadInBarCount
+                        settings.getCurrentUser().settings.scaleLeadInBeatCountIndex = leadInBarCount
                     })
                 }
                 
@@ -134,7 +134,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: backingPresetNumber, {
-                        settings.backingSamplerPreset = backingPresetNumber
+                        settings.getCurrentUser().settings.backingSamplerPreset = backingPresetNumber
                         //AudioManager.shared.resetAudioKit()
                     })
                 }
@@ -150,7 +150,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: badgeStyleNumber, {
-                        settings.badgeStyle = badgeStyleNumber
+                        settings.getCurrentUser().settings.badgeStyle = badgeStyleNumber
                     })
                 }
                 
@@ -161,7 +161,7 @@ struct SettingsView: View {
                         Text("Gamification").font(.title2).padding(0)
                     }
                     .onChange(of: practiceChartGamificationOn, {
-                        settings.practiceChartGamificationOn = practiceChartGamificationOn
+                        settings.getCurrentUser().settings.practiceChartGamificationOn = practiceChartGamificationOn
                     })
                     Spacer()
                 }
@@ -174,7 +174,7 @@ struct SettingsView: View {
                         Text("Use MIDI Connections").font(.title2).padding(0)
                     }
                     .onChange(of: useMidiConnnections, {
-                        settings.useMidiConnnections = useMidiConnnections
+                        settings.getCurrentUser().settings.useMidiConnnections = useMidiConnnections
                     })
                     Spacer()
                 }
@@ -235,18 +235,18 @@ struct SettingsView: View {
             
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
             .onAppear() {
-                leadInBarCount = settings.scaleLeadInBeatCountIndex
+                leadInBarCount = settings.getCurrentUser().settings.scaleLeadInBeatCountIndex
                 self.defaultOctaves = settings.defaultOctaves
                 if let score = scalesModel.getScore() {
                     PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
                                                                                             scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
                 }
-                self.keyboardColor = Settings.shared.getKeyboardColor1()
-                self.backgroundColor = Settings.shared.getBackgroundColor()
-                self.backingPresetNumber = settings.backingSamplerPreset
-                self.practiceChartGamificationOn = settings.practiceChartGamificationOn
-                self.badgeStyleNumber = settings.badgeStyle
-                self.useMidiConnnections = settings.useMidiConnnections
+                self.keyboardColor = Settings.shared.getCurrentUser().settings.getKeyboardColor()
+                self.backgroundColor = Settings.shared.getCurrentUser().settings.getBackgroundColor()
+                self.backingPresetNumber = Settings.shared.getCurrentUser().settings.backingSamplerPreset
+                self.practiceChartGamificationOn = Settings.shared.getCurrentUser().settings.practiceChartGamificationOn
+                self.badgeStyleNumber = Settings.shared.getCurrentUser().settings.badgeStyle
+                self.useMidiConnnections = Settings.shared.getCurrentUser().settings.useMidiConnnections
             }
             .onDisappear() {
                 settings.save()

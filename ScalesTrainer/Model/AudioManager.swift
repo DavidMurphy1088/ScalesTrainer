@@ -63,7 +63,7 @@ class AudioManager {
                 var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
                 self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
                 
-                switch Settings.shared.backingSamplerPreset {
+                switch Settings.shared.getCurrentUser().settings.backingSamplerPreset {
                 case 1: preset = 28
                 case 2: preset = 37
                 case 3: preset = 49

@@ -226,7 +226,7 @@ class TabSelectionManager: ObservableObject {
     }
     
     func nextNavigationTab() {
-        if Settings.shared.isDeveloperMode() {
+        if Settings.shared.isDeveloperMode1() {
             let hands = [0,1]
             //let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
             
@@ -284,7 +284,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
-        if !Settings.shared.isDeveloperMode() {
+        if !Settings.shared.isDeveloperMode1() {
             LicenceManager.shared.getFreeLicenses()
         }
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
@@ -343,7 +343,7 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             VStack {
-                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode() {
+                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
                     MainContentView()
                         .environmentObject(orientationInfo)
                 }
@@ -363,14 +363,14 @@ struct ScalesTrainerApp: App {
     
     func MainContentView() -> some View {
         TabView(selection: $tabSelectionManager.selectedTab) {
-            if Settings.shared.isDeveloperMode() {
+            if Settings.shared.isDeveloperMode1() {
 
                 //MIDIView()
                 //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                //ScalesView(practiceChartCell: nil, practiceModeHand: nil)
+                ScalesView(practiceChartCell: nil, practiceModeHand: nil)
                 //TestView()
-                FFTView()
+                //FFTView()
                 //FFTContentView()
                     .tabItem {
                         Label("SCALE", systemImage: "house")
@@ -414,7 +414,7 @@ struct ScalesTrainerApp: App {
                 .tag(50)
                 .environmentObject(tabSelectionManager)
             
-            if Settings.shared.isDeveloperMode() {
+            if Settings.shared.isDeveloperMode1() {
                 MIDIView()
                     .tabItem {
                         Label("MIDI", systemImage: "house")

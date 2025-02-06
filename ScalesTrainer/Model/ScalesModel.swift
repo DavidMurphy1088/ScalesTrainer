@@ -376,7 +376,7 @@ public class ScalesModel : ObservableObject {
 
                 self.exerciseBadge = Badge.getRandomExerciseBadge()
                 let soundHandler:SoundEventHandlerProtocol
-                if Settings.shared.useMidiConnnections {
+                if Settings.shared.getCurrentUser().settings.useMidiConnnections {
                     soundHandler = MIDISoundEventHandler(scale: scale)
                     self.midiTestHander = soundHandler as? MIDISoundEventHandler
                 }
@@ -387,7 +387,7 @@ public class ScalesModel : ObservableObject {
                 
                 let followProcess = FollowScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
                 followProcess.start(soundHandler: soundHandler)
-                if !Settings.shared.useMidiConnnections {
+                if !Settings.shared.getCurrentUser().settings.useMidiConnnections {
                     self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
                 }
             }
@@ -395,7 +395,7 @@ public class ScalesModel : ObservableObject {
         
         if [.leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
-            if Settings.shared.useMidiConnnections {
+            if Settings.shared.getCurrentUser().settings.useMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
                 self.midiTestHander = soundHandler as? MIDISoundEventHandler
             }
@@ -411,7 +411,7 @@ public class ScalesModel : ObservableObject {
 //                metronome.setTicking(way: true)
 //                metronome.start()
 //            }
-            if !Settings.shared.useMidiConnnections {
+            if !Settings.shared.getCurrentUser().settings.useMidiConnnections {
                 self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
             }
         }

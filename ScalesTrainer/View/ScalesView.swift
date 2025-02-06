@@ -169,7 +169,7 @@ struct ScalesView: View {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
-                            if Settings.shared.practiceChartGamificationOn {
+                            if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
                                 ///Stopped by user before exercise process stopped it
                                 if exerciseState.statePublished == .won  {
                                     exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
@@ -246,7 +246,7 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if Settings.shared.useMidiConnnections {
+        if Settings.shared.getCurrentUser().settings.useMidiConnnections {
             return true
         }
         else {
@@ -560,20 +560,22 @@ struct ScalesView: View {
                 VStack {
                     if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                         ///Scale is contrary with LH and RH joined on one keyboard
-                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getKeyboardColor1())
+                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
                             .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
 
                     }
                     else {
                         if scalesModel.scale.needsTwoKeyboards() {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getKeyboardColor1())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, keyColor: Settings.shared.getKeyboardColor1())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, 
+                                              keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                         else {
                             let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, keyColor: Settings.shared.getKeyboardColor1())
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, 
+                                              keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                         }
                     }
@@ -611,7 +613,7 @@ struct ScalesView: View {
                 BadgesView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if Settings.shared.practiceChartGamificationOn {
+            if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
                 HStack {
                     if let exerciseBadge = scalesModel.exerciseBadge {
                         //if true || [ExerciseState.State.wonAndFinished, ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
@@ -646,8 +648,8 @@ struct ScalesView: View {
                     }
                 }
             }
-            if Settings.shared.isDeveloperMode()  {
-                if Settings.shared.useMidiConnnections {
+            if Settings.shared.isDeveloperMode1()  {
+                if Settings.shared.getCurrentUser().settings.useMidiConnnections {
                     Spacer()
                     TestInputView()
                 }
@@ -718,7 +720,7 @@ struct ScalesView: View {
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt
-                if Settings.shared.isDeveloperMode()  {
+                if Settings.shared.isDeveloperMode1()  {
                     let fileManager = FileManager.default
                     if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                         do {

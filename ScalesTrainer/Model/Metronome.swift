@@ -128,7 +128,7 @@ class Metronome:ObservableObject {
         let tempo = Double(scalesModel.getTempo())
         let delay = (60.0 / tempo) / Double(notesPerClick)
         Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
-        let leadInTicks = Settings.shared.getLeadInBeats() * notesPerClick
+        let leadInTicks = Settings.shared.getCurrentUser().settings.getLeadInBeats() * notesPerClick
         var leadingIn = false
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing

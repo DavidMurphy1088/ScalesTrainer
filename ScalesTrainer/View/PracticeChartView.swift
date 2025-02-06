@@ -255,7 +255,7 @@ struct CellView: View {
             starView()
             Spacer()
             badgeView()
-            if Settings.shared.isDeveloperMode() {
+            if Settings.shared.isDeveloperMode1() {
                 Button(action: {
                     if !isCorrectSet() {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
@@ -420,7 +420,7 @@ struct PracticeChartView: View {
                         .buttonStyle(.bordered)
                         //.padding()
                         
-//                        if Settings.shared.isDeveloperMode() {
+//                        if Settings.shared.isDeveloperMode1() {
 //                            Spacer()
 //                            Button(action: {
 //                                practiceChart.deleteFile()
@@ -489,7 +489,7 @@ struct PracticeChartView: View {
                 }
             }
             minorTypeIndex = practiceChart.minorScaleType
-            if Settings.shared.isDeveloperMode() {
+            if Settings.shared.isDeveloperMode1() {
                 Firebase.shared.readAllScales(board: self.practiceChart.board, grade:self.practiceChart.grade) { scalesAndScores in
                     self.scalesInChart = scalesAndScores.map { $0.0 }
                 }

@@ -45,7 +45,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
-        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode() ? 1 : 4)) / 4
+        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode1() ? 1 : 4)) / 4
         exerciseState.setNumberToWin(numberToWin)
         if scale.scaleMotion == .contraryMotion {
             if scale.getScaleNoteState(handType: .left, index: 0).midi == scale.getScaleNoteState(handType: .right, index: 0).midi {
@@ -187,7 +187,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     }
     
     func awardChartBadge() {
-        if Settings.shared.practiceChartGamificationOn {
+        if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
             let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
             exerciseState.bumpTotalCorrect()
             let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin

@@ -132,7 +132,7 @@ public struct ClassicStyle {
                 let gradientWhiteKey:Gradient = Gradient(colors: [
                     hilightColor,
                     keyColor,
-                    Settings.shared.isCustomColor() ? Settings.shared.getKeyboardColor1() : Color(red: 1, green: 1, blue: 1),
+                    Settings.shared.getCurrentUser().settings.isCustomColor() ? Settings.shared.getCurrentUser().settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
                 ])
                 context.fill(path, with: .linearGradient(
                     gradientWhiteKey,
