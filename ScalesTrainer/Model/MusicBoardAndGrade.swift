@@ -1,7 +1,6 @@
 import Foundation
 
 class MusicBoardAndGrade: Codable, Identifiable {
-    static var shared:MusicBoardAndGrade? //(board: MusicBoard(name: ""), grade: 0)
     let board:MusicBoard
     let grade:Int
     var practiceChart:PracticeChart? = nil
@@ -9,15 +8,15 @@ class MusicBoardAndGrade: Codable, Identifiable {
     init(board:MusicBoard, grade:Int) {
         self.board = board
         self.grade = grade
-        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
-            self.practiceChart = chart
-            ///Testing only - to test adjust chart's hilighted 'today' column
-//            self.practiceChart?.firstColumnDayOfWeekNumber -= 1
-//            savePracticeChartToFile()
-        }
-        else {
-            self.practiceChart = PracticeChart(board: board.name, grade:grade, columnWidth: 3, minorScaleType: 0)
-        }
+//        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
+//            self.practiceChart = chart
+//            ///Testing only - to test adjust chart's hilighted 'today' column
+////            self.practiceChart?.firstColumnDayOfWeekNumber -= 1
+////            savePracticeChartToFile()
+//        }
+//        else {
+//            self.practiceChart = PracticeChart(board: board.name, grade:grade, columnWidth: 3, minorScaleType: 0)
+//        }
     }
     
     enum CodingKeys: String, CodingKey {
@@ -30,55 +29,12 @@ class MusicBoardAndGrade: Codable, Identifiable {
         let boardName = try container.decode(String.self, forKey: .boardName)
         board = MusicBoard(name: boardName)
         grade = try container.decode(Int.self, forKey: .grade)
-        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
-            self.practiceChart = chart
-        }
-        else {
-            self.practiceChart = PracticeChart(board: boardName, grade:grade, columnWidth: 3, minorScaleType: 0)
-        }
-    }
-    
-    func getFileName() -> String {
-        return "_"+self.board.name+"_"+String(self.grade)
-    }
-    
-    func loadPracticeChartFromFile(board:String, grade:Int) -> PracticeChart? {
-        let decoder = JSONDecoder()
-        do {
-            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                if let notRegression = ProcessInfo.processInfo.environment["NOT_RUNNING_REGRESSION"] {
-                    Logger.shared.log(self, "Failed to load PracticeChart - file not found")
-                }
-                return nil
-            }
-            let url = dir.appendingPathComponent(getFileName())
-            let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: url.path) {
-                return nil
-            }
-            let urlData = try Data(contentsOf: url)  // Read the data from the file
-            let chart = try decoder.decode(PracticeChart.self, from: urlData)
-            for r in 0..<chart.rows.count {
-                let row:[PracticeChartCell] = chart.rows[r]
-                for chartCell in row {
-                    chartCell.isLicensed = false
-                    if LicenceManager.shared.isLicensed() {
-                        chartCell.isLicensed = true
-                    }
-                    else {
-                        if r == 0 {
-                            chartCell.isLicensed = true
-                        }
-                    }
-                }
-            }
-            Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
-            chart.adjustForStartDay()
-            return chart
-        } catch {
-            Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
-            return nil
-        }
+//        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
+//            self.practiceChart = chart
+//        }
+//        else {
+//            self.practiceChart = PracticeChart(board: boardName, grade:grade, columnWidth: 3, minorScaleType: 0)
+//        }
     }
     
     func encode(to encoder: Encoder) throws {
@@ -96,43 +52,6 @@ class MusicBoardAndGrade: Codable, Identifiable {
         var name = self.board.name
         name += ", Grade " + String(grade) + " Piano"
         return name
-    }
-    
-    func savePracticeChartToFile() {
-        guard let practiceChart = self.practiceChart else {
-            return
-        }
-        do {
-            //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY
-            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                Logger.shared.reportError(self, "Failed to save PracticeChart")
-                return
-            }
-            let url = dir.appendingPathComponent(getFileName())
-            if let data = practiceChart.convertToJSON() {
-                try data.write(to: url)  // Write the data to the file
-                Logger.shared.log(self, "Saved PracticeChart for Board:\(self.board) Grade:\(self.grade) ➡️ to \(url) size:\(data.count)")
-            }
-            else {
-                Logger.shared.log(self, "Cannot convert PracticeChart")
-            }
-        } catch {
-            Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
-        }
-    }
-    
-    func deleteFile() {
-        do {
-            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                Logger.shared.reportError(self, "Failed to save PracticeChart")
-                return
-            }
-            let url = dir.appendingPathComponent(getFileName())
-            try FileManager.default.removeItem(at: url)
-            Logger.shared.log(self, "PracticeChart deleted: \(url.path)")
-        } catch {
-            Logger.shared.reportError(self, "Failed to delete PracticeChart \(error)")
-        }
     }
     
     ///List the scales and include melodics and harmonic minors

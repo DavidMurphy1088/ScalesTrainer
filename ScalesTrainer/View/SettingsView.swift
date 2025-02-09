@@ -22,7 +22,7 @@ func backingSoundName(_ n:Int) -> String {
 }
 
 struct SettingsView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    //@EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
@@ -62,7 +62,7 @@ struct SettingsView: View {
                 }
                 PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
             }
-            .background(UIGlobals.shared.purpleDark)
+            .background(UIGlobals.shared.purpleHeading)
             .onAppear() {
                 self.selectedColor = parentColor
             }
@@ -225,9 +225,9 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        //NavigationStack {
             VStack {
-                TitleView(screenName: "Settings", showGrade: true).commonFrameStyle()
+                ScreenTitleView(screenName: "Settings").commonFrameStyle()
                 DetailedCustomSettingsView()
                     .commonFrameStyle()
                     .padding()
@@ -251,8 +251,7 @@ struct SettingsView: View {
             .onDisappear() {
                 settings.save()
             }
-        }
-        
+        //}
     }
 }
 

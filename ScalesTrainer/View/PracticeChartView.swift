@@ -141,7 +141,7 @@ struct CellView: View {
     
     func starView() -> some View {
         HStack {
-            NavigationLink(destination: ScalesView(practiceChartCell: practiceCell, practiceModeHand: practiceModeHand), isActive: $navigateToScale) {
+            NavigationLink(destination: ScalesView(practiceChart: practiceChart, practiceChartCell: practiceCell, practiceModeHand: practiceModeHand), isActive: $navigateToScale) {
             }.frame(width: 0.0)
 
             HStack {
@@ -351,7 +351,7 @@ struct PracticeChartView: View {
             
             VStack {
                 VStack(spacing: 0) {
-                    TitleView(screenName: "Practice Chart", showGrade: true).commonFrameStyle()
+                    ScreenTitleView(screenName: "Practice Chart").commonFrameStyle()
                         .accessibilityIdentifier("chart_title")
                     HStack {
                         Spacer()
@@ -373,7 +373,7 @@ struct PracticeChartView: View {
                             practiceChart.minorScaleType = minorTypeIndex
                             practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
                                                            selectedMotions:[.similarMotion], newType: newType)
-                            MusicBoardAndGrade.shared?.savePracticeChartToFile()
+                            practiceChart.savePracticeChartToFile("MinorTypeChange")
                             self.reloadTrigger = !self.reloadTrigger
                         })
                         Text("\(self.redrawCounter)").opacity(0.0).padding(0)
@@ -412,7 +412,7 @@ struct PracticeChartView: View {
                                 withAnimation(.linear(duration: 1.0)) {
                                     cellOpacityValue = 1.0
                                 }
-                                MusicBoardAndGrade.shared?.savePracticeChartToFile()
+                                practiceChart.savePracticeChartToFile("Shuffle")
                             }
                         }) {
                             Text("Shuffle")
@@ -482,12 +482,7 @@ struct PracticeChartView: View {
         .commonFrameStyle()
         
         .onAppear() {
-            if let boardAndGrade = MusicBoardAndGrade.shared {
-                if let chart = boardAndGrade.practiceChart {
-                    self.practiceChart = chart
-                    self.minorScaleTypes = boardAndGrade.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
-                }
-            }
+            self.minorScaleTypes = self.practiceChart.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = practiceChart.minorScaleType
             if Settings.shared.isDeveloperMode1() {
                 Firebase.shared.readAllScales(board: self.practiceChart.board, grade:self.practiceChart.grade) { scalesAndScores in

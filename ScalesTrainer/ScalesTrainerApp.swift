@@ -175,45 +175,61 @@ struct DeveloperView: View {
     }
 }
 
-///------------------------------------------------------------
 
-//class BackgroundTaskManager: ObservableObject {
-//    private var timer: Timer?
-//    private var startDate: Date
-//    private var loopCtr: Int = 0
-//    
-//    init() {
-//        startDate = Date()
-//        startTimer()
-//    }
-//
-//    private func startTimer() {
-//        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
-//            self?.performTask()
-//        }
-//    }
-//
-//    ///Reload the practice chart on day or month change. The active day column must change on day of mon change.
-//    private func performTask() {
-//        DispatchQueue.global(qos: .background).async { [weak self] in
-//            guard let self = self else { return }
-//            let calendar = Calendar.current
-//            let startDay = calendar.component(.day, from: self.startDate)
-//            let currentDay = calendar.component(.day, from: Date())
-//            loopCtr += 1
-//            if loopCtr > 3 || currentDay != startDay {
-//                DispatchQueue.main.async {
-//                    exit(0)
-//                }
-//            } else {
-//                print("Day-of-month remains the same (\(currentDay)) at \(Date()).")
-//            }
-//        }
-//    }
-//    deinit {
-//        timer?.invalidate()
-//    }
-//}
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+        
+#if targetEnvironment(simulator)
+        ///Simulator asks for password every time even though its signed in with Apple ID. By design for IAP purchasing... :(
+        ///Code to run on the Simulator
+        Logger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
+#else
+        SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
+        LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
+        LicenceManager.shared.requestProducts() ///Get products
+        ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
+#endif
+        FirebaseApp.configure()
+        Settings.shared.load()
+        if !Settings.shared.isDeveloperMode1() {
+            LicenceManager.shared.getFreeLicenses()
+        }
+        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
+        
+        let status = AVCaptureDevice.authorizationStatus(for: .audio)
+        var statusMsg = ""
+        switch status {
+        case .authorized:
+            statusMsg = "The user has previously granted access to the microphone."
+        case .notDetermined:
+            statusMsg = "The user has not yet been asked to grant microphone access."
+        case .denied:
+            statusMsg = "The user has previously denied access."
+        case .restricted:
+            statusMsg = "The user can't grant access due to restrictions."
+        @unknown default:
+            statusMsg = "unknown \(status)"
+        }
+        Logger.shared.log(self, "Microphone access:\(statusMsg))")
+
+        return true
+    }
+    
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            //return [.portrait, .landscapeLeft, .landscapeRight]
+            return [.portrait]
+            //return [.landscape]
+        } else {
+            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
+        }
+    }
+}
+
+///------------------------------------------------------------
 
 class TabSelectionManager: ObservableObject {
     @Published var selectedTab: Int = 0
@@ -247,75 +263,15 @@ class TabSelectionManager: ObservableObject {
                                                 //scaleCustomisation: scaleCustomisation,
                                                 debugOn: true)
             }
-            else {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F#"), scaleType: .melodicMinor,
-                                                         scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
-                                                         dynamicTypes: [.mf], articulationTypes: [.legato],
-                                                         scaleCustomisation: scaleCustomisation)
-            }
-
             selectedTab = 0
         }
         else {
-            if MusicBoardAndGrade.shared == nil {
-                selectedTab = 10
+            if Settings.shared.users.count == 0 {
+                selectedTab = 11
             }
             else {
                 selectedTab = 20
             }
-        }
-    }
-}
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
-        
-#if targetEnvironment(simulator)
-        ///Simulator asks for password every time even though its signed in with Apple ID. By design for IAP purchasing... :(
-        ///Code to run on the Simulator
-        Logger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
-#else
-        SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
-        LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
-        LicenceManager.shared.requestProducts() ///Get products
-        ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
-#endif
-        FirebaseApp.configure()
-        if !Settings.shared.isDeveloperMode1() {
-            LicenceManager.shared.getFreeLicenses()
-        }
-        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-        Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
-        
-        let status = AVCaptureDevice.authorizationStatus(for: .audio)
-        var statusMsg = ""
-        switch status {
-        case .authorized:
-            statusMsg = "The user has previously granted access to the microphone."
-        case .notDetermined:
-            statusMsg = "The user has not yet been asked to grant microphone access."
-        case .denied:
-            statusMsg = "The user has previously denied access."
-        case .restricted:
-            statusMsg = "The user can't grant access due to restrictions."
-        @unknown default:
-            statusMsg = "unknown \(status)"
-        }
-        Logger.shared.log(self, "Microphone access:\(statusMsg))")
-
-        return true
-    }
-    
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            //return [.portrait, .landscapeLeft, .landscapeRight]
-            return [.portrait]
-            //return [.landscape]
-        } else {
-            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
         }
     }
 }
@@ -361,16 +317,38 @@ struct ScalesTrainerApp: App {
         }
     }
     
+//    struct CustomTabItem: View {
+//        let iconName: String
+//        let label: String
+//        let color: Color
+//
+//        var body: some View {
+//            VStack {
+//                Image(systemName: iconName)
+//                    .foregroundColor(color)
+//                Text(label)
+//            }
+//        }
+//    }
+    
     func MainContentView() -> some View {
         TabView(selection: $tabSelectionManager.selectedTab) {
+//            UserListView()
+//                .tabItem {
+//                    VStack {
+//                        Image(systemName: "house.fill")
+//                            .renderingMode(.template) // Allows tinting per item
+//                            .foregroundColor(.red) DOESNT work
+//                        Text("Home")
+//                    }
+//                }
+//                .tag(0)
+            
             if Settings.shared.isDeveloperMode1() {
-
-                //MIDIView()
-                //PracticeChartView(rows: 10, columns: 3)
                 //HomeView()
-                ScalesView(practiceChartCell: nil, practiceModeHand: nil)
+                //ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
+                UserListView()
                 //TestView()
-                //FFTView()
                 //FFTContentView()
                     .tabItem {
                         Label("SCALE", systemImage: "house")
@@ -379,14 +357,26 @@ struct ScalesTrainerApp: App {
                     .tag(1)
             }
             
-            UserDetailsView()
+            UserListView()
                 .tabItem {
-                    Label(NSLocalizedString("Grade", comment: "Menu"), systemImage: "graduationcap.fill")
+                    Label {
+                        Text(NSLocalizedString("Users", comment: "Menu"))
+                    } icon: {
+                        Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
+                    }
                 }
                 .tag(10)
                 .environmentObject(tabSelectionManager)
+
             
-            HomeView()
+//            UserDetailsView()
+//                .tabItem {
+//                    Label(NSLocalizedString("Grades", comment: "Menu"), systemImage: "graduationcap.fill")
+//                }
+//                .tag(15)
+//                .environmentObject(tabSelectionManager)
+            
+            HomeView(user: Settings.shared.getCurrentUser())
                 .tabItem {
                     Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
                 }
@@ -462,6 +452,7 @@ struct ScalesTrainerApp: App {
                     .environmentObject(tabSelectionManager)
             }
         }
+        //.tint(.blue) // Set the color for the tab items
     }
 }
 

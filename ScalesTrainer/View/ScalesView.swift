@@ -40,6 +40,7 @@ struct MetronomeView: View {
 struct ScalesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     //let initialRunProcess:RunningProcess?
+    let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
     let practiceModeHand:HandType?
     @ObservedObject private var scalesModel = ScalesModel.shared
@@ -71,7 +72,8 @@ struct ScalesView: View {
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
     
-    init(practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+    init(practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+        self.practiceChart = practiceChart
         self.practiceChartCell = practiceChartCell
         self.practiceModeHand = practiceModeHand
     }
@@ -265,7 +267,7 @@ struct ScalesView: View {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
 
                         Button(action: {
-                            scalesModel.setRunningProcess(.followingScale, practiceChartCell: practiceChartCell)
+                            scalesModel.setRunningProcess(.followingScale, practiceChart: practiceChart, practiceChartCell: practiceChartCell)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                             self.directionIndex = 0
                         }) {
@@ -299,7 +301,7 @@ struct ScalesView: View {
                             }
                             else {
                                 self.exerciseBadge = scalesModel.exerciseBadge
-                                scalesModel.setRunningProcess(.leadingTheScale, practiceChartCell: self.practiceChartCell)
+                                scalesModel.setRunningProcess(.leadingTheScale, practiceChart: self.practiceChart, practiceChartCell: self.practiceChartCell)
                                 scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                             }
                             self.directionIndex = 0
@@ -539,7 +541,7 @@ struct ScalesView: View {
         VStack {
             VStack(spacing: 0) {
                 ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
                     .padding(.horizontal, 0)
                 HStack {
                     Spacer()

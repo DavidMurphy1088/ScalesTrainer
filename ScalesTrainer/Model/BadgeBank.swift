@@ -64,10 +64,10 @@ class BadgeBank : ObservableObject {
             //}
         }
     }
-    func addBadge(badge:Badge) {
-        self.badges.append(badge)
-    }
-    
+//    func addBadge(badge:Badge) {
+//        self.badges.append(badge)
+//    }
+//    
 //    func clearMatches() {
 //        setTotalCorrect(0)
 //        DispatchQueue.main.async {

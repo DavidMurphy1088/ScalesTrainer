@@ -299,7 +299,7 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    func setRunningProcess(_ setProcess: RunningProcess, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
+    func setRunningProcess(_ setProcess: RunningProcess, practiceChart:PracticeChart? = nil, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         if setProcess == self.runningProcess {
             return
         }
@@ -385,7 +385,7 @@ public class ScalesModel : ObservableObject {
                 }
                 self.soundEventHandlers.append(soundHandler)
                 
-                let followProcess = FollowScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
+                let followProcess = FollowScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
                 followProcess.start(soundHandler: soundHandler)
                 if !Settings.shared.getCurrentUser().settings.useMidiConnnections {
                     self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
@@ -404,7 +404,7 @@ public class ScalesModel : ObservableObject {
             }
             self.soundEventHandlers.append(soundHandler)
             self.exerciseBadge = Badge.getRandomExerciseBadge()
-            let leadProcess = LeadScaleProcess(scalesModel: self, practiceChartCell: practiceChartCell, metronome: metronome)
+            let leadProcess = LeadScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
             leadProcess.start(soundHandler: soundHandler)
 //            if !Settings.shared.isDeveloperMode() {
 //                metronome.addProcessesToNotify(process: leadProcess)

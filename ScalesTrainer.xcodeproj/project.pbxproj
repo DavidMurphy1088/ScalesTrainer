@@ -101,7 +101,7 @@
 		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
 		79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB56202C599D9F00BB328F /* PracticeChart.swift */; };
 		79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D6F2BEE426B00454BB6 /* Staff.swift */; };
-		79CF5D722BEE46C900454BB6 /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserDetailsView.swift */; };
+		79CF5D722BEE46C900454BB6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserListView.swift */; };
 		79CFA1F02C3808A90018DC8A /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA1EF2C3808A90018DC8A /* Test.swift */; };
 		79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
@@ -238,7 +238,7 @@
 		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		79CB56202C599D9F00BB328F /* PracticeChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChart.swift; sourceTree = "<group>"; };
 		79CF5D6F2BEE426B00454BB6 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
-		79CF5D712BEE46C900454BB6 /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
+		79CF5D712BEE46C900454BB6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		79CFA1EF2C3808A90018DC8A /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureReportView.swift; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
@@ -507,7 +507,7 @@
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
-				79CF5D712BEE46C900454BB6 /* UserDetailsView.swift */,
+				79CF5D712BEE46C900454BB6 /* UserListView.swift */,
 				799DC8412D5190BB007008A5 /* FFTView.swift */,
 			);
 			path = View;
@@ -814,7 +814,7 @@
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
 				79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */,
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
-				79CF5D722BEE46C900454BB6 /* UserDetailsView.swift in Sources */,
+				79CF5D722BEE46C900454BB6 /* UserListView.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,

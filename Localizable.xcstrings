@@ -7,9 +7,6 @@
     " " : {
 
     },
-    "     " : {
-
-    },
     "                  " : {
 
     },
@@ -67,6 +64,9 @@
 
     },
     "%@" : {
+
+    },
+    "%@ Grades" : {
 
     },
     "%@, %@" : {
@@ -127,6 +127,9 @@
     "Activities" : {
       "comment" : "Menu"
     },
+    "Add New User" : {
+
+    },
     "Adjust:" : {
 
     },
@@ -182,9 +185,6 @@
 
     },
     "Calibration" : {
-
-    },
-    "Cancel" : {
 
     },
     "Choose your background colour " : {
@@ -273,13 +273,7 @@
     "Firebase Write" : {
 
     },
-    "first name" : {
-
-    },
     "First name" : {
-
-    },
-    "FIX" : {
 
     },
     "Follow the Scale" : {
@@ -320,6 +314,7 @@
     },
     "Grade" : {
       "comment" : "Menu",
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -329,8 +324,8 @@
         }
       }
     },
-    "Grade %lld" : {
-
+    "Grades" : {
+      "comment" : "Menu"
     },
     "Hand:" : {
 
@@ -462,6 +457,9 @@
     "Major Scales" : {
 
     },
+    "Make Current User" : {
+
+    },
     "Make sure your device has an active internet connection. Without internet, emails cannot be sent." : {
 
     },
@@ -495,13 +493,10 @@
     "New Amplitude Filter:%@" : {
 
     },
-    "New User Profile" : {
-
-    },
     "Next: %lld" : {
 
     },
-    "No music grade" : {
+    "No music grade has been selected for %@" : {
 
     },
     "Not in Scale" : {
@@ -535,9 +530,6 @@
       }
     },
     "Play The Scale" : {
-
-    },
-    "Please enter the first name" : {
 
     },
     "Please enter your first name" : {
@@ -580,6 +572,9 @@
       }
     },
     "Recording %@" : {
+
+    },
+    "Remove" : {
 
     },
     "Required Consecutive Count" : {
@@ -648,6 +643,9 @@
     "Scales Academy" : {
 
     },
+    "Scales Academy Users" : {
+
+    },
     "Scales Library" : {
 
     },
@@ -673,6 +671,9 @@
 
     },
     "Set Correct" : {
+
+    },
+    "Set Grade" : {
 
     },
     "Settings" : {
@@ -819,6 +820,9 @@
     },
     "Use MIDI Connections" : {
 
+    },
+    "Users" : {
+      "comment" : "Menu"
     },
     "Version %@" : {
 

@@ -16,8 +16,8 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
     }
     var requiredNotes:[RequiredNote] = []
     
-    override init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
-        super.init(scalesModel: scalesModel, practiceChartCell: practiceChartCell, metronome: metronome)
+    override init(scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
+        super.init(scalesModel: scalesModel, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
     }
     
     func metronomeStart() {

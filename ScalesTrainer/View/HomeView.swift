@@ -21,39 +21,6 @@ struct CustomBackButton: View {
     }
 }
 
-struct TitleView: View {
-    @ObservedObject var settingsPublished = SettingsPublished.shared
-    let screenName: String
-    let showGrade:Bool
-    
-    func getTitle() -> String {
-        var name = self.settingsPublished.name
-        if self.settingsPublished.name.count > 0 {
-            name += "'s "
-        }
-        name += screenName
-        return name
-    }
-
-    var body: some View {
-        VStack {
-            Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-            if showGrade {
-                HStack {
-                    //if let boardAndGrade = settingsPublished.boardAndGrade {
-                        Text("FIX").font(.title2)
-                        //Text("\(boardAndGrade.getFullName())").font(.title2)
-                    //}
-                }
-            }
-        }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
-        .onAppear() {
-
-        }
-    }
-}
-
 class ActivityMode : Identifiable {
     let name:String
     let view:AnyView
@@ -97,11 +64,11 @@ struct FamousQuotesView: View {
 struct ActivityModeView: View {
     @EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
-    let musicBoardAndGrade:MusicBoardAndGrade
+    let user:User
+    let practiceChart:PracticeChart
     @State var menuOptionsLeft:[ActivityMode] = []
     //@State var menuOptionsRight:[ActivityMode] = []
     @State var helpShowing = false
-    //@State private var isNavigationActive = false
     let shade = 8.0
     
     func getView(activityMode: ActivityMode) -> some View {
@@ -114,7 +81,7 @@ struct ActivityModeView: View {
                 let overlay = Circle().stroke(Color.black, lineWidth: 2)
                 
                 Spacer()
-                if let practiceChart = musicBoardAndGrade.practiceChart {
+                //if let practiceChart = musicBoardAndGrade.practiceChart {
                     // Invisible NavigationLink that activates when isNavigationActive becomes true.
                     NavigationLink(
                         destination: PracticeChartView(practiceChart: practiceChart),
@@ -176,7 +143,7 @@ struct ActivityModeView: View {
 //                    .navigationDestination(isPresented: $tabSelectionManager.isSpinWheelActive) {
 //                        SpinWheelView(practiceChart: practiceChart)
 //                    }
-                }
+                //}
                 Spacer()
             }
             .commonFrameStyle()
@@ -193,27 +160,53 @@ struct ActivityModeView: View {
 
 struct HomeView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
-    @State var scaleGroupsSheet = false
+    @State var user:User
+    ///Reference types (e.g. User) state aren't refreshed with onAppear
+    @State var userName:String = ""
+    @State var grade:Int?
+
+    func loadChart(user:User) -> PracticeChart? {
+        guard let grade = self.grade else {
+            return nil
+        }
+        
+        let practiceChart:PracticeChart
+        if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: user, board: user.board, grade: grade) {
+            practiceChart = loadedChart
+        }
+        else {
+            practiceChart = PracticeChart(user: user, board: user.board, grade: grade)
+        }
+        return practiceChart
+    }
     
     var body: some View {
         VStack {
             NavigationView {
                 VStack {
                     Spacer()
-                    TitleView(screenName: "Scales Academy", showGrade: true)
-                    if let musicBoardAndGrade = MusicBoardAndGrade.shared {
-                        ActivityModeView(musicBoardAndGrade: musicBoardAndGrade)
+                    ScreenTitleView(screenName: "Activities")
+                    if let practiceChart = loadChart(user: user) {
+                        ActivityModeView(user: user, practiceChart: practiceChart)
                             .environmentObject(orientationInfo)
                     }
                     else {
-                        Text("No music grade").padding()
-                        Text("Please select your music grade").padding()
+                        Spacer()
+                        Text("No music grade has been selected for \(userName)").font(.title2).padding()
+                        Text("Please select your music grade").font(.title2).padding()
+                        Spacer()
                     }
                     Spacer()
                 }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear() {
+            self.user = Settings.shared.getCurrentUser()
+            self.userName = user.name
+            self.grade = user.grade
+        }
+
     }
     
 }

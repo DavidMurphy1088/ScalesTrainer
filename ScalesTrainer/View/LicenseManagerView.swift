@@ -655,7 +655,7 @@ public struct LicenseManagerView: View {
     public var body: some View {
         NavigationStack {
             VStack {
-                TitleView(screenName: "Licence Subscriptions", showGrade: false).commonFrameStyle()
+                ScreenTitleView(screenName: "Licence Subscriptions").commonFrameStyle()
                 DetailedLicensesView()
                     .commonFrameStyle()
                     .padding()

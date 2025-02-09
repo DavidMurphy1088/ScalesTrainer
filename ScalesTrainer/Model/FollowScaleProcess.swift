@@ -17,14 +17,14 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     let exerciseState:ExerciseState
     let badgeBank:BadgeBank ///The badges earned on a per note basis for the exercise
     let metronome:Metronome
+    let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
     var soundEventCtr = 0
     var currentScoreSegment = 0
     var cancelled = false
-    //var soundNotificationProcessingStarted = false
     let accessQueue = DispatchQueue(label: "ExerciseHandlerQueue")
     
-    init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
+    init(scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
         self.scalesModel = scalesModel
         self.exerciseState = ExerciseState.shared
         self.badgeBank = BadgeBank.shared
@@ -32,6 +32,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         nextExpectedStaffSegment = [:]
         self.metronome = metronome
         self.scale = scalesModel.scale
+        self.practiceChart = practiceChart
         self.practiceChartCell = practiceChartCell
     }
     
@@ -194,7 +195,9 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             if !wonStateOld && wonStateNew {
                 if let exerciseBadge = scalesModel.exerciseBadge {
                     if let practiceChartCell = practiceChartCell {
-                        practiceChartCell.addBadge(badge: exerciseBadge)
+                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
+                            self.practiceChart?.savePracticeChartToFile("ExerciseAddBadge")
+                        })
                     }
                 }
             }
@@ -215,6 +218,10 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             scalesModel.clearFunctionToNotify()
             scalesModel.setRunningProcess(.none)
             exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", exerciseState.getState() == .won ? .wonAndFinished : .lost)
+            if let practiceChart {
+                practiceChart.savePracticeChartToFile("FollowAwardBadge")
+            }
+
             return true
         }
         else {
@@ -238,8 +245,8 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
     }
     var keyboardSemaphores:[KeyboardSemaphore] = []
 
-    override init(scalesModel:ScalesModel, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
-        super.init(scalesModel: scalesModel, practiceChartCell: practiceChartCell, metronome: metronome)
+    override init(scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
+        super.init(scalesModel: scalesModel, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
     }
     
     func metronomeStart() {

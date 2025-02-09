@@ -78,7 +78,7 @@ struct SegmentedCircleView: View {
 }
 
 struct SpinWheelView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    //@EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel = ScalesModel.shared
     @State var practiceChart:PracticeChart // = boardAndGrade.practiceChart
@@ -211,7 +211,7 @@ struct SpinWheelView: View {
 
     var body: some View {
         VStack {
-            TitleView(screenName: "Spin The Scales Wheel", showGrade: true).commonFrameStyle()
+            ScreenTitleView(screenName: "Spin The Scales Wheel").commonFrameStyle()
             VStack {
                 //let handSizeFactor = 0.25
                 //let rootSizeFactor = 0.40
@@ -247,7 +247,7 @@ struct SpinWheelView: View {
                 if self.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
-                    NavigationLink(destination: ScalesView(practiceChartCell: nil, practiceModeHand: nil)) {
+                    NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()
                             .font(.title2)
@@ -260,9 +260,9 @@ struct SpinWheelView: View {
         }
         .onAppear() {
             self.spinState = .notStarted
-            if let chart = MusicBoardAndGrade.shared?.practiceChart {
-                self.practiceChart = chart
-            }
+//            if let chart = PracticeChart() {
+//                self.practiceChart = chart
+//            }
             //self.wheelSize = orientationInfo.isPortrait ? 0.9 : 0.55
             self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
         }

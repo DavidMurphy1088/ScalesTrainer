@@ -112,7 +112,7 @@ struct ScalesLibraryView: View {
                 //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
                 Text("Scales Library")
                     .font(.title2)
-                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleDark)
+                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
                 VStack {
                     VStack {
                         Text("Major Scales").font(.title).padding()
@@ -161,7 +161,7 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: true)
-                        NavigationLink(destination: ScalesView(practiceChartCell: nil, practiceModeHand: nil)) {
+                        NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
                             HStack {
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
                                 Text("  \(name)  ").font(.title2).padding()
@@ -222,7 +222,7 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: false)
-                        NavigationLink(destination: ScalesView(practiceChartCell: nil, practiceModeHand: nil)) {
+                        NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
                             HStack {
                                 //let name = scale.getScaleName(handFull: true, octaves: true)
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)

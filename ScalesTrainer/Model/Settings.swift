@@ -25,10 +25,25 @@ public class SettingsPublished : ObservableObject {
 //    }
 }
 
-class User {
-    let settingsPublished = SettingsPublished.shared
-
-    class UserSettings {
+class User : Encodable, Decodable, Hashable, Identifiable {
+    var id:UUID
+    var name:String
+    var email:String
+    var board:String
+    var grade:Int?
+    var settings:UserSettings
+    var practiceChartFileName:String
+    var isCurrentUser:Bool
+    
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id) // Combine the `id` property into the hasher
+    }
+    
+    ///User settings irrespective of the grade the student is in.
+    class UserSettings : Encodable, Decodable {
         var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
         var leadInCOunt:Int = 0
@@ -92,26 +107,29 @@ class User {
         }
     }
     
-    var name:String
-    var email:String
-    var board:String?
-    var grade:Int?
-    var settings:UserSettings
-
-    init() {
+    init(board:String) {
+        self.id = UUID()
         self.name = ""
         self.email = ""
-        self.board = nil
+        self.board = board
         self.grade = nil
         self.settings = UserSettings()
+        self.isCurrentUser = false
+        practiceChartFileName = ""
     }
-
+        
+    func getTitle() -> String {
+        var title = self.name// + (self.grade == nil ? "" : ",")
+        if let grade = self.grade {
+            title += ", Grade "
+            title += String(grade)
+        }
+        return title
+    }
 }
 
-class Settings {
+class Settings : Encodable, Decodable {
     static var shared = Settings()
-    
-    var currentUser:User?
     var users:[User]
     private var currentUserIndex = 0
     
@@ -119,20 +137,68 @@ class Settings {
     var requiredConsecutiveCount = 2
     var defaultOctaves = 2
     var amplitudeFilter:Double
-    let settingsPublished = SettingsPublished.shared
     
     init() {
         self.users = []
-        self.currentUser = nil
 //#if targetEnvironment(simulator)
         self.amplitudeFilter = 0.04
     }
     
-    func save() {
+    func getUser(id:UUID) -> User? {
+        for user in users {
+            if user.id == id {
+                return user
+            }
+        }
+        return nil
     }
     
-    func loadFromFile() -> Bool {
-        return true
+    func setCurrentUser(id:UUID) {
+        for user in users {
+            if user.id == id {
+                user.isCurrentUser = true
+            }
+            else {
+                user.isCurrentUser = false
+            }
+        }
+    }
+
+    func save() {
+        do {
+            let jsonEncoder = JSONEncoder()
+            let jsonData = try jsonEncoder.encode(self)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                UserDefaults.standard.set(jsonString, forKey: "settings")
+                Logger.shared.log(self, "✅ settings saved userCount:\(self.users.count) currentUser:\(self.currentUserIndex)")
+            }
+            else {
+                Logger.shared.reportError(self, "save cannot form JSON")
+            }
+        } catch {
+            Logger.shared.reportError(self, "save:" + error.localizedDescription)
+        }
+    }
+    
+    func load() {
+        if let jsonString = UserDefaults.standard.string(forKey: "settings") {
+            do {
+                guard let jsonData = jsonString.data(using: .utf8) else {
+                    Logger.shared.reportError(self, "load: cannot conver to JSON")
+                    return
+                }
+                let jsonDecoder = JSONDecoder()
+                let decoded = try jsonDecoder.decode(Settings.self, from: jsonData)
+                self.users = decoded.users
+                self.currentUserIndex = decoded.currentUserIndex
+                self.isDeveloperMode = decoded.isDeveloperMode
+                self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
+                self.defaultOctaves = decoded.defaultOctaves
+                self.amplitudeFilter = decoded.amplitudeFilter
+            } catch {
+                Logger.shared.reportError(self, "load:" + error.localizedDescription)
+            }
+        }
     }
     
     func addUser(user:User) {
@@ -140,6 +206,10 @@ class Settings {
         updatePublished()
     }
     
+    func deleteUser(by id: UUID) {
+        users.removeAll { $0.id == id }
+    }
+
     func setUserGrade(_ grade:Int) {
         self.getCurrentUser().grade = grade
         updatePublished()
@@ -154,16 +224,16 @@ class Settings {
         let user = self.getCurrentUser()
         if user.name.count > 0 {
             DispatchQueue.main.async {
-                self.settingsPublished.name = user.name
-                self.settingsPublished.board = user.board
-                self.settingsPublished.grade = user.grade
+                SettingsPublished.shared.name = user.name
+                SettingsPublished.shared.board = user.board
+                SettingsPublished.shared.grade = user.grade
             }
         }
     }
     
     func getCurrentUser() -> User {
         if users.count == 0 {
-            return User()
+            return User(board: "Trinity")
         }
         return users[currentUserIndex]
     }
@@ -172,9 +242,14 @@ class Settings {
         if users.count == 0 {
             return false
         }
-        let user = self.getCurrentUser()
-        return user.name.range(of: "dev", options: .caseInsensitive) != nil
+        for user in self.users {
+            if user.name.range(of: "dev", options: .caseInsensitive) != nil {
+                return true
+            }
+        }
+        //let user = self.getCurrentUser()
+        //return user.name.range(of: "dev", options: .caseInsensitive) != nil
+        return false
     }
-
 }
 
