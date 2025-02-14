@@ -355,6 +355,7 @@ struct ScalesTrainerApp: App {
                         //Label("MIDI", systemImage: "house")
                     }
                     .tag(1)
+                    .environmentObject(tabSelectionManager)
             }
             
             UserListView()
@@ -367,7 +368,6 @@ struct ScalesTrainerApp: App {
                 }
                 .tag(10)
                 .environmentObject(tabSelectionManager)
-
             
 //            UserDetailsView()
 //                .tabItem {

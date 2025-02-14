@@ -40,9 +40,24 @@ struct ScaleTitleView: View {
         
         var title = ""
         if let customisation = scale.scaleCustomisation {
-            if let custonName = customisation.customScaleName {
-                title = custonName
+            if let hand = self.practiceModeHand {
+                if hand == .left {
+                    if let customName = customisation.customScaleNameLH {
+                        title = customName
+                    }
+                }
+                if hand == .right {
+                    if let customName = customisation.customScaleNameRH {
+                        title = customName
+                    }
+                }
             }
+            else {
+                if let customName = customisation.customScaleName {
+                    title = customName
+                }
+            }
+            
         }
         if title.count == 0 {
             title = scale.scaleRoot.name + " " + scale.scaleType.description

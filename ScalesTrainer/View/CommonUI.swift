@@ -7,10 +7,6 @@ struct ScreenTitleView: View {
     
     func getTitle() -> String {
         let name = screenName //Settings.shared.getCurrentUser().name //self.settingsPublished.name
-//        if self.settingsPublished.name.count > 0 {
-//            name += "'s "
-//        }
-//        name += screenName
         return name
     }
 

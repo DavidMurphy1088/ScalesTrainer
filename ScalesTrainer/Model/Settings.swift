@@ -131,7 +131,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
 class Settings : Encodable, Decodable {
     static var shared = Settings()
     var users:[User]
-    private var currentUserIndex = 0
+    //private var currentUserIndex = 0
     
     var isDeveloperMode = false
     var requiredConsecutiveCount = 2
@@ -170,7 +170,7 @@ class Settings : Encodable, Decodable {
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-                Logger.shared.log(self, "✅ settings saved userCount:\(self.users.count) currentUser:\(self.currentUserIndex)")
+                Logger.shared.log(self, "✅ settings saved userCount:\(self.users.count)")
             }
             else {
                 Logger.shared.reportError(self, "save cannot form JSON")
@@ -190,7 +190,7 @@ class Settings : Encodable, Decodable {
                 let jsonDecoder = JSONDecoder()
                 let decoded = try jsonDecoder.decode(Settings.self, from: jsonData)
                 self.users = decoded.users
-                self.currentUserIndex = decoded.currentUserIndex
+                //self.currentUserIndex = decoded.currentUserIndex
                 self.isDeveloperMode = decoded.isDeveloperMode
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
                 self.defaultOctaves = decoded.defaultOctaves
@@ -199,6 +199,14 @@ class Settings : Encodable, Decodable {
                 Logger.shared.reportError(self, "load:" + error.localizedDescription)
             }
         }
+    }
+    
+    func debug(_ ctx:String) {
+        print("Settings debug ============= \(ctx)")
+        for user in users {
+            print("  User", user.name, "Grade:", user.grade ?? "")
+        }
+        print()
     }
     
     func addUser(user:User) {
@@ -232,10 +240,12 @@ class Settings : Encodable, Decodable {
     }
     
     func getCurrentUser() -> User {
-        if users.count == 0 {
-            return User(board: "Trinity")
+        for user in self.users {
+            if user.isCurrentUser {
+                return user
+            }
         }
-        return users[currentUserIndex]
+        return User(board: "Trinity")
     }
     
     public func isDeveloperMode1() -> Bool {
@@ -247,8 +257,6 @@ class Settings : Encodable, Decodable {
                 return true
             }
         }
-        //let user = self.getCurrentUser()
-        //return user.name.range(of: "dev", options: .caseInsensitive) != nil
         return false
     }
 }

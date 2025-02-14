@@ -43,7 +43,7 @@ struct UserDetailsView: View {
     
     var body: some View {
         VStack {
-            GradeTitleView().commonFrameStyle()
+            //GradeTitleView().commonFrameStyle()
 
             VStack {
                 Spacer()
@@ -55,17 +55,6 @@ struct UserDetailsView: View {
                         .padding()
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: UIScreen.main.bounds.width * 0.5)
-//                        .onChange(of: firstName) { oldValue, newValue in
-//                            let user:User
-//                            if settings.users.count == 0 {
-//                                user = settings.getCurrentUser()
-//                                settings.addUser(user: user)
-//                            }
-//                            else {
-//                                user = settings.getCurrentUser()
-//                            }
-//                            settings.setUserName(newValue)
-//                        }
                 
                     Text("Optional Email").padding()
                     TextField("Email", text: $emailAddress)
@@ -78,7 +67,7 @@ struct UserDetailsView: View {
                 })
                 
                 Spacer()
-                SelectBoardGradesView(inBoard: MusicBoard(name: "Trinity"))
+                SelectBoardGradesView(userForGrade:user, inBoard: MusicBoard(name: "Trinity"))
                 Spacer()
             }
             .commonFrameStyle()
@@ -93,29 +82,13 @@ struct UserDetailsView: View {
             if let user = settings.getUser(id: user.id) {
                 user.name = self.firstName
                 user.email = self.emailAddress
+                settings.setCurrentUser(id: user.id)
                 settings.save()
                 listUpdated = true
             }
         }
     }
 }
-
-//func getAvailableMicrophones() -> [AVAudioSessionPortDescription] {
-//    var availableMicrophones: [AVAudioSessionPortDescription] = []
-//    let audioSession = AVAudioSession.sharedInstance()
-//    availableMicrophones = audioSession.availableInputs ?? []
-//    return availableMicrophones
-//}
-//
-//func selectMicrophone(_ microphone: AVAudioSessionPortDescription) {
-//    let audioSession = AVAudioSession.sharedInstance()
-//    do {
-//        try audioSession.setPreferredInput(microphone)
-//
-//    } catch {
-//        //Logger.shared.reportError(self, "Failed to set preferred input: \(error)")
-//    }
-//}
 
 // --------------------------- List of all Users ------------------------------
 
@@ -129,10 +102,13 @@ struct UsersTitleView: View {
 }
 
 struct UserListView: View {
+    @EnvironmentObject var tabSelectionManager: TabSelectionManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var listUpdated = false
     @State private var selectedUser: User?
+    @State private var userToDelete: User?
+    @State private var showDeleteAlert:Bool = false
     
     func getUsersList(listUpdated:Bool) -> [String] {
         var list:[String] = []
@@ -147,29 +123,43 @@ struct UserListView: View {
             UsersTitleView()
             Spacer()
             VStack {
-                //VStack {
                 NavigationStack {
                     Text("Users").font(.title2).padding()
                     List(getUsersList(listUpdated: listUpdated), id: \.self) { userId in
                         if let id = UUID(uuidString: userId), let user = settings.getUser(id: id) {
                             HStack {
                                 Text("\(user.name)")
-                                    .font(.title2)
+                                    .font(UIDevice.current.userInterfaceIdiom != .phone ? .title2 : .callout)
                                     .lineLimit(1) // Prevent text from wrapping
                                     .truncationMode(.tail) // Add "..." if text is too long
-                                    .frame(width: UIScreen.main.bounds.width * 0.33, alignment: .leading) // Fixed width for username
+                                    .frame(width: UIScreen.main.bounds.width * 0.20, alignment: .leading) // Fixed width for username
                                     .foregroundColor(user.isCurrentUser ? /*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/ : .black)
+                                
+                                Spacer()
+                                if let grade = user.grade {
+                                    Text("Grade-\(String(grade))").font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                }
+                                else {
+                                    Text("Grade-0").opacity(0.0).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                }
+                                
                                 Spacer()
                                 Button(action: {
                                     settings.setCurrentUser(id: id)
                                     settings.save()
+                                    tabSelectionManager.isSpinWheelActive = false
+                                    tabSelectionManager.isPracticeChartActive = false
+                                    Settings.shared.save()
+
                                     listUpdated.toggle()
                                 }) {
                                     HStack {
-                                        //Image(systemName: "graduationcap.fill")
-                                        //.resizable()
-                                        //.foregroundColor(.green)
-                                        Text("Make Current User").foregroundColor(.blue)
+                                        if UIDevice.current.userInterfaceIdiom != .phone {
+                                            Image(systemName: "checkmark.circle").opacity(user.isCurrentUser ? 1.0 : 0.0).bold()
+                                            //.resizable()
+                                                .foregroundColor(.green)
+                                        }
+                                        Text("Make Current User").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
                                     }
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
@@ -179,22 +169,29 @@ struct UserListView: View {
                                     selectedUser = user
                                 }) {
                                     HStack {
-                                        Image(systemName: "graduationcap.fill")
-                                        //.resizable()
-                                        .foregroundColor(.green)
-                                        Text("Set Grade").foregroundColor(.blue)
+                                        if UIDevice.current.userInterfaceIdiom != .phone {
+                                            Image(systemName: "graduationcap.fill")
+                                            //.resizable()
+                                                .foregroundColor(.green)
+                                        }
+                                        Text("Set Grade").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
                                     }
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
                                 
                                 Spacer()
                                 Button(action: {
-                                    settings.deleteUser(by: user.id)
-                                    settings.save()
-                                    listUpdated.toggle()
-                                }) {
-                                    Text("Remove")
-                                        .foregroundColor(.red)
+                                    showDeleteAlert = true
+                                    userToDelete = user
+                                }) {      
+                                    HStack {
+                                        if UIDevice.current.userInterfaceIdiom != .phone {
+                                            Image(systemName: "trash")
+                                            //.resizable()
+                                                .foregroundColor(.red)
+                                        }
+                                        Text("Remove").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                    }
                                 }
                                 .buttonStyle(BorderlessButtonStyle()) // AI says needed - otherwise any click on the the line anywhere triggers delete 🥵
                                 Spacer()
@@ -218,7 +215,7 @@ struct UserListView: View {
                     .buttonStyle(.bordered)
                     Spacer()
                 }
-                //.frame(height: UIScreen.main.bounds.height * 0.33)
+                .frame(height: UIScreen.main.bounds.height * 0.75)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -229,6 +226,22 @@ struct UserListView: View {
             Spacer()
         }
         .commonFrameStyle()
+        .alert(isPresented: $showDeleteAlert) {
+            Alert(
+                title: Text("Confirm Remove User?"),
+                message: Text("Are you sure you want remove \(userToDelete!.name)"),
+                primaryButton: .destructive(Text("Remove")) {
+                    settings.deleteUser(by: userToDelete!.id)
+                    settings.save()
+                    listUpdated.toggle()
+                },
+                secondaryButton: .cancel()
+            )
+        }
+
+        .onDisappear() {
+            //Settings.shared.save()
+        }
         .onAppear() {
             if settings.users.count == 0 {
                 let user = User(board: "Trinity")
@@ -238,6 +251,7 @@ struct UserListView: View {
                 listUpdated.toggle()
             }
         }
+
     }
 }
 

@@ -320,8 +320,10 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 67, startMidiLH: 55, clefSwitch: false)))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(customScaleName: "Diminished 7th Arpeggio, Starting on B, Hands together",
-                                                                       customScaleNameWheel: "Dim 7th Arp on B, Together",
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "Diminished 7th Arpeggio Starting on B, Hands Together",
+                                                                       customScaleNameLH: "Diminished 7th Arpeggio Starting on B, LH",
+                                                                       customScaleNameRH: "Diminished 7th Arpeggio Starting on B, RH",
+                                                                       customScaleNameWheel: "Dim 7th Arp on B, Tog",
                                                                        removeKeySig: true)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
@@ -329,13 +331,10 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [ArticulationType.legato],
                                 scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
-                                                                       customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
+                                                                       customScaleName: "Chromatic in Contrary Motion, LH starting C, RH starting E",
+                                                                       customScaleNameLH: "Chromatic in Contrary Motion, LH starting C",
+                                                                       customScaleNameRH: "Chromatic in Contrary Motion, RH starting E",
                                                                        customScaleNameWheel: "Chrom Contrary, LH C, RH E")))
-            //            scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves-1, hands: [0,1],
-            //                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [ArticulationType.legato],
-            //                                scaleCustomisation: ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
-            //                                                                       customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
-            //                                                                       customScaleNameWheel: "Chrom Contrary, LH C, RH E")))
         }
         
         return scales

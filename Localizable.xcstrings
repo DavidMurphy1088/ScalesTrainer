@@ -139,6 +139,9 @@
     "Amplitude: %.4f" : {
 
     },
+    "Are you sure you want remove %@" : {
+
+    },
     "Available Subscriptions" : {
 
     },
@@ -197,6 +200,9 @@
 
     },
     "Choose your keyboard colour " : {
+
+    },
+    "Confirm Remove User?" : {
 
     },
     "Connected MIDI Sources" : {
@@ -323,6 +329,12 @@
           }
         }
       }
+    },
+    "Grade-%@" : {
+
+    },
+    "Grade-0" : {
+
     },
     "Grades" : {
       "comment" : "Menu"

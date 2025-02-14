@@ -152,16 +152,23 @@ public class ScaleCustomisation : Codable {
     let maxAccidentalLookback:Int?
     let customScaleName:String?
     let customScaleNameWheel:String?
+    let customScaleNameRH:String?
+    let customScaleNameLH:String?
     let removeKeySig:Bool?
 
     init (startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil, maxAccidentalLookback:Int? = nil,
-          customScaleName:String? = nil,  customScaleNameWheel:String? = nil, removeKeySig:Bool? = nil) {
+          customScaleName:String? = nil,
+          customScaleNameLH:String? = nil, customScaleNameRH:String? = nil,
+          customScaleNameWheel:String? = nil,
+          removeKeySig:Bool? = nil) {
         self.startMidiRH = startMidiRH
         self.startMidiLH = startMidiLH
         self.clefSwitch = clefSwitch
         self.maxAccidentalLookback = maxAccidentalLookback
         self.customScaleName = customScaleName
         self.customScaleNameWheel = customScaleNameWheel
+        self.customScaleNameRH = customScaleNameRH
+        self.customScaleNameLH = customScaleNameLH
         self.removeKeySig = removeKeySig
     }
 }
