@@ -9,6 +9,7 @@ import Firebase
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import UIKit
 
 enum LaunchScreenStep {
     case firstStep
@@ -27,6 +28,39 @@ final class LaunchScreenStateManager: ObservableObject {
         }
     }
 }
+
+struct OrientationManager {
+    //    iPhone 15: 6.1-inch Super Retina XDR OLED display
+    //    iPhone 15 Plus: 6.7-inch Super Retina XDR OLED display
+    //    iPhone 15 Pro: 6.1-inch Super Retina XDR OLED display with ProMotion technology
+    //    iPhone 15 Pro Max: 6.7-inch Super Retina XDR OLED display with ProMotion technology
+    //    iPhone 16 Series (Released September 2024):
+    //    iPhone 16: 6.1-inch Super Retina XDR OLED display
+    //    iPhone 16 Plus: 6.7-inch Super Retina XDR OLED display
+    
+    static var appDelegate: AppDelegate?
+    
+    static func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
+        if let delegate = appDelegate {
+            delegate.orientationLock = orientation
+        }
+    }
+
+    // Lock orientation and rotate
+    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
+        self.lockOrientation(orientation)
+        UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
+        UINavigationController.attemptRotationToDeviceOrientation()
+    }
+
+    // Unlock orientation
+    static func unlockOrientation() {
+        if let delegate = appDelegate {
+            delegate.orientationLock = .all
+        }
+    }
+}
+
 
 class Opacity : ObservableObject {
     @Published var imageOpacity: Double = 0.0
@@ -81,11 +115,13 @@ struct LaunchScreenView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Image("trinity")
+                        //Image("trinity")
+                        let imageSize = min(geo.size.width, geo.size.height) * 0.50
+                        Image("PianoKeyboard")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: geo.size.width * 0.40)
-                                .cornerRadius(10) // Adjust the radius value to your preference
+                                .frame(width: imageSize, height: imageSize)
+                                .cornerRadius(imageSize * 0.1)
                                 .opacity(self.opacity.imageOpacity)
                         Spacer()
                     }
@@ -177,6 +213,8 @@ struct DeveloperView: View {
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    var orientationLock: UIInterfaceOrientationMask = .all  
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
@@ -214,26 +252,26 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             statusMsg = "unknown \(status)"
         }
         Logger.shared.log(self, "Microphone access:\(statusMsg))")
-
         return true
     }
     
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            //return [.portrait, .landscapeLeft, .landscapeRight]
-            return [.portrait]
-            //return [.landscape]
-        } else {
-            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
-        }
+//        if UIDevice.current.userInterfaceIdiom == .phone {
+//            //return [.portrait]
+//            return [.portrait, .landscapeLeft, .landscapeRight]
+//        } else {
+//            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
+//        }
+        return orientationLock
     }
 }
 
 ///------------------------------------------------------------
 
-class TabSelectionManager: ObservableObject {
+class ViewManager: ObservableObject {
+    static var shared = ViewManager()
     @Published var selectedTab: Int = 0
-    @Published var currentUser: User? //= false
+    @Published var titleUser: User?
     ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
     @Published var isPracticeChartActive: Bool = false
     @Published var isSpinWheelActive: Bool = false
@@ -243,8 +281,14 @@ class TabSelectionManager: ObservableObject {
         settings.load()
         Settings.shared.load()
         DispatchQueue.main.async {
-            self.currentUser = settings.getCurrentUser()
+            self.titleUser = settings.getCurrentUser()
             self.nextNavigationTab()
+        }
+    }
+    
+    func updateCurrentPublished(user:User) {
+        DispatchQueue.main.async {
+            self.titleUser = user
         }
     }
     
@@ -286,11 +330,11 @@ class TabSelectionManager: ObservableObject {
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @ObservedObject private var tabSelectionManager = TabSelectionManager()
+    @ObservedObject private var viewManager = ViewManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
-    
+
     init() {
 #if os(iOS)
         do {
@@ -300,6 +344,15 @@ struct ScalesTrainerApp: App {
             Logger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
+        ///Tab bar settings
+//        let appearance = UITabBarAppearance()
+//        appearance.configureWithOpaqueBackground()
+//        appearance.backgroundColor = UIColor(Color.green) //UIColor.systemGray6
+//        // Reduce tab bar height using item positioning
+//        UITabBar.appearance().scrollEdgeAppearance = appearance
+//        UITabBar.appearance().standardAppearance = appearance
+//        UITabBar.appearance().itemSpacing = 10
+//        UITabBar.appearance().itemWidth = 50
     }
     
     var body: some Scene {
@@ -308,6 +361,9 @@ struct ScalesTrainerApp: App {
                 if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
                     MainContentView()
                         .environmentObject(orientationInfo)
+                        .onAppear {
+                            OrientationManager.appDelegate = appDelegate // Pass delegate
+                        }
                 }
                 else {
                     if launchScreenState.state != .finished {
@@ -323,14 +379,9 @@ struct ScalesTrainerApp: App {
         }
     }
     
-    func getUser(tabMgr:TabSelectionManager) -> User? {
-        let user = tabMgr.currentUser
-        return user
-    }
-
     func MainContentView() -> some View {
         
-        TabView(selection: $tabSelectionManager.selectedTab) {
+        TabView(selection: $viewManager.selectedTab) {
             
             if Settings.shared.isDeveloperMode1() {
                 //HomeView()
@@ -340,10 +391,9 @@ struct ScalesTrainerApp: App {
                 //FFTContentView()
                     .tabItem {
                         Label("SCALE", systemImage: "house")
-                        //Label("MIDI", systemImage: "house")
                     }
                     .tag(1)
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
             }
             
             UserListView()
@@ -355,24 +405,22 @@ struct ScalesTrainerApp: App {
                     }
                 }
                 .tag(10)
-                .environmentObject(tabSelectionManager)
+                .environmentObject(viewManager)
             
-            if let user = getUser(tabMgr: tabSelectionManager) {
-                //if let user = Settings.shared.getCurrentUser() {
-                    ActivitiesView(user: user)
-                        .tabItem {
-                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                        }
-                        .tag(20)
-                        .environmentObject(tabSelectionManager)
-                    
-                    SettingsView(user:user)
-                        .tabItem {
-                            Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                        }
-                        .tag(30)
-                        .environmentObject(tabSelectionManager)
-                //}
+            if let user = Settings.shared.getCurrentUser() {
+                ActivitiesView()
+                    .tabItem {
+                        Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                    }
+                    .tag(20)
+                    .environmentObject(viewManager)
+                
+                SettingsView(user:user)
+                    .tabItem {
+                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                    }
+                    .tag(30)
+                    .environmentObject(viewManager)
             }
             
             LicenseManagerView(contentSection: ContentSection(), email: "email.com")
@@ -380,14 +428,14 @@ struct ScalesTrainerApp: App {
                     Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                 }
                 .tag(40)
-                .environmentObject(tabSelectionManager)
+                .environmentObject(viewManager)
             
             FeatureReportView()
                 .tabItem {
                     Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
                 }
                 .tag(50)
-                .environmentObject(tabSelectionManager)
+                .environmentObject(viewManager)
             
             if Settings.shared.isDeveloperMode1() {
                 MIDIView()
@@ -396,7 +444,7 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(89)
                     .accessibilityIdentifier("app_log")
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
 
                 LogView()
                     .tabItem {
@@ -404,14 +452,14 @@ struct ScalesTrainerApp: App {
                     }
                     .tag(90)
                     .accessibilityIdentifier("app_log")
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
                 
                 ScalesLibraryView()
                     .tabItem {
                         Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
                     }
                     .tag(60)
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
                 
                 
                 CalibrationView()
@@ -419,14 +467,14 @@ struct ScalesTrainerApp: App {
                         Label("Calibration", systemImage: "lines.measurement.vertical")
                     }
                     .tag(70)
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
                 
                 ScalesLibraryView()
                     .tabItem {
                         Label("ScaleLibrary", systemImage: "book.pages")
                     }
                     .tag(80)
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
                 
                 
                 DeveloperView()
@@ -434,10 +482,14 @@ struct ScalesTrainerApp: App {
                         Label("Dev", systemImage: "book.pages")
                     }
                     .tag(100)
-                    .environmentObject(tabSelectionManager)
+                    .environmentObject(viewManager)
             }
         }
+        .tabViewStyle(DefaultTabViewStyle())
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .toolbar(.hidden, for: .tabBar) // Hide tab bar
         //.tint(.blue) // Set the color for the tab items
+
     }
 }
 

@@ -172,9 +172,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                     score.hilightStaffNote(segment: self.currentScoreSegment, midi: midi, handType: keyboard.getKeyboardHandType())
                 }
             }
-            
-            //        print("======== ExerciseHandler, processSound ctr:\(self.soundEventCtr) ", "midi", midi,
-            //              "keyboard", keyToPlay?.keyboardModel.keyboardNumber ?? "NoKeyboard")
+
             let hand:HandType?
             if callNumber == 1 {
                 hand = .right
@@ -349,13 +347,11 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
                     pianoKey.hilightKeyToFollow = .followThisNote
                     keyboardSemaphore.keyboard.redraw()
                     ///Set the closure called when a piano key is pressed
-                    //pianoKey.setCallbackFunction(fn: {
-                    //print("============ Adding semaphore callback for key. midi:", pianoKey.midi, "keyboard:", pianoKey.keyboardModel.keyboardNumber)
+
                     pianoKey.addCallbackFunction(fn: {
                         keyboardSemaphore.semaphore.signal()
                         inScaleCount += 1
                         keyboardSemaphore.keyboard.redraw()
-                        //print("=============listenForKeyPresses 😊 KeyCallback called id:\(keyboardSemaphore.id)", "midi", pianoKey.midi)
                         //pianoKey.setCallbackFunction(fn: nil)
                         //pianoKey.setCallbackFunction(fn: nil)
                     })
@@ -363,17 +359,14 @@ class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  
                 
                 ///Wait for the right key to be played and signalled on every keyboard
                 
-                //print("============= Follow waiting ... for:", nextExpectedNoteForHandIndex)
                 for keyboardSemaphore in keyboardSemaphores {
                     if !self.cancelled && self.scalesModel.runningProcess == .followingScale {
                         keyboardSemaphore.semaphore.wait()
-                        //print("============= ➡️ end wait \(keyboardSemaphore.id)")
                         accessQueue.sync {
                             self.nextExpectedNoteForHandIndex[keyboardSemaphore.keyboard.keyboardNumber==1 ? .right : .left]! += 1
                         }
                     }
                 }
-               //print("============= Follow received all expected notes ...")
 
                 if self.cancelled { //}|| self.scalesModel.runningProcess != .followingScale || scaleIndex >= self.scale.getScaleNoteCount() - 1 {
                    break

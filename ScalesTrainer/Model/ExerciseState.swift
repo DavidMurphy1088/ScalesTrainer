@@ -26,7 +26,6 @@ class ExerciseState : ObservableObject {
     private var state:State = .exerciseNotStarted
     func setExerciseState(ctx:String, _ value:ExerciseState.State) {
         if value != self.state {
-            //print("====== ExerciseStat, state change ctx:[\(ctx)]", self.state, "-->", value)
             self.state = value
             DispatchQueue.main.async {
                 self.statePublished = value
@@ -40,7 +39,6 @@ class ExerciseState : ObservableObject {
     @Published private(set) var totalCorrectPublished: Int = 0
     var totalCorrect: Int = 0
     func bumpTotalCorrect() {
-        //print("====== ExerciseStat, setTotalCorrect", self.totalCorrect)
         if totalCorrect < self.numberToWin {
             self.totalCorrect += 1
             if self.totalCorrect == self.numberToWin {

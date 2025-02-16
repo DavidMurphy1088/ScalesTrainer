@@ -47,8 +47,6 @@ struct UserDetailsView: View {
     
     var body: some View {
         VStack {
-            //GradeTitleView().commonFrameStyle()
-
             VStack {
                 Spacer()
                 VStack() {
@@ -60,10 +58,10 @@ struct UserDetailsView: View {
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: UIScreen.main.bounds.width * 0.5)
                             .onChange(of: firstName) { oldName, name in
-                                settings.setUserName(name)
+                                settings.setUserName(user, name)
                             }
                     }
-
+                    
                     HStack {
                         Text("Optional Email")
                         TextField("Email", text: $emailAddress)
@@ -79,13 +77,19 @@ struct UserDetailsView: View {
                 })
                 
                 Spacer()
-                SelectBoardGradesView(userForGrade:user, inBoard: MusicBoard(name: "Trinity"))
+                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"))
                 Spacer()
             }
             .commonFrameStyle()
         }
         .sheet(isPresented: $welcomeNotification) {
             VStack(spacing: 20) {
+                Image("PianoKeyboard2")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        //.frame(width: geo.size.width * 0.60)
+                        .cornerRadius(20)
+
                 Text("😊 Welcome 😊")
                     .font(.title).fontWeight(.bold)
                 Text("We hope you enjoy your experience using Scales Academy.").multilineTextAlignment(.center)
@@ -100,16 +104,23 @@ struct UserDetailsView: View {
             }
             .padding()
         }
+        .onChange(of: welcomeNotification) { newValue in
+            // Focus only when the sheet is dismissed
+            if !newValue {
+                self.isNameFieldFocused = true
+            }
+        }
+    
         .onAppear() {
-            if let user = Settings.shared.getCurrentUser() {
+            //if let user = user { //Settings.shared.getCurrentUser() {
                 self.firstName = user.name
                 self.emailAddress = user.email
                 welcomeNotification = false
                 if settings.users.count == 1 && user.name.count == 0 {
                     welcomeNotification = true
                 }
-            }
-            self.isNameFieldFocused = true
+            //}
+            //self.isNameFieldFocused = true
             listUpdated = false
         }
         .onDisappear() {
@@ -117,7 +128,6 @@ struct UserDetailsView: View {
             if let user = settings.getUser(id: user.id) {
                 user.name = self.firstName
                 user.email = self.emailAddress
-                settings.setCurrentUser(id: user.id)
                 settings.save()
                 listUpdated = true
             }

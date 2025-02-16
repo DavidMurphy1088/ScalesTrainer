@@ -25,7 +25,7 @@ public class NoteLayoutPositions {
 //        }
     }
     
-    func debug1(_ ctx:String, handType:HandType) -> Bool {
+    func debug11(_ ctx:String, handType:HandType) -> Bool {
         print ("=============== NoteLayoutPos", ctx)
         var ctr = 0
         for k in positions.keys {
@@ -66,50 +66,15 @@ public class BarLayoutPositions {
 //    }
 
     public func storePosition(mode:Int, barLine: BarLine, rect: CGRect) {
-        //if notes.count > 0 {
-            //if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
-                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
-                let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
-                //DispatchQueue.main.async {
-                    ///Make sure this fires after all other UI is rendered
-                    ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
-                    //sleep(UInt32(0.25))
-                    //sleep(UInt32(0.5))
-                self.positions[barLine] = rectCopy
-            //}
-        //}
+        let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
+        //DispatchQueue.main.async {
+            ///Make sure this fires after all other UI is rendered
+            ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
+            //sleep(UInt32(0.25))
+            //sleep(UInt32(0.5))
+        self.positions[barLine] = rectCopy
     }
 }
-
-//public class BarLayoutPositions : ObservableObject {
-//    @Published public var positions:[BarLine: CGRect] = [:]
-//    
-//    public init() {
-//    }
-//    
-//    public func storeBarLinePositionOld(barLine:BarLine, rect: CGRect, ctx:String) {
-//        //print("============= storePosition, store barline COUNT:", self.positions.count, "BARLINE", barLine.id, "RECT", rect)
-//        DispatchQueue.main.async {
-//            let rectCopy = rect
-//            self.positions[barLine] = rectCopy
-//        }
-//    }
-//
-//    public func storeBarLinePosition(onAppear:Bool, notes: [StaffNote], rect: CGRect) {
-//        if notes.count > 0 {
-//            if [StaffNote.VALUE_QUAVER, StaffNote.VALUE_TRIPLET].contains(notes[0].getValue()) {
-//                //print("============= storePosition", "Appear:", onAppear, "note:", notes[0].midi, "rect:", rect.midX, rect.midY)
-//                let rectCopy = CGRect(origin: CGPoint(x: rect.minX, y: rect.minY), size: CGSize(width: rect.size.width, height: rect.size.height))
-//                //DispatchQueue.main.async {
-//                    ///Make sure this fires after all other UI is rendered
-//                    ///Also can cause 'Publishing changes from within view updates is not allowed, this will cause undefined behavior.' - but cant see how to stop it :(
-//                    //sleep(UInt32(0.25))
-//                    //sleep(UInt32(0.5))
-//                self.positions[notes[0]] = rectCopy
-//            }
-//        }
-//    }
-//}
 
 class StaffPlacementsByKey {
     var staffPlacement:[NoteStaffPlacement] = []

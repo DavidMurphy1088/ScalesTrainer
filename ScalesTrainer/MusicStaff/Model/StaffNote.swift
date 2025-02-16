@@ -334,10 +334,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
 //                    }
 //                }
 //            }
-////            if self.midiNumber == stop {
-////                print("==========", self.timeSlice.sequence, self.midiNumber, self.noteStaffPlacement.offsetFromStaffMidline, self.noteStaffPlacement.accidental ?? "_", "maxLoopback:", maxAccidentalLoopback ?? "_")
-////                print("     =====", "00", defaultNotePlacement.offsetFromStaffMidline, defaultNotePlacement.accidental ?? "_")
-////            }
+
 //
 //            ///If not already matched, adjust the note's accidental based on the key signature
 //            if !matchedAccidental {

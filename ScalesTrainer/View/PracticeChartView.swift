@@ -420,16 +420,6 @@ struct PracticeChartView: View {
                         .buttonStyle(.bordered)
                         //.padding()
                         
-//                        if Settings.shared.isDeveloperMode1() {
-//                            Spacer()
-//                            Button(action: {
-//                                practiceChart.deleteFile()
-//                            }) {
-//                                Text("Delete")
-//                            }spinW
-//                            .buttonStyle(.bordered)
-//                            //.padding()
-//                        }
                         Spacer()
                     }
                 }
@@ -498,9 +488,3 @@ struct PracticeChartView: View {
     }
 }
 
-//struct InnerHeightPreferenceKey: PreferenceKey {
-//    static let defaultValue: CGFloat = .zero
-//    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-//        value = nextValue()
-//    }
-//}

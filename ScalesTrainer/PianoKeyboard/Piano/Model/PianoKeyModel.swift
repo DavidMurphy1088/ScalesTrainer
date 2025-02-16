@@ -85,7 +85,6 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Also hilight the associated score note.
     public func setKeyPlaying() {
         if true {
-            //print("============= Set KEY Playing", "midi:", self.scaleNoteState?.midi, "keyhand:", self.hand)
             self.keyIsSounding = true
             DispatchQueue.global(qos: .background).async {
                 usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))

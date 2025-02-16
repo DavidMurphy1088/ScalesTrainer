@@ -62,7 +62,7 @@ struct FamousQuotesView: View {
 }
 
 struct ActivityModeView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    @EnvironmentObject var tabSelectionManager: ViewManager
     @EnvironmentObject var orientationInfo: OrientationInfo
     let user:User
     let practiceChart:PracticeChart
@@ -160,16 +160,13 @@ struct ActivityModeView: View {
 
 struct ActivitiesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
-    let user:User
-    @State var practiceChart:PracticeChart?
-    ///NB 🟢 Reference types (e.g. User) state aren't refreshed with onAppear, use userName
-    //@State var userName:String = ""
+    //@State var user:User
+    ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
+    ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
+    @State var userName:String = ""
+    @State var userGrade:Int?
 
     func loadChart(user:User) -> PracticeChart? {
-//        guard let grade = self.grade else {
-//            return nil
-//        }
-        
         var practiceChart:PracticeChart? = nil
         if let grade = user.grade {
             if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: user, board: user.board, grade: grade) {
@@ -188,9 +185,11 @@ struct ActivitiesView: View {
                 VStack {
                     Spacer()
                     ScreenTitleView(screenName: "Activities")
-                    if let practiceChart = self.practiceChart {
-                        ActivityModeView(user: user, practiceChart: practiceChart)
-                            .environmentObject(orientationInfo)
+                    ///A view refresh (and chart load) **must** be triggered by either a change in name or grade
+                    if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
+                        if let practiceChart = self.loadChart(user: user) {
+                            ActivityModeView(user: user, practiceChart: practiceChart)
+                        }
                     }
                     else {
                         Spacer()
@@ -209,12 +208,12 @@ struct ActivitiesView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
-            print("========================= Act view user", user.name, user.grade)
-            practiceChart = self.loadChart(user: user)
-            //self.userName = user.name
-            //self.grade = user.grade
+            ///Force the view to redraw by updating these @State variables
+            if let user = Settings.shared.getCurrentUser() {
+                self.userName = user.name
+                self.userGrade = user.grade
+            }
         }
-
     }
     
 }

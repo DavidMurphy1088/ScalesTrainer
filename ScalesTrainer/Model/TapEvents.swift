@@ -173,7 +173,7 @@ public class TapEventSet {
         self.events = events
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print(" ======== DEBUG TapEventSet", ctx)
         for event in self.events {
             print(event.tapNum, "time:", event.timestamp, ",", event.amplitude, ",", event.frequency, ",", event.tapMidi)

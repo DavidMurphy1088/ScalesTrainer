@@ -174,11 +174,12 @@ public class Score : ObservableObject, Encodable {
     public init(scale:Scale, key:StaffKey, timeSignature:TimeSignature, linesPerStaff:Int, heightPaddingEnabled:Bool = true, debugOn:Bool) {
         self.id = UUID()
         self.scale = scale
+        //29Jan2025 - Other calculations elsewhere have to be micro adjusted if lineSpacing changes. Best to leave it constant.
         if UIDevice.current.userInterfaceIdiom == .phone {
-            self.lineSpacing = 8.0
+            let orientationObserver = OrientationInfo()
+            self.lineSpacing = 8.0 //OrientationInfo().isPortrait ? 8.0 : 6.0
         }
         else {
-            //29Jan2025 - Other calculations elsewhere have to be micro adjusted if lineSpacing changes. Best to leave it constant
             self.lineSpacing = 8.0 //scale.hands.count > 1 ? 8.0 : 10
         }
         self.timeSignature = timeSignature

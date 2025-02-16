@@ -224,7 +224,6 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
     
     //override
 //    func processSound1(midi:Int, callNumber:Int) {
-//        //print("\n========== LEAD processMIDI call:", callNumber, midi, "Indexes:", self.nextExpectedNoteInScaleIndex[.left], self.nextExpectedNoteInScaleIndex[.right])
 //        
 //        ///Does the received midi match with the expected note in any hand?
 //        var handForNote:HandType?

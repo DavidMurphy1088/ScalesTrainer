@@ -5,18 +5,11 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-public class SettingsPublished : ObservableObject {
-    static var shared = SettingsPublished()
-    @Published var board:String?
-    @Published var grade:Int?
-    @Published var name = ""
-}
-
 class User : Encodable, Decodable, Hashable, Identifiable {
     var id:UUID
+    var board:String
     var name:String
     var email:String
-    var board:String
     var grade:Int?
     var settings:UserSettings
     var practiceChartFileName:String
@@ -161,11 +154,45 @@ class Settings : Encodable, Decodable {
         for user in users {
             if user.id == id {
                 user.isCurrentUser = true
+                ViewManager.shared.updateCurrentPublished(user: user)
             }
             else {
                 user.isCurrentUser = false
             }
         }
+    }
+    
+    func addUser(user:User) {
+        self.users.append(user)
+    }
+    
+    func deleteUser(by id: UUID) {
+        users.removeAll { $0.id == id }
+    }
+
+    func setUserGrade(_ user:User, _ grade:Int) {
+        //if let user = self.getCurrentUser() {
+            user.grade = grade
+            if user.isCurrentUser {
+                ViewManager.shared.updateCurrentPublished(user: user)
+            }
+        //}
+    }
+    
+    func setUserName(_ user:User, _ name:String) {
+        user.name = name
+        if user.isCurrentUser {
+            ViewManager.shared.updateCurrentPublished(user: user)
+        }
+    }
+    
+    func getCurrentUser() -> User? {
+        for user in self.users {
+            if user.isCurrentUser {
+                return user
+            }
+        }
+        return nil
     }
 
     func save() {
@@ -182,7 +209,7 @@ class Settings : Encodable, Decodable {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
                 let currentUser = self.getCurrentUser()
-                Logger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
+                //Logger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             }
             else {
                 Logger.shared.reportError(self, "save cannot form JSON")
@@ -215,62 +242,14 @@ class Settings : Encodable, Decodable {
         }
     }
     
-    func debug(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print("Settings debug ============= \(ctx)")
         for user in users {
             print("  User", user.name, "Grade:", user.grade ?? "")
         }
         print()
     }
-    
-    func addUser(user:User) {
-        self.users.append(user)
-        updatePublished()
-    }
-    
-    func deleteUser(by id: UUID) {
-        users.removeAll { $0.id == id }
-    }
-
-    func setUserGrade(_ grade:Int) {
-        if let user = self.getCurrentUser() {
-            user.grade = grade
-            updatePublished()
-        }
-    }
-    
-    func setUserName(_ name:String) {
-        if let user = self.getCurrentUser() {
-            user.name = name
-            updatePublished()
-        }
-    }
-    
-    private func updatePublished() {
-        DispatchQueue.main.async {
-            if let user = self.getCurrentUser() {
-                SettingsPublished.shared.name = user.name
-                SettingsPublished.shared.board = user.board
-                SettingsPublished.shared.grade = user.grade
-            }
-            else {
-                SettingsPublished.shared.name = ""
-                SettingsPublished.shared.board = ""
-                SettingsPublished.shared.grade = nil
-
-            }
-        }
-    }
-    
-    func getCurrentUser() -> User? {
-        for user in self.users {
-            if user.isCurrentUser {
-                return user
-            }
-        }
-        return nil
-    }
-    
+        
     public func isDeveloperMode1() -> Bool {
         if users.count == 0 {
             return false

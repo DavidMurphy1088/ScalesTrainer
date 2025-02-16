@@ -17,7 +17,7 @@ struct UsersTitleView: View {
 }
 
 struct UserListView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    @EnvironmentObject var tabSelectionManager: ViewManager
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var listUpdated = false
@@ -39,7 +39,7 @@ struct UserListView: View {
             Spacer()
             VStack {
                 NavigationStack {
-                    Text("Users").font(.title2).padding()
+                    Text("User List").font(.title2).padding()
                     List(getUsersList(listUpdated: listUpdated), id: \.self) { userId in
                         if let id = UUID(uuidString: userId), let user = settings.getUser(id: id) {
                             HStack {
@@ -67,14 +67,11 @@ struct UserListView: View {
                                     listUpdated.toggle()
                                 }) {
                                     HStack {
-                                        //if UIDevice.current.userInterfaceIdiom != .phone {
-                                        if user.isCurrentUser {
-                                            Image(systemName: "checkmark.circle").opacity(user.isCurrentUser ? 1.0 : 0.0).bold()
-                                                //.resizable()
-                                                .foregroundColor(.green)
-                                        }
-                                        else {
+                                        ZStack {
+                                            Image(systemName: "checkmark.circle").opacity(user.isCurrentUser ? 1.0 : 0.0).bold().foregroundColor(.green)
+                                                .opacity(user.isCurrentUser ? 1.0 : 0.0)
                                             Text("Make Current User").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                                .opacity(user.isCurrentUser ? 0.0 : 1.0)
                                         }
                                     }
                                 }
@@ -86,9 +83,7 @@ struct UserListView: View {
                                 }) {
                                     HStack {
                                         if UIDevice.current.userInterfaceIdiom != .phone {
-                                            Image(systemName: "graduationcap.fill")
-                                            //.resizable()
-                                                .foregroundColor(.green)
+                                            Image(systemName: "graduationcap.fill").foregroundColor(.green)
                                         }
                                         Text("Set Grade").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
                                     }

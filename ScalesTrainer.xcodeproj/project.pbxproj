@@ -61,7 +61,6 @@
 		797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970138F2BEE3E45009F85D6 /* ScoreView.swift */; };
 		797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */; };
 		797013962BEE3E45009F85D6 /* StaffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013912BEE3E45009F85D6 /* StaffView.swift */; };
-		797013972BEE3E45009F85D6 /* StemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013922BEE3E45009F85D6 /* StemView.swift */; };
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
 		79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD82D38D278009405C3 /* ScoreTest.swift */; };
@@ -201,7 +200,6 @@
 		7970138F2BEE3E45009F85D6 /* ScoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreEntriesView.swift; sourceTree = "<group>"; };
 		797013912BEE3E45009F85D6 /* StaffView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffView.swift; sourceTree = "<group>"; };
-		797013922BEE3E45009F85D6 /* StemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StemView.swift; sourceTree = "<group>"; };
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
 		79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests1.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -361,7 +359,6 @@
 				797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */,
 				7970138F2BEE3E45009F85D6 /* ScoreView.swift */,
 				797013912BEE3E45009F85D6 /* StaffView.swift */,
-				797013922BEE3E45009F85D6 /* StemView.swift */,
 				797013932BEE3E45009F85D6 /* TimeSliceView.swift */,
 			);
 			path = View;
@@ -508,6 +505,7 @@
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
+				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
 				79CF5D712BEE46C900454BB6 /* UserListView.swift */,
 			);
 			path = View;
@@ -553,7 +551,6 @@
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
-				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -835,7 +832,6 @@
 				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
 				79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */,
 				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
-				797013972BEE3E45009F85D6 /* StemView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
 				79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */,
 				79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */,
@@ -1051,7 +1047,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1090,7 +1086,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

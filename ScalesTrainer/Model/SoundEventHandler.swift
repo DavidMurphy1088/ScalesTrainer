@@ -49,7 +49,6 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
 
     ///Call the feature function that is specified when a new MIDI notification arrives
     func midiManagerNotificationTarget(msg:MIDIMessage) {
-        //print("========== Handler NotificationTarget", msg.midi)
         if let notify = self.functionToNotify {
             notify(msg.midi)
         }

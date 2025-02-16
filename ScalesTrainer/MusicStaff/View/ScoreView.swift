@@ -14,7 +14,6 @@ public struct ScoreView: View {
     }
     
     public var body: some View {
-        
         HStack(spacing: 0) {
             if score.getStaffs().count > 1 {
                 ///Draw staff brace

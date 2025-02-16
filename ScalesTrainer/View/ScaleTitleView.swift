@@ -82,11 +82,9 @@ struct ScaleTitleView: View {
         let compoundTime = scale.timeSignature.top % 3 == 0
         if UIDevice.current.userInterfaceIdiom == .phone {
             VStack {
-                //HStack {
-                    Text("\(getTitle(practiceModeHand: practiceModeHand))").padding(.horizontal, 0)
-                //}
+                Text("\(getTitle(practiceModeHand: practiceModeHand))").padding(.horizontal, 0)
                 HStack(spacing: 0) {
-                    Text("min. ").padding(.horizontal, 0)
+                    //Text("min. ").padding(.horizontal, 0)
                     Image(compoundTime ? "crotchetDotted" : "crotchet")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -105,7 +103,8 @@ struct ScaleTitleView: View {
         else {
             VStack {
                 HStack(spacing: 0) {
-                    Text("\(getTitle(practiceModeHand: practiceModeHand)), min. ").padding(.horizontal, 0)
+                    //Text("\(getTitle(practiceModeHand: practiceModeHand)), min. ").padding(.horizontal, 0)
+                    Text("\(getTitle(practiceModeHand: practiceModeHand)), ").padding(.horizontal, 0)
                     Image(compoundTime ? "crotchetDotted" : "crotchet")
                         .resizable()
                         .aspectRatio(contentMode: .fit)

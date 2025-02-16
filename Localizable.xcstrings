@@ -69,6 +69,9 @@
     "%@ Grades" : {
 
     },
+    "%@, " : {
+
+    },
     "%@, %@" : {
       "localizations" : {
         "en" : {
@@ -78,9 +81,6 @@
           }
         }
       }
-    },
-    "%@, min. " : {
-
     },
     "%lld" : {
 
@@ -493,9 +493,6 @@
     "MIDI: %@" : {
 
     },
-    "min. " : {
-
-    },
     "Minor Scales" : {
 
     },
@@ -711,9 +708,6 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -837,6 +831,9 @@
 
     },
     "Use MIDI Connections" : {
+
+    },
+    "User List" : {
 
     },
     "Users" : {

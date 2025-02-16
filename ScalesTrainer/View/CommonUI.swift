@@ -1,23 +1,19 @@
 import SwiftUI
 
 struct ScreenTitleView: View {
-    @ObservedObject var settingsPublished = SettingsPublished.shared
+    @ObservedObject var viewManager = ViewManager.shared
     let screenName: String
-    //@State var user = //Settings.shared.getCurrentUser()
     
     var body: some View {
         VStack {
             Text(screenName).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             HStack {
-                if let user = Settings.shared.getUser(name: settingsPublished.name) {
+                if let user = viewManager.titleUser {
                     Text(user.getTitle()).font(.title2)
                 }
             }
         }
         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-        .onAppear() {
-            //self.user = Settings.shared.getCurrentUser()
-        }
     }
 }
 
@@ -44,24 +40,7 @@ class UIGlobals {
     }
 }
 
-struct CommonFrameStyle: ViewModifier {
-    var backgroundColor: Color
-    var cornerRadius: CGFloat
-    var borderColor: Color
-    var borderWidth: CGFloat
 
-    func body(content: Content) -> some View {
-        content
-            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 10)
-            .background(backgroundColor)
-            .cornerRadius(cornerRadius)
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(borderColor, lineWidth: borderWidth)
-            )
-            .shadow(radius: 5)  // Optional: Add a shadow for depth
-    }
-}
 
 struct Hilighted: ViewModifier {
     var backgroundColor: Color
@@ -83,14 +62,65 @@ extension View {
                           cornerRadius: CGFloat = 10,
                           borderColor: Color = .blue,
                           borderWidth: CGFloat = 1) -> some View {
-        modifier(CommonFrameStyle(backgroundColor: backgroundColor,
-                                  cornerRadius: cornerRadius,
-                                  borderColor: borderColor,
-                                  borderWidth: borderWidth))
+
+            modifier(CommonFrameStyle1(backgroundColor: backgroundColor,
+                                       cornerRadius: cornerRadius,
+                                       borderColor: borderColor,
+                                       borderWidth: borderWidth))
+
+//            modifier(CommonFrameStyle2(backgroundImageName: "PianoKeyboard2", opacity: 0.6, cornerRadius: 0, borderColor: .black, borderWidth: 1))
+//                                      cornerRadius: cornerRadius,
+//                                      borderColor: borderColor,
+//                                      borderWidth: borderWidth))
+//        }
     }
 
     func hilighted(backgroundColor: Color = .green) -> some View {
         modifier(Hilighted(backgroundColor: backgroundColor))
     }
 
+}
+
+struct CommonFrameStyle1: ViewModifier {
+    var backgroundColor: Color
+    var cornerRadius: CGFloat
+    var borderColor: Color
+    var borderWidth: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .frame(minWidth: 100, maxWidth: .infinity, minHeight: 10)
+            .background(backgroundColor)
+            .cornerRadius(cornerRadius)
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(borderColor, lineWidth: borderWidth)
+            )
+            .shadow(radius: 5)  // Optional: Add a shadow for depth
+    }
+}
+
+struct CommonFrameStyle2: ViewModifier {
+    var backgroundImageName: String
+    var opacity: Double
+    var cornerRadius: CGFloat
+    var borderColor: Color
+    var borderWidth: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .background(
+                Image(backgroundImageName)
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(opacity)
+                    .clipped()
+                    .cornerRadius(cornerRadius)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(borderColor, lineWidth: borderWidth)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    }
 }

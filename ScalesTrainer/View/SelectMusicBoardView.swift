@@ -2,21 +2,18 @@ import Foundation
 import SwiftUI
 
 struct SelectBoardGradesView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
-    let userForGrade:User
+    @EnvironmentObject var tabSelectionManager: ViewManager
+    let user:User
     let inBoard:MusicBoard
     @State private var isOn = [Bool](repeating: false, count: 12)
     let width = 0.7
     
     func updateBoardGrade(gradeNumber:Int) {
-        userForGrade.grade = gradeNumber
-        Settings.shared.setUserGrade(gradeNumber)
+        user.grade = gradeNumber
+        Settings.shared.setUserGrade(user, gradeNumber)
         ///Force all views dependendent on grade to close since they show the previous grade
         tabSelectionManager.isSpinWheelActive = false
         tabSelectionManager.isPracticeChartActive = false
-        DispatchQueue.main.async {
-            tabSelectionManager.currentUser = userForGrade
-        }
         Settings.shared.save()
     }
     
@@ -62,10 +59,9 @@ struct SelectBoardGradesView: View {
             for i in 0..<isOn.count {
                 isOn[i] = false
             }
-            if let grade = userForGrade.grade {
+            if let grade = user.grade {
                 isOn[grade] = true
             }
-            Settings.shared.debug("appear")
         }
         .onDisappear() {
         }

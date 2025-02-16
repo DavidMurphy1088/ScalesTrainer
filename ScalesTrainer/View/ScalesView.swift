@@ -258,12 +258,10 @@ struct ScalesView: View {
     
     func SelectActionView() -> some View {
         VStack {
-
             HStack(alignment: .top) {
-                Spacer()
                 if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                    Spacer()
                     HStack()  {
-//                        let title = NSLocalizedString(UIDevice.current.userInterfaceIdiom == .phone ? "Follow" : "Follow", comment: "ProcessMenu")
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
 
                         Button(action: {
@@ -281,14 +279,14 @@ struct ScalesView: View {
                                 VStack {
                                     Image(systemName: "questionmark.circle")
                                         .imageScale(.large)
-                                        .font(.title2)//.bold()
+                                        .font(.title2)
                                         .foregroundColor(.green)
                                 }
                             }
                         }
                     }
-                    .padding(.vertical)
-                    .padding(.horizontal, 0)
+                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.horizontal, 0)
                 }
                 
                 if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
@@ -323,8 +321,8 @@ struct ScalesView: View {
                             }
                         }
                     }
-                    .padding(.vertical)
-                    .padding(.horizontal, 0)
+                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.horizontal, 0)
                 }
                 
                 Spacer()
@@ -352,8 +350,8 @@ struct ScalesView: View {
                         }
                     }
                 }
-                .padding(.vertical)
-                .padding(.horizontal, 0)
+                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                //.padding(.horizontal, 0)
                 
                 Spacer()
                 HStack {
@@ -384,10 +382,11 @@ struct ScalesView: View {
                         }
                     }
                 }
-                .padding(.vertical)
-                .padding(.horizontal, 0)
+                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                //.padding(.horizontal, 0)
                 
                 if scalesModel.recordedAudioFile != nil {
+                    Spacer()
                     HStack {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Hear" : "Hear Recording"
                         Button(action: {
@@ -409,8 +408,8 @@ struct ScalesView: View {
                             }
                         }
                     }
-                    .padding(.vertical)
-                    .padding(.horizontal, 0)
+                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.horizontal, 0)
                 }
                 
                 if scalesModel.scale.getBackingChords() != nil {
@@ -442,8 +441,8 @@ struct ScalesView: View {
                             }
                         }
                     }
-                    .padding(.vertical)
-                    .padding(.horizontal, 0)
+                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.horizontal, 0)
                 }
                 Spacer()
             }
@@ -455,10 +454,13 @@ struct ScalesView: View {
         var height:Double
         if scalesModel.scale.needsTwoKeyboards() {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
-            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
+            //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
+            ///16 Feb 2025 Can be a bit longer due to just minimizing some other UI heights in landscape
+            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 4)
         }
         else {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
+            //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait  ? 4 : 3)
             height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait  ? 4 : 3)
         }
         if scalesModel.scale.octaves > 1 {
@@ -540,22 +542,35 @@ struct ScalesView: View {
     var body: some View {
         VStack {
             VStack(spacing: 0) {
-                ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-                    .padding(.horizontal, 0)
-                HStack {
-                    Spacer()
-                    //if scalesModel.runningProcessPublished == .none {
-                    SelectScaleParametersView()
-                        .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-                    //}
-                    if UIDevice.current.userInterfaceIdiom != .phone {
-                        HideAndShowView()
-                            .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                if orientationInfo.isPortrait {
+                    HStack {
+                        ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
+                            .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
                     }
-                    Spacer()
+                    HStack {
+                        Spacer()
+                        SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            HideAndShowView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                        }
+                        Spacer()
+                    }
+                    .commonFrameStyle(backgroundColor: Color.white)
                 }
-                .commonFrameStyle(backgroundColor: Color.white)
+                else {
+                    ///Layout horizontally to save vertical space in landscape
+                    HStack {
+                        ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
+                            .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
+                        Spacer()
+                        SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            HideAndShowView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                        }
+                        Spacer()
+                    }
+                    .commonFrameStyle(backgroundColor: Color.white)
+                }
             }
             
             if scalesModel.showKeyboard {
@@ -565,8 +580,6 @@ struct ScalesView: View {
                             ///Scale is contrary with LH and RH joined on one keyboard
                             PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            
-                            
                         }
                         else {
                             if scalesModel.scale.needsTwoKeyboards() {
@@ -613,7 +626,7 @@ struct ScalesView: View {
                 }
             }
             else {
-                SelectActionView().commonFrameStyle(backgroundColor: Color.white)
+                SelectActionView().commonFrameStyle(backgroundColor: Color.white)//.padding(vertical: 0)
             }
             
             if [.exerciseStarted, .won].contains(exerciseState.statePublished) {
@@ -721,6 +734,19 @@ struct ScalesView: View {
             if let score = scalesModel.getScore() {
                 //score.debug2(ctx: "ScalesView.onAppear", handType: nil)
             }
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.octaves > 1 {
+                    OrientationManager.lockOrientation(.landscape, andRotateTo: .landscapeLeft)
+                }
+                else {
+                    ///If need two keyboards (which take space) and two staves then lokc portrait
+                    if PianoKeyboardModel.sharedCombined == nil {
+                        if scalesModel.scale.needsTwoKeyboards() {
+                            OrientationManager.lockOrientation(.portrait, andRotateTo: .portrait)
+                        }
+                    }
+                }
+            }
         }
         
         .onDisappear {
@@ -728,7 +754,7 @@ struct ScalesView: View {
             metronome.removeAllProcesses()
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
-
+            OrientationManager.unlockOrientation()
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt

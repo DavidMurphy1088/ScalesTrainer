@@ -272,10 +272,6 @@ public class Scale : Codable {
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
         
-//        if let custom = scaleCustomisation  {
-//            print("============== Scale Init CUSTOM", scaleRoot.name, scaleType, scaleMotion, "octaves", octaves, "ID:", self.id)
-//        }
-
         if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
             self.timeSignature = TimeSignature(top: 3, bottom: 8, visible: true)
         }
@@ -835,7 +831,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug11(_ msg:String, short:Bool=false)  {
+    func debug1(_ msg:String, short:Bool=false)  {
         if !self.debugOn {
             //return
         }

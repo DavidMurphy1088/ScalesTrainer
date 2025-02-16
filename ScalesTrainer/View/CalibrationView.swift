@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct CalibrationView: View {
-    @EnvironmentObject var tabSelectionManager: TabSelectionManager
+    @EnvironmentObject var tabSelectionManager: ViewManager
     let scalesModel = ScalesModel.shared
     @ObservedObject var pianoKeyboardViewModel = PianoKeyboardModel.sharedRH
     
