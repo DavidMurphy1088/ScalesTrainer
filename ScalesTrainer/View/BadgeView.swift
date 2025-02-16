@@ -131,28 +131,32 @@ struct BadgesView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             if badgeBank.totalCorrect > 0 {
-                                if Settings.shared.getCurrentUser().settings.badgeStyle == 0 {
-                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c)
-                                        .rotationEffect(Angle.degrees(rotationAngle))
-                                    .offset(y: verticalOffset)
-                                    .onAppear {
-                                        withAnimation(Animation.easeOut(duration: 1.0)) {
-                                            rotationAngle = 360
-                                            verticalOffset = 0
-                                        }
+                                if let user = Settings.shared.getCurrentUser() {
+                                    if user.settings.badgeStyle == 0 {
+                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c)
+                                            .rotationEffect(Angle.degrees(rotationAngle))
+                                            .offset(y: verticalOffset)
+                                            .onAppear {
+                                                withAnimation(Animation.easeOut(duration: 1.0)) {
+                                                    rotationAngle = 360
+                                                    verticalOffset = 0
+                                                }
+                                            }
                                     }
                                 }
                                 else {
-                                    Image(self.imageName(imageSet: Settings.shared.getCurrentUser().settings.badgeStyle, n: scaleNoteNumber))
-                                    .resizable()
-                                    .frame(width: imWidth)
-                                    .rotationEffect(Angle.degrees(rotationAngle))
-                                    .offset(y: verticalOffset)
-                                    .onAppear {
-                                        withAnimation(Animation.easeOut(duration: 1.0)) {
-                                            rotationAngle = 360
-                                            verticalOffset = 0
-                                        }
+                                    if let user = Settings.shared.getCurrentUser() {
+                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+                                            .resizable()
+                                            .frame(width: imWidth)
+                                            .rotationEffect(Angle.degrees(rotationAngle))
+                                            .offset(y: verticalOffset)
+                                            .onAppear {
+                                                withAnimation(Animation.easeOut(duration: 1.0)) {
+                                                    rotationAngle = 360
+                                                    verticalOffset = 0
+                                                }
+                                            }
                                     }
                                 }
                             }
@@ -163,13 +167,15 @@ struct BadgesView: View {
                         ZStack {
                             Text("⊙").foregroundColor(.blue)
                             if scaleNoteNumber < badgeBank.totalCorrect {
-                                if Settings.shared.getCurrentUser().settings.badgeStyle == 0 {
-                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
-                                }
-                                else {
-                                    Image(self.imageName(imageSet: Settings.shared.getCurrentUser().settings.badgeStyle, n: scaleNoteNumber))
-                                        .resizable()
-                                        .frame(width: imWidth)
+                                if let user = Settings.shared.getCurrentUser() {
+                                    if user.settings.badgeStyle == 0 {
+                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
+                                    }
+                                    else {
+                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+                                            .resizable()
+                                            .frame(width: imWidth)
+                                    }
                                 }
                             }
                         }

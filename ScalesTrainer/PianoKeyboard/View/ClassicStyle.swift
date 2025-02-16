@@ -84,6 +84,9 @@ public struct ClassicStyle {
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
+            guard let user = Settings.shared.getCurrentUser() else {
+                return
+            }
             let scalesModel = ScalesModel.shared
             let width = size.width
             let height = size.height
@@ -132,7 +135,7 @@ public struct ClassicStyle {
                 let gradientWhiteKey:Gradient = Gradient(colors: [
                     hilightColor,
                     keyColor,
-                    Settings.shared.getCurrentUser().settings.isCustomColor() ? Settings.shared.getCurrentUser().settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
+                    user.settings.isCustomColor() ? user.settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
                 ])
                 context.fill(path, with: .linearGradient(
                     gradientWhiteKey,

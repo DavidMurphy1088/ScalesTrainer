@@ -3,23 +3,20 @@ import SwiftUI
 struct ScreenTitleView: View {
     @ObservedObject var settingsPublished = SettingsPublished.shared
     let screenName: String
-    @State var user = Settings.shared.getCurrentUser()
+    //@State var user = //Settings.shared.getCurrentUser()
     
-    func getTitle() -> String {
-        let name = screenName //Settings.shared.getCurrentUser().name //self.settingsPublished.name
-        return name
-    }
-
     var body: some View {
         VStack {
-            Text(getTitle()).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
+            Text(screenName).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
             HStack {
-                Text(user.getTitle()).font(.title2)
+                if let user = Settings.shared.getUser(name: settingsPublished.name) {
+                    Text(user.getTitle()).font(.title2)
+                }
             }
         }
         .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
         .onAppear() {
-            self.user = Settings.shared.getCurrentUser()
+            //self.user = Settings.shared.getCurrentUser()
         }
     }
 }
@@ -80,7 +77,9 @@ struct Hilighted: ViewModifier {
 }
 
 extension View {
-    func commonFrameStyle(backgroundColor: Color = Settings.shared.getCurrentUser().settings.getBackgroundColor(),
+    func commonFrameStyle(backgroundColor: Color = Settings.shared.getCurrentUser() == nil ? 
+                          Settings.shared.getDefaultBackgroundColor() :
+                          Settings.shared.getCurrentUser()!.settings.getBackgroundColor(),
                           cornerRadius: CGFloat = 10,
                           borderColor: Color = .blue,
                           borderWidth: CGFloat = 1) -> some View {

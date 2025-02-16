@@ -22,8 +22,8 @@ func backingSoundName(_ n:Int) -> String {
 }
 
 struct SettingsView: View {
-    //@EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
+    var user:User
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var leadInBarCount = 0
@@ -68,8 +68,8 @@ struct SettingsView: View {
             }
         }
     }
-    
-    func DetailedCustomSettingsView() -> some View {
+
+    func DetailedCustomSettingsView(user:User) -> some View {
         NavigationView {
             VStack {
                 VStack {
@@ -80,7 +80,7 @@ struct SettingsView: View {
                         ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
                             .padding()
                             .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                                Settings.shared.getCurrentUser().settings.setBackgroundColor(newColor)
+                                user.settings.setBackgroundColor(newColor)
                                 self.backgroundChange += 1
                             }
                             .labelsHidden()
@@ -93,7 +93,7 @@ struct SettingsView: View {
                         }
                         //.padding()
                         .onChange(of: keyboardColor, {
-                            Settings.shared.getCurrentUser().settings.setKeyboardColor(keyboardColor)
+                            user.settings.setKeyboardColor(keyboardColor)
                         })
                         .hilighted(backgroundColor: .gray)
                         .frame(width: UIScreen.main.bounds.size.width * 0.9,
@@ -119,7 +119,7 @@ struct SettingsView: View {
                     //.disabled(!self.metronomeOn)
                     .pickerStyle(.menu)
                     .onChange(of: leadInBarCount, {
-                        settings.getCurrentUser().settings.scaleLeadInBeatCountIndex = leadInBarCount
+                        user.settings.scaleLeadInBeatCountIndex = leadInBarCount
                     })
                 }
                 
@@ -134,7 +134,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: backingPresetNumber, {
-                        settings.getCurrentUser().settings.backingSamplerPreset = backingPresetNumber
+                        user.settings.backingSamplerPreset = backingPresetNumber
                         //AudioManager.shared.resetAudioKit()
                     })
                 }
@@ -150,7 +150,7 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: badgeStyleNumber, {
-                        settings.getCurrentUser().settings.badgeStyle = badgeStyleNumber
+                        user.settings.badgeStyle = badgeStyleNumber
                     })
                 }
                 
@@ -161,7 +161,7 @@ struct SettingsView: View {
                         Text("Gamification").font(.title2).padding(0)
                     }
                     .onChange(of: practiceChartGamificationOn, {
-                        settings.getCurrentUser().settings.practiceChartGamificationOn = practiceChartGamificationOn
+                        user.settings.practiceChartGamificationOn = practiceChartGamificationOn
                     })
                     Spacer()
                 }
@@ -174,7 +174,7 @@ struct SettingsView: View {
                         Text("Use MIDI Connections").font(.title2).padding(0)
                     }
                     .onChange(of: useMidiConnnections, {
-                        settings.getCurrentUser().settings.useMidiConnnections = useMidiConnnections
+                        user.settings.useMidiConnnections = useMidiConnnections
                     })
                     Spacer()
                 }
@@ -225,33 +225,36 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        //NavigationStack {
-            VStack {
-                ScreenTitleView(screenName: "Settings").commonFrameStyle()
-                DetailedCustomSettingsView()
+        VStack {
+            ScreenTitleView(screenName: "Settings").commonFrameStyle()
+            //if let user = settings.getCurrentUser() {
+                DetailedCustomSettingsView(user:user)
                     .commonFrameStyle()
                     .padding()
+            //}
+        }
+        
+        .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
+        .onAppear() {
+            guard let user = settings.getCurrentUser() else {
+                return
             }
-            
-            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
-            .onAppear() {
-                leadInBarCount = settings.getCurrentUser().settings.scaleLeadInBeatCountIndex
-                self.defaultOctaves = settings.defaultOctaves
-                if let score = scalesModel.getScore() {
-                    PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
-                                                                                            scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
-                }
-                self.keyboardColor = Settings.shared.getCurrentUser().settings.getKeyboardColor()
-                self.backgroundColor = Settings.shared.getCurrentUser().settings.getBackgroundColor()
-                self.backingPresetNumber = Settings.shared.getCurrentUser().settings.backingSamplerPreset
-                self.practiceChartGamificationOn = Settings.shared.getCurrentUser().settings.practiceChartGamificationOn
-                self.badgeStyleNumber = Settings.shared.getCurrentUser().settings.badgeStyle
-                self.useMidiConnnections = Settings.shared.getCurrentUser().settings.useMidiConnnections
+            leadInBarCount = user.settings.scaleLeadInBeatCountIndex
+            self.defaultOctaves = settings.defaultOctaves
+            if let score = scalesModel.getScore() {
+                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
+                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
             }
-            .onDisappear() {
-                settings.save()
-            }
-        //}
+            self.keyboardColor = user.settings.getKeyboardColor()
+            self.backgroundColor = user.settings.getBackgroundColor()
+            self.backingPresetNumber = user.settings.backingSamplerPreset
+            self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
+            self.badgeStyleNumber = user.settings.badgeStyle
+            self.useMidiConnnections = user.settings.useMidiConnnections
+        }
+        .onDisappear() {
+            settings.save()
+        }
     }
 }
 

@@ -5,91 +5,6 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-// ---------------------- Edit details of a single user -------------------
-
-struct GradeTitleView: View {
-    @ObservedObject var settingsPublished = SettingsPublished.shared
-    let user = Settings.shared.getCurrentUser()
-
-    var body: some View {
-        VStack {
-            Text("Name and Grade").font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-            HStack {
-                if user.name.count > 0 {
-                    Text(user.getTitle()).font(.title2)
-                }
-            }
-        }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-    }
-}
-
-struct UserDetailsView: View {
-    @ObservedObject var publishedSettings = SettingsPublished.shared
-    let user:User
-    @Binding var listUpdated:Bool
-    
-    let scalesModel = ScalesModel.shared
-    let settings = Settings.shared
-    @State var firstName = Settings.shared.getCurrentUser().name
-    @State var emailAddress = Settings.shared.getCurrentUser().email
-    
-    @State private var tapBufferSize = 4096
-    @State private var navigateToSelectBoard = false
-    @State private var navigateToSelectGrade = false
-    @State private var selectedGrade:Int?
-    @State private var userName = ""
-    let width = UIScreen.main.bounds.width * 0.7
-    
-    var body: some View {
-        VStack {
-            //GradeTitleView().commonFrameStyle()
-
-            VStack {
-                Spacer()
-                VStack() {
-                    let x = String(user.id.uuidString.suffix(4))
-                    Text(x)
-                    Text("Please enter your first name").padding()
-                    TextField("First name", text: $firstName)
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: UIScreen.main.bounds.width * 0.5)
-                
-                    Text("Optional Email").padding()
-                    TextField("Email", text: $emailAddress)
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: UIScreen.main.bounds.width * 0.5)
-                }
-                .onChange(of: emailAddress, {
-                    settings.getCurrentUser().email = emailAddress
-                })
-                
-                Spacer()
-                SelectBoardGradesView(userForGrade:user, inBoard: MusicBoard(name: "Trinity"))
-                Spacer()
-            }
-            .commonFrameStyle()
-        }
-        .onAppear() {
-            self.firstName = user.name
-            self.emailAddress = user.email
-            listUpdated = false
-        }
-        .onDisappear() {
-            ///Called on downward navigation from this view as well as view exit
-            if let user = settings.getUser(id: user.id) {
-                user.name = self.firstName
-                user.email = self.emailAddress
-                settings.setCurrentUser(id: user.id)
-                settings.save()
-                listUpdated = true
-            }
-        }
-    }
-}
-
 // --------------------------- List of all Users ------------------------------
 
 struct UsersTitleView: View {
@@ -134,7 +49,6 @@ struct UserListView: View {
                                     .truncationMode(.tail) // Add "..." if text is too long
                                     .frame(width: UIScreen.main.bounds.width * 0.20, alignment: .leading) // Fixed width for username
                                     .foregroundColor(user.isCurrentUser ? /*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/ : .black)
-                                
                                 Spacer()
                                 if let grade = user.grade {
                                     Text("Grade-\(String(grade))").font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
@@ -150,16 +64,18 @@ struct UserListView: View {
                                     tabSelectionManager.isSpinWheelActive = false
                                     tabSelectionManager.isPracticeChartActive = false
                                     Settings.shared.save()
-
                                     listUpdated.toggle()
                                 }) {
                                     HStack {
-                                        if UIDevice.current.userInterfaceIdiom != .phone {
+                                        //if UIDevice.current.userInterfaceIdiom != .phone {
+                                        if user.isCurrentUser {
                                             Image(systemName: "checkmark.circle").opacity(user.isCurrentUser ? 1.0 : 0.0).bold()
-                                            //.resizable()
+                                                //.resizable()
                                                 .foregroundColor(.green)
                                         }
-                                        Text("Make Current User").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                        else {
+                                            Text("Make Current User").foregroundColor(.blue).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                        }
                                     }
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
@@ -208,6 +124,7 @@ struct UserListView: View {
                         user.name = ""
                         settings.addUser(user: user)
                         selectedUser = user
+                        settings.setCurrentUser(id: user.id)
                         listUpdated.toggle()
                     }) {
                         Text("Add New User")
@@ -238,20 +155,20 @@ struct UserListView: View {
                 secondaryButton: .cancel()
             )
         }
-
         .onDisappear() {
             //Settings.shared.save()
         }
         .onAppear() {
+            ///Create a user if we dont have one already
             if settings.users.count == 0 {
                 let user = User(board: "Trinity")
                 user.name = ""
                 settings.addUser(user: user)
+                settings.setCurrentUser(id: user.id)
                 selectedUser = user
                 listUpdated.toggle()
             }
         }
-
     }
 }
 

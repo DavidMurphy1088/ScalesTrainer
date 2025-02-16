@@ -8,11 +8,15 @@ struct SelectBoardGradesView: View {
     @State private var isOn = [Bool](repeating: false, count: 12)
     let width = 0.7
     
-    func updateBoardGrade(gradeIndex:Int) {
-        userForGrade.grade = gradeIndex
+    func updateBoardGrade(gradeNumber:Int) {
+        userForGrade.grade = gradeNumber
+        Settings.shared.setUserGrade(gradeNumber)
         ///Force all views dependendent on grade to close since they show the previous grade
         tabSelectionManager.isSpinWheelActive = false
         tabSelectionManager.isPracticeChartActive = false
+        DispatchQueue.main.async {
+            tabSelectionManager.currentUser = userForGrade
+        }
         Settings.shared.save()
     }
     
@@ -29,7 +33,7 @@ struct SelectBoardGradesView: View {
                 }
                 .padding(.horizontal)
             }
-
+            
             List {
                 ForEach(inBoard.gradesOffered, id: \.self) { number in
                     HStack {
@@ -37,24 +41,23 @@ struct SelectBoardGradesView: View {
                         Text(name).background(Color.clear).padding()
                         Spacer()
                         Toggle("", isOn: $isOn[number])
-                        .onChange(of: isOn[number]) { oldWasOn, newWasOn in
-                            if newWasOn {
-                                for j in 0..<isOn.count {
-                                    if j != number {
-                                        isOn[j] = false
+                            .onChange(of: isOn[number]) { oldWasOn, newWasOn in
+                                if newWasOn {
+                                    for j in 0..<isOn.count {
+                                        if j != number {
+                                            isOn[j] = false
+                                        }
                                     }
+                                    self.updateBoardGrade(gradeNumber: number)
                                 }
-                                self.updateBoardGrade(gradeIndex: number)
                             }
-                        }
                     }
                 }
             }
             .listStyle(PlainListStyle())
             .padding()
         }
-        //.commonFrameStyle()
-
+        
         .onAppear() {
             for i in 0..<isOn.count {
                 isOn[i] = false
@@ -63,7 +66,6 @@ struct SelectBoardGradesView: View {
                 isOn[grade] = true
             }
             Settings.shared.debug("appear")
-
         }
         .onDisappear() {
         }

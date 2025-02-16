@@ -7,22 +7,9 @@ import AudioKit
 
 public class SettingsPublished : ObservableObject {
     static var shared = SettingsPublished()
-    @Published var board:String? 
+    @Published var board:String?
     @Published var grade:Int?
     @Published var name = ""
-    
-    func setBoardAndGrade(board:String, grade:Int?) {
-        DispatchQueue.main.async {
-            self.board = board
-            self.grade = grade
-        }
-    }
-    
-//    func setFirstName(firstName:String) {
-//        DispatchQueue.main.async {
-//            self.name = firstName
-//        }
-//    }
 }
 
 class User : Encodable, Decodable, Hashable, Identifiable {
@@ -131,7 +118,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
 class Settings : Encodable, Decodable {
     static var shared = Settings()
     var users:[User]
-    //private var currentUserIndex = 0
     
     var isDeveloperMode = false
     var requiredConsecutiveCount = 2
@@ -153,6 +139,24 @@ class Settings : Encodable, Decodable {
         return nil
     }
     
+    func getUser(name:String) -> User? {
+        for user in users {
+            if user.name == name {
+                return user
+            }
+        }
+        return nil
+    }
+
+    func getDefaultBackgroundColor() -> Color {
+        let red = CGFloat(0.8219926357269287)
+        let green = CGFloat(0.8913233876228333)
+        let blue = CGFloat(1.0000004768371582)
+        let alpha = CGFloat(1)
+        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+        return Color(uiColor)
+    }
+    
     func setCurrentUser(id:UUID) {
         for user in users {
             if user.id == id {
@@ -165,12 +169,20 @@ class Settings : Encodable, Decodable {
     }
 
     func save() {
+        guard self.users.count > 0 else {
+            return
+        }
+        guard self.users[0].name.count > 0 else {
+            return
+        }
+        //return
         do {
             let jsonEncoder = JSONEncoder()
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-                Logger.shared.log(self, "✅ settings saved userCount:\(self.users.count)")
+                let currentUser = self.getCurrentUser()
+                Logger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             }
             else {
                 Logger.shared.reportError(self, "save cannot form JSON")
@@ -195,6 +207,8 @@ class Settings : Encodable, Decodable {
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
+                let currentUser = self.getCurrentUser()
+                Logger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             } catch {
                 Logger.shared.reportError(self, "load:" + error.localizedDescription)
             }
@@ -219,33 +233,42 @@ class Settings : Encodable, Decodable {
     }
 
     func setUserGrade(_ grade:Int) {
-        self.getCurrentUser().grade = grade
-        updatePublished()
+        if let user = self.getCurrentUser() {
+            user.grade = grade
+            updatePublished()
+        }
     }
     
     func setUserName(_ name:String) {
-        self.getCurrentUser().name = name
-        updatePublished()
+        if let user = self.getCurrentUser() {
+            user.name = name
+            updatePublished()
+        }
     }
     
     private func updatePublished() {
-        let user = self.getCurrentUser()
-        if user.name.count > 0 {
-            DispatchQueue.main.async {
+        DispatchQueue.main.async {
+            if let user = self.getCurrentUser() {
                 SettingsPublished.shared.name = user.name
                 SettingsPublished.shared.board = user.board
                 SettingsPublished.shared.grade = user.grade
             }
+            else {
+                SettingsPublished.shared.name = ""
+                SettingsPublished.shared.board = ""
+                SettingsPublished.shared.grade = nil
+
+            }
         }
     }
     
-    func getCurrentUser() -> User {
+    func getCurrentUser() -> User? {
         for user in self.users {
             if user.isCurrentUser {
                 return user
             }
         }
-        return User(board: "Trinity")
+        return nil
     }
     
     public func isDeveloperMode1() -> Bool {

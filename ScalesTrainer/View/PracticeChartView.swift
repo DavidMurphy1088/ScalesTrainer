@@ -495,7 +495,6 @@ struct PracticeChartView: View {
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Practice Chart")
         }
-
     }
 }
 

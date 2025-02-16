@@ -192,7 +192,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
-        Settings.shared.load()
+        //Settings.shared.load()
         if !Settings.shared.isDeveloperMode1() {
             LicenceManager.shared.getFreeLicenses()
         }
@@ -233,12 +233,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 class TabSelectionManager: ObservableObject {
     @Published var selectedTab: Int = 0
+    @Published var currentUser: User? //= false
     ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
     @Published var isPracticeChartActive: Bool = false
     @Published var isSpinWheelActive: Bool = false
 
     init() {
-        nextNavigationTab()
+        let settings  = Settings.shared
+        settings.load()
+        Settings.shared.load()
+        DispatchQueue.main.async {
+            self.currentUser = settings.getCurrentUser()
+            self.nextNavigationTab()
+        }
     }
     
     func nextNavigationTab() {
@@ -266,8 +273,8 @@ class TabSelectionManager: ObservableObject {
             selectedTab = 0
         }
         else {
-            if Settings.shared.users.count == 0 {
-                selectedTab = 11
+            if Settings.shared.getCurrentUser() == nil {
+                selectedTab = 10
             }
             else {
                 selectedTab = 20
@@ -279,10 +286,9 @@ class TabSelectionManager: ObservableObject {
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject private var tabSelectionManager = TabSelectionManager()
+    @ObservedObject private var tabSelectionManager = TabSelectionManager()
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @StateObject private var orientationInfo = OrientationInfo()
-    //@StateObject private var backgroundTaskManager = BackgroundTaskManager()
     let launchTimeSecs = 3.0
     
     init() {
@@ -317,32 +323,14 @@ struct ScalesTrainerApp: App {
         }
     }
     
-//    struct CustomTabItem: View {
-//        let iconName: String
-//        let label: String
-//        let color: Color
-//
-//        var body: some View {
-//            VStack {
-//                Image(systemName: iconName)
-//                    .foregroundColor(color)
-//                Text(label)
-//            }
-//        }
-//    }
-    
+    func getUser(tabMgr:TabSelectionManager) -> User? {
+        let user = tabMgr.currentUser
+        return user
+    }
+
     func MainContentView() -> some View {
+        
         TabView(selection: $tabSelectionManager.selectedTab) {
-//            UserListView()
-//                .tabItem {
-//                    VStack {
-//                        Image(systemName: "house.fill")
-//                            .renderingMode(.template) // Allows tinting per item
-//                            .foregroundColor(.red) DOESNT work
-//                        Text("Home")
-//                    }
-//                }
-//                .tag(0)
             
             if Settings.shared.isDeveloperMode1() {
                 //HomeView()
@@ -369,26 +357,23 @@ struct ScalesTrainerApp: App {
                 .tag(10)
                 .environmentObject(tabSelectionManager)
             
-//            UserDetailsView()
-//                .tabItem {
-//                    Label(NSLocalizedString("Grades", comment: "Menu"), systemImage: "graduationcap.fill")
-//                }
-//                .tag(15)
-//                .environmentObject(tabSelectionManager)
-            
-            HomeView(user: Settings.shared.getCurrentUser())
-                .tabItem {
-                    Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                }
-                .tag(20)
-                .environmentObject(tabSelectionManager)
-            
-            SettingsView()
-                .tabItem {
-                    Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                }
-                .tag(30)
-                .environmentObject(tabSelectionManager)
+            if let user = getUser(tabMgr: tabSelectionManager) {
+                //if let user = Settings.shared.getCurrentUser() {
+                    ActivitiesView(user: user)
+                        .tabItem {
+                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                        }
+                        .tag(20)
+                        .environmentObject(tabSelectionManager)
+                    
+                    SettingsView(user:user)
+                        .tabItem {
+                            Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                        }
+                        .tag(30)
+                        .environmentObject(tabSelectionManager)
+                //}
+            }
             
             LicenseManagerView(contentSection: ContentSection(), email: "email.com")
                 .tabItem {

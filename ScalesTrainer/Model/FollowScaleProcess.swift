@@ -188,16 +188,18 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     }
     
     func awardChartBadge() {
-        if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
-            let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
-            exerciseState.bumpTotalCorrect()
-            let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
-            if !wonStateOld && wonStateNew {
-                if let exerciseBadge = scalesModel.exerciseBadge {
-                    if let practiceChartCell = practiceChartCell {
-                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
-                            self.practiceChart?.savePracticeChartToFile("ExerciseAddBadge")
-                        })
+        if let user = Settings.shared.getCurrentUser() {
+            if user.settings.practiceChartGamificationOn {
+                let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
+                exerciseState.bumpTotalCorrect()
+                let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
+                if !wonStateOld && wonStateNew {
+                    if let exerciseBadge = scalesModel.exerciseBadge {
+                        if let practiceChartCell = practiceChartCell {
+                            practiceChartCell.addBadge(badge: exerciseBadge, callback: {
+                                self.practiceChart?.savePracticeChartToFile("ExerciseAddBadge")
+                            })
+                        }
                     }
                 }
             }

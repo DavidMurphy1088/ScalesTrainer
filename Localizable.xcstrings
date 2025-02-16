@@ -109,6 +109,9 @@
     "😊" : {
 
     },
+    "😊 Welcome 😊" : {
+
+    },
     "😔" : {
 
     },
@@ -282,6 +285,9 @@
     "First name" : {
 
     },
+    "First Name" : {
+
+    },
     "Follow the Scale" : {
       "comment" : "ProcessMenu",
       "extractionState" : "stale",
@@ -312,6 +318,9 @@
     "Gamification" : {
 
     },
+    "Get Started" : {
+
+    },
     "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
 
     },
@@ -335,9 +344,6 @@
     },
     "Grade-0" : {
 
-    },
-    "Grades" : {
-      "comment" : "Menu"
     },
     "Hand:" : {
 
@@ -508,7 +514,7 @@
     "Next: %lld" : {
 
     },
-    "No music grade has been selected for %@" : {
+    "No name or grade has been setup." : {
 
     },
     "Not in Scale" : {
@@ -544,10 +550,7 @@
     "Play The Scale" : {
 
     },
-    "Please enter your first name" : {
-
-    },
-    "Please select your music grade" : {
+    "Please setup your name and grade." : {
 
     },
     "Practice Chart" : {
@@ -821,6 +824,9 @@
         }
       }
     },
+    "To get started please enter your name and Grade." : {
+
+    },
     "Type:" : {
 
     },
@@ -854,6 +860,9 @@
           }
         }
       }
+    },
+    "We hope you enjoy your experience using Scales Academy." : {
+
     },
     "Your current subscription is " : {
 

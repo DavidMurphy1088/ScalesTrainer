@@ -16,6 +16,7 @@
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
+		7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C00B2D605B5D0030928B /* UserDetailsView.swift */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* LicenseManagerView.swift */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
@@ -63,7 +64,6 @@
 		797013972BEE3E45009F85D6 /* StemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013922BEE3E45009F85D6 /* StemView.swift */; };
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
 		797DBBB22C621FDA009A54C9 /* MIDIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797DBBB12C621FDA009A54C9 /* MIDIModel.swift */; };
-		7985635D2C0349BF008BAC79 /* SettingsOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985635C2C0349BF008BAC79 /* SettingsOLD.swift */; };
 		79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD82D38D278009405C3 /* ScoreTest.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
@@ -71,7 +71,7 @@
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
 		799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */; };
-		799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* HomeView.swift */; };
+		799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		799DC8422D5190BB007008A5 /* FFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DC8412D5190BB007008A5 /* FFTView.swift */; };
 		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
@@ -156,6 +156,7 @@
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
+		7910C00B2D605B5D0030928B /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		791F6C302CD18939006BAEBD /* LicenseManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManagerView.swift; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
@@ -203,7 +204,6 @@
 		797013922BEE3E45009F85D6 /* StemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StemView.swift; sourceTree = "<group>"; };
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
 		797DBBB12C621FDA009A54C9 /* MIDIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIModel.swift; sourceTree = "<group>"; };
-		7985635C2C0349BF008BAC79 /* SettingsOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOLD.swift; sourceTree = "<group>"; };
 		79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests1.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79891CD82D38D278009405C3 /* ScoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreTest.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
@@ -212,7 +212,7 @@
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
 		799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
-		799BE2AF2C01C66A004B19F6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		799DC8412D5190BB007008A5 /* FFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTView.swift; sourceTree = "<group>"; };
 		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
@@ -479,6 +479,7 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
 				79E220ED2C856150004F64D8 /* BadgeView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
 				799BE2A72BFF4322004B19F6 /* CalibrationView.swift */,
@@ -486,8 +487,8 @@
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				790624092C374F5D005A6A3E /* EmailView.swift */,
 				79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */,
+				799DC8412D5190BB007008A5 /* FFTView.swift */,
 				79312DB62C118B41005FDE8B /* HelpView.swift */,
-				799BE2AF2C01C66A004B19F6 /* HomeView.swift */,
 				799BE2A92BFF4EED004B19F6 /* LegendView.swift */,
 				791F6C302CD18939006BAEBD /* LicenseManagerView.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
@@ -508,7 +509,6 @@
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				79CF5D712BEE46C900454BB6 /* UserListView.swift */,
-				799DC8412D5190BB007008A5 /* FFTView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -547,13 +547,13 @@
 				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
 				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
 				79F3F58B2D5363C700D6BAA3 /* Settings.swift */,
-				7985635C2C0349BF008BAC79 /* SettingsOLD.swift */,
 				79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
+				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -798,7 +798,6 @@
 				7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */,
 				79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */,
 				79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */,
-				7985635D2C0349BF008BAC79 /* SettingsOLD.swift in Sources */,
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */,
 				79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */,
@@ -809,6 +808,7 @@
 				799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */,
 				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
 				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
+				7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
 				79552FB62BDB975D00A27531 /* Result.swift in Sources */,
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
@@ -843,7 +843,7 @@
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
 				79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */,
 				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
-				799BE2B02C01C66A004B19F6 /* HomeView.swift in Sources */,
+				799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */,
 				79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */,
 				79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,

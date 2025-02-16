@@ -158,24 +158,26 @@ struct ActivityModeView: View {
     }
 }
 
-struct HomeView: View {
+struct ActivitiesView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
-    @State var user:User
-    ///Reference types (e.g. User) state aren't refreshed with onAppear
-    @State var userName:String = ""
-    @State var grade:Int?
+    let user:User
+    @State var practiceChart:PracticeChart?
+    ///NB 🟢 Reference types (e.g. User) state aren't refreshed with onAppear, use userName
+    //@State var userName:String = ""
 
     func loadChart(user:User) -> PracticeChart? {
-        guard let grade = self.grade else {
-            return nil
-        }
+//        guard let grade = self.grade else {
+//            return nil
+//        }
         
-        let practiceChart:PracticeChart
-        if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: user, board: user.board, grade: grade) {
-            practiceChart = loadedChart
-        }
-        else {
-            practiceChart = PracticeChart(user: user, board: user.board, grade: grade)
+        var practiceChart:PracticeChart? = nil
+        if let grade = user.grade {
+            if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: user, board: user.board, grade: grade) {
+                practiceChart = loadedChart
+            }
+            else {
+                practiceChart = PracticeChart(user: user, board: user.board, grade: grade)
+            }
         }
         return practiceChart
     }
@@ -186,15 +188,20 @@ struct HomeView: View {
                 VStack {
                     Spacer()
                     ScreenTitleView(screenName: "Activities")
-                    if let practiceChart = loadChart(user: user) {
+                    if let practiceChart = self.practiceChart {
                         ActivityModeView(user: user, practiceChart: practiceChart)
                             .environmentObject(orientationInfo)
                     }
                     else {
                         Spacer()
-                        Text("No music grade has been selected for \(userName)").font(.title2).padding()
-                        Text("Please select your music grade").font(.title2).padding()
-                        Spacer()
+//                        if userName.count > 0 {
+//                            Text("No music grade has been selected for \(userName).").font(.title2).padding()
+//                            Text("Please select your music grade.").font(.title2).padding()
+//                        }
+//                        else {
+                            Text("No name or grade has been setup.").font(.title2).padding()
+                            Text("Please setup your name and grade.").font(.title2).padding()
+//                        }
                     }
                     Spacer()
                 }
@@ -202,9 +209,10 @@ struct HomeView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
-            self.user = Settings.shared.getCurrentUser()
-            self.userName = user.name
-            self.grade = user.grade
+            print("========================= Act view user", user.name, user.grade)
+            practiceChart = self.loadChart(user: user)
+            //self.userName = user.name
+            //self.grade = user.grade
         }
 
     }

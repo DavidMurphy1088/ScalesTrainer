@@ -163,7 +163,7 @@ struct ScalesView: View {
 //        }
 //    }
     
-    func StopProcessView() -> some View {
+    func StopProcessView(user:User) -> some View {
         VStack {
             if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
                 HStack {
@@ -171,7 +171,7 @@ struct ScalesView: View {
                     Button(action: {
                         scalesModel.setRunningProcess(.none)
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
-                            if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
+                            if user.settings.practiceChartGamificationOn {
                                 ///Stopped by user before exercise process stopped it
                                 if exerciseState.statePublished == .won  {
                                     exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
@@ -248,12 +248,12 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if Settings.shared.getCurrentUser().settings.useMidiConnnections {
-            return true
+        if let user = settings.getCurrentUser() {
+            if user.settings.useMidiConnnections {
+                return true
+            }
         }
-        else {
-            return scale.hands.count == 1
-        }
+        return scale.hands.count == 1
     }
     
     func SelectActionView() -> some View {
@@ -546,12 +546,12 @@ struct ScalesView: View {
                 HStack {
                     Spacer()
                     //if scalesModel.runningProcessPublished == .none {
-                        SelectScaleParametersView()
+                    SelectScaleParametersView()
                         .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
                     //}
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         HideAndShowView()
-                        .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
+                            .padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
                     }
                     Spacer()
                 }
@@ -559,30 +559,33 @@ struct ScalesView: View {
             }
             
             if scalesModel.showKeyboard {
-                VStack {
-                    if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
-                        ///Scale is contrary with LH and RH joined on one keyboard
-                        PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
-                            .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-
-                    }
-                    else {
-                        if scalesModel.scale.needsTwoKeyboards() {
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
+                if let user = settings.getCurrentUser() {
+                    VStack {
+                        if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                            ///Scale is contrary with LH and RH joined on one keyboard
+                            PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH, 
-                                              keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
-                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            
+                            
                         }
                         else {
-                            let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                            PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard, 
-                                              keyColor: Settings.shared.getCurrentUser().settings.getKeyboardColor())
+                            if scalesModel.scale.needsTwoKeyboards() {
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
+                                                  keyColor: user.settings.getKeyboardColor())
                                 .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            }
+                            else {
+                                let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
+                                                  keyColor: user.settings.getKeyboardColor())
+                                .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            }
                         }
                     }
+                    .commonFrameStyle()
                 }
-                .commonFrameStyle()
                 if UIDevice.current.userInterfaceIdiom != .phone {
                     if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
                         if scalesModel.showLegend {
@@ -605,7 +608,9 @@ struct ScalesView: View {
             }
             
             if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying || scalesModel.synchedIsPlaying {
-                StopProcessView()
+                if let user = settings.getCurrentUser() {
+                    StopProcessView(user:user)
+                }
             }
             else {
                 SelectActionView().commonFrameStyle(backgroundColor: Color.white)
@@ -615,10 +620,11 @@ struct ScalesView: View {
                 BadgesView(scale: scalesModel.scale).commonFrameStyle(backgroundColor: Color.white)
             }
             
-            if Settings.shared.getCurrentUser().settings.practiceChartGamificationOn {
-                HStack {
-                    if let exerciseBadge = scalesModel.exerciseBadge {
-                        //if true || [ExerciseState.State.wonAndFinished, ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
+            if let user = Settings.shared.getCurrentUser() {
+                if user.settings.practiceChartGamificationOn {
+                    HStack {
+                        if let exerciseBadge = scalesModel.exerciseBadge {
+                            //if true || [ExerciseState.State.wonAndFinished, ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
                             let msg = getExerciseStatusMessage(badge: exerciseBadge)
                             Text(msg)
                                 .padding()
@@ -636,24 +642,28 @@ struct ScalesView: View {
                                 .frame(height: UIScreen.main.bounds.height * 0.05)
                             
                                 .offset(x: getBadgeOffset(state: exerciseState.statePublished).0, y:getBadgeOffset(state: exerciseState.statePublished).1)
-                                ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
-                                //                        .rotation3DEffect( //3D flip around its vertical axis
-                                //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
-                                //                            axis: (x: 0.0, y: 1.0, z: 0.0)
-                                //                        )
+                            ///Can't use .rotation3DEffect since a subsequent offset move behaves unexpectedly
+                            //                        .rotation3DEffect( //3D flip around its vertical axis
+                            //                            Angle(degrees: [.won].contains(exerciseState.state) ? 360 : 0),
+                            //                            axis: (x: 0.0, y: 1.0, z: 0.0)
+                            //                        )
                                 .animation(.easeInOut(duration: 2), value: exerciseState.statePublished)
                                 .rotationEffect(Angle(degrees: exerciseState.statePublished == .lost ? 180 : 0))
-                                //.opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
+                            //.opacity(exerciseState.statePublished == .exerciseNotStarted ? 0.0 : 1.0)
                                 .opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
-
-                        //}
+                            
+                            //}
+                        }
                     }
                 }
             }
+        
             if Settings.shared.isDeveloperMode1()  {
-                if Settings.shared.getCurrentUser().settings.useMidiConnnections {
-                    Spacer()
-                    TestInputView()
+                if let user = Settings.shared.getCurrentUser() {
+                    if user.settings.useMidiConnnections {
+                        Spacer()
+                        TestInputView()
+                    }
                 }
             }
             Spacer()
