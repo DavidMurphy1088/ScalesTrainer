@@ -3,32 +3,34 @@ import Foundation
 
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
-    @Published var isActive: Bool = false
+    @Published var isStarredPublished: Bool = false
     @Published var badges:[Badge] = []
     
+    weak var chart: PracticeChart?
     let board:String
     let grade:Int
     var scaleIDKey:String
     var scale: Scale
-    var hilighted: Bool = false
+    var isStarred: Bool = false
     var isLicensed:Bool = false
     
     enum CodingKeys: String, CodingKey {
         case board
         case grade
         case scaleIDKey
-        case hilighted
+        case isStarred
         case badges
         case isLicensed
     }
     
-    init(board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, hilighted: Bool = false) {
+    init(chart:PracticeChart?, board:String, grade:Int, scaleIDKey: String, isLicensed:Bool) {
+        self.chart = chart
         self.board = board
         self.grade = grade
         self.scaleIDKey = scaleIDKey
         self.scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey)!
-        self.hilighted = hilighted
-        self.isActive = hilighted  // Set isActive based on enabled during initialization
+        self.isStarred = false
+        self.isStarredPublished = false
         self.badges = []
         self.isLicensed = isLicensed
     }
@@ -45,16 +47,17 @@ class PracticeChartCell: ObservableObject, Codable {
         board = try container.decode(String.self, forKey: .board)
         grade = try container.decode(Int.self, forKey: .grade)
         scaleIDKey = try container.decode(String.self, forKey: .scaleIDKey)
-        hilighted = try container.decode(Bool.self, forKey: .hilighted)
+        isStarred = try container.decode(Bool.self, forKey: .isStarred)
         isLicensed = try container.decode(Bool.self, forKey: .isLicensed)
         badges = try container.decode([Badge].self, forKey: .badges)
-        self.isActive = hilighted
+        
         if let scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey) {
             self.scale = scale
         }
         else {
             fatalError("PracticeChartCell - no scale for board:\(board), grade:\(grade) scaleKey:\(scaleIDKey)")
         }
+        self.isStarredPublished = self.isStarred
     }
     
     func encode(to encoder: Encoder) throws {
@@ -62,15 +65,18 @@ class PracticeChartCell: ObservableObject, Codable {
         try container.encode(board, forKey: .board)
         try container.encode(grade, forKey: .grade)
         try container.encode(scaleIDKey, forKey: .scaleIDKey)
-        try container.encode(hilighted, forKey: .hilighted)
+        try container.encode(isStarred, forKey: .isStarred)
         try container.encode(isLicensed, forKey: .isLicensed)
         try container.encode(badges, forKey: .badges)
     }
     
-    func setHilighted(way: Bool) {
-        self.hilighted = way
+    func setStarred(way: Bool) {
+        self.isStarred = way
         DispatchQueue.main.async {
-            self.isActive = way
+            self.isStarredPublished = way
+        }
+        if let chart = self.chart {
+            chart.savePracticeChartToFile()
         }
     }
 }
@@ -105,9 +111,10 @@ class PracticeChart: Codable {
             if scaleCtr < scales.count {
                 for _ in 0..<columnWidth {
                     if scaleCtr < scales.count {
-                        rowCells.append(PracticeChartCell(board:self.board, grade:self.grade,
+                        rowCells.append(PracticeChartCell(chart:self, board:self.board, grade:self.grade,
                                                           scaleIDKey: scales[scaleCtr].getScaleIdentificationKey(),
-                                                          isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()))
+                                                          isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()
+                                                        ))
                         scaleCtr += 1
                     }
                     else {
@@ -127,7 +134,8 @@ class PracticeChart: Codable {
         encoder.outputFormatting = .prettyPrinted
         do {
             let data = try encoder.encode(self)
-            //let jsonString = String(data: data, encoding: .utf8)
+            let jsonString = String(data: data, encoding: .utf8)
+            //print("\n", jsonString ?? "")
             return data
         } catch {
             Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
@@ -136,7 +144,6 @@ class PracticeChart: Codable {
     }
     
     func debug1(_ ctx:String) {
-        print("====== DEUBG Chart Debug", ctx)
         for r in 0..<self.rows.count {
             let row = self.self.rows[r]
             for c in 0..<row.count {
@@ -187,7 +194,7 @@ class PracticeChart: Codable {
 //                }
                 self.firstColumnDayOfWeekNumber = todaysDayNumber
                 self.todaysColumn = 0
-                savePracticeChartToFile("StartDayAdjust")
+                savePracticeChartToFile()
                 ///Reset the badge count
                 for row in self.rows {
                     for cell in row {
@@ -216,10 +223,10 @@ class PracticeChart: Codable {
         self.rows[tarRow][tarCol] = cell
         let secs = Double.random(in: 0..<0.75)
         DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
-            cell.isActive = !cell.isActive
+            cell.isStarredPublished = !cell.isStarredPublished
             let secs = Double.random(in: 0..<0.75)
             DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
-                cell.isActive = !cell.isActive
+                cell.isStarredPublished = !cell.isStarredPublished
             }
         }
     }
@@ -250,7 +257,7 @@ class PracticeChart: Codable {
         }
     }
     
-    func savePracticeChartToFile(_ ctx:String) {
+    func savePracticeChartToFile() {
         do {
             //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
@@ -261,7 +268,7 @@ class PracticeChart: Codable {
             let url = dir.appendingPathComponent(fileName)
             if let data = self.convertToJSON() {
                 try data.write(to: url)  // Write the data to the file
-                Logger.shared.log(self, "✅ Saved PracticeChart ctx:\(ctx) Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
+                Logger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
             }
             else {
                 Logger.shared.log(self, "Cannot convert PracticeChart")

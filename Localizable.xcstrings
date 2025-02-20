@@ -109,7 +109,10 @@
     "😊" : {
 
     },
-    "😊 Welcome 😊" : {
+    "😊 Thanks, Your Grade Is Set 😊" : {
+
+    },
+    "😊 Welcome To Scales Academy 😊" : {
 
     },
     "😔" : {
@@ -125,6 +128,9 @@
 
     },
     "4. Restart the Device" : {
+
+    },
+    "Activites" : {
 
     },
     "Activities" : {
@@ -191,6 +197,9 @@
 
     },
     "Calibration" : {
+
+    },
+    "Cancel" : {
 
     },
     "Choose your background colour " : {
@@ -508,6 +517,9 @@
     "New Amplitude Filter:%@" : {
 
     },
+    "Next, let's go to your Activities for Grade %@" : {
+
+    },
     "Next: %lld" : {
 
     },
@@ -708,6 +720,9 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -858,7 +873,7 @@
         }
       }
     },
-    "We hope you enjoy your experience using Scales Academy." : {
+    "We hope you enjoy your experience using this app." : {
 
     },
     "Your current subscription is " : {

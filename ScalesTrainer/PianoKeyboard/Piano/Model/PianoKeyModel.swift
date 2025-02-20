@@ -103,6 +103,7 @@ public class PianoKeyModel: Identifiable, Hashable {
                 }
             }
         }
+            
     }
     
     public var noteMidiNumber: Int {

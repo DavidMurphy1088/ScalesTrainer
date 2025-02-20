@@ -327,9 +327,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
                 pianoKeyModel.setState(state: keyState)
             }
         }
-        //let key = self.pianoKeyModel[i]
-        //key[10].scaleNoteState = ScaleNoteState()
-        //self.linkScaleFingersToKeyboardKeys(scale: scale, direction: ScalesModel.shared.selectedDirection)
     }
     
     public func resetLinkScaleFingersToKeyboardKeys() {

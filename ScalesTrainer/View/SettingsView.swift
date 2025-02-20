@@ -42,6 +42,7 @@ struct SettingsView: View {
     @State var backgroundChange = 0
     
     struct SetKeyboardColourView: View {
+        let scalesModel: ScalesModel
         @Binding var parentColor: Color
         @State private var selectedColor: Color = .white
         
@@ -60,7 +61,9 @@ struct SettingsView: View {
                         
                     Spacer()
                 }
-                PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor).padding()
+                PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor)
+                    .frame(height: UIScreen.main.bounds.size.height * 0.3)
+                    .padding()
             }
             .background(UIGlobals.shared.purpleHeading)
             .onAppear() {
@@ -86,10 +89,11 @@ struct SettingsView: View {
                             .labelsHidden()
                         //Spacer()
                     }
+
                     HStack {
                         //Spacer()
                         VStack {
-                            SetKeyboardColourView(parentColor: $keyboardColor)
+                            SetKeyboardColourView(scalesModel: self.scalesModel, parentColor: $keyboardColor)
                         }
                         //.padding()
                         .onChange(of: keyboardColor, {
@@ -104,8 +108,6 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.vertical, 0)
-                //.padding(.vertical, 0)
-                //.border(Color.red)
                 
                 ///Lead in count
                 Spacer()
@@ -239,6 +241,11 @@ struct SettingsView: View {
             guard let user = settings.getCurrentUser() else {
                 return
             }
+            ///The keyboard model must be configured to something (if not already) to display the keyboard
+            if scalesModel.getScore() == nil {
+                scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)
+            }
+
             leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
             if let score = scalesModel.getScore() {

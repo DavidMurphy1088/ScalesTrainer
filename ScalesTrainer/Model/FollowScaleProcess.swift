@@ -195,7 +195,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                     if let exerciseBadge = scalesModel.exerciseBadge {
                         if let practiceChartCell = practiceChartCell {
                             practiceChartCell.addBadge(badge: exerciseBadge, callback: {
-                                self.practiceChart?.savePracticeChartToFile("ExerciseAddBadge")
+                                self.practiceChart?.savePracticeChartToFile()
                             })
                         }
                     }
@@ -219,7 +219,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             scalesModel.setRunningProcess(.none)
             exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", exerciseState.getState() == .won ? .wonAndFinished : .lost)
             if let practiceChart {
-                practiceChart.savePracticeChartToFile("FollowAwardBadge")
+                practiceChart.savePracticeChartToFile()
             }
 
             return true

@@ -41,9 +41,28 @@ struct UserDetailsView: View {
     @State private var navigateToSelectGrade = false
     @State private var selectedGrade:Int?
     @State private var userName = ""
-    @State private var welcomeNotification = false
+    @State private var firstUseForUserStep1 = false
+    @State private var firstUseForUserStep2 = false
+    @State private var firstUseForUser = false
+    @State private var firstUserGrade = ""
 
     let width = UIScreen.main.bounds.width * 0.7
+    
+    func setGradeCallback(grade:Int) {
+        guard self.firstName.count > 0 else {
+            return
+        }
+        switch grade {
+        case 1 : self.firstUserGrade = "One"
+        case 2 : self.firstUserGrade = "Two"
+        case 3 : self.firstUserGrade = "Three"
+        case 4 : self.firstUserGrade = "Four"
+        case 5 : self.firstUserGrade = "Five"
+        default: self.firstUserGrade = ""
+        }
+        print("=========== SETXX", grade, self.firstUserGrade)
+        firstUseForUserStep2 = true
+    }
     
     var body: some View {
         VStack {
@@ -77,25 +96,25 @@ struct UserDetailsView: View {
                 })
                 
                 Spacer()
-                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"))
+                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), setGradeCallback: setGradeCallback)
                 Spacer()
             }
             .commonFrameStyle()
         }
-        .sheet(isPresented: $welcomeNotification) {
+        .sheet(isPresented: $firstUseForUserStep1) {
             VStack(spacing: 20) {
-                Image("PianoKeyboard2")
+                let imageSize = UIScreen.main.bounds.width * 0.6
+                Image("GrandPiano")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        //.frame(width: geo.size.width * 0.60)
-                        .cornerRadius(20)
-
-                Text("😊 Welcome 😊")
-                    .font(.title).fontWeight(.bold)
+                        .frame(width: imageSize )
+                        .cornerRadius(imageSize * 0.1)
+                
+                Text("😊 Welcome 😊").font(.title).fontWeight(.bold)
                 Text("We hope you enjoy your experience using Scales Academy.").multilineTextAlignment(.center)
                 Text("To get started please enter your name and Grade.").multilineTextAlignment(.center)
                 Button("Get Started") {
-                    welcomeNotification = false
+                    firstUseForUserStep1 = false
                 }
                 .padding()
                 .background(Color.blue)
@@ -104,23 +123,45 @@ struct UserDetailsView: View {
             }
             .padding()
         }
-        .onChange(of: welcomeNotification) { newValue in
+        .sheet(isPresented: $firstUseForUserStep2) {
+            VStack(spacing: 20) {
+                Text("😊 Thanks, Your Grade Is Set 😊").font(.title).fontWeight(.bold)
+                Text("Next, let's go to your Activities for Grade \(self.firstUserGrade)").multilineTextAlignment(.center)
+                HStack {
+                    Button("Cancel") {
+                        firstUseForUserStep2 = false
+                    }
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
+
+                    Button("Activites") {
+                        firstUseForUserStep2 = false
+                        ViewManager.shared.setTab(tab: 20)
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                }                
+                .padding()
+            }
+            .padding()
+        }
+        .onChange(of: firstUseForUserStep1) { newValue in
             // Focus only when the sheet is dismissed
             if !newValue {
                 self.isNameFieldFocused = true
             }
         }
-    
         .onAppear() {
-            //if let user = user { //Settings.shared.getCurrentUser() {
-                self.firstName = user.name
-                self.emailAddress = user.email
-                welcomeNotification = false
-                if settings.users.count == 1 && user.name.count == 0 {
-                    welcomeNotification = true
-                }
-            //}
-            //self.isNameFieldFocused = true
+            self.firstName = user.name
+            self.emailAddress = user.email
+            firstUseForUserStep1 = false
+            if settings.users.count == 1 && user.name.count == 0 {
+                firstUseForUserStep1 = true
+                firstUseForUser = true
+            }
             listUpdated = false
         }
         .onDisappear() {

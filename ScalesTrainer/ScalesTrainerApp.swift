@@ -56,11 +56,16 @@ struct OrientationManager {
     // Unlock orientation
     static func unlockOrientation() {
         if let delegate = appDelegate {
-            delegate.orientationLock = .all
+            delegate.orientationLock = .all // Unlocks orientation lock
+        }
+        
+        // Explicitly rotate back to portrait after unlocking
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            UINavigationController.attemptRotationToDeviceOrientation()
         }
     }
 }
-
 
 class Opacity : ObservableObject {
     @Published var imageOpacity: Double = 0.0
@@ -105,6 +110,17 @@ struct LaunchScreenView: View {
         return "\(appVersion).\(buildNumber)"
     }
         
+    func getImageSize(geo: GeometryProxy) -> Double {
+        let imageSize:Double
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            imageSize = min(geo.size.width, geo.size.height) * 0.80
+        }
+        else {
+            imageSize = min(geo.size.width, geo.size.height) * 0.60
+        }
+        return imageSize
+    }
+    
     @ViewBuilder
     private var image: some View {  // Mark 3
         GeometryReader { geo in
@@ -115,12 +131,11 @@ struct LaunchScreenView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        //Image("trinity")
-                        let imageSize = min(geo.size.width, geo.size.height) * 0.50
-                        Image("PianoKeyboard")
+                        let imageSize = getImageSize(geo: geo)
+                        Image("GrandPiano")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: imageSize, height: imageSize)
+                                .frame(width: imageSize )
                                 .cornerRadius(imageSize * 0.1)
                                 .opacity(self.opacity.imageOpacity)
                         Spacer()
@@ -292,6 +307,13 @@ class ViewManager: ObservableObject {
         }
     }
     
+    func setTab(tab:Int) {
+        DispatchQueue.main.async {
+            self.objectWillChange.send() 
+            self.selectedTab = tab
+        }
+    }
+
     func nextNavigationTab() {
         if Settings.shared.isDeveloperMode1() {
             let hands = [0,1]
@@ -314,7 +336,7 @@ class ViewManager: ObservableObject {
                                                 //scaleCustomisation: scaleCustomisation,
                                                 debugOn: true)
             }
-            selectedTab = 0
+            selectedTab = 20
         }
         else {
             if Settings.shared.getCurrentUser() == nil {
@@ -330,7 +352,7 @@ class ViewManager: ObservableObject {
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @ObservedObject private var viewManager = ViewManager()
+    @ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
@@ -362,7 +384,7 @@ struct ScalesTrainerApp: App {
                     MainContentView()
                         .environmentObject(orientationInfo)
                         .onAppear {
-                            OrientationManager.appDelegate = appDelegate // Pass delegate
+                            OrientationManager.appDelegate = appDelegate
                         }
                 }
                 else {

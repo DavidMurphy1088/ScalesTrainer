@@ -38,8 +38,6 @@ struct MetronomeView: View {
 }
 
 struct ScalesView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
-    //let initialRunProcess:RunningProcess?
     let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
     let practiceModeHand:HandType?
@@ -68,7 +66,8 @@ struct ScalesView: View {
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
     @State var lastBadgeNumber = 0
-    
+    @State private var isLandscape: Bool = false
+
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
     
@@ -446,22 +445,22 @@ struct ScalesView: View {
                 }
                 Spacer()
             }
-
         }
     }
     
     func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
         var height:Double
+        
         if scalesModel.scale.needsTwoKeyboards() {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
             //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
             ///16 Feb 2025 Can be a bit longer due to just minimizing some other UI heights in landscape
-            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 4)
+            height = UIScreen.main.bounds.size.height / (isLandscape ? 4 : 5)
         }
         else {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 3 : 4)
             //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait  ? 4 : 3)
-            height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait  ? 4 : 3)
+            height = UIScreen.main.bounds.size.height / (isLandscape  ? 3 : 4)
         }
         if scalesModel.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
@@ -540,14 +539,14 @@ struct ScalesView: View {
     }
     
     var body: some View {
+        
         VStack {
+            //Screen title
             VStack(spacing: 0) {
-                if orientationInfo.isPortrait {
+                if isLandscape {
                     HStack {
                         ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
                             .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
-                    }
-                    HStack {
                         Spacer()
                         SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -556,12 +555,14 @@ struct ScalesView: View {
                         Spacer()
                     }
                     .commonFrameStyle(backgroundColor: Color.white)
+
                 }
                 else {
-                    ///Layout horizontally to save vertical space in landscape
                     HStack {
                         ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
                             .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
+                    }
+                    HStack {
                         Spacer()
                         SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -572,6 +573,7 @@ struct ScalesView: View {
                     .commonFrameStyle(backgroundColor: Color.white)
                 }
             }
+            //.border(Color.red, width: 2)
             
             if scalesModel.showKeyboard {
                 if let user = settings.getCurrentUser() {
@@ -598,6 +600,7 @@ struct ScalesView: View {
                         }
                     }
                     .commonFrameStyle()
+                    
                 }
                 if UIDevice.current.userInterfaceIdiom != .phone {
                     if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
@@ -695,7 +698,18 @@ struct ScalesView: View {
         .onChange(of: tempoIndex, {
             scalesModel.setTempo(self.tempoIndex)
         })
-
+        
+        ///Determine device orientation
+        .background(GeometryReader { geometry in
+            Color.clear
+                .onAppear {
+                    isLandscape = geometry.size.width > geometry.size.height
+                }
+                .onChange(of: geometry.size) { newSize in
+                    isLandscape = newSize.width > newSize.height
+                }
+            })
+        
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
@@ -716,7 +730,6 @@ struct ScalesView: View {
             else {
                 PianoKeyboardModel.sharedCombined = nil
             }
-            
             self.directionIndex = 0
             //if let process = initialRunProcess {
             //scalesModel.setRunningProcess(process, practiceChartCell: self.practiceChartCell)
@@ -731,9 +744,7 @@ struct ScalesView: View {
             //if scalesModel.scale.debugOn {
                 //scalesModel.scale.debug1("In View1", short: false)
             //}
-            if let score = scalesModel.getScore() {
-                //score.debug2(ctx: "ScalesView.onAppear", handType: nil)
-            }
+
             if UIDevice.current.userInterfaceIdiom == .phone {
                 if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.octaves > 1 {
                     OrientationManager.lockOrientation(.landscape, andRotateTo: .landscapeLeft)
@@ -755,6 +766,7 @@ struct ScalesView: View {
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
             OrientationManager.unlockOrientation()
+            
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt

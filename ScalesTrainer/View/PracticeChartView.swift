@@ -64,20 +64,15 @@ struct CellView: View {
 //        }
 //    }
     
-    func setHilighted(scale:Scale) {
+    func setStarred(scale:Scale) {
         for row in practiceChart.rows {
             for chartCell in row {
                 if chartCell.scale.getScaleIdentificationKey() == scale.getScaleIdentificationKey(){
-                    //if chartCell.scale.hands == scale.hands {
-                        //if chartCell.scale.scaleType == scale.scaleType {
-                            chartCell.setHilighted(way: !chartCell.hilighted)
-                        //}
-                    //}
+                    chartCell.setStarred(way: !chartCell.isStarred)
                 }
             }
         }
     }
-    
 
     func handsView() -> some View {
         HStack {
@@ -146,9 +141,9 @@ struct CellView: View {
 
             HStack {
                 Button(action: {
-                    setHilighted(scale: practiceCell.scale)
+                    setStarred(scale: practiceCell.scale)
                 }) {
-                    let name = practiceCell.isActive ? "star.fill" : "star"
+                    let name = practiceCell.isStarredPublished ? "star.fill" : "star"
                     Image(systemName: name)
                         .resizable()
                         .scaledToFit()
@@ -346,7 +341,6 @@ struct PracticeChartView: View {
             let screenHeight = geometry.size.height
             let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
             let cellHeight: CGFloat = screenHeight / 12.0
-            
             let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
             
             VStack {
@@ -373,7 +367,7 @@ struct PracticeChartView: View {
                             practiceChart.minorScaleType = minorTypeIndex
                             practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
                                                            selectedMotions:[.similarMotion], newType: newType)
-                            practiceChart.savePracticeChartToFile("MinorTypeChange")
+                            practiceChart.savePracticeChartToFile()
                             self.reloadTrigger = !self.reloadTrigger
                         })
                         Text("\(self.redrawCounter)").opacity(0.0).padding(0)
@@ -412,7 +406,7 @@ struct PracticeChartView: View {
                                 withAnimation(.linear(duration: 1.0)) {
                                     cellOpacityValue = 1.0
                                 }
-                                practiceChart.savePracticeChartToFile("Shuffle")
+                                practiceChart.savePracticeChartToFile()
                             }
                         }) {
                             Text("Shuffle")

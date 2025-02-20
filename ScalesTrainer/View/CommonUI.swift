@@ -68,10 +68,7 @@ extension View {
                                        borderColor: borderColor,
                                        borderWidth: borderWidth))
 
-//            modifier(CommonFrameStyle2(backgroundImageName: "PianoKeyboard2", opacity: 0.6, cornerRadius: 0, borderColor: .black, borderWidth: 1))
-//                                      cornerRadius: cornerRadius,
-//                                      borderColor: borderColor,
-//                                      borderWidth: borderWidth))
+
 //        }
     }
 
