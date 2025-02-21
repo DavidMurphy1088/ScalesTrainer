@@ -34,7 +34,7 @@
 		794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC42C2B73770001297E /* ScaleIntervals.swift */; };
 		794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC62C2BD24C0001297E /* CoinBankView.swift */; };
 		794A9FC92C2BFC270001297E /* CoinBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC82C2BFC270001297E /* CoinBank.swift */; };
-		794D49482BCD15AE0005A173 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* Logger.swift */; };
+		794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* AppLogger.swift */; };
 		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
 		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
 		794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* RealTimeTapHandler.swift */; };
@@ -174,7 +174,7 @@
 		794A9FC42C2B73770001297E /* ScaleIntervals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleIntervals.swift; sourceTree = "<group>"; };
 		794A9FC62C2BD24C0001297E /* CoinBankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBankView.swift; sourceTree = "<group>"; };
 		794A9FC82C2BFC270001297E /* CoinBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBank.swift; sourceTree = "<group>"; };
-		794D49472BCD15AE0005A173 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		794D49472BCD15AE0005A173 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		794D49552BCD29090005A173 /* RealTimeTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeTapHandler.swift; sourceTree = "<group>"; };
 		794D49572BCD29390005A173 /* ScaleMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleMatcher.swift; sourceTree = "<group>"; };
@@ -529,7 +529,7 @@
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
-				794D49472BCD15AE0005A173 /* Logger.swift */,
+				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
@@ -829,7 +829,7 @@
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
 				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
-				794D49482BCD15AE0005A173 /* Logger.swift in Sources */,
+				794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */,
 				79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */,
 				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
@@ -1047,7 +1047,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1086,7 +1086,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

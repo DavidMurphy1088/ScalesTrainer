@@ -1,5 +1,6 @@
 import Foundation
 import MessageUI
+import os
 
 public class LogMessage : Identifiable {
     public var id:UUID = UUID()
@@ -26,8 +27,9 @@ public class LogMessage : Identifiable {
     }
 }
 
-public class Logger : ObservableObject {
-    public static var shared = Logger()
+public class AppLogger : ObservableObject {
+    public static var shared = AppLogger()
+    private let os_logger = Logger(subsystem: "com.scalesacademy.app", category: "general")
     @Published var loggedMsg:String? = nil
     @Published var errorNo:Int = 0
     @Published public var errorMsg:String? = nil
@@ -39,40 +41,32 @@ public class Logger : ObservableObject {
     public init() {
     }
     
-//    public func clearLog() {
-//        DispatchQueue.main.async {
-//            self.loggedMsgs = []
-//            self.hiliteLogValue = 10000.0
-//        }
-//    }
-    
     func hilite(val:Double) {
         DispatchQueue.main.async {
             self.hiliteLogValue = val
         }
     }
     
-    func calcValueLimits() {
-        var min = 100000000.0
-        var max = 0.0
-        for m in loggedMsgs {
-            if m.value < min {
-                min = m.value
-            }
-            if m.value > max {
-                max = m.value
-            }
-        }
-        DispatchQueue.main.async {
-            self.maxLogValue = max
-            self.minLogValue = min
-            self.hiliteLogValue = min
-        }
-    }
+//    func calcValueLimits() {
+//        var min = 100000000.0
+//        var max = 0.0
+//        for m in loggedMsgs {
+//            if m.value < min {
+//                min = m.value
+//            }
+//            if m.value > max {
+//                max = m.value
+//            }
+//        }
+//        DispatchQueue.main.async {
+//            self.maxLogValue = max
+//            self.minLogValue = min
+//            self.hiliteLogValue = min
+//        }
+//    }
     
     private func getTime() -> String {
         let dateFormatter = DateFormatter()
-        //dateFormatter.dateFormat = "dd-MMM-yyyy HH:mm:ss"
         dateFormatter.dateFormat = "HH:mm:ss"
         let now = Date()
         let s = dateFormatter.string(from: now)
@@ -84,8 +78,9 @@ public class Logger : ObservableObject {
         if let err = err {
             msg += ", "+err.localizedDescription
         }
-        print(msg)
-       
+        //print(msg)
+        os_logger.error("\("msg")")
+
         DispatchQueue.main.async {
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: true, msg, valueIn: 0))
             self.errorMsg = msg
@@ -100,7 +95,8 @@ public class Logger : ObservableObject {
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
         let msg = String(describing: type(of: reporter)) + ":" + msg
         //let strVal = value == nil ? "_" : String(format: "%.2f", value!)
-        print("\(getTime()) \(msg)")//  val:\(strVal)")
+        //print("\(getTime()) \(msg)")//  val:\(strVal)")
+        os_logger.info("\(msg)")
         DispatchQueue.main.async {
             let val:Double = value == nil ? 0 : value!
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: false, msg, valueIn: val * 100))

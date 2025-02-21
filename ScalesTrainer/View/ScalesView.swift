@@ -780,11 +780,11 @@ struct ScalesView: View {
                                     try fileManager.removeItem(at: fileURL)
                                     //Logger.shared.log("Removed file at \(fileURL)")
                                 } catch {
-                                    Logger.shared.reportError(fileManager, error.localizedDescription)
+                                    AppLogger.shared.reportError(fileManager, error.localizedDescription)
                                 }
                             }
                         } catch {
-                            Logger.shared.reportError(fileManager, error.localizedDescription)
+                            AppLogger.shared.reportError(fileManager, error.localizedDescription)
                         }
                     }
                 }

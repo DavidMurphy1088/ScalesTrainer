@@ -170,7 +170,7 @@ struct DeveloperView: View {
     @State private var password = "Password1"
     @State private var isLoggedIn = false
     @State var status = ""
-    let logger = Logger.shared
+    let logger = AppLogger.shared
     @State var ctr = 0
     let firebase = Firebase.shared
     
@@ -237,7 +237,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 #if targetEnvironment(simulator)
         ///Simulator asks for password every time even though its signed in with Apple ID. By design for IAP purchasing... :(
         ///Code to run on the Simulator
-        Logger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
+        AppLogger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
 #else
         SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
         LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
@@ -250,7 +250,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             LicenceManager.shared.getFreeLicenses()
         }
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-        Logger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
+        AppLogger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
         
         let status = AVCaptureDevice.authorizationStatus(for: .audio)
         var statusMsg = ""
@@ -266,7 +266,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         @unknown default:
             statusMsg = "unknown \(status)"
         }
-        Logger.shared.log(self, "Microphone access:\(statusMsg))")
+        AppLogger.shared.log(self, "Microphone access:\(statusMsg))")
         return true
     }
     
@@ -363,7 +363,7 @@ struct ScalesTrainerApp: App {
             try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch let err {
-            Logger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
+            AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
         ///Tab bar settings

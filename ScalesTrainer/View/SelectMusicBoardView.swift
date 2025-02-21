@@ -5,7 +5,7 @@ struct SelectBoardGradesView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     let user:User
     let inBoard:MusicBoard
-    let setGradeCallback:((Int)->Void)?
+    @Binding var selectedGrade: Int
     @State private var isOn = [Bool](repeating: false, count: 12)
     let width = 0.7
     
@@ -16,9 +16,7 @@ struct SelectBoardGradesView: View {
         tabSelectionManager.isSpinWheelActive = false
         tabSelectionManager.isPracticeChartActive = false
         Settings.shared.save()
-        if let callback = self.setGradeCallback {
-            callback(gradeNumber)
-        }
+        self.selectedGrade = gradeNumber
     }
     
     var body: some View {

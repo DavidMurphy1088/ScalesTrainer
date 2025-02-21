@@ -52,7 +52,7 @@ struct SendMailView: UIViewControllerRepresentable {
             let mimeType = "text/plain" // Change this if needed
             vc.addAttachmentData(data, mimeType: mimeType, fileName: "scale.txt")
         } catch {
-            Logger.shared.reportError(vc, "Error reading data from file: \(error)")
+            AppLogger.shared.reportError(vc, "Error reading data from file: \(error)")
         }
         
         vc.mailComposeDelegate = context.coordinator

@@ -55,7 +55,7 @@ class AudioManager {
                 }
                 self.audioEngine = AudioEngine()
                 guard let engine = self.audioEngine else {
-                    Logger.shared.reportError(self, "No engine")
+                    AppLogger.shared.reportError(self, "No engine")
                     return
                 }
                 
@@ -100,7 +100,7 @@ class AudioManager {
                 engine.output = self.mixer
 //                Logger.shared.log(self, "Configured AudioKit mic:\(withMic)")
             } catch {
-                Logger.shared.reportError(self, "Can't configure AudioKit \(error)")
+                AppLogger.shared.reportError(self, "Can't configure AudioKit \(error)")
             }
         }
 
@@ -108,7 +108,7 @@ class AudioManager {
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
         checkMicPermission(completion: {granted in
             if !granted {
-                Logger.shared.reportError(self, "No microphone permission")
+                AppLogger.shared.reportError(self, "No microphone permission")
             }
         })
         setSession()
@@ -137,7 +137,7 @@ class AudioManager {
             }
         }
         catch {
-            Logger.shared.reportError(self, "Error starting engine: \(error)")
+            AppLogger.shared.reportError(self, "Error starting engine: \(error)")
         }
     }
 
@@ -151,10 +151,10 @@ class AudioManager {
             return audioPlayer
         }
         catch  {
-            Logger.shared.reportError(self, "Cannot prepare AVAudioPlayer")
+            AppLogger.shared.reportError(self, "Cannot prepare AVAudioPlayer")
         }
 
-        Logger.shared.log(self, "Loaded audio players")
+        AppLogger.shared.log(self, "Loaded audio players")
         return nil
     }
     
@@ -174,7 +174,7 @@ class AudioManager {
                 self.audioPlayer = AudioPlayer(file: audioFile)
                 self.audioPlayer?.volume = 1.0  // Set volume to maximum
                 audioEngine?.output = self.audioPlayer
-                Logger.shared.log(self, "Recording Duration: \(audioFile.duration) seconds")
+                AppLogger.shared.log(self, "Recording Duration: \(audioFile.duration) seconds")
                 audioPlayer?.completionHandler = {
                     DispatchQueue.main.async {
                         ScalesModel.shared.recordingIsPlaying = false
@@ -238,9 +238,9 @@ class AudioManager {
             if let audioFile = recorder.audioFile {
                 ScalesModel.shared.setRecordedAudioFile(recorder.audioFile)
                 let log = "Stopped recording, len:\(audioFile.length) duration:\(audioFile.duration) recorded file: \(audioFile.url) "
-                Logger.shared.log(self, log)
+                AppLogger.shared.log(self, log)
             } else {
-                Logger.shared.reportError(self, "No audio file found after stopping recording")
+                AppLogger.shared.reportError(self, "No audio file found after stopping recording")
             }
         }
         //audioEngine?.stop() NO 🥵
@@ -255,7 +255,7 @@ class AudioManager {
             try audioSession.setActive(true) //EXTREME WARNING - without this death 😡
         }
         catch {
-            Logger.shared.reportError(self, "Error setting audio session: \(error)")
+            AppLogger.shared.reportError(self, "Error setting audio session: \(error)")
         }
     }
     
@@ -265,11 +265,11 @@ class AudioManager {
             //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
             let sampler = MIDISampler()
             try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-            Logger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+            AppLogger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
             return sampler
         }
         catch {
-            Logger.shared.reportError(self, error.localizedDescription)
+            AppLogger.shared.reportError(self, error.localizedDescription)
             return nil
         }
     }
@@ -303,7 +303,7 @@ class AudioManager {
                 contents = try String(contentsOfFile: filePath, encoding: .utf8)
             }
             catch {
-                Logger.shared.log(self, "cannot read file \(error.localizedDescription)")
+                AppLogger.shared.log(self, "cannot read file \(error.localizedDescription)")
                 return tapEventSets
             }
             let lines = contents.split(separator: "\r\n")
@@ -332,7 +332,7 @@ class AudioManager {
                             //                            newTapSet.events.append(TapEvent(tapNum: tapNum, consecutiveCount: 1, frequency: tap/, amplitude: <#Float#>))
                             //                        }
                             //tapEventSets.append(newTapSet)
-                            Logger.shared.log(self, "Read \(currentTapSet.events.count) events from file for bufferSize:\(currentTapSet.bufferSize)")
+                            AppLogger.shared.log(self, "Read \(currentTapSet.events.count) events from file for bufferSize:\(currentTapSet.bufferSize)")
                             //tapEvents = []
                             tapNum = 0
                         }
@@ -359,7 +359,7 @@ class AudioManager {
             }
         }
         else {
-            Logger.shared.reportError(self, "Cant open file bundle")
+            AppLogger.shared.reportError(self, "Cant open file bundle")
         }
         return tapEventSets
     }
@@ -367,7 +367,7 @@ class AudioManager {
     func playbackTapEvents(tapEventSets:[TapEventSet], tapHandlers:[TapHandlerProtocol]) {
         var tapHandlerIndex = 0
         for tapEventSet in tapEventSets {
-            Logger.shared.log(self, "Start play back \(tapEventSet.events.count) tap events for bufferSize:\(tapEventSet.bufferSize)")
+            AppLogger.shared.log(self, "Start play back \(tapEventSet.events.count) tap events for bufferSize:\(tapEventSet.bufferSize)")
             for tIndex in 0..<tapEventSet.events.count {
                 let tapEvent = tapEventSet.events[tIndex]
                 let f:AUValue = tapEvent.frequency
@@ -382,7 +382,7 @@ class AudioManager {
 
 //        let events = tapHandlers[0].stopTappingProcess("AudioMgr.playbackEvents")
 //        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
-        Logger.shared.log(self, "Played back \(tapHandlerIndex) tap event sets")
+        AppLogger.shared.log(self, "Played back \(tapHandlerIndex) tap event sets")
         ScalesModel.shared.setRunningProcess(.none)
     }
     

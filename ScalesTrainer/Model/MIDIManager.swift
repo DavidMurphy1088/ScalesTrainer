@@ -102,7 +102,7 @@ class MIDIManager : ObservableObject {
     private var midiClient: MIDIClientRef = 0
     private var inputPort: MIDIPortRef = 0
     private var connectedSources: Set<MIDIEndpointRef> = []
-    private let log = Logger.shared
+    private let log = AppLogger.shared
     var lastNoteOn:Date? = nil
     
     var testMidiNotes:TestMidiNotes?
@@ -368,12 +368,12 @@ private let midiSetupNotifyProc: MIDINotifyProc = { (message, refCon) in
 
     switch messageID {
     case .msgObjectAdded:
-        Logger.shared.log(MIDIManager.shared, "MIDI Object Added")
+        AppLogger.shared.log(MIDIManager.shared, "MIDI Object Added")
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
         midiManager.handleDeviceAdded(notification.child)
         
     case .msgObjectRemoved:
-        Logger.shared.log(MIDIManager.shared, "MIDI Object Removed")
+        AppLogger.shared.log(MIDIManager.shared, "MIDI Object Removed")
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
         midiManager.handleDeviceRemoved(notification.child)
         

@@ -129,11 +129,11 @@ public class NoteOffsetsInScaleByKey {
     ///Some notes in some minor scale are assigned specific non-default placements, accidentals and note names (e.g. E#)
     func getDefaultPlacement(scale:Scale, noteValue:Int, scaleDegree:Int, keyNum:Int) -> NoteStaffPlacement? {
         guard scaleDegree < self.noteOffsetByKey.count else {
-            Logger.shared.reportError(self, "Invalid degree \(scaleDegree)")
+            AppLogger.shared.reportError(self, "Invalid degree \(scaleDegree)")
             return nil
         }
         guard keyNum < 12 else {
-            Logger.shared.reportError(self, "Invalid key \(scaleDegree)")
+            AppLogger.shared.reportError(self, "Invalid key \(scaleDegree)")
             return nil
         }
 
@@ -196,7 +196,7 @@ public class NoteOffsetsInScaleByKey {
             return placement
         }
         else {
-            Logger.shared.reportError(self, "Invalid data at row:\(scaleDegree), col:\(keyNum)")
+            AppLogger.shared.reportError(self, "Invalid data at row:\(scaleDegree), col:\(keyNum)")
             return nil
         }
     }
@@ -358,7 +358,7 @@ public class StaffClef : ScoreEntry {
                 offsetFromTonic = 12 + offsetFromTonic
             }
            guard let notePlacement = noteOffsetsInScaleByKey.getDefaultPlacement(scale: scale, noteValue: midiValue, scaleDegree: offsetFromTonic, keyNum: keyNumber) else {
-                Logger.shared.reportError(self, "No note offset data for note \(midiValue)")
+                AppLogger.shared.reportError(self, "No note offset data for note \(midiValue)")
                 break
             }
 

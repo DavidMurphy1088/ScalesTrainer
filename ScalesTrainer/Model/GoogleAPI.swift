@@ -92,7 +92,7 @@ public class GoogleAPI {
     public static let shared = GoogleAPI()
     let dataCache = DataCache()
     var accessToken:String?
-    let logger = Logger.shared
+    let logger = AppLogger.shared
     
     public struct GoogleFile : Codable {
         let name: String

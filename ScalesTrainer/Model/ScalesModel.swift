@@ -99,7 +99,7 @@ public class ScalesModel : ObservableObject {
     
     let calibrationTapHandler:RealTimeTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
-    let logger = Logger.shared
+    let logger = AppLogger.shared
     var helpTopic:String? = nil
     var onRecordingDoneCallback:(()->Void)?
     var soundEventHandlers:[SoundEventHandlerProtocol] = []
@@ -310,7 +310,7 @@ public class ScalesModel : ObservableObject {
         defer {
             setProcessLock.unlock()
         }
-        Logger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
+        AppLogger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopListening()
             if self.runningProcess == .syncRecording {
@@ -1041,9 +1041,9 @@ public class ScalesModel : ObservableObject {
             }
             //ScalesModel.shared.recordedTapsFileURL = fileURL
             fileHandle.closeFile()
-            Logger.shared.log(self, "Wrote \(tapSets.count) tapSets to \(url)")
+            AppLogger.shared.log(self, "Wrote \(tapSets.count) tapSets to \(url)")
         } catch {
-            Logger.shared.reportError(self, "Error writing to file: \(error)")
+            AppLogger.shared.reportError(self, "Error writing to file: \(error)")
         }
         DispatchQueue.main.async {
             ScalesModel.shared.recordedTapsFileName = fileName

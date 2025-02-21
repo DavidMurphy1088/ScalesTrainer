@@ -212,10 +212,10 @@ class Settings : Encodable, Decodable {
                 //Logger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             }
             else {
-                Logger.shared.reportError(self, "save cannot form JSON")
+                AppLogger.shared.reportError(self, "save cannot form JSON")
             }
         } catch {
-            Logger.shared.reportError(self, "save:" + error.localizedDescription)
+            AppLogger.shared.reportError(self, "save:" + error.localizedDescription)
         }
     }
     
@@ -223,7 +223,7 @@ class Settings : Encodable, Decodable {
         if let jsonString = UserDefaults.standard.string(forKey: "settings") {
             do {
                 guard let jsonData = jsonString.data(using: .utf8) else {
-                    Logger.shared.reportError(self, "load: cannot conver to JSON")
+                    AppLogger.shared.reportError(self, "load: cannot conver to JSON")
                     return
                 }
                 let jsonDecoder = JSONDecoder()
@@ -235,9 +235,9 @@ class Settings : Encodable, Decodable {
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
                 let currentUser = self.getCurrentUser()
-                Logger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
+                AppLogger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             } catch {
-                Logger.shared.reportError(self, "load:" + error.localizedDescription)
+                AppLogger.shared.reportError(self, "load:" + error.localizedDescription)
             }
         }
     }

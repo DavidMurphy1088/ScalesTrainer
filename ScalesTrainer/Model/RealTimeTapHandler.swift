@@ -187,7 +187,7 @@ class RealTimeTapHandler : TapHandlerProtocol {
     }
     
     func stopTappingProcess() -> TapEventSet {
-        Logger.shared.log(self, "RealTime tap handler recorded \(String(describing: tapHandlerEventSet.events.count)) tap events")
+        AppLogger.shared.log(self, "RealTime tap handler recorded \(String(describing: tapHandlerEventSet.events.count)) tap events")
         return tapHandlerEventSet
     }
 }

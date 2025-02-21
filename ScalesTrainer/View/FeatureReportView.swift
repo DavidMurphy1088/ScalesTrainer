@@ -30,7 +30,7 @@ struct FeatureReportMailView: UIViewControllerRepresentable {
                     let logFileData = try Data(contentsOf: logFileURL)
                     mailComposeVC.addAttachmentData(logFileData, mimeType: "text/plain", fileName: "app_log.txt")
                 } catch {
-                    Logger.shared.reportError(Logger.shared, "Error reading log file to send:\(error)")
+                    AppLogger.shared.reportError(AppLogger.shared, "Error reading log file to send:\(error)")
                 }
             }
         }
@@ -140,7 +140,7 @@ struct FeatureReportView: View {
         }
         let logFileURL = documentsDirectory.appendingPathComponent("app_log.txt")
         var logContent = "Log file\n\n"
-        for line in Logger.shared.loggedMsgs {
+        for line in AppLogger.shared.loggedMsgs {
             logContent += line.getLogEvent() + "\n"
         }
         do {

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HideAndShowView: View {
-    @ObservedObject var logger = Logger.shared
+    @ObservedObject var logger = AppLogger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     var body: some View {
         HStack {
@@ -40,7 +40,7 @@ struct HideAndShowView: View {
 struct LegendView: View {
     let hands:[Int]
     let scale:Scale
-    @ObservedObject var logger = Logger.shared
+    @ObservedObject var logger = AppLogger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
     @State private var scrollToEnd = false
     @State private var proxy: ScrollViewProxy? = nil

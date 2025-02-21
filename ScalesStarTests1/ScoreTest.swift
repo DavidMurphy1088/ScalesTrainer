@@ -6,7 +6,7 @@ import FirebaseAuth
 import XCTest
 
 final class ScoreTest: XCTestCase {
-    let logger = Logger.shared
+    let logger = AppLogger.shared
     let firebase = Firebase.shared
     
     override func setUpWithError() throws {

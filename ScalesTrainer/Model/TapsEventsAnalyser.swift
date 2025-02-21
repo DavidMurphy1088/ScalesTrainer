@@ -182,7 +182,7 @@ class TapsEventsAnalyser {
                             bestTapEventSet = tapEventSet
                         }
                         let bestErrors:Int = bestResult?.getTotalErrors() ?? -1
-                        Logger.shared.log(self, "==[\(assessmentCtr)] Result:\(result1.getInfo()) bestErrors:\(bestErrors)")
+                        AppLogger.shared.log(self, "==[\(assessmentCtr)] Result:\(result1.getInfo()) bestErrors:\(bestErrors)")
                         if bestErrors == 0 {
                             atZeroErrors = true
                             break

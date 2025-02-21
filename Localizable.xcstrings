@@ -109,10 +109,10 @@
     "😊" : {
 
     },
-    "😊 Thanks, Your Grade Is Set 😊" : {
+    "😊 Thanks %@, Your Grade Is Set 😊" : {
 
     },
-    "😊 Welcome To Scales Academy 😊" : {
+    "😊 Welcome 😊" : {
 
     },
     "😔" : {
@@ -720,9 +720,6 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -873,7 +870,7 @@
         }
       }
     },
-    "We hope you enjoy your experience using this app." : {
+    "We hope you enjoy your experience using Scales Academy." : {
 
     },
     "Your current subscription is " : {

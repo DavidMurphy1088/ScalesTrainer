@@ -66,7 +66,7 @@ class SpeechManagerUnused : NSObject, MetronomeTimerNotificationProtocol, SFSpee
     
     private override init() {
         super.init()
-        Logger.shared.log(self, "Inited")
+        AppLogger.shared.log(self, "Inited")
         //requestPermissions()
     }
     
@@ -107,11 +107,11 @@ class SpeechManagerUnused : NSObject, MetronomeTimerNotificationProtocol, SFSpee
             ctr += 1
             self.recognitionRequest?.append(buffer)
         }
-        Logger.shared.log(self, "Installed speech tap")
+        AppLogger.shared.log(self, "Installed speech tap")
 
         do {
             try audioEngine.start()
-            Logger.shared.log(self, "started speech tap AudioEngine")
+            AppLogger.shared.log(self, "started speech tap AudioEngine")
             //DispatchQueue.main.async {
                 self.isRunning = true
             //}
@@ -128,7 +128,7 @@ class SpeechManagerUnused : NSObject, MetronomeTimerNotificationProtocol, SFSpee
         audioEngine.stop()
         audioEngine.inputNode.removeTap(onBus: 0)
         
-        Logger.shared.log(self, "stopped AudioEngine")
+        AppLogger.shared.log(self, "stopped AudioEngine")
         //DispatchQueue.main.async {
             self.isRunning = false
         //}

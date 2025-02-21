@@ -127,7 +127,7 @@ class Metronome:ObservableObject {
         let notesPerClick = self.getNotesPerClick()
         let tempo = Double(scalesModel.getTempo())
         let delay = (60.0 / tempo) / Double(notesPerClick)
-        Logger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
+        AppLogger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
         let leadInTicks:Int
         if let user = Settings.shared.getCurrentUser() {
             leadInTicks = user.settings.getLeadInBeats() * notesPerClick

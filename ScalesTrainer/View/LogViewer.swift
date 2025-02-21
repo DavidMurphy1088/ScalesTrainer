@@ -6,7 +6,7 @@ enum LogLevel {
 }
 
 struct LogView: View {
-    @ObservedObject var logger = Logger.shared
+    @ObservedObject var logger = AppLogger.shared
     @State private var scrollToEnd = false
     @State private var proxy: ScrollViewProxy? = nil
     

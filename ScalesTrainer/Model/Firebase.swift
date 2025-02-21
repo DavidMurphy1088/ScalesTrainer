@@ -5,7 +5,7 @@ import FirebaseAuth
 
 public class Firebase  {
     public static var shared = Firebase()
-    let logger = Logger.shared
+    let logger = AppLogger.shared
     
     init() {
         var username:String? = nil
@@ -20,7 +20,7 @@ public class Firebase  {
             }
         }
         if username == nil || pwd == nil {
-            Logger.shared.reportError(self, "No user for Firebase RealTime DB")
+            AppLogger.shared.reportError(self, "No user for Firebase RealTime DB")
         }
         signIn(username: username!, pwd: pwd!)
     }
@@ -28,7 +28,7 @@ public class Firebase  {
     func signIn(username:String, pwd:String) {
         Auth.auth().signIn(withEmail: username, password: pwd) { authResult, error in
            if let error = error {
-               Logger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
+               AppLogger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
                 return
             }
          }

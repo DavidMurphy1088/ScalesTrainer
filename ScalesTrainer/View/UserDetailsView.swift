@@ -26,42 +26,37 @@ struct GradeTitleView: View {
 }
 
 struct UserDetailsView: View {
-    //@ObservedObject var publishedSettings = SettingsPublished.shared
     let user:User
     @Binding var listUpdated:Bool
     @FocusState private var isNameFieldFocused: Bool
     
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
-    @State var firstName = "" //Settings.shared.getCurrentUser().name
-    @State var emailAddress  = "" //= Settings.shared.getCurrentUser().email
+    @State var firstName = ""
+    @State var emailAddress  = ""
     
     @State private var tapBufferSize = 4096
     @State private var navigateToSelectBoard = false
     @State private var navigateToSelectGrade = false
-    @State private var selectedGrade:Int?
     @State private var userName = ""
     @State private var firstUseForUserStep1 = false
     @State private var firstUseForUserStep2 = false
     @State private var firstUseForUser = false
-    @State private var firstUserGrade = ""
+    @State private var selectedGrade = 0
 
     let width = UIScreen.main.bounds.width * 0.7
     
-    func setGradeCallback(grade:Int) {
-        guard self.firstName.count > 0 else {
-            return
-        }
+    func getGradeName(grade:Int) -> String {
+        var gradeStr = ""
         switch grade {
-        case 1 : self.firstUserGrade = "One"
-        case 2 : self.firstUserGrade = "Two"
-        case 3 : self.firstUserGrade = "Three"
-        case 4 : self.firstUserGrade = "Four"
-        case 5 : self.firstUserGrade = "Five"
-        default: self.firstUserGrade = ""
+        case 1 : gradeStr = "One"
+        case 2 : gradeStr = "Two"
+        case 3 : gradeStr = "Three"
+        case 4 : gradeStr = "Four"
+        case 5 : gradeStr = "Five"
+        default: gradeStr = ""
         }
-        print("=========== SETXX", grade, self.firstUserGrade)
-        firstUseForUserStep2 = true
+        return gradeStr
     }
     
     var body: some View {
@@ -96,11 +91,20 @@ struct UserDetailsView: View {
                 })
                 
                 Spacer()
-                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), setGradeCallback: setGradeCallback)
+                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
                 Spacer()
             }
             .commonFrameStyle()
         }
+        .onChange(of: selectedGrade, {
+            if firstUseForUser {
+                if self.firstName.count > 0 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        firstUseForUserStep2 = true
+                    }
+                }
+            }
+        })
         .sheet(isPresented: $firstUseForUserStep1) {
             VStack(spacing: 20) {
                 let imageSize = UIScreen.main.bounds.width * 0.6
@@ -125,8 +129,8 @@ struct UserDetailsView: View {
         }
         .sheet(isPresented: $firstUseForUserStep2) {
             VStack(spacing: 20) {
-                Text("😊 Thanks, Your Grade Is Set 😊").font(.title).fontWeight(.bold)
-                Text("Next, let's go to your Activities for Grade \(self.firstUserGrade)").multilineTextAlignment(.center)
+                Text("😊 Thanks \(self.firstName), Your Grade Is Set 😊").font(.title).fontWeight(.bold)
+                Text("Next, let's go to your Activities for Grade \(getGradeName(grade: self.selectedGrade))").multilineTextAlignment(.center)
                 HStack {
                     Button("Cancel") {
                         firstUseForUserStep2 = false
@@ -144,9 +148,8 @@ struct UserDetailsView: View {
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }                
-                .padding()
             }
-            .padding()
+            .presentationDetents([.fraction(0.3)])
         }
         .onChange(of: firstUseForUserStep1) { newValue in
             // Focus only when the sheet is dismissed

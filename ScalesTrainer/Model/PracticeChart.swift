@@ -138,7 +138,7 @@ class PracticeChart: Codable {
             //print("\n", jsonString ?? "")
             return data
         } catch {
-            Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
+            AppLogger.shared.reportError(self, "Failed to save PracticeChart \(error)")
             return nil
         }
     }
@@ -261,20 +261,20 @@ class PracticeChart: Codable {
         do {
             //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-                Logger.shared.reportError(self, "Failed to save PracticeChart")
+                AppLogger.shared.reportError(self, "Failed to save PracticeChart")
                 return
             }
             let fileName = PracticeChart.getFileName(user: self.user, board: self.board, grade: self.grade)
             let url = dir.appendingPathComponent(fileName)
             if let data = self.convertToJSON() {
                 try data.write(to: url)  // Write the data to the file
-                Logger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
+                AppLogger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
             }
             else {
-                Logger.shared.log(self, "Cannot convert PracticeChart")
+                AppLogger.shared.log(self, "Cannot convert PracticeChart")
             }
         } catch {
-            Logger.shared.reportError(self, "Failed to save PracticeChart \(error)")
+            AppLogger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
     }
     
@@ -301,7 +301,7 @@ class PracticeChart: Codable {
         do {
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 if let notRegression = ProcessInfo.processInfo.environment["NOT_RUNNING_REGRESSION"] {
-                    Logger.shared.log(self, "Failed to load PracticeChart - file not found")
+                    AppLogger.shared.log(self, "Failed to load PracticeChart - file not found")
                 }
                 return nil
             }
@@ -326,11 +326,11 @@ class PracticeChart: Codable {
                     }
                 }
             }
-            Logger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
+            AppLogger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
             chart.adjustForStartDay()
             return chart
         } catch {
-            Logger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
+            AppLogger.shared.reportError(self, "Failed to load PracticeChart: \(error)")
             return nil
         }
     }
