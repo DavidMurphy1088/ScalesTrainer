@@ -7,6 +7,19 @@ enum SpinState {
     case spunAndStopped
 }
 
+struct Arrow: View {
+    let size:Int = 40
+    var body: some View {
+        Path { path in
+            path.move(to: CGPoint(x: size, y: 0))
+            path.addLine(to: CGPoint(x: 0, y: size/2))
+            path.addLine(to: CGPoint(x: size, y: size))
+            path.closeSubpath()
+        }
+        .fill(Color.blue)
+    }
+}
+
 struct SegmentView: View {
     let index: Int
     let total: Int
@@ -210,20 +223,17 @@ struct SpinWheelView: View {
     }
 
     var body: some View {
-        VStack {
-            ScreenTitleView(screenName: "Spin The Scales Wheel").commonFrameStyle()
+        VStack(spacing: 0) {
+            ScreenTitleView(screenName: "Spin The Wheel", showUser: true).padding(.vertical, 0)
             VStack {
-                //let handSizeFactor = 0.25
-                //let rootSizeFactor = 0.40
-                //let arrowPos = UIScreen.main.bounds.width * (orientationInfo.isPortrait ? 0.94 : 0.76)
                 ZStack {
-                        SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize)
-                        /// Fixed arrow
-                        Arrow()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.purple)
-                            //.position(x: arrowPos)//, y: geometry.size.height * 0.5)
-                            .offset(x: wheelSize * 0.5)
+                    SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize)
+                    /// Fixed arrow
+                    Arrow()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.purple)
+                    //.position(x: arrowPos)//, y: geometry.size.height * 0.5)
+                        .offset(x: wheelSize * 0.5)
                 }
                 .edgesIgnoringSafeArea(.all)
                 
@@ -232,18 +242,18 @@ struct SpinWheelView: View {
                         Spacer()
                         VStack {
                             Button(action: {
-                                //startSpinning3Wheels(scaleTypes: self.getTypeNames(),scaleRoots: self.getRootNames(),hands: [1,0])
                                 startSpinningWheel(scaleNames: getScaleNames())
                             }) {
                                 HStack {
-                                    Text(" Spin The Wheel ").padding().font(.title2).hilighted(backgroundColor: .blue)
+                                    Text(" Spin The Wheel ").fancyTextStyle()
                                 }
                             }
+                            //.compactButtonStyle(trim: false)
                         }
                         Spacer()
                     }
                 }
-
+                
                 if self.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
@@ -256,20 +266,14 @@ struct SpinWheelView: View {
                 }
                 Spacer()
             }
-            .commonFrameStyle()
+            .screenBackgroundStyle()
         }
         .onAppear() {
             self.spinState = .notStarted
-//            if let chart = PracticeChart() {
-//                self.practiceChart = chart
-//            }
-            //self.wheelSize = orientationInfo.isPortrait ? 0.9 : 0.55
             self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
         }
-
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }
-    
 }
 

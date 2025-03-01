@@ -8,25 +8,10 @@ import AudioKit
 
 // ---------------------- Edit details of a single user -------------------
 
-struct GradeTitleView: View {
-    //@ObservedObject var settingsPublished = SettingsPublished.shared
-    let user = Settings.shared.getCurrentUser()
-
-    var body: some View {
-        VStack {
-            Text("Name and Grade").font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-            HStack {
-                if let user = Settings.shared.getCurrentUser() {
-                    Text(user.getTitle()).font(.title2)
-                }
-            }
-        }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-    }
-}
-
 struct UserDetailsView: View {
+    @Environment(\.dismiss) var dismiss  // Access the dismiss function
     let user:User
+    let creatingNewUser:Bool
     @Binding var listUpdated:Bool
     @FocusState private var isNameFieldFocused: Bool
     
@@ -39,9 +24,9 @@ struct UserDetailsView: View {
     @State private var navigateToSelectBoard = false
     @State private var navigateToSelectGrade = false
     @State private var userName = ""
-    @State private var firstUseForUserStep1 = false
+    @State private var showWelcomeToFirstUser = false
+    @State private var isFirstUser = false
     @State private var firstUseForUserStep2 = false
-    @State private var firstUseForUser = false
     @State private var selectedGrade = 0
 
     let width = UIScreen.main.bounds.width * 0.7
@@ -92,12 +77,25 @@ struct UserDetailsView: View {
                 
                 Spacer()
                 SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
+                if self.creatingNewUser && user.name.count > 0 && selectedGrade > 0 {
+                    Spacer()
+                    Button(action: {
+                        settings.addUser(user: user)
+                        settings.setCurrentUser(id: user.id)
+                        listUpdated.toggle()
+                        dismiss()
+                    }) {
+                        Text("Add User")
+                    }
+                    .blueButtonStyle()
+                }
                 Spacer()
             }
-            .commonFrameStyle()
+            //.commonFrameStyle()
+            //.screenBackgroundStyle()
         }
         .onChange(of: selectedGrade, {
-            if firstUseForUser {
+            if isFirstUser {
                 if self.firstName.count > 0 {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                         firstUseForUserStep2 = true
@@ -105,7 +103,7 @@ struct UserDetailsView: View {
                 }
             }
         })
-        .sheet(isPresented: $firstUseForUserStep1) {
+        .sheet(isPresented: $showWelcomeToFirstUser) {
             VStack(spacing: 20) {
                 let imageSize = UIScreen.main.bounds.width * 0.6
                 Image("GrandPiano")
@@ -118,7 +116,7 @@ struct UserDetailsView: View {
                 Text("We hope you enjoy your experience using Scales Academy.").multilineTextAlignment(.center)
                 Text("To get started please enter your name and Grade.").multilineTextAlignment(.center)
                 Button("Get Started") {
-                    firstUseForUserStep1 = false
+                    showWelcomeToFirstUser = false
                 }
                 .padding()
                 .background(Color.blue)
@@ -141,7 +139,9 @@ struct UserDetailsView: View {
 
                     Button("Activites") {
                         firstUseForUserStep2 = false
-                        ViewManager.shared.setTab(tab: 20)
+                        settings.addUser(user: user)
+                        settings.setCurrentUser(id: user.id)
+                        ViewManager.shared.setTab(tab: MainContentView.TAB_ACTIVITES)
                     }
                     .padding()
                     .background(Color.blue)
@@ -151,7 +151,7 @@ struct UserDetailsView: View {
             }
             .presentationDetents([.fraction(0.3)])
         }
-        .onChange(of: firstUseForUserStep1) { newValue in
+        .onChange(of: showWelcomeToFirstUser) { newValue in
             // Focus only when the sheet is dismissed
             if !newValue {
                 self.isNameFieldFocused = true
@@ -160,10 +160,10 @@ struct UserDetailsView: View {
         .onAppear() {
             self.firstName = user.name
             self.emailAddress = user.email
-            firstUseForUserStep1 = false
-            if settings.users.count == 1 && user.name.count == 0 {
-                firstUseForUserStep1 = true
-                firstUseForUser = true
+            showWelcomeToFirstUser = false
+            if settings.users.count == 0 {
+                showWelcomeToFirstUser = true
+                isFirstUser = true
             }
             listUpdated = false
         }

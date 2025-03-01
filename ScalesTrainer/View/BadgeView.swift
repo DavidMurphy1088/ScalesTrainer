@@ -183,6 +183,7 @@ struct BadgesView: View {
                     }
                 }
             }
+            .padding()
             Text("")
             .onChange(of: badgeBank.totalCorrect, {
                 verticalOffset = -50
@@ -191,7 +192,6 @@ struct BadgesView: View {
         }
         .onAppear() {
             self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
-            //self.size1 = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteStates(handType: handType).count) * 1.7)
             self.badgeIconSize = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteCount()) * 1.7)
             ///Ensure not more than 2 concurrent same values
             for _ in 0..<scale.getScaleNoteStates(handType: handType).count {

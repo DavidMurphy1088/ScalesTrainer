@@ -277,12 +277,12 @@ struct CellView: View {
         .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
         .cornerRadius(10)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
-        )
+        ///Border?
+//        .overlay(
+//            RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
+//        )
         .onAppear() {
             let scaleName = self.practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
-            //self.isCorrectSet = self.scalesInChart.contains(scaleName)
         }
         .alert(isPresented: $showLicenceRequiredScale) {
             Alert(
@@ -332,98 +332,90 @@ struct PracticeChartView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            ///Tried using GeometryReader since it supposedly reacts to orientation changes.
-            ///But using it casues all the child view centering not to work
-            //let screenWidth = UIScreen.main.bounds.width
-            //let screenHeight = UIScreen.main.bounds.height
-            let screenWidth = geometry.size.width
-            let screenHeight = geometry.size.height
-            let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
-            let cellHeight: CGFloat = screenHeight / 12.0
-            let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
-            
+        VStack(spacing: 0)  {
+            ScreenTitleView(screenName: "Practice Chart", showUser: true).accessibilityIdentifier("chart_title").padding(.vertical, 0)
             VStack {
-                VStack(spacing: 0) {
-                    ScreenTitleView(screenName: "Practice Chart").commonFrameStyle()
-                        .accessibilityIdentifier("chart_title")
-                    HStack {
-                        Spacer()
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Minor" : "MinorType"
-                        Text(LocalizedStringResource("\(title)")).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .body).padding(0)
-                        Picker("Select Value", selection: $minorTypeIndex) {
-                            ForEach(minorScaleTypes.indices, id: \.self) { index in
-                                Text("\(minorScaleTypes[index])").font(.body)
+                ///Tried using GeometryReader since it supposedly reacts to orientation changes.
+                ///But using it casues all the child view centering not to work
+                let screenWidth = UIScreen.main.bounds.size.width //geometry.size.width
+                let screenHeight = UIScreen.main.bounds.size.height //geometry.size.height
+                let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
+                let cellHeight: CGFloat = screenHeight / 12.0
+                let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
+                VStack {
+                    VStack(spacing: 0) {
+                        HStack {
+                            Spacer()
+                            let title = UIDevice.current.userInterfaceIdiom == .phone ? "Minor" : "MinorType"
+                            Text(LocalizedStringResource("\(title)")).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .body).padding(0)
+                            Picker("Select Value", selection: $minorTypeIndex) {
+                                ForEach(minorScaleTypes.indices, id: \.self) { index in
+                                    Text("\(minorScaleTypes[index])").font(.body)
+                                }
                             }
-                        }
-                        .pickerStyle(.menu)
-                        .onChange(of: minorTypeIndex, {
-                            let newType:ScaleType
-                            switch minorTypeIndex {
-                            case 0:newType = .harmonicMinor
-                            case 1:newType = .melodicMinor
-                            default:newType = .naturalMinor
+                            .pickerStyle(.menu)
+                            .onChange(of: minorTypeIndex, {
+                                let newType:ScaleType
+                                switch minorTypeIndex {
+                                case 0:newType = .harmonicMinor
+                                case 1:newType = .melodicMinor
+                                default:newType = .naturalMinor
+                                }
+                                practiceChart.minorScaleType = minorTypeIndex
+                                practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
+                                                               selectedMotions:[.similarMotion], newType: newType)
+                                practiceChart.savePracticeChartToFile()
+                                self.reloadTrigger = !self.reloadTrigger
+                            })
+                            Text("\(self.redrawCounter)").opacity(0.0).padding(0)
+                            
+                            if UIDevice.current.userInterfaceIdiom != .phone {
+                                Spacer()
+                                Button(action: {
+                                    helpShowing = true
+                                }) {
+                                    Text("Instructions")
+                                }
+                                //.buttonStyle(.bordered)
+                                //.padding()
                             }
-                            practiceChart.minorScaleType = minorTypeIndex
-                            practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
-                                                           selectedMotions:[.similarMotion], newType: newType)
-                            practiceChart.savePracticeChartToFile()
-                            self.reloadTrigger = !self.reloadTrigger
-                        })
-                        Text("\(self.redrawCounter)").opacity(0.0).padding(0)
-                        
-                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            
                             Spacer()
                             Button(action: {
-                                helpShowing = true
+                                self.showHands.toggle()
                             }) {
-                                Text("Instructions")
+                                if UIDevice.current.userInterfaceIdiom == .phone {
+                                    Text(self.showHands ? "Hide" : "Hands")
+                                }
+                                else {
+                                    Text(self.showHands ? "Hide Hands" : "Show Hands")
+                                }
+                            }
+                            //.buttonStyle(.bordered)
+                            //.padding()
+                            
+                            Spacer()
+                            Button(action: {
+                                cellOpacityValue = 0.1
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    sleep(1)
+                                    doShuffle(update: true)
+                                    withAnimation(.linear(duration: 1.0)) {
+                                        cellOpacityValue = 1.0
+                                    }
+                                    practiceChart.savePracticeChartToFile()
+                                }
+                            }) {
+                                Text("Shuffle")
                             }
                             .buttonStyle(.bordered)
                             //.padding()
+                            
+                            Spacer()
                         }
-                        
-                        Spacer()
-                        Button(action: {
-                            self.showHands.toggle()
-                        }) {
-                            if UIDevice.current.userInterfaceIdiom == .phone {
-                                Text(self.showHands ? "Hide" : "Hands")
-                            }
-                            else {
-                                Text(self.showHands ? "Hide Hands" : "Show Hands")
-                            }
-                        }
-                        .buttonStyle(.bordered)
-                        //.padding()
-                        
-                        Spacer()
-                        Button(action: {
-                            cellOpacityValue = 0.1
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                sleep(1)
-                                doShuffle(update: true)
-                                withAnimation(.linear(duration: 1.0)) {
-                                    cellOpacityValue = 1.0
-                                }
-                                practiceChart.savePracticeChartToFile()
-                            }
-                        }) {
-                            Text("Shuffle")
-                        }
-                        .buttonStyle(.bordered)
-                        //.padding()
-                        
-                        Spacer()
                     }
-                }
-                .commonFrameStyle()
-//                Button("Trigger Exit") {
-//                    navigationState2.navigationChildIsActive = false
-//                }
-                ScrollView(.vertical) {
+                    
                     VStack(spacing: 0) {
-                        
                         // Column Headers
                         HStack(spacing: 0) {
                             ForEach(0..<practiceChart.columns, id: \.self) { index in
@@ -441,30 +433,36 @@ struct PracticeChartView: View {
                                 .padding(cellPadding)
                             }
                         }
-                        
-                        ///Rows
-                        ForEach(0..<practiceChart.rows.count, id: \.self) { row in
-                            HStack(spacing: 0) {
-                                ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                    if column < practiceChart.rows[row].count {
-                                        CellView(column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
-                                                 cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
-                                        .padding(cellPadding)
-                                    }
-                                    else {
-                                        BlankCellView(cellWidth: cellWidth, cellHeight: cellHeight)
-                                        .padding(cellPadding)
+                        ScrollView(.vertical) {
+                            ///Rows
+                            ForEach(0..<practiceChart.rows.count, id: \.self) { row in
+                                HStack(spacing: 0) {
+                                    ForEach(0..<practiceChart.columns, id: \.self) { column in
+                                        if column < practiceChart.rows[row].count {
+                                            CellView(column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
+                                                     cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
+                                            .outlinedStyleView()
+                                            .padding(cellPadding)
+                                        }
+                                        else {
+                                            BlankCellView(cellWidth: cellWidth, cellHeight: cellHeight)
+                                                .outlinedStyleView()
+                                                .padding(cellPadding)
+                                        }
                                     }
                                 }
                             }
                         }
+                        .id(reloadTrigger)
+                        //.frame(height: UIScreen.main.bounds.size.height * 0.67)
+                        Spacer()
                     }
-                    .id(reloadTrigger)
                 }
+                //.padding() ///DO NOT DELETE - else the scroller underlaps the TabView at bottom
             }
+            .frame(maxWidth: .infinity)
+            .screenBackgroundStyle()
         }
-        .commonFrameStyle()
-        
         .onAppear() {
             self.minorScaleTypes = self.practiceChart.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = practiceChart.minorScaleType

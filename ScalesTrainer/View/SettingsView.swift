@@ -62,10 +62,10 @@ struct SettingsView: View {
                     Spacer()
                 }
                 PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: PianoKeyboardModel.sharedForSettings, keyColor: selectedColor)
-                    .frame(height: UIScreen.main.bounds.size.height * 0.3)
+                    .frame(height: UIScreen.main.bounds.size.height * 0.15)
                     .padding()
             }
-            .background(UIGlobals.shared.purpleHeading)
+            //.background(UIGlobals.shared.purpleHeading)
             .onAppear() {
                 self.selectedColor = parentColor
             }
@@ -73,42 +73,38 @@ struct SettingsView: View {
     }
 
     func DetailedCustomSettingsView(user:User) -> some View {
-        NavigationView {
+        //NavigationView {
             VStack {
                 VStack {
-                    HStack {
-                        //Spacer()
-                        Text("Choose your background colour ").font(.title2).padding(0)
-                        ///Force a repaint on color change with published self.backgroundChange
-                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
-                            .padding()
-                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-                                user.settings.setBackgroundColor(newColor)
-                                self.backgroundChange += 1
-                            }
-                            .labelsHidden()
-                        //Spacer()
-                    }
+//                    HStack {
+//                        //Spacer()
+//                        Text("Choose your background colour ").font(.title2).padding(0)
+//                        ///Force a repaint on color change with published self.backgroundChange
+//                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
+//                            .padding()
+//                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
+//                                user.settings.setBackgroundColor(newColor)
+//                                self.backgroundChange += 1
+//                            }
+//                            .labelsHidden()
+//                        //Spacer()
+//                    }
 
                     HStack {
                         //Spacer()
                         VStack {
                             SetKeyboardColourView(scalesModel: self.scalesModel, parentColor: $keyboardColor)
                         }
-                        //.padding()
                         .onChange(of: keyboardColor, {
                             user.settings.setKeyboardColor(keyboardColor)
                         })
                         .hilighted(backgroundColor: .gray)
-                        .frame(width: UIScreen.main.bounds.size.width * 0.9,
-                               //height: orientationObserver.orientation.isAnyLandscape ? UIScreen.main.bounds.size.height * 0.4 : UIScreen.main.bounds.size.height * 0.25)
+                        .frame(width: UIScreen.main.bounds.size.width * 0.6,
                                height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
-                        
-                        //Spacer()
                     }
                 }
-                .padding(.vertical, 0)
-                
+                .padding()
+
                 ///Lead in count
                 Spacer()
                 HStack {
@@ -192,9 +188,9 @@ struct SettingsView: View {
                 
                 Spacer()
             }
-            .commonFrameStyle()
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
+            //.screenBackgroundStyle()
+        //}
+        //.navigationViewStyle(StackNavigationViewStyle())
     }
     
     func backingSoundName(_ n:Int) -> String {
@@ -227,16 +223,15 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack {
-            ScreenTitleView(screenName: "Settings").commonFrameStyle()
-            //if let user = settings.getCurrentUser() {
-                DetailedCustomSettingsView(user:user)
-                    .commonFrameStyle()
-                    .padding()
-            //}
+        VStack(spacing: 0) {
+            ScreenTitleView(screenName: "Settings", showUser: true)
+                .frame(maxWidth: .infinity)
+            DetailedCustomSettingsView(user:user)
+                .frame(maxWidth: .infinity)
+                .screenBackgroundStyle()
+
         }
         
-        .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth, height: UIScreen.main.bounds.height * 0.9)
         .onAppear() {
             guard let user = settings.getCurrentUser() else {
                 return

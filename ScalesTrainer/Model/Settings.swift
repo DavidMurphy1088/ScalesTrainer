@@ -24,7 +24,8 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     
     ///User settings irrespective of the grade the student is in.
     class UserSettings : Encodable, Decodable {
-        var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
+        //var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
+        var keyboardColor:[Double] = [1.0, 0.949, 0.835, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
         var leadInCOunt:Int = 0
         var backingSamplerPreset:Int = 0
@@ -191,6 +192,10 @@ class Settings : Encodable, Decodable {
             if user.isCurrentUser {
                 return user
             }
+        }
+        if self.users.count > 0 {
+            self.setCurrentUser(id: self.users[1].id)
+            return self.users[1]
         }
         return nil
     }

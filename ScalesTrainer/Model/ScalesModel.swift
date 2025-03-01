@@ -89,7 +89,9 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    var tempoSettings:[String] = []
+    //private(set) var tempoSettings:[String] = []
+    public let tempoSettings:[String]
+    
     @Published var tempoChangePublished = false
     var selectedTempoIndex = 0 //5 //60=2
     var exerciseBadge:Badge?
@@ -266,6 +268,13 @@ public class ScalesModel : ObservableObject {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
                           minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
         self.calibrationTapHandler = nil
+        if scale.timeSignature.top == 3 {
+            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
+        }
+        else {
+            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
+        }
+
     }
     
     func clearFunctionToNotify() {
@@ -933,12 +942,12 @@ public class ScalesModel : ObservableObject {
             callback(scale, score)
         }
         
-        if scale.timeSignature.top == 3 {
-            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
-        }
-        else {
-            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
-        }
+//        if scale.timeSignature.top == 3 {
+//            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
+//        }
+//        else {
+//            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
+//        }
         
         ///10Jan2025 - changed to ensure keyboard key view has score to be able to set its note names
         //self.configureKeyboards(scale: scale, ctx: "setScale")

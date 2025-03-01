@@ -245,7 +245,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
-        //Settings.shared.load()
         if !Settings.shared.isDeveloperMode1() {
             LicenceManager.shared.getFreeLicenses()
         }
@@ -297,7 +296,12 @@ class ViewManager: ObservableObject {
         Settings.shared.load()
         DispatchQueue.main.async {
             self.titleUser = settings.getCurrentUser()
-            self.nextNavigationTab()
+            if settings.getCurrentUser() == nil {
+                self.selectedTab = MainContentView.TAB_USERS
+            }
+            else {
+                self.selectedTab = MainContentView.TAB_ACTIVITES
+            }
         }
     }
     
@@ -313,102 +317,61 @@ class ViewManager: ObservableObject {
             self.selectedTab = tab
         }
     }
-
-    func nextNavigationTab() {
-        if Settings.shared.isDeveloperMode1() {
-            let hands = [0,1]
-            //let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
-            
-            //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-            //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
-            
-            //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
-            //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
-            let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
-                                                   customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
-                                                   customScaleNameWheel: "Chrom Contrary, LH C, RH E")
-            ScalesModel.shared = ScalesModel()
-            let scalesModel = ScalesModel.shared
-            if true {
-                scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .trinityBrokenTriad,
-                                                scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
-                                                dynamicTypes: [.mf], articulationTypes: [.legato],
-                                                //scaleCustomisation: scaleCustomisation,
-                                                debugOn: true)
-            }
-            selectedTab = 20
-        }
-        else {
-            if Settings.shared.getCurrentUser() == nil {
-                selectedTab = 10
-            }
-            else {
-                selectedTab = 20
-            }
-        }
-    }
 }
 
-@main
-struct ScalesTrainerApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+struct MainContentView: View {
     @ObservedObject private var viewManager = ViewManager.shared
-    @StateObject var launchScreenState = LaunchScreenStateManager()
-    @StateObject private var orientationInfo = OrientationInfo()
-    let launchTimeSecs = 3.0
-
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    static let TAB_USERS = 10
+    static let TAB_ACTIVITES = 20
+    
     init() {
-#if os(iOS)
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch let err {
-            AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
-        }
-#endif
-        ///Tab bar settings
-//        let appearance = UITabBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        appearance.backgroundColor = UIColor(Color.green) //UIColor.systemGray6
-//        // Reduce tab bar height using item positioning
-//        UITabBar.appearance().scrollEdgeAppearance = appearance
-//        UITabBar.appearance().standardAppearance = appearance
-//        UITabBar.appearance().itemSpacing = 10
-//        UITabBar.appearance().itemWidth = 50
-    }
-    
-    var body: some Scene {
-        WindowGroup {
-            VStack {
-                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
-                    MainContentView()
-                        .environmentObject(orientationInfo)
-                        .onAppear {
-                            OrientationManager.appDelegate = appDelegate
-                        }
-                }
-                else {
-                    if launchScreenState.state != .finished {
-                        LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
-                    }
-                }
-            }
-            .task {
-                DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
-                    self.launchScreenState.dismiss()
-                }
-            }
-        }
-    }
-    
-    func MainContentView() -> some View {
+        // Customize tab bar appearance (System-wide)
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
         
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground() // Ensures the tab bar is solid
+        appearance.backgroundColor = UIColor.white //
+        
+//        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = selectedColor
+//        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor, .font: UIFont.systemFont(ofSize: 12, weight: .bold)] // **Bold, larger text**
+//        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
+//        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: unselectedColor, .font: UIFont.systemFont(ofSize: 12, weight: .medium)]
+
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+    }
+    
+    func setupDev() {
+        //let hands = [0,1]
+        //let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
+        
+        //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+        //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
+        
+        //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
+        //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
+        let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
+                                               customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
+                                               customScaleNameWheel: "Chrom Contrary, LH C, RH E")
+        ScalesModel.shared = ScalesModel()
+        let scalesModel = ScalesModel.shared
+        if true {
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0,1],
+                                            dynamicTypes: [.mf], articulationTypes: [.legato],
+                                            //scaleCustomisation: scaleCustomisation,
+                                            debugOn: true)
+        }
+    }
+    
+    var body: some View {
         TabView(selection: $viewManager.selectedTab) {
-            
             if Settings.shared.isDeveloperMode1() {
                 //HomeView()
-                //ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
-                UserListView()
+                ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
+                //UserListView()
                 //TestView()
                 //FFTContentView()
                     .tabItem {
@@ -421,12 +384,12 @@ struct ScalesTrainerApp: App {
             UserListView()
                 .tabItem {
                     Label {
-                        Text(NSLocalizedString("Users", comment: "Menu"))
+                        Text(NSLocalizedString("Users", comment: "Menu")).background(.white).bold()
                     } icon: {
                         Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
                     }
                 }
-                .tag(10)
+                .tag(MainContentView.TAB_USERS)
                 .environmentObject(viewManager)
             
             if let user = Settings.shared.getCurrentUser() {
@@ -434,7 +397,7 @@ struct ScalesTrainerApp: App {
                     .tabItem {
                         Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
                     }
-                    .tag(20)
+                    .tag(MainContentView.TAB_ACTIVITES)
                     .environmentObject(viewManager)
                 
                 SettingsView(user:user)
@@ -506,12 +469,65 @@ struct ScalesTrainerApp: App {
                     .tag(100)
                     .environmentObject(viewManager)
             }
-        }
+        }      
+        .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
         .ignoresSafeArea(.keyboard, edges: .bottom)
-        .toolbar(.hidden, for: .tabBar) // Hide tab bar
-        //.tint(.blue) // Set the color for the tab items
+//        .toolbarBackground(
+//            LinearGradient(colors: [Color.purple.opacity(0.4), Color.blue.opacity(0.4)], // **Smoother, lighter match to the title**
+//                           startPoint: .topLeading, endPoint: .bottomTrailing),
+//            for: .tabBar
+//        )
+        .onAppear {
+            OrientationManager.appDelegate = appDelegate
+            if Settings.shared.isDeveloperMode1() {
+                self.setupDev()
+                ViewManager.shared.setTab(tab: 1)
+            }
+        }
+    }
+}
+
+@main
+struct ScalesTrainerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
+    @ObservedObject private var viewManager = ViewManager.shared
+    @StateObject var launchScreenState = LaunchScreenStateManager()
+    @StateObject private var orientationInfo = OrientationInfo()
+    let launchTimeSecs = 3.0
+
+    init() {
+#if os(iOS)
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker, .mixWithOthers, .allowBluetoothA2DP])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let err {
+            AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
+        }
+#endif
 
     }
+    
+    var body: some Scene {
+        WindowGroup {
+            VStack {
+                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
+                    MainContentView()
+                        .environmentObject(orientationInfo)
+                }
+                else {
+                    if launchScreenState.state != .finished {
+                        LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
+                    }
+                }
+            }
+            .task {
+                DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
+                    self.launchScreenState.dismiss()
+                }
+            }
+        }
+    }
+    
 }
 

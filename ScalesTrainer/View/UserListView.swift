@@ -7,14 +7,14 @@ import AudioKit
 
 // --------------------------- List of all Users ------------------------------
 
-struct UsersTitleView: View {
-    var body: some View {
-        VStack {
-            Text("Scales Academy Users").font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-        }
-        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-    }
-}
+//struct UsersTitleView: View {
+//    var body: some View {
+//        VStack {
+//            Text("Scales Academy Users").font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
+//        }
+//        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
+//    }
+//}
 
 struct UserListView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
@@ -22,6 +22,7 @@ struct UserListView: View {
     let settings = Settings.shared
     @State var listUpdated = false
     @State private var selectedUser: User?
+    @State private var creatingNewUser = false
     @State private var userToDelete: User?
     @State private var showDeleteAlert:Bool = false
     
@@ -34,9 +35,8 @@ struct UserListView: View {
     }
 
     var body: some View {
-        VStack {
-            UsersTitleView()
-            Spacer()
+        VStack(spacing: 0) {
+            ScreenTitleView(screenName: "Scales Academy Users", showUser: false).padding(.vertical, 0)
             VStack {
                 NavigationStack {
                     Text("User List").font(.title2).padding()
@@ -79,6 +79,7 @@ struct UserListView: View {
 
                                 Spacer()
                                 Button(action: {
+                                    self.creatingNewUser = false
                                     selectedUser = user
                                 }) {
                                     HStack {
@@ -112,32 +113,31 @@ struct UserListView: View {
                     }
                     .listStyle(PlainListStyle())
                     .navigationDestination(item: $selectedUser) { user in
-                        UserDetailsView(user: user, listUpdated: $listUpdated)
+                        UserDetailsView(user: user, creatingNewUser: self.creatingNewUser, listUpdated: $listUpdated)
                     }
                     Button(action: {
                         let user = User(board: "Trinity")
                         user.name = ""
-                        settings.addUser(user: user)
+                        //settings.addUser(user: user)
                         selectedUser = user
-                        settings.setCurrentUser(id: user.id)
+                        self.creatingNewUser = true
+                        //settings.setCurrentUser(id: user.id)
                         listUpdated.toggle()
                     }) {
                         Text("Add New User")
                     }
-                    .buttonStyle(.bordered)
+                    .blueButtonStyle(trim: false)
                     Spacer()
                 }
-                .frame(height: UIScreen.main.bounds.height * 0.75)
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray, lineWidth: 2)
-                )
-                .padding()
+                //.frame(height: UIScreen.main.bounds.height * 0.75)
+                .frame(height: UIScreen.main.bounds.height * 0.70)
+                .outlinedStyleView()
+                Spacer()
             }
-            Spacer()
+            .padding()
+            .screenBackgroundStyle()
         }
-        .commonFrameStyle()
+        
         .alert(isPresented: $showDeleteAlert) {
             Alert(
                 title: Text("Confirm Remove User?"),
@@ -150,18 +150,20 @@ struct UserListView: View {
                 secondaryButton: .cancel()
             )
         }
-        .onDisappear() {
-            //Settings.shared.save()
-        }
+
         .onAppear() {
-            ///Create a user if we dont have one already
+            ///Create a user if we dont have one already and go straight to editing that user
             if settings.users.count == 0 {
                 let user = User(board: "Trinity")
                 user.name = ""
-                settings.addUser(user: user)
-                settings.setCurrentUser(id: user.id)
+                //settings.addUser(user: user)
+                //settings.setCurrentUser(id: user.id)
                 selectedUser = user
+                self.creatingNewUser = true
                 listUpdated.toggle()
+            }
+            else {
+                selectedUser = nil
             }
         }
     }

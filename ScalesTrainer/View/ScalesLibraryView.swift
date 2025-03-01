@@ -112,7 +112,7 @@ struct ScalesLibraryView: View {
                 //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
                 Text("Scales Library")
                     .font(.title2)
-                    .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
+                    //.commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
                 VStack {
                     VStack {
                         Text("Major Scales").font(.title).padding()
@@ -172,7 +172,7 @@ struct ScalesLibraryView: View {
                             let _ = setModelScale(major: true)
                         })
                     }
-                    .commonFrameStyle(backgroundColor: Color.white)
+                    //.commonFrameStyle(backgroundColor: Color.white)
                     .padding()
                     
                     VStack {
@@ -234,11 +234,11 @@ struct ScalesLibraryView: View {
                             let _ = setModelScale(major: false)
                         })
                     }
-                    .commonFrameStyle(backgroundColor: Color.white)
+                    //.commonFrameStyle(backgroundColor: Color.white)
                     .padding()
                     Spacer()
                 }
-                .commonFrameStyle()
+                //.commonFrameStyle()
                 .onAppear() {
                     if self.typesMinor.count == 0 {
                         for scale in ScaleType.allCases {
@@ -256,7 +256,7 @@ struct ScalesLibraryView: View {
                     }
                 }
             }
-            .commonFrameStyle()
+            //.commonFrameStyle()
             //.border(.red, width: 2)
             //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         }

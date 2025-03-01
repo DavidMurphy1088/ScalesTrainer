@@ -56,104 +56,77 @@ struct FamousQuotesView: View {
                 Spacer()
             }
         }
-        .commonFrameStyle()
+        //.commonFrameStyle()
         .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
     }
 }
 
-struct ActivityModeView: View {
+struct ActivityEntriesView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     @EnvironmentObject var orientationInfo: OrientationInfo
-    let user:User
-    let practiceChart:PracticeChart
-    @State var menuOptionsLeft:[ActivityMode] = []
-    //@State var menuOptionsRight:[ActivityMode] = []
+    let user: User
+    let practiceChart: PracticeChart
     @State var helpShowing = false
-    let shade = 8.0
-    
-    func getView(activityMode: ActivityMode) -> some View {
-        return activityMode.view
-    }
-    
+    let overlay = Circle().stroke(Color.white.opacity(0.8), lineWidth: 3) // Soft stroke effect
+
     var body: some View {
-        //NavigationStack {
-            VStack {
-                let overlay = Circle().stroke(Color.black, lineWidth: 2)
-                
-                Spacer()
-                //if let practiceChart = musicBoardAndGrade.practiceChart {
-                    // Invisible NavigationLink that activates when isNavigationActive becomes true.
-                    NavigationLink(
-                        destination: PracticeChartView(practiceChart: practiceChart),
-                        isActive: $tabSelectionManager.isPracticeChartActive
-                    ) {
-                        EmptyView()
-                    }
-                    
-                    Button(action: {
-                        practiceChart.adjustForStartDay()
-                        tabSelectionManager.isPracticeChartActive = true
-                    }) {
-                        VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                            if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
-                                ///Image wont scale reasonably when too little space
-                                Image("home_practice_chart_1")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())  // Clips the image to a circular shape
-                                    .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                                    .overlay(overlay)
-                                //.border(.red)
-                            }
-                            Text("Practice Chart")
-                                .font(.custom("Noteworthy-Bold", size: 32)).padding()
-                        }
-                        .padding()
-                        
-                    }
-//                    .navigationDestination(isPresented: $tabSelectionManager.isPracticeChartActive) {
-//                        PracticeChartView(practiceChart: practiceChart)
-//                    }
-                    
-                    Spacer()
-                    NavigationLink(
-                        destination: SpinWheelView(practiceChart: practiceChart),
-                        isActive: $tabSelectionManager.isSpinWheelActive
-                    ) {
-                        EmptyView()
-                    }
-                    Button(action: {
-                        tabSelectionManager.isSpinWheelActive = true
-                    }) {
-                        VStack(spacing: 0) {  // Ensure no space between the elements inside VStack
-                            if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
-                                Image("home_scales_wheel_1")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(width: UIScreen.main.bounds.size.width * 0.35)
-                                    .overlay(overlay)
-                                //.border(.red)
-                            }
-                            Text("Spin The Scale Wheel")
-                                .font(.custom("Noteworthy-Bold", size: 32)).padding()
-                        }
-                        .padding()
-                    }
-//                    .navigationDestination(isPresented: $tabSelectionManager.isSpinWheelActive) {
-//                        SpinWheelView(practiceChart: practiceChart)
-//                    }
-                //}
-                Spacer()
+
+        VStack {
+            Spacer()
+            navigationButton(imageName: "home_practice_chart_1",
+                            text: "Practice Chart",
+                            action: {
+                                practiceChart.adjustForStartDay()
+                                tabSelectionManager.isPracticeChartActive = true
+                            },
+                            isActive: $tabSelectionManager.isPracticeChartActive,
+                            destination: PracticeChartView(practiceChart: practiceChart))
+            
+            Spacer()
+            
+            navigationButton(imageName: "home_scales_wheel_1",
+                            text: "Spin The Scale Wheel",
+                            action: {
+                                tabSelectionManager.isSpinWheelActive = true
+                            },
+                            isActive: $tabSelectionManager.isSpinWheelActive,
+                            destination: SpinWheelView(practiceChart: practiceChart))
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .screenBackgroundStyle()
+        .sheet(isPresented: $helpShowing) {
+            if let topic = ScalesModel.shared.helpTopic {
+                HelpView(topic: topic)
             }
-            .commonFrameStyle()
-            .sheet(isPresented: $helpShowing) {
-                if let topic = ScalesModel.shared.helpTopic {
-                    HelpView(topic: topic)
+        }
+    }
+
+    /// Custom Navigation Button for dynamic UI
+    @ViewBuilder
+    private func navigationButton<T: View>(imageName: String, text: String, action: @escaping () -> Void, isActive: Binding<Bool>, destination: T) -> some View {
+        NavigationLink(destination: destination, isActive: isActive) { EmptyView() }
+
+        Button(action: {
+            //withAnimation(.easeInOut(duration: 0.3)) { action() }
+            action()
+        }) {
+            VStack(spacing: 10) {
+                if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(Circle())
+                        .frame(width: UIScreen.main.bounds.size.width * 0.35)
+                        .overlay(overlay)
+                        .shadow(color: Color.blue.opacity(0.4), radius: 8, x: -5, y: -5)
+                        .shadow(color: Color.purple.opacity(0.4), radius: 8, x: 5, y: 5)
+                        .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 10)
+                        .scaleEffect(isActive.wrappedValue ? 1.1 : 1.0) // Slight zoom effect
+                        .padding()
                 }
+                Text(text).fancyTextStyle()
             }
-        //}
-        .onAppear() {
         }
     }
 }
@@ -180,29 +153,26 @@ struct ActivitiesView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             NavigationView {
                 VStack {
-                    Spacer()
-                    ScreenTitleView(screenName: "Activities")
+                    ScreenTitleView(screenName: "Activities", showUser: true).padding(.vertical, 0)
                     ///A view refresh (and chart load) **must** be triggered by either a change in name or grade
                     if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
                         if let practiceChart = self.loadChart(user: user) {
-                            ActivityModeView(user: user, practiceChart: practiceChart)
+                            ActivityEntriesView(user: user, practiceChart: practiceChart)
                         }
                     }
                     else {
-                        Spacer()
-//                        if userName.count > 0 {
-//                            Text("No music grade has been selected for \(userName).").font(.title2).padding()
-//                            Text("Please select your music grade.").font(.title2).padding()
-//                        }
-//                        else {
+                        VStack {
+                            Spacer()
+
                             Text("No name or grade has been setup.").font(.title2).padding()
                             Text("Please setup your name and grade.").font(.title2).padding()
-//                        }
+                            //                        }
+                        }
+                        .screenBackgroundStyle()
                     }
-                    Spacer()
                 }
             }
         }

@@ -25,6 +25,9 @@
     " =" : {
 
     },
+    " ●" : {
+
+    },
     " C" : {
 
     },
@@ -72,26 +75,10 @@
     "%@, " : {
 
     },
-    "%@, %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@"
-          }
-        }
-      }
-    },
     "%lld" : {
 
     },
     "© 2025 Musicmaster Education LLC." : {
-
-    },
-    "=%lld" : {
-
-    },
-    "=%lld, " : {
 
     },
     "⊙" : {
@@ -137,6 +124,9 @@
       "comment" : "Menu"
     },
     "Add New User" : {
+
+    },
+    "Add User" : {
 
     },
     "Adjust:" : {
@@ -200,12 +190,6 @@
 
     },
     "Cancel" : {
-
-    },
-    "Choose your background colour " : {
-
-    },
-    "Choose your background colour %lld" : {
 
     },
     "Choose your keyboard colour" : {
@@ -511,9 +495,6 @@
     "Motion:" : {
 
     },
-    "Name and Grade" : {
-
-    },
     "New Amplitude Filter:%@" : {
 
     },
@@ -560,9 +541,6 @@
 
     },
     "Please setup your name and grade." : {
-
-    },
-    "Practice Chart" : {
 
     },
     "Purchase" : {
@@ -667,9 +645,6 @@
     "Scales Academy" : {
 
     },
-    "Scales Academy Users" : {
-
-    },
     "Scales Library" : {
 
     },
@@ -720,13 +695,13 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
     "Sorry, no subscription is available yet" : {
-
-    },
-    "Spin The Scale Wheel" : {
 
     },
     "Start Analysis" : {

@@ -84,7 +84,6 @@ struct LegendView: View {
             return ""
         }
         var title = hand == 0 ? NSLocalizedString("Right Hand", comment: "Menu") : NSLocalizedString("Left Hand", comment: "Menu")
-        //title += " " + NSLocalizedString("Fingers", comment: "Menu")
         if scalesModel.runningProcess == .leadingTheScale  {
             title = "Practice"
         }
@@ -104,15 +103,17 @@ struct LegendView: View {
             if scalesModel.resultPublished == nil {
                 if scalesModel.showKeyboard {
                     if scalesModel.showFingers {
-                        Spacer()
-                        Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                        Text(NSLocalizedString("Finger Number", comment: "LegendView"))
-                        
-                        Spacer()
-                        //Text("1").foregroundColor(.orange).font(.title2).bold()
-                        Text("●").foregroundColor(.orange).font(.title2).bold()
-                        Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion))
-                        Spacer()
+                        HStack(spacing: 0) {
+                            //Spacer()
+                            Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
+                            Text(NSLocalizedString("Finger Number", comment: "LegendView"))
+                            
+                            //Spacer()
+                            //Text("1").foregroundColor(.orange).font(.title2).bold()
+                            Text(" ●").foregroundColor(.orange).font(.title2).bold()
+                            Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion))
+                            //Spacer()
+                        }
                     }
                 }
             }

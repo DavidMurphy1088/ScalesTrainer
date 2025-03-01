@@ -315,6 +315,7 @@ class PracticeChart: Codable {
             for r in 0..<chart.rows.count {
                 let row:[PracticeChartCell] = chart.rows[r]
                 for chartCell in row {
+                    chartCell.chart = chart
                     chartCell.isLicensed = false
                     if LicenceManager.shared.isLicensed() {
                         chartCell.isLicensed = true
@@ -326,7 +327,7 @@ class PracticeChart: Codable {
                     }
                 }
             }
-            AppLogger.shared.log(self, "Loaded PracticeChart ⬅️ from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
+            AppLogger.shared.log(self, "Loaded PracticeChart from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
             chart.adjustForStartDay()
             return chart
         } catch {

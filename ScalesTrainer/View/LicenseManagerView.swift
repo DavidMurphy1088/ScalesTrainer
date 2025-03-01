@@ -658,10 +658,10 @@ public struct LicenseManagerView: View {
     
     public var body: some View {
         NavigationStack {
-            VStack {
-                ScreenTitleView(screenName: "Licence Subscriptions").commonFrameStyle()
+            VStack(spacing: 0) {
+                ScreenTitleView(screenName: "Licence Subscriptions", showUser: true).padding(.vertical, 0)
                 DetailedLicensesView()
-                    .commonFrameStyle()
+                    //.screenBackgroundStyle()
                     .padding()
             }
             .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth) //, height: UIScreen.main.bounds.height * 0.9)

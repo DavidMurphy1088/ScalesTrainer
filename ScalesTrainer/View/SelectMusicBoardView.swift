@@ -23,10 +23,10 @@ struct SelectBoardGradesView: View {
         VStack {
             if UIDevice.current.userInterfaceIdiom != .phone {
                 HStack {
-                    Image("trinity")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: UIFont.preferredFont(forTextStyle: .title2).lineHeight * 3.0)
+//                    Image("trinity")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(height: UIFont.preferredFont(forTextStyle: .title2).lineHeight * 3.0)
                     
                     Text("\(inBoard.name) Grades").font(.title).font(.title3)
                 }

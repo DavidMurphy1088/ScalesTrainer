@@ -26,6 +26,9 @@ public class Firebase  {
     }
 
     func signIn(username:String, pwd:String) {
+//        guard let defaultApp = FirebaseApp.app() else {
+//            return
+//        }
         Auth.auth().signIn(withEmail: username, password: pwd) { authResult, error in
            if let error = error {
                AppLogger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
