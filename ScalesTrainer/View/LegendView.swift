@@ -3,36 +3,37 @@ import SwiftUI
 struct HideAndShowView: View {
     @ObservedObject var logger = AppLogger.shared
     @ObservedObject var scalesModel = ScalesModel.shared
+    let compact:Bool
+    
     var body: some View {
         HStack {
-            //Spacer()
             Button(action: {
                 scalesModel.setShowKeyboard(!scalesModel.showKeyboard)
             }) {
                 Text(scalesModel.showKeyboard ? NSLocalizedString("Hide Keyboard", comment: "LegendView") : "Show Keyboard")
             }
             .buttonStyle(.bordered)
-            .padding()
-            
+            .padding(.horizontal)
+            .padding(.vertical, 0)
+
             if scalesModel.showKeyboard {
-                //Spacer()
                 Button(action: {
                     scalesModel.setShowFingers(!scalesModel.showFingers)
                 }) {
                     Text(scalesModel.showFingers ? NSLocalizedString("Hide Fingers", comment: "LegendView") : "Show Fingers")
                 }
-                .buttonStyle(.bordered)
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, 0)
             }
             
-            //Spacer()
             Button(action: {
                 scalesModel.setShowStaff(!scalesModel.showStaff)
             }) {
                 Text(scalesModel.showStaff ? NSLocalizedString("Hide Staff", comment: "LegendView") : "Show Staff")
             }
             .buttonStyle(.bordered)
-            .padding()
+            .padding(.horizontal)
+            .padding(.vertical, 0)
         }
     }
 }
@@ -98,7 +99,10 @@ struct LegendView: View {
     func legendForHandView(hand:Int) -> some View {
         HStack {
             if let title = title(hand: hand) {
-                Text("\(title)").padding(.horizontal).hilighted()
+                Text("\(title)").bold().foregroundColor(.white) // White text
+                    //.padding() //.padding(.horizontal).hilighted().padding(.top, 2)
+                    .background(Color.green)
+                    .cornerRadius(4)
             }
             if scalesModel.resultPublished == nil {
                 if scalesModel.showKeyboard {
@@ -117,44 +121,45 @@ struct LegendView: View {
                     }
                 }
             }
-            if false && scalesModel.runningProcess == .leadingTheScale {
-                Spacer()
-                Circle()
-                    .stroke(Color.green.opacity(1.0), lineWidth: 3)
-                    .frame(width: width())
-                Text("Correctly Played")
-                Spacer()
-                Circle()
-                    .stroke(Color.red.opacity(1.0), lineWidth: 3)
-                    .frame(width: width())
-                //Text("Played But Not in Scale")
-                Text("Not in Scale")
-                Spacer()
-            }
+//            if false && scalesModel.runningProcess == .leadingTheScale {
+//                Spacer()
+//                Circle()
+//                    .stroke(Color.green.opacity(1.0), lineWidth: 3)
+//                    .frame(width: width())
+//                Text("Correctly Played")
+//                Spacer()
+//                Circle()
+//                    .stroke(Color.red.opacity(1.0), lineWidth: 3)
+//                    .frame(width: width())
+//                //Text("Played But Not in Scale")
+//                Text("Not in Scale")
+//                Spacer()
+//            }
             
-            if let result = scalesModel.resultPublished  {
-                Spacer()
-                Circle()
-                    .fill(Color.green.opacity(0.4))
-                    .frame(width: width())
-                Text("Correctly Played")
-                if result.getTotalErrors() > 0 {
-                    Spacer()
-                    Circle()
-                        .fill(Color.red.opacity(0.4))
-                        .frame(width: width())
-                    Text("Not in Scale")
-                    Spacer()
-                    Circle()
-                        .fill(Color.yellow.opacity(0.4))
-                        .frame(width: width())
-                    //Text("In Scale But Not Played")
-                    Text("Missing")
-                }
-                Spacer()
-            }
+//            if let result = scalesModel.resultPublished  {
+//                Spacer()
+//                Circle()
+//                    .fill(Color.green.opacity(0.4))
+//                    .frame(width: width())
+//                Text("Correctly Played")
+//                if result.getTotalErrors() > 0 {
+//                    Spacer()
+//                    Circle()
+//                        .fill(Color.red.opacity(0.4))
+//                        .frame(width: width())
+//                    Text("Not in Scale")
+//                    Spacer()
+//                    Circle()
+//                        .fill(Color.yellow.opacity(0.4))
+//                        .frame(width: width())
+//                    //Text("In Scale But Not Played")
+//                    Text("Missing")
+//                }
+//                Spacer()
+//            }
             Spacer()
         }
+        
     }
     
     var body: some View {
@@ -164,5 +169,6 @@ struct LegendView: View {
                 legendForHandView(hand:hand)
             }
         }
+        
     }
 }

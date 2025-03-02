@@ -632,11 +632,21 @@ public class Scale : Codable {
     }
 
     
-    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
+//    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
+//        let states = self.scaleNoteState[handType == .right ? 0 : 1]
+//        return states[index]
+//    }
+    func getScaleNoteState(handType: HandType, index: Int) -> ScaleNoteState {
         let states = self.scaleNoteState[handType == .right ? 0 : 1]
+        
+        // Ensure index is within the valid range
+//        guard index >= 0, index < states.count else {
+//            print("Error: Index \(index) is out of range. Valid range: 0 to \(states.count - 1)")
+//            return .unknown // Return a default ScaleNoteState instead of crashing
+//        }
+
         return states[index]
     }
-    
     func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
         return self.scaleNoteState[handType == .right ? 0 : 1]
     }

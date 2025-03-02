@@ -441,12 +441,12 @@ struct PracticeChartView: View {
                                         if column < practiceChart.rows[row].count {
                                             CellView(column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
                                                      cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
-                                            .outlinedStyleView()
+                                            .outlinedStyleView(opacity: 0.3)
                                             .padding(cellPadding)
                                         }
                                         else {
                                             BlankCellView(cellWidth: cellWidth, cellHeight: cellHeight)
-                                                .outlinedStyleView()
+                                                .outlinedStyleView(opacity: 0.3)
                                                 .padding(cellPadding)
                                         }
                                     }

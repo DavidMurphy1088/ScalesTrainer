@@ -53,6 +53,7 @@ struct HexagramShape: View {
 struct BadgesView: View {
     @ObservedObject var badgeBank:BadgeBank
     let scale:Scale
+    let onClose: () -> Void
     @State private var badgeIconSize: CGFloat = 0
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
@@ -60,9 +61,10 @@ struct BadgesView: View {
     @State var imageIds:[Int] = []
     @State var handType = KeyboardType.right
     
-    init(scale:Scale) {
+    init(scale:Scale, onClose: @escaping () -> Void) {
         self.badgeBank = BadgeBank.shared
         self.scale = scale
+        self.onClose = onClose
     }
     
     func imageName(imageSet:Int, n:Int) -> String {
@@ -112,87 +114,100 @@ struct BadgesView: View {
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                Text("Note Badges").font(.title3)
-//                Button(action: {
-//                    badgeBank.setShow(false)
-//                }) {
-//                    Image(systemName: "xmark")
-//                        .foregroundColor(.blue)
-//                }
-            }
-            HStack(spacing: getDotSpace()) {
-                let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
-                let imWidth = CGFloat(40)
-                
-                ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
-                    if scaleNoteNumber == badgeBank.totalCorrect - 1  {
-                        ZStack {
-                            Text("⊙").foregroundColor(.blue)
-                            if badgeBank.totalCorrect > 0 {
-                                if let user = Settings.shared.getCurrentUser() {
-                                    if user.settings.badgeStyle == 0 {
-                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c)
-                                            .rotationEffect(Angle.degrees(rotationAngle))
-                                            .offset(y: verticalOffset)
-                                            .onAppear {
-                                                withAnimation(Animation.easeOut(duration: 1.0)) {
-                                                    rotationAngle = 360
-                                                    verticalOffset = 0
-                                                }
-                                            }
-                                    }
-                                }
-                                else {
+        ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
+            VStack {
+                HStack {
+                    Text("Note Badges").font(.title3)
+                }
+                HStack(spacing: getDotSpace()) {
+                    let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
+                    let imWidth = CGFloat(40)
+                    let animationDuration = 0.5
+                    
+                    ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
+                        if scaleNoteNumber == badgeBank.totalCorrect - 1  {
+                            ZStack {
+                                Text("⊙").foregroundColor(.blue)
+                                if badgeBank.totalCorrect > 0 {
                                     if let user = Settings.shared.getCurrentUser() {
-                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-                                            .resizable()
-                                            .frame(width: imWidth)
-                                            .rotationEffect(Angle.degrees(rotationAngle))
-                                            .offset(y: verticalOffset)
-                                            .onAppear {
-                                                withAnimation(Animation.easeOut(duration: 1.0)) {
-                                                    rotationAngle = 360
-                                                    verticalOffset = 0
+                                        if user.settings.badgeStyle == 0 {
+                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c)
+                                                .rotationEffect(Angle.degrees(rotationAngle))
+                                                .offset(y: verticalOffset)
+                                                .onAppear {
+                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
+                                                        rotationAngle = 360
+                                                        verticalOffset = 0
+                                                    }
                                                 }
-                                            }
-                                    }
-                                }
-                            }
-                        }
-                        .frame(width:badgeIconSize, height: badgeIconSize)
-                    }
-                    else {
-                        ZStack {
-                            Text("⊙").foregroundColor(.blue)
-                            if scaleNoteNumber < badgeBank.totalCorrect {
-                                if let user = Settings.shared.getCurrentUser() {
-                                    if user.settings.badgeStyle == 0 {
-                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
+                                        }
                                     }
                                     else {
-                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-                                            .resizable()
-                                            .frame(width: imWidth)
+                                        if let user = Settings.shared.getCurrentUser() {
+                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+                                                .resizable()
+                                                .frame(width: imWidth)
+                                                .rotationEffect(Angle.degrees(rotationAngle))
+                                                .offset(y: verticalOffset)
+                                                .onAppear {
+                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
+                                                        rotationAngle = 360
+                                                        verticalOffset = 0
+                                                    }
+                                                }
+                                        }
                                     }
                                 }
                             }
+                            .frame(width: badgeIconSize, height: badgeIconSize)
                         }
-                        .frame(width:badgeIconSize, height: badgeIconSize)//.opacity(n < BadgeBank.shared.totalCorrect  ? 1 : 0)
+                        else {
+                            ZStack {
+                                Text("⊙").foregroundColor(.blue)
+                                if scaleNoteNumber < badgeBank.totalCorrect {
+                                    if let user = Settings.shared.getCurrentUser() {
+                                        if user.settings.badgeStyle == 0 {
+                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
+                                        }
+                                        else {
+                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+                                                .resizable()
+                                                .frame(width: imWidth)
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(width: badgeIconSize, height: badgeIconSize)
+                        }
                     }
                 }
+                .padding()
+                Text("")
+                .onChange(of: badgeBank.totalCorrect, {
+                    verticalOffset = -50
+                    rotationAngle = 0
+                })
             }
-            .padding()
-            Text("")
-            .onChange(of: badgeBank.totalCorrect, {
-                verticalOffset = -50
-                rotationAngle = 0
-            })
+            
+            // ✅ Button in Top-Right Corner
+            Button(action: {
+                onClose()
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.gray)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 5)
+            }
+            .padding() // Space from edges
         }
+
         .onAppear() {
             self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
-            self.badgeIconSize = UIScreen.main.bounds.size.width / (Double(scale.getScaleNoteCount()) * 1.7)
+            let divider = max(scale.getScaleNoteCount(), 16)
+            self.badgeIconSize = UIScreen.main.bounds.size.width / (Double(divider) * 1.7)
             ///Ensure not more than 2 concurrent same values
             for _ in 0..<scale.getScaleNoteStates(handType: handType).count {
                 var newValue: Int

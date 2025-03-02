@@ -121,14 +121,17 @@ struct screenBackgroundStyleView: ViewModifier {
 }
 
 struct OutlinedStyleView: ViewModifier {
+    let opacity:Double
     func body(content: Content) -> some View {
-        content
-            .background(Color.white)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12).stroke(Color.gray, lineWidth: 2)
-            )
-    }
+            content
+                .background(Color.white)
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray, lineWidth: 2)
+                )
+                .shadow(color: Color.black.opacity(opacity), radius: 8, x: 0, y: 4)
+        }
 }
 
 struct FancyTextStyle: ViewModifier {
@@ -157,8 +160,8 @@ extension View {
     }
     
     ///A gray border around the view
-    func outlinedStyleView() -> some View {
-        modifier(OutlinedStyleView())
+    func outlinedStyleView(opacity:Double = 0.2) -> some View {
+        modifier(OutlinedStyleView(opacity: opacity))
     }
     
     func fancyTextStyle() -> some View {

@@ -240,7 +240,7 @@ class Settings : Encodable, Decodable {
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
                 let currentUser = self.getCurrentUser()
-                AppLogger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
+                AppLogger.shared.log(self, "settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
             } catch {
                 AppLogger.shared.reportError(self, "load:" + error.localizedDescription)
             }

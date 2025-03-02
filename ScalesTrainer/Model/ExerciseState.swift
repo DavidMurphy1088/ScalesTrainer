@@ -11,22 +11,23 @@ class ExerciseState : ObservableObject {
     }
     
     enum State {
-        case exerciseNotStarted
-        case exerciseStarted
-        case lost
-        case won
-        case wonAndFinished
+        case exerciseNotStarted1
+        case exerciseStarting
+        case exerciseRunning
+        case exerciseLost
+        case exerciseWon
     }
     
     func pointsNeededToWin() -> Int {
         return numberToWin - totalCorrect
     }
     
-    @Published private(set) var statePublished:State = .exerciseNotStarted
-    private var state:State = .exerciseNotStarted
+    @Published private(set) var statePublished:State = .exerciseNotStarted1
+    private(set) var state:State = .exerciseNotStarted1
     func setExerciseState(ctx:String, _ value:ExerciseState.State) {
         if value != self.state {
             self.state = value
+            print("================= Exercise setState ✅", value)
             DispatchQueue.main.async {
                 self.statePublished = value
             }
@@ -39,19 +40,23 @@ class ExerciseState : ObservableObject {
     @Published private(set) var totalCorrectPublished: Int = 0
     var totalCorrect: Int = 0
     func bumpTotalCorrect() {
-        if totalCorrect < self.numberToWin {
+        if self.totalCorrect < self.numberToWin {
             self.totalCorrect += 1
             if self.totalCorrect == self.numberToWin {
-                if ![.won, .wonAndFinished].contains(self.state) {
+                if ![.exerciseWon].contains(self.state) {
                     if self.totalCorrect >= self.numberToWin {
-                        self.setExerciseState(ctx:"ExerciseState - SetTotalCorrect after points update \(self.totalCorrect),\(self.numberToWin)", .won)
+                        self.setExerciseState(ctx:"ExerciseState - SetTotalCorrect after points update \(self.totalCorrect),\(self.numberToWin)", .exerciseWon)
                     }
                 }
             }
-
             DispatchQueue.main.async {
                 self.totalCorrectPublished = self.totalCorrect
             }
+//            if [ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                    exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", .exerciseNotStarted1)
+//                }
+//            }
         }
     }
     func resetTotalCorrect() {
@@ -60,7 +65,6 @@ class ExerciseState : ObservableObject {
             self.totalCorrectPublished = 0
         }
     }
-
     
     @Published private(set) var totalIncorrect: Int = 0
     func setTotalIncorrect(_ value:Int) {

@@ -39,14 +39,14 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     func start(soundHandler:SoundEventHandlerProtocol) {
         self.badgeBank.setTotalCorrect(0)
         scalesModel.scale.resetMatchedData()
-        exerciseState.setExerciseState(ctx: "ExerciseHandler", .exerciseStarted)
         exerciseState.resetTotalCorrect()
         nextExpectedNoteForHandIndex[.left] = 0
         nextExpectedNoteForHandIndex[.right] = 0
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
-        let numberToWin = (scalesModel.scale.getScaleNoteCount() * (Settings.shared.isDeveloperMode1() ? 1 : 4)) / 4
+        //let numberToWin = Settings.shared.isDeveloperMode1() ? 2 : scalesModel.scale.getScaleNoteCount()
+        let numberToWin = scalesModel.scale.getScaleNoteCount()
         exerciseState.setNumberToWin(numberToWin)
         if scale.scaleMotion == .contraryMotion {
             if scale.getScaleNoteState(handType: .left, index: 0).midi == scale.getScaleNoteState(handType: .right, index: 0).midi {
@@ -56,6 +56,10 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
         cancelled = false
         soundHandler.start()
+        exerciseState.setExerciseState(ctx: "ExerciseHandler", .exerciseStarting)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+            self.exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", .exerciseRunning)
+        }
     }
     
     func applySerialLock() -> Bool {
@@ -217,7 +221,9 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         if atEnd {
             scalesModel.clearFunctionToNotify()
             scalesModel.setRunningProcess(.none)
-            exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", exerciseState.getState() == .won ? .wonAndFinished : .lost)
+            if exerciseState.getState() == .exerciseRunning {
+                exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", .exerciseLost)
+            }
             if let practiceChart {
                 practiceChart.savePracticeChartToFile()
             }

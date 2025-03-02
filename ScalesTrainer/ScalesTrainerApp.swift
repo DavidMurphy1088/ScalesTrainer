@@ -40,15 +40,12 @@ struct OrientationManager {
     
     static var appDelegate: AppDelegate?
     
-    static func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
+    // Lock orientation and rotate
+    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
+        //self.lockOrientation(orientation)
         if let delegate = appDelegate {
             delegate.orientationLock = orientation
         }
-    }
-
-    // Lock orientation and rotate
-    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
-        self.lockOrientation(orientation)
         UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
         UINavigationController.attemptRotationToDeviceOrientation()
     }
@@ -321,7 +318,6 @@ class ViewManager: ObservableObject {
 
 struct MainContentView: View {
     @ObservedObject private var viewManager = ViewManager.shared
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     static let TAB_USERS = 10
     static let TAB_ACTIVITES = 20
     
@@ -358,8 +354,8 @@ struct MainContentView: View {
         ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0,1],
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMajor,
+                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
@@ -479,7 +475,7 @@ struct MainContentView: View {
 //            for: .tabBar
 //        )
         .onAppear {
-            OrientationManager.appDelegate = appDelegate
+            //OrientationManager.appDelegate = appDelegate
             if Settings.shared.isDeveloperMode1() {
                 self.setupDev()
                 ViewManager.shared.setTab(tab: 1)
@@ -505,7 +501,7 @@ struct ScalesTrainerApp: App {
             AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
-
+        OrientationManager.appDelegate = appDelegate
     }
     
     var body: some Scene {

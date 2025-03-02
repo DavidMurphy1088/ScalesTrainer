@@ -1,43 +1,6 @@
 import Foundation
 import SwiftUI
         
-//struct ScaleTitleView: View {
-//    let scale:Scale
-//    let isLandscape = false
-//    let practiceModeHand:HandType?
-//    
-//    var body: some View {
-//        if isLandscape {
-//            HStack {
-//                ScaleTitleView1(scale: scale, practiceModeHand: practiceModeHand)
-//                //.commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
-//                Spacer()
-//                //SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-//                if UIDevice.current.userInterfaceIdiom != .phone {
-//                    HideAndShowView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-//                }
-//                Spacer()
-//            }
-//            //.commonFrameStyle(backgroundColor: Color.white)
-//        }
-//        else {
-//            HStack {
-//                ScaleTitleView1(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-//                //.commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading).padding(.horizontal, 0)
-//            }
-//            HStack {
-//                Spacer()
-//                SelectScaleParametersView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-//                if UIDevice.current.userInterfaceIdiom != .phone {
-//                    HideAndShowView().padding(.vertical, 0) ///Keep it trim, esp. in Landscape to save vertical space
-//                }
-//                Spacer()
-//            }
-//            //.commonFrameStyle(backgroundColor: Color.white)
-//        }
-//    }
-//}
-
 struct ScaleTitleView: View {
     @EnvironmentObject var orientationInfo: OrientationInfo
     let scale:Scale
