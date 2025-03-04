@@ -143,7 +143,7 @@ class PracticeChart: Codable {
         }
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         for r in 0..<self.rows.count {
             let row = self.self.rows[r]
             for c in 0..<row.count {
@@ -151,6 +151,19 @@ class PracticeChart: Codable {
                 print(r, c, "cell \(cell.scale.getScaleIdentificationKey())")
             }
         }
+    }
+    
+    func getCellForScale(scale:Scale) -> PracticeChartCell? {
+        for r in 0..<self.rows.count {
+            let row = self.self.rows[r]
+            for c in 0..<row.count {
+                let cell = self.rows[r][c]
+                if cell.scale.isSameScale(scale: scale) {
+                    return cell
+                }
+            }
+        }
+        return nil
     }
     
     func getCellIDByScale(scale:Scale) -> PracticeChartCell? {

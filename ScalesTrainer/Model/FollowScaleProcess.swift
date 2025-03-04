@@ -56,9 +56,9 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
         cancelled = false
         soundHandler.start()
-        exerciseState.setExerciseState(ctx: "ExerciseHandler", .exerciseStarting)
+        exerciseState.setExerciseState(.exerciseStarting)
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-            self.exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", .exerciseRunning)
+            self.exerciseState.setExerciseState(.exerciseRunning)
         }
     }
     
@@ -91,10 +91,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     ///The specific exercise sets the callback on the key to have its code executed once the key is set playing.
     ///
     public func processSound(midi:Int, callNumber:Int) {
-            //if self.soundNotificationProcessingStarted {
-                //Logger.shared.reportError(self, "🙄🙄🙄🙄🙄🙄🙄🙄 LAST NOTE PROCESSING DID NOT FINISH call:\(callNumber) midi:\(midi)")
-            //}
-            //self.soundNotificationProcessingStarted = true
+
             ///Does the received midi match with the expected note in any hand?
             var handMatchingExpectedScaleNote:HandType?
             var handsToSearch:[HandType] = []
@@ -222,7 +219,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             scalesModel.clearFunctionToNotify()
             scalesModel.setRunningProcess(.none)
             if exerciseState.getState() == .exerciseRunning {
-                exerciseState.setExerciseState(ctx: "ExerciseHandler - ExerciseEnded", .exerciseLost)
+                exerciseState.setExerciseState(.exerciseLost)
             }
             if let practiceChart {
                 practiceChart.savePracticeChartToFile()

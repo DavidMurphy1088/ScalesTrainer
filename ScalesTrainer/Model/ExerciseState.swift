@@ -24,10 +24,9 @@ class ExerciseState : ObservableObject {
     
     @Published private(set) var statePublished:State = .exerciseNotStarted1
     private(set) var state:State = .exerciseNotStarted1
-    func setExerciseState(ctx:String, _ value:ExerciseState.State) {
+    func setExerciseState(_ value:ExerciseState.State) {
         if value != self.state {
             self.state = value
-            print("================= Exercise setState ✅", value)
             DispatchQueue.main.async {
                 self.statePublished = value
             }
@@ -45,7 +44,7 @@ class ExerciseState : ObservableObject {
             if self.totalCorrect == self.numberToWin {
                 if ![.exerciseWon].contains(self.state) {
                     if self.totalCorrect >= self.numberToWin {
-                        self.setExerciseState(ctx:"ExerciseState - SetTotalCorrect after points update \(self.totalCorrect),\(self.numberToWin)", .exerciseWon)
+                        self.setExerciseState(.exerciseWon)
                     }
                 }
             }
@@ -79,7 +78,27 @@ class ExerciseState : ObservableObject {
             self.matches.append(value)
         }
     }
-
+    
+    func getExerciseStatusMessage(badge:Badge) -> String {
+        let remaining = self.pointsNeededToWin()
+        var msg = ""
+        let name = badge.name
+        
+        switch self.statePublished {
+        case .exerciseNotStarted1:
+            msg = ""
+        case .exerciseStarting:
+            msg = "Win \(name) ✋"
+        case .exerciseRunning:
+            msg = ""
+        case .exerciseWon:
+            msg = "😊 Nice Job, You Won \(name) 😊"
+        case .exerciseLost:
+            msg = ""
+        }
+        return (msg)
+    }
+    
     func removeMatch() {
         DispatchQueue.main.async {
             if !self.matches.isEmpty {

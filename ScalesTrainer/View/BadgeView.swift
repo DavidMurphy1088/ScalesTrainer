@@ -122,7 +122,7 @@ struct BadgesView: View {
                 HStack(spacing: getDotSpace()) {
                     let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                     let imWidth = CGFloat(40)
-                    let animationDuration = 0.5
+                    let animationDuration = 0.1
                     
                     ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
                         if scaleNoteNumber == badgeBank.totalCorrect - 1  {
@@ -220,3 +220,50 @@ struct BadgesView: View {
         }
     }
 }
+
+struct SlideUpPanel : View {
+    let user:User
+    let exerciseState:ExerciseState
+    let msg:String
+    let imageName:String
+    @State var badgeImageRotationAngle:Double = 0
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text(msg)
+                    .padding()
+                    .foregroundColor(.blue)
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title2)
+                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
+                    .zIndex(1) // Keeps it above other views
+                
+                ///Practice chart badge position is based on exercise state
+                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: UIScreen.main.bounds.height * 0.04)
+                //                    .offset(x: getBadgeOffset(state: exerciseState.statePublished).0,
+                //                            y: getBadgeOffset(state: exerciseState.statePublished).1)
+                    .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
+                    .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
+                    .padding()
+                    .onChange(of: exerciseState.statePublished) { _ in
+                        withAnimation(.easeInOut(duration: 1)) {
+                            if exerciseState.statePublished == .exerciseWon {
+                                badgeImageRotationAngle += 360
+                            }
+                        }
+                    }
+            }
+            .frame(maxWidth: UIScreen.main.bounds.size.width * 0.8)
+            .frame(height: UIScreen.main.bounds.size.height * 0.07)
+            .background(user.settings.getKeyboardColor()) //opacity(0.9)
+            .cornerRadius(20)
+            .shadow(radius: 10)
+            Text("")
+        }
+    }
+}
+

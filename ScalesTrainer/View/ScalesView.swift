@@ -37,52 +37,6 @@ struct MetronomeView: View {
     }
 }
 
-struct SlideUpPanel : View {
-    let user:User
-    let exerciseState:ExerciseState
-    let msg:String
-    let imageName:String
-    @State var badgeImageRotationAngle:Double = 0
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(msg)
-                    .padding()
-                    .foregroundColor(.blue)
-                    .font(.title2)
-                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
-                    .zIndex(1) // Keeps it above other views
-
-                ///Practice chart badge position is based on exercise state
-                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIScreen.main.bounds.height * 0.04)
-//                    .offset(x: getBadgeOffset(state: exerciseState.statePublished).0,
-//                            y: getBadgeOffset(state: exerciseState.statePublished).1)
-                .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
-                    .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
-                    .padding()
-                    .onChange(of: exerciseState.statePublished) { _ in
-                        withAnimation(.easeInOut(duration: 1)) {
-                            if exerciseState.statePublished == .exerciseWon {
-                                badgeImageRotationAngle += 360
-                            }
-                        }
-                    }
-                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
-            }
-        }
-        .frame(maxWidth: UIScreen.main.bounds.size.width * 0.6)
-        .frame(height: UIScreen.main.bounds.size.height * 0.07)
-        .background(user.settings.getKeyboardColor()) //opacity(0.9)
-        .cornerRadius(20)
-        .shadow(radius: 10)
-    }
-}
-
 struct ScalesView: View {
     let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
@@ -117,8 +71,8 @@ struct ScalesView: View {
     @State private var spacingVertical:CGFloat = 0
     @State private var spacingHorizontal:CGFloat = 12
     ///The slide up panel for badge info
-    @State private var showPanel = false
-    @State private var showPanelOffset: CGFloat = UIScreen.main.bounds.height 
+    @State private var showBadgeMessagePanel = false
+    @State private var showBadgeMessagePanelOffset: CGFloat = UIScreen.main.bounds.height 
     
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
@@ -219,7 +173,7 @@ struct ScalesView: View {
                                     //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
                                 }
                                 else {
-                                    exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() LOST", .exerciseLost)
+                                    exerciseState.setExerciseState(.exerciseLost)
                                 }
                             }
                         }
@@ -521,27 +475,6 @@ struct ScalesView: View {
         return mailInfo
     }
     
-    func getExerciseStatusMessage(badge:Badge) -> String {
-        let remaining = exerciseState.pointsNeededToWin()
-        var msg = ""
-        let name = badge.name
-        
-        switch exerciseState.statePublished {
-        case .exerciseNotStarted1:
-            msg = ""
-        case .exerciseStarting:
-            msg = "Win \(name) ✋"
-        case .exerciseRunning:
-            msg = ""
-        case .exerciseWon:
-            msg = "😊 You Won \(name) 😊"
-        case .exerciseLost:
-            msg = ""
-        }
-        print("==================== ⬅️ getExerciseStatusMessage", exerciseState.statePublished, msg)
-        return (msg)
-    }
-    
     func staffCanFit() -> Bool {
         var canFit = true
         ///01Feb2025 - decided chromatic cant display well on any device or orientation
@@ -654,16 +587,15 @@ struct ScalesView: View {
                             .outlinedStyleView(opacity: 0.3)
                             .padding(.top, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
-//                            .cornerRadius(spacingHorizontal)
-//                            .padding(.vertical, spacingVertical)
-//                            .padding(.horizontal, spacingHorizontal)
+
                             
                         }
                         if UIDevice.current.userInterfaceIdiom != .phone {
                             if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
                                 if scalesModel.showLegend {
                                     LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                                        .padding(.top, 2)
+                                        .padding(.top, 0)
+                                        .padding(.horizontal)
                                     //.border(Color.red, width: 1)
                                 }
                             }
@@ -701,7 +633,7 @@ struct ScalesView: View {
                                 ///Show the horizontal row of badges
                                 if [ExerciseState.State.exerciseStarting, ExerciseState.State.exerciseRunning, ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
                                     BadgesView(scale: scalesModel.scale, onClose: {
-                                        exerciseState.setExerciseState(ctx: "", .exerciseNotStarted1)
+                                        exerciseState.setExerciseState(.exerciseNotStarted1)
                                     })
                                         .outlinedStyleView()
                                         .padding(.vertical, spacingVertical)
@@ -726,23 +658,24 @@ struct ScalesView: View {
                 //.border(Color.pink, width:2)
             }
             
-            if showPanel {
+            if showBadgeMessagePanel {
                 if let user = Settings.shared.getCurrentUser() {
                     if user.settings.practiceChartGamificationOn {
                         if let badge = scalesModel.exerciseBadge {
-                            SlideUpPanel(user: user, exerciseState: exerciseState, msg:self.getExerciseStatusMessage(badge: badge), imageName: badge.imageName)
-                                .offset(y: showPanelOffset)
-                                //.offset(x: showPanelOffset)
+                            SlideUpPanel(user: user, exerciseState: exerciseState,
+                                         msg:exerciseState.getExerciseStatusMessage(badge: badge),
+                                         imageName: badge.imageName)
+                                .offset(y: showBadgeMessagePanelOffset)
                                 .onAppear {
-                                    if showPanel {
+                                    if showBadgeMessagePanel {
                                         withAnimation(.easeInOut(duration: 1.0)) {
-                                            showPanelOffset = 0 // Slide in slowly
+                                            showBadgeMessagePanelOffset = 0 // Slide in slowly
                                         }
                                     }
                                 }
-                                .onChange(of: showPanel) { newValue in
+                                .onChange(of: showBadgeMessagePanel) { newValue in
                                     withAnimation(.easeInOut(duration: 1.0)) {
-                                        showPanelOffset = newValue ? 0 : UIScreen.main.bounds.height // Slide up/down slowly
+                                        showBadgeMessagePanelOffset = newValue ? 0 : UIScreen.main.bounds.height // Slide up/down slowly
                                         //showPanelOffset = newValue ? 0 : UIScreen.main.bounds.width
                                     }
                                 }
@@ -754,11 +687,6 @@ struct ScalesView: View {
                 }
             }
         }
-        //.inspection.inspect(inspection)
-        ///Dont make height > 0.90 otherwise it screws up widthways centering. No idea why 😡
-        ///If setting either width or height always also set the other otherwise landscape vs. portrai layout is wrecked.
-        //.frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.86)
-        //.commonFrameStyle()
     
         .sheet(isPresented: $helpShowing) {
             if let topic = scalesModel.helpTopic {
@@ -771,11 +699,11 @@ struct ScalesView: View {
         .onChange(of: exerciseState.statePublished, {
             ///Slide in the badge message
             if [ExerciseState.State.exerciseStarting, ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
-                self.showPanel = true
-                self.showPanelOffset = UIScreen.main.bounds.height
+                self.showBadgeMessagePanel = true
+                self.showBadgeMessagePanelOffset = UIScreen.main.bounds.height
             }
             else {
-                self.showPanel = false
+                self.showBadgeMessagePanel = false
             }
         })
 
@@ -820,7 +748,7 @@ struct ScalesView: View {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)
-            exerciseState.setExerciseState(ctx: "ScalesView, onAppear", .exerciseNotStarted1)
+            exerciseState.setExerciseState(.exerciseNotStarted1)
             scalesModel.setRecordedAudioFile(nil)
 
             if UIDevice.current.userInterfaceIdiom == .phone {

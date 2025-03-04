@@ -91,10 +91,10 @@ struct SegmentedCircleView: View {
 }
 
 struct SpinWheelView: View {
-    //@EnvironmentObject var tabSelectionManager: TabSelectionManager
     @EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel = ScalesModel.shared
     @State var practiceChart:PracticeChart // = boardAndGrade.practiceChart
+    @ObservedObject private var exerciseState = ExerciseState.shared
     
     @State private var rotation: Double = 0
     @State private var totalDuration: Double = 3 // Duration in seconds
@@ -106,7 +106,7 @@ struct SpinWheelView: View {
     @State private var selectedScaleRoot = 0
     @State private var selectedHand = 0
     @State var spinState:SpinState = .notStarted
-    
+
     func getRootNames() -> [String] {
         var scaleRoots:Set<String> = []
         for scale in practiceChart.getScales() {
@@ -256,8 +256,8 @@ struct SpinWheelView: View {
                 
                 if self.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
-                    //let chartCell = PracticeChart.shared.getCellIDByScale(scale: scale)
-                    NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
+                    let practiceChartCell:PracticeChartCell? = practiceChart.getCellForScale(scale:scale)
+                    NavigationLink(destination: ScalesView(practiceChart: practiceChart, practiceChartCell: practiceChartCell, practiceModeHand: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()
                             .font(.title2)
@@ -271,7 +271,9 @@ struct SpinWheelView: View {
         .onAppear() {
             self.spinState = .notStarted
             self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
+
         }
+
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }

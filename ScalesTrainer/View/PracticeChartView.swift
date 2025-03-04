@@ -169,7 +169,12 @@ struct CellView: View {
     func badgeView() -> some View {
         HStack {
             if practiceCell.badges.count > 0 {
-                Text(" \(practiceCell.badges.count)").font(.custom("MarkerFelt-Wide", size: 24)).foregroundColor(.purple).bold() //.font(.title2)
+                Text(" \(practiceCell.badges.count)").font(.custom("MarkerFelt-Wide", size: 24)).foregroundColor(.purple).bold()
+//                    .padding(4) // Adds spacing so the text isn't touching the circle
+//                        .background(
+//                            Circle()
+//                                .stroke(Color.purple, lineWidth: 2) 
+//                        )
             }
             ForEach(0..<practiceCell.badges.count, id: \.self) {index in
                 if index < self.getMinBadgeIndex() {
@@ -408,11 +413,12 @@ struct PracticeChartView: View {
                             }) {
                                 Text("Shuffle")
                             }
-                            .buttonStyle(.bordered)
+                            //.buttonStyle(.bordered)
                             //.padding()
                             
                             Spacer()
                         }
+                        .outlinedStyleView(opacity: 0.3)
                     }
                     
                     VStack(spacing: 0) {

@@ -99,10 +99,11 @@ struct LegendView: View {
     func legendForHandView(hand:Int) -> some View {
         HStack {
             if let title = title(hand: hand) {
-                Text("\(title)").bold().foregroundColor(.white) // White text
+                Text(" \(title) ").bold().foregroundColor(.white) // White text
                     //.padding() //.padding(.horizontal).hilighted().padding(.top, 2)
+                    .padding(.horizontal)
                     .background(Color.green)
-                    .cornerRadius(4)
+                    .cornerRadius(6)
             }
             if scalesModel.resultPublished == nil {
                 if scalesModel.showKeyboard {

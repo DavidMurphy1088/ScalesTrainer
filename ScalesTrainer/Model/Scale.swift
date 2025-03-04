@@ -267,7 +267,7 @@ public class Scale : Codable {
         self.scaleType = scaleType
         self.scaleMotion = scaleMotion
         self.debugOn = debugOn
-
+        
         scaleNoteState = []
         self.hands = hands
         self.scaleCustomisation = scaleCustomisation
@@ -292,7 +292,7 @@ public class Scale : Codable {
         ///Lowest start note is A three ledger lines below the stave, making highest note G three ledger lines above the stave.
         
         ///The start of the scale for one octave -
-
+        
         var firstMidi = 0
         if let scaleCustomisation = self.scaleCustomisation {
             if let startMidiRH = scaleCustomisation.startMidiRH {
@@ -365,12 +365,12 @@ public class Scale : Codable {
         if [.trinityBrokenTriad].contains(self.scaleType) {
             notesPerSegment = 3
         }
-
+        
         ///Set midi values in scale
-
+        
         let scaleOffsets:[Int] = getScaleOffsets(scaleType: scaleType)
         let scaleNoteValue = [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? StaffNote.VALUE_TRIPLET : StaffNote.VALUE_QUAVER
-
+        
         func getSegment(hand:Int) -> Int {
             let totalValue = getTotalNoteValueInScale(handIndex: hand)
             var seg = (totalValue / scaleNoteValue) / Double(self.notesPerSegment)
@@ -393,13 +393,13 @@ public class Scale : Codable {
             if let scaleCustomisation = self.scaleCustomisation {
                 if hand == 0 {
                     if let startMidiRH = scaleCustomisation.startMidiRH {
-                         return startMidiRH
+                        return startMidiRH
                     }
                 }
-
+                
                 if hand == 1 {
                     if let startMidiLH = scaleCustomisation.startMidiLH {
-                         return startMidiLH
+                        return startMidiLH
                     }
                 }
             }
@@ -478,7 +478,7 @@ public class Scale : Codable {
                 }
             }
         }
-
+        
         ///Set MIDIS for downwards direction - Mirror notes with midis for the downwards direction
         let up = Array(scaleNoteState)
         var ctr = 0
@@ -556,7 +556,7 @@ public class Scale : Codable {
         }
         
         ///Set last note value
-
+        
         for handIndex in [0,1] {
             var barValue = 0.0
             var lastNote:ScaleNoteState?
@@ -600,6 +600,16 @@ public class Scale : Codable {
         Scale.createCount += 1
     }
     
+    func isSameScale(scale:Scale) -> Bool {
+        for hand in 0..<scaleNoteState.count {
+            let match = self.scaleNoteState[hand].elementsEqual(scale.scaleNoteState[hand]) { $0.midi == $1.midi && $0.value == $1.value }
+            if !match {
+                return false
+            }
+        }
+        return self.hands == scale.hands
+    }
+
     func getDynamicsDescription(long:Bool) -> String {
         var desc = ""
         var d = 0
@@ -783,7 +793,6 @@ public class Scale : Codable {
         case .trinityBrokenTriad:
             scaleOffsets = [4,3,-3,-4, 0]
         }
-
         return scaleOffsets
     }
     

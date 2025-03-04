@@ -139,19 +139,6 @@ struct ActivitiesView: View {
     @State var userName:String = ""
     @State var userGrade:Int?
 
-    func loadChart(user:User) -> PracticeChart? {
-        var practiceChart:PracticeChart? = nil
-        if let grade = user.grade {
-            if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: user, board: user.board, grade: grade) {
-                practiceChart = loadedChart
-            }
-            else {
-                practiceChart = PracticeChart(user: user, board: user.board, grade: grade)
-            }
-        }
-        return practiceChart
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
             NavigationView {
@@ -159,7 +146,8 @@ struct ActivitiesView: View {
                     ScreenTitleView(screenName: "Activities", showUser: true).padding(.vertical, 0)
                     ///A view refresh (and chart load) **must** be triggered by either a change in name or grade
                     if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
-                        if let practiceChart = self.loadChart(user: user) {
+                        //if let practiceChart = PracticeChart.loadChartForUser(user: user) {
+                        if let practiceChart = user.getPracticeChart() {
                             ActivityEntriesView(user: user, practiceChart: practiceChart)
                         }
                     }

@@ -160,7 +160,7 @@ extension View {
     }
     
     ///A gray border around the view
-    func outlinedStyleView(opacity:Double = 0.2) -> some View {
+    func outlinedStyleView(opacity:Double = 0.3) -> some View {
         modifier(OutlinedStyleView(opacity: opacity))
     }
     

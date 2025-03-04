@@ -10,10 +10,11 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     var board:String
     var name:String
     var email:String
-    var grade:Int?
     var settings:UserSettings
-    var practiceChartFileName:String
     var isCurrentUser:Bool
+    
+    var grade:Int?
+    //private var practiceChart:PracticeChart?
     
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
@@ -25,7 +26,8 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     ///User settings irrespective of the grade the student is in.
     class UserSettings : Encodable, Decodable {
         //var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
-        var keyboardColor:[Double] = [1.0, 0.949, 0.835, 1.0]
+        //var keyboardColor:[Double] = [1.0, 0.949, 0.835, 1.0]
+        var keyboardColor:[Double] = [1.0, 0.9647, 1.0, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
         var leadInCOunt:Int = 0
         var backingSamplerPreset:Int = 0
@@ -96,7 +98,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.grade = nil
         self.settings = UserSettings()
         self.isCurrentUser = false
-        practiceChartFileName = ""
     }
         
     func getTitle() -> String {
@@ -106,6 +107,18 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             title += String(grade)
         }
         return title
+    }
+    
+    func getPracticeChart() -> PracticeChart? {
+        if let grade = self.grade {
+            if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: self, board: self.board, grade: grade) {
+                return loadedChart
+            }
+            else {
+                return PracticeChart(user: self, board: self.board, grade: grade)
+            }
+        }
+        return nil
     }
 }
 
@@ -172,12 +185,10 @@ class Settings : Encodable, Decodable {
     }
 
     func setUserGrade(_ user:User, _ grade:Int) {
-        //if let user = self.getCurrentUser() {
-            user.grade = grade
-            if user.isCurrentUser {
-                ViewManager.shared.updateCurrentPublished(user: user)
-            }
-        //}
+        user.grade = grade
+        if user.isCurrentUser {
+            ViewManager.shared.updateCurrentPublished(user: user)
+        }
     }
     
     func setUserName(_ user:User, _ name:String) {

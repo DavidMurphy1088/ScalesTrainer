@@ -376,15 +376,15 @@ public class ScalesModel : ObservableObject {
             //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
             badgeBank.setTotalCorrect(0)
             setShowKeyboard(true)
-            ///Play first note to start then wait some time.
-            ///Wait for note to die down otherwise it triggers the first note detection
             if self.scale.getScaleNoteCount() > 0 {
-                if let sampler = self.audioManager.getSamplerForKeyboard() {
-                    ///Hilight the first key on each keyboard
-                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
-                    self.showFollowKeyHilights(sampler: sampler)
-                    usleep(1000000 * UInt32(1.0))
-                }
+                ///Play first note to start then wait some time.
+                ///Wait for note to die down otherwise it triggers the first note detection
+//                if let sampler = self.audioManager.getSamplerForKeyboard() {
+//                    ///Hilight the first key on each keyboard
+//                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
+//                    self.showFollowKeyHilights(sampler: sampler)
+//                    usleep(1000000 * UInt32(1.0))
+//                }
 
                 self.exerciseBadge = Badge.getRandomExerciseBadge()
                 let soundHandler:SoundEventHandlerProtocol
