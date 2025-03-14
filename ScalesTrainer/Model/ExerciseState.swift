@@ -11,10 +11,11 @@ class ExerciseState : ObservableObject {
     }
     
     enum State {
-        case exerciseNotStarted1
-        case exerciseStarting
-        case exerciseRunning
+        case exerciseNotStarted
+        case exerciseAboutToStart
+        case exerciseStarted
         case exerciseLost
+        case exerciseAborted
         case exerciseWon
     }
     
@@ -22,12 +23,16 @@ class ExerciseState : ObservableObject {
         return numberToWin - totalCorrect
     }
     
-    @Published private(set) var statePublished:State = .exerciseNotStarted1
-    private(set) var state:State = .exerciseNotStarted1
-    func setExerciseState(_ value:ExerciseState.State) {
+    @Published private(set) var statePublished:State = .exerciseNotStarted
+    private(set) var state:State = .exerciseNotStarted
+    func setExerciseState(_ ctx:String, _ value:ExerciseState.State) {
         if value != self.state {
             self.state = value
             DispatchQueue.main.async {
+//                if value == .exerciseStarted {
+//                    print("")
+//                }
+//                print("=============setExerciseState", "[", ctx, "]", self.statePublished, "TO:", value)
                 self.statePublished = value
             }
         }
@@ -44,7 +49,7 @@ class ExerciseState : ObservableObject {
             if self.totalCorrect == self.numberToWin {
                 if ![.exerciseWon].contains(self.state) {
                     if self.totalCorrect >= self.numberToWin {
-                        self.setExerciseState(.exerciseWon)
+                        self.setExerciseState("bumpTotal", .exerciseWon)
                     }
                 }
             }
@@ -80,20 +85,17 @@ class ExerciseState : ObservableObject {
     }
     
     func getExerciseStatusMessage(badge:Badge) -> String {
-        let remaining = self.pointsNeededToWin()
         var msg = ""
         let name = badge.name
-        
         switch self.statePublished {
-        case .exerciseNotStarted1:
-            msg = ""
-        case .exerciseStarting:
+        case .exerciseStarted:
             msg = "Win \(name) ✋"
-        case .exerciseRunning:
-            msg = ""
+        case .exerciseLost:
+            msg = "🙄 Whoops, Wrong Note 🙄"
+
         case .exerciseWon:
             msg = "😊 Nice Job, You Won \(name) 😊"
-        case .exerciseLost:
+        default:
             msg = ""
         }
         return (msg)

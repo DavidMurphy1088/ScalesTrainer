@@ -65,17 +65,22 @@ struct ScalesView: View {
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
     @State var activeSheet: ActiveSheet?
-    @State var lastBadgeNumber = 0
-    @State private var isLandscape: Bool = false
-    @State private var badgeImageRotationAngle: Double = 0
-    @State private var spacingVertical:CGFloat = 0
-    @State private var spacingHorizontal:CGFloat = 12
-    ///The slide up panel for badge info
-    @State private var showBadgeMessagePanel = false
-    @State private var showBadgeMessagePanelOffset: CGFloat = UIScreen.main.bounds.height 
+    @State var showStartExercisePopup = false
     
+    ///The slide up panel for badge info - which badge the student could win or did win
+    @State private var badgeMessagePanelOffset: CGFloat = 0
+    @State var badgeMessageImageRotationAngle:Double = 0
+
+    ///Star view - the starts that are earned for each correct not
+    @State private var starViewAnimateCount:Int? = nil  //Counter that controls the animation of an exercise loss
+    @State private var starViewShakeAmount: CGFloat = 0
+
     ///Practice Chart badge control
     @State var exerciseBadge:Badge?
+
+    @State private var isLandscape: Bool = false
+    @State private var spacingVertical:CGFloat = 0
+    @State private var spacingHorizontal:CGFloat = 12
     
     init(practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
         self.practiceChart = practiceChart
@@ -162,26 +167,28 @@ struct ScalesView: View {
     func StopProcessView(user:User) -> some View {
         VStack {
             if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
-                HStack {
-                    let text = getStopButtonText(process: scalesModel.runningProcessPublished)
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                        if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
-                            if user.settings.practiceChartGamificationOn {
-                                ///Stopped by user before exercise process stopped it
-                                if exerciseState.statePublished == .exerciseWon  {
-                                    //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
-                                }
-                                else {
-                                    exerciseState.setExerciseState(.exerciseLost)
+                //if exerciseState.statePublished == .exerciseStarted {
+                    HStack {
+                        let text = getStopButtonText(process: scalesModel.runningProcessPublished)
+                        Button(action: {
+                            scalesModel.setRunningProcess(.none)
+                            if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+                                if user.settings.practiceChartGamificationOn {
+                                    ///Stopped by user before exercise process stopped it
+                                    if exerciseState.statePublished == .exerciseWon  {
+                                        //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
+                                    }
+                                    else {
+                                        exerciseState.setExerciseState("ScalesView - user stopped", .exerciseAborted)
+                                    }
                                 }
                             }
+                        }) {
+                            Text("\(text)")
                         }
-                    }) {
-                        Text("\(text)")
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
-                }
+                //}
             }
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
@@ -261,6 +268,7 @@ struct ScalesView: View {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
 
                         Button(action: {
+                            self.resetBadgeAnimation()
                             scalesModel.setRunningProcess(.followingScale, practiceChart: practiceChart, practiceChartCell: practiceChartCell)
                             scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
                             self.directionIndex = 0
@@ -296,6 +304,7 @@ struct ScalesView: View {
                             }
                             else {
                                 self.exerciseBadge = scalesModel.exerciseBadge
+                                self.resetBadgeAnimation()
                                 scalesModel.setRunningProcess(.leadingTheScale, practiceChart: self.practiceChart, practiceChartCell: self.practiceChartCell)
                                 scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
                             }
@@ -488,27 +497,24 @@ struct ScalesView: View {
         return canFit
     }
         
-    func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
-        ///All offsets are relative to the last postion
-        if state == .exerciseNotStarted1 {
-            //return (0, UIScreen.main.bounds.height)
-            return (0, 300)
-        }
-//        if state == .exerciseStarted {
+//    func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
+//        ///All offsets are relative to the last postion
+//        if state == .exerciseNotStarted {
 //            //return (0, UIScreen.main.bounds.height)
-//            return (0, 0)
+//            return (0, 300)
 //        }
-        if state == .exerciseLost {
-            //return (0, UIScreen.main.bounds.height)
-            ///The image is rotated down so negative offset sends it down
-            return (0, UIScreen.main.bounds.height * -0.5)
-        }
-//        if [.wonAndFinished].contains(state) {
-//            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
-//            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
+//
+//        if state == .exerciseLost {
+//            //return (0, UIScreen.main.bounds.height)
+//            ///The image is rotated down so negative offset sends it down
+//            return (0, UIScreen.main.bounds.height * -0.5)
 //        }
-        return (0,0) //Exercise started
-    }
+////        if [.wonAndFinished].contains(state) {
+////            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
+////            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
+////        }
+//        return (0,0) //Exercise started
+//    }
     
     func hasVerticalSpace() -> Bool {
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -546,19 +552,24 @@ struct ScalesView: View {
         }
     }
     
+    func resetBadgeAnimation() {
+        starViewShakeAmount = 0
+        starViewAnimateCount = nil
+    }
+
     var body: some View {
         
         ZStack {
             VStack(spacing:0) {
                 VStack(spacing: 0) {
                     ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-                        //.border(Color.red)
+                    //.border(Color.red)
                 }
                 VStack {
                     HeaderView()
                         .outlinedStyleView(opacity: 0.3)
                         .padding(.top, spacingVertical)
-                        //.padding(.bottom, spacingVertical)
+                    //.padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
                     if scalesModel.showKeyboard {
                         if let user = settings.getCurrentUser() {
@@ -587,7 +598,7 @@ struct ScalesView: View {
                             .outlinedStyleView(opacity: 0.3)
                             .padding(.top, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
-
+                            
                             
                         }
                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -625,19 +636,25 @@ struct ScalesView: View {
                         SelectActionView()
                     }
                     
-                    ///-------- Badges mesages and displays ----------
+                    ///-------- Exercise stars mesages and displays ----------
                     
                     if let user = Settings.shared.getCurrentUser() {
                         if user.settings.practiceChartGamificationOn {
                             if let exerciseBadge = scalesModel.exerciseBadge {
                                 ///Show the horizontal row of badges
-                                if [ExerciseState.State.exerciseStarting, ExerciseState.State.exerciseRunning, ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
-                                    BadgesView(scale: scalesModel.scale, onClose: {
-                                        exerciseState.setExerciseState(.exerciseNotStarted1)
+                                if [ExerciseState.State.exerciseStarted, .exerciseLost]
+                                    //, ExerciseState.State.exerciseWon, ExerciseState.State.exerciseLost]
+                                    .contains(exerciseState.statePublished) {
+                                    ExerciseBadgesView(scale: scalesModel.scale, onClose: {
+                                        exerciseState.setExerciseState("ScalesView stars closed", .exerciseNotStarted)
                                     })
-                                        .outlinedStyleView()
-                                        .padding(.vertical, spacingVertical)
-                                        .padding(.horizontal, spacingHorizontal)
+                                    .outlinedStyleView()
+                                    .offset(y: badgeMessagePanelOffset)
+                                    .padding(.vertical, spacingVertical)
+                                    .padding(.horizontal, spacingHorizontal)
+                                    .offset(y: self.starViewAnimateCount == nil ? 0 : UIScreen.main.bounds.height)
+                                    .rotationEffect(.degrees(starViewShakeAmount))
+                                    .animation(.easeInOut(duration: 3), value: self.starViewAnimateCount != nil)
                                 }
                             }
                         }
@@ -658,36 +675,24 @@ struct ScalesView: View {
                 //.border(Color.pink, width:2)
             }
             
-            if showBadgeMessagePanel {
+            if [.exerciseStarted, .exerciseWon, .exerciseLost].contains(exerciseState.statePublished) {
                 if let user = Settings.shared.getCurrentUser() {
                     if user.settings.practiceChartGamificationOn {
                         if let badge = scalesModel.exerciseBadge {
-                            SlideUpPanel(user: user, exerciseState: exerciseState,
-                                         msg:exerciseState.getExerciseStatusMessage(badge: badge),
-                                         imageName: badge.imageName)
-                                .offset(y: showBadgeMessagePanelOffset)
-                                .onAppear {
-                                    if showBadgeMessagePanel {
-                                        withAnimation(.easeInOut(duration: 1.0)) {
-                                            showBadgeMessagePanelOffset = 0 // Slide in slowly
-                                        }
-                                    }
-                                }
-                                .onChange(of: showBadgeMessagePanel) { newValue in
-                                    withAnimation(.easeInOut(duration: 1.0)) {
-                                        showBadgeMessagePanelOffset = newValue ? 0 : UIScreen.main.bounds.height // Slide up/down slowly
-                                        //showPanelOffset = newValue ? 0 : UIScreen.main.bounds.width
-                                    }
-                                }
-                                .ignoresSafeArea(edges: .bottom)
-                                .frame(maxHeight: .infinity, alignment: .bottom) // Keeps it at bottom
-                                .zIndex(1)
+                            BadgeInformationPanel(user: user,
+                                                  msg:exerciseState.getExerciseStatusMessage(badge: badge),
+                                                  imageName: badge.imageName,
+                                                  badgeImageRotationAngle: self.$badgeMessageImageRotationAngle)
+                            .offset(y: badgeMessagePanelOffset)
+                            .ignoresSafeArea(edges: .bottom)
+                            .frame(maxHeight: .infinity, alignment: .bottom) // Keeps it at bottom
+                            .zIndex(1)
                         }
                     }
                 }
             }
         }
-    
+        
         .sheet(isPresented: $helpShowing) {
             if let topic = scalesModel.helpTopic {
                 HelpView(topic: topic)
@@ -696,17 +701,51 @@ struct ScalesView: View {
         .onChange(of: tempoIndex, {
             scalesModel.setTempo(self.tempoIndex)
         })
-        .onChange(of: exerciseState.statePublished, {
-            ///Slide in the badge message
-            if [ExerciseState.State.exerciseStarting, ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
-                self.showBadgeMessagePanel = true
-                self.showBadgeMessagePanelOffset = UIScreen.main.bounds.height
+        .onChange(of: exerciseState.statePublished) { oldValue, newValue in
+            ///Modify showBadgeMessagePanelOffset to bring the badge message off and on the display
+            let messageTime = 3.0
+            let fallTime = 2.0
+            let offScreenoffset = UIScreen.main.bounds.height / 4
+            
+            if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
+                showStartExercisePopup = true
             }
-            else {
-                self.showBadgeMessagePanel = false
+            if [ExerciseState.State.exerciseNotStarted].contains(exerciseState.statePublished) {
+                badgeMessagePanelOffset = offScreenoffset
             }
-        })
-
+            if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
+                badgeMessageImageRotationAngle = 0
+                withAnimation(.easeInOut(duration: 1.0)) {
+                    badgeMessagePanelOffset = 0 // Slide in slowly
+                }
+            }
+            if [ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
+                badgeMessageImageRotationAngle += 360
+                DispatchQueue.main.asyncAfter(deadline: .now() + messageTime) {
+                    withAnimation(.easeInOut(duration: fallTime * 2.0)) {
+                        badgeMessagePanelOffset = offScreenoffset
+                        scalesModel.setRunningProcess(.none)
+                    }
+                }
+            }
+            if [ExerciseState.State.exerciseLost].contains(exerciseState.statePublished) {
+                badgeMessageImageRotationAngle = 180
+                DispatchQueue.main.asyncAfter(deadline: .now() + messageTime) {
+                    withAnimation(.easeInOut(duration: fallTime)) {
+                        badgeMessagePanelOffset = offScreenoffset
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        exerciseState.setExerciseState("ScalesView Lost", .exerciseNotStarted)
+                        scalesModel.setRunningProcess(.none)
+                    }
+                }
+            }
+            if [ExerciseState.State.exerciseAborted].contains(exerciseState.statePublished) {
+                badgeMessageImageRotationAngle = 0
+                badgeMessagePanelOffset = offScreenoffset
+            }
+        }
+        
         ///Determine device orientation
         .background(GeometryReader { geometry in
             Color.clear
@@ -714,11 +753,11 @@ struct ScalesView: View {
                     isLandscape = geometry.size.width > geometry.size.height
                     setVerticalSpacing()
                 }
-                .onChange(of: geometry.size) { newSize in
+                .onChange(of: geometry.size) { oldSize, newSize in
                     isLandscape = newSize.width > newSize.height
                     setVerticalSpacing()
                 }
-                
+            
         })
         //.screenBackgroundStyle()
         
@@ -733,9 +772,11 @@ struct ScalesView: View {
                     PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale, handType: .right)
                 }
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    let middleKeyIndex = combined.getKeyIndexForMidi(midi: scalesModel.scale.getScaleNoteState(handType: .right, index: 0).midi)
-                    if let middleKeyIndex = middleKeyIndex {
-                        combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
+                    if let firstNote = scalesModel.scale.getScaleNoteState(handType: .right, index: 0) {
+                        let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstNote.midi)
+                        if let middleKeyIndex = middleKeyIndex {
+                            combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
+                        }
                     }
                 }
             }
@@ -748,20 +789,21 @@ struct ScalesView: View {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)
-            exerciseState.setExerciseState(.exerciseNotStarted1)
+            exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
+            badgeMessagePanelOffset = UIScreen.main.bounds.height / 4.0
             scalesModel.setRecordedAudioFile(nil)
-
+            
             if UIDevice.current.userInterfaceIdiom == .phone {
                 if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.octaves > 1 {
                     OrientationManager.lockOrientation(.landscape, andRotateTo: .landscapeLeft)
                 }
                 else {
                     ///If need two keyboards (which take space) and two staves then lock portrait
-//                    if PianoKeyboardModel.sharedCombined == nil {
-//                        if scalesModel.scale.needsTwoKeyboards() {
-//                            OrientationManager.lockOrientation(.portrait, andRotateTo: .portrait)
-//                        }
-//                    }
+                    //                    if PianoKeyboardModel.sharedCombined == nil {
+                    //                        if scalesModel.scale.needsTwoKeyboards() {
+                    //                            OrientationManager.lockOrientation(.portrait, andRotateTo: .portrait)
+                    //                        }
+                    //                    }
                     OrientationManager.lockOrientation(.portrait, andRotateTo: .portrait)
                 }
             }
@@ -801,6 +843,18 @@ struct ScalesView: View {
         .alert(isPresented: $scalesModel.showUserMessage) {
             Alert(title: Text("Good job 😊"), message: Text(scalesModel.userMessage ?? ""), dismissButton: .default(Text("OK")))
         }
+        .alert("Ready to Begin?", isPresented: $showStartExercisePopup) {
+            Button("Cancel", role: .cancel) {
+                exerciseState.setExerciseState("", .exerciseNotStarted)
+                scalesModel.setRunningProcess(.none)
+            }
+            Button("Start", role: .destructive) {
+                exerciseState.setExerciseState("", .exerciseStarted)
+            }
+        } message: {
+            //Text("Ready to Begin?")
+        }
+    
         .sheet(item: $activeSheet) { item in
             switch item {
             case .emailRecording:

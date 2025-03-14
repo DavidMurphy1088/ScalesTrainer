@@ -248,7 +248,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             //lowestIndex = scale.scaleMotion == .contraryMotion ? scale.scaleNoteState[hand].count/2 : 0
             lowestIndex = scale.scaleMotion == .contraryMotion ? scale.getScaleNoteStates(handType: .left).count/2 : 0
         }
-        var lowestKeyMidi = scale.getScaleNoteState(handType: handType, index: lowestIndex).midi // [hand][lowestIndex].midi
+        var lowestKeyMidi = scale.getScaleNoteState(handType: handType, index: lowestIndex)!.midi // [hand][lowestIndex].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
         switch self.scalesModel.scale.scaleRoot.name {

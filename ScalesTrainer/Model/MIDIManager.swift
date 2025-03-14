@@ -427,23 +427,25 @@ class TestMidiNotes {
         for n in 0..<totalNotes {
             var noteSet:[Int] = []
             for hand in hands {
-                let midi = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: n).midi
-                ///When contrary starting and ending LH and RH on same note the student will only play one note. So only generate that note, not one for each hand
-                if scale.scaleMotion == .contraryMotion && hands.count > 1 {
-                    if hand == 0 {
-                        noteSet.append(midi)
-                    }
-                    else {
-                        if n > 0 && n < scale.getScaleNoteCount() - 1 {
+                if let noteState = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: n) {
+                    let midi = noteState.midi
+                    ///When contrary starting and ending LH and RH on same note the student will only play one note. So only generate that note, not one for each hand
+                    if scale.scaleMotion == .contraryMotion && hands.count > 1 {
+                        if hand == 0 {
                             noteSet.append(midi)
                         }
+                        else {
+                            if n > 0 && n < scale.getScaleNoteCount() - 1 {
+                                noteSet.append(midi)
+                            }
+                        }
+                    }
+                    else {
+                        noteSet.append(midi)
                     }
                 }
-                else {
-                    noteSet.append(midi)
-                }
+                self.noteSets.append(NoteSet(noteSet))
             }
-            self.noteSets.append(NoteSet(noteSet))
         }
     }
 }

@@ -17,7 +17,6 @@ class Badge : Encodable, Decodable {
     init(id:Int) {
         self.id = id
         imageName = Badge.imageNames[id]
-        //name = String(Badge.imageNames[id])+" "+Badge.names[id]
         name = Badge.names[id]
     }
     
@@ -48,31 +47,21 @@ class Badge : Encodable, Decodable {
     }
 }
 
-class BadgeBank : ObservableObject {
-    static let shared = BadgeBank()
+class ExerciseBadgesList : ObservableObject {
+    static let shared = ExerciseBadgesList()
 
-    @Published var badges:[Badge] = []
-    @Published private(set) var totalCorrectPublished: Int = 0
-    
-    var totalCorrect: Int = 0
-    func setTotalCorrect(_ value:Int) {
-        self.totalCorrect = value
+    //@Published var badges:[Badge] = []
+    @Published private(set) var totalBadgesPublished: Int = 0
+
+    var totalBadges: Int = 0
+    func setTotalBadges(_ value:Int) {
+        self.totalBadges = value
         DispatchQueue.main.async {
-            self.totalCorrectPublished = self.totalCorrect
-            //if self.totalCorrect >= self.numberToWin {
-                //self.exerciseState = .won
-            //}
+            self.totalBadgesPublished = self.totalBadges
+            //print("=========== BadgesList tota", self.totalBadgesPublished)
+
         }
     }
-//    func addBadge(badge:Badge) {
-//        self.badges.append(badge)
-//    }
-//    
-//    func clearMatches() {
-//        setTotalCorrect(0)
-//        DispatchQueue.main.async {
-//            self.matches = []
-//        }
-//    }
+    
 }
 

@@ -187,48 +187,7 @@ class AudioManager {
             }
         //}
     }
-    
-//    func startRecordingMicToRecordOLD() {
-//        checkMicPermission(completion: {granted in
-//            if !granted {
-//                Logger.shared.reportError(self, "No microphone permission")
-//                return
-//            }
-//        })
-//        setSession()
-//
-//        ///Based on CookBook Tuner
-//        //self.audioEngine = AudioEngine()
-//        guard let engine = self.audioEngine else {
-//            Logger.shared.reportError(self, "No engine")
-//            return
-//        }
-//        guard let engineInput = engine.input else {
-//            Logger.shared.reportError(self, "No input")
-//            return
-//        }
-//        self.mic = engineInput
-//        self.tappableNodeA = Fader(self.mic!)
-//        self.silencer = Fader(tappableNodeA!, gain: 0)
-//        ///If a node with an installed tap is not connected to the engine's output (directly or indirectly), the audio data will not flow through that node, and consequently, the tap closure will not be called.
-//        engine.output = self.silencer
-//
-//        do {
-//            let fader = self.tappableNodeA
-//            //self.nodeRecorder = try NodeRecorder(node: self.mic!) //Does not work. Absolutley no idea why...
-//            self.nodeRecorder = try NodeRecorder(node: fader!)
-//            ///The recorded file is stored in the temporary directory of your app by default. This means that the file is placed in a location that can be cleared
-//            ///by the system when the app is terminated or when storage space is needed.
-//            if let recorder = self.nodeRecorder {
-//                try engine.start()
-//                try recorder.record()
-//                Logger.shared.log(self, "Recording started: \(recorder.isRecording)")
-//            }
-//        } catch let err {
-//            Logger.shared.reportError(self, "Recorder \(err.localizedDescription)")
-//        }
-//    }
-    
+        
     func stopListening() {
         for pitchTap in self.pitchTaps {
             pitchTap.stop()

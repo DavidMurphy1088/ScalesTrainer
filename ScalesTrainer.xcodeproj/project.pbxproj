@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
-		79064CA82D08349C002490A8 /* BadgeBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* BadgeBank.swift */; };
+		79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
 		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
 		79064CAE2D0A9EA2002490A8 /* FollowScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */; };
@@ -121,7 +121,7 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
-		79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* BadgeView.swift */; };
+		79E220EE2C856150004F64D8 /* ExerciseBadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
 		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
@@ -148,7 +148,7 @@
 		34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
-		79064CA72D08349C002490A8 /* BadgeBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeBank.swift; sourceTree = "<group>"; };
+		79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesList.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
 		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
 		79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowScaleProcess.swift; sourceTree = "<group>"; };
@@ -255,7 +255,7 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
-		79E220ED2C856150004F64D8 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
 		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
@@ -477,7 +477,7 @@
 			isa = PBXGroup;
 			children = (
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
-				79E220ED2C856150004F64D8 /* BadgeView.swift */,
+				79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
 				799BE2A72BFF4322004B19F6 /* CalibrationView.swift */,
 				794A9FC62C2BD24C0001297E /* CoinBankView.swift */,
@@ -516,7 +516,7 @@
 			children = (
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
-				79064CA72D08349C002490A8 /* BadgeBank.swift */,
+				79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */,
 				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
@@ -815,7 +815,7 @@
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
-				79064CA82D08349C002490A8 /* BadgeBank.swift in Sources */,
+				79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */,
 				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
 				799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */,
 				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,
@@ -841,7 +841,7 @@
 				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
 				799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */,
 				79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */,
-				79E220EE2C856150004F64D8 /* BadgeView.swift in Sources */,
+				79E220EE2C856150004F64D8 /* ExerciseBadgesView.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */,
 				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,

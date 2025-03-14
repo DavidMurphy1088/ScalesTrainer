@@ -49,9 +49,9 @@ struct HexagramShape: View {
     }
 }
 
-///The badge view for the exercise view
-struct BadgesView: View {
-    @ObservedObject var badgeBank:BadgeBank
+///The badge view for the exercise 
+struct ExerciseBadgesView: View {
+    @ObservedObject var exerciseBadgesList:ExerciseBadgesList
     let scale:Scale
     let onClose: () -> Void
     @State private var badgeIconSize: CGFloat = 0
@@ -62,7 +62,7 @@ struct BadgesView: View {
     @State var handType = KeyboardType.right
     
     init(scale:Scale, onClose: @escaping () -> Void) {
-        self.badgeBank = BadgeBank.shared
+        self.exerciseBadgesList = ExerciseBadgesList.shared
         self.scale = scale
         self.onClose = onClose
     }
@@ -124,11 +124,13 @@ struct BadgesView: View {
                     let imWidth = CGFloat(40)
                     let animationDuration = 0.1
                     
+                    ///Draw a place for every note in the scale. Put badges in places where the note was played
                     ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
-                        if scaleNoteNumber == badgeBank.totalCorrect - 1  {
+                        if scaleNoteNumber == exerciseBadgesList.totalBadges - 1  {
+                            ///Drop in the last badge awarded
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
-                                if badgeBank.totalCorrect > 0 {
+                                if exerciseBadgesList.totalBadges > 0 {
                                     if let user = Settings.shared.getCurrentUser() {
                                         if user.settings.badgeStyle == 0 {
                                             HexagramShape(size1: badgeIconSize, offset: offset, color: c)
@@ -164,10 +166,10 @@ struct BadgesView: View {
                         else {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
-                                if scaleNoteNumber < badgeBank.totalCorrect {
+                                if scaleNoteNumber < exerciseBadgesList.totalBadges {
                                     if let user = Settings.shared.getCurrentUser() {
                                         if user.settings.badgeStyle == 0 {
-                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < badgeBank.totalCorrect  ? 1 : 0)
+                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
                                         }
                                         else {
                                             Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
@@ -183,7 +185,7 @@ struct BadgesView: View {
                 }
                 .padding()
                 Text("")
-                .onChange(of: badgeBank.totalCorrect, {
+                    .onChange(of: exerciseBadgesList.totalBadges, {
                     verticalOffset = -50
                     rotationAngle = 0
                 })
@@ -221,12 +223,11 @@ struct BadgesView: View {
     }
 }
 
-struct SlideUpPanel : View {
+struct BadgeInformationPanel : View {
     let user:User
-    let exerciseState:ExerciseState
     let msg:String
     let imageName:String
-    @State var badgeImageRotationAngle:Double = 0
+    @Binding var badgeImageRotationAngle:Double
     
     var body: some View {
         VStack {
@@ -249,13 +250,13 @@ struct SlideUpPanel : View {
                     .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
                     .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
                     .padding()
-                    .onChange(of: exerciseState.statePublished) { _ in
-                        withAnimation(.easeInOut(duration: 1)) {
-                            if exerciseState.statePublished == .exerciseWon {
-                                badgeImageRotationAngle += 360
-                            }
-                        }
-                    }
+//                    .onChange(of: exerciseState.statePublished) { _ in
+//                        withAnimation(.easeInOut(duration: 1)) {
+//                            if exerciseState.statePublished == .exerciseWon {
+//                                badgeImageRotationAngle += 360
+//                            }
+//                        }
+//                    }
             }
             .frame(maxWidth: UIScreen.main.bounds.size.width * 0.8)
             .frame(height: UIScreen.main.bounds.size.height * 0.07)

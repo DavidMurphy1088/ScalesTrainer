@@ -435,12 +435,12 @@ struct MainContentView: View {
                     .accessibilityIdentifier("app_log")
                     .environmentObject(viewManager)
                 
-                ScalesLibraryView()
-                    .tabItem {
-                        Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
-                    }
-                    .tag(60)
-                    .environmentObject(viewManager)
+//                ScalesLibraryView()
+//                    .tabItem {
+//                        Label(NSLocalizedString("ScaleLibrary", comment: "Menu"), systemImage: "book")
+//                    }
+//                    .tag(60)
+//                    .environmentObject(viewManager)
                 
                 
                 CalibrationView()
@@ -450,13 +450,13 @@ struct MainContentView: View {
                     .tag(70)
                     .environmentObject(viewManager)
                 
-                ScalesLibraryView()
-                    .tabItem {
-                        Label("ScaleLibrary", systemImage: "book.pages")
-                    }
-                    .tag(80)
-                    .environmentObject(viewManager)
-                
+//                ScalesLibraryView()
+//                    .tabItem {
+//                        Label("ScaleLibrary", systemImage: "book.pages")
+//                    }
+//                    .tag(80)
+//                    .environmentObject(viewManager)
+//                
                 
                 DeveloperView()
                     .tabItem {

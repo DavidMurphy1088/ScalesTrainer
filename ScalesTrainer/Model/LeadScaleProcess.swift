@@ -4,17 +4,8 @@ import Combine
 import SwiftUI
 
 class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
-    
-    class RequiredNote {
-        let midi:Int
-        let hand:HandType
-        var matched = false
-        init(midi:Int, hand:HandType) {
-            self.midi = midi
-            self.hand = hand
-        }
-    }
     var requiredNotes:[RequiredNote] = []
+    var lastMatchedMidi:Int? = nil
     
     override init(scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
         super.init(scalesModel: scalesModel, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
@@ -31,40 +22,76 @@ class LeadScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol {
     
     override func start(soundHandler:SoundEventHandlerProtocol) {
         super.start(soundHandler: soundHandler)
+        self.lastMatchedMidi = nil
+    }
+    
+    func testForAbortExercise(midi:Int, requiredNotes: [RequiredNote]) {
+        ///If the note was close to (but not the same as) an expected note, the note played was wrong
+        for requiredNote in requiredNotes {
+            let midiDelta = 3
+            let midiDiff = abs(midi - requiredNote.midi)
+            if midiDiff <= midiDelta {
+                exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost)
+                scalesModel.exerciseCompletedNotify()
+                break
+            }
+        }
     }
     
     override func notifyPlayedKey(midi: Int, hand:HandType?) {
+        ///Gather the expected next midi in each hand
         if self.requiredNotes.count == 0 {
             for h in scale.hands {
                 let hand = h==0 ? HandType.right : .left
                 if let expectedOffset = self.nextExpectedNoteForHandIndex[hand] {
-                    let expectedMidi = scale.getScaleNoteState(handType: hand, index: expectedOffset).midi
-                    self.requiredNotes.append(RequiredNote(midi: expectedMidi, hand: hand))
+                    if let nextExpectedNote = scale.getScaleNoteState(handType: hand, index: expectedOffset) {
+                        let expectedMidi = nextExpectedNote.midi
+                        self.requiredNotes.append(RequiredNote(midi: expectedMidi, hand: hand))
+                    }
                 }
             }
         }
         var matchedCount = 0
+        
+        //print("============== NOTIFIED", midi, hand, matchedCount)
+//        for n in self.requiredNotes {
+//            print("                    ==== ", n.midi, n.hand, n.matched)
+//        }
         for requiredNote in requiredNotes {
-            if requiredNote.midi == midi && requiredNote.hand == hand {
-                requiredNote.matched = true
-            }
-            if requiredNote.matched {
-                matchedCount += 1
+            if let hand = hand {
+                if requiredNote.midi == midi && requiredNote.hand == hand {
+                    requiredNote.matched = true
+                }
+                if requiredNote.matched {
+                    matchedCount += 1
+                }
             }
         }
+//        if midi == 69 {
+//            print("================ Lead req:", midi, requiredNotes.first?.midi ?? 0)
+//        }
+
+        ///Check notes in both hands are matched before moving on, otherwise wait for the other hand
         if matchedCount == scale.hands.count {
-            badgeBank.setTotalCorrect(badgeBank.totalCorrect + 1)
+            exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
+            self.lastMatchedMidi = midi
             for requiredNote in requiredNotes {
                 self.nextExpectedNoteForHandIndex[requiredNote.hand]! += 1
             }
             self.requiredNotes = []
             let index = nextExpectedNoteForHandIndex[hand!]!
             if index < scale.getScaleNoteCount() {
-                let scaleNote = scale.getScaleNoteState(handType: hand!, index: index)
-                scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
+                if let scaleNote = scale.getScaleNoteState(handType: hand!, index: index) {
+                    scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
+                }
             }
             awardChartBadge()
             _ = testForEndOfExercise()
+        }
+        else {
+            if midi != lastMatchedMidi {
+                testForAbortExercise(midi: midi, requiredNotes: self.requiredNotes)
+            }
         }
     }
     

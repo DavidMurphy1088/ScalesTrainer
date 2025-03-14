@@ -70,10 +70,6 @@ public class ScalesModel : ObservableObject {
     }
     @Published var recordingIsPlaying = false
     @Published var synchedIsPlaying = false
-    
-    ///The overall score of the exercise
-    @ObservedObject private var exerciseState = ExerciseState.shared
-    @ObservedObject private var badgeBank = BadgeBank.shared
 
     private let setProcessLock = NSLock()
     
@@ -277,7 +273,7 @@ public class ScalesModel : ObservableObject {
 
     }
     
-    func clearFunctionToNotify() {
+    func exerciseCompletedNotify() {
         if soundEventHandlers.count > 0 {
             let soundHandler = soundEventHandlers[0]
             soundHandler.setFunctionToNotify(functionToNotify: nil)
@@ -287,24 +283,26 @@ public class ScalesModel : ObservableObject {
     ///Show the key hilights for the Follow task
     func showFollowKeyHilights(sampler:MIDISampler) {
         for hand in scale.hands {
-            let midi = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0).midi
-            let keyboard:PianoKeyboardModel
-            if let combined = PianoKeyboardModel.sharedCombined {
-                keyboard = combined
+            if let noteState = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0) {
+                let midi = noteState.midi
+                let keyboard:PianoKeyboardModel
+                if let combined = PianoKeyboardModel.sharedCombined {
+                    keyboard = combined
+                }
+                else {
+                    keyboard = hand == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                }
+                
+                if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
+                    let key = keyboard.pianoKeyModel[keyIndex]
+                    //key.hilightCallback = {
+                    //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+                    //}
+                    key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
+                    keyboard.redraw1()
+                }
+                sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
             }
-            else {
-                keyboard = hand == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-            }
-            
-            if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
-                let key = keyboard.pianoKeyModel[keyIndex]
-                //key.hilightCallback = {
-                //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                //}
-                key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
-                keyboard.redraw1()
-            }
-            sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
         }
     }
     
@@ -374,7 +372,7 @@ public class ScalesModel : ObservableObject {
         if [.followingScale].contains(setProcess)  {
             self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
             //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-            badgeBank.setTotalCorrect(0)
+            //badgeBank.setTotalCorrect(0)
             setShowKeyboard(true)
             if self.scale.getScaleNoteCount() > 0 {
                 ///Play first note to start then wait some time.
@@ -679,11 +677,13 @@ public class ScalesModel : ObservableObject {
             ///The note for each hand is added to the one single TimeSlice
             for handType in handTypes {
                 let noteState = scale.getScaleNoteState(handType: handType, index: i)
-                let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, handType:handType, segments: noteState.segments)
-                note.setValue(value: noteState.value)
-                ts.addNote(n: note)
-                if maxValue == nil || noteState.value > maxBarValue {
-                    maxValue = noteState.value
+                if let noteState = noteState {
+                    let note = StaffNote(timeSlice: ts, midi: noteState.midi, value: noteState.value, handType:handType, segments: noteState.segments)
+                    note.setValue(value: noteState.value)
+                    ts.addNote(n: note)
+                    if maxValue == nil || noteState.value > maxBarValue {
+                        maxValue = noteState.value
+                    }
                 }
             }
             if let maxValue = maxValue {
@@ -1011,7 +1011,8 @@ public class ScalesModel : ObservableObject {
         var keyName = scale.getScaleIdentificationKey()
         keyName = keyName.replacingOccurrences(of: " ", with: "")
         var fileName = String(format: "%02d", month)+"_"+String(format: "%02d", day)+"_"+String(format: "%02d", hour)+"_"+String(format: "%02d", minute)
-        fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.getScaleNoteState(handType: .right, index: 0).midi) + "_" + modelName
+//        fileName += "_"+keyName + "_"+String(scale.octaves) + "_" + String(scale.getScaleNoteState(handType: .right, index: 0).midi) + "_" + modelName
+        fileName += "_"+keyName + "_"+String(scale.octaves)  + "_" + modelName
 //        fileName += "_"+String(result.playedAndWrongCountAsc)+","+String(result.playedAndWrongCountDesc)+","+String(result.missedFromScaleCountAsc)+","+String(result.missedFromScaleCountDesc)
         fileName += "_Taps"+String(tapSets.count)
         fileName += "_"+String(AudioManager.shared.recordedFileSequenceNum)
