@@ -354,8 +354,8 @@ struct MainContentView: View {
         ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "F"), scaleType: .arpeggioMajor,
-                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor,
+                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 2, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)

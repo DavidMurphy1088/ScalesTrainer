@@ -121,17 +121,27 @@ public struct ClassicStyle {
                 ///White keys colour
                 ///Hilight the key if in following keys mode
                 let hilightColor:Color
-                if keyModel.hilightKeyToFollow == .followThisNote {
+//                if keyModel.hilightType == .followThisNote {
+//                    hilightColor = hiliteKeyColor(key.touchDown)
+//                }
+//                else {
+                switch keyModel.hilightType {
+                case .followThisNote:
                     hilightColor = hiliteKeyColor(key.touchDown)
+                case .middleOfKeyboard:
+                    hilightColor = Color(.green)
+                case .wasWrongNote:
+                    hilightColor = Color(.red)
+                default:
+                    hilightColor = naturalColor(key.touchDown)
                 }
-                else {
-                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
-                        hilightColor = Color(.green)
-                    }
-                    else {
-                        hilightColor = naturalColor(key.touchDown)
-                    }
-                }
+//                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
+//                        hilightColor = Color(.green)
+//                    }
+//                    else {
+//                        hilightColor = naturalColor(key.touchDown)
+//                    }
+//                }
                 let gradientWhiteKey:Gradient = Gradient(colors: [
                     hilightColor,
                     keyColor,
@@ -255,17 +265,17 @@ public struct ClassicStyle {
                
                 ///Black keys colour
                 let hilightColor:Color
-                if keyModel.hilightKeyToFollow == .followThisNote {
+                switch keyModel.hilightType {
+                case .followThisNote:
                     hilightColor = hiliteKeyColor(key.touchDown)
+                case .middleOfKeyboard:
+                    hilightColor = Color(.green)
+                case .wasWrongNote:
+                    hilightColor = Color(.red)
+                default:
+                    hilightColor = naturalColor(key.touchDown)
                 }
-                else {
-                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
-                        hilightColor = Color(.green)
-                    }
-                    else {
-                        hilightColor = naturalColor(key.touchDown)
-                    }
-                }
+
                 let gradientBlackKey = Gradient(colors: [
                     hilightColor,
                     sharpFlatColor(key.touchDown),

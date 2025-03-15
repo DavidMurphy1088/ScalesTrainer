@@ -95,7 +95,9 @@ public class AppLogger : ObservableObject {
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
         let msg = String(describing: type(of: reporter)) + ":" + msg
         //let strVal = value == nil ? "_" : String(format: "%.2f", value!)
-        //print("\(getTime()) \(msg)")//  val:\(strVal)")
+        if Settings.shared.isDeveloperMode1() {
+            print("\(getTime()) \(msg)")//  val:\(strVal)")
+        }
         os_logger.info("\(msg)")
         DispatchQueue.main.async {
             let val:Double = value == nil ? 0 : value!

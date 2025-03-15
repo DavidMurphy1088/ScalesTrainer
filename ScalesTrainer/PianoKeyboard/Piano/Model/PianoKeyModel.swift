@@ -15,6 +15,7 @@ public enum PianoKeyHilightType {
     case none
     case followThisNote
     case middleOfKeyboard
+    case wasWrongNote
 }
 
 public enum KeyboardType {
@@ -51,7 +52,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
     
-    var hilightKeyToFollow:PianoKeyHilightType = .none
+    var hilightType:PianoKeyHilightType = .none
     
     var hilightCallbackNotUSed: () -> Void = {}
 

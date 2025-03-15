@@ -280,31 +280,31 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    ///Show the key hilights for the Follow task
-    func showFollowKeyHilights(sampler:MIDISampler) {
-        for hand in scale.hands {
-            if let noteState = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0) {
-                let midi = noteState.midi
-                let keyboard:PianoKeyboardModel
-                if let combined = PianoKeyboardModel.sharedCombined {
-                    keyboard = combined
-                }
-                else {
-                    keyboard = hand == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                }
-                
-                if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
-                    let key = keyboard.pianoKeyModel[keyIndex]
-                    //key.hilightCallback = {
-                    //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-                    //}
-                    key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
-                    keyboard.redraw1()
-                }
-                sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
-            }
-        }
-    }
+//    ///Show the key hilights for the Follow task
+//    func showFollowKeyHilights(sampler:MIDISampler) {
+//        for hand in scale.hands {
+//            if let noteState = self.scale.getScaleNoteState(handType: hand == 0 ? .right : .left, index: 0) {
+//                let midi = noteState.midi
+//                let keyboard:PianoKeyboardModel
+//                if let combined = PianoKeyboardModel.sharedCombined {
+//                    keyboard = combined
+//                }
+//                else {
+//                    keyboard = hand == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+//                }
+//                
+//                if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
+//                    let key = keyboard.pianoKeyModel[keyIndex]
+//                    //key.hilightCallback = {
+//                    //sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+//                    //}
+//                    key.hilightKeyToFollow = PianoKeyHilightType.followThisNote
+//                    keyboard.redraw1()
+//                }
+//                sampler.play(noteNumber: UInt8(midi), velocity: 64, channel: 0)
+//            }
+//        }
+//    }
     
     func setRunningProcess(_ setProcess: RunningProcess, practiceChart:PracticeChart? = nil, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         guard let user = Settings.shared.getCurrentUser() else {
@@ -369,41 +369,41 @@ public class ScalesModel : ObservableObject {
         
         let metronome = Metronome.shared
         
-        if [.followingScale].contains(setProcess)  {
-            self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-            //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-            //badgeBank.setTotalCorrect(0)
-            setShowKeyboard(true)
-            if self.scale.getScaleNoteCount() > 0 {
-                ///Play first note to start then wait some time.
-                ///Wait for note to die down otherwise it triggers the first note detection
-//                if let sampler = self.audioManager.getSamplerForKeyboard() {
-//                    ///Hilight the first key on each keyboard
-//                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
-//                    self.showFollowKeyHilights(sampler: sampler)
-//                    usleep(1000000 * UInt32(1.0))
+//        if [.followingScale].contains(setProcess)  {
+//            self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
+//            //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+//            //badgeBank.setTotalCorrect(0)
+//            setShowKeyboard(true)
+//            if self.scale.getScaleNoteCount() > 0 {
+//                ///Play first note to start then wait some time.
+//                ///Wait for note to die down otherwise it triggers the first note detection
+////                if let sampler = self.audioManager.getSamplerForKeyboard() {
+////                    ///Hilight the first key on each keyboard
+////                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
+////                    self.showFollowKeyHilights(sampler: sampler)
+////                    usleep(1000000 * UInt32(1.0))
+////                }
+//
+//                self.exerciseBadge = Badge.getRandomExerciseBadge()
+//                let soundHandler:SoundEventHandlerProtocol
+//                if user.settings.useMidiConnnections {
+//                    soundHandler = MIDISoundEventHandler(scale: scale)
+//                    self.midiTestHander = soundHandler as? MIDISoundEventHandler
 //                }
-
-                self.exerciseBadge = Badge.getRandomExerciseBadge()
-                let soundHandler:SoundEventHandlerProtocol
-                if user.settings.useMidiConnnections {
-                    soundHandler = MIDISoundEventHandler(scale: scale)
-                    self.midiTestHander = soundHandler as? MIDISoundEventHandler
-                }
-                else {
-                    soundHandler = AcousticSoundEventHandler(scale: scale)
-                }
-                self.soundEventHandlers.append(soundHandler)
-                
-                let followProcess = FollowScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
-                followProcess.start(soundHandler: soundHandler)
-                if !user.settings.useMidiConnnections {
-                    self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
-                }
-            }
-        }
+//                else {
+//                    soundHandler = AcousticSoundEventHandler(scale: scale)
+//                }
+//                self.soundEventHandlers.append(soundHandler)
+//                
+//                let followProcess = FollowScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
+//                followProcess.start(soundHandler: soundHandler)
+//                if !user.settings.useMidiConnnections {
+//                    self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
+//                }
+//            }
+//        }
         
-        if [.leadingTheScale].contains(setProcess) {
+        if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
             if user.settings.useMidiConnnections {
                 soundHandler = MIDISoundEventHandler(scale: scale)
@@ -414,13 +414,8 @@ public class ScalesModel : ObservableObject {
             }
             self.soundEventHandlers.append(soundHandler)
             self.exerciseBadge = Badge.getRandomExerciseBadge()
-            let leadProcess = LeadScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
-            leadProcess.start(soundHandler: soundHandler)
-//            if !Settings.shared.isDeveloperMode() {
-//                metronome.addProcessesToNotify(process: leadProcess)
-//                metronome.setTicking(way: true)
-//                metronome.start()
-//            }
+            let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
+            exerciseProcess.start(soundHandler: soundHandler)
             if !user.settings.useMidiConnnections {
                 self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
             }

@@ -64,7 +64,7 @@ struct ScalesView: View {
     @State var helpShowing:Bool = false
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
-    @State var activeSheet: ActiveSheet?
+    @State var emailPopupSheet: ActiveSheet?
     @State var showStartExercisePopup = false
     
     ///The slide up panel for badge info - which badge the student could win or did win
@@ -328,7 +328,6 @@ struct ScalesView: View {
                         }
                     }
                     .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
-                    //.padding(.horizontal, 0)
                 }
                 
                 Spacer()
@@ -708,7 +707,12 @@ struct ScalesView: View {
             let offScreenoffset = UIScreen.main.bounds.height / 4
             
             if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                showStartExercisePopup = true
+                if Settings.shared.isDeveloperMode1() {
+                    exerciseState.setExerciseState("", .exerciseStarted)
+                }
+                else {
+                    showStartExercisePopup = true
+                }
             }
             if [ExerciseState.State.exerciseNotStarted].contains(exerciseState.statePublished) {
                 badgeMessagePanelOffset = offScreenoffset
@@ -775,7 +779,7 @@ struct ScalesView: View {
                     if let firstNote = scalesModel.scale.getScaleNoteState(handType: .right, index: 0) {
                         let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstNote.midi)
                         if let middleKeyIndex = middleKeyIndex {
-                            combined.pianoKeyModel[middleKeyIndex].hilightKeyToFollow = .middleOfKeyboard
+                            combined.pianoKeyModel[middleKeyIndex].hilightType = .middleOfKeyboard
                         }
                     }
                 }
@@ -843,19 +847,18 @@ struct ScalesView: View {
         .alert(isPresented: $scalesModel.showUserMessage) {
             Alert(title: Text("Good job 😊"), message: Text(scalesModel.userMessage ?? ""), dismissButton: .default(Text("OK")))
         }
-        .alert("Ready to Begin?", isPresented: $showStartExercisePopup) {
+
+        .alert("🟢 Go Ahead ?", isPresented: $showStartExercisePopup) {
             Button("Cancel", role: .cancel) {
                 exerciseState.setExerciseState("", .exerciseNotStarted)
                 scalesModel.setRunningProcess(.none)
             }
-            Button("Start", role: .destructive) {
+            Button("OK") {
                 exerciseState.setExerciseState("", .exerciseStarted)
             }
-        } message: {
-            //Text("Ready to Begin?")
         }
-    
-        .sheet(item: $activeSheet) { item in
+
+        .sheet(item: $emailPopupSheet) { item in
             switch item {
             case .emailRecording:
                 if MFMailComposeViewController.canSendMail() {

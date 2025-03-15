@@ -105,6 +105,9 @@
     "😔" : {
 
     },
+    "🟢 Go Ahead ?" : {
+
+    },
     "1. Check Email Account Configuration" : {
 
     },
@@ -540,9 +543,6 @@
     "Purchase in progress. Please standby..." : {
 
     },
-    "Ready to Begin?" : {
-
-    },
     "Record the Scale" : {
       "comment" : "Menu",
       "extractionState" : "stale",
@@ -689,16 +689,10 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
     "Sorry, no subscription is available yet" : {
-
-    },
-    "Start" : {
 
     },
     "Start Analysis" : {

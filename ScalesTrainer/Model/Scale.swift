@@ -1019,6 +1019,32 @@ public class Scale : Codable {
         return (self.scaleNoteState[handIndex][0].midi, self.scaleNoteState[handIndex][mid].midi)
     }
     
+    func getMinMaxMidis() -> (Int, Int) {
+        var min = 0
+        var max = 0
+        if self.hands.count == 1 {
+            let handIndex = self.hands[0]
+            let states = self.scaleNoteState[handIndex]
+            if let m = states.min(by: { $0.midi < $1.midi })?.midi {
+                min = m
+            }
+            if let m = states.max(by: { $0.midi < $1.midi })?.midi {
+                max = m
+            }
+        }
+        else {
+            let statesLH = self.scaleNoteState[self.hands[self.hands[1]]]
+            if let m = statesLH.min(by: { $0.midi < $1.midi })?.midi {
+                min = m
+            }
+            let statesRH = self.scaleNoteState[self.hands[self.hands[0]]]
+            if let m = statesRH.max(by: { $0.midi < $1.midi })?.midi {
+                max = m
+            }
+        }
+        return (min, max)
+    }
+    
     func getMidisInScale(handIndex:Int) -> [Int] {
         var notes:[Int] = []
         for note in self.scaleNoteState[handIndex] {

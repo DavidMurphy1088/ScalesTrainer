@@ -457,11 +457,11 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         for i in 0..<numberOfKeys {
             if let except = except {
                 if !except.contains(i) {
-                    pianoKeyModel[i].hilightKeyToFollow = .none
+                    pianoKeyModel[i].hilightType = .none
                 }
             }
             else {
-                pianoKeyModel[i].hilightKeyToFollow = .none
+                pianoKeyModel[i].hilightType = .none
             }
         }
     }

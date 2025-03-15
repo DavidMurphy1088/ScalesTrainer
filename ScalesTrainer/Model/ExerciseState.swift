@@ -29,10 +29,10 @@ class ExerciseState : ObservableObject {
         if value != self.state {
             self.state = value
             DispatchQueue.main.async {
-//                if value == .exerciseStarted {
-//                    print("")
-//                }
-//                print("=============setExerciseState", "[", ctx, "]", self.statePublished, "TO:", value)
+                if value == .exerciseStarted {
+                    print("")
+                }
+                print("=============setExerciseState", "[", ctx, "]", self.statePublished, "TO:", value)
                 self.statePublished = value
             }
         }

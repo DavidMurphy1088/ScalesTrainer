@@ -12,7 +12,7 @@
 		79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
 		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
-		79064CAE2D0A9EA2002490A8 /* FollowScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */; };
+		79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */; };
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
@@ -151,7 +151,7 @@
 		79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesList.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
 		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
-		79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowScaleProcess.swift; sourceTree = "<group>"; };
+		79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHandler.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
@@ -523,7 +523,7 @@
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
 				79B072FD2D37C76D00CD6F2B /* Firebase.swift */,
-				79064CAD2D0A9EA2002490A8 /* FollowScaleProcess.swift */,
+				79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */,
 				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
@@ -865,7 +865,7 @@
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
 				794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */,
 				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,
-				79064CAE2D0A9EA2002490A8 /* FollowScaleProcess.swift in Sources */,
+				79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */,
 				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,
 				797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */,
 			);
