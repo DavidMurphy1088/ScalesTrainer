@@ -189,16 +189,16 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     
     public func isLicensed() -> Bool {
         return true
-        if let user = Settings.shared.getCurrentUser() {
-            if emailIsLicensed(email: user.email) {
-                return true
-            }
+        let user = Settings.shared.getCurrentUser()
+        if emailIsLicensed(email: user.email) {
+            return true
         }
-        else {
-            if let subscription = SubscriptionTransactionReceipt.load() {
-                return subscription.expiryDate >= Date()
-            }
-        }
+        //}
+//        else {
+//            if let subscription = SubscriptionTransactionReceipt.load() {
+//                return subscription.expiryDate >= Date()
+//            }
+//        }
         return false
     }
     
@@ -560,17 +560,15 @@ public struct LicenseManagerView: View {
     
     func DetailedLicensesView() -> some View {
         VStack {
-            
             if LicenceManager.shared.isLicensed() {
                 VStack {
                     Text("Your current subscription is ").font(.title2).padding()
-                    if let user = Settings.shared.getCurrentUser() {
-                        if LicenceManager.shared.emailIsLicensed(email:user.email) {
-                            Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
-                        }
-                        else {
-                            Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
-                        }
+                    let user = Settings.shared.getCurrentUser()
+                    if LicenceManager.shared.emailIsLicensed(email:user.email) {
+                        Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
+                    }
+                    else {
+                        Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
                     }
                 }
                 .padding()

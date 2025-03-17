@@ -251,7 +251,8 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         var lowestKeyMidi = scale.getScaleNoteState(handType: handType, index: lowestIndex)!.midi // [hand][lowestIndex].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
-        switch self.scalesModel.scale.scaleRoot.name {
+        //switch self.scalesModel.scale.scaleRoot.name {
+        switch scale.scaleRoot.name {
         case "C#":
             lowestKeyMidi -= 1
         case "D♭":
@@ -286,16 +287,16 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
                
         var numKeys = (scale.octaves * 12) + 1
         numKeys += 2
-        if ["E", "G", "A", "A♭", "E♭"].contains(self.scalesModel.scale.scaleRoot.name) {
+        if ["E", "G", "A", "A♭", "E♭"].contains(scale.scaleRoot.name) {
             numKeys += 4
         }
-        if ["G#"].contains(self.scalesModel.scale.scaleRoot.name) {
+        if ["G#"].contains(scale.scaleRoot.name) {
             numKeys += 1
         }
-        if ["B", "B♭"].contains(self.scalesModel.scale.scaleRoot.name) {
+        if ["B", "B♭"].contains(scale.scaleRoot.name) {
             numKeys += 6
         }
-        if [.brokenChordMajor, .brokenChordMinor].contains(self.scalesModel.scale.scaleType) {
+        if [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) {
             numKeys += 4
         }
 
@@ -313,7 +314,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType)
     }
     
-    func configureKeyboardForScaleStartView(scale:Scale, score:Score, start:Int, numberOfKeys:Int, scaleStartMidi:Int, handType:HandType) {
+    func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, scaleStartMidi:Int, handType:HandType) {
         self.pianoKeyModel = []
         self.keyRects1 = Array(repeating: .zero, count: numberOfKeys)
         self.firstKeyMidi = start

@@ -62,18 +62,16 @@ class AudioManager {
                 self.samplerForKeyboard = MIDISampler()
                 var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
                 self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
-                if let user = Settings.shared.getCurrentUser() {
-                    switch user.settings.backingSamplerPreset {
-                    case 1: preset = 28
-                    case 2: preset = 37
-                    case 3: preset = 49
-                    case 4: preset = 33
-                    case 5: preset = 39
-                    case 6: preset = 43
-                    case 7: preset = 2
-                    case 8: preset = 4
-                    default: preset = 0
-                    }
+                switch Settings.shared.getCurrentUser().settings.backingSamplerPreset {
+                case 1: preset = 28
+                case 2: preset = 37
+                case 3: preset = 49
+                case 4: preset = 33
+                case 5: preset = 39
+                case 6: preset = 43
+                case 7: preset = 2
+                case 8: preset = 4
+                default: preset = 0
                 }
                 self.samplerForBacking = loadSampler(num: 1, preset: preset)
                 
@@ -323,27 +321,27 @@ class AudioManager {
         return tapEventSets
     }
     
-    func playbackTapEvents(tapEventSets:[TapEventSet], tapHandlers:[TapHandlerProtocol]) {
-        var tapHandlerIndex = 0
-        for tapEventSet in tapEventSets {
-            AppLogger.shared.log(self, "Start play back \(tapEventSet.events.count) tap events for bufferSize:\(tapEventSet.bufferSize)")
-            for tIndex in 0..<tapEventSet.events.count {
-                let tapEvent = tapEventSet.events[tIndex]
-                let f:AUValue = tapEvent.frequency
-                let a:AUValue = tapEvent.amplitude
-                tapHandlers[tapHandlerIndex].tapUpdate([f, f], [a, a])
-            }
-            tapHandlerIndex += 1
-            if tapHandlerIndex >= tapHandlers.count {
-                break
-            }
-        }
-
-//        let events = tapHandlers[0].stopTappingProcess("AudioMgr.playbackEvents")
-//        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
-        AppLogger.shared.log(self, "Played back \(tapHandlerIndex) tap event sets")
-        ScalesModel.shared.setRunningProcess(.none)
-    }
+//    func playbackTapEvents(tapEventSets:[TapEventSet], tapHandlers:[TapHandlerProtocol]) {
+//        var tapHandlerIndex = 0
+//        for tapEventSet in tapEventSets {
+//            AppLogger.shared.log(self, "Start play back \(tapEventSet.events.count) tap events for bufferSize:\(tapEventSet.bufferSize)")
+//            for tIndex in 0..<tapEventSet.events.count {
+//                let tapEvent = tapEventSet.events[tIndex]
+//                let f:AUValue = tapEvent.frequency
+//                let a:AUValue = tapEvent.amplitude
+//                tapHandlers[tapHandlerIndex].tapUpdate([f, f], [a, a])
+//            }
+//            tapHandlerIndex += 1
+//            if tapHandlerIndex >= tapHandlers.count {
+//                break
+//            }
+//        }
+//
+////        let events = tapHandlers[0].stopTappingProcess("AudioMgr.playbackEvents")
+////        ScalesModel.shared.setTapHandlerEventSet(events, publish: true) ///WARNING😡😡😡😡😡😡 - off breaks READ_TEST_DATA (AT LEAST), ON breaks callibration
+//        AppLogger.shared.log(self, "Played back \(tapHandlerIndex) tap event sets")
+//        ScalesModel.shared.setRunningProcess(.none)
+//    }
     
     func installTapHandler(node:Node, tapHandler:AcousticSoundEventHandler, asynch : Bool) -> PitchTap {
         let installedTap = PitchTap(node, bufferSize:UInt32(tapHandler.getBufferSize())) { pitch, amplitude in

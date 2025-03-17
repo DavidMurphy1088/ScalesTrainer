@@ -167,10 +167,9 @@ struct ActivitiesView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
             ///Force the view to redraw by updating these @State variables
-            if let user = Settings.shared.getCurrentUser() {
-                self.userName = user.name
-                self.userGrade = user.grade
-            }
+            let user = Settings.shared.getCurrentUser() 
+            self.userName = user.name
+            self.userGrade = user.grade
         }
     }
     

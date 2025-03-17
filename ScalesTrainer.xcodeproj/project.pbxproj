@@ -125,6 +125,7 @@
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
 		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
+		79F1A1DD2D86BB8D008CEAC9 /* StartExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */; };
 		79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3F58B2D5363C700D6BAA3 /* Settings.swift */; };
 		79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */; };
 		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
@@ -259,6 +260,7 @@
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
 		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
+		79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartExerciseView.swift; sourceTree = "<group>"; };
 		79F3F58B2D5363C700D6BAA3 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
 				79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
@@ -855,6 +858,7 @@
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
 				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
 				794A9FC92C2BFC270001297E /* CoinBank.swift in Sources */,
+				79F1A1DD2D86BB8D008CEAC9 /* StartExerciseView.swift in Sources */,
 				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
 				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
 				79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */,
@@ -1047,7 +1051,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1086,7 +1090,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

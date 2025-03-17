@@ -93,7 +93,7 @@
     "𝄢" : {
 
     },
-    "😊" : {
+    "🔺 Sorry, %@" : {
 
     },
     "😊 Thanks %@, Your Grade Is Set 😊" : {
@@ -102,10 +102,7 @@
     "😊 Welcome 😊" : {
 
     },
-    "😔" : {
-
-    },
-    "🟢 Go Ahead ?" : {
+    "😊 You  Won %@" : {
 
     },
     "1. Check Email Account Configuration" : {
@@ -567,9 +564,6 @@
         }
       }
     },
-    "Recording %@" : {
-
-    },
     "Remove" : {
 
     },
@@ -689,10 +683,16 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
     "Sorry, no subscription is available yet" : {
+
+    },
+    "Start" : {
 
     },
     "Start Analysis" : {
@@ -723,9 +723,6 @@
           }
         }
       }
-    },
-    "Stop Recording Scale" : {
-
     },
     "Subscription Required" : {
 
@@ -799,6 +796,9 @@
     "To get started please enter your name and Grade." : {
 
     },
+    "Try again?" : {
+
+    },
     "Type:" : {
 
     },
@@ -837,6 +837,9 @@
       }
     },
     "We hope you enjoy your experience using Scales Academy." : {
+
+    },
+    "Win %@" : {
 
     },
     "Your current subscription is " : {

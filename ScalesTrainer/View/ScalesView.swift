@@ -45,7 +45,7 @@ struct ScalesView: View {
     @ObservedObject private var exerciseState = ExerciseState.shared
 
     let settings = Settings.shared
-
+    let user = Settings.shared.getCurrentUser()
     @ObservedObject private var metronome = Metronome.shared
     private let audioManager = AudioManager.shared
 
@@ -65,18 +65,18 @@ struct ScalesView: View {
     @State private var emailShowing = false
     @State var emailResult: MFMailComposeResult? = nil
     @State var emailPopupSheet: ActiveSheet?
-    @State var showStartExercisePopup = false
+    @State var exerciseProcess:RunningProcess? = nil
     
     ///The slide up panel for badge info - which badge the student could win or did win
-    @State private var badgeMessagePanelOffset: CGFloat = 0
-    @State var badgeMessageImageRotationAngle:Double = 0
+    //@State private var badgeMessagePanelOffset: CGFloat = 0
+    //@State var badgeMessageImageRotationAngle:Double = 0
 
     ///Star view - the starts that are earned for each correct not
-    @State private var starViewAnimateCount:Int? = nil  //Counter that controls the animation of an exercise loss
-    @State private var starViewShakeAmount: CGFloat = 0
+    //@State private var starViewAnimateCount:Int? = nil  //Counter that controls the animation of an exercise loss
+    //@State private var starViewShakeAmount: CGFloat = 0
 
     ///Practice Chart badge control
-    @State var exerciseBadge:Badge?
+    //@State var exerciseBadge:Badge?
 
     @State private var isLandscape: Bool = false
     @State private var spacingVertical:CGFloat = 0
@@ -179,7 +179,7 @@ struct ScalesView: View {
                                         //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
                                     }
                                     else {
-                                        exerciseState.setExerciseState("ScalesView - user stopped", .exerciseAborted)
+                                        exerciseState.setExerciseState("ScalesView, user stopped", .exerciseAborted)
                                     }
                                 }
                             }
@@ -206,29 +206,29 @@ struct ScalesView: View {
                 }
             }
             
-            if [.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
-                Spacer()
-                VStack {
-                    //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-                    let name = scalesModel.scale.getScaleIdentificationKey()
-                    Text("Recording \(name)").font(.title).padding()
-                    //ScaleStartView()
-                    RecordingIsUnderwayView()
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                    }) {
-                        VStack {
-                            Text("Stop Recording Scale")//.padding().font(.title2).hilighted(backgroundColor: .blue)
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-//                    if coinBank.lastBet > 0 {
-//                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
+//            if [RunningProcess.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
+//                Spacer()
+//                VStack {
+//                    //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
+//                    let name = scalesModel.scale.getScaleIdentificationKey()
+//                    Text("Recording \(name)").font(.title).padding()
+//                    //ScaleStartView()
+//                    RecordingIsUnderwayView()
+//                    Button(action: {
+//                        scalesModel.setRunningProcess(.none)
+//                    }) {
+//                        VStack {
+//                            Text("Stop Recording Scale")//.padding().font(.title2).hilighted(backgroundColor: .blue)
+//                        }
 //                    }
-                }
-                //.commonFrameStyle()
-                Spacer()
-            }
+//                    .buttonStyle(.borderedProminent)
+////                    if coinBank.lastBet > 0 {
+////                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
+////                    }
+//                }
+//                //.commonFrameStyle()
+//                Spacer()
+//            }
             
             if scalesModel.recordingIsPlaying {
                 Button(action: {
@@ -239,22 +239,20 @@ struct ScalesView: View {
                 .buttonStyle(.borderedProminent)
             }
             
-            if scalesModel.synchedIsPlaying {
-                Button(action: {
-                    scalesModel.setRunningProcess(.none)
-                }) {
-                    Text("Stop Hearing")//.padding().font(.title2).hilighted(backgroundColor: .blue)
-                }
-                .buttonStyle(.borderedProminent)
-            }
+//            if scalesModel.synchedIsPlaying {
+//                Button(action: {
+//                    scalesModel.setRunningProcess(.none)
+//                }) {
+//                    Text("Stop Hearing")//.padding().font(.title2).hilighted(backgroundColor: .blue)
+//                }
+//                .buttonStyle(.borderedProminent)
+//            }
         }
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if let user = settings.getCurrentUser() {
-            if user.settings.useMidiConnnections {
-                return true
-            }
+        if user.settings.useMidiConnnections {
+            return true
         }
         return scale.hands.count == 1
     }
@@ -266,11 +264,10 @@ struct ScalesView: View {
                     Spacer()
                     HStack()  {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
-
                         Button(action: {
-                            self.resetBadgeAnimation()
-                            scalesModel.setRunningProcess(.followingScale, practiceChart: practiceChart, practiceChartCell: practiceChartCell)
-                            scalesModel.setProcessInstructions("Play the next scale note as shown by the hilighted key")
+                            scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                            self.exerciseProcess = RunningProcess.followingScale
+                            self.exerciseState.setExerciseState("View follow start", .exerciseAboutToStart)
                             self.directionIndex = 0
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -303,10 +300,9 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                self.exerciseBadge = scalesModel.exerciseBadge
-                                self.resetBadgeAnimation()
-                                scalesModel.setRunningProcess(.leadingTheScale, practiceChart: self.practiceChart, practiceChartCell: self.practiceChartCell)
-                                scalesModel.setProcessInstructions("Play the notes of the scale. Watch for any wrong notes.")
+                                scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                                self.exerciseProcess = RunningProcess.leadingTheScale
+                                self.exerciseState.setExerciseState("View lead start", .exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {
@@ -335,7 +331,6 @@ struct ScalesView: View {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
                     Button(action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
-                        scalesModel.setProcessInstructions("Play along with the scale as its played")
                         self.directionIndex = 0
                     }) {
                         Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -550,11 +545,6 @@ struct ScalesView: View {
             self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 12
         }
     }
-    
-    func resetBadgeAnimation() {
-        starViewShakeAmount = 0
-        starViewAnimateCount = nil
-    }
 
     var body: some View {
         
@@ -571,35 +561,32 @@ struct ScalesView: View {
                     //.padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
                     if scalesModel.showKeyboard {
-                        if let user = settings.getCurrentUser() {
-                            VStack {
-                                if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
-                                    ///Scale is contrary with LH and RH joined on one keyboard
-                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
+                        VStack {
+                            if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
+                                ///Scale is contrary with LH and RH joined on one keyboard
+                                PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                            }
+                            else {
+                                if scalesModel.scale.needsTwoKeyboards() {
+                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
                                         .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
+                                                      keyColor: user.settings.getKeyboardColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                                 }
                                 else {
-                                    if scalesModel.scale.needsTwoKeyboards() {
-                                        PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
-                                            .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                                        PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
-                                                          keyColor: user.settings.getKeyboardColor())
-                                        .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                                    }
-                                    else {
-                                        let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-                                        PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
-                                                          keyColor: user.settings.getKeyboardColor())
-                                        .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
-                                    }
+                                    let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
+                                                      keyColor: user.settings.getKeyboardColor())
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
                                 }
                             }
-                            .outlinedStyleView(opacity: 0.3)
-                            .padding(.top, spacingVertical)
-                            .padding(.horizontal, spacingHorizontal)
-                            
-                            
                         }
+                        .outlinedStyleView(opacity: 0.3)
+                        .padding(.top, spacingVertical)
+                        .padding(.horizontal, spacingHorizontal)
+                                                    
                         if UIDevice.current.userInterfaceIdiom != .phone {
                             if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
                                 if scalesModel.showLegend {
@@ -626,10 +613,10 @@ struct ScalesView: View {
                         }
                     }
                     
-                    if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying || scalesModel.synchedIsPlaying {
-                        if let user = settings.getCurrentUser() {
-                            StopProcessView(user:user)
-                        }
+                    if [.backingOn, .playingAlongWithScale, .recordingScale].contains(scalesModel.runningProcessPublished) ||
+                                                                                      scalesModel.recordingIsPlaying {
+                    //if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying { //} || scalesModel.synchedIsPlaying {
+                        StopProcessView(user:Settings.shared.getCurrentUser())
                     }
                     else {
                         SelectActionView()
@@ -637,57 +624,66 @@ struct ScalesView: View {
                     
                     ///-------- Exercise stars mesages and displays ----------
                     
-                    if let user = Settings.shared.getCurrentUser() {
-                        if user.settings.practiceChartGamificationOn {
-                            if let exerciseBadge = scalesModel.exerciseBadge {
-                                ///Show the horizontal row of badges
-                                if [ExerciseState.State.exerciseStarted, .exerciseLost]
-                                    //, ExerciseState.State.exerciseWon, ExerciseState.State.exerciseLost]
-                                    .contains(exerciseState.statePublished) {
-                                    ExerciseBadgesView(scale: scalesModel.scale, onClose: {
-                                        exerciseState.setExerciseState("ScalesView stars closed", .exerciseNotStarted)
-                                    })
-                                    .outlinedStyleView()
-                                    .offset(y: badgeMessagePanelOffset)
-                                    .padding(.vertical, spacingVertical)
-                                    .padding(.horizontal, spacingHorizontal)
-                                    .offset(y: self.starViewAnimateCount == nil ? 0 : UIScreen.main.bounds.height)
-                                    .rotationEffect(.degrees(starViewShakeAmount))
-                                    .animation(.easeInOut(duration: 3), value: self.starViewAnimateCount != nil)
-                                }
+                    if user.settings.practiceChartGamificationOn {
+                        if let exerciseBadge = scalesModel.exerciseBadge {
+                            ///Show the horizontal row of badges
+                            //if [ExerciseState.State.exerciseStarted, .exerciseLost]
+                            if [ExerciseState.State.exerciseStarted, .exerciseLost]
+                                //, ExerciseState.State.exerciseWon, ExerciseState.State.exerciseLost]
+                                .contains(exerciseState.statePublished) {
+                                ExerciseBadgesView(scale: scalesModel.scale, onClose: {
+                                    exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
+                                })
+                                .outlinedStyleView()
+                                //.offset(y: UIScreen.main.bounds.height / 4.0)
+                                .padding(.vertical, spacingVertical)
+                                .padding(.horizontal, spacingHorizontal)
+                                .zIndex(1)
                             }
                         }
                     }
                     
                     if Settings.shared.isDeveloperMode1()  {
-                        if let user = Settings.shared.getCurrentUser() {
-                            if user.settings.useMidiConnnections {
-                                Spacer()
-                                TestInputView()
-                            }
+                        if user.settings.useMidiConnnections {
+                            Spacer()
+                            TestInputView()
                         }
                     }
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
                 .screenBackgroundStyle()
-                //.border(Color.pink, width:2)
             }
             
-            if [.exerciseStarted, .exerciseWon, .exerciseLost].contains(exerciseState.statePublished) {
-                if let user = Settings.shared.getCurrentUser() {
-                    if user.settings.practiceChartGamificationOn {
-                        if let badge = scalesModel.exerciseBadge {
-                            BadgeInformationPanel(user: user,
-                                                  msg:exerciseState.getExerciseStatusMessage(badge: badge),
-                                                  imageName: badge.imageName,
-                                                  badgeImageRotationAngle: self.$badgeMessageImageRotationAngle)
-                            .offset(y: badgeMessagePanelOffset)
-                            .ignoresSafeArea(edges: .bottom)
-                            .frame(maxHeight: .infinity, alignment: .bottom) // Keeps it at bottom
-                            .zIndex(1)
-                        }
+
+            //if [.exerciseAboutToStart, .exerciseLost].contains(exerciseState.statePublished) {
+            if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
+                if let badge = scalesModel.exerciseBadge {
+                    VStack {
+                        StartExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {cancelled in
+                            if cancelled {
+                                exerciseState.setExerciseState("Popup", .exerciseNotStarted)
+                            }
+                            else {
+                                exerciseState.setExerciseState("Popup", .exerciseStarted)
+                            }
+                        })
+                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)
                     }
+                    .padding()
+                }
+            }
+            if [.exerciseWon].contains(exerciseState.statePublished) {
+                if let badge = scalesModel.exerciseBadge {
+                    VStack {
+                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {
+                            cancelled in
+                            exerciseState.setExerciseState("Popup", .exerciseNotStarted)
+
+                        })
+                        .frame(width: UIScreen.main.bounds.width * 0.50, height: UIScreen.main.bounds.height * 0.25)
+                    }
+                    .padding()
                 }
             }
         }
@@ -702,51 +698,45 @@ struct ScalesView: View {
         })
         .onChange(of: exerciseState.statePublished) { oldValue, newValue in
             ///Modify showBadgeMessagePanelOffset to bring the badge message off and on the display
-            let messageTime = 3.0
-            let fallTime = 2.0
-            let offScreenoffset = UIScreen.main.bounds.height / 4
+            //let messageTime = 3.0
+            //let fallTime = 2.0
+            //let offScreenoffset = UIScreen.main.bounds.height / 4
             
             if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                if Settings.shared.isDeveloperMode1() {
-                    exerciseState.setExerciseState("", .exerciseStarted)
+                if false && Settings.shared.isDeveloperMode1() {
+                    exerciseState.setExerciseState("ScalesView, exercise started", .exerciseStarted)
                 }
                 else {
-                    showStartExercisePopup = true
+                    //showStartExercisePopup = true
                 }
             }
             if [ExerciseState.State.exerciseNotStarted].contains(exerciseState.statePublished) {
-                badgeMessagePanelOffset = offScreenoffset
+                scalesModel.setRunningProcess(.none)
+                scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
             }
+
             if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
-                badgeMessageImageRotationAngle = 0
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    badgeMessagePanelOffset = 0 // Slide in slowly
+                if let process = self.exerciseProcess {
+                    scalesModel.setRunningProcess(process, practiceChart: practiceChart, practiceChartCell: practiceChartCell)
                 }
             }
-            if [ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
-                badgeMessageImageRotationAngle += 360
-                DispatchQueue.main.asyncAfter(deadline: .now() + messageTime) {
-                    withAnimation(.easeInOut(duration: fallTime * 2.0)) {
-                        badgeMessagePanelOffset = offScreenoffset
-                        scalesModel.setRunningProcess(.none)
-                    }
-                }
-            }
+            
             if [ExerciseState.State.exerciseLost].contains(exerciseState.statePublished) {
-                badgeMessageImageRotationAngle = 180
-                DispatchQueue.main.asyncAfter(deadline: .now() + messageTime) {
-                    withAnimation(.easeInOut(duration: fallTime)) {
-                        badgeMessagePanelOffset = offScreenoffset
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        exerciseState.setExerciseState("ScalesView Lost", .exerciseNotStarted)
-                        scalesModel.setRunningProcess(.none)
-                    }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                    exerciseState.setExerciseState("ScalesView Lost", .exerciseAboutToStart)
                 }
+            }
+            
+            if [ExerciseState.State.exerciseWon].contains(exerciseState.statePublished) {
+                scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+//                DispatchQueue.main.asyncAfter(deadline: .now() + messageTime) {
+//                    withAnimation(.easeInOut(duration: fallTime * 2.0)) {
+//                        scalesModel.setRunningProcess(.none)
+//                    }
+//                }
             }
             if [ExerciseState.State.exerciseAborted].contains(exerciseState.statePublished) {
-                badgeMessageImageRotationAngle = 0
-                badgeMessagePanelOffset = offScreenoffset
             }
         }
         
@@ -794,8 +784,8 @@ struct ScalesView: View {
             }
             scalesModel.setShowStaff(true)
             exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
-            badgeMessagePanelOffset = UIScreen.main.bounds.height / 4.0
             scalesModel.setRecordedAudioFile(nil)
+            scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
             
             if UIDevice.current.userInterfaceIdiom == .phone {
                 if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.octaves > 1 {
@@ -846,16 +836,6 @@ struct ScalesView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .alert(isPresented: $scalesModel.showUserMessage) {
             Alert(title: Text("Good job 😊"), message: Text(scalesModel.userMessage ?? ""), dismissButton: .default(Text("OK")))
-        }
-
-        .alert("🟢 Go Ahead ?", isPresented: $showStartExercisePopup) {
-            Button("Cancel", role: .cancel) {
-                exerciseState.setExerciseState("", .exerciseNotStarted)
-                scalesModel.setRunningProcess(.none)
-            }
-            Button("OK") {
-                exerciseState.setExerciseState("", .exerciseStarted)
-            }
         }
 
         .sheet(item: $emailPopupSheet) { item in

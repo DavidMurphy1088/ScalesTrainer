@@ -354,8 +354,8 @@ struct MainContentView: View {
         ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMajor,
-                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 2, hands: [0],
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor,
+                                            scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
@@ -388,7 +388,7 @@ struct MainContentView: View {
                 .tag(MainContentView.TAB_USERS)
                 .environmentObject(viewManager)
             
-            if let user = Settings.shared.getCurrentUser() {
+            //if let user = Settings.shared.getCurrentUser() {
                 ActivitiesView()
                     .tabItem {
                         Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
@@ -396,13 +396,13 @@ struct MainContentView: View {
                     .tag(MainContentView.TAB_ACTIVITES)
                     .environmentObject(viewManager)
                 
-                SettingsView(user:user)
+                SettingsView(user:Settings.shared.getCurrentUser())
                     .tabItem {
                         Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
                     }
                     .tag(30)
                     .environmentObject(viewManager)
-            }
+            //}
             
             LicenseManagerView(contentSection: ContentSection(), email: "email.com")
                 .tabItem {

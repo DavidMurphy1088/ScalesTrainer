@@ -84,9 +84,7 @@ public struct ClassicStyle {
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
-            guard let user = Settings.shared.getCurrentUser() else {
-                return
-            }
+            let user = Settings.shared.getCurrentUser() 
             let scalesModel = ScalesModel.shared
             let width = size.width
             let height = size.height
@@ -97,7 +95,7 @@ public struct ClassicStyle {
             let cornerRadius = width * cornerRadiusMultiplier
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             let naturalXIncr = naturalWidth + naturalKeySpace
-            var xpos: CGFloat = 0.0
+            var xpos: CGFloat = 0
             let playingMidiRadius = naturalWidth * 0.5
             
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
@@ -127,7 +125,8 @@ public struct ClassicStyle {
 //                else {
                 switch keyModel.hilightType {
                 case .followThisNote:
-                    hilightColor = hiliteKeyColor(key.touchDown)
+                    //hilightColor = hiliteKeyColor(key.touchDown)
+                    hilightColor = Color(.green)
                 case .middleOfKeyboard:
                     hilightColor = Color(.green)
                 case .wasWrongNote:
@@ -267,7 +266,8 @@ public struct ClassicStyle {
                 let hilightColor:Color
                 switch keyModel.hilightType {
                 case .followThisNote:
-                    hilightColor = hiliteKeyColor(key.touchDown)
+                    //hilightColor = hiliteKeyColor(key.touchDown)
+                    hilightColor = Color(.green)
                 case .middleOfKeyboard:
                     hilightColor = Color(.green)
                 case .wasWrongNote:

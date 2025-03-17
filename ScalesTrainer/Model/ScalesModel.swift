@@ -26,11 +26,11 @@ enum RunningProcess {
     case followingScale
     case leadingTheScale
     case recordingScale
-    case recordingScaleForAssessment
-    case recordScaleWithFileData
-    case syncRecording
     case playingAlongWithScale
     case backingOn
+    //case recordingScaleForAssessment
+    //case recordScaleWithFileData
+    //case syncRecording
 
     var description: String {
         switch self {
@@ -42,12 +42,12 @@ enum RunningProcess {
             return "Leading Scale"
         case .recordingScale:
             return "Recording Scale"
-       case .recordingScaleForAssessment:
-            return "Recording Scale"
-        case .recordScaleWithFileData:
-            return "Recording Scale With File Data"
-        case .syncRecording:
-            return "Synchronize Recording"
+//       case .recordingScaleForAssessment:
+//            return "Recording Scale"
+//        case .recordScaleWithFileData:
+//            return "Recording Scale With File Data"
+//        case .syncRecording:
+//            return "Synchronize Recording"
         case .playingAlongWithScale:
             return "Playing Along With Scale"
         case .backingOn:
@@ -69,7 +69,7 @@ public class ScalesModel : ObservableObject {
         return self.score1
     }
     @Published var recordingIsPlaying = false
-    @Published var synchedIsPlaying = false
+    //@Published var synchedIsPlaying = false
 
     private let setProcessLock = NSLock()
     
@@ -95,7 +95,7 @@ public class ScalesModel : ObservableObject {
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
     
-    let calibrationTapHandler:RealTimeTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
+    //let calibrationTapHandler:RealTimeTapHandler? //(requiredStartAmplitude: 0, recordData: false, scale: nil)
     let audioManager = AudioManager.shared
     let logger = AppLogger.shared
     var helpTopic:String? = nil
@@ -150,12 +150,12 @@ public class ScalesModel : ObservableObject {
     }
     @Published private(set) var resultPublished:Result?
 
-    @Published private(set) var processInstructions:String? = nil
-    func setProcessInstructions(_ msg:String?) {
-        DispatchQueue.main.async {
-            self.processInstructions = msg
-        }
-    }
+//    @Published private(set) var processInstructions:String? = nil
+//    func setProcessInstructions(_ msg:String?) {
+//        DispatchQueue.main.async {
+//            self.processInstructions = msg
+//        }
+//    }
     
     @Published private(set) var showStaff = true
     func setShowStaff(_ newValue: Bool) {
@@ -263,7 +263,7 @@ public class ScalesModel : ObservableObject {
     init() {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
                           minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
-        self.calibrationTapHandler = nil
+        //self.calibrationTapHandler = nil
         if scale.timeSignature.top == 3 {
             self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
         }
@@ -307,9 +307,7 @@ public class ScalesModel : ObservableObject {
 //    }
     
     func setRunningProcess(_ setProcess: RunningProcess, practiceChart:PracticeChart? = nil, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
-        guard let user = Settings.shared.getCurrentUser() else {
-            return
-        }
+        let user = Settings.shared.getCurrentUser()
         if setProcess == self.runningProcess {
             return
         }
@@ -320,11 +318,11 @@ public class ScalesModel : ObservableObject {
         AppLogger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
         if setProcess == .none {
             self.audioManager.stopListening()
-            if self.runningProcess == .syncRecording {
-                DispatchQueue.main.async {
-                    self.synchedIsPlaying = false
-                }
-            }
+//            if self.runningProcess == .syncRecording {
+//                DispatchQueue.main.async {
+//                    self.synchedIsPlaying = false
+//                }
+//            }
             
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = true
             PianoKeyboardModel.sharedRH.hilightNotesOutsideScale = true
@@ -357,7 +355,6 @@ public class ScalesModel : ObservableObject {
         self.setShowKeyboard(true)
         self.setShowLegend(true)
         self.setSelectedScaleSegment(0)
-        self.setProcessInstructions(nil)
         if resultInternal != nil {
             self.setShowStaff(true)
         }
@@ -413,7 +410,7 @@ public class ScalesModel : ObservableObject {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
             }
             self.soundEventHandlers.append(soundHandler)
-            self.exerciseBadge = Badge.getRandomExerciseBadge()
+            //self.exerciseBadge = Badge.getRandomExerciseBadge()
             let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
             exerciseProcess.start(soundHandler: soundHandler)
             if !user.settings.useMidiConnnections {
@@ -442,46 +439,46 @@ public class ScalesModel : ObservableObject {
             //metronome.addProcessesToNotify(process: RecordScaleProcess())
         }
         
-        if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
-            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
-            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
-            self.scale.resetMatchedData()
-            self.setShowKeyboard(false)
-            self.setShowStaff(false)
-            self.setShowLegend(false)
-            self.setResultInternal(nil, "setRunningProcess::start record")
-            setUserMessage(heading: nil, msg: nil)
-            self.setProcessedEventSet(nil, publish: true)
-            PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.redraw()
-            ///4096 has extra params to figure out automatic scale play end
-            ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
-//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, amplitudeFilter: nil))
-//            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, amplitudeFilter: nil))
-
-            //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
-            self.recordedTapsFileURL = nil
-            if setProcess == .recordScaleWithFileData {
-                ///For plaback of an emailed file
-                let tapEventSets = self.audioManager.readTestDataFile()
-                //self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
-            }
-
-            if setProcess == .recordingScaleForAssessment {
-                DispatchQueue.main.async {
-                    //self.runningProcess = .leadingIn
-                }
-//                doLeadIn(instruction: "Record your scale", leadInDone: {
-//                    //😡😡 cannot record and tap concurrenlty
-//                    //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
-//                    DispatchQueue.main.async {
-//                        self.runningProcess = RunningProcess.recordingScaleForAssessment
-//                    }
-//                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
-//                })
-            }
-        }
+//        if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
+//            PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
+//            PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
+//            self.scale.resetMatchedData()
+//            self.setShowKeyboard(false)
+//            self.setShowStaff(false)
+//            self.setShowLegend(false)
+//            self.setResultInternal(nil, "setRunningProcess::start record")
+//            setUserMessage(heading: nil, msg: nil)
+//            self.setProcessedEventSet(nil, publish: true)
+//            PianoKeyboardModel.sharedRH.redraw()
+//            PianoKeyboardModel.sharedLH.redraw()
+//            ///4096 has extra params to figure out automatic scale play end
+//            ///WARING - adding too many seems to have a penalty on accuracy of the standard sizes like 4096. i.e. 4096 gets more taps on its own than when >2 others are also installed.
+////            self.tapHandlers.append(ScaleTapHandler(bufferSize: 4096, scale: self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
+////            self.tapHandlers.append(ScaleTapHandler(bufferSize: 2048, scale: self.scale, amplitudeFilter: nil))
+////            self.tapHandlers.append(ScaleTapHandler(bufferSize: 8192 * 2, scale: self.scale, amplitudeFilter: nil))
+//
+//            //self.tapHandlers.append(ScaleTapHandler(bufferSize: 2 * 8192, scale: nil, amplitudeFilter: nil))
+//            self.recordedTapsFileURL = nil
+//            if setProcess == .recordScaleWithFileData {
+//                ///For plaback of an emailed file
+//                let tapEventSets = self.audioManager.readTestDataFile()
+//                //self.audioManager.playbackTapEvents(tapEventSets: tapEventSets, tapHandlers: self.tapHandlers)
+//            }
+//
+//            if setProcess == .recordingScaleForAssessment {
+//                DispatchQueue.main.async {
+//                    //self.runningProcess = .leadingIn
+//                }
+////                doLeadIn(instruction: "Record your scale", leadInDone: {
+////                    //😡😡 cannot record and tap concurrenlty
+////                    //self.audioManager.startRecordingMicWithTapHandler(tapHandler: tapHandler, recordAudio: true)
+////                    DispatchQueue.main.async {
+////                        self.runningProcess = RunningProcess.recordingScaleForAssessment
+////                    }
+////                    self.audioManager.startRecordingMicWithTapHandlers(tapHandlers: self.tapHandlers, recordAudio: true)
+////                })
+//            }
+//        }
     }
     
     ///Allow user to follow notes hilighted on the keyboard.

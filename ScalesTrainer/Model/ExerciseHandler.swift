@@ -73,7 +73,6 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
         cancelled = false
         soundHandler.start()
-        exerciseState.setExerciseState("Follow start", .exerciseAboutToStart)
         lastKeyHilighted = nil
         noteNotificationNumber = 0
         if self.exerciseType == .followingScale {
@@ -240,7 +239,8 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     }
     
     func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType) {
-        ///Gather the expected next midi(s) in each hand
+        ///Gather the expected next midi(s) in each hand. We look ahead usualy 2 notes for a match.
+        ///Thats because at faster tempos there may be failure to get notified of correct notes the student plays.
         var requiredNotes:[RequiredNote] = []
         
         if requiredNotes.count == 0 {
@@ -261,31 +261,33 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         }
 
         for requiredNote in requiredNotes {
-            //if let hand = hand {
-                if requiredNote.midi == midi && requiredNote.handType == handType {
-                    requiredNote.matched = true
-                    for previousNote in requiredNotes {
-                        if previousNote.sequenceNum < requiredNote.sequenceNum {
-                            previousNote.matched = true
-                        }
+            ///16Mar2025 - sometimes get wrong octave of note played so allow it
+            let allowed = [requiredNote.midi-24, requiredNote.midi-12, requiredNote.midi, requiredNote.midi+12, requiredNote.midi+24]
+            //if requiredNote.midi == midi && requiredNote.handType == handType {
+            if allowed.contains(midi) && requiredNote.handType == handType {
+                requiredNote.matched = true
+                for previousNote in requiredNotes {
+                    if previousNote.sequenceNum < requiredNote.sequenceNum {
+                        previousNote.matched = true
                     }
-                    break
                 }
-            //}
+                break
+            }
         }
-        
-        var l = "======== notifyPlayedKey \(self.noteNotificationNumber) midi:\(midi) required:"
-        for n in requiredNotes {
-            l += "[\(n.handType) midi:\(n.midi) match:\(n.matched)]"
-        }
-        AppLogger.shared.log(self, l)
+//        if Settings.shared.isDeveloperMode1() {
+//            var l = "======== notifyPlayedKey \(self.noteNotificationNumber) midi:\(midi) required:"
+//            for n in requiredNotes {
+//                l += "[\(n.handType) midi:\(n.midi) match:\(n.matched)]"
+//            }
+//            AppLogger.shared.log(self, l)
+//        }
         
         var matchedCount = 0
         for requiredNote in requiredNotes {
             if requiredNote.matched {
                 matchedCount += 1
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
-                self.lastMatchedMidi = midi
+                self.lastMatchedMidi = requiredNote.midi
                 //for requiredNote in requiredNotes {
                 //if let hand = handType {
                 if self.nextExpectedNoteForHandIndex.keys.contains(handType) {
@@ -311,9 +313,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         //requiredNotes.removeAll { $0.matched }
         
         if matchedCount == 0 {
-            if midi != lastMatchedMidi {
-                testForFailExercise(midi: midi, requiredNotes: requiredNotes, keyboard: Keyboard)
-            }
+            testForFailExercise(midi: midi, requiredNotes: requiredNotes, keyboard: Keyboard)
         }
         
         ///Check notes in both hands are matched before moving on, otherwise wait for the other hand
@@ -344,18 +344,17 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     }
         
     func awardChartBadge() {
-        if let user = Settings.shared.getCurrentUser() {
-            if user.settings.practiceChartGamificationOn {
-                let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
-                exerciseState.bumpTotalCorrect()
-                let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
-                if !wonStateOld && wonStateNew {
-                    if let exerciseBadge = scalesModel.exerciseBadge {
-                        if let practiceChartCell = practiceChartCell {
-                            practiceChartCell.addBadge(badge: exerciseBadge, callback: {
-                                self.practiceChart?.savePracticeChartToFile()
-                            })
-                        }
+        let user = Settings.shared.getCurrentUser()
+        if user.settings.practiceChartGamificationOn {
+            let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
+            exerciseState.bumpTotalCorrect()
+            let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
+            if !wonStateOld && wonStateNew {
+                if let exerciseBadge = scalesModel.exerciseBadge {
+                    if let practiceChartCell = practiceChartCell {
+                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
+                            self.practiceChart?.savePracticeChartToFile()
+                        })
                     }
                 }
             }
@@ -364,7 +363,11 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     
     func testForFailExercise(midi:Int, requiredNotes: [RequiredNote], keyboard:PianoKeyboardModel) {
         ///The note pitches may ring on and cause > 1 note notification
-        if midi == self.lastMatchedMidi {
+        guard let lastMatchedMidi = self.lastMatchedMidi else {
+            return
+        }
+        let lastMatchedMidis = [lastMatchedMidi-24, lastMatchedMidi-12, lastMatchedMidi, lastMatchedMidi+12, lastMatchedMidi+24]
+        if lastMatchedMidis.contains(midi) {
             return
         }
         if self.lastMatchedMidi == nil {
@@ -380,14 +383,16 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             }
         }
         ///If the note was close to (but not the same as) an expected note, the note played was wrong
+        //////16Mar2025 - sometimes get wrong octave of octave played
         for requiredNote in requiredNotes {
-            let midiDiff = abs(midi - requiredNote.midi)
-            if midiDiff > 0 {
+            let allowed = [requiredNote.midi-24, requiredNote.midi-12, requiredNote.midi, requiredNote.midi+12, requiredNote.midi+24]
+            //let midiDiff = abs(midi - requiredNote.midi)
+            if !allowed.contains(midi) {
                 if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
                     let key = keyboard.pianoKeyModel[keyIndex]
                     key.hilightType = .wasWrongNote
                 }
-                exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost)
+                exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, "Wrong Note")
                 scalesModel.exerciseCompletedNotify()
                 break
             }
@@ -408,7 +413,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             scalesModel.exerciseCompletedNotify()
             scalesModel.setRunningProcess(.none)
             if exerciseState.getState() == .exerciseStarted {
-                exerciseState.setExerciseState("Follow, set Lost", .exerciseLost)
+                exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
             }
             if let practiceChart {
                 practiceChart.savePracticeChartToFile()
@@ -422,239 +427,6 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
 
 }
 
-///Prompt the use for the key to play and wait for them to do that
-///
-//class FollowScaleProcess : ExerciseHandler, MetronomeTimerNotificationProtocol  {
-//    class KeyboardSemaphore {
-//        let id:Int
-//        let keyboard:PianoKeyboardModel
-//        let semaphore:DispatchSemaphore
-//        init(id:Int, keyboard:PianoKeyboardModel, semaphore:DispatchSemaphore) {
-//            self.keyboard = keyboard
-//            self.semaphore = semaphore
-//            self.id = id
-//        }
-//    }
-//    var keyboardSemaphores:[KeyboardSemaphore] = []
-//
-//    override init(scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
-//        super.init(scalesModel: scalesModel, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
-//    }
-//    
-//    func metronomeStart() {
-//    }
-//    
-//    func metronomeStop() {
-//    }
-//    
-//    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
-//    }
-//    
-////    func startOld(soundHandler:SoundEventHandlerProtocol) {
-////        super.start(soundHandler: soundHandler)
-////        self.keyboardSemaphores = []
-////
-////        if scale.hands.count == 1 {
-////            let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-////            self.keyboardSemaphores.append(KeyboardSemaphore(id: 0, keyboard: keyboard, semaphore: DispatchSemaphore(value: 0)))
-////        }
-////        else {
-////            ///For a combined (single) keyboard for two-hands (e.g. chromatic) we still need 2 semaphores to wait for the two notes
-////            if let combined = PianoKeyboardModel.sharedCombined {
-////                self.keyboardSemaphores.append(KeyboardSemaphore(id: 0, keyboard: combined, semaphore: DispatchSemaphore(value: 0)))
-////                self.keyboardSemaphores.append(KeyboardSemaphore(id: 1, keyboard: combined, semaphore: DispatchSemaphore(value: 0)))
-////            }
-////            else {
-////                self.keyboardSemaphores.append(KeyboardSemaphore(id: 0, keyboard: PianoKeyboardModel.sharedRH, semaphore: DispatchSemaphore(value: 0)))
-////                self.keyboardSemaphores.append(KeyboardSemaphore(id: 1, keyboard: PianoKeyboardModel.sharedLH, semaphore: DispatchSemaphore(value: 0)))
-////            }
-////        }
-////        
-////        ///Allow Cancel - Setup to listen for cancelled state. If cancelled make sure all semaphores are signalled so the the process thread can exit
-////        ///appmode is None at start since its set (for publish)  in main thread
-////        DispatchQueue.global(qos: .background).async {
-////            while true {
-////                sleep(1)
-////                if self.scalesModel.runningProcess != .followingScale {
-////                    for keyboardSemaphore in self.keyboardSemaphores {
-////                        keyboardSemaphore.semaphore.signal()
-////                        keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except: nil)
-////                    }
-////                    self.cancelled = true
-////                    break
-////                }
-////            }
-////        }
-////        //listenForKeyPresses()
-////    }
-//    
-//    override func start(soundHandler:SoundEventHandlerProtocol) {
-//        super.start(soundHandler: soundHandler)
-//        hilightKeys(scaleIndex: 0)
-//    }
-//    
-//
-//    
-//    ///The nextExpectedNoteForHandIndex needs dictionary has to be thread-safe.
-//    ///Its updated when the correct key is pressed (the semaphore signalled) and read in a different thread.
-//    override func applySerialLock() -> Bool {
-//        return true
-//    }
-//
-//
-//    ///Setup DispatchSemaphores on each keyboard to wait for the expected key on that keyboard.
-//    ///Update badges for the notes played.
-//    ///
-//    func listenForKeyPressesOld() {
-//        DispatchQueue.global(qos: .background).async { [self] in
-//            var scaleIndex = 0
-//            var inScaleCount = 0
-//            
-//            while true {
-//                if scaleIndex >= self.scale.getScaleNoteCount() {
-//                    break
-//                }
-//                
-//                ///Set a semaphore to detect when the expected keyboard key is played.
-//                ///Hilight on the keyboard the next note(s) to be played
-//                
-//                var combinedHandCtr = 0
-//                var hilightedKeys:[Int] = []
-//                
-//                for keyboardSemaphore in keyboardSemaphores {
-//                    let keyboardNumber = keyboardSemaphore.keyboard.keyboardNumber - 1
-//                    let hand:HandType
-//                    if let combinedkeyboard = PianoKeyboardModel.sharedCombined {
-//                        ///Add a semaphore for each hand
-//                        hand = combinedHandCtr == 0 ? .right : .left
-//                        combinedHandCtr += 1
-//                    }
-//                    else {
-//                        hand = keyboardNumber == 0 ? .right : .left
-//                    }
-//                    if let note = self.scale.getScaleNoteState(handType: hand, index: scaleIndex) {
-//                        guard let keyIndex = keyboardSemaphore.keyboard.getKeyIndexForMidi(midi:note.midi) else {
-//                            scaleIndex += 1
-//                            continue
-//                        }
-//                        let pianoKey = keyboardSemaphore.keyboard.pianoKeyModel[keyIndex]
-//                        hilightedKeys.append(keyIndex)
-//                        keyboardSemaphore.keyboard.clearAllFollowingKeyHilights(except:hilightedKeys)
-//                        
-//                        pianoKey.hilightKeyToFollow = .followThisNote
-//                        keyboardSemaphore.keyboard.redraw()
-//                        ///Set the closure called when a piano key is pressed
-//                        
-//                        pianoKey.addCallbackFunction(fn: {
-//                            keyboardSemaphore.semaphore.signal()
-//                            inScaleCount += 1
-//                            keyboardSemaphore.keyboard.redraw()
-//                            //pianoKey.setCallbackFunction(fn: nil)
-//                            //pianoKey.setCallbackFunction(fn: nil)
-//                        })
-//                    }
-//                }
-//                
-//                ///Wait for the right key to be played and signalled on every keyboard
-//                
-//                for keyboardSemaphore in keyboardSemaphores {
-//                    if !self.cancelled && self.scalesModel.runningProcess == .followingScale {
-//                        keyboardSemaphore.semaphore.wait()
-//                        accessQueue.sync {
-//                            self.nextExpectedNoteForHandIndex[keyboardSemaphore.keyboard.keyboardNumber==1 ? .right : .left]! += 1
-//                        }
-//                    }
-//                }
-//
-//                if self.cancelled {
-//                   break
-//                }
-//                else {
-//                    scaleIndex += 1
-//                    if scaleIndex < self.scale.getScaleNoteCount() {
-//                        if let nextNote = self.scale.getScaleNoteState(handType: .right, index: scaleIndex) {
-//                            scalesModel.setSelectedScaleSegment(nextNote.segments[0])
-//                        }
-//                    }
-//                    exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
-//                    awardChartBadge()
-//                    if testForEndOfExercise() {
-//                        break
-//                    }
-//                }
-//            }
-//            scalesModel.setSelectedScaleSegment(0)
-//            
-////            if inScaleCount > 2 {
-////                var msg = "😊 Good job following the scale"
-////                msg += "\nYou played \(inScaleCount) notes in the scale"
-////                //msg += "\nYou played \(xxx) notes out of the scale"
-////                ScalesModel.shared.setUserMessage(heading: "Following the Scale", msg:msg)
-////            }
-//            }
-//        }
-//    
-//        override func notifyPlayedKey(midi: Int, hand:HandType?) {
-////            ///Gather the expected next midi in each hand
-////            if self.requiredNotes.count == 0 {
-////                for h in scale.hands {
-////                    let hand = h==0 ? HandType.right : .left
-////                    if let expectedOffset = self.nextExpectedNoteForHandIndex[hand] {
-////                        if let nextExpectedNote = scale.getScaleNoteState(handType: hand, index: expectedOffset) {
-////                            let expectedMidi = nextExpectedNote.midi
-////                            self.requiredNotes.append(RequiredNote(midi: expectedMidi, hand: hand))
-////                        }
-////                    }
-////                }
-////            }
-////            var matchedCount = 0
-////            
-////            //print("============== NOTIFIED", midi, hand, matchedCount)
-////    //        for n in self.requiredNotes {
-////    //            print("                    ==== ", n.midi, n.hand, n.matched)
-////    //        }
-////            for requiredNote in requiredNotes {
-////                if let hand = hand {
-////                    if requiredNote.midi == midi && requiredNote.hand == hand {
-////                        requiredNote.matched = true
-////                    }
-////                    if requiredNote.matched {
-////                        matchedCount += 1
-////                    }
-////                }
-////
-////                
-////            }
-////    //        if midi == 69 {
-////    //            print("================ Lead req:", midi, requiredNotes.first?.midi ?? 0)
-////    //        }
-////
-////            ///Check notes in both hands are matched before moving on, otherwise wait for the other hand
-////            if matchedCount == scale.hands.count {
-////                exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
-////                self.lastMatchedMidi = midi
-////                for requiredNote in requiredNotes {
-////                    self.nextExpectedNoteForHandIndex[requiredNote.hand]! += 1
-////                }
-////                self.requiredNotes = []
-////                let index = nextExpectedNoteForHandIndex[hand!]!
-////                if index < scale.getScaleNoteCount() {
-////                    if let scaleNote = scale.getScaleNoteState(handType: hand!, index: index) {
-////                        scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
-////                    }
-////                }
-////                hilightKeys(scaleIndex: index)
-////                awardChartBadge()
-////                _ = testForEndOfExercise()
-////            }
-////            else {
-////                if midi != lastMatchedMidi {
-////                    testForAbortExercise(midi: midi, requiredNotes: self.requiredNotes)
-////                }
-////            }
-////        }
-//    
-//    }
 
 //func playDemo() {
 //    //self.start()

@@ -58,8 +58,6 @@ class ExerciseBadgesList : ObservableObject {
         self.totalBadges = value
         DispatchQueue.main.async {
             self.totalBadgesPublished = self.totalBadges
-            //print("=========== BadgesList tota", self.totalBadgesPublished)
-
         }
     }
     

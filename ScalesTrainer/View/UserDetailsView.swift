@@ -70,9 +70,7 @@ struct UserDetailsView: View {
                     }
                 }
                 .onChange(of: emailAddress, {
-                    if let user = settings.getCurrentUser() {
-                        user.email = emailAddress
-                    }
+                    settings.getCurrentUser().email = emailAddress
                 })
                 
                 Spacer()

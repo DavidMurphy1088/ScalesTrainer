@@ -131,34 +131,33 @@ struct ExerciseBadgesView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
-                                    if let user = Settings.shared.getCurrentUser() {
-                                        if user.settings.badgeStyle == 0 {
-                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c)
-                                                .rotationEffect(Angle.degrees(rotationAngle))
-                                                .offset(y: verticalOffset)
-                                                .onAppear {
-                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
-                                                        rotationAngle = 360
-                                                        verticalOffset = 0
-                                                    }
+                                    let user = Settings.shared.getCurrentUser()
+                                    if user.settings.badgeStyle == 0 {
+                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c)
+                                            .rotationEffect(Angle.degrees(rotationAngle))
+                                            .offset(y: verticalOffset)
+                                            .onAppear {
+                                                withAnimation(Animation.easeOut(duration: animationDuration)) {
+                                                    rotationAngle = 360
+                                                    verticalOffset = 0
                                                 }
-                                        }
+                                            }
                                     }
-                                    else {
-                                        if let user = Settings.shared.getCurrentUser() {
-                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-                                                .resizable()
-                                                .frame(width: imWidth)
-                                                .rotationEffect(Angle.degrees(rotationAngle))
-                                                .offset(y: verticalOffset)
-                                                .onAppear {
-                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
-                                                        rotationAngle = 360
-                                                        verticalOffset = 0
-                                                    }
-                                                }
-                                        }
-                                    }
+//                                    else {
+//                                        if let user = Settings.shared.getCurrentUser() {
+//                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+//                                                .resizable()
+//                                                .frame(width: imWidth)
+//                                                .rotationEffect(Angle.degrees(rotationAngle))
+//                                                .offset(y: verticalOffset)
+//                                                .onAppear {
+//                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
+//                                                        rotationAngle = 360
+//                                                        verticalOffset = 0
+//                                                    }
+//                                                }
+//                                        }
+//                                    }
                                 }
                             }
                             .frame(width: badgeIconSize, height: badgeIconSize)
@@ -167,15 +166,14 @@ struct ExerciseBadgesView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
-                                    if let user = Settings.shared.getCurrentUser() {
-                                        if user.settings.badgeStyle == 0 {
-                                            HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
-                                        }
-                                        else {
-                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-                                                .resizable()
-                                                .frame(width: imWidth)
-                                        }
+                                    let user = Settings.shared.getCurrentUser()
+                                    if user.settings.badgeStyle == 0 {
+                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
+                                    }
+                                    else {
+                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
+                                            .resizable()
+                                            .frame(width: imWidth)
                                     }
                                 }
                             }
@@ -223,48 +221,48 @@ struct ExerciseBadgesView: View {
     }
 }
 
-struct BadgeInformationPanel : View {
-    let user:User
-    let msg:String
-    let imageName:String
-    @Binding var badgeImageRotationAngle:Double
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(msg)
-                    .padding()
-                    .foregroundColor(.blue)
-                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title2)
-                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
-                    .zIndex(1) // Keeps it above other views
-                
-                ///Practice chart badge position is based on exercise state
-                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
-                Image(imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIScreen.main.bounds.height * 0.04)
-                //                    .offset(x: getBadgeOffset(state: exerciseState.statePublished).0,
-                //                            y: getBadgeOffset(state: exerciseState.statePublished).1)
-                    .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
-                    .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
-                    .padding()
-//                    .onChange(of: exerciseState.statePublished) { _ in
-//                        withAnimation(.easeInOut(duration: 1)) {
-//                            if exerciseState.statePublished == .exerciseWon {
-//                                badgeImageRotationAngle += 360
-//                            }
-//                        }
-//                    }
-            }
-            .frame(maxWidth: UIScreen.main.bounds.size.width * 0.8)
-            .frame(height: UIScreen.main.bounds.size.height * 0.07)
-            .background(user.settings.getKeyboardColor()) //opacity(0.9)
-            .cornerRadius(20)
-            .shadow(radius: 10)
-            Text("")
-        }
-    }
-}
+//struct BadgeInformationPanel : View {
+//    let user:User
+//    let msg:String
+//    let imageName:String
+//    @Binding var badgeImageRotationAngle:Double
+//    
+//    var body: some View {
+//        VStack {
+//            HStack {
+//                Text(msg)
+//                    .padding()
+//                    .foregroundColor(.blue)
+//                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title2)
+//                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
+//                    .zIndex(1) // Keeps it above other views
+//                
+//                ///Practice chart badge position is based on exercise state
+//                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
+//                Image(imageName)
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(height: UIScreen.main.bounds.height * 0.04)
+//                //                    .offset(x: getBadgeOffset(state: exerciseState.statePublished).0,
+//                //                            y: getBadgeOffset(state: exerciseState.statePublished).1)
+//                    .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
+//                    .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
+//                    .padding()
+////                    .onChange(of: exerciseState.statePublished) { _ in
+////                        withAnimation(.easeInOut(duration: 1)) {
+////                            if exerciseState.statePublished == .exerciseWon {
+////                                badgeImageRotationAngle += 360
+////                            }
+////                        }
+////                    }
+//            }
+//            .frame(maxWidth: UIScreen.main.bounds.size.width * 0.8)
+//            .frame(height: UIScreen.main.bounds.size.height * 0.07)
+//            .background(user.settings.getKeyboardColor()) //opacity(0.9)
+//            .cornerRadius(20)
+//            .shadow(radius: 10)
+//            Text("")
+//        }
+//    }
+//}
 

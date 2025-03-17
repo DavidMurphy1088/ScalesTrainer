@@ -47,8 +47,9 @@ public class PianoKeyModel: Identifiable, Hashable {
     /// The key was just played and its note is sounding
     var keyIsSounding = false
     /// How long the key stays hilighed when played
-    static let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
-    
+    //swcdstatic let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
+    static let keySoundingSeconds:Double = 0.8 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
+
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
     
@@ -63,10 +64,10 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     ///Sometimes the single key needs to call more than one callback. e.g. the key for the first note in a contrary motion scale starting on the same note.
     ///The key will need to generate a press for the LH and RH separately.
-    private var playedCallbacks:[(()->Void)?] = []
-    func addCallbackFunction(fn:(()->Void)?) {
-        self.playedCallbacks.append(fn)
-    }
+//    private var playedCallbacks:[(()->Void)?] = []
+//    func addCallbackFunction(fn:(()->Void)?) {
+//        self.playedCallbacks.append(fn)
+//    }
     
     init(scale:Scale, score:Score, keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int, handType:HandType) {
         self.scale = scale
@@ -85,26 +86,23 @@ public class PianoKeyModel: Identifiable, Hashable {
     ///Set a keyboard key as playing.
     ///Also hilight the associated score note.
     public func setKeyPlaying() {
-        if true {
-            self.keyIsSounding = true
-            DispatchQueue.global(qos: .background).async {
-                usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
-                DispatchQueue.main.async {
-                    self.keyIsSounding = false
-                    self.keyboardModel.redraw()
-                }
-            }
-            ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
-            self.keyboardModel.redraw()
-            
-            if self.playedCallbacks.count > 0 {
-                if let callback = self.playedCallbacks[0] {
-                    callback()
-                    self.playedCallbacks.removeFirst()
-                }
+        self.keyIsSounding = true
+        DispatchQueue.global(qos: .background).async {
+            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+            DispatchQueue.main.async {
+                self.keyIsSounding = false
+                self.keyboardModel.redraw()
             }
         }
-            
+        ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+        self.keyboardModel.redraw()
+        
+//        if self.playedCallbacks.count > 0 {
+//            if let callback = self.playedCallbacks[0] {
+//                callback()
+//                self.playedCallbacks.removeFirst()
+//            }
+//        }
     }
     
     public var noteMidiNumber: Int {

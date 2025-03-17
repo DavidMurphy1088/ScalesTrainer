@@ -198,7 +198,7 @@ class Settings : Encodable, Decodable {
         }
     }
     
-    func getCurrentUser() -> User? {
+    func getCurrentUser() -> User {
         for user in self.users {
             if user.isCurrentUser {
                 return user
@@ -208,7 +208,7 @@ class Settings : Encodable, Decodable {
             self.setCurrentUser(id: self.users[1].id)
             return self.users[1]
         }
-        return nil
+        return User(board: "")
     }
 
     func save() {
@@ -245,13 +245,12 @@ class Settings : Encodable, Decodable {
                 let jsonDecoder = JSONDecoder()
                 let decoded = try jsonDecoder.decode(Settings.self, from: jsonData)
                 self.users = decoded.users
-                //self.currentUserIndex = decoded.currentUserIndex
                 self.isDeveloperMode = decoded.isDeveloperMode
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
                 let currentUser = self.getCurrentUser()
-                AppLogger.shared.log(self, "settings load userCount:\(self.users.count) currentuser:\(currentUser?.name ?? "none")")
+                AppLogger.shared.log(self, "settings load userCount:\(self.users.count) currentuser:\(currentUser.name)")
             } catch {
                 AppLogger.shared.reportError(self, "load:" + error.localizedDescription)
             }

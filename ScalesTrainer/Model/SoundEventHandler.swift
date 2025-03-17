@@ -17,7 +17,6 @@ class SoundEventHandler  {
     let scale:Scale
     
     ///The exercise function that is called when a new MIDI notification arrives
-    //var functionToNotify: ((Int, TapEventStatus) -> Void)?
     var functionToNotify: ((Int) -> Void)?
 
     required init(scale: Scale) {
@@ -35,15 +34,12 @@ class SoundEventHandler  {
 ///A class that generates sound events from the MIDI notifications to exercise processes
 ///
 class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
+    
     func start() {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.midiManagerNotificationTarget(msg:))
         if let testMidiNotes = midiManager.testMidiNotes {
-            //if testMidiNotes.scaleId == self.scale.id {
-                if true {
-                    self.sendTestMidiNotes(notes: testMidiNotes)
-                }
-            //}
+            self.sendTestMidiNotes(notes: testMidiNotes)
         }
     }
 
@@ -79,6 +75,8 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     let bufferSize = 4096
     var consecutiveCount = 0
     let amplitudeFilter = Settings.shared.amplitudeFilter
+    var lastHilightedMidi:Int? = nil
+    
     class LastPlayedKey {
         let midi:Int
         let time:Date
@@ -99,11 +97,11 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     
     func start() {
         consecutiveCount = 0
+        lastHilightedMidi = nil
     }
 
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         var tapStatus:TapEventStatus = .none
-        //let scalesModel = ScalesModel.shared
         
         var frequency:Float
         var amplitude:Float
@@ -124,7 +122,6 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
                 consecutiveCount = 0
             }
             if let lastPlayedKey = lastPlayedKey {
-                //if midi % 12 == lastPlayedKey.midi % 12 {
                 if midi == lastPlayedKey.midi {
                     consecutiveCount += 1
                 }
@@ -141,13 +138,13 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         else {
             tapStatus = .belowAmplitudeFilter
         }
-        
-//        if [.belowAmplitudeFilter, .countTooLow].contains(status) {
-//            return
-//        }
 
         if tapStatus == .none {
-            self.hilightKeysAndStaff(midi: midi)
+            if midi != lastHilightedMidi {
+                self.hilightKeysAndStaff(midi: midi)
+                lastHilightedMidi = midi
+            }
+            
             if let notify = self.functionToNotify {
                 notify(midi)
             }
@@ -191,7 +188,6 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             let keyboard = keyboards[i]
             if let index = keyboard.getKeyIndexForMidi(midi: midi) {
                 let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
-                //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
                 let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
                 possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
             }

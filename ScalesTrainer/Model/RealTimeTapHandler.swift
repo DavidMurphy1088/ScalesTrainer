@@ -11,16 +11,16 @@ import UIKit
 ///By default, the bufferSize is set to 4096 samples. Assuming a typical sample rate of 44,100 Hz, this means that the closure will be called approximately 10.7 times per second (44,100 / 4096).
 ///To increase the frequency at which the closure is called, you can decrease the bufferSize value when initializing the PitchTap instance.
 
-protocol TapHandlerProtocol {
+protocol TapHandlerProtocolUnused {
     init(bufferSize:Int, scale:Scale, amplitudeFilter:Double?)
     func tapUpdate(_ frequency: [AUValue], _ amplitude: [AUValue])
-    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void)
+    //func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void)
     func stopTappingProcess() -> TapEventSet
     func getBufferSize() -> Int
 }
 
 ///Tap handler to udate the model in real time as events are received
-class RealTimeTapHandler : TapHandlerProtocol {
+class RealTimeTapHandlerUnused : TapHandlerProtocolUnused {
     let startTime:Date = Date()
     let bufferSize:Int
     let amplitudeFilter:Double?
@@ -50,9 +50,9 @@ class RealTimeTapHandler : TapHandlerProtocol {
         lastPlayedKey = nil
     }
     
-    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void) {
-        self.notifyFunction = notifyFunction
-    }
+//    func setNotifyFunction(notifyFunction: @escaping (Int, TapEventStatus) -> Void) {
+//        self.notifyFunction = notifyFunction
+//    }
 
     func getBufferSize() -> Int {
         return self.bufferSize

@@ -53,30 +53,30 @@ struct ResultView: View {
         return (getAllCorrect(), status)
     }
 
-    func getResultStatus() -> (Bool, String)? {
-        if [.recordingScaleForAssessment, .recordScaleWithFileData].contains(self.result.fromProcess) {
-            return recordStatus()
-        }
-        if self.result.fromProcess == .followingScale {
-            return (true, self.result.userMessage)
-        }
-        return nil
-    }
+//    func getResultStatus() -> (Bool, String)? {
+//        if [.recordingScaleForAssessment, .recordScaleWithFileData].contains(self.result.fromProcess) {
+//            return recordStatus()
+//        }
+//        if self.result.fromProcess == .followingScale {
+//            return (true, self.result.userMessage)
+//        }
+//        return nil
+//    }
     
     var body: some View {
         VStack {
-            HStack {
-                //Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
-                if let status = getResultStatus() {
-                    if status.0 {
-                        Text("😊").font(.system(size: 45))
-                    }
-                    else {
-                        Text("😔").font(.system(size: 45))
-                    }
-                    Text(status.1).padding()
-                }
-            }
+//            HStack {
+//                //Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
+//                if let status = getResultStatus() {
+//                    if status.0 {
+//                        Text("😊").font(.system(size: 45))
+//                    }
+//                    else {
+//                        Text("😔").font(.system(size: 45))
+//                    }
+//                    Text(status.1).padding()
+//                }
+//            }
         }
     }
 }

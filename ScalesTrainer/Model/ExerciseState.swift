@@ -5,6 +5,9 @@ import SwiftUI
 
 class ExerciseState : ObservableObject {
     static let shared = ExerciseState()
+    
+    @Published var exerciseMessage:String? = nil
+    
     private(set) var numberToWin = 0
     func setNumberToWin(_ n:Int) {
         self.numberToWin = n
@@ -25,14 +28,22 @@ class ExerciseState : ObservableObject {
     
     @Published private(set) var statePublished:State = .exerciseNotStarted
     private(set) var state:State = .exerciseNotStarted
-    func setExerciseState(_ ctx:String, _ value:ExerciseState.State) {
+    func setExerciseState(_ ctx:String, _ value:ExerciseState.State, _ msg:String? = nil) {
         if value != self.state {
             self.state = value
             DispatchQueue.main.async {
                 if value == .exerciseStarted {
                     print("")
                 }
-                print("=============setExerciseState", "[", ctx, "]", self.statePublished, "TO:", value)
+                AppLogger.shared.log(self, "=============setExerciseState \(ctx), TO: \(value) msg:\(msg ?? "")")
+                if self.state == .exerciseLost {
+                    self.exerciseMessage = msg
+                }
+                else {
+                    if self.state == .exerciseStarted {
+                        self.exerciseMessage = nil
+                    }
+                }
                 self.statePublished = value
             }
         }
