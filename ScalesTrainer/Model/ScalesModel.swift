@@ -57,8 +57,8 @@ enum RunningProcess {
 }
 
 public class ScalesModel : ObservableObject {
-    static public var shared = ScalesModel() 
-
+    static public var shared = ScalesModel("static init")
+    private let id:UUID
     private(set) var scale:Scale
     
     @Published private(set) var forcePublish = 0 //Called to force a repaint of keyboard
@@ -239,38 +239,17 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    ///Dont make backing a full blown process. This way Its designed to be able to run with a full blown process (but does not yet)
-//    @Published private(set) var backingOn:Bool = false
-//    func setBacking(_ way:Bool) {
-//        let metronome = Metronome.shared
-//        if way {
-//            if self.backer == nil {
-//                self.backer = Backer()
-//            }
-//            metronome.addProcessesToNotify(process: self.backer!)
-//            metronome.setTicking(way: true)
-//            metronome.start()
-//        }
-//        else {
-//            metronome.stop()
-//        }
-//        DispatchQueue.main.async {
-//            self.backingOn = way
-//        }
-//    }
-    
     //init(musicBoardGrade:MusicBoardGrade) {
-    init() {
+    init(_ ctx:String) {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
                           minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
-        //self.calibrationTapHandler = nil
         if scale.timeSignature.top == 3 {
             self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
         }
         else {
             self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
         }
-
+        self.id = UUID()
     }
     
     func exerciseCompletedNotify() {
@@ -588,10 +567,14 @@ public class ScalesModel : ObservableObject {
 //        }
 //    }
     
+    func idStringDebug() -> String {
+        let uuidString = self.id.uuidString
+        return "🟢" + String(uuidString.suffix(6))
+    }
+    
     ///Get tempo for 1/4 note
-    func getTempo() -> Int {
+    func getTempo(_ ctx: String) -> Int {
         var selected = self.tempoSettings[self.selectedTempoIndex]
-        //selected = String(selected.dropFirst(2))
         selected = String(selected)
         return Int(selected) ?? 60
     }
@@ -984,11 +967,9 @@ public class ScalesModel : ObservableObject {
         }
     }
         
-    func setTempo(_ index:Int) {
-        //DispatchQueue.main.async {
-            self.selectedTempoIndex = index
-            //PianoKeyboardModel.shared.setFingers(direction: index)
-        //}
+    func setTempo(_ ctx:String, _ index:Int) {
+        //print("========== MODEL setTempo", "id", self.idString(), ctx, index)
+        self.selectedTempoIndex = index
     }
 
     func saveTapsToFile(tapSets:[TapEventSet], result:Result) {

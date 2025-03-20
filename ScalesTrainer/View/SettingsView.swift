@@ -22,7 +22,7 @@ func backingSoundName(_ n:Int) -> String {
 }
 
 struct SettingsView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     var user:User
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
@@ -100,7 +100,8 @@ struct SettingsView: View {
                         })
                         .hilighted(backgroundColor: .gray)
                         .frame(width: UIScreen.main.bounds.size.width * 0.6,
-                               height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
+                            //height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
+                            height: UIScreen.main.bounds.size.height * 0.4)
                     }
                 }
                 .padding()
@@ -165,25 +166,27 @@ struct SettingsView: View {
                 }
                 .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
                 
-                Spacer()
-                HStack {
+                if false {
                     Spacer()
-                    Toggle(isOn: $useMidiConnnections) {
-                        Text("Use MIDI Connections").font(.title2).padding(0)
+                    HStack {
+                        Spacer()
+                        Toggle(isOn: $useMidiConnnections) {
+                            Text("Use MIDI Connections").font(.title2).padding(0)
+                        }
+                        .onChange(of: useMidiConnnections, {
+                            user.settings.useMidiConnnections = useMidiConnnections
+                        })
+                        Spacer()
                     }
-                    .onChange(of: useMidiConnnections, {
-                        user.settings.useMidiConnnections = useMidiConnnections
-                    })
-                    Spacer()
-                }
-                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-                
-                if useMidiConnnections {
-                    VStack(spacing: 20) {
-                        NavigationLink("MIDI Connections", destination: MIDIView())
-                        //Text("Hello, SwiftUI!")
+                    .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                    
+                    if useMidiConnnections {
+                        VStack(spacing: 20) {
+                            NavigationLink("MIDI Connections", destination: MIDIView())
+                            //Text("Hello, SwiftUI!")
+                        }
+                        .navigationTitle("Settings") // Title for the navigation bar
                     }
-                    .navigationTitle("Settings") // Title for the navigation bar
                 }
                 
                 Spacer()

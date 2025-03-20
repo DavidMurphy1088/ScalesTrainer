@@ -29,40 +29,40 @@ final class LaunchScreenStateManager: ObservableObject {
     }
 }
 
-struct OrientationManager {
-    //    iPhone 15: 6.1-inch Super Retina XDR OLED display
-    //    iPhone 15 Plus: 6.7-inch Super Retina XDR OLED display
-    //    iPhone 15 Pro: 6.1-inch Super Retina XDR OLED display with ProMotion technology
-    //    iPhone 15 Pro Max: 6.7-inch Super Retina XDR OLED display with ProMotion technology
-    //    iPhone 16 Series (Released September 2024):
-    //    iPhone 16: 6.1-inch Super Retina XDR OLED display
-    //    iPhone 16 Plus: 6.7-inch Super Retina XDR OLED display
-    
-    static var appDelegate: AppDelegate?
-    
-    // Lock orientation and rotate
-    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
-        //self.lockOrientation(orientation)
-        if let delegate = appDelegate {
-            delegate.orientationLock = orientation
-        }
-        UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
-        UINavigationController.attemptRotationToDeviceOrientation()
-    }
-
-    // Unlock orientation
-    static func unlockOrientation() {
-        if let delegate = appDelegate {
-            delegate.orientationLock = .all // Unlocks orientation lock
-        }
-        
-        // Explicitly rotate back to portrait after unlocking
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-            UINavigationController.attemptRotationToDeviceOrientation()
-        }
-    }
-}
+//struct OrientationManager {
+//    //    iPhone 15: 6.1-inch Super Retina XDR OLED display
+//    //    iPhone 15 Plus: 6.7-inch Super Retina XDR OLED display
+//    //    iPhone 15 Pro: 6.1-inch Super Retina XDR OLED display with ProMotion technology
+//    //    iPhone 15 Pro Max: 6.7-inch Super Retina XDR OLED display with ProMotion technology
+//    //    iPhone 16 Series (Released September 2024):
+//    //    iPhone 16: 6.1-inch Super Retina XDR OLED display
+//    //    iPhone 16 Plus: 6.7-inch Super Retina XDR OLED display
+//    
+//    static var appDelegate: AppDelegate?
+//    
+//    // Lock orientation and rotate
+//    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
+//        //self.lockOrientation(orientation)
+//        if let delegate = appDelegate {
+//            delegate.orientationLock = orientation
+//        }
+//        UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
+//        UINavigationController.attemptRotationToDeviceOrientation()
+//    }
+//
+//    // Unlock orientation
+//    static func unlockOrientation() {
+//        if let delegate = appDelegate {
+//            delegate.orientationLock = .all // Unlocks orientation lock
+//        }
+//        
+//        // Explicitly rotate back to portrait after unlocking
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+//            UINavigationController.attemptRotationToDeviceOrientation()
+//        }
+//    }
+//}
 
 class Opacity : ObservableObject {
     @Published var imageOpacity: Double = 0.0
@@ -225,7 +225,7 @@ struct DeveloperView: View {
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var orientationLock: UIInterfaceOrientationMask = .all  
+    var orientationLock: UIInterfaceOrientationMask = UIInterfaceOrientationMask.landscape
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
@@ -273,7 +273,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        } else {
 //            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
 //        }
-        return orientationLock
+        
+        //return orientationLock
+        return UIInterfaceOrientationMask.landscape
     }
 }
 
@@ -351,17 +353,16 @@ struct MainContentView: View {
         let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
                                                customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
                                                customScaleNameWheel: "Chrom Contrary, LH C, RH E")
-        ScalesModel.shared = ScalesModel()
+        //ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor,
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .arpeggioMajorSeventh,
                                             scaleMotion: .similarMotion, minTempo: 80, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
         }
     }
-    
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if Settings.shared.isDeveloperMode1() {
@@ -489,7 +490,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
-    @StateObject private var orientationInfo = OrientationInfo()
+    //@StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
 
     init() {
@@ -501,7 +502,7 @@ struct ScalesTrainerApp: App {
             AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
-        OrientationManager.appDelegate = appDelegate
+        //OrientationManager.appDelegate = appDelegate
     }
     
     var body: some Scene {
@@ -509,7 +510,7 @@ struct ScalesTrainerApp: App {
             VStack {
                 if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
                     MainContentView()
-                        .environmentObject(orientationInfo)
+                        //.environmentObject(orientationInfo)
                 }
                 else {
                     if launchScreenState.state != .finished {

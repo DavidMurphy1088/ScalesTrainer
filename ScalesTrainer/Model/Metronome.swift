@@ -36,7 +36,7 @@ class Metronome:ObservableObject {
         setTimerTickerCountPublished(count: 0)
         self.ticker.tickNum = 0
         if self.tickTimer == nil {
-            self.startTimerThread()
+            self.startTimerThread("Metronome start")
         }
     }
     
@@ -74,10 +74,10 @@ class Metronome:ObservableObject {
         return "♩= \(tempo)"
     }
     
-    func DontUse_JustForDemo() {
-        self.startTimerThread()
-    }
-    
+//    func DontUse_JustForDemo() {
+//        self.startTimerThread()
+//    }
+//    
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
 //        for i in 0..<self.processesToNotify.count {
 //            self.processesToNotify[i].metronomeStop()
@@ -117,7 +117,7 @@ class Metronome:ObservableObject {
     }
         
     ///notified: MetronomeTimerNotificationProtocol, onDone:(() -> Void)?
-    func startTimerThread() {
+    func startTimerThread(_ ctx:String) {
         ///Dont create another thread
         if self.tickTimer != nil {
             return
@@ -125,16 +125,16 @@ class Metronome:ObservableObject {
         self.timerTickerCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
         let notesPerClick = self.getNotesPerClick()
-        let tempo = Double(scalesModel.getTempo())
-        let delay = (60.0 / tempo) / Double(notesPerClick)
-        AppLogger.shared.log(self, "Metronome thread starting, tempo:\(scalesModel.getTempo()) delay:\(String(format: "%.2f", delay))")
+        let tempo = Double(scalesModel.getTempo("Metronom::startTimerThread"))
+        let threadWait = (60.0 / tempo) / Double(notesPerClick)
+        AppLogger.shared.log(self, "Metronome thread starting, tempo:\(tempo)")
         let leadInTicks = Settings.shared.getCurrentUser().settings.getLeadInBeats() * notesPerClick
         var leadingIn = false
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
         if true {
             DispatchQueue.global(qos: .background).async { [self] in
-                tickTimer = Timer.publish(every: delay, on: .main, in: .common)
+                tickTimer = Timer.publish(every: threadWait, on: .main, in: .common)
                     .autoconnect()
                     .sink { _ in
 //                    if self.processesToNotify.count == 0 {

@@ -69,10 +69,10 @@
     "%@" : {
 
     },
-    "%@ Grades" : {
+    "%@ Badges" : {
 
     },
-    "%@, " : {
+    "%@ Grades" : {
 
     },
     "%lld" : {
@@ -181,9 +181,6 @@
 
     },
     "Bluetooth MIDI Devices" : {
-
-    },
-    "C" : {
 
     },
     "Calibration" : {
@@ -474,6 +471,9 @@
     "MessageUs" : {
       "comment" : "Menu"
     },
+    "Middle C" : {
+
+    },
     "MIDI" : {
 
     },
@@ -499,9 +499,6 @@
 
     },
     "No name or grade has been setup." : {
-
-    },
-    "Note Badges" : {
 
     },
     "Octaves:" : {
@@ -571,6 +568,9 @@
 
     },
     "Restore Subscriptions" : {
+
+    },
+    "Retry" : {
 
     },
     "Right" : {
@@ -821,6 +821,7 @@
 
     },
     "Viewing\nDirection" : {
+      "extractionState" : "stale",
       "localizations" : {
         "hi" : {
           "stringUnit" : {
@@ -835,6 +836,9 @@
           }
         }
       }
+    },
+    "Viewing Direction" : {
+
     },
     "We hope you enjoy your experience using Scales Academy." : {
 

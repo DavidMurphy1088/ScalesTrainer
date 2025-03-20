@@ -112,7 +112,7 @@ public struct NoteHiliteView: View {
 }
 
 struct StaffNoteView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     let staff:Staff
     let timeSlice:TimeSlice
     @ObservedObject var note:StaffNote
@@ -149,9 +149,9 @@ struct StaffNoteView: View {
         var multipler = 1.0
         if UIDevice.current.userInterfaceIdiom == .phone {
             //if orientationObserver.orientation.isAnyLandscape {
-            if !orientationInfo.isPortrait {
+            //if !orientationInfo.isPortrait {
                 multipler = 1.1
-            }
+            //}
         }
         return multipler
     }
@@ -262,7 +262,7 @@ struct StaffNoteView: View {
 }
 
 public struct TimeSliceView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var timeSlice:TimeSlice
     @ObservedObject var scalesModel:ScalesModel
     var staff:Staff

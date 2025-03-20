@@ -126,7 +126,7 @@ struct UserListView: View {
                     }) {
                         Text("Add New User")
                     }
-                    .blueButtonStyle(trim: false)
+                    .appButtonStyle(trim: false)
                     Spacer()
                 }
                 //.frame(height: UIScreen.main.bounds.height * 0.75)

@@ -118,7 +118,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
                         ///Stop the note soon to avoid the reverb, extended sounding effect of leaving it running
                         if let noteValue = key.scaleNoteState?.value {
-                            let tempo = Double(scalesModel.getTempo())
+                            let tempo = Double(scalesModel.getTempo("Hear Scale"))
                             let wait = noteValue * (60.0 / tempo) * 1.0
                             ///Dont silence the last note since the same note will be repeated as the first note of the next play iteration (which then wont sound)
                             if nextNoteIndex < self.scale.getScaleNoteCount() - 1 {

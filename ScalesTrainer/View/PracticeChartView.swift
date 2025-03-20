@@ -137,7 +137,8 @@ struct CellView: View {
     func starView() -> some View {
         HStack {
             NavigationLink(destination: ScalesView(practiceChart: practiceChart, practiceChartCell: practiceCell, practiceModeHand: practiceModeHand), isActive: $navigateToScale) {
-            }.frame(width: 0.0)
+            }
+            .frame(width: 0.0)
 
             HStack {
                 Button(action: {

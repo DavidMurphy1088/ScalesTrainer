@@ -85,7 +85,7 @@ struct UserDetailsView: View {
                     }) {
                         Text("Add User")
                     }
-                    .blueButtonStyle()
+                    .appButtonStyle()
                 }
                 Spacer()
             }

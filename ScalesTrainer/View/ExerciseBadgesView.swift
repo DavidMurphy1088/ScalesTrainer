@@ -53,6 +53,7 @@ struct HexagramShape: View {
 struct ExerciseBadgesView: View {
     @ObservedObject var exerciseBadgesList:ExerciseBadgesList
     let scale:Scale
+    let exerciseName:String
     let onClose: () -> Void
     @State private var badgeIconSize: CGFloat = 0
     @State private var offset: CGFloat = 5.0
@@ -61,9 +62,10 @@ struct ExerciseBadgesView: View {
     @State var imageIds:[Int] = []
     @State var handType = KeyboardType.right
     
-    init(scale:Scale, onClose: @escaping () -> Void) {
+    init(scale:Scale, exerciseName:String, onClose: @escaping () -> Void) {
         self.exerciseBadgesList = ExerciseBadgesList.shared
         self.scale = scale
+        self.exerciseName = exerciseName
         self.onClose = onClose
     }
     
@@ -117,7 +119,7 @@ struct ExerciseBadgesView: View {
         ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
             VStack {
                 HStack {
-                    Text("Note Badges").font(.title3)
+                    Text("\(exerciseName) Badges").font(.title3)
                 }
                 HStack(spacing: getDotSpace()) {
                     let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
@@ -161,6 +163,7 @@ struct ExerciseBadgesView: View {
                                 }
                             }
                             .frame(width: badgeIconSize, height: badgeIconSize)
+                            //.border(Color.green)
                         }
                         else {
                             ZStack {
@@ -178,15 +181,16 @@ struct ExerciseBadgesView: View {
                                 }
                             }
                             .frame(width: badgeIconSize, height: badgeIconSize)
+                            //.border(Color.orange)
                         }
                     }
                 }
                 .padding()
-                Text("")
-                    .onChange(of: exerciseBadgesList.totalBadges, {
-                    verticalOffset = -50
-                    rotationAngle = 0
-                })
+//                Text("")
+//                    .onChange(of: exerciseBadgesList.totalBadges, {
+//                    verticalOffset = -50
+//                    rotationAngle = 0
+//                })
             }
             
             // ✅ Button in Top-Right Corner
@@ -214,7 +218,6 @@ struct ExerciseBadgesView: View {
                 repeat {
                     newValue = Int.random(in: 0..<3)
                 } while imageIds.count >= 2 && newValue == imageIds[imageIds.count - 1] && newValue == imageIds[imageIds.count - 2]
-                
                 self.imageIds.append(newValue)
             }
         }

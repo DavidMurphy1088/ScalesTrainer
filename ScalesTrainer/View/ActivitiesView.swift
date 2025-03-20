@@ -63,14 +63,13 @@ struct FamousQuotesView: View {
 
 struct ActivityEntriesView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     let user: User
     let practiceChart: PracticeChart
     @State var helpShowing = false
     let overlay = Circle().stroke(Color.white.opacity(0.8), lineWidth: 3) // Soft stroke effect
 
     var body: some View {
-
         VStack {
             Spacer()
             navigationButton(imageName: "home_practice_chart_1",
@@ -112,7 +111,7 @@ struct ActivityEntriesView: View {
             action()
         }) {
             VStack(spacing: 10) {
-                if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
+                //if UIDevice.current.userInterfaceIdiom != .phone || orientationInfo.isPortrait {
                     Image(imageName)
                         .resizable()
                         .scaledToFit()
@@ -124,7 +123,7 @@ struct ActivityEntriesView: View {
                         .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 10)
                         .scaleEffect(isActive.wrappedValue ? 1.1 : 1.0) // Slight zoom effect
                         .padding()
-                }
+                //}
                 Text(text).fancyTextStyle()
             }
         }
@@ -132,7 +131,6 @@ struct ActivityEntriesView: View {
 }
 
 struct ActivitiesView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
     //@State var user:User
     ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
     ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
@@ -154,10 +152,8 @@ struct ActivitiesView: View {
                     else {
                         VStack {
                             Spacer()
-
                             Text("No name or grade has been setup.").font(.title2).padding()
                             Text("Please setup your name and grade.").font(.title2).padding()
-                            //                        }
                         }
                         .screenBackgroundStyle()
                     }

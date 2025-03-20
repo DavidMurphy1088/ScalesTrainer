@@ -109,7 +109,9 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
         ///But note based badge matching requires that both LH and RH of the scale are matched, so send the midi again.
         
-        let margin = 2
+        ///Filter out harmonics and overtones that cause wrong note notification.
+        let margin = 3
+        //let margin = 12 + 2
         if midi < self.scaleMinxMaxMidis.0 - margin {
             return
         }
@@ -274,18 +276,14 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                 break
             }
         }
-//        if Settings.shared.isDeveloperMode1() {
-//            var l = "======== notifyPlayedKey \(self.noteNotificationNumber) midi:\(midi) required:"
-//            for n in requiredNotes {
-//                l += "[\(n.handType) midi:\(n.midi) match:\(n.matched)]"
-//            }
-//            AppLogger.shared.log(self, l)
-//        }
         
         var matchedCount = 0
         for requiredNote in requiredNotes {
             if requiredNote.matched {
                 matchedCount += 1
+                DispatchQueue.main.async {
+                    self.exerciseState.showHelp = false
+                }
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 self.lastMatchedMidi = requiredNote.midi
                 //for requiredNote in requiredNotes {

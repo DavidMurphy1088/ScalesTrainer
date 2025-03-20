@@ -6,10 +6,11 @@ public protocol PianoKeyboardDelegate: AnyObject {
 }
 
 public class PianoKeyboardModel: ObservableObject, Equatable {
-    public static var sharedRH = PianoKeyboardModel(keyboardNumber: 1)
-    public static var sharedLH = PianoKeyboardModel(keyboardNumber: 2)
+    let name:String
+    public static var sharedRH = PianoKeyboardModel(name: "commonRH", keyboardNumber: 1)
+    public static var sharedLH = PianoKeyboardModel(name: "commonLH", keyboardNumber: 2)
     public static var sharedCombined:PianoKeyboardModel?
-    public static var sharedForSettings = PianoKeyboardModel(keyboardNumber: 2)
+    public static var sharedForSettings = PianoKeyboardModel(name: "forShared", keyboardNumber: 2)
 
     let id = UUID()
     @Published public var forceRepaint = 0 ///Without this the key view does not update when pressed
@@ -32,76 +33,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             return nil
         }
     }
-//    ///Set the
-//    static func setKeysHilight(scale:Scale, midi:Int) {
-//        class PossibleKeyPlayed {
-//            let keyboard:PianoKeyboardModel
-//            let keyIndex: Int
-//            let inScale:Bool
-//            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
-//                //self.hand = hand
-//                self.keyIndex = keyIndex
-//                self.inScale = inScale
-//                self.keyboard = keyboard
-//            }
-//        }
-//        let scalesModel = ScalesModel.shared
-//        var keyboards:[PianoKeyboardModel] = []
-//        if scale.getKeyboardCount() == 1 {
-//            let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
-//            keyboards.append(keyboard)
-//        }
-//        else {
-//            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
-//                keyboards.append(combinedKeyboard)
-//            }
-//            else {
-//                keyboards.append(PianoKeyboardModel.sharedLH)
-//                keyboards.append(PianoKeyboardModel.sharedRH)
-//            }
-//        }
-//
-//        ///A MIDI heard may be in both the LH and RH keyboards.
-//        ///Determine which keyboard the MIDI was played on
-//        var possibleKeysPlayed:[PossibleKeyPlayed] = []
-//        for i in 0..<keyboards.count {
-//            let keyboard = keyboards[i]
-//            if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: scalesModel.selectedScaleSegment) {
-//                let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
-//                //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
-//                let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
-//                possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
-//            }
-//        }
-//        
-//        if possibleKeysPlayed.count > 0 {
-//            if keyboards.count == 1 {
-//                let keyboard = keyboards[0]
-//                let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
-//                keyboardKey.setKeyPlaying(hilight: true)
-//            }
-//            else {
-//                if possibleKeysPlayed.first(where: { $0.inScale == true})  == nil {
-//                    ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
-//                    if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
-//                        let keyboard = outOfScale.keyboard
-//                        let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
-//                        keyboardKey.setKeyPlaying(hilight: true)
-//                    }
-//                }
-//                else {
-//                    ///New option for scale Lead in? - For all keys played show the played status only on one keyboard - RH or LH, not both
-//                    ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
-//                    for possibleKey in possibleKeysPlayed {
-//                        let keyboard = possibleKey.keyboard
-//                        let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
-//                        keyboardKey.setKeyPlaying(hilight: true)
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     @Published public var latch = false {
         didSet { resetKeyDownKeyUpState() }
     }
@@ -111,7 +42,9 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     weak var keyboardAudioManager: AudioManager?
     public var view:ClassicStyle? = nil
     
-    private init(keyboardNumber:Int) {
+    //private
+    init(name:String, keyboardNumber:Int) {
+        self.name = name
         self.pianoKeyModel = []
         self.keyRects1 = []
         self.keyboardNumber = keyboardNumber
@@ -123,7 +56,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     }
 
     public func joinKeyboard(score:Score, fromKeyboard:PianoKeyboardModel, scale:Scale, handType:HandType) -> PianoKeyboardModel {
-        let merged = PianoKeyboardModel(keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
+        let merged = PianoKeyboardModel(name: "merged", keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
         var offset = 0
         var keyCount = 0
         var lowestRHInScaleKey:PianoKeyModel? = nil
@@ -492,3 +425,73 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     }
 
 }
+//    ///Set the
+//    static func setKeysHilight(scale:Scale, midi:Int) {
+//        class PossibleKeyPlayed {
+//            let keyboard:PianoKeyboardModel
+//            let keyIndex: Int
+//            let inScale:Bool
+//            init(keyboard:PianoKeyboardModel, keyIndex:Int, inScale:Bool) {
+//                //self.hand = hand
+//                self.keyIndex = keyIndex
+//                self.inScale = inScale
+//                self.keyboard = keyboard
+//            }
+//        }
+//        let scalesModel = ScalesModel.shared
+//        var keyboards:[PianoKeyboardModel] = []
+//        if scale.getKeyboardCount() == 1 {
+//            let keyboard = scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+//            keyboards.append(keyboard)
+//        }
+//        else {
+//            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
+//                keyboards.append(combinedKeyboard)
+//            }
+//            else {
+//                keyboards.append(PianoKeyboardModel.sharedLH)
+//                keyboards.append(PianoKeyboardModel.sharedRH)
+//            }
+//        }
+//
+//        ///A MIDI heard may be in both the LH and RH keyboards.
+//        ///Determine which keyboard the MIDI was played on
+//        var possibleKeysPlayed:[PossibleKeyPlayed] = []
+//        for i in 0..<keyboards.count {
+//            let keyboard = keyboards[i]
+//            if let index = keyboard.getKeyIndexForMidi(midi: midi, segment: scalesModel.selectedScaleSegment) {
+//                let handType = keyboard.keyboardNumber - 1 == 0 ? HandType.right : HandType.left
+//                //let inScale = scale.getStateForMidi(handIndex: keyboard.keyboardNumber - 1, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
+//                let inScale = scale.getStateForMidi(handType: handType, midi: midi, scaleSegment: scalesModel.selectedScaleSegment) != nil
+//                possibleKeysPlayed.append(PossibleKeyPlayed(keyboard: keyboard, keyIndex: index, inScale: inScale))
+//            }
+//        }
+//
+//        if possibleKeysPlayed.count > 0 {
+//            if keyboards.count == 1 {
+//                let keyboard = keyboards[0]
+//                let keyboardKey = keyboard.pianoKeyModel[possibleKeysPlayed[0].keyIndex]
+//                keyboardKey.setKeyPlaying(hilight: true)
+//            }
+//            else {
+//                if possibleKeysPlayed.first(where: { $0.inScale == true})  == nil {
+//                    ///Find the keyboard where the key played is not in the scale. If found, hilight it on just that keyboard
+//                    if let outOfScale = possibleKeysPlayed.first(where: { $0.inScale == false}) {
+//                        let keyboard = outOfScale.keyboard
+//                        let keyboardKey = keyboard.pianoKeyModel[outOfScale.keyIndex]
+//                        keyboardKey.setKeyPlaying(hilight: true)
+//                    }
+//                }
+//                else {
+//                    ///New option for scale Lead in? - For all keys played show the played status only on one keyboard - RH or LH, not both
+//                    ///Find the first keyboard where the key played is in the scale. If found, hilight it on just that keyboard
+//                    for possibleKey in possibleKeysPlayed {
+//                        let keyboard = possibleKey.keyboard
+//                        let keyboardKey = keyboard.pianoKeyModel[possibleKey.keyIndex]
+//                        keyboardKey.setKeyPlaying(hilight: true)
+//                    }
+//                }
+//            }
+//        }
+//    }
+    

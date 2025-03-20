@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftUI
 
 public struct ClassicStyle {
-    let orientationObserver = OrientationInfo()
+    let name:String
     let sfKeyWidthMultiplier: CGFloat
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
@@ -11,32 +11,43 @@ public struct ClassicStyle {
     let keyColor: Color
     let hand:Int
     let scale:Scale
+    let plainStyle:Bool
     let blackNoteFingerNumberHeight:Double
+    var noteToHilight:Int?
     
     public let naturalKeySpace: CGFloat
 
     public init(
+        name:String,
         scale:Scale,
         hand:Int,
+        plainStyle:Bool,
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
-        naturalKeySpace: CGFloat = 3,
         labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
         self.hand = hand
+        self.name = name
         self.sfKeyWidthMultiplier = sfKeyWidthMultiplier
         self.sfKeyHeightMultiplier = sfKeyHeightMultiplier
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
         self.cornerRadiusMultiplier = cornerRadiusMultiplier
-        self.naturalKeySpace = naturalKeySpace
+        if plainStyle {
+            self.naturalKeySpace = 1
+            let hand = scale.hands[0]
+            noteToHilight = scale.getMinMax(handIndex: hand).0
+        }
+        else {
+            self.naturalKeySpace = scale.octaves > 1 ? 2 : 3
+        }
         self.labelColor = labelColor
         self.keyColor = keyColor
         self.scale = scale
-        //self.blackNoteYHeightMult = orientationObserver.orientation.isAnyLandscape ? 0.50 : 0.80
-        self.blackNoteFingerNumberHeight = orientationObserver.isPortrait ? 0.50 : 0.50
+        self.plainStyle = plainStyle
+        self.blackNoteFingerNumberHeight = 0.50 //: 0.50
     }
 
     public func naturalColor(_ down: Bool) -> Color {
@@ -82,24 +93,56 @@ public struct ClassicStyle {
         return scaleNote.keyboardColourType == .fingerSequenceBreak ? Color.orange : Color.blue
     }
     
-    public func layout(repaint:Int, viewModel: PianoKeyboardModel, geometry: GeometryProxy) -> some View {
+    func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
+        var keyNameToShow:String? = nil
+        if plainStyle {
+            if [60].contains(key.midi) {
+                let flashColor = Color.green//.opacity(flashOpacity)
+                context.fill(keyPath, with: .color(flashColor))
+                keyNameToShow = "C"
+            }
+            if [noteToHilight].contains(key.midi) {
+                let flashColor = Color.orange//.opacity(flashOpacity)
+                context.fill(keyPath, with: .color(flashColor))
+            }
+        }
+        else {
+            if showKeyName {
+                if scalesModel.showFingers {
+                    if key.finger.count > 0 {
+                        keyNameToShow = key.getName()
+                    }
+                }
+            }
+        }
+        if let keyNameToShow = keyNameToShow {
+            let yPos = plainStyle ? keyRect.height * 0.80 : 20
+            context.draw(
+                Text(keyNameToShow)
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
+                    .foregroundColor(Color(UIColor.darkGray)),
+                at: CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: yPos)
+            )
+        }
+        context.stroke(keyPath, with: .color(.gray), lineWidth: 1)
+    }
+    
+    public func layout(repaint:Int, viewModel: PianoKeyboardModel, plainStyle:Bool, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
-            let user = Settings.shared.getCurrentUser() 
+            //let user = Settings.shared.getCurrentUser() 
             let scalesModel = ScalesModel.shared
             let width = size.width
             let height = size.height
-            let xg = geometry.frame(in: .global).origin.x
-            let yg = geometry.frame(in: .global).origin.y
+            let geometryLeftEdge = geometry.frame(in: .global).origin.x
+            let geometryTopEdge = geometry.frame(in: .global).origin.y
 
             // Natural keys
-            let cornerRadius = width * cornerRadiusMultiplier
+            let cornerRadius = plainStyle ? 2 : width * cornerRadiusMultiplier
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
-            let naturalXIncr = naturalWidth + naturalKeySpace
             var xpos: CGFloat = 0
-            let playingMidiRadius = naturalWidth * 0.5
-            
-            for (index, key) in viewModel.pianoKeyModel.enumerated() {
+            let playingMidiRadius = naturalWidth * (scale.octaves > 1 ? 0.5 : 0.3)
 
+            for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 guard key.isNatural else {
                     continue
                 }
@@ -108,13 +151,13 @@ public struct ClassicStyle {
                 }
                 let keyModel = viewModel.pianoKeyModel[index]
 
-                let rect = CGRect(
+                let keyRect = CGRect(
                     origin: CGPoint(x: xpos, y: 0),
                     size: CGSize(width: naturalWidth, height: height)
                 )
                 
-                let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
-                    .path(in: rect)
+                let keyPath = RoundedCornersShape(corners: [.topLeft, .topRight, .bottomLeft, .bottomRight],
+                                                  radius: cornerRadius).path(in: keyRect)
                 
                 ///White keys colour
                 ///Hilight the key if in following keys mode
@@ -142,49 +185,26 @@ public struct ClassicStyle {
 //                    }
 //                }
                 let gradientWhiteKey:Gradient = Gradient(colors: [
-                    hilightColor,
-                    keyColor,
-                    user.settings.isCustomColor() ? user.settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
+                    Color.white
                 ])
-                context.fill(path, with: .linearGradient(
-                    gradientWhiteKey,
-                    startPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 0.0),
-                    endPoint: CGPoint(x: rect.width / 2.0, y: rect.height * 1.0)
-                ))
-
-                /// ----------- Note name ----------
-
-                if scalesModel.showFingers {
-                    if key.finger.count > 0 {
-                        context.draw(
-                            Text(key.getName())
-                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
-                            //.foregroundColor(keyModel.midi == 60 ? .blue : .black),
-                            .foregroundColor(.black),
-                            at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                        )
-                    }
-                }
+                                                         
+//                let gradientWhiteKey1:Gradient = Gradient(colors: [
+//                    hilightColor,
+//                    keyColor,
+//                    //user.settings.isCustomColor() ? user.settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
+//                    Color(red: 1, green: 1, blue: 1),
+//                ])
+//                context.fill(keyPath, with: .linearGradient(
+//                    gradientWhiteKey,
+//                    startPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 0.0),
+//                    endPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 1.0)
+//                ))
                 
-                /// ----------- Middle C Note name ----------
-                /// If the keyName is not "C" (e.g. its B#) Dont overwrite it.
-                if key.midi == 60 && key.getName() != "B#" {
-                    let circleRadius:Double = UIDevice.current.userInterfaceIdiom == .phone ? 10 : 12
-                    let y = UIDevice.current.userInterfaceIdiom == .phone ? circleRadius * 1.0 : circleRadius / 2 + 2
-                    let circle = CGRect(x: Double(Int(rect.midX)) - circleRadius, // * 2,
-                                        y: y,
-                                        width: circleRadius * 2,
-                                        height: circleRadius * 2)
-                    context.fill(Path(ellipseIn: circle), with: .color(.white))
-                    context.stroke(Path(ellipseIn: circle), with: .color(.blue), lineWidth: 2)
-                    context.draw(
-                        Text("C")
-                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2).bold()
-                        .foregroundColor(.blue),
-                        at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                    )
-                }
-
+                
+                /// ----------- Key name and key color hilights ---------
+                context.fill(keyPath, with: .color(Color.white))
+                showKeyNameAndHilights(scalesModel: scalesModel, context: context, keyRect: keyRect, key: key, keyPath: keyPath, showKeyName: true)
+                
                 /// ----------- Playing the note ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
@@ -197,13 +217,12 @@ public struct ClassicStyle {
                         color = viewModel.hilightNotesOutsideScale ? .red : .clear
                     }
                     
-                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2,
-                                       y: rect.origin.y + rect.height * 0.70 - w/2,
+                    let frame = CGRect(x: keyRect.origin.x + keyRect.width / 2.0 - w/2,
+                                       y: keyRect.origin.y + keyRect.height * 0.70 - w/2,
                                        width: w, height: w)
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        //lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
                         lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
                 }
                             
@@ -211,8 +230,8 @@ public struct ClassicStyle {
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         if scaleNote.finger > 0 {
-                            let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.70)
-                            let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
+                            let point = CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: keyRect.origin.y + keyRect.height * 0.70)
+                            let finger:String = scaleNote.finger > 5 ? "" : String(scaleNote.finger)
                             context.draw(
                                 Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),
@@ -221,9 +240,10 @@ public struct ClassicStyle {
                         }
                     }
                 }
-                xpos += naturalXIncr
+                //xpos += plainStyle ? 8 : naturalXIncr
+                xpos += naturalWidth + naturalKeySpace
                 if index < viewModel.keyRects1.count {
-                    viewModel.keyRects1[index] = rect.offsetBy(dx: xg, dy: yg)
+                    viewModel.keyRects1[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
                 }
                 
             }
@@ -235,27 +255,26 @@ public struct ClassicStyle {
             xpos = 0.0
 
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
-
                 if key.isNatural {
-                    xpos += naturalXIncr
+                    xpos += naturalWidth + naturalKeySpace
                     continue
                 }
                 if index >= viewModel.pianoKeyModel.count {
                     continue
                 }
                 let keyModel = viewModel.pianoKeyModel[index]
-                let rect = CGRect(
+                let keyRect = CGRect(
                     origin: CGPoint(x: xpos - (sfKeyWidth / 2.0), y: 0),
                     size: CGSize(width: sfKeyWidth, height: sfKeyHeight)
                 )
 
-                let path = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
-                    .path(in: rect)
+                let keyPath = RoundedCornersShape(corners: [.bottomLeft, .bottomRight], radius: cornerRadius)
+                    .path(in: keyRect)
 
-                context.fill(path, with: .color(Color(red: 0.1, green: 0.1, blue: 0.1)))
+                context.fill(keyPath, with: .color(Color(red: 0.1, green: 0.1, blue: 0.1)))
 
                 let inset = sfKeyWidth * sfKeyInsetMultiplier
-                let insetRect = rect
+                let insetRect = keyRect
                     .insetBy(dx: inset, dy: inset)
                     .offsetBy(dx: 0, dy: key.touchDown ? -(inset) : -(inset * 1.5))
 
@@ -283,25 +302,26 @@ public struct ClassicStyle {
                 ])
                 context.fill(pathInset, with: .linearGradient(
                     gradientBlackKey,
-                    startPoint: CGPoint(x: rect.width / 2.0, y: 0),
-                    endPoint: CGPoint(x: rect.width / 2.0, y: rect.height)
+                    startPoint: CGPoint(x: keyRect.width / 2.0, y: 0),
+                    endPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height)
                 ))
                 
-                ///------------- Back notes - Note name -----
+                ///------------- Key Name -----
                 ///On iPhone or long scales many keys results in overlapping key names. So dont show the black key key names.
-                if UIDevice.current.userInterfaceIdiom != .phone {
-                    if scale.getScaleNoteCount() <= 24{ //} || !self.orientationObserver.isPortrait {
-                        if scalesModel.showFingers {
-                            if key.finger.count > 0 {
-                                let str = key.getName()
-                                context.draw(
-                                    Text("\(key.getName())")
-                                    //Text(key.getName())
-                                    //.font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title3)//.bold()
-                                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
-                                        .foregroundColor(.white),
-                                    at: CGPoint(x: rect.origin.x + rect.width / 2.0, y: 20)
-                                )
+                showKeyNameAndHilights(scalesModel: scalesModel, context: context, keyRect: keyRect, key: key, keyPath: keyPath, showKeyName: scale.getScaleNoteCount() <= 24)
+
+                if false {
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        if scale.getScaleNoteCount() <= 24 {
+                            if scalesModel.showFingers {
+                                if key.finger.count > 0 {
+                                    context.draw(
+                                        Text("\(key.getName())")
+                                            .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
+                                            .foregroundColor(.white),
+                                        at: CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: 20)
+                                    )
+                                }
                             }
                         }
                     }
@@ -310,9 +330,10 @@ public struct ClassicStyle {
                 /// ----------- The note from the key touch is playing ----------
                 if keyModel.keyIsSounding {
                     let innerContext = context
-                    let w = playingMidiRadius * 1.0
-                    let frame = CGRect(x: rect.origin.x + rect.width / 2.0 - w/2 , y: rect.origin.y + rect.height * 0.80 - w/2,
-                                       width: w, height: w)
+                    let diameter = playingMidiRadius * 1.0
+                    let frame = CGRect(x: keyRect.origin.x + keyRect.width / 2.0 - diameter/2 ,
+                                       y: keyRect.origin.y + keyRect.height * 0.50 - diameter/2,
+                                       width: diameter, height: diameter)
                     let color:Color
                     if keyModel.scaleNoteState != nil {
                         color = .green
@@ -323,7 +344,6 @@ public struct ClassicStyle {
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        //lineWidth: keyModel.scaleNoteState != nil ? 6 : 12)
                         lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
                 }
                 
@@ -332,16 +352,16 @@ public struct ClassicStyle {
                     if let scaleNote = key.scaleNoteState {
                         
                         //let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
-                        let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * self.blackNoteFingerNumberHeight)
-                        let finger:String = scaleNote.finger > 5 ? "►" : String(scaleNote.finger)
+                        let point = CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: keyRect.origin.y + keyRect.height * self.blackNoteFingerNumberHeight)
+                        let finger:String = scaleNote.finger > 5 ? "" : String(scaleNote.finger)
                         if false {
                             ///White background for finger number on a black key
                             ///23May dropped and instead make black keys less black
                             if key.scaleNoteState == nil {
-                                let edge = rect.width * 0.05
+                                let edge = keyRect.width * 0.05
                                 let col = Color.white.opacity(0.8) //scaleNote.fingerSequenceBreak ? Color.yellow.opacity(0.6) :
-                                let width = rect.width - 2 * edge
-                                let backgroundRect = CGRect(x: rect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
+                                let width = keyRect.width - 2 * edge
+                                let backgroundRect = CGRect(x: keyRect.origin.x + edge, y: point.y - width / 2.0 + 1, width: width, height: width)
                                 context.fill(Path(ellipseIn: backgroundRect), with: .color(col))
                             }
                         }
@@ -353,7 +373,7 @@ public struct ClassicStyle {
                     }
                 }
                 if index < viewModel.keyRects1.count {
-                    viewModel.keyRects1[index] = rect.offsetBy(dx: xg, dy: yg)
+                    viewModel.keyRects1[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
                 }
             }
         }

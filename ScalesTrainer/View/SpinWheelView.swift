@@ -52,8 +52,8 @@ struct SegmentView: View {
                 .stroke(Color.white, lineWidth: 2)
             )
 
-            Text(text)
-                .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption : .title2).bold(true)
+            Text("\(  text)") ///push start of title away from center
+                .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption : .title3).bold(true)
                 .foregroundColor(.white)
                 .rotationEffect(.degrees((startAngle + endAngle) / 2))
                 .position(x: posx + CGFloat(radius / 2 * cos((startAngle + angle / 2) * .pi / 180)),
@@ -91,7 +91,7 @@ struct SegmentedCircleView: View {
 }
 
 struct SpinWheelView: View {
-    @EnvironmentObject var orientationInfo: OrientationInfo
+    //@EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var scalesModel = ScalesModel.shared
     @State var practiceChart:PracticeChart // = boardAndGrade.practiceChart
     @ObservedObject private var exerciseState = ExerciseState.shared
@@ -270,10 +270,9 @@ struct SpinWheelView: View {
         }
         .onAppear() {
             self.spinState = .notStarted
-            self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
-
+            //self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
+            self.wheelSize = 0.45 * UIScreen.main.bounds.width
         }
-
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }

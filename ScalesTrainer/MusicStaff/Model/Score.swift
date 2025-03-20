@@ -175,13 +175,13 @@ public class Score : ObservableObject, Encodable {
         self.id = UUID()
         self.scale = scale
         //29Jan2025 - Other calculations elsewhere have to be micro adjusted if lineSpacing changes. Best to leave it constant.
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            let orientationObserver = OrientationInfo()
+        //if UIDevice.current.userInterfaceIdiom == .phone {
+            //let orientationObserver = OrientationInfo()
             self.lineSpacing = 8.0 //OrientationInfo().isPortrait ? 8.0 : 6.0
-        }
-        else {
-            self.lineSpacing = 8.0 //scale.hands.count > 1 ? 8.0 : 10
-        }
+        //}
+        //else {
+            //self.lineSpacing = 8.0 //scale.hands.count > 1 ? 8.0 : 10
+        //}
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key

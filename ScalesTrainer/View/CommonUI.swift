@@ -22,28 +22,36 @@ class UIGlobals {
     }
 }
 
-struct BlueButtonStyle: ButtonStyle {
-    let trim:Bool
+struct AppButtonStyle: ButtonStyle {
+    let trim: Bool
+    let color: Color
+
+    // The color parameter defaults to blue if not provided.
+    init(trim: Bool, color: Color = .blue) {
+        self.trim = trim
+        self.color = color
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(.horizontal, trim ? 8 : 24)
             .padding(.vertical, trim ? 4 : 12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.blue)
+                    .fill(color)
                     .shadow(color: .gray.opacity(0.3), radius: configuration.isPressed ? 1 : 3, x: 0, y: 2)
             )
             .foregroundColor(.white)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            //.animation(.spring(response: 0.3, dampingFraction: 0.7))
     }
 }
 
 extension Button {
-    func blueButtonStyle(trim:Bool = false) -> some View {
-        self.buttonStyle(BlueButtonStyle(trim: trim))
+    func appButtonStyle(trim: Bool = false, color: Color = .blue) -> some View {
+        self.buttonStyle(AppButtonStyle(trim: trim, color: color))
     }
 }
+
 
 /// Title view at the top of every screen
 struct ScreenTitleView: View {
@@ -129,6 +137,7 @@ struct OutlinedStyleView: ViewModifier {
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.gray, lineWidth: 2)
+                        //.stroke(Color.gray, lineWidth: 1)
                 )
                 .shadow(color: Color.black.opacity(opacity), radius: 8, x: 0, y: 4)
         }
