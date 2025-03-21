@@ -66,22 +66,12 @@ struct ScalesView: View {
     @State var emailResult: MFMailComposeResult? = nil
     @State var emailPopupSheet: ActiveSheet?
     @State var exerciseProcess:RunningProcess? = nil
+    @State var badgesShowing = false
     
-    ///The slide up panel for badge info - which badge the student could win or did win
-    //@State private var badgeMessagePanelOffset: CGFloat = 0
-    //@State var badgeMessageImageRotationAngle:Double = 0
-
-    ///Star view - the starts that are earned for each correct not
-    //@State private var starViewAnimateCount:Int? = nil  //Counter that controls the animation of an exercise loss
-    //@State private var starViewShakeAmount: CGFloat = 0
-
-    ///Practice Chart badge control
-    //@State var exerciseBadge:Badge?
-
     @State private var isLandscape: Bool = false
-    @State private var spacingVertical:CGFloat = 0
     @State private var spacingHorizontal:CGFloat = 12
-    
+    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -4 : UIScreen.main.bounds.size.height * 0.02
+
     init(practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
         self.practiceChart = practiceChart
         self.practiceChartCell = practiceChartCell
@@ -157,7 +147,7 @@ struct ScalesView: View {
     }
     
     func StopProcessView(user:User) -> some View {
-        VStack {
+        VStack(spacing:0) {
             if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
                 //if exerciseState.statePublished == .exerciseStarted {
                     HStack {
@@ -250,7 +240,7 @@ struct ScalesView: View {
     }
     
     func SelectActionView() -> some View {
-        VStack {
+        VStack(spacing:0) {
             HStack(alignment: .top) {
                 if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
                     Spacer()
@@ -294,7 +284,7 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("View lead start", settings.isDeveloperMode1() ? .exerciseAboutToStart : .exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("View lead start", settings.isDeveloperMode1() ? .exerciseStarted : .exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {
@@ -306,7 +296,7 @@ struct ScalesView: View {
                             Button(action: {
                                 showHelp("Lead")
                             }) {
-                                VStack {
+                                VStack(spacing:0) {
                                     Image(systemName: "questionmark.circle")
                                         .imageScale(.large)
                                         .font(.title2)//.bold()
@@ -452,7 +442,7 @@ struct ScalesView: View {
         }
         else {
             //height = UIScreen.main.bounds.size.height / (isLandscape  ? 3 : 4)
-            height = UIScreen.main.bounds.size.height / (isLandscape  ? 4 : 3)
+            height = UIScreen.main.bounds.size.height * (isLandscape  ? 0.33 : 0.33)
         }
         if scalesModel.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
@@ -530,46 +520,44 @@ struct ScalesView: View {
 
     }
     
-    func setVerticalSpacing() {
-        if isLandscape {
-            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 0
-        }
-        else {
-            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 12
-        }
-    }
+//    func setVerticalSpacing() {
+//        if isLandscape {
+//            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 0
+//        }
+//        else {
+//            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 12
+//        }
+//    }
 
     var body: some View {
-        
         ZStack {
-            VStack(spacing:0) {
-//                VStack(spacing: 0) {
-//                    ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-//                    //.border(Color.red)
-//                }
-                VStack {
-                    HStack {
-                        Spacer()
-                        ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
-                            .outlinedStyleView(opacity: 0.3)
-                        Spacer()
-                        HeaderView()
-                            .outlinedStyleView(opacity: 0.3)
-//                            .padding(.top, spacingVertical)
-//                            .padding(.bottom)
-//                            .padding(.horizontal, spacingHorizontal)
-                        //.padding()
-                        Spacer()
+            let headerOpacity = 0.1
+            VStack() {
+                let headerScale = UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.10
+                VStack() {
+                    if !self.badgesShowing {
+                        HStack {
+                            ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
+                                .frame(height: UIScreen.main.bounds.height * headerScale)
+                                .background(
+                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
+                                                   startPoint: .topLeading, endPoint: .bottomTrailing)                                                )
+                                .outlinedStyleView()
+                            Spacer()
+                            HeaderView()
+                                .frame(height: UIScreen.main.bounds.height * headerScale)
+                                .background(
+                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
+                                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .outlinedStyleView()
+                        }
+                        .padding(.bottom, spacingVertical)
+                        .padding(.horizontal, spacingHorizontal)
                     }
-                    .background(
-                        LinearGradient(colors: [Color.purple.opacity(0.3), Color.blue.opacity(0.3)],
-                                       startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
-                    .outlinedStyleView(opacity: 0.3)
-                    .padding(.horizontal, spacingHorizontal)
-
+                    
                     if scalesModel.showKeyboard {
-                        VStack {
+                        VStack(spacing:0) {
                             if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                                 ///Scale is contrary with LH and RH joined on one keyboard
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
@@ -579,6 +567,7 @@ struct ScalesView: View {
                                 if scalesModel.scale.needsTwoKeyboards() {
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
                                         .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                        .padding(.bottom, spacingVertical)
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
                                                       keyColor: user.settings.getKeyboardColor())
                                     .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
@@ -591,20 +580,20 @@ struct ScalesView: View {
                                 }
                             }
                         }
-                        //.outlinedStyleView(opacity: 0.3)
-                        .padding(.top, spacingVertical)
+                        .outlinedStyleView(color: Color.clear)
+                        .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
                                                     
-                        if UIDevice.current.userInterfaceIdiom != .phone {
+                        //if UIDevice.current.userInterfaceIdiom != .phone {
                             if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
                                 if scalesModel.showLegend {
                                     LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                                        .padding(.top, 0)
+                                        .padding(.bottom, spacingVertical)
                                         .padding(.horizontal)
                                     //.border(Color.red, width: 1)
                                 }
                             }
-                        }
+                        //}
                     }
                     
                     if staffCanFit() {
@@ -615,19 +604,26 @@ struct ScalesView: View {
                                 }
                             }
                             //.border(Color.red, width: 1)
-                            .outlinedStyleView(opacity: 0.3)
-                            .padding(.top, spacingVertical)
+//                            .background(
+//                                LinearGradient(colors: [Color.purple.opacity(opacity), Color.blue.opacity(opacity)],
+//                                               startPoint: .topLeading, endPoint: .bottomTrailing)
+//                                )
+                            .outlinedStyleView()
+                            .padding(.bottom, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
                         }
                     }
                     
-                    if [.leadingTheScale, .followingScale, .backingOn, .playingAlongWithScale, .recordingScale].contains(scalesModel.runningProcessPublished) ||
-                                                                                      scalesModel.recordingIsPlaying {
-                    //if scalesModel.runningProcessPublished != .none || scalesModel.recordingIsPlaying { //} || scalesModel.synchedIsPlaying {
+                    //if [.leadingTheScale, .followingScale, .backingOn, .playingAlongWithScale, .recordingScale]
+                    ///on iPhone dont show this to save vertical space. Let the user exit via the badges close button
+                    if [.backingOn, .playingAlongWithScale, .recordingScale]
+                        .contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
                         StopProcessView(user:Settings.shared.getCurrentUser())
                     }
                     else {
-                        SelectActionView()
+                        if !self.badgesShowing {
+                            SelectActionView()
+                        }
                     }
                     
                     ///-------- Exercise stars mesages and displays ----------
@@ -635,23 +631,26 @@ struct ScalesView: View {
                     if user.settings.practiceChartGamificationOn {
                         if let exerciseBadge = scalesModel.exerciseBadge {
                             ///Show the horizontal row of badges
-                            VStack {
+                            VStack(spacing:0) {
                                 if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
                                     ExerciseBadgesView(scale: scalesModel.scale,
                                                        exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
                                                        onClose: {
                                         exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
                                     })
-                                        .outlinedStyleView()
-                                        .padding()
-                                    if exerciseState.showHelp {
-                                        let height = UIScreen.main.bounds.height * 0.07
-                                        PianoStartNoteIllustrationView(scalesModel: scalesModel, keyHeight: height * 0.9)
-                                            .frame(width: UIScreen.main.bounds.width * 0.50, height: height)
-                                            .outlinedStyleView()
-                                        //.border(Color.red, width: 1)
-                                            .padding()
+                                    .outlinedStyleView()
+                                    .padding(.bottom, self.spacingVertical)
+                                    .onAppear() {
+                                        if UIDevice.current.userInterfaceIdiom == .phone {
+                                            self.badgesShowing = true
+                                        }
                                     }
+                                    .onDisappear() {
+                                        if UIDevice.current.userInterfaceIdiom == .phone {
+                                            self.badgesShowing = false
+                                        }
+                                    }
+
                                 }
                             }
                         }
@@ -671,7 +670,7 @@ struct ScalesView: View {
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if let badge = scalesModel.exerciseBadge {
-                    VStack {
+                    VStack(spacing:0) {
                         StartExerciseView(badge: badge, scalesModel: self.scalesModel, callback: {cancelled in
                             if cancelled {
                                 exerciseState.setExerciseState("Popup", .exerciseNotStarted)
@@ -687,7 +686,7 @@ struct ScalesView: View {
             }
             if [.exerciseWon].contains(exerciseState.statePublished) {
                 if let badge = scalesModel.exerciseBadge {
-                    VStack {
+                    VStack(spacing:0) {
                         EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry in
                             exerciseState.setExerciseState("Popup", .exerciseNotStarted)
                         }, failed: false)
@@ -697,7 +696,7 @@ struct ScalesView: View {
             }
             if [.exerciseLost].contains(exerciseState.statePublished) {
                 if let badge = scalesModel.exerciseBadge {
-                    VStack {
+                    VStack(spacing:0) {
                         EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry in
                             if retry {
                                 exerciseState.setExerciseState("Popup", .exerciseAboutToStart)
@@ -761,18 +760,18 @@ struct ScalesView: View {
         }
         
         ///Determine device orientation
-        .background(GeometryReader { geometry in
-            Color.clear
-                .onAppear {
-                    isLandscape = geometry.size.width > geometry.size.height
-                    setVerticalSpacing()
-                }
-                .onChange(of: geometry.size) { oldSize, newSize in
-                    isLandscape = newSize.width > newSize.height
-                    setVerticalSpacing()
-                }
-            
-        })
+//        .background(GeometryReader { geometry in
+//            Color.clear
+//                .onAppear {
+//                    isLandscape = geometry.size.width > geometry.size.height
+//                    setVerticalSpacing()
+//                }
+//                .onChange(of: geometry.size) { oldSize, newSize in
+//                    isLandscape = newSize.width > newSize.height
+//                    setVerticalSpacing()
+//                }
+//            
+//        })
         //.screenBackgroundStyle()
         
         ///Every time the view appears, not just the first.

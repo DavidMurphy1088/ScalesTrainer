@@ -128,19 +128,54 @@ struct screenBackgroundStyleView: ViewModifier {
     }
 }
 
+//struct OutlinedStyleView: ViewModifier {
+//    let opacity:Double
+//    let color:Color
+//    func body(content: Content) -> some View {
+//        let compact = UIDevice.current.userInterfaceIdiom == .phone
+//        content
+//            .background(color)
+//            .cornerRadius(compact ? 6 : 12) ///👹
+//            .overlay(
+//                RoundedRectangle(cornerRadius: compact ? 6 : 12)
+//                    .stroke(Color.gray, lineWidth: compact ? 1 : 2)
+//            )
+//            ///y > 0 means shadow from above
+//            .shadow(color: Color.black.opacity(opacity), radius: compact ? 2 : 8, x: 0, y: compact ? 2 : 4)
+//    }
+//}
+
 struct OutlinedStyleView: ViewModifier {
-    let opacity:Double
+    let shadowOpacity: Double
+    let color: Color
+    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    
     func body(content: Content) -> some View {
-            content
-                .background(Color.white)
-                .cornerRadius(12)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray, lineWidth: 2)
-                        //.stroke(Color.gray, lineWidth: 1)
-                )
-                .shadow(color: Color.black.opacity(opacity), radius: 8, x: 0, y: 4)
-        }
+        let isCompact = horizontalSizeClass == .compact
+        
+        // Scale values based on size class
+        let cornerRadius = isCompact ? 9.0 : 12.0
+        let strokeWidth = isCompact ? 1.0 : 2.0
+        let shadowRadius = isCompact ? 2.0 : 8.0
+        let shadowOffset = isCompact ? 2.0 : 4.0
+        
+        return content
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(color)
+                    .shadow(
+                        color: Color.black.opacity(shadowOpacity),
+                        radius: shadowRadius,
+                        x: 0,
+                        y: shadowOffset
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(Color.gray, lineWidth: strokeWidth)
+            )
+    }
 }
 
 struct FancyTextStyle: ViewModifier {
@@ -169,8 +204,8 @@ extension View {
     }
     
     ///A gray border around the view
-    func outlinedStyleView(opacity:Double = 0.3) -> some View {
-        modifier(OutlinedStyleView(opacity: opacity))
+    func outlinedStyleView(shadowOpacity:Double = 0.3, color:Color = Color.white) -> some View {
+        modifier(OutlinedStyleView(shadowOpacity: shadowOpacity, color: color))
     }
     
     func fancyTextStyle() -> some View {

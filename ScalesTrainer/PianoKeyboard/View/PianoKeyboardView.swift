@@ -4,7 +4,7 @@ import UIKit
 
 public struct PianoKeyboardView : View {
     @ObservedObject var scalesModel: ScalesModel
-    @State private var viewModel: PianoKeyboardModel
+    @ObservedObject private var viewModel: PianoKeyboardModel
     let keyColor:Color
     let plainStyle:Bool
     var style:ClassicStyle
@@ -21,17 +21,18 @@ public struct PianoKeyboardView : View {
         GeometryReader { geometry in
             VStack {
                 ///🤚01 May - things work without a forced repaint here...
-                //Text("Repaint \(viewModel.forceRepaint1)")
-                //.background(Color.clear) - not needed since canvas background is clear by default
-                ZStack(alignment: .top) {
-                    //Warning - Anything added here screws up touch handling 😡
-                    style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, plainStyle: plainStyle, geometry: geometry)
-                    if plainStyle == false {
-                        TouchesView(viewModel: viewModel)
+                //if viewModel.forceRepaint != -1 {
+                    //.background(Color.clear) - not needed since canvas background is clear by default
+                    //Text("REPAIONT \(viewModel.forceRepaint)")
+                    ZStack(alignment: .top) {
+                        //Warning - Anything added here screws up touch handling 😡
+                        style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, plainStyle: plainStyle, geometry: geometry)
+                        if plainStyle == false {
+                            TouchesView(viewModel: viewModel)
+                        }
                     }
-                }
+                //}
             }
-            
         }
     }
 //    public var body: some View {

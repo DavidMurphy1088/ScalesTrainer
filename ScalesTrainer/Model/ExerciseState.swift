@@ -7,7 +7,7 @@ class ExerciseState : ObservableObject {
     static let shared = ExerciseState()
     
     @Published var exerciseMessage:String? = nil
-    @Published var showHelp:Bool = false
+    //@Published var showHelp:Bool = false
 
     private(set) var numberToWin = 0
     func setNumberToWin(_ n:Int) {
@@ -35,7 +35,7 @@ class ExerciseState : ObservableObject {
             DispatchQueue.main.async {
                 if value == .exerciseStarted {
                     print("")
-                    self.showHelp = true
+                    //self.showHelp = true
                 }
                 AppLogger.shared.log(self, "=============setExerciseState \(ctx), TO: \(value) msg:\(msg ?? "")")
                 if self.state == .exerciseLost {

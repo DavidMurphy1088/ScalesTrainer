@@ -281,9 +281,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         for requiredNote in requiredNotes {
             if requiredNote.matched {
                 matchedCount += 1
-                DispatchQueue.main.async {
-                    self.exerciseState.showHelp = false
-                }
+
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 self.lastMatchedMidi = requiredNote.midi
                 //for requiredNote in requiredNotes {

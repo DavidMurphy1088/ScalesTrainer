@@ -101,6 +101,7 @@ struct LegendView: View {
             if let title = title(hand: hand) {
                 Text(" \(title) ").bold().foregroundColor(.white) // White text
                     //.padding() //.padding(.horizontal).hilighted().padding(.top, 2)
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     .padding(.horizontal)
                     .background(Color.green)
                     .cornerRadius(6)
@@ -110,13 +111,13 @@ struct LegendView: View {
                     if scalesModel.showFingers {
                         HStack(spacing: 0) {
                             //Spacer()
-                            Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold()
-                            Text(NSLocalizedString("Finger Number", comment: "LegendView"))
+                            Text("●").foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/).font(.title2).bold().font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(NSLocalizedString("Finger Number", comment: "LegendView")).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                             
                             //Spacer()
                             //Text("1").foregroundColor(.orange).font(.title2).bold()
-                            Text(" ●").foregroundColor(.orange).font(.title2).bold()
-                            Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion))
+                            Text(" ●").foregroundColor(.orange).font(.title2).bold().font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion)).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                             //Spacer()
                         }
                     }

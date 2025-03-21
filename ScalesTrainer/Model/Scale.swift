@@ -610,36 +610,18 @@ public class Scale : Codable {
         return self.hands == scale.hands
     }
 
-    func getDynamicsDescription(long:Bool) -> String {
-        var desc = ""
-        var d = 0
-        for dynamic in self.dynamicTypes {
-            if d > 0 {
-                desc += " or "
-            }
-            if false && long {
-                desc += String(dynamic.description)
-            }
-            else {
-                desc += String(dynamic.descriptionShort)
-            }
-            d += 1
-        }
-        return desc
-    }
-    
-    func getArticulationsDescription() -> String {
-        var desc = ""
-        var d = 0
-        for articulationType in articulationTypes {
-            if d > 0 {
-                desc += " or "
-            }
-            desc += String(articulationType.description)
-            d += 1
-        }
-        return desc
-    }
+//    func getArticulationsDescription() -> String {
+//        var desc = ""
+//        var d = 0
+//        for articulationType in articulationTypes {
+//            if d > 0 {
+//                desc += " or "
+//            }
+//            desc += String(articulationType.description)
+//            d += 1
+//        }
+//        return desc
+//    }
 
     
 //    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
@@ -1442,15 +1424,6 @@ public class Scale : Codable {
         //return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 24 : 4
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
-
-    ///Firebase Realtime causes exception with a label with a '#'
-    func getScaleIdentificationKey() -> String {
-        var key = self.getScaleName(handFull: false, motion: true, octaves: true)
-        key = key.replacingOccurrences(of: "#", with: "Sharp")
-        key = key.replacingOccurrences(of: " ", with: "_")
-        key = key.replacingOccurrences(of: ",", with: "")
-        return key
-    }
     
     func getScaleName(handFull:Bool, motion:Bool? = nil, octaves:Bool? = nil) -> String {
         var name = scaleRoot.name + " " + scaleType.description
@@ -1486,6 +1459,80 @@ public class Scale : Codable {
             }
         }
         return name
+    }
+    
+    ///Firebase Realtime causes exception with a label with a '#'
+    func getScaleIdentificationKey() -> String {
+        var key = self.getScaleName(handFull: false, motion: true, octaves: true)
+        key = key.replacingOccurrences(of: "#", with: "Sharp")
+        key = key.replacingOccurrences(of: " ", with: "_")
+        key = key.replacingOccurrences(of: ",", with: "")
+        return key
+    }
+    
+    func getScaleDescription(name:Bool? = nil, hands:Bool?=nil, motion:Bool? = nil, octaves:Bool? = nil, tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
+        var description = ""
+        if let name = name {
+            description = scaleRoot.name + " " + scaleType.description
+            if scaleMotion == .contraryMotion || motion == true {
+                description += ", " + scaleMotion.description
+            }
+        }
+        if let hands = hands {
+            if self.scaleMotion != .contraryMotion {
+                if self.hands.count == 1 {
+                    var handName = ""
+                    if true {
+                        switch self.hands[0] {
+                        case 0: handName = "Right Hand"
+                        case 1: handName = "Left Hand"
+                        default: handName = "Together"
+                        }
+                    }
+                    else {
+                        switch self.hands[0] {
+                        case 0: handName = "RH"
+                        case 1: handName = "LH"
+                        default: handName = "Together"
+                        }
+                    }
+                    description = handName
+                }
+                else {
+                    description = "Together"
+                }
+            }
+        }
+        if let octaves = octaves {
+            if octaves {
+                description = "\(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+            }
+        }
+        if let tempo = tempo {
+            description = "\u{2669}"
+            if self.timeSignature.top % 3 == 0 {
+                description += String("\u{00B7}")
+                description += " "
+            }
+            description += "=\(self.minTempo)"
+        }
+        if let dynamics = dynamics {
+            var d = 0
+            description = ""
+            for dynamic in self.dynamicTypes {
+                if d > 0 {
+                    description += " or "
+                }
+                if false { //&& long {
+                    description += String(dynamic.description)
+                }
+                else {
+                    description += String(dynamic.descriptionShort)
+                }
+                d += 1
+            }
+        }
+        return description
     }
     
     func getScaleAttributes(showTempo:Bool) -> String {

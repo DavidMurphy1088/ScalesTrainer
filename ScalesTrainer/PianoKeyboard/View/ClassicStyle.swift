@@ -41,7 +41,8 @@ public struct ClassicStyle {
             noteToHilight = scale.getMinMax(handIndex: hand).0
         }
         else {
-            self.naturalKeySpace = scale.octaves > 1 ? 2 : 3
+            //self.naturalKeySpace = scale.octaves > 1 ? 2 : 3
+            self.naturalKeySpace = 1
         }
         self.labelColor = labelColor
         self.keyColor = keyColor
@@ -141,7 +142,7 @@ public struct ClassicStyle {
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             var xpos: CGFloat = 0
             let playingMidiRadius = naturalWidth * (scale.octaves > 1 ? 0.5 : 0.3)
-
+            
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 guard key.isNatural else {
                     continue
@@ -161,48 +162,36 @@ public struct ClassicStyle {
                 
                 ///White keys colour
                 ///Hilight the key if in following keys mode
-                let hilightColor:Color
-//                if keyModel.hilightType == .followThisNote {
-//                    hilightColor = hiliteKeyColor(key.touchDown)
-//                }
-//                else {
+                var hilightColor1:Color? = nil
                 switch keyModel.hilightType {
                 case .followThisNote:
-                    //hilightColor = hiliteKeyColor(key.touchDown)
-                    hilightColor = Color(.green)
+                    hilightColor1 = Color(.green)
                 case .middleOfKeyboard:
-                    hilightColor = Color(.green)
+                    hilightColor1 = Color(.green)
                 case .wasWrongNote:
-                    hilightColor = Color(.red)
+                    hilightColor1 = Color(.red)
                 default:
-                    hilightColor = naturalColor(key.touchDown)
+                    hilightColor1 = nil
                 }
-//                    if keyModel.hilightKeyToFollow == .middleOfKeyboard {
-//                        hilightColor = Color(.green)
-//                    }
-//                    else {
-//                        hilightColor = naturalColor(key.touchDown)
-//                    }
-//                }
-                let gradientWhiteKey:Gradient = Gradient(colors: [
-                    Color.white
-                ])
+
+                if let hilightColor = hilightColor1 {
+                    let gradientWhiteKey:Gradient = Gradient(colors: [
+                        hilightColor,
+                        Color.white
+                    ])
+                    context.fill(keyPath, with: .linearGradient(
+                        gradientWhiteKey,
+                        startPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 0.0),
+                        endPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 1.0)
+                    ))
+                }
+                else {
+                    context.fill(keyPath, with: .color(Color.white))
+                }
                                                          
-//                let gradientWhiteKey1:Gradient = Gradient(colors: [
-//                    hilightColor,
-//                    keyColor,
-//                    //user.settings.isCustomColor() ? user.settings.getKeyboardColor() : Color(red: 1, green: 1, blue: 1),
-//                    Color(red: 1, green: 1, blue: 1),
-//                ])
-//                context.fill(keyPath, with: .linearGradient(
-//                    gradientWhiteKey,
-//                    startPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 0.0),
-//                    endPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height * 1.0)
-//                ))
-                
-                
                 /// ----------- Key name and key color hilights ---------
-                context.fill(keyPath, with: .color(Color.white))
+                
+                
                 showKeyNameAndHilights(scalesModel: scalesModel, context: context, keyRect: keyRect, key: key, keyPath: keyPath, showKeyName: true)
                 
                 /// ----------- Playing the note ----------
@@ -253,7 +242,7 @@ public struct ClassicStyle {
             let sfKeyWidth = naturalWidth * sfKeyWidthMultiplier
             let sfKeyHeight = height * sfKeyHeightMultiplier
             xpos = 0.0
-
+            
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 if key.isNatural {
                     xpos += naturalWidth + naturalKeySpace
@@ -282,21 +271,21 @@ public struct ClassicStyle {
                     .path(in: insetRect)
                
                 ///Black keys colour
-                let hilightColor:Color
+                let hilightColor1:Color
                 switch keyModel.hilightType {
                 case .followThisNote:
                     //hilightColor = hiliteKeyColor(key.touchDown)
-                    hilightColor = Color(.green)
+                    hilightColor1 = Color(.green)
                 case .middleOfKeyboard:
-                    hilightColor = Color(.green)
+                    hilightColor1 = Color(.green)
                 case .wasWrongNote:
-                    hilightColor = Color(.red)
+                    hilightColor1 = Color(.red)
                 default:
-                    hilightColor = naturalColor(key.touchDown)
+                    hilightColor1 = naturalColor(key.touchDown)
                 }
 
                 let gradientBlackKey = Gradient(colors: [
-                    hilightColor,
+                    hilightColor1,
                     sharpFlatColor(key.touchDown),
                     sharpFlatColor(key.touchDown),
                 ])

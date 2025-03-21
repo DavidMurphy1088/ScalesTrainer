@@ -151,11 +151,11 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             self.forceRepaint += 1
         }
     }
-    func redraw1() {
-        //DispatchQueue.main.async {
-            self.forceRepaint += 1
-        //}
-    }
+//    func redraw1() {
+//        //DispatchQueue.main.async {
+//            self.forceRepaint += 1
+//        //}
+//    }
 
     public var numberOfKeys = 18
     

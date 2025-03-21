@@ -117,7 +117,7 @@ struct ExerciseBadgesView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
-            VStack {
+            VStack(spacing:0) {
                 HStack {
                     Text("\(exerciseName) Badges").font(.title3)
                 }

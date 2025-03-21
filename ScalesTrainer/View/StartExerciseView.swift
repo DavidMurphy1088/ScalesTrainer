@@ -15,8 +15,8 @@ struct EndOfExerciseView: View {
             if failed {
                 VStack {
                     if let msg = exerciseMessage {
-                        HStack {
-                            Text("🔺 Sorry, \(msg)").font(.title2)
+                        VStack(spacing : 0) {
+                            Text("Sorry 😢 - \(msg)").font(.title2)
                             Text("Try again?").font(.title2)
                         }
                         .padding()
@@ -121,7 +121,7 @@ struct StartExerciseView: View {
                 
                 Spacer()
                 if isCountingDown {
-                    let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown) ..."
+                    let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
                     Text(message)
                         .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
                         .foregroundColor(countdown == 0 ? Color(.orange) : Color(.blue))

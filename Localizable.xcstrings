@@ -44,16 +44,6 @@
     " Spin The Wheel " : {
 
     },
-    ", %@, %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : ", %1$@, %2$@"
-          }
-        }
-      }
-    },
     "?" : {
 
     },
@@ -91,9 +81,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "🔺 Sorry, %@" : {
 
     },
     "😊 Thanks %@, Your Grade Is Set 😊" : {
@@ -683,10 +670,10 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
+    "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
-    "Sometimes, restarting your device can resolve issues related to email configurations." : {
+    "Sorry 😢 - %@" : {
 
     },
     "Sorry, no subscription is available yet" : {
