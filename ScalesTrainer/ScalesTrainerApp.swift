@@ -295,7 +295,7 @@ class ViewManager: ObservableObject {
         Settings.shared.load()
         DispatchQueue.main.async {
             self.titleUser = settings.getCurrentUser()
-            if settings.getCurrentUser() == nil {
+            if settings.noUserDefined() {
                 self.selectedTab = MainContentView.TAB_USERS
             }
             else {

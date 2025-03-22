@@ -28,7 +28,6 @@
 //    func testExample() throws {
 //        continueAfterFailure = false
 //        app.launch()
-//        print("=========== In UI TEST start testExample")
 //
 //        var tapMeButton = app.buttons["button_lead"]
 //        XCTAssertTrue(tapMeButton.exists, "The 'Tap Me' button should exist.")
@@ -53,7 +52,6 @@
 //
 ////private func listDestinationEndpoints() {
 ////    // Iterate through available MIDI destinations
-////    print("========== DestinationEndpoint Count", MIDIGetNumberOfDestinations())
 ////    for index in 0..<MIDIGetNumberOfDestinations() {
 ////        let destination = MIDIGetDestination(index)
 ////        // Get the destination's name
@@ -63,7 +61,6 @@
 ////        if nameResult == noErr {
 ////            if let name = name {
 ////                let endpointName = name.takeRetainedValue() as String
-////                print("=========== DestinationEndpoint name:", name)
 ////            }
 ////        }
 ////    }

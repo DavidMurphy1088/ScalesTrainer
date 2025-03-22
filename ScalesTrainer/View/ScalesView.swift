@@ -70,7 +70,7 @@ struct ScalesView: View {
     
     @State private var isLandscape: Bool = false
     @State private var spacingHorizontal:CGFloat = 12
-    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? -4 : UIScreen.main.bounds.size.height * 0.02
+    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
 
     init(practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
         self.practiceChart = practiceChart
@@ -255,7 +255,7 @@ struct ScalesView: View {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         //.buttonStyle(.bordered)
-                        .appButtonStyle(trim: true, color: Color.orange)
+                        .appButtonStyle(trim: true, color: AppOrange)
                         if false {
                             Button(action: {
                                 showHelp("Follow")
@@ -284,13 +284,13 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("View lead start", settings.isDeveloperMode1() ? .exerciseStarted : .exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("View lead start", settings.isDeveloperMode1() ? .exerciseAboutToStart : .exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
-                        .appButtonStyle(trim: true, color: Color.orange)
+                        .appButtonStyle(trim: true, color: AppOrange)
                         .accessibilityIdentifier("button_lead")
                         if false {
                             Button(action: {
@@ -431,14 +431,19 @@ struct ScalesView: View {
         }
     }
     
-    func getKeyboardHeight(keyboardCount:Int) -> CGFloat {
+    func getKeyboardHeight(keyboardCount:Int, showingStaff:Bool) -> CGFloat {
         var height:Double
         
         if scalesModel.scale.needsTwoKeyboards() {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
             //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
             ///16 Feb 2025 Can be a bit longer due to just minimizing some other UI heights in landscape
-            height = UIScreen.main.bounds.size.height / (isLandscape ? 4 : 5)
+            if showingStaff {
+                height = UIScreen.main.bounds.size.height * (isLandscape ? 0.25 : 0.20)
+            }
+            else {
+                height = UIScreen.main.bounds.size.height * (isLandscape ? 0.33 : 0.33)
+            }
         }
         else {
             //height = UIScreen.main.bounds.size.height / (isLandscape  ? 3 : 4)
@@ -561,26 +566,26 @@ struct ScalesView: View {
                             if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                                 ///Scale is contrary with LH and RH joined on one keyboard
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
                             }
                             else {
                                 if scalesModel.scale.needsTwoKeyboards() {
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
-                                        .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                        .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
                                         .padding(.bottom, spacingVertical)
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                                 else {
                                     let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count))
+                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                             }
                         }
-                        .outlinedStyleView(color: Color.clear)
+                        //.outlinedStyleView(color: Color.clear)
                         .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
                                                     
@@ -603,11 +608,6 @@ struct ScalesView: View {
                                     ScoreView(scale: ScalesModel.shared.scale, score: score)
                                 }
                             }
-                            //.border(Color.red, width: 1)
-//                            .background(
-//                                LinearGradient(colors: [Color.purple.opacity(opacity), Color.blue.opacity(opacity)],
-//                                               startPoint: .topLeading, endPoint: .bottomTrailing)
-//                                )
                             .outlinedStyleView()
                             .padding(.bottom, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
@@ -679,7 +679,7 @@ struct ScalesView: View {
                                 exerciseState.setExerciseState("Popup", .exerciseStarted)
                             }
                         })
-                        .frame(width: UIScreen.main.bounds.width * 0.60, height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 1.0 : 0.60))
+                        .frame(width: UIScreen.main.bounds.width * 0.60, height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.70 : 0.60))
                     }
                     .padding()
                 }

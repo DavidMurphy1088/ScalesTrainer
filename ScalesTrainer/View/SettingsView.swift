@@ -75,36 +75,22 @@ struct SettingsView: View {
     func DetailedCustomSettingsView(user:User) -> some View {
         //NavigationView {
             VStack {
-                VStack {
+//                VStack {
 //                    HStack {
 //                        //Spacer()
-//                        Text("Choose your background colour ").font(.title2).padding(0)
-//                        ///Force a repaint on color change with published self.backgroundChange
-//                        ColorPicker("Choose your background colour \(self.backgroundChange)", selection: $selectedBackgroundColor)
-//                            .padding()
-//                            .onChange(of: selectedBackgroundColor) { oldColor, newColor in
-//                                user.settings.setBackgroundColor(newColor)
-//                                self.backgroundChange += 1
-//                            }
-//                            .labelsHidden()
-//                        //Spacer()
+//                        VStack {
+//                            SetKeyboardColourView(scalesModel: self.scalesModel, parentColor: $keyboardColor)
+//                        }
+//                        .onChange(of: keyboardColor, {
+//                            user.settings.setKeyboardColor(keyboardColor)
+//                        })
+//                        .hilighted(backgroundColor: .gray)
+//                        .frame(width: UIScreen.main.bounds.size.width * 0.6,
+//                               //height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
+//                               height: UIScreen.main.bounds.size.height * 0.4)
 //                    }
-
-                    HStack {
-                        //Spacer()
-                        VStack {
-                            SetKeyboardColourView(scalesModel: self.scalesModel, parentColor: $keyboardColor)
-                        }
-                        .onChange(of: keyboardColor, {
-                            user.settings.setKeyboardColor(keyboardColor)
-                        })
-                        .hilighted(backgroundColor: .gray)
-                        .frame(width: UIScreen.main.bounds.size.width * 0.6,
-                            //height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
-                            height: UIScreen.main.bounds.size.height * 0.4)
-                    }
-                }
-                .padding()
+//                }
+//                .padding()
 
                 ///Lead in count
                 Spacer()
@@ -232,7 +218,6 @@ struct SettingsView: View {
             DetailedCustomSettingsView(user:user)
                 .frame(maxWidth: .infinity)
                 .screenBackgroundStyle()
-
         }
         
         .onAppear() {

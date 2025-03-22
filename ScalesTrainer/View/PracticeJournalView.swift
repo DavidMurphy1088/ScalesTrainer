@@ -38,7 +38,7 @@
 //    
 //    func getColor(progress:Double) -> Color {
 //        if progress < 0.2 {
-//            return Color.orange
+//            return AppOrange
 //        }
 //        if progress < 0.4 {
 //            return Color.yellow

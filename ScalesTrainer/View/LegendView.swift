@@ -115,8 +115,7 @@ struct LegendView: View {
                             Text(NSLocalizedString("Finger Number", comment: "LegendView")).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                             
                             //Spacer()
-                            //Text("1").foregroundColor(.orange).font(.title2).bold()
-                            Text(" ●").foregroundColor(.orange).font(.title2).bold().font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                            Text(" ●").foregroundColor(AppOrange).font(.title2).bold().font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                             Text(fingerChangeName(keyboardHand: hand, scaleMotion: self.scale.scaleMotion)).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                             //Spacer()
                         }

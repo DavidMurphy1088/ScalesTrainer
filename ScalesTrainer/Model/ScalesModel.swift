@@ -968,7 +968,6 @@ public class ScalesModel : ObservableObject {
     }
         
     func setTempo(_ ctx:String, _ index:Int) {
-        //print("========== MODEL setTempo", "id", self.idString(), ctx, index)
         self.selectedTempoIndex = index
     }
 

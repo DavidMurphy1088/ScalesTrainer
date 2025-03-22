@@ -181,7 +181,7 @@ struct ExerciseBadgesView: View {
                                 }
                             }
                             .frame(width: badgeIconSize, height: badgeIconSize)
-                            //.border(Color.orange)
+                            //.border(AppOrange)
                         }
                     }
                 }

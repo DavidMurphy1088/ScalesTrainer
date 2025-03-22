@@ -80,18 +80,13 @@ public struct ClassicStyle {
             let seg = scaleNote.segments[0]  % 4
             let color:Color
             switch seg {
-//            case 1 :
-//                color = Color.mint
-//            case 2:
-//                color = Color.orange
-//            case 3:
-//                color = Color.yellow
+
             default:
                 color = Color.blue
             }
             return color
         }
-        return scaleNote.keyboardColourType == .fingerSequenceBreak ? Color.orange : Color.blue
+        return scaleNote.keyboardColourType == .fingerSequenceBreak ? AppOrange : Color.blue
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
@@ -103,7 +98,7 @@ public struct ClassicStyle {
                 keyNameToShow = "C"
             }
             if [noteToHilight].contains(key.midi) {
-                let flashColor = Color.orange//.opacity(flashOpacity)
+                let flashColor = AppOrange//.opacity(flashOpacity)
                 context.fill(keyPath, with: .color(flashColor))
             }
         }

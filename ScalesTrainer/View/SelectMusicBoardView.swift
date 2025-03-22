@@ -20,42 +20,39 @@ struct SelectBoardGradesView: View {
     }
     
     var body: some View {
-        VStack {
-            if UIDevice.current.userInterfaceIdiom != .phone {
-                HStack {
-//                    Image("trinity")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(height: UIFont.preferredFont(forTextStyle: .title2).lineHeight * 3.0)
-                    
-                    Text("\(inBoard.name) Grades").font(.title).font(.title3)
-                }
-                .padding(.horizontal)
-            }
-            
-            List {
-                ForEach(inBoard.gradesOffered, id: \.self) { number in
+        VStack(spacing: 0) {
+                if UIDevice.current.userInterfaceIdiom != .phone {
                     HStack {
-                        let name = "Grade " + String(number) + " Piano"
-                        Text(name).background(Color.clear).padding()
-                        Spacer()
-                        Toggle("", isOn: $isOn[number])
-                            .onChange(of: isOn[number]) { oldWasOn, newWasOn in
-                                if newWasOn {
-                                    for j in 0..<isOn.count {
-                                        if j != number {
-                                            isOn[j] = false
+                        Text("\(inBoard.name) Grades")
+                            .font(.title)
+                            .font(.title3)
+                    }
+                    .padding(.horizontal)
+                }
+                List {
+                    ForEach(inBoard.gradesOffered, id: \.self) { number in
+                        HStack {
+                            let name = "Grade " + String(number) + " Piano"
+                            Text(name)
+                                .padding(.vertical, 4)  // Reduced vertical padding
+                            Spacer()
+                            Toggle("", isOn: $isOn[number])
+                                .onChange(of: isOn[number]) { oldWasOn, newWasOn in
+                                    if newWasOn {
+                                        for j in 0..<isOn.count {
+                                            if j != number {
+                                                isOn[j] = false
+                                            }
                                         }
+                                        self.updateBoardGrade(gradeNumber: number)
                                     }
-                                    self.updateBoardGrade(gradeNumber: number)
                                 }
-                            }
+                        }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     }
                 }
+                .listStyle(PlainListStyle())
             }
-            .listStyle(PlainListStyle())
-            .padding()
-        }
         
         .onAppear() {
             for i in 0..<isOn.count {

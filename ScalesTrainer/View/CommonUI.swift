@@ -1,5 +1,7 @@
 import SwiftUI
 
+let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
+
 class UIGlobals {
     static let shared = UIGlobals()
     func getBackground1() -> String {
@@ -119,31 +121,8 @@ struct screenBackgroundStyleView: ViewModifier {
                                startPoint: .topLeading, endPoint: .bottomTrailing)
                     //.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             )
-//            .overlay(
-//                RoundedRectangle(cornerRadius: cornerRadius)
-//                    .stroke(borderColor, lineWidth: borderWidth)
-//            )
-            //.shadow(radius: 5) // Adds depth effect
-            //.border(Color.red, width: 1)
     }
 }
-
-//struct OutlinedStyleView: ViewModifier {
-//    let opacity:Double
-//    let color:Color
-//    func body(content: Content) -> some View {
-//        let compact = UIDevice.current.userInterfaceIdiom == .phone
-//        content
-//            .background(color)
-//            .cornerRadius(compact ? 6 : 12) ///👹
-//            .overlay(
-//                RoundedRectangle(cornerRadius: compact ? 6 : 12)
-//                    .stroke(Color.gray, lineWidth: compact ? 1 : 2)
-//            )
-//            ///y > 0 means shadow from above
-//            .shadow(color: Color.black.opacity(opacity), radius: compact ? 2 : 8, x: 0, y: compact ? 2 : 4)
-//    }
-//}
 
 struct OutlinedStyleView: ViewModifier {
     let shadowOpacity: Double
@@ -153,7 +132,6 @@ struct OutlinedStyleView: ViewModifier {
     
     func body(content: Content) -> some View {
         let isCompact = horizontalSizeClass == .compact
-        
         // Scale values based on size class
         let cornerRadius = isCompact ? 9.0 : 12.0
         let strokeWidth = isCompact ? 1.0 : 2.0
@@ -175,6 +153,7 @@ struct OutlinedStyleView: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(Color.gray, lineWidth: strokeWidth)
             )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 
@@ -195,7 +174,7 @@ struct FancyTextStyle: ViewModifier {
 
 extension View {
     func screenBackgroundStyle (backgroundColor: Color? = nil) -> some View {
-          modifier(screenBackgroundStyleView(cornerRadius: 10, borderColor: .blue,borderWidth: 1
+        modifier(screenBackgroundStyleView(cornerRadius: 10, borderColor: .blue,borderWidth: 1
         ))
     }
 

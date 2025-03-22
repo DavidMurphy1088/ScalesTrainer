@@ -68,21 +68,19 @@ struct PianoStartNoteIllustrationView: View {
     let keyboardModel = PianoKeyboardModel(name: "PianoStartNoteIllustrationView", keyboardNumber: 1)
     
     var body: some View {
-        GeometryReader { geo in
-            VStack {
-                PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel, keyColor: Color.white, plainStyle: true)
-                    .frame(width:7 * keyHeight, height: keyHeight)
-                    .cornerRadius(16)
-                    .padding(.bottom, 0)
-                    //.border(Color.orange)
-                    //.outlinedStyleView()
-                Text("Middle C").font(.callout )
-            }
+        VStack(spacing:0) {
+            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel, keyColor: Color.white, plainStyle: true)
+                .frame(width:7 * keyHeight, height: keyHeight)
+                .cornerRadius(16)
+                .padding(.bottom, 0)
+                //.border(AppOrange)
+                .outlinedStyleView()
+            Text("Middle C").font(.callout)
+            //Text("\(scalesModel.scale.getScaleDescription(hands:true))").font(.callout)
         }
-        //.border(Color.red)
         .onAppear() {
             if let score = scalesModel.getScore() {
-                keyboardModel.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 22, numberOfKeys: 80,
+                keyboardModel.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 37, numberOfKeys: 47,
                                                                                         scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
             }
         }
@@ -99,32 +97,37 @@ struct StartExerciseView: View {
     @State private var isCountingDown = false
     
     var body: some View {
+        let compact = UIDevice.current.userInterfaceIdiom == .phone
         GeometryReader {geo in
-            VStack {
-                let imageSize = UIDevice.current.userInterfaceIdiom == .phone ? 0.1 : 0.2
-                Spacer()
-                Text("Win \(badge.name)").font(.title)
-                    .padding()
-                
-                Spacer()
+            VStack(spacing:0) {
+                let imageSize = compact ? 0.2 : 0.2
+                //if !compact {
+                    Spacer()
+                //}
+                Text("Win \(badge.name)").font(compact ? .title : .title)
+                    //.padding()
+                if !compact {
+                    Spacer()
+                }
                 Image(badge.imageName)
                     .resizable()
-                    //.scaledToFit()
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: geo.size.width * imageSize, height: geo.size.height * imageSize)
-                    .padding()
-                
+                    
                 Spacer()
+                
                 PianoStartNoteIllustrationView(scalesModel: scalesModel, keyHeight: geo.size.height * 0.20)
-                    .frame(width: geo.size.width * 0.95, height: geo.size.height * 0.3)
-                //.border(Color.red)
-                
-                
-                Spacer()
+                    .frame(width: geo.size.width * 0.99, height: geo.size.height * 0.4)
+                    //.border(.red)
+
+                if !compact {
+                    Spacer()
+                }
                 if isCountingDown {
                     let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
                     Text(message)
                         .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-                        .foregroundColor(countdown == 0 ? Color(.orange) : Color(.blue))
+                        .foregroundColor(countdown == 0 ? AppOrange : Color(.blue))
                         .padding()
                 }
                 else {
@@ -144,9 +147,11 @@ struct StartExerciseView: View {
                         .disabled(isCountingDown)
                         .padding()
                     }
-                    .padding()
+                    //.padding()
                 }
-                Spacer()
+                //if !compact {
+                    Spacer()
+                //}
             }
         }
         .background(Color.white.opacity(1.0))

@@ -467,9 +467,11 @@ struct PracticeChartView: View {
                 }
                 //.padding() ///DO NOT DELETE - else the scroller underlaps the TabView at bottom
             }
-            .frame(maxWidth: .infinity)
             .screenBackgroundStyle()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        //.navigationBarHidden(true)
+        //.navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
             self.minorScaleTypes = self.practiceChart.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = practiceChart.minorScaleType

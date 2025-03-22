@@ -37,7 +37,7 @@ class ExerciseState : ObservableObject {
                     print("")
                     //self.showHelp = true
                 }
-                AppLogger.shared.log(self, "=============setExerciseState \(ctx), TO: \(value) msg:\(msg ?? "")")
+                //AppLogger.shared.log(self, "=============setExerciseState \(ctx), TO: \(value) msg:\(msg ?? "")")
                 if self.state == .exerciseLost {
                     self.exerciseMessage = msg
                 }

@@ -197,7 +197,9 @@ class Settings : Encodable, Decodable {
             ViewManager.shared.updateCurrentPublished(user: user)
         }
     }
-    
+    func noUserDefined() -> Bool {
+        return self.users.count == 0
+    }
     func getCurrentUser() -> User {
         for user in self.users {
             if user.isCurrentUser {

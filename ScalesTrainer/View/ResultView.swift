@@ -109,7 +109,7 @@ struct TapDataView: View {
 //            color = .red
 //        }
 //        if event.status == .farFromExpected {
-//            color = .orange
+//            color = AppOrange
 //        }
         if event.status == .belowAmplitudeFilter {
             color = .brown

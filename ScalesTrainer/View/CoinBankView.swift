@@ -13,7 +13,7 @@ import SwiftUI
 //        let darkYellow = Color(red: 192 / 255.0, green: 128 / 255.0, blue: 0 / 255.0)
 //        
 //        Ellipse()
-//            .strokeBorder(LinearGradient(gradient: Gradient(colors: [darkYellow, .orange]), startPoint: .leading, endPoint: .trailing), lineWidth: coinWidth * 0.05)
+//            .strokeBorder(LinearGradient(gradient: Gradient(colors: [darkYellow, AppOrange]), startPoint: .leading, endPoint: .trailing), lineWidth: coinWidth * 0.05)
 //            .background(Ellipse().fill(Color.yellow)) // Base color of the coin
 //            .frame(width: coinWidth, height: coinHeight)
 //            .offset(x: offset)

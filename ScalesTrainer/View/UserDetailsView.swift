@@ -47,8 +47,8 @@ struct UserDetailsView: View {
     var body: some View {
         VStack {
             VStack {
-                Spacer()
-                VStack() {
+                //Spacer()
+                VStack(spacing: 0) {
                     HStack {
                         Text("First Name")
                         TextField("First name", text: $firstName)
@@ -64,7 +64,7 @@ struct UserDetailsView: View {
                     HStack {
                         Text("Optional Email")
                         TextField("Email", text: $emailAddress)
-                            .padding()
+                            //.padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: UIScreen.main.bounds.width * 0.5)
                     }
@@ -73,8 +73,9 @@ struct UserDetailsView: View {
                     settings.getCurrentUser().email = emailAddress
                 })
                 
-                Spacer()
+                //Spacer()
                 SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
+                    .frame(width: UIScreen.main.bounds.size.width * 0.75)
                 if self.creatingNewUser && user.name.count > 0 && selectedGrade > 0 {
                     Spacer()
                     Button(action: {
@@ -87,7 +88,7 @@ struct UserDetailsView: View {
                     }
                     .appButtonStyle()
                 }
-                Spacer()
+                //Spacer()
             }
             //.commonFrameStyle()
             //.screenBackgroundStyle()
