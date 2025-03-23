@@ -38,7 +38,7 @@ struct HideAndShowView: View {
     }
 }
 
-struct LegendView: View {
+struct LegendViewUNUSED: View {
     let hands:[Int]
     let scale:Scale
     @ObservedObject var logger = AppLogger.shared

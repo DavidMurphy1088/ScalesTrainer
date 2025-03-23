@@ -237,6 +237,7 @@ public struct ClassicStyle {
             let sfKeyWidth = naturalWidth * sfKeyWidthMultiplier
             let sfKeyHeight = height * sfKeyHeightMultiplier
             xpos = 0.0
+            var handIndicatorShown = false
             
             for (index, key) in viewModel.pianoKeyModel.enumerated() {
                 if key.isNatural {
@@ -290,6 +291,33 @@ public struct ClassicStyle {
                     endPoint: CGPoint(x: keyRect.width / 2.0, y: keyRect.height)
                 ))
                 
+                ///Left or right hand indicator in left most key
+                if !handIndicatorShown {
+                    var handImageName:String? = nil
+                    if viewModel.keyboardNumber == 1  {
+                        handImageName = "hand_right_orange"
+                    }
+                    if viewModel.keyboardNumber == 2 {
+                        handImageName = "hand_left_orange"
+                    }
+                    if let handImageName = handImageName {
+                        let image = Image(handImageName)
+                        let resolved = context.resolve(image)
+                        let targetWidth: CGFloat = sfKeyWidth * 0.60
+                        let originalSize = resolved.size
+                        // Calculate height to maintain aspect ratio
+                        let aspectRatio = originalSize.height / originalSize.width
+                        let targetHeight = targetWidth * aspectRatio
+                        let drawRect = CGRect(
+                            x: (sfKeyWidth - targetWidth) * 0.50,
+                            y: 20,
+                            width: targetWidth,
+                            height: targetHeight
+                        )
+                        context.draw(resolved, in: drawRect)
+                    }
+                    handIndicatorShown = true
+                }
                 ///------------- Key Name -----
                 ///On iPhone or long scales many keys results in overlapping key names. So dont show the black key key names.
                 showKeyNameAndHilights(scalesModel: scalesModel, context: context, keyRect: keyRect, key: key, keyPath: keyPath, showKeyName: scale.getScaleNoteCount() <= 24)

@@ -106,19 +106,49 @@ struct ScalesView: View {
             //.padding(.horizontal, 0)
             Spacer()
             
-            Text(LocalizedStringResource("Viewing Direction"))
-            Picker("Select Value", selection: $directionIndex) {
-                ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
-                    if scalesModel.selectedScaleSegment >= 0 {
-                        Text("\(scalesModel.directionTypes[index])")
+            //if false {
+                Text(LocalizedStringResource("Viewing Direction"))
+                Picker("Select Value", selection: $directionIndex) {
+                    ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
+                        if scalesModel.selectedScaleSegment >= 0 {
+                            Text("\(scalesModel.directionTypes[index])")
+                        }
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: directionIndex, {
+                    scalesModel.setSelectedScaleSegment(self.directionIndex)
+                })
+            //}
+            
+            Spacer()
+            GeometryReader { geo in
+                ///👹at top of scale directipnm does not chamge
+                HStack {
+                    Button(action: {
+                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
+                        scalesModel.setSelectedScaleSegment(self.directionIndex)
+                    }) {
+                        Image("arrow_up")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: geo.size.height * 1.0)
+                            .foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
+                    }
+                    Button(action: {
+                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
+                        scalesModel.setSelectedScaleSegment(self.directionIndex)
+                    }) {
+                        Image("arrow_down")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: geo.size.height * 1.0)
+                            .foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
                     }
                 }
             }
-            .pickerStyle(.menu)
-            .onChange(of: directionIndex, {
-                scalesModel.setSelectedScaleSegment(self.directionIndex)
-            })
-            
             Spacer()
         }
     }
@@ -590,14 +620,14 @@ struct ScalesView: View {
                         .padding(.horizontal, spacingHorizontal)
                                                     
                         //if UIDevice.current.userInterfaceIdiom != .phone {
-                            if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
-                                if scalesModel.showLegend {
-                                    LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-                                        .padding(.bottom, spacingVertical)
-                                        .padding(.horizontal)
-                                    //.border(Color.red, width: 1)
-                                }
-                            }
+//                            if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+//                                if scalesModel.showLegend {
+//                                    LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+//                                        .padding(.bottom, spacingVertical)
+//                                        .padding(.horizontal)
+//                                    //.border(Color.red, width: 1)
+//                                }
+//                            }
                         //}
                     }
                     

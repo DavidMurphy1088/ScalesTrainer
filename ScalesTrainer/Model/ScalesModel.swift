@@ -85,7 +85,6 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    //private(set) var tempoSettings:[String] = []
     public let tempoSettings:[String]
     
     @Published var tempoChangePublished = false
