@@ -86,7 +86,7 @@ public struct ClassicStyle {
             }
             return color
         }
-        return scaleNote.keyboardColourType == .fingerSequenceBreak ? AppOrange : Color.blue
+        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? AppOrange : Color.blue
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {

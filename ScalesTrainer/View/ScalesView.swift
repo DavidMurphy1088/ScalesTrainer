@@ -19,7 +19,7 @@ struct MetronomeView: View {
         Button(action: {
             metronome.setTicking(way: !metronome.isMetronomeTicking())
             if metronome.isMetronomeTicking() {
-                metronome.start()
+                metronome.start(doLeadIn: false, scale: nil)
             }
             else {
                 metronome.stop()
@@ -87,6 +87,8 @@ struct ScalesView: View {
         HStack {
             Spacer()
             MetronomeView()
+                //.padding()
+            Spacer()
             HStack(spacing: 0) {
                 let compoundTime = scalesModel.scale.timeSignature.top % 3 == 0
                 Image(compoundTime ? "crotchetDotted" : "crotchet")
@@ -94,8 +96,10 @@ struct ScalesView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
                     ///Center it
-                    .padding(.bottom, 8)
+                    //.padding(.bottom, 8)
+                    //.padding(.horizontal, 0)
                 Text(" =").padding(.horizontal, 0)
+                    .padding(.horizontal, 0)
             }
             Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
                 ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
@@ -103,10 +107,10 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
-            //.padding(.horizontal, 0)
-            Spacer()
+            //.padding()
             
-            //if false {
+            if false {
+                Spacer()
                 Text(LocalizedStringResource("Viewing Direction"))
                 Picker("Select Value", selection: $directionIndex) {
                     ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
@@ -119,11 +123,10 @@ struct ScalesView: View {
                 .onChange(of: directionIndex, {
                     scalesModel.setSelectedScaleSegment(self.directionIndex)
                 })
-            //}
+            }
             
             Spacer()
             GeometryReader { geo in
-                ///👹at top of scale directipnm does not chamge
                 HStack {
                     Button(action: {
                         self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -134,7 +137,8 @@ struct ScalesView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: geo.size.height * 1.0)
-                            .foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
+                            //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
+                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? AppOrange : Color.black)
                     }
                     Button(action: {
                         self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -145,7 +149,9 @@ struct ScalesView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: geo.size.height * 1.0)
-                            .foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
+                            //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
+                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? AppOrange : Color.black)
+
                     }
                 }
             }
@@ -155,11 +161,11 @@ struct ScalesView: View {
     
     func getStopButtonText(process: RunningProcess) -> String {
         let text:String
-        if metronome.isLeadingIn {
-            ///2 ticks per beat
-            text = "  Leading In  " //\((metronome.timerTickerCountPublished / 2) + 1)"
-        }
-        else {
+//        if metronome.isLeadingIn {
+//            ///2 ticks per beat
+//            text = "  Leading In  " //\((metronome.timerTickerCountPublished / 2) + 1)"
+//        }
+//        else {
             switch process {
             case.leadingTheScale:
                 text = "Stop Leading"
@@ -172,7 +178,7 @@ struct ScalesView: View {
             default:
                 text = ""
             }
-        }
+        //}
         return text
     }
     
@@ -343,27 +349,14 @@ struct ScalesView: View {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
                     Button(action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
-                        self.directionIndex = 0
+                        exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
+                        //self.directionIndex = 0
                     }) {
                         Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     .appButtonStyle(trim: true)
-                    
-                    if false {
-                        Button(action: {
-                            showHelp("Play Along")
-                        }) {
-                            VStack {
-                                Image(systemName: "questionmark.circle")
-                                    .imageScale(.large)
-                                    .font(.title2)//.bold()
-                                    .foregroundColor(.green)
-                            }
-                        }
-                    }
                 }
                 .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
-                //.padding(.horizontal, 0)
                 
                 Spacer()
                 HStack {
@@ -373,6 +366,7 @@ struct ScalesView: View {
                             scalesModel.setRunningProcess(.none)
                         }
                         else {
+                            exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
                             scalesModel.setRunningProcess(.recordingScale)
                         }
                         
@@ -433,6 +427,7 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
+                                exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
                                 scalesModel.setRunningProcess(.backingOn)
                             }
                         }) {
@@ -656,7 +651,7 @@ struct ScalesView: View {
                         }
                     }
                     
-                    ///-------- Exercise stars mesages and displays ----------
+                    ///-------- Exercise badges displays ----------
                     
                     if user.settings.practiceChartGamificationOn {
                         if let exerciseBadge = scalesModel.exerciseBadge {
@@ -696,6 +691,15 @@ struct ScalesView: View {
                 }
                 .frame(maxHeight: .infinity)
                 .screenBackgroundStyle()
+            }
+
+            ///-------- Exercise state displays ----------
+            
+            if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
+                StartCountdownView(callback: {
+                    ///We just need to cause this popup to disappear, no other badge state required since no badges
+                    exerciseState.setExerciseState("PlayAlong start", .exerciseWithoutBadgesStarted)
+                })
             }
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
@@ -739,8 +743,12 @@ struct ScalesView: View {
                     .padding()
                 }
             }
+            if [.exerciseWon].contains(exerciseState.statePublished) {
+                ConfettiView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+            }
         }
-        //.navigationBarHidden(true) // Hide the navigation bar
         .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .edgesIgnoringSafeArea(.bottom)
         

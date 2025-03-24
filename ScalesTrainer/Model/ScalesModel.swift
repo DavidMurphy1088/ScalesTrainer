@@ -149,12 +149,11 @@ public class ScalesModel : ObservableObject {
     }
     @Published private(set) var resultPublished:Result?
 
-//    @Published private(set) var processInstructions:String? = nil
-//    func setProcessInstructions(_ msg:String?) {
-//        DispatchQueue.main.async {
-//            self.processInstructions = msg
-//        }
-//    }
+    enum DirectionOfPlay {
+        case upwards
+        case downwards
+    }
+    @Published private(set) var directionOfPlay:DirectionOfPlay = DirectionOfPlay.upwards
     
     @Published private(set) var showStaff = true
     func setShowStaff(_ newValue: Bool) {
@@ -184,6 +183,13 @@ public class ScalesModel : ObservableObject {
         self.selectedScaleSegment = segment
         DispatchQueue.main.async { 
             self.selectedScaleSegmentPublished = segment
+            let scaleSegments = self.scale.getMinMaxSegments()
+            if scaleSegments.0 == segment {
+                self.directionOfPlay = DirectionOfPlay.upwards
+            }
+            else {
+                self.directionOfPlay = DirectionOfPlay.downwards
+            }
         }
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
@@ -195,6 +201,7 @@ public class ScalesModel : ObservableObject {
             PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
             PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
             PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
+             
             
             PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
             PianoKeyboardModel.sharedRH.redraw()
@@ -317,7 +324,8 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
         }
 
-        Metronome.shared.setLeadingIn(way: false)
+        //Metronome.shared.setLeadingIn(way: false)
+        //Metronome.shared.setLeadInCount("\n\nScalesModel,setRunningProcess", count: nil)
         Metronome.shared.stop()
         Metronome.shared.setTicking(way: false)
 
@@ -344,40 +352,6 @@ public class ScalesModel : ObservableObject {
         
         let metronome = Metronome.shared
         
-//        if [.followingScale].contains(setProcess)  {
-//            self.setResultInternal(nil, "setRunningProcess::nil for follow/practice")
-//            //self.tapHandlers.append(RealTimeTapHandler(bufferSize: 4096, scale:self.scale, amplitudeFilter: Settings.shared.amplitudeFilter))
-//            //badgeBank.setTotalCorrect(0)
-//            setShowKeyboard(true)
-//            if self.scale.getScaleNoteCount() > 0 {
-//                ///Play first note to start then wait some time.
-//                ///Wait for note to die down otherwise it triggers the first note detection
-////                if let sampler = self.audioManager.getSamplerForKeyboard() {
-////                    ///Hilight the first key on each keyboard
-////                    ///Need delay to avoid the first note being 'heard' from this sampler playing note
-////                    self.showFollowKeyHilights(sampler: sampler)
-////                    usleep(1000000 * UInt32(1.0))
-////                }
-//
-//                self.exerciseBadge = Badge.getRandomExerciseBadge()
-//                let soundHandler:SoundEventHandlerProtocol
-//                if user.settings.useMidiConnnections {
-//                    soundHandler = MIDISoundEventHandler(scale: scale)
-//                    self.midiTestHander = soundHandler as? MIDISoundEventHandler
-//                }
-//                else {
-//                    soundHandler = AcousticSoundEventHandler(scale: scale)
-//                }
-//                self.soundEventHandlers.append(soundHandler)
-//                
-//                let followProcess = FollowScaleProcess(scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
-//                followProcess.start(soundHandler: soundHandler)
-//                if !user.settings.useMidiConnnections {
-//                    self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
-//                }
-//            }
-//        }
-        
         if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
             if user.settings.useMidiConnnections {
@@ -400,20 +374,20 @@ public class ScalesModel : ObservableObject {
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlongWithScale))
             metronome.setTicking(way: true)
-            metronome.start()
+            metronome.start(doLeadIn: true, scale: self.scale)
         }
         
         if [.backingOn].contains(setProcess) {
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
             metronome.setTicking(way: true)
-            metronome.start()
+            metronome.start(doLeadIn: true, scale: self.scale)
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
             metronome.setTicking(way: true)
-            metronome.start()
+            metronome.start(doLeadIn: true, scale: self.scale)
             //metronome.addProcessesToNotify(process: RecordScaleProcess())
         }
         

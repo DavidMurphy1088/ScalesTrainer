@@ -14,7 +14,9 @@ protocol MetronomeTimerNotificationProtocol: AnyObject {
 class Metronome:ObservableObject {
     public static let shared = Metronome()
 
-    @Published private(set) var isLeadingIn:Bool = false
+    @Published private(set) var leadInCountdownPublished:Int? = nil
+    private var leadInCount:Int?
+
     @Published var timerTickerCountPublished = 0
     
     public var timerTickerCount = 0
@@ -31,9 +33,15 @@ class Metronome:ObservableObject {
         self.ticker.metronomeStart()
     }
     
-    func start() {
+    func start(doLeadIn:Bool, scale:Scale?) {
         self.timerTickerCount = 0
-        setTimerTickerCountPublished(count: 0)
+        setLeadInCountdownPublished(count: 0)
+        if doLeadIn {
+            if let scale = scale {
+                self.leadInCount = scale.timeSignature.top % 3 == 0 ? 3 : 4
+            }
+        }
+        //self.setLeadInCount("MetronomeStart", count: leadInCount)
         self.ticker.tickNum = 0
         if self.tickTimer == nil {
             self.startTimerThread("Metronome start")
@@ -46,7 +54,6 @@ class Metronome:ObservableObject {
             self.tickTimer = nil
         }
         self.isTicking = false
-        setTimerTickerCountPublished(count: 0)
         removeAllProcesses()
     }
 
@@ -58,15 +65,9 @@ class Metronome:ObservableObject {
         return self.isTicking
     }
 
-    func setLeadingIn(way:Bool) {
+    func setLeadInCountdownPublished(count:Int) {
         DispatchQueue.main.async {
-            self.isLeadingIn = way
-        }
-    }
-    
-    func setTimerTickerCountPublished(count:Int) {
-        DispatchQueue.main.async {
-            self.timerTickerCountPublished = count
+            self.leadInCountdownPublished = count
         }
     }
     
@@ -74,10 +75,6 @@ class Metronome:ObservableObject {
         return "♩= \(tempo)"
     }
     
-//    func DontUse_JustForDemo() {
-//        self.startTimerThread()
-//    }
-//    
     func addProcessesToNotify(process:MetronomeTimerNotificationProtocol) {
 //        for i in 0..<self.processesToNotify.count {
 //            self.processesToNotify[i].metronomeStop()
@@ -128,7 +125,7 @@ class Metronome:ObservableObject {
         let tempo = Double(scalesModel.getTempo("Metronom::startTimerThread"))
         let threadWait = (60.0 / tempo) / Double(notesPerClick)
         AppLogger.shared.log(self, "Metronome thread starting, tempo:\(tempo)")
-        let leadInTicks = Settings.shared.getCurrentUser().settings.getLeadInBeats() * notesPerClick
+        //let leadInTicks = 4 //Settings.shared.getCurrentUser().settings.getLeadInBeats() * notesPerClick
         var leadingIn = false
         
         ///Timer seems more accurate but using timer means the user cant vary the tempo during timing
@@ -137,37 +134,24 @@ class Metronome:ObservableObject {
                 tickTimer = Timer.publish(every: threadWait, on: .main, in: .common)
                     .autoconnect()
                     .sink { _ in
-//                    if self.processesToNotify.count == 0 {
-//                        if let timer = self.tickTimer {
-//                            self.tickTimer = nil
-//                            timer.cancel()
-//                        }
-//                        Logger.shared.log(self, "Metronome thread ended count:\(self.timerTickerCount)")
-//                        return
-//                    }
-//                        if ctr % notesPerClick == 0 {
-//                            _ = self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: false)
-//                            self.setTimerTickerCountPublished(count: self.timerTickerCount / notesPerClick)
-//                        }
-                    if self.timerTickerCount < leadInTicks {
+                        leadingIn = false
+                        if let leadInCount = self.leadInCount {
+                            if self.timerTickerCount < leadInCount  * notesPerClick {
+                                let remaining:Int = (leadInCount * notesPerClick - self.timerTickerCount) / notesPerClick
+                                self.setLeadInCountdownPublished(count: remaining)
+                                leadingIn = true
+                            }
+                        }
+                        //print("\n========== METRONOME", self.timerTickerCount, leadInCount, leadingIn)
+                        self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
                         if !leadingIn {
-                            leadingIn = true
-                            self.setLeadingIn(way: true)
+                            //print("  ========== METRONOME-Notify")
+                            for toNotify in self.processesToNotify {
+                                _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
+                            }
                         }
+                        self.timerTickerCount += 1
                     }
-                    else {
-                        if leadingIn  {
-                            leadingIn = false
-                            self.setLeadingIn(way: false)
-                        }
-                    }
-                    self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
-                    for toNotify in self.processesToNotify {
-                        _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickerCount, leadingIn: leadingIn)
-                    }
-
-                    self.timerTickerCount += 1
-                }
             }
         }
 //        else {

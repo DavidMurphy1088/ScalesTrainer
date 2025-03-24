@@ -414,9 +414,6 @@
     "Key 4" : {
       "extractionState" : "manual"
     },
-    "Lead In Count" : {
-
-    },
     "Lead the Scale" : {
       "comment" : "Menu",
       "extractionState" : "stale",
@@ -670,9 +667,6 @@
     "Shuffle" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -826,9 +820,6 @@
           }
         }
       }
-    },
-    "Viewing Direction" : {
-
     },
     "We hope you enjoy your experience using Scales Academy." : {
 

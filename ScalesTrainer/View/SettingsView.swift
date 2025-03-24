@@ -93,20 +93,20 @@ struct SettingsView: View {
 //                .padding()
 
                 ///Lead in count
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
-                    Picker("Select Value", selection: $leadInBarCount) {
-                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-                            Text("\(scalesModel.scaleLeadInCounts[index])")
-                        }
-                    }
-                    //.disabled(!self.metronomeOn)
-                    .pickerStyle(.menu)
-                    .onChange(of: leadInBarCount, {
-                        user.settings.scaleLeadInBeatCountIndex = leadInBarCount
-                    })
-                }
+//                Spacer()
+//                HStack {
+//                    Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
+//                    Picker("Select Value", selection: $leadInBarCount) {
+//                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
+//                            Text("\(scalesModel.scaleLeadInCounts[index])")
+//                        }
+//                    }
+//                    //.disabled(!self.metronomeOn)
+//                    .pickerStyle(.menu)
+//                    .onChange(of: leadInBarCount, {
+//                        user.settings.scaleLeadInBeatCountIndex = leadInBarCount
+//                    })
+//                }
                 
                 ///Backing sampler
                 Spacer()
@@ -228,7 +228,7 @@ struct SettingsView: View {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)
             }
 
-            leadInBarCount = user.settings.scaleLeadInBeatCountIndex
+            //leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
             if let score = scalesModel.getScore() {
                 PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,

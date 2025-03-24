@@ -1,6 +1,13 @@
 import Foundation
 import SwiftUI
 
+struct SelectBoardView: View {
+    var body: some View {
+        VStack(spacing: 0) {
+        }
+    }
+}
+
 struct SelectBoardGradesView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     let user:User

@@ -88,6 +88,60 @@ struct PianoStartNoteIllustrationView: View {
     
 }
 
+struct StartCountdownView: View {
+    @ObservedObject private var metronome = Metronome.shared
+    let callback: () -> Void
+    @State var waitForFirstLeadIn = true
+    
+    func stayAlive(countdown:Int) -> Bool {
+        if waitForFirstLeadIn {
+            waitForFirstLeadIn = countdown == 0
+        }
+        if countdown > 0 {
+            return true
+        }
+        else {
+            if waitForFirstLeadIn {
+                return true
+            }
+            else {
+                ///close the popup[
+                callback()
+                return false
+            }
+        }
+    }
+    
+    var body: some View {
+        VStack {
+            if let countdown = metronome.leadInCountdownPublished {
+                if stayAlive(countdown: countdown)  {
+                    VStack {
+                        Text("")
+                        if countdown > 0 {
+                            let message = "Starting in \(countdown)"
+                            Text(message)
+                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
+                                .foregroundColor(countdown == 1 ? AppOrange : Color(.blue))
+                                .foregroundColor(Color(.blue))
+                                .padding()
+                        }
+                        //}
+                        Text("")
+                    }
+                    .background(Color.white.opacity(1.0))
+                    .cornerRadius(30)
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.blue, lineWidth: 3))
+                    .shadow(radius: 10)
+                    .onAppear() {
+                        waitForFirstLeadIn = true
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct StartExerciseView: View {
     let badge: Badge
     let scalesModel:ScalesModel

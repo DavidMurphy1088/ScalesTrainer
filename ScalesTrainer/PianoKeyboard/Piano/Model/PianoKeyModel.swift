@@ -41,7 +41,6 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyWasPlayedState:PianoKeyPlayedState
     
     ///The note in the scale to which the key currently maps. The mapping changes between ascending and descending
-    //private(set) var scaleNoteState:ScaleNoteState?
     private(set) var scaleNoteState:ScaleNoteState?
     
     /// The key was just played and its note is sounding
@@ -94,6 +93,7 @@ public class PianoKeyModel: Identifiable, Hashable {
                 self.keyboardModel.redraw()
             }
         }
+        
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
         

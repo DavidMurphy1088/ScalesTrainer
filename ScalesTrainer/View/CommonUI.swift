@@ -193,3 +193,145 @@ extension View {
 
 }
 
+struct ConfettiView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let container = UIView(frame: .zero)
+        container.backgroundColor = .clear
+        return container
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        // Remove any existing emitter layers
+        uiView.layer.sublayers?.removeAll(where: { $0 is CAEmitterLayer })
+        
+        // Delay setting up the emitter until the view's bounds are valid.
+        DispatchQueue.main.async {
+            guard uiView.bounds.size != .zero else { return }
+            
+            // Calculate confetti size based on screen width
+            let screenWidth = uiView.bounds.width
+            let confettiSize = calculateConfettiSize(forScreenWidth: screenWidth)
+            
+            print("Screen width: \(screenWidth), Confetti size: \(confettiSize)")
+            
+            let emitter = CAEmitterLayer()
+            emitter.frame = uiView.bounds
+            emitter.emitterPosition = CGPoint(x: uiView.bounds.midX, y: 0)
+            emitter.emitterShape = .line
+            emitter.emitterSize = CGSize(width: uiView.bounds.width, height: 1)
+            
+            // Define several colors for variety
+            let colors: [UIColor] = [
+                .systemRed,
+                .systemBlue,
+                .systemGreen,
+                .systemYellow,
+                .systemPurple,
+                .systemOrange,
+                .systemPink,
+                .systemTeal
+            ]
+            
+            // Create different emitter cells for each color
+            var cells: [CAEmitterCell] = []
+            
+            for color in colors {
+                // Create star shapes with responsive size
+                if let starImage = createStarImage(size: CGSize(width: confettiSize, height: confettiSize), color: color) {
+                    let cell = createEmitterCell(with: starImage, forScreenWidth: screenWidth)
+                    cells.append(cell)
+                }
+            }
+            
+            // Set cells to the emitter
+            emitter.emitterCells = cells
+            
+            // Add the emitter to the view
+            uiView.layer.addSublayer(emitter)
+            
+            // Stop emitting after 1 second, then remove the emitter after another 1.5 seconds.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                emitter.birthRate = 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    emitter.removeFromSuperlayer()
+                }
+            }
+        }
+    }
+    
+    // Calculate appropriate confetti size based on screen width
+    private func calculateConfettiSize(forScreenWidth width: CGFloat) -> CGFloat {
+        let percentage: CGFloat = width < 400 ? 0.05 : (width < 800 ? 0.04 : 0.025)
+        let size = width * percentage * 2.0
+        let minSize: CGFloat = 30
+        //let maxSize: CGFloat = 100
+        let maxSize: CGFloat = 200
+        return min(max(size, minSize), maxSize)
+    }
+    
+    // Create a standard emitter cell with the given content image
+    private func createEmitterCell(with image: UIImage?, forScreenWidth width: CGFloat) -> CAEmitterCell {
+        let cell = CAEmitterCell()
+        cell.contents = image?.cgImage
+        
+        let scaleBase: CGFloat = width < 400 ? 0.5 : (width < 800 ? 0.4 : 0.3)
+        let velocityBase: CGFloat = width < 400 ? 80 : (width < 800 ? 100 : 120)
+        
+        cell.birthRate = 15
+        //cell.lifetime = 10.0   // Lifetime in seconds
+        cell.lifetime = 5.0   // Lifetime in seconds
+        cell.velocity = velocityBase
+        cell.velocityRange = velocityBase * 0.4
+        cell.emissionLongitude = .pi
+        cell.emissionRange = .pi / 3
+        cell.spin = 1.5
+        cell.spinRange = 1.0
+        cell.scale = scaleBase
+        cell.scaleRange = scaleBase * 0.4
+        
+        cell.yAcceleration = 40
+        
+        // Set alphaSpeed so the particle fades linearly to 0 over its lifetime.
+        // With lifetime = 10 seconds, alphaSpeed = -1/10 = -0.1 ensures full fade.
+        cell.alphaSpeed = -0.4
+        
+        return cell
+    }
+    
+    // Create a star-shaped image with the given color
+    private func createStarImage(size: CGSize, color: UIColor) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let outerRadius = min(size.width, size.height) / 2
+        let innerRadius = outerRadius * 0.4
+        let points = 5
+        
+        color.setFill()
+        
+        var angle: CGFloat = -CGFloat.pi / 2  // Start at the top
+        let angleIncrement = CGFloat.pi * 2 / CGFloat(points * 2)
+        
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: center.x + outerRadius * cos(angle),
+                              y: center.y + outerRadius * sin(angle)))
+        
+        for i in 0..<points * 2 {
+            angle += angleIncrement
+            let radius = i % 2 == 0 ? innerRadius : outerRadius
+            path.addLine(to: CGPoint(x: center.x + radius * cos(angle),
+                                     y: center.y + radius * sin(angle)))
+        }
+        
+        path.closeSubpath()
+        context.addPath(path)
+        context.fillPath()
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
+}
+

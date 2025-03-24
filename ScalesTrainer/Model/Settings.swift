@@ -29,15 +29,14 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         //var keyboardColor:[Double] = [1.0, 0.949, 0.835, 1.0]
         var keyboardColor:[Double] = [1.0, 0.9647, 1.0, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
-        var leadInCOunt:Int = 0
         var backingSamplerPreset:Int = 0
         var badgeStyle = 0
         var practiceChartGamificationOn = true
         var useMidiConnnections = false
-        var scaleLeadInBeatCountIndex:Int = 2
+        var scaleLeadInBeatCountIndexOld:Int = 2
         
-        public func getLeadInBeats() -> Int {
-            switch scaleLeadInBeatCountIndex {
+        public func getLeadInBeatsOld() -> Int {
+            switch scaleLeadInBeatCountIndexOld {
             case 1:
                 return 2
             case 2:
@@ -200,6 +199,7 @@ class Settings : Encodable, Decodable {
     func noUserDefined() -> Bool {
         return self.users.count == 0
     }
+    
     func getCurrentUser() -> User {
         for user in self.users {
             if user.isCurrentUser {

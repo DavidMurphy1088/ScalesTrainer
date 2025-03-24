@@ -33,7 +33,7 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
                 player.play()
             }
             self.tickNum += 1
-            metronome.setTimerTickerCountPublished(count: self.tickNum)
+            //metronome.setTimerTickerCountPublished(count: self.tickNum)
         }
     }
     
