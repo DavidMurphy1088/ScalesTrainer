@@ -285,7 +285,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
-                            self.exerciseState.setExerciseState("View follow start", settings.isDeveloperMode1() ? .exerciseStarted : .exerciseAboutToStart)
+                            self.exerciseState.setExerciseState("View follow start", .exerciseAboutToStart)
                             self.directionIndex = 0
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -320,7 +320,7 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("View lead start", settings.isDeveloperMode1() ? .exerciseAboutToStart : .exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("View lead start", .exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {
@@ -681,12 +681,12 @@ struct ScalesView: View {
                         }
                     }
                     
-                    if Settings.shared.isDeveloperMode1()  {
-                        if user.settings.useMidiConnnections {
-                            Spacer()
-                            TestInputView()
-                        }
-                    }
+//                    if Settings.shared.isDeveloperMode1()  {
+//                        if user.settings.useMidiConnnections {
+//                            Spacer()
+//                            TestInputView()
+//                        }
+//                    }
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)

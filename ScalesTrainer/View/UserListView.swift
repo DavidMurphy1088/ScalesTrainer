@@ -95,7 +95,7 @@ struct UserListView: View {
                                 Button(action: {
                                     showDeleteAlert = true
                                     userToDelete = user
-                                }) {      
+                                }) {
                                     HStack {
                                         if UIDevice.current.userInterfaceIdiom != .phone {
                                             Image(systemName: "trash")
@@ -168,4 +168,3 @@ struct UserListView: View {
         }
     }
 }
-

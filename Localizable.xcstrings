@@ -170,6 +170,9 @@
     "Bluetooth MIDI Devices" : {
 
     },
+    "But here you can practise %@ hands separately." : {
+
+    },
     "Calibration" : {
 
     },
@@ -322,12 +325,6 @@
     "Hand:" : {
 
     },
-    "Hands" : {
-
-    },
-    "Hide" : {
-
-    },
     "Hide Fingers" : {
       "comment" : "LegendView",
       "localizations" : {
@@ -338,9 +335,6 @@
           }
         }
       }
-    },
-    "Hide Hands" : {
-
     },
     "Hide Keyboard" : {
       "comment" : "LegendView",
@@ -377,6 +371,9 @@
       }
     },
     "If the issue persists, try opening the Mail app and attempting to send an email manually. This can provide additional error messages to help troubleshoot the problem." : {
+
+    },
+    "In the exam %@ must be played with both hands." : {
 
     },
     "Instructions" : {
@@ -425,9 +422,6 @@
           }
         }
       }
-    },
-    "Left" : {
-
     },
     "Left Hand" : {
       "extractionState" : "manual",
@@ -515,6 +509,15 @@
     "Please setup your name and grade." : {
 
     },
+    "Practise Hands Together" : {
+
+    },
+    "Practise Left Hand" : {
+
+    },
+    "Practise Right Hand" : {
+
+    },
     "Purchase" : {
 
     },
@@ -555,9 +558,6 @@
 
     },
     "Retry" : {
-
-    },
-    "Right" : {
 
     },
     "Right Hand" : {
@@ -629,6 +629,9 @@
     "Select Value" : {
 
     },
+    "Selected board: %@" : {
+
+    },
     "Send us a message about an issue or a new feature" : {
 
     },
@@ -657,9 +660,6 @@
           }
         }
       }
-    },
-    "Show Hands" : {
-
     },
     "Show Tap Data" : {
 

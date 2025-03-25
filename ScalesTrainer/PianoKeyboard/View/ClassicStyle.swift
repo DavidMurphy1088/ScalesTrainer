@@ -11,7 +11,7 @@ public struct ClassicStyle {
     let keyColor: Color
     let hand:Int
     let scale:Scale
-    let plainStyle:Bool
+    let miniKeyboardStyle:Bool
     let blackNoteFingerNumberHeight:Double
     var noteToHilight:Int?
     
@@ -21,7 +21,7 @@ public struct ClassicStyle {
         name:String,
         scale:Scale,
         hand:Int,
-        plainStyle:Bool,
+        miniKeyboardStyle:Bool,
         sfKeyWidthMultiplier: CGFloat = 0.65,
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
@@ -35,7 +35,7 @@ public struct ClassicStyle {
         self.sfKeyHeightMultiplier = sfKeyHeightMultiplier
         self.sfKeyInsetMultiplier = sfKeyInsetMultiplier
         self.cornerRadiusMultiplier = cornerRadiusMultiplier
-        if plainStyle {
+        if miniKeyboardStyle {
             self.naturalKeySpace = 1
             let hand = scale.hands[0]
             noteToHilight = scale.getMinMax(handIndex: hand).0
@@ -47,7 +47,7 @@ public struct ClassicStyle {
         self.labelColor = labelColor
         self.keyColor = keyColor
         self.scale = scale
-        self.plainStyle = plainStyle
+        self.miniKeyboardStyle = miniKeyboardStyle
         self.blackNoteFingerNumberHeight = 0.50 //: 0.50
     }
 
@@ -91,14 +91,14 @@ public struct ClassicStyle {
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
         var keyNameToShow:String? = nil
-        if plainStyle {
+        if miniKeyboardStyle {
             if [60].contains(key.midi) {
-                let flashColor = Color.green//.opacity(flashOpacity)
+                let flashColor = Color.blue.opacity((0.25))
                 context.fill(keyPath, with: .color(flashColor))
                 keyNameToShow = "C"
             }
             if [noteToHilight].contains(key.midi) {
-                let flashColor = AppOrange//.opacity(flashOpacity)
+                let flashColor = Color.green
                 context.fill(keyPath, with: .color(flashColor))
             }
         }
@@ -112,7 +112,7 @@ public struct ClassicStyle {
             }
         }
         if let keyNameToShow = keyNameToShow {
-            let yPos = plainStyle ? keyRect.height * 0.80 : 20
+            let yPos = miniKeyboardStyle ? keyRect.height * 0.80 : 20
             context.draw(
                 Text(keyNameToShow)
                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .caption2 : .title3)
@@ -123,7 +123,7 @@ public struct ClassicStyle {
         context.stroke(keyPath, with: .color(.gray), lineWidth: 1)
     }
     
-    public func layout(repaint:Int, viewModel: PianoKeyboardModel, plainStyle:Bool, geometry: GeometryProxy) -> some View {
+    public func layout(repaint:Int, viewModel: PianoKeyboardModel, miniKeyboardStyle:Bool, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
             //let user = Settings.shared.getCurrentUser() 
             let scalesModel = ScalesModel.shared
@@ -133,7 +133,7 @@ public struct ClassicStyle {
             let geometryTopEdge = geometry.frame(in: .global).origin.y
 
             // Natural keys
-            let cornerRadius = plainStyle ? 2 : width * cornerRadiusMultiplier
+            let cornerRadius = miniKeyboardStyle ? 2 : width * cornerRadiusMultiplier
             let naturalWidth = naturalKeyWidth(width, naturalKeyCount: viewModel.naturalKeyCount, space: naturalKeySpace)
             var xpos: CGFloat = 0
             let playingMidiRadius = naturalWidth * (scale.octaves > 1 ? 0.5 : 0.3)
@@ -185,7 +185,6 @@ public struct ClassicStyle {
                 }
                                                          
                 /// ----------- Key name and key color hilights ---------
-                
                 
                 showKeyNameAndHilights(scalesModel: scalesModel, context: context, keyRect: keyRect, key: key, keyPath: keyPath, showKeyName: true)
                 

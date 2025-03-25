@@ -1456,32 +1456,34 @@ public class Scale : Codable {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
     
-    func getScaleName(handFull:Bool, motion:Bool? = nil, octaves:Bool? = nil) -> String {
+    func getScaleName(showHands:Bool=true, handFull:Bool, motion:Bool? = nil, octaves:Bool? = nil) -> String {
         var name = scaleRoot.name + " " + scaleType.description
         if scaleMotion == .contraryMotion || motion == true {
             name += ", " + scaleMotion.description
         }
-        if self.scaleMotion != .contraryMotion {
-            if self.hands.count == 1 {
-                var handName = ""
-                if handFull {
-                    switch self.hands[0] {
-                    case 0: handName = "Right Hand"
-                    case 1: handName = "Left Hand"
-                    default: handName = "Together"
+        if showHands {
+            if self.scaleMotion != .contraryMotion {
+                if self.hands.count == 1 {
+                    var handName = ""
+                    if handFull {
+                        switch self.hands[0] {
+                        case 0: handName = "Right Hand"
+                        case 1: handName = "Left Hand"
+                        default: handName = "Together"
+                        }
                     }
+                    else {
+                        switch self.hands[0] {
+                        case 0: handName = "RH"
+                        case 1: handName = "LH"
+                        default: handName = "Together"
+                        }
+                    }
+                    name += ", " + handName
                 }
                 else {
-                    switch self.hands[0] {
-                    case 0: handName = "RH"
-                    case 1: handName = "LH"
-                    default: handName = "Together"
-                    }
+                    name += handFull ? ", Together" : ", Together"
                 }
-                name += ", " + handName
-            }
-            else {
-                name += handFull ? ", Together" : ", Together"
             }
         }
         if let octaves = octaves {

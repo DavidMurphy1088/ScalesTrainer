@@ -69,7 +69,7 @@ struct PianoStartNoteIllustrationView: View {
     
     var body: some View {
         VStack(spacing:0) {
-            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel, keyColor: Color.white, plainStyle: true)
+            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel, keyColor: Color.white, miniKeyboardStyle: true)
                 .frame(width:7 * keyHeight, height: keyHeight)
                 .cornerRadius(16)
                 .padding(.bottom, 0)

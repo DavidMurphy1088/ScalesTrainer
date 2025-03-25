@@ -356,7 +356,7 @@ struct MainContentView: View {
         //ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .arpeggioDominantSeventh,
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor,
                                             scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,

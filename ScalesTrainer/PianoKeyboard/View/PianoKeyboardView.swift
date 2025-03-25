@@ -6,15 +6,16 @@ public struct PianoKeyboardView : View {
     @ObservedObject var scalesModel: ScalesModel
     @ObservedObject private var viewModel: PianoKeyboardModel
     let keyColor:Color
-    let plainStyle:Bool
+    let miniKeyboardStyle:Bool
     var style:ClassicStyle
 
-    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardModel, keyColor:Color, plainStyle:Bool = false) {
+    public init(scalesModel:ScalesModel, viewModel: PianoKeyboardModel, keyColor:Color, miniKeyboardStyle:Bool = false) {
         self.scalesModel = scalesModel
         self.viewModel = viewModel
         self.keyColor = keyColor
-        self.plainStyle = plainStyle
-        style = ClassicStyle(name: viewModel.name, scale: scalesModel.scale, hand: viewModel.keyboardNumber - 1, plainStyle: plainStyle, keyColor: keyColor)
+        self.miniKeyboardStyle = miniKeyboardStyle
+        style = ClassicStyle(name: viewModel.name, scale: scalesModel.scale, hand: viewModel.keyboardNumber - 1,
+                             miniKeyboardStyle: miniKeyboardStyle, keyColor: keyColor)
     }
 
     public var body: some View {
@@ -26,8 +27,8 @@ public struct PianoKeyboardView : View {
                     //Text("REPAIONT \(viewModel.forceRepaint)")
                     ZStack(alignment: .top) {
                         //Warning - Anything added here screws up touch handling 😡
-                        style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, plainStyle: plainStyle, geometry: geometry)
-                        if plainStyle == false {
+                        style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, miniKeyboardStyle: miniKeyboardStyle, geometry: geometry)
+                        if miniKeyboardStyle == false {
                             TouchesView(viewModel: viewModel)
                         }
                     }
