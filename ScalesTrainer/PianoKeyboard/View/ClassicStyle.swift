@@ -13,7 +13,7 @@ public struct ClassicStyle {
     let scale:Scale
     let miniKeyboardStyle:Bool
     let blackNoteFingerNumberHeight:Double
-    var noteToHilight:Int?
+    var notesToHilight:[Int]?
     
     public let naturalKeySpace: CGFloat
 
@@ -38,7 +38,8 @@ public struct ClassicStyle {
         if miniKeyboardStyle {
             self.naturalKeySpace = 1
             let hand = scale.hands[0]
-            noteToHilight = scale.getMinMax(handIndex: hand).0
+            //noteToHilight = scale.getMinMax(handIndex: hand).0
+            notesToHilight = scale.getHandStartMidis()
         }
         else {
             //self.naturalKeySpace = scale.octaves > 1 ? 2 : 3
@@ -97,9 +98,11 @@ public struct ClassicStyle {
                 context.fill(keyPath, with: .color(flashColor))
                 keyNameToShow = "C"
             }
-            if [noteToHilight].contains(key.midi) {
-                let flashColor = Color.green
-                context.fill(keyPath, with: .color(flashColor))
+            if let notesToHilight = self.notesToHilight {
+                if notesToHilight.contains(key.midi) {
+                    let flashColor = Color.green
+                    context.fill(keyPath, with: .color(flashColor))
+                }
             }
         }
         else {
@@ -125,7 +128,24 @@ public struct ClassicStyle {
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, miniKeyboardStyle:Bool, geometry: GeometryProxy) -> some View {
         Canvas { context, size in
-            //let user = Settings.shared.getCurrentUser() 
+//            func getRGBComponents(from color: Color) -> (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)? {
+//                let uiColor = UIColor(color)
+//                var red: CGFloat = 0
+//                var green: CGFloat = 0
+//                var blue: CGFloat = 0
+//                var alpha: CGFloat = 0
+//
+//                if uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+//                    return (red, green, blue, alpha)
+//                }
+//                
+//                return nil
+//            }
+//
+//            if let components = getRGBComponents(from: Color.green) {
+//                print("Red: \(components.red), Green: \(components.green), Blue: \(components.blue), Alpha: \(components.alpha)")
+//            }
+            //let user = Settings.shared.getCurrentUser()
             let scalesModel = ScalesModel.shared
             let width = size.width
             let height = size.height
@@ -291,31 +311,33 @@ public struct ClassicStyle {
                 ))
                 
                 ///Left or right hand indicator in left most key
-                if !handIndicatorShown {
-                    var handImageName:String? = nil
-                    if viewModel.keyboardNumber == 1  {
-                        handImageName = "hand_right_orange"
+                if !miniKeyboardStyle  {
+                    if !handIndicatorShown {
+                        var handImageName:String? = nil
+                        if viewModel.keyboardNumber == 1  {
+                            handImageName = "hand_right_green"
+                        }
+                        if viewModel.keyboardNumber == 2 {
+                            handImageName = "hand_left_green"
+                        }
+                        if let handImageName = handImageName {
+                            let image = Image(handImageName)//.renderingMode(.template)
+                            let resolved = context.resolve(image)
+                            let targetWidth: CGFloat = sfKeyWidth * 0.70
+                            let originalSize = resolved.size
+                            // Calculate height to maintain aspect ratio
+                            let aspectRatio = originalSize.height / originalSize.width
+                            let targetHeight = targetWidth * aspectRatio
+                            let drawRect = CGRect(
+                                x: (sfKeyWidth - targetWidth) * 0.50,
+                                y: 20,
+                                width: targetWidth,
+                                height: targetHeight
+                            )
+                            context.draw(resolved, in: drawRect)
+                        }
+                        handIndicatorShown = true
                     }
-                    if viewModel.keyboardNumber == 2 {
-                        handImageName = "hand_left_orange"
-                    }
-                    if let handImageName = handImageName {
-                        let image = Image(handImageName)
-                        let resolved = context.resolve(image)
-                        let targetWidth: CGFloat = sfKeyWidth * 0.60
-                        let originalSize = resolved.size
-                        // Calculate height to maintain aspect ratio
-                        let aspectRatio = originalSize.height / originalSize.width
-                        let targetHeight = targetWidth * aspectRatio
-                        let drawRect = CGRect(
-                            x: (sfKeyWidth - targetWidth) * 0.50,
-                            y: 20,
-                            width: targetWidth,
-                            height: targetHeight
-                        )
-                        context.draw(resolved, in: drawRect)
-                    }
-                    handIndicatorShown = true
                 }
                 ///------------- Key Name -----
                 ///On iPhone or long scales many keys results in overlapping key names. So dont show the black key key names.

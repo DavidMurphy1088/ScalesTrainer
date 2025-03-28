@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
+		790614452D940943009E7A8D /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614442D94093A009E7A8D /* MetronomeView.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
 		79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
@@ -148,6 +149,7 @@
 		0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.release.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.release.xcconfig"; sourceTree = "<group>"; };
 		34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
+		790614442D94093A009E7A8D /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesList.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
@@ -478,20 +480,20 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
-				79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
 				799BE2A72BFF4322004B19F6 /* CalibrationView.swift */,
 				794A9FC62C2BD24C0001297E /* CoinBankView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				790624092C374F5D005A6A3E /* EmailView.swift */,
+				79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */,
 				79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */,
 				799DC8412D5190BB007008A5 /* FFTView.swift */,
 				79312DB62C118B41005FDE8B /* HelpView.swift */,
 				799BE2A92BFF4EED004B19F6 /* LegendView.swift */,
 				791F6C302CD18939006BAEBD /* LicenseManagerView.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
+				790614442D94093A009E7A8D /* MetronomeView.swift */,
 				79F80E0B2CD4CD6800D636FB /* MIDIView.swift */,
 				799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */,
 				790537042C47319600AC794D /* PracticeChartView.swift */,
@@ -506,6 +508,7 @@
 				799381782C75D1A400734FDE /* SettingsView.swift */,
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
+				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
@@ -792,6 +795,7 @@
 				79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */,
 				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
 				79312DB12C0B2B7E005FDE8B /* ResultView.swift in Sources */,
+				790614452D940943009E7A8D /* MetronomeView.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
 				799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */,
 				79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */,

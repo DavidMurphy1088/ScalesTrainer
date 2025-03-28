@@ -230,10 +230,10 @@ struct SettingsView: View {
 
             //leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
-            if let score = scalesModel.getScore() {
-                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
-                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
-            }
+//            if let score = scalesModel.getScore() {
+//                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
+//                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
+//            }
             self.keyboardColor = user.settings.getKeyboardColor()
             self.backgroundColor = user.settings.getBackgroundColor()
             self.backingPresetNumber = user.settings.backingSamplerPreset

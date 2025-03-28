@@ -74,8 +74,11 @@ struct UserDetailsView: View {
                 })
                 
                 //Spacer()
-                SelectBoardGradesView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
-                    .frame(width: UIScreen.main.bounds.size.width * 0.75)
+                if false {
+                    SelectGradesForBoardView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
+                        .frame(width: UIScreen.main.bounds.size.width * 0.75)
+                }
+                //SelectBoardView()
                 if self.creatingNewUser && user.name.count > 0 && selectedGrade > 0 {
                     Spacer()
                     Button(action: {

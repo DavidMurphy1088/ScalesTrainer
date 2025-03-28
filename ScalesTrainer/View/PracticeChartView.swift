@@ -16,6 +16,114 @@ struct BlankCellView: View {
     }
 }
 
+struct SelectHandForPractice: View {
+    let practiceChart:PracticeChart
+    let practiceCell:PracticeChartCell
+    let scale:Scale
+    @State var practiceModeHand:HandType?
+    @State var navigateToScale = false
+    let imageSize = UIScreen.main.bounds.size.width * 0.05
+    
+    init(practiceChart:PracticeChart, practiceCell:PracticeChartCell) {
+        self.practiceChart = practiceChart
+        self.practiceCell = practiceCell
+        self.scale = practiceCell.scale
+    }
+    
+    func setScale(practiceHands:[Int]) {
+        ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType,
+                                                 scaleMotion: practiceCell.scale.scaleMotion,
+                                                 minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
+                                                 hands: practiceHands,
+                                                 dynamicTypes: practiceCell.scale.dynamicTypes,
+                                                 articulationTypes: practiceCell.scale.articulationTypes,
+                                                 ctx: "PracticeChartHands",
+                                                 scaleCustomisation:practiceCell.scale.scaleCustomisation)
+    }
+    
+    var body: some View {
+        let nameFull = scale.getScaleName(handFull: false)
+        let name = scale.getScaleName(showHands: false, handFull: false)
+        VStack(spacing: 0) {
+            //VStack(spacing: 0) {
+                Text(nameFull).font(.title)
+            //}
+            VStack(spacing: 0) {
+                Text("In the exam \(nameFull) must be played with both hands.")
+                Text("But here you can practise \(name) hands separately.")
+            }
+            .padding()
+            Button(action: {
+                setScale(practiceHands: [0,1])
+                navigateToScale = true
+                practiceModeHand = nil
+            }) {
+                VStack(spacing: 0)  {
+                    HStack {
+                        Image("hand_left")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height:imageSize)
+                        Image("hand_right")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height:imageSize)
+                    }
+                    Text("Practise Hands Together")
+                }
+            }
+            .padding()
+            Text("")
+            HStack {
+                Button(action: {
+                    setScale(practiceHands: [1])
+                    practiceModeHand = .left
+                    navigateToScale = true
+                }) {
+                    VStack {
+                        Image("hand_left_orange")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height:imageSize)
+                        Text("Practise Left Hand")
+                    }
+                }
+                .padding()
+                Button(action: {
+                    setScale(practiceHands: [0])
+                    navigateToScale = true
+                    practiceModeHand = .left
+                }) {
+                    VStack {
+                        Image("hand_right_orange")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height:imageSize)
+                        Text("Practise Right Hand")
+                    }
+                }
+                .padding()
+            }
+
+//            HStack(spacing: 40) {
+//                Button("Cancel") {
+//                }
+//                .padding()
+//                .background(Color.gray.opacity(0.2))
+//                .cornerRadius(8)
+//            }
+        }
+        .onAppear {
+            //navigateToScale = false ///Having this here casues the back navigation to screw up. No idea why 😰
+        }
+        .navigationDestination(isPresented: $navigateToScale) {
+            ScalesView(practiceChart: practiceChart,
+                       practiceChartCell: practiceCell,
+                       practiceModeHand: practiceModeHand)
+        }
+    }
+}
+
 struct CellView: View {
     let column:Int
     let practiceChart:PracticeChart
@@ -30,85 +138,14 @@ struct CellView: View {
     
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
-    @State var navigateToScale = false
+    @State var navigateToScaleDirectly = false
+    @State var navigateToSelectHands = false
     @State var practiceModeHand:HandType? = nil
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
-    @State private var showProceedConfirmation = false
     
     let padding = 5.0
 
-    struct selectHandToProceedView: View {
-        let scale:Scale
-        var onComplete: ([HandType]) -> Void
-        let imageSize = UIScreen.main.bounds.size.width * 0.05
-        var body: some View {
-            let nameFull = scale.getScaleName(handFull: false)
-            let name = scale.getScaleName(showHands: false, handFull: false)
-            VStack(spacing: 0) {
-                Text(nameFull).font(.title)
-                VStack(spacing: 0) {
-                    Text("In the exam \(nameFull) must be played with both hands.")
-                    Text("But here you can practise \(name) hands separately.")
-                }
-                .padding()
-                Button(action: {
-                    onComplete([.left, .right])
-                }) {
-                    VStack(spacing: 0)  {
-                        HStack {
-                            Image("hand_left")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                            Image("hand_right")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                        }
-                        Text("Practise Hands Together")
-                    }
-                }
-                .padding()
-                Text("")
-                HStack {
-                    Button(action: {
-                        onComplete([.left])
-                    }) {
-                        VStack {
-                            Image("hand_left_orange")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                            Text("Practise Left Hand")
-                        }
-                    }
-                    .padding()
-                    Button(action: {
-                        onComplete([.right])
-                    }) {
-                        VStack {
-                            Image("hand_right_orange")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                            Text("Practise Right Hand")
-                        }
-                    }
-                    .padding()
-                }
-
-                HStack(spacing: 40) {
-                    Button("Cancel") {
-                        onComplete([])
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-                }
-            }
-        }
-    }
     
     func getColor() -> Color {
         return .green
@@ -133,75 +170,9 @@ struct CellView: View {
         }
     }
 
-//    func handsView() -> some View {
-//        HStack {
-//            Button(action: {
-//                setScale(hands: [1])
-//                if practiceCell.isLicensed {
-//                    navigateToScale = true
-//                    practiceModeHand = .left
-//                }
-//            }) {
-//                HStack {
-//                    if UIDevice.current.userInterfaceIdiom != .phone {
-//                        //Text("Left Hand").font(.body)
-//                        Text("Left").font(.body)
-//                    }
-//                    Image("hand_left")
-//                        .resizable()
-//                        .renderingMode(.template)
-//                        .foregroundColor(.purple)
-//                        .opacity(0.5)
-//                        .scaledToFit()
-//                        .frame(height: 25)
-//                }
-//            }
-//            .buttonStyle(.bordered)
-//            Button(action: {
-//                setScale(hands:[0])
-//                if practiceCell.isLicensed {
-//                    navigateToScale = true
-//                    practiceModeHand = .right
-//                }
-//            }) {
-//                if UIDevice.current.userInterfaceIdiom != .phone {
-//                    HStack {
-//                        Text("Right").font(.callout)
-//                    }
-//                }
-//                Image("hand_right")
-//                    .resizable()
-//                    .renderingMode(.template)
-//                    .foregroundColor(.purple)
-//                    .opacity(0.5)
-//                    .scaledToFit()
-//                    .frame(height: 25)
-//
-//            }
-//            .buttonStyle(.bordered)
-//        }
-//        .opacity(opacityValue)
-//    }
-    
-    func setScale(hands:[Int]) {
-        ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType,
-                                                 scaleMotion: practiceCell.scale.scaleMotion,
-                                                 minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
-                                                 hands: hands, dynamicTypes: practiceCell.scale.dynamicTypes, 
-                                                 articulationTypes: practiceCell.scale.articulationTypes,
-                                                 ctx: "PracticeChart",
-                                                 scaleCustomisation:practiceCell.scale.scaleCustomisation)
-    }
     
     func starView() -> some View {
         HStack {
-            NavigationLink(destination: ScalesView(practiceChart: practiceChart,
-                                                   practiceChartCell: practiceCell,
-                                                   practiceModeHand: practiceModeHand),
-                           isActive: $navigateToScale) {
-            }
-            .frame(width: 0.0)
-
             HStack {
                 Button(action: {
                     setStarred(scale: practiceCell.scale)
@@ -279,16 +250,33 @@ struct CellView: View {
         return self.scalesInChart.contains(name)
     }
     
+    func setScale(requiredHands:[Int]) {
+        ScalesModel.shared.setScaleByRootAndType(scaleRoot: practiceCell.scale.scaleRoot, scaleType: practiceCell.scale.scaleType,
+                                                 scaleMotion: practiceCell.scale.scaleMotion,
+                                                 minTempo: practiceCell.scale.minTempo, octaves: practiceCell.scale.octaves,
+                                                 hands: requiredHands,
+                                                 dynamicTypes: practiceCell.scale.dynamicTypes,
+                                                 articulationTypes: practiceCell.scale.articulationTypes,
+                                                 ctx: "PracticeChartHands",
+                                                 scaleCustomisation:practiceCell.scale.scaleCustomisation)
+    }
+    
     var body: some View {
         VStack {
             Button(action: {
-                setScale(hands: practiceCell.scale.hands)
                 if practiceCell.isLicensed {
-                    if self.practiceCell.scale.hands.count == 1 {
-                        navigateToScale = true
+                    if practiceCell.scale.hands.count == 1 {
+                        let chartHands = practiceCell.scale.hands
+                        if chartHands.count > 1 {
+                            setScale(requiredHands: [0,1])
+                        }
+                        else {
+                            setScale(requiredHands: [chartHands[0]])
+                        }
+                        navigateToScaleDirectly = true
                     }
                     else {
-                        showProceedConfirmation = true
+                        navigateToSelectHands = true
                     }
                 }
                 else {
@@ -311,28 +299,6 @@ struct CellView: View {
                 }
             }
             .padding(self.padding)
-            .sheet(isPresented: $showProceedConfirmation) {
-                selectHandToProceedView(scale: practiceCell.scale) {handTypes in
-                    if handTypes.count > 1 {
-                        self.practiceModeHand = nil
-                        navigateToScale = true
-                    }
-                    else {
-                        if handTypes.count == 1 {
-                            let hands = handTypes[0] == .left ? [1] : [0]
-                            setScale(hands: hands)
-                            self.practiceModeHand = handTypes[0]
-                            navigateToScale = true
-                        }
-                    }
-                    showProceedConfirmation = false
-                }
-            }
-//            if practiceCell.scale.hands.count == 2 {
-//                if self.showHands {
-//                    handsView()
-//                }
-//            }
             
             //Spacer()
             starView()
@@ -362,6 +328,13 @@ struct CellView: View {
             }
             Spacer()
         }
+        .navigationDestination(isPresented: $navigateToScaleDirectly) {
+            ScalesView(practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
+        }
+        .navigationDestination(isPresented: $navigateToSelectHands) {
+            SelectHandForPractice(practiceChart: practiceChart, practiceCell: practiceCell)
+        }
+
         .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
         .cornerRadius(10)

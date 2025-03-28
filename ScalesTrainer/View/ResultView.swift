@@ -38,7 +38,7 @@ struct ResultView: View {
             if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
                 let metronome = Metronome.shared
                 status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
-                var appTempoString = ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
+                var appTempoString = "" //ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
                 if appTempoString.count >= 2 {
                     ///Remove to noteType = prefix in tempo setting
                     let index = appTempoString.index(appTempoString.startIndex, offsetBy: 2)

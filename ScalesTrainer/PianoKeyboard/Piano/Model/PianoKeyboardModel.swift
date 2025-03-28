@@ -247,15 +247,17 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType)
     }
     
-    func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, scaleStartMidi:Int, handType:HandType) {
+    func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, handType:HandType) {
         self.pianoKeyModel = []
         self.keyRects1 = Array(repeating: .zero, count: numberOfKeys)
         self.firstKeyMidi = start
+        let handStartMidis = scale.getHandStartMidis()
+        
         for i in 0..<numberOfKeys {
             let pianoKeyModel = PianoKeyModel(scale:scale, score: score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
-            if pianoKeyModel.midi == scaleStartMidi {
-                let keyState = ScaleNoteState(sequence: 0, midi: scaleStartMidi, value: 1, segment: [0])
+            if handStartMidis.contains(pianoKeyModel.midi) {
+                let keyState = ScaleNoteState(sequence: 0, midi: pianoKeyModel.midi, value: 1, segment: [0])
                 ///Mark the start of scale
                 keyState.finger = 9
                 pianoKeyModel.setState(state: keyState)

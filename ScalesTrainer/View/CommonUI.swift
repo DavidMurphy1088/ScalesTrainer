@@ -2,6 +2,10 @@ import SwiftUI
 
 let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
 
+///Equivalent of Swiftui Color.green for canvas drawing
+//let AppGreen = Color(red: 0.20392156, green: 0.7803921, blue: 0.349019607)
+//Red: 0.20392156862745098, Green: 0.7803921568627451, Blue: 0.34901960784313724, Alpha: 1.0
+
 class UIGlobals {
     static let shared = UIGlobals()
     func getBackground1() -> String {

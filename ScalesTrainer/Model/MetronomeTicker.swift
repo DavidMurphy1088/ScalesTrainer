@@ -22,7 +22,7 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
         tickNum = 0
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool)  {
+    func metronomeTickNotification(timerTickerNumber: Int)  {
         let metronome = Metronome.shared
         let notesPerClick = metronome.getNotesPerClick()
         ///1.0.20 play the tick on every note but make the offbeat zero volume.

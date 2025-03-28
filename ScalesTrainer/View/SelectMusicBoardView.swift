@@ -1,52 +1,51 @@
 import Foundation
 import SwiftUI
 
+//struct SelectBoardView: View {
+//    var body: some View {
+//        VStack(spacing: 0) {
+//        }
+//    }
+//}
+
 struct SelectBoardView: View {
-    var body: some View {
-        VStack(spacing: 0) {
-        }
-    }
-}
-struct SelectBoardViewNEW: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     let user:User
     @State private var isOn = [Bool](repeating: false, count: 12)
     let boards = MusicBoard.getSupportedBoards()
     @State var grade:Int = 0
     var body: some View {
-        //NavigationStack {
-            List(boards) { board in
-                NavigationLink(value: board) {
-                    HStack {
-                        Image(board.imageName)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                        
-                        VStack(alignment: .leading) {
-                            Text(board.name)
-                                .font(.headline)
-                            Text(board.fullName)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
+        List(boards) { board in
+            NavigationLink(value: board) {
+                HStack {
+                    Image(board.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                    VStack(alignment: .leading) {
+                        Text(board.name)
+                            .font(.headline)
+                        Text(board.fullName)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
-                    .padding(.vertical, 4)
                 }
+                .padding(.vertical, 4)
             }
-            .listStyle(PlainListStyle())
-            .navigationDestination(for: MusicBoard.self) { board in
-                // Pass the board to your detail view if needed.
-                Text("Selected board: \(board.name)")
-                //SelectBoardGradesView(user:user, musicBoard: board, selectedGrade: $grade)
-            }
-        //}
-        //.navigationViewStyle(StackNavigationViewStyle())
+        }
+        .listStyle(PlainListStyle())
+        .navigationDestination(for: MusicBoard.self) { board in
+            // Pass the board to your detail view if needed.
+            Text("Selected board: \(board.name)")
+            //SelectBoardGradesView(user:user, musicBoard: board, selectedGrade: $grade)
+        }
+
     }
 }
 
-struct SelectBoardGradesView: View {
+struct SelectGradesForBoardView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     let user:User
     let inBoard:MusicBoard

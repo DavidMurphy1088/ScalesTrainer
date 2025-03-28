@@ -91,10 +91,10 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
     }
     
-    func metronomeTickNotification(timerTickerNumber: Int, leadingIn:Bool) {
-        if leadingIn {
-            return
-        }
+    func metronomeTickNotification(timerTickerNumber: Int) {
+//        if leadingIn {
+//            return
+//        }
         let samplerForKeyboard = audioManager.getSamplerForKeyboard()
 
         for hand in scale.hands {

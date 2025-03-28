@@ -7,15 +7,6 @@ import AudioKit
 
 // --------------------------- List of all Users ------------------------------
 
-//struct UsersTitleView: View {
-//    var body: some View {
-//        VStack {
-//            Text("Scales Academy Users").font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-//        }
-//        .commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
-//    }
-//}
-
 struct UserListView: View {
     @EnvironmentObject var tabSelectionManager: ViewManager
     let scalesModel = ScalesModel.shared

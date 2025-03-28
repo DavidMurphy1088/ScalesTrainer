@@ -59,6 +59,16 @@
     "%@" : {
 
     },
+    "%@ - Win %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ - Win %2$@"
+          }
+        }
+      }
+    },
     "%@ Badges" : {
 
     },
@@ -323,6 +333,9 @@
 
     },
     "Hand:" : {
+
+    },
+    "Hands ready?" : {
 
     },
     "Hide Fingers" : {
@@ -641,9 +654,6 @@
     "Sensitivity: %.3f" : {
 
     },
-    "Separate Hand Practice Only" : {
-
-    },
     "Set Correct" : {
 
     },
@@ -667,6 +677,9 @@
     "Shuffle" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
@@ -680,6 +693,9 @@
 
     },
     "Start Analysis" : {
+
+    },
+    "Starting %@" : {
 
     },
     "Stats: %@" : {
@@ -822,9 +838,6 @@
       }
     },
     "We hope you enjoy your experience using Scales Academy." : {
-
-    },
-    "Win %@" : {
 
     },
     "Your current subscription is " : {

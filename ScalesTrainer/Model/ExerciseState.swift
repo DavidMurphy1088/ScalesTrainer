@@ -7,8 +7,8 @@ class ExerciseState : ObservableObject {
     static let shared = ExerciseState()
     
     @Published var exerciseMessage:String? = nil
-    //@Published var showHelp:Bool = false
-
+    var activityName:String = ""
+    
     private(set) var numberToWin = 0
     func setNumberToWin(_ n:Int) {
         self.numberToWin = n
@@ -33,9 +33,10 @@ class ExerciseState : ObservableObject {
     
     @Published private(set) var statePublished:State = .exerciseNotStarted
     private(set) var state:State = .exerciseNotStarted
-    func setExerciseState(_ ctx:String, _ value:ExerciseState.State, _ msg:String? = nil) {
+    func setExerciseState(_ activityName:String, _ value:ExerciseState.State, _ msg:String? = nil) {
         if value != self.state {
             self.state = value
+            self.activityName = activityName
             DispatchQueue.main.async {
                 //AppLogger.shared.log(self, "   ➡️=============setExerciseState \(ctx), TO: \(value) msg:\(msg ?? "")")
                 if self.state == .exerciseLost {

@@ -356,8 +356,8 @@ struct MainContentView: View {
         //ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .arpeggioMajor,
-                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
+            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .major,
+                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0,1],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
@@ -470,13 +470,9 @@ struct MainContentView: View {
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
         .ignoresSafeArea(.keyboard, edges: .bottom)
-//        .toolbarBackground(
-//            LinearGradient(colors: [Color.purple.opacity(0.4), Color.blue.opacity(0.4)], // **Smoother, lighter match to the title**
-//                           startPoint: .topLeading, endPoint: .bottomTrailing),
-//            for: .tabBar
-//        )
+        ///required to stop iPad putting tabView at top and overwriting some of the app's UI
+        .environment(\.horizontalSizeClass, .compact)
         .onAppear {
-            //OrientationManager.appDelegate = appDelegate
             if Settings.shared.isDeveloperMode1() {
                 self.setupDev()
                 ViewManager.shared.setTab(tab: 1)

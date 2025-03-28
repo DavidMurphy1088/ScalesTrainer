@@ -1032,6 +1032,21 @@ public class Scale : Codable {
         return (self.scaleNoteState[handIndex][0].midi, self.scaleNoteState[handIndex][mid].midi)
     }
     
+    func getHandStartMidis() -> [Int] {
+        if hands.count > 1 {
+            return [self.scaleNoteState[1][0].midi, self.scaleNoteState[0][0].midi]
+        }
+        else {
+            if hands[0] == 1 {
+                return [self.scaleNoteState[1][0].midi]
+            }
+            else {
+                return [self.scaleNoteState[0][0].midi]
+            }
+        }
+    }
+
+    
     func getMinMaxMidis() -> (Int, Int) {
         var min = 0
         var max = 0
@@ -1512,7 +1527,7 @@ public class Scale : Codable {
             }
         }
         if let hands = hands {
-            if self.scaleMotion != .contraryMotion {
+            //if self.scaleMotion != .contraryMotion {
                 if self.hands.count == 1 {
                     var handName = ""
                     if true {
@@ -1534,7 +1549,7 @@ public class Scale : Codable {
                 else {
                     description = "Together"
                 }
-            }
+            //}
         }
         if let octaves = octaves {
             if octaves {

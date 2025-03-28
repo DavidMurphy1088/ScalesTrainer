@@ -1,5 +1,96 @@
 import SwiftUI
 
+struct HandsView: View {
+    let scale:Scale
+    let color:Color = Color.green
+    let imageSize = UIScreen.main.bounds.size.width * 0.05
+    var body: some View {
+        VStack(spacing: 0)  {
+            HStack {
+                if scale.hands.count > 1 || scale.hands[0] == 1 {
+                    Image("hand_left")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height:imageSize)
+                        .foregroundColor(color)
+                }
+                if scale.hands.count > 1 || scale.hands[0] == 0 {
+                    Image("hand_right")
+                        .resizable()
+                        .renderingMode(.template)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height:imageSize)
+                        .foregroundColor(color)
+                }
+            }
+        }
+    }
+}
+
+struct StartCountdownView: View {
+    @ObservedObject private var metronome = Metronome.shared
+    let scale:Scale
+    let activityName:String
+    let callback: (_ : ExerciseState.State) -> Void
+    
+    func stayAlive(countdown:Int) -> Bool {
+        if metronome.statusPublished == MetronomeStatus.running {
+            callback(ExerciseState.State.exerciseStarted)
+            return false
+        }
+        return true
+    }
+
+    var body: some View {
+        VStack {
+            let scaleName = scale.getScaleName(handFull: true)
+            GeometryReader { geo in
+                VStack(spacing:0) {
+                    Text("Starting \(activityName)").font(.title)
+                    Text("\(scaleName)").font(.title2)
+                    if metronome.statusPublished == .standby {
+                        Text("Hands ready?").font(.title2).bold()
+                    }
+                    else {
+                        if let countdown = metronome.leadInCountdownPublished {
+                            if stayAlive(countdown: countdown)  {
+                                VStack {
+                                    if countdown > 0 {
+                                        let message = "Starting in \(countdown)"
+                                        Text(message)
+                                            .font(.title2).bold()
+                                            .foregroundColor(countdown == 1 ? AppOrange : Color(.blue))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    PianoStartNoteIllustrationView(scalesModel: ScalesModel.shared, keyHeight: geo.size.height * 0.20)
+                            .frame(width: geo.size.width * 0.99, height: geo.size.height * 0.4)
+                    HandsView(scale: scale)
+
+                    Button("Cancel") {
+                        callback(.exerciseAborted)
+                    }
+                    //.font(.title2)
+                    //.padding()
+                    Spacer()
+                }
+            }
+        }
+        .onAppear() {
+        }
+        .frame(width: UIScreen.main.bounds.width * 0.60, height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.70 : 0.60))
+        .background(Color.white.opacity(1.0))
+        .cornerRadius(30)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.blue, lineWidth: 3))
+        .shadow(radius: 10)
+    }
+}
+
+/// ------------------ With badges exercises -----------------
+
 struct EndOfExerciseView: View {
     let badge: Badge
     let scalesModel:ScalesModel
@@ -73,78 +164,23 @@ struct PianoStartNoteIllustrationView: View {
                 .frame(width:7 * keyHeight, height: keyHeight)
                 .cornerRadius(16)
                 .padding(.bottom, 0)
-                //.border(AppOrange)
                 .outlinedStyleView()
             Text("Middle C").font(.callout)
-            //Text("\(scalesModel.scale.getScaleDescription(hands:true))").font(.callout)
         }
         .onAppear() {
             if let score = scalesModel.getScore() {
-                keyboardModel.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 37, numberOfKeys: 47,
-                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
-            }
-        }
-    }
-    
-}
-
-struct StartCountdownView: View {
-    @ObservedObject private var metronome = Metronome.shared
-    let callback: () -> Void
-    @State var waitForFirstLeadIn = true
-    
-    func stayAlive(countdown:Int) -> Bool {
-        if waitForFirstLeadIn {
-            waitForFirstLeadIn = countdown == 0
-        }
-        if countdown > 0 {
-            return true
-        }
-        else {
-            if waitForFirstLeadIn {
-                return true
-            }
-            else {
-                ///close the popup[
-                callback()
-                return false
-            }
-        }
-    }
-    
-    var body: some View {
-        VStack {
-            if let countdown = metronome.leadInCountdownPublished {
-                if stayAlive(countdown: countdown)  {
-                    VStack {
-                        Text("")
-                        if countdown > 0 {
-                            let message = "Starting in \(countdown)"
-                            Text(message)
-                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-                                .foregroundColor(countdown == 1 ? AppOrange : Color(.blue))
-                                .foregroundColor(Color(.blue))
-                                .padding()
-                        }
-                        //}
-                        Text("")
-                    }
-                    .background(Color.white.opacity(1.0))
-                    .cornerRadius(30)
-                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.blue, lineWidth: 3))
-                    .shadow(radius: 10)
-                    .onAppear() {
-                        waitForFirstLeadIn = true
-                    }
-                }
+                keyboardModel.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 37, numberOfKeys: 47, handType: .right)
             }
         }
     }
 }
 
-struct StartExerciseView: View {
+///Prepare a Follow, Lead and start the exercise when the user hits start. No metronome
+///
+struct StartFollowLeadView: View {
     let badge: Badge
     let scalesModel:ScalesModel
+    let activityName:String
     let callback: (_ cancelled: Bool) -> Void
     
     @State private var countdown = 0
@@ -155,10 +191,10 @@ struct StartExerciseView: View {
         GeometryReader {geo in
             VStack(spacing:0) {
                 let imageSize = compact ? 0.2 : 0.2
-                //if !compact {
+                if !compact {
                     Spacer()
-                //}
-                Text("Win \(badge.name)").font(compact ? .title : .title)
+                }
+                Text("\(activityName) - Win \(badge.name)").font(compact ? .title : .title)
                     //.padding()
                 if !compact {
                     Spacer()
@@ -167,13 +203,13 @@ struct StartExerciseView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: geo.size.width * imageSize, height: geo.size.height * imageSize)
-                    
-                Spacer()
-                
+                if !compact {
+                    Spacer()
+                }
                 PianoStartNoteIllustrationView(scalesModel: scalesModel, keyHeight: geo.size.height * 0.20)
                     .frame(width: geo.size.width * 0.99, height: geo.size.height * 0.4)
                     //.border(.red)
-
+                HandsView(scale: scalesModel.scale)
                 if !compact {
                     Spacer()
                 }

@@ -10,33 +10,6 @@ enum ActiveSheet: Identifiable {
     }
 }
 
-struct MetronomeView: View {
-    let scalesModel = ScalesModel.shared
-    @ObservedObject var metronome = Metronome.shared
-    
-    var body: some View {
-        let beat = (metronome.timerTickerCountPublished % 4) + 1 
-        Button(action: {
-            metronome.setTicking(way: !metronome.isMetronomeTicking())
-            if metronome.isMetronomeTicking() {
-                metronome.start(doLeadIn: false, scale: nil)
-            }
-            else {
-                metronome.stop()
-            }
-        }) {
-            HStack {
-                Image("metronome-left")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(x: beat/2 % 2 == 0 ? -1 : 1, y: 1)
-                    //.animation(.easeInOut(duration: 0.1), value: beat)
-            }
-            .frame(width: UIScreen.main.bounds.size.width * 0.04)
-        }
-    }
-}
-
 struct ScalesView: View {
     let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
@@ -107,7 +80,13 @@ struct ScalesView: View {
                 }
             }
             .pickerStyle(.menu)
-            //.padding()
+//            .onChange(of: tempoIndex, {
+//                
+//            })
+            .onChange(of: tempoIndex, {
+                scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
+            })
+
             
             if false {
                 Spacer()
@@ -285,7 +264,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
-                            self.exerciseState.setExerciseState("View follow start", .exerciseAboutToStart)
+                            self.exerciseState.setExerciseState("Follow", .exerciseAboutToStart)
                             self.directionIndex = 0
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -320,7 +299,7 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("View lead start", .exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("Lead the Scale", .exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {
@@ -427,7 +406,7 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
+                                exerciseState.setExerciseState("Backing", .exerciseWithoutBadgesAboutToStart)
                                 scalesModel.setRunningProcess(.backingOn)
                             }
                         }) {
@@ -549,15 +528,6 @@ struct ScalesView: View {
         .padding()
 
     }
-    
-//    func setVerticalSpacing() {
-//        if isLandscape {
-//            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 0
-//        }
-//        else {
-//            self.spacingVertical = UIDevice.current.userInterfaceIdiom == .phone ? 0 : 12
-//        }
-//    }
 
     var body: some View {
         ZStack {
@@ -694,18 +664,25 @@ struct ScalesView: View {
             }
 
             ///-------- Exercise state displays ----------
-            
-            if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
-                StartCountdownView(callback: {
-                    ///We just need to cause this popup to disappear, no other badge state required since no badges
-                    exerciseState.setExerciseState("PlayAlong start", .exerciseWithoutBadgesStarted)
-                })
+            if scalesModel.runningProcess != .none {
+                if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
+                    StartCountdownView(scale: scalesModel.scale, activityName: exerciseState.activityName, callback: {status in
+                        if status == ExerciseState.State.exerciseStarted {
+                            exerciseState.setExerciseState("", .exerciseWithoutBadgesStarted)
+                        }
+                        else {
+                            exerciseState.setExerciseState("", .exerciseNotStarted)
+                        }
+                    })
+                    .frame(width: UIScreen.main.bounds.width * 0.60,
+                           height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.50))
+                }
             }
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if let badge = scalesModel.exerciseBadge {
                     VStack(spacing:0) {
-                        StartExerciseView(badge: badge, scalesModel: self.scalesModel, callback: {cancelled in
+                        StartFollowLeadView(badge: badge, scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
                             if cancelled {
                                 exerciseState.setExerciseState("Popup", .exerciseNotStarted)
                             }
@@ -713,7 +690,8 @@ struct ScalesView: View {
                                 exerciseState.setExerciseState("Popup", .exerciseStarted)
                             }
                         })
-                        .frame(width: UIScreen.main.bounds.width * 0.60, height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.70 : 0.60))
+                        .frame(width: UIScreen.main.bounds.width * 0.60,
+                               height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.60))
                     }
                     .padding()
                 }
@@ -757,9 +735,6 @@ struct ScalesView: View {
                 HelpView(topic: topic)
             }
         }
-        .onChange(of: tempoIndex, {
-            scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
-        })
         .onChange(of: exerciseState.statePublished) { oldValue, newValue in
             ///Modify showBadgeMessagePanelOffset to bring the badge message off and on the display
             //let messageTime = 3.0
