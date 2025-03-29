@@ -11,6 +11,7 @@ enum ActiveSheet: Identifiable {
 }
 
 struct ScalesView: View {
+    let user:User
     let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
     let practiceModeHand:HandType?
@@ -18,7 +19,6 @@ struct ScalesView: View {
     @ObservedObject private var exerciseState = ExerciseState.shared
 
     let settings = Settings.shared
-    let user = Settings.shared.getCurrentUser()
     @ObservedObject private var metronome = Metronome.shared
     private let audioManager = AudioManager.shared
 
@@ -45,7 +45,8 @@ struct ScalesView: View {
     @State private var spacingHorizontal:CGFloat = 12
     let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
 
-    init(practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+    init(user:User, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+        self.user = user
         self.practiceChart = practiceChart
         self.practiceChartCell = practiceChartCell
         self.practiceModeHand = practiceModeHand
@@ -337,7 +338,42 @@ struct ScalesView: View {
                 }
                 .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 
+                if scalesModel.scale.getBackingChords() != nil {
+                    Spacer()
+                    HStack {
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
+                        Button(action: {
+                            if scalesModel.runningProcessPublished == .backingOn {
+                                scalesModel.setRunningProcess(.none)
+                            }
+                            else {
+                                exerciseState.setExerciseState("Backing", .exerciseWithoutBadgesAboutToStart)
+                                scalesModel.setRunningProcess(.backingOn)
+                            }
+                        }) {
+                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                        }
+                        .appButtonStyle(trim: true)
+                        
+                        if false {
+                            Button(action: {
+                                showHelp("Backing Track Harmony")
+                            }) {
+                                VStack {
+                                    Image(systemName: "questionmark.circle")
+                                        .imageScale(.large)
+                                        .font(.title2)//.bold()
+                                        .foregroundColor(.green)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.horizontal, 0)
+                }
+                
                 Spacer()
+                
                 HStack {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
                     Button(action: {
@@ -397,39 +433,6 @@ struct ScalesView: View {
                     //.padding(.horizontal, 0)
                 }
                 
-                if scalesModel.scale.getBackingChords() != nil {
-                    Spacer()
-                    HStack {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
-                        Button(action: {
-                            if scalesModel.runningProcessPublished == .backingOn {
-                                scalesModel.setRunningProcess(.none)
-                            }
-                            else {
-                                exerciseState.setExerciseState("Backing", .exerciseWithoutBadgesAboutToStart)
-                                scalesModel.setRunningProcess(.backingOn)
-                            }
-                        }) {
-                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                        }
-                        .appButtonStyle(trim: true)
-                        
-                        if false {
-                            Button(action: {
-                                showHelp("Backing Track Harmony")
-                            }) {
-                                VStack {
-                                    Image(systemName: "questionmark.circle")
-                                        .imageScale(.large)
-                                        .font(.title2)//.bold()
-                                        .foregroundColor(.green)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
-                    //.padding(.horizontal, 0)
-                }
                 Spacer()
             }
         }
@@ -583,16 +586,16 @@ struct ScalesView: View {
                         //.outlinedStyleView(color: Color.clear)
                         .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
-                                                    
+                        
                         //if UIDevice.current.userInterfaceIdiom != .phone {
-//                            if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
-//                                if scalesModel.showLegend {
-//                                    LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
-//                                        .padding(.bottom, spacingVertical)
-//                                        .padding(.horizontal)
-//                                    //.border(Color.red, width: 1)
-//                                }
-//                            }
+                        //                            if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+                        //                                if scalesModel.showLegend {
+                        //                                    LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                        //                                        .padding(.bottom, spacingVertical)
+                        //                                        .padding(.horizontal)
+                        //                                    //.border(Color.red, width: 1)
+                        //                                }
+                        //                            }
                         //}
                     }
                     
@@ -613,7 +616,7 @@ struct ScalesView: View {
                     ///on iPhone dont show this to save vertical space. Let the user exit via the badges close button
                     if [.backingOn, .playingAlongWithScale, .recordingScale]
                         .contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
-                        StopProcessView(user:Settings.shared.getCurrentUser())
+                        StopProcessView(user:user)
                     }
                     else {
                         if !self.badgesShowing {
@@ -622,13 +625,12 @@ struct ScalesView: View {
                     }
                     
                     ///-------- Exercise badges displays ----------
-                    
                     if user.settings.practiceChartGamificationOn {
                         if let exerciseBadge = scalesModel.exerciseBadge {
                             ///Show the horizontal row of badges
                             VStack(spacing:0) {
                                 if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
-                                    ExerciseBadgesView(scale: scalesModel.scale,
+                                    ExerciseBadgesView(user: user, scale: scalesModel.scale,
                                                        exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
                                                        onClose: {
                                         exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
@@ -645,7 +647,7 @@ struct ScalesView: View {
                                             self.badgesShowing = false
                                         }
                                     }
-
+                                    
                                 }
                             }
                         }

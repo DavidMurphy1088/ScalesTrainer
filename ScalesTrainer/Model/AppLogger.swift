@@ -29,7 +29,7 @@ public class LogMessage : Identifiable {
 
 public class AppLogger : ObservableObject {
     public static var shared = AppLogger()
-    private let os_logger = Logger(subsystem: "com.scalesacademy.app", category: "general")
+    //private let os_logger = Logger(subsystem: "com.scalesacademy.app", category: "general")
     @Published var loggedMsg:String? = nil
     @Published var errorNo:Int = 0
     @Published public var errorMsg:String? = nil
@@ -78,8 +78,8 @@ public class AppLogger : ObservableObject {
         if let err = err {
             msg += ", "+err.localizedDescription
         }
-        //print(msg)
-        os_logger.error("\("msg")")
+        print(msg)
+        //os_logger.error("\("msg")")
 
         DispatchQueue.main.async {
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: true, msg, valueIn: 0))
@@ -94,11 +94,10 @@ public class AppLogger : ObservableObject {
 
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
         let msg = String(describing: type(of: reporter)) + ":" + msg
-        //let strVal = value == nil ? "_" : String(format: "%.2f", value!)
-        if Settings.shared.isDeveloperMode1() {
+        //if Settings.shared.isDeveloperMode1() {
             print("\(getTime()) \(msg)")//  val:\(strVal)")
-        }
-        os_logger.info("\(msg)")
+        //}
+        //os_logger.info("\(msg)")
         DispatchQueue.main.async {
             let val:Double = value == nil ? 0 : value!
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: false, msg, valueIn: val * 100))

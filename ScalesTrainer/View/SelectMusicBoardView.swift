@@ -1,112 +1,100 @@
 import Foundation
 import SwiftUI
 
-//struct SelectBoardView: View {
-//    var body: some View {
-//        VStack(spacing: 0) {
-//        }
-//    }
-//}
-
-struct SelectBoardView: View {
-    @EnvironmentObject var tabSelectionManager: ViewManager
-    let user:User
-    @State private var isOn = [Bool](repeating: false, count: 12)
-    let boards = MusicBoard.getSupportedBoards()
-    @State var grade:Int = 0
-    var body: some View {
-        List(boards) { board in
-            NavigationLink(value: board) {
-                HStack {
-                    Image(board.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
-                    VStack(alignment: .leading) {
-                        Text(board.name)
-                            .font(.headline)
-                        Text(board.fullName)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-        }
-        .listStyle(PlainListStyle())
-        .navigationDestination(for: MusicBoard.self) { board in
-            // Pass the board to your detail view if needed.
-            Text("Selected board: \(board.name)")
-            //SelectBoardGradesView(user:user, musicBoard: board, selectedGrade: $grade)
-        }
-
-    }
-}
-
-struct SelectGradesForBoardView: View {
-    @EnvironmentObject var tabSelectionManager: ViewManager
-    let user:User
-    let inBoard:MusicBoard
-    @Binding var selectedGrade: Int
-    @State private var isOn = [Bool](repeating: false, count: 12)
-    let width = 0.7
+struct SelectGradeView: View {
+    let user: User
+    let board: MusicBoard
+    let settings = Settings.shared
+    @State private var selectedGrade: Int? = nil
     
-    func updateBoardGrade(gradeNumber:Int) {
-        user.grade = gradeNumber
-        Settings.shared.setUserGrade(user, gradeNumber)
-        ///Force all views dependendent on grade to close since they show the previous grade
-        tabSelectionManager.isSpinWheelActive = false
-        tabSelectionManager.isPracticeChartActive = false
-        Settings.shared.save()
-        self.selectedGrade = gradeNumber
+    func getGrades() -> [Int] {
+        board.gradesOffered
     }
     
     var body: some View {
         VStack(spacing: 0) {
-                if UIDevice.current.userInterfaceIdiom != .phone {
+            ScreenTitleView(screenName: "\(board.name) Grades").padding(.vertical, 0)
+            List {
+                ForEach(getGrades(), id: \.self) { grade in
                     HStack {
-                        Text("\(inBoard.name) Grades")
-                            .font(.title)
-                            .font(.title3)
-                    }
-                    .padding(.horizontal)
-                }
-                List {
-                    ForEach(inBoard.gradesOffered, id: \.self) { number in
+                        Spacer()
                         HStack {
-                            let name = "Grade " + String(number) + " Piano"
-                            Text(name)
-                                .padding(.vertical, 4)  // Reduced vertical padding
+                            Text("Grade \(grade)")
                             Spacer()
-                            Toggle("", isOn: $isOn[number])
-                                .onChange(of: isOn[number]) { oldWasOn, newWasOn in
-                                    if newWasOn {
-                                        for j in 0..<isOn.count {
-                                            if j != number {
-                                                isOn[j] = false
-                                            }
-                                        }
-                                        self.updateBoardGrade(gradeNumber: number)
-                                    }
-                                }
+                            if selectedGrade == grade {
+                                Image(systemName: "checkmark")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.blue)
+                            }
                         }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .frame(width: UIScreen.main.bounds.size.width * 0.30)
+                        .contentShape(Rectangle()) // Make entire row tappable
+                        
+                        .onTapGesture {
+                            selectedGrade = grade
+                            let user = settings.getCurrentUser()
+                            user.board = board.name
+                            user.grade = grade
+                            ViewManager.shared.updatePublishedUser()
+                            ViewManager.shared.isPracticeChartActive = false
+                            ViewManager.shared.isSpinWheelActive = false
+                            settings.save()
+                        }
+                        Spacer()
                     }
                 }
-                .listStyle(PlainListStyle())
             }
-        
+            .listStyle(PlainListStyle())
+        }
         .onAppear() {
-            for i in 0..<isOn.count {
-                isOn[i] = false
-            }
-            if let grade = user.grade {
-                isOn[grade] = true
+            let user = Settings.shared.getCurrentUser()
+            if user.board == board.name {
+                selectedGrade = user.grade
             }
         }
-        .onDisappear() {
-        }
+        
     }
 }
+
+struct SelectBoardView: View {
+    let user:User
+    let boards = MusicBoard.getSupportedBoards()
+    
+    var body: some View {
+            VStack {
+                List(boards) { board in
+                    HStack {
+                        Spacer()
+                        NavigationLink(destination: SelectGradeView(user:user, board: board)) {
+                            HStack {
+                                Image(board.imageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 50, height: 50)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                
+                                VStack(alignment: .leading) {
+                                    Text(board.name)
+                                        .font(.headline)
+                                    Text(board.fullName)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .frame(width: UIScreen.main.bounds.size.width * 0.40)
+                        Spacer()
+                    }
+                }
+//                .navigationDestination(for: MusicBoard.self) 👹 NIGHTMARE { board in
+//                    // Pass the board to your detail view if needed.
+//                    //Text("Selected board: \(board.name)")
+//                    SelectGradeView(user:user, board: board) //, selectedGrade: $grade)
+//                }
+                .listStyle(PlainListStyle())
+             }
+    }
+}
+

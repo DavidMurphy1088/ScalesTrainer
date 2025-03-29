@@ -161,7 +161,8 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: true)
-                        NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
+                        let user = Settings.shared.getCurrentUser()
+                        NavigationLink(destination: ScalesView(user: user, practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
                             HStack {
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
                                 Text("  \(name)  ").font(.title2).padding()
@@ -222,7 +223,8 @@ struct ScalesLibraryView: View {
                         }
                         
                         let scale = setModelScale(major: false)
-                        NavigationLink(destination: ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
+                        let user = Settings.shared.getCurrentUser()
+                        NavigationLink(destination: ScalesView(user: user, practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)) {
                             HStack {
                                 //let name = scale.getScaleName(handFull: true, octaves: true)
                                 let name = scale.getScaleName(handFull: true) + " " + scale.getScaleAttributes(showTempo: false)
@@ -233,6 +235,7 @@ struct ScalesLibraryView: View {
                         .simultaneousGesture(TapGesture().onEnded {
                             let _ = setModelScale(major: false)
                         })
+                        
                     }
                     //.commonFrameStyle(backgroundColor: Color.white)
                     .padding()

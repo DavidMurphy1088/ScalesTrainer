@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
 		790614452D940943009E7A8D /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614442D94093A009E7A8D /* MetronomeView.swift */; };
+		790614472D968A0A009E7A8D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614462D968A06009E7A8D /* User.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
 		79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
@@ -150,6 +151,7 @@
 		34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
 		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
 		790614442D94093A009E7A8D /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
+		790614462D968A06009E7A8D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
 		79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesList.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
@@ -520,22 +522,22 @@
 		79DA822C2BCCED24008AC492 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
-				79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */,
 				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				794A9FC82C2BFC270001297E /* CoinBank.swift */,
+				79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */,
+				79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */,
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
 				79B072FD2D37C76D00CD6F2B /* Firebase.swift */,
-				79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */,
 				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
 				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
-				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
@@ -556,6 +558,7 @@
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
 				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
 				79CFA1EF2C3808A90018DC8A /* Test.swift */,
+				790614462D968A06009E7A8D /* User.swift */,
 				794D495B2BCD29DF0005A173 /* Util.swift */,
 			);
 			path = Model;
@@ -819,6 +822,7 @@
 				79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */,
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
 				79CF5D722BEE46C900454BB6 /* UserListView.swift in Sources */,
+				790614472D968A0A009E7A8D /* User.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,

@@ -91,7 +91,8 @@ struct SegmentedCircleView: View {
 }
 
 struct SpinWheelView: View {
-    //@EnvironmentObject var orientationInfo: OrientationInfo
+    @Environment(\.dismiss) var dismiss
+    let user:User
     @ObservedObject var scalesModel = ScalesModel.shared
     @State var practiceChart:PracticeChart // = boardAndGrade.practiceChart
     @ObservedObject private var exerciseState = ExerciseState.shared
@@ -224,7 +225,7 @@ struct SpinWheelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenTitleView(screenName: "Spin The Wheel", showUser: true).padding(.vertical, 0)
+            ScreenTitleView(screenName: "Spin The Wheel").padding(.vertical, 0)
             VStack {
                 ZStack {
                     SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize)
@@ -257,7 +258,7 @@ struct SpinWheelView: View {
                 if self.spinState == SpinState.spunAndStopped {
                     let scale = scalesModel.scale
                     let practiceChartCell:PracticeChartCell? = practiceChart.getCellForScale(scale:scale)
-                    NavigationLink(destination: ScalesView(practiceChart: practiceChart, practiceChartCell: practiceChartCell, practiceModeHand: nil)) {
+                    NavigationLink(destination: ScalesView(user: user, practiceChart: practiceChart, practiceChartCell: practiceChartCell, practiceModeHand: nil)) {
                         let name = scale.getScaleName(handFull: true, octaves: true)
                         Text(" Go To Scale \(name) - Good Luck 😊").padding()
                             .font(.title2)
@@ -273,6 +274,12 @@ struct SpinWheelView: View {
             //self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
             self.wheelSize = 0.45 * UIScreen.main.bounds.width
         }
+        .onChange(of: ViewManager.shared.isSpinWheelActive) { newValue in
+            if newValue == false {
+                dismiss()
+            }
+        }
+
         ///Block the back button for a badge attempt
         //.navigationBarBackButtonHidden(scalesModel.spinState == .spunAndStopped)
     }

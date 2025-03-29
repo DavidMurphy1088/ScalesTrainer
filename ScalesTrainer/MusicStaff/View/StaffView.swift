@@ -137,7 +137,6 @@ struct KeySignatureView: View {
 }
 
 public struct StaffView: View {
-    //@EnvironmentObject var orientationInfo: OrientationInfo
     let scale:Scale
     @ObservedObject var score:Score
     let scoreView:ScoreView

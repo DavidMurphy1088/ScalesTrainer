@@ -63,24 +63,28 @@ extension Button {
 struct ScreenTitleView: View {
     @ObservedObject var viewManager = ViewManager.shared
     let screenName: String
-    let showUser: Bool
+
+    func getUserTitle() -> String {
+        var title = ""
+        if let user = viewManager.publishedUser {
+            title = user.getTitle()
+        }
+        return title
+    }
     
     var body: some View {
-        //VStack(spacing: 2) { // Keeps vertical space minimal
         HStack() {
-            let name = screenName + String(showUser ? ": " : "")
-            Text(screenName)
+            let screenNameTitle = screenName + (getUserTitle().isEmpty ? "" : " - ")
+            Text(screenNameTitle)
                 .font(UIDevice.current.userInterfaceIdiom == .phone ? .title2 : .largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
 
-            if showUser {
-                if let user = viewManager.titleUser {
-                    Text(user.getTitle())
-                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .title2 : .largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
+            if let user = viewManager.publishedUser {
+                Text(getUserTitle())
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title2 : .largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
             }
         }
         .padding(.vertical, 0) // Keeps height minimal
@@ -88,10 +92,6 @@ struct ScreenTitleView: View {
         .background(
             LinearGradient(colors: [Color.purple.opacity(0.6), Color.blue.opacity(0.6)],
                            startPoint: .topLeading, endPoint: .bottomTrailing)
-//            LinearGradient(colors: [Color.yellow.opacity(0.8), Color.blue.opacity(0.6)],
-//                           startPoint: .topLeading, endPoint: .bottomTrailing)
-            //.edgesIgnoringSafeArea(.horizontal) // Extends background to screen edges
-            //.ignoresSafeArea()
         )
         //.border(Color.green, width: 1)
     }

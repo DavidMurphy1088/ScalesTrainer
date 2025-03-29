@@ -52,6 +52,7 @@ struct HexagramShape: View {
 ///The badge view for the exercise 
 struct ExerciseBadgesView: View {
     @ObservedObject var exerciseBadgesList:ExerciseBadgesList
+    let user:User
     let scale:Scale
     let exerciseName:String
     let onClose: () -> Void
@@ -62,7 +63,8 @@ struct ExerciseBadgesView: View {
     @State var imageIds:[Int] = []
     @State var handType = KeyboardType.right
     
-    init(scale:Scale, exerciseName:String, onClose: @escaping () -> Void) {
+    init(user:User, scale:Scale, exerciseName:String, onClose: @escaping () -> Void) {
+        self.user = user
         self.exerciseBadgesList = ExerciseBadgesList.shared
         self.scale = scale
         self.exerciseName = exerciseName
@@ -134,7 +136,7 @@ struct ExerciseBadgesView: View {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
                                     let user = Settings.shared.getCurrentUser()
-                                    if user.settings.badgeStyle == 0 {
+                                    //if user.settings.badgeStyle == 0 {
                                         HexagramShape(size1: badgeIconSize, offset: offset, color: c)
                                             .rotationEffect(Angle.degrees(rotationAngle))
                                             .offset(y: verticalOffset)
@@ -144,7 +146,7 @@ struct ExerciseBadgesView: View {
                                                     verticalOffset = 0
                                                 }
                                             }
-                                    }
+                                    //}
 //                                    else {
 //                                        if let user = Settings.shared.getCurrentUser() {
 //                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
@@ -169,7 +171,7 @@ struct ExerciseBadgesView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
-                                    let user = Settings.shared.getCurrentUser()
+                                    //let user = Settings.shared.getCurrentUser()
                                     if user.settings.badgeStyle == 0 {
                                         HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
                                     }

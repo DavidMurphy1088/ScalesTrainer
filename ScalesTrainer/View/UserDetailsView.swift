@@ -9,9 +9,7 @@ import AudioKit
 // ---------------------- Edit details of a single user -------------------
 
 struct UserDetailsView: View {
-    @Environment(\.dismiss) var dismiss  // Access the dismiss function
-    let user:User
-    let creatingNewUser:Bool
+    @State var user:User
     @Binding var listUpdated:Bool
     @FocusState private var isNameFieldFocused: Bool
     
@@ -46,8 +44,8 @@ struct UserDetailsView: View {
     
     var body: some View {
         VStack {
-            VStack {
-                //Spacer()
+            ScreenTitleView(screenName: "User Details").padding(.vertical, 0)
+            VStack(spacing:0) {
                 VStack(spacing: 0) {
                     HStack {
                         Text("First Name")
@@ -56,46 +54,33 @@ struct UserDetailsView: View {
                             .padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: UIScreen.main.bounds.width * 0.5)
-                            .onChange(of: firstName) { oldName, name in
-                                settings.setUserName(user, name)
+                            .onChange(of: firstName) { oldName, newName in
+                                if !newName.isEmpty {
+                                    let user = settings.getCurrentUser()
+                                    user.name = newName
+                                }
                             }
                     }
                     
                     HStack {
                         Text("Optional Email")
                         TextField("Email", text: $emailAddress)
-                            //.padding()
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .onChange(of: emailAddress, {
+                                let user = settings.getCurrentUser()
+                                user.email = emailAddress
+                            })
                     }
                 }
-                .onChange(of: emailAddress, {
-                    settings.getCurrentUser().email = emailAddress
-                })
-                
-                //Spacer()
-                if false {
-                    SelectGradesForBoardView(user:user, inBoard: MusicBoard(name: "Trinity"), selectedGrade: $selectedGrade)
-                        .frame(width: UIScreen.main.bounds.size.width * 0.75)
-                }
-                //SelectBoardView()
-                if self.creatingNewUser && user.name.count > 0 && selectedGrade > 0 {
-                    Spacer()
-                    Button(action: {
-                        settings.addUser(user: user)
-                        settings.setCurrentUser(id: user.id)
-                        listUpdated.toggle()
-                        dismiss()
-                    }) {
-                        Text("Add User")
-                    }
-                    .appButtonStyle()
-                }
-                //Spacer()
+
+                SelectBoardView(user: user)
+                    
             }
             //.commonFrameStyle()
             //.screenBackgroundStyle()
         }
+
         .onChange(of: selectedGrade, {
             if isFirstUser {
                 if self.firstName.count > 0 {
@@ -116,7 +101,7 @@ struct UserDetailsView: View {
                 
                 Text("😊 Welcome 😊").font(.title).fontWeight(.bold)
                 Text("We hope you enjoy your experience using Scales Academy.").multilineTextAlignment(.center)
-                Text("To get started please enter your name and Grade.").multilineTextAlignment(.center)
+                Text("To get started please enter your name, Music Board and Grade.").multilineTextAlignment(.center)
                 Button("Get Started") {
                     showWelcomeToFirstUser = false
                 }
@@ -127,32 +112,32 @@ struct UserDetailsView: View {
             }
             .padding()
         }
-        .sheet(isPresented: $firstUseForUserStep2) {
-            VStack(spacing: 20) {
-                Text("😊 Thanks \(self.firstName), Your Grade Is Set 😊").font(.title).fontWeight(.bold)
-                Text("Next, let's go to your Activities for Grade \(getGradeName(grade: self.selectedGrade))").multilineTextAlignment(.center)
-                HStack {
-                    Button("Cancel") {
-                        firstUseForUserStep2 = false
-                    }
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                    Button("Activites") {
-                        firstUseForUserStep2 = false
-                        settings.addUser(user: user)
-                        settings.setCurrentUser(id: user.id)
-                        ViewManager.shared.setTab(tab: MainContentView.TAB_ACTIVITES)
-                    }
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                }
-            }
-            .presentationDetents([.fraction(0.3)])
-        }
+//        .sheet(isPresented: $firstUseForUserStep2) {
+//            VStack(spacing: 20) {
+//                Text("😊 Thanks \(self.firstName), Your Grade Is Set 😊").font(.title).fontWeight(.bold)
+//                Text("Next, let's go to your Activities for Grade \(getGradeName(grade: self.selectedGrade))").multilineTextAlignment(.center)
+//                HStack {
+//                    Button("Cancel") {
+//                        firstUseForUserStep2 = false
+//                    }
+//                    .padding()
+//                    .background(Color.gray.opacity(0.2))
+//                    .cornerRadius(8)
+//
+//                    Button("Activites") {
+//                        firstUseForUserStep2 = false
+//                        settings.addUser(user: user)
+//                        settings.setCurrentUser(id: user.id)
+//                        ViewManager.shared.setTab(tab: MainContentView.TAB_ACTIVITES)
+//                    }
+//                    .padding()
+//                    .background(Color.blue)
+//                    .foregroundColor(.white)
+//                    .cornerRadius(8)
+//                }
+//            }
+//            .presentationDetents([.fraction(0.3)])
+//        }
         .onChange(of: showWelcomeToFirstUser) { newValue in
             // Focus only when the sheet is dismissed
             if !newValue {

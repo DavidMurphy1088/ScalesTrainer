@@ -293,6 +293,7 @@ public class ScalesModel : ObservableObject {
     
     func setRunningProcess(_ setProcess: RunningProcess, practiceChart:PracticeChart? = nil, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         let user = Settings.shared.getCurrentUser()
+
         if setProcess == self.runningProcess {
             return
         }

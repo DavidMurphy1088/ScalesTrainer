@@ -26,7 +26,6 @@ class AudioManager {
 //    private var tappableNodeE: Fader?
 //    private var tappableNodeF: Fader?
     private var silencer: Fader?
-    //private let oneInit = false
     
     var recordedFileSequenceNum = 0
     var audioPlayer:AudioPlayer?
@@ -46,7 +45,6 @@ class AudioManager {
     }
 
     func configureAudio(withMic:Bool, recordAudio:Bool, soundEventHandlers:[SoundEventHandlerProtocol] = []) {
-        
         func configureAudioKit(withMic:Bool, recordAudio:Bool) {
             do {
                 if self.audioEngine != nil {
@@ -54,24 +52,27 @@ class AudioManager {
                     self.audioEngine?.output = nil
                 }
                 self.audioEngine = AudioEngine()
-                guard let engine = self.audioEngine else {
-                    AppLogger.shared.reportError(self, "No engine")
+                guard let audioEngine = self.audioEngine else {
+                    AppLogger.shared.reportError(self, "No audio engine")
                     return
                 }
                 
                 self.samplerForKeyboard = MIDISampler()
                 var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
                 self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
-                switch Settings.shared.getCurrentUser().settings.backingSamplerPreset {
-                case 1: preset = 28
-                case 2: preset = 37
-                case 3: preset = 49
-                case 4: preset = 33
-                case 5: preset = 39
-                case 6: preset = 43
-                case 7: preset = 2
-                case 8: preset = 4
-                default: preset = 0
+                if Settings.shared.aValidUserIsDefined() {
+                    let user = Settings.shared.getCurrentUser()
+                    switch user.settings.backingSamplerPreset {
+                        case 1: preset = 28
+                        case 2: preset = 37
+                        case 3: preset = 49
+                        case 4: preset = 33
+                        case 5: preset = 39
+                        case 6: preset = 43
+                        case 7: preset = 2
+                        case 8: preset = 4
+                        default: preset = 0
+                    }
                 }
                 self.samplerForBacking = loadSampler(num: 1, preset: preset)
                 
@@ -83,11 +84,11 @@ class AudioManager {
                     self.mic = self.audioEngine?.input
                     self.tappableNodeA = Fader(mic!)
                     ///Multiple nodes allow multiple tap handlers - if required
-    //                self.tappableNodeB = Fader(tappableNodeA!)
-    //                self.tappableNodeC = Fader(tappableNodeB!)
-    //                self.tappableNodeD = Fader(tappableNodeC!)
-    //                self.tappableNodeE = Fader(tappableNodeD!)
-    //                self.tappableNodeF = Fader(tappableNodeE!)
+                    //                self.tappableNodeB = Fader(tappableNodeA!)
+                    //                self.tappableNodeC = Fader(tappableNodeB!)
+                    //                self.tappableNodeD = Fader(tappableNodeC!)
+                    //                self.tappableNodeE = Fader(tappableNodeD!)
+                    //                self.tappableNodeF = Fader(tappableNodeE!)
                     self.silencer = Fader(tappableNodeA!, gain: 0)
                     self.mixer!.addInput(silencer!)
                     if recordAudio {
@@ -95,13 +96,13 @@ class AudioManager {
                     }
                 }
                 
-                engine.output = self.mixer
-//                Logger.shared.log(self, "Configured AudioKit mic:\(withMic)")
+                audioEngine.output = self.mixer
+                //                Logger.shared.log(self, "Configured AudioKit mic:\(withMic)")
             } catch {
                 AppLogger.shared.reportError(self, "Can't configure AudioKit \(error)")
             }
         }
-
+        
         ///It appears that we cannot both record the mic and install a tap on it at the same time
         ///Error is reason: 'required condition is false: nullptr == Tap()' when the record starts.
         checkMicPermission(completion: {granted in
@@ -112,9 +113,9 @@ class AudioManager {
         setSession()
         configureAudioKit(withMic: true, recordAudio: recordAudio)
         
-//        if oneInit {
-//            self.pitchTaps = []
-//        }
+        //        if oneInit {
+        //            self.pitchTaps = []
+        //        }
         if soundEventHandlers.count > 0 {
             self.pitchTaps.append(installTapHandler(node: self.tappableNodeA!,
                                                     tapHandler: soundEventHandlers[0] as! AcousticSoundEventHandler,
@@ -124,18 +125,17 @@ class AudioManager {
             }
         }
         
-//        if oneInit {
-//            self.audioEngine!.stop()
-//        }
-        do {
-            ///As per the order in Cookbook Recorder example
-            try self.audioEngine!.start()
-            if recordAudio {
-                try self.nodeRecorder?.record()
+        if let audioEngine = self.audioEngine {
+            do {
+                ///As per the order in Cookbook Recorder example
+                try audioEngine.start()
+                if recordAudio {
+                    try self.nodeRecorder?.record()
+                }
             }
-        }
-        catch {
-            AppLogger.shared.reportError(self, "Error starting engine: \(error)")
+            catch {
+                AppLogger.shared.reportError(self, "Error starting engine: \(error)")
+            }
         }
     }
 

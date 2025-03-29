@@ -72,8 +72,15 @@
     "%@ Badges" : {
 
     },
-    "%@ Grades" : {
-
+    "%@ Grade-%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ Grade-%2$@"
+          }
+        }
+      }
     },
     "%lld" : {
 
@@ -91,9 +98,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "😊 Thanks %@, Your Grade Is Set 😊" : {
 
     },
     "😊 Welcome 😊" : {
@@ -114,16 +118,10 @@
     "4. Restart the Device" : {
 
     },
-    "Activites" : {
-
-    },
     "Activities" : {
       "comment" : "Menu"
     },
     "Add New User" : {
-
-    },
-    "Add User" : {
 
     },
     "Adjust:" : {
@@ -326,10 +324,7 @@
         }
       }
     },
-    "Grade-%@" : {
-
-    },
-    "Grade-0" : {
+    "Grade %lld" : {
 
     },
     "Hand:" : {
@@ -481,9 +476,6 @@
 
     },
     "New Amplitude Filter:%@" : {
-
-    },
-    "Next, let's go to your Activities for Grade %@" : {
 
     },
     "Next: %lld" : {
@@ -642,9 +634,6 @@
     "Select Value" : {
 
     },
-    "Selected board: %@" : {
-
-    },
     "Send us a message about an issue or a new feature" : {
 
     },
@@ -793,7 +782,7 @@
         }
       }
     },
-    "To get started please enter your name and Grade." : {
+    "To get started please enter your name, Music Board and Grade." : {
 
     },
     "Try again?" : {
@@ -809,9 +798,6 @@
 
     },
     "Use MIDI Connections" : {
-
-    },
-    "User List" : {
 
     },
     "Users" : {

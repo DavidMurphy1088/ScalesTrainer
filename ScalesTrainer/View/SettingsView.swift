@@ -213,7 +213,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenTitleView(screenName: "Settings", showUser: true)
+            ScreenTitleView(screenName: "Settings")
                 .frame(maxWidth: .infinity)
             DetailedCustomSettingsView(user:user)
                 .frame(maxWidth: .infinity)
@@ -221,25 +221,25 @@ struct SettingsView: View {
         }
         
         .onAppear() {
-            let user = settings.getCurrentUser() 
-
+            let user = settings.getCurrentUser()
             ///The keyboard model must be configured to something (if not already) to display the keyboard
             if scalesModel.getScore() == nil {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)
             }
-
+            
             //leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
-//            if let score = scalesModel.getScore() {
-//                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
-//                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
-//            }
-            self.keyboardColor = user.settings.getKeyboardColor()
-            self.backgroundColor = user.settings.getBackgroundColor()
+            //            if let score = scalesModel.getScore() {
+            //                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
+            //                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
+            //            }
+            //self.keyboardColor = user.settings.getKeyboardColor()
+            //self.backgroundColor = user.settings.getBackgroundColor()
             self.backingPresetNumber = user.settings.backingSamplerPreset
             self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
             self.useMidiConnnections = user.settings.useMidiConnnections
+            
         }
         .onDisappear() {
             settings.save()

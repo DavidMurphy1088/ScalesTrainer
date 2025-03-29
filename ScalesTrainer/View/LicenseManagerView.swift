@@ -193,12 +193,6 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
         if emailIsLicensed(email: user.email) {
             return true
         }
-        //}
-//        else {
-//            if let subscription = SubscriptionTransactionReceipt.load() {
-//                return subscription.expiryDate >= Date()
-//            }
-//        }
         return false
     }
     
@@ -562,17 +556,16 @@ public struct LicenseManagerView: View {
         VStack {
             if LicenceManager.shared.isLicensed() {
                 VStack {
-                    Text("Your current subscription is ").font(.title2).padding()
                     let user = Settings.shared.getCurrentUser()
+                    Text("Your current subscription is ").font(.title2).padding()
                     if LicenceManager.shared.emailIsLicensed(email:user.email) {
                         Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
                     }
                     else {
                         Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
                     }
+                    Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
                 }
-                .padding()
-                Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
             }
             else {
                 Text("Available Subscriptions").font(.title).padding()
@@ -657,7 +650,7 @@ public struct LicenseManagerView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                ScreenTitleView(screenName: "Licence Subscriptions", showUser: true).padding(.vertical, 0)
+                ScreenTitleView(screenName: "Licence Subscriptions").padding(.vertical, 0)
                 DetailedLicensesView()
                     //.screenBackgroundStyle()
                     .padding()

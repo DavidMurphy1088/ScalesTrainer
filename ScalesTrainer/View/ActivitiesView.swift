@@ -73,13 +73,13 @@ struct ActivityEntriesView: View {
             Spacer()
             VStack {
                 navigationButton(imageName: "home_practice_chart_1",
-                                 text: "Practice Chart",
-                                 action: {
-                    practiceChart.adjustForStartDay()
-                    tabSelectionManager.isPracticeChartActive = true
-                },
-                                 isActive: $tabSelectionManager.isPracticeChartActive,
-                                 destination: PracticeChartView(practiceChart: practiceChart))
+                    text: "Practice Chart",
+                    action: {
+                        practiceChart.adjustForStartDay()
+                        tabSelectionManager.isPracticeChartActive = true
+                    },
+                    isActive: $tabSelectionManager.isPracticeChartActive,
+                    destination: PracticeChartView(user: user, practiceChart: practiceChart))
             }
             .frame(width: UIScreen.main.bounds.width * 0.3)
             //.border(Color.red)
@@ -88,11 +88,11 @@ struct ActivityEntriesView: View {
             VStack {
                 navigationButton(imageName: "home_scales_wheel_1",
                                  text: "Spin The Scale Wheel",
-                                 action: {
-                    tabSelectionManager.isSpinWheelActive = true
-                },
-                                 isActive: $tabSelectionManager.isSpinWheelActive,
-                                 destination: SpinWheelView(practiceChart: practiceChart))
+                    action: {
+                        tabSelectionManager.isSpinWheelActive = true
+                    },
+                    isActive: $tabSelectionManager.isSpinWheelActive,
+                    destination: SpinWheelView(user: user, practiceChart: practiceChart))
             }
             .frame(width: UIScreen.main.bounds.width * 0.3)
             Spacer()
@@ -147,7 +147,7 @@ struct ActivitiesView: View {
         VStack(spacing: 0) {
             NavigationStack {
                 VStack(spacing: 0) {
-                    ScreenTitleView(screenName: "Activities", showUser: false).padding(.vertical, 0)
+                    ScreenTitleView(screenName: "Activities").padding(.vertical, 0)
                     VStack {
                         if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
                             if let practiceChart = user.getPracticeChart() {
@@ -176,6 +176,7 @@ struct ActivitiesView: View {
                 let user = Settings.shared.getCurrentUser()
                 self.userName = user.name
                 self.userGrade = user.grade
+                
             }
         }
         .screenBackgroundStyle()

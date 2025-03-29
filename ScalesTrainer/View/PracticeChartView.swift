@@ -17,6 +17,7 @@ struct BlankCellView: View {
 }
 
 struct SelectHandForPractice: View {
+    let user:User
     let practiceChart:PracticeChart
     let practiceCell:PracticeChartCell
     let scale:Scale
@@ -24,7 +25,8 @@ struct SelectHandForPractice: View {
     @State var navigateToScale = false
     let imageSize = UIScreen.main.bounds.size.width * 0.05
     
-    init(practiceChart:PracticeChart, practiceCell:PracticeChartCell) {
+    init(user:User, practiceChart:PracticeChart, practiceCell:PracticeChartCell) {
+        self.user = user
         self.practiceChart = practiceChart
         self.practiceCell = practiceCell
         self.scale = practiceCell.scale
@@ -117,7 +119,7 @@ struct SelectHandForPractice: View {
             //navigateToScale = false ///Having this here casues the back navigation to screw up. No idea why 😰
         }
         .navigationDestination(isPresented: $navigateToScale) {
-            ScalesView(practiceChart: practiceChart,
+            ScalesView(user: user, practiceChart: practiceChart,
                        practiceChartCell: practiceCell,
                        practiceModeHand: practiceModeHand)
         }
@@ -125,6 +127,7 @@ struct SelectHandForPractice: View {
 }
 
 struct CellView: View {
+    let user:User
     let column:Int
     let practiceChart:PracticeChart
     @Binding var scalesInChart: [String]
@@ -329,12 +332,11 @@ struct CellView: View {
             Spacer()
         }
         .navigationDestination(isPresented: $navigateToScaleDirectly) {
-            ScalesView(practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
+            ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
         }
         .navigationDestination(isPresented: $navigateToSelectHands) {
-            SelectHandForPractice(practiceChart: practiceChart, practiceCell: practiceCell)
+            SelectHandForPractice(user:user, practiceChart: practiceChart, practiceCell: practiceCell)
         }
-
         .frame(width: cellWidth) //, height: cellHeight)
         .background(Color.white)
         .cornerRadius(10)
@@ -356,6 +358,8 @@ struct CellView: View {
 }
 
 struct PracticeChartView: View {
+    @Environment(\.dismiss) var dismiss
+    let user:User
     @State private var practiceChart:PracticeChart
     var daysOfWeek:[String] = []
     @State var minorTypeIndex:Int = 0
@@ -367,7 +371,8 @@ struct PracticeChartView: View {
     @State var minorScaleTypes:[String] = []
     @State var scalesInChart:[String] = []
     
-    init(practiceChart:PracticeChart) {
+    init(user:User, practiceChart:PracticeChart) {
+        self.user = user
         self.practiceChart = practiceChart
         self.daysOfWeek = getDaysOfWeek()
     }
@@ -394,7 +399,7 @@ struct PracticeChartView: View {
     
     var body: some View {
         VStack(spacing: 0)  {
-            ScreenTitleView(screenName: "Practice Chart", showUser: true).accessibilityIdentifier("chart_title").padding(.vertical, 0)
+            ScreenTitleView(screenName: "Practice Chart").padding(.vertical, 0)
             VStack {
                 ///Tried using GeometryReader since it supposedly reacts to orientation changes.
                 ///But using it casues all the child view centering not to work
@@ -499,7 +504,7 @@ struct PracticeChartView: View {
                                 HStack(spacing: 0) {
                                     ForEach(0..<practiceChart.columns, id: \.self) { column in
                                         if column < practiceChart.rows[row].count {
-                                            CellView(column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
+                                            CellView(user: user, column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
                                                      cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
                                             .outlinedStyleView()
                                             .padding(cellPadding)
@@ -538,6 +543,11 @@ struct PracticeChartView: View {
         }
         .sheet(isPresented: $helpShowing) {
             HelpView(topic: "Practice Chart")
+        }
+        .onChange(of: ViewManager.shared.isPracticeChartActive) { newValue in
+            if newValue == false {
+                dismiss()
+            }
         }
     }
 }

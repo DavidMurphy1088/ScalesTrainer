@@ -19,7 +19,6 @@ enum LaunchScreenStep {
 
 final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep = .firstStep
-
     @MainActor func dismiss() {
         Task {
             state = .secondStep
@@ -28,41 +27,6 @@ final class LaunchScreenStateManager: ObservableObject {
         }
     }
 }
-
-//struct OrientationManager {
-//    //    iPhone 15: 6.1-inch Super Retina XDR OLED display
-//    //    iPhone 15 Plus: 6.7-inch Super Retina XDR OLED display
-//    //    iPhone 15 Pro: 6.1-inch Super Retina XDR OLED display with ProMotion technology
-//    //    iPhone 15 Pro Max: 6.7-inch Super Retina XDR OLED display with ProMotion technology
-//    //    iPhone 16 Series (Released September 2024):
-//    //    iPhone 16: 6.1-inch Super Retina XDR OLED display
-//    //    iPhone 16 Plus: 6.7-inch Super Retina XDR OLED display
-//    
-//    static var appDelegate: AppDelegate?
-//    
-//    // Lock orientation and rotate
-//    static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
-//        //self.lockOrientation(orientation)
-//        if let delegate = appDelegate {
-//            delegate.orientationLock = orientation
-//        }
-//        UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
-//        UINavigationController.attemptRotationToDeviceOrientation()
-//    }
-//
-//    // Unlock orientation
-//    static func unlockOrientation() {
-//        if let delegate = appDelegate {
-//            delegate.orientationLock = .all // Unlocks orientation lock
-//        }
-//        
-//        // Explicitly rotate back to portrait after unlocking
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-//            UINavigationController.attemptRotationToDeviceOrientation()
-//        }
-//    }
-//}
 
 class Opacity : ObservableObject {
     @Published var imageOpacity: Double = 0.0
@@ -284,29 +248,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 class ViewManager: ObservableObject {
     static var shared = ViewManager()
     @Published var selectedTab: Int = 0
-    @Published var titleUser: User?
+    @Published var publishedUser: User?
     ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
-    @Published var isPracticeChartActive: Bool = false
     @Published var isSpinWheelActive: Bool = false
+    @Published var isPracticeChartActive: Bool = false
 
     init() {
         let settings  = Settings.shared
         settings.load()
         Settings.shared.load()
         DispatchQueue.main.async {
-            self.titleUser = settings.getCurrentUser()
-            if settings.noUserDefined() {
-                self.selectedTab = MainContentView.TAB_USERS
+            if Settings.shared.aValidUserIsDefined() {
+                self.publishedUser = settings.getCurrentUser()
+                self.selectedTab = MainContentView.TAB_ACTIVITES
             }
             else {
-                self.selectedTab = MainContentView.TAB_ACTIVITES
+                self.selectedTab = MainContentView.TAB_USERS
             }
         }
     }
     
-    func updateCurrentPublished(user:User) {
+    func updatePublishedUser() {
         DispatchQueue.main.async {
-            self.titleUser = user
+            let user = Settings.shared.getCurrentUser()
+            self.publishedUser = user
         }
     }
     
@@ -363,19 +328,19 @@ struct MainContentView: View {
                                             debugOn: true)
         }
     }
+        
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if Settings.shared.isDeveloperMode1() {
-                //HomeView()
-                ScalesView(practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
-                //UserListView()
-                //TestView()
-                //FFTContentView()
-                    .tabItem {
-                        Label("SCALE", systemImage: "house")
-                    }
-                    .tag(1)
-                    .environmentObject(viewManager)
+                if Settings.shared.aValidUserIsDefined() {
+                    //HomeView()
+                    ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
+                        .tabItem {
+                            Label("SCALE", systemImage: "house")
+                        }
+                        .tag(1)
+                        .environmentObject(viewManager)
+                }
             }
             
             UserListView()
@@ -389,28 +354,30 @@ struct MainContentView: View {
                 .tag(MainContentView.TAB_USERS)
                 .environmentObject(viewManager)
             
-            //if let user = Settings.shared.getCurrentUser() {
-                ActivitiesView()
-                    .tabItem {
-                        Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                    }
-                    .tag(MainContentView.TAB_ACTIVITES)
-                    .environmentObject(viewManager)
-                
-                SettingsView(user:Settings.shared.getCurrentUser())
-                    .tabItem {
-                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                    }
-                    .tag(30)
-                    .environmentObject(viewManager)
-            //}
-            
-            LicenseManagerView(contentSection: ContentSection(), email: "email.com")
-                .tabItem {
-                    Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+            if Settings.shared.aValidUserIsDefined() {
+                if ViewManager.shared.publishedUser != nil {
+                    ActivitiesView()
+                        .tabItem {
+                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                        }
+                        .tag(MainContentView.TAB_ACTIVITES)
+                        .environmentObject(viewManager)
+                    
+                    SettingsView(user:Settings.shared.getCurrentUser())
+                        .tabItem {
+                            Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                        }
+                        .tag(30)
+                        .environmentObject(viewManager)
+                    
+                    LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+                        .tabItem {
+                            Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+                        }
+                        .tag(40)
+                        .environmentObject(viewManager)
                 }
-                .tag(40)
-                .environmentObject(viewManager)
+            }
             
             FeatureReportView()
                 .tabItem {

@@ -112,7 +112,6 @@ public struct NoteHiliteView: View {
 }
 
 struct StaffNoteView: View {
-    //@EnvironmentObject var orientationInfo: OrientationInfo
     let staff:Staff
     let timeSlice:TimeSlice
     @ObservedObject var note:StaffNote
@@ -262,7 +261,6 @@ struct StaffNoteView: View {
 }
 
 public struct TimeSliceView: View {
-    //@EnvironmentObject var orientationInfo: OrientationInfo
     @ObservedObject var timeSlice:TimeSlice
     @ObservedObject var scalesModel:ScalesModel
     var staff:Staff

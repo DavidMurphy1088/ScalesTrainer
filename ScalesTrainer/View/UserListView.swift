@@ -12,8 +12,7 @@ struct UserListView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var listUpdated = false
-    @State private var selectedUser: User?
-    @State private var creatingNewUser = false
+    @State private var selectedUserForDetailing: User?
     @State private var userToDelete: User?
     @State private var showDeleteAlert:Bool = false
     
@@ -24,13 +23,25 @@ struct UserListView: View {
         }
         return list
     }
-
+    
+    func createAndAddUser() -> User {
+        let boards = MusicBoard.getSupportedBoards()
+        if boards.count > 0 {
+            let user = User(board: boards[0].name)
+            settings.addUser(user: user)
+            settings.setCurrentUser(id: user.id)
+            return user
+            //listUpdated.toggle()
+        }
+        fatalError("No boards for default user")
+    }
+    
     var body: some View {
-        VStack(spacing: 0) {
-            ScreenTitleView(screenName: "Scales Academy Users", showUser: false).padding(.vertical, 0)
-            VStack {
-                NavigationStack {
-                    Text("User List").font(.title2).padding()
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScreenTitleView(screenName: "Scales Academy Users").padding(.vertical, 0)
+                VStack {
+                    //Text("User List").font(.title2).padding()
                     List(getUsersList(listUpdated: listUpdated), id: \.self) { userId in
                         if let id = UUID(uuidString: userId), let user = settings.getUser(id: id) {
                             HStack {
@@ -41,12 +52,12 @@ struct UserListView: View {
                                     .frame(width: UIScreen.main.bounds.width * 0.20, alignment: .leading) // Fixed width for username
                                     .foregroundColor(user.isCurrentUser ? /*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/ : .black)
                                 Spacer()
-                                if let grade = user.grade {
-                                    Text("Grade-\(String(grade))").font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
-                                }
-                                else {
-                                    Text("Grade-0").opacity(0.0).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
-                                }
+                                //if let grade = user.grade {
+                                Text("\(user.board) Grade-\(String(user.grade))").font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                //}
+                                //else {
+                                    //Text("Grade-0").opacity(0.0).font(UIDevice.current.userInterfaceIdiom != .phone ? .body : .caption)
+                                //}
                                 
                                 Spacer()
                                 Button(action: {
@@ -70,8 +81,8 @@ struct UserListView: View {
 
                                 Spacer()
                                 Button(action: {
-                                    self.creatingNewUser = false
-                                    selectedUser = user
+                                    //self.creatingNewUser = false
+                                    selectedUserForDetailing = user
                                 }) {
                                     HStack {
                                         if UIDevice.current.userInterfaceIdiom != .phone {
@@ -103,26 +114,21 @@ struct UserListView: View {
                         }
                     }
                     .listStyle(PlainListStyle())
-                    .navigationDestination(item: $selectedUser) { user in
-                        UserDetailsView(user: user, creatingNewUser: self.creatingNewUser, listUpdated: $listUpdated)
-                    }
+                    
                     Button(action: {
-                        let user = User(board: "Trinity")
-                        user.name = ""
-                        //settings.addUser(user: user)
-                        selectedUser = user
-                        self.creatingNewUser = true
-                        //settings.setCurrentUser(id: user.id)
-                        listUpdated.toggle()
+                        let user = createAndAddUser()
+                        selectedUserForDetailing = user
                     }) {
                         Text("Add New User")
                     }
                     .appButtonStyle(trim: false)
                     Spacer()
                 }
-                //.frame(height: UIScreen.main.bounds.height * 0.75)
                 .frame(height: UIScreen.main.bounds.height * 0.70)
                 .outlinedStyleView()
+                .navigationDestination(item: $selectedUserForDetailing) { user in
+                    UserDetailsView(user: user, listUpdated: $listUpdated)
+                }
                 Spacer()
             }
             .padding()
@@ -145,16 +151,8 @@ struct UserListView: View {
         .onAppear() {
             ///Create a user if we dont have one already and go straight to editing that user
             if settings.users.count == 0 {
-                let user = User(board: "Trinity")
-                user.name = ""
-                //settings.addUser(user: user)
-                //settings.setCurrentUser(id: user.id)
-                selectedUser = user
-                self.creatingNewUser = true
-                listUpdated.toggle()
-            }
-            else {
-                selectedUser = nil
+                let user = createAndAddUser() 
+                selectedUserForDetailing = user
             }
         }
     }
