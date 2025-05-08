@@ -22,7 +22,6 @@ func backingSoundName(_ n:Int) -> String {
 }
 
 struct SettingsView: View {
-    //@EnvironmentObject var orientationInfo: OrientationInfo
     var user:User
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
@@ -30,7 +29,7 @@ struct SettingsView: View {
     @State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
-    @State var useMidiConnnections = false
+    @State var useMidiSources = false
     @State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
@@ -152,27 +151,26 @@ struct SettingsView: View {
                 }
                 .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
                 
-                if false {
+                if MIDIManager.shared.connectionSourcesPublished.count > 0  {
                     Spacer()
                     HStack {
                         Spacer()
-                        Toggle(isOn: $useMidiConnnections) {
+                        Toggle(isOn: $useMidiSources) {
                             Text("Use MIDI Connections").font(.title2).padding(0)
                         }
-                        .onChange(of: useMidiConnnections, {
-                            user.settings.useMidiConnnections = useMidiConnnections
+                        .onChange(of: useMidiSources, {
+                            user.settings.useMidiSources = useMidiSources
                         })
                         Spacer()
                     }
                     .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-                    
-                    if useMidiConnnections {
-                        VStack(spacing: 20) {
-                            NavigationLink("MIDI Connections", destination: MIDIView())
-                            //Text("Hello, SwiftUI!")
-                        }
-                        .navigationTitle("Settings") // Title for the navigation bar
-                    }
+//                    if useMidiConnnections {
+//                        VStack(spacing: 20) {
+//                            NavigationLink("MIDI Connections", destination: MIDIView())
+//                            //Text("Hello, SwiftUI!")
+//                        }
+//                        .navigationTitle("Settings") // Title for the navigation bar
+//                    }
                 }
                 
                 Spacer()
@@ -229,17 +227,11 @@ struct SettingsView: View {
             
             //leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
-            //            if let score = scalesModel.getScore() {
-            //                PianoKeyboardModel.sharedForSettings.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 36, numberOfKeys: 20,
-            //                                                                                        scaleStartMidi: ScalesModel.shared.scale.getMinMax(handIndex: 0).0, handType: .right)
-            //            }
-            //self.keyboardColor = user.settings.getKeyboardColor()
-            //self.backgroundColor = user.settings.getBackgroundColor()
             self.backingPresetNumber = user.settings.backingSamplerPreset
             self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
-            self.useMidiConnnections = user.settings.useMidiConnnections
-            
+            self.useMidiSources = user.settings.useMidiSources
+
         }
         .onDisappear() {
             settings.save()

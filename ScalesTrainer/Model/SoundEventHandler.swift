@@ -9,6 +9,7 @@ import UIKit
 ///A class that sends sounds events to exercise processes
 protocol SoundEventHandlerProtocol {
     func setFunctionToNotify(functionToNotify: ((Int) -> Void)?)
+    func getFunctionToNotify() -> ((Int) -> Void)?
     func start()
     func stop()
 }
@@ -16,7 +17,7 @@ protocol SoundEventHandlerProtocol {
 class SoundEventHandler  {
     let scale:Scale
     
-    ///The exercise function that is called when a new MIDI notification arrives
+    ///The exercise function that is called when a new acoustic or MIDI notification arrives
     var functionToNotify: ((Int) -> Void)?
 
     required init(scale: Scale) {
@@ -27,20 +28,19 @@ class SoundEventHandler  {
         self.functionToNotify = functionToNotify
     }
     
+    func getFunctionToNotify() -> ((Int) -> Void)? {
+        return self.functionToNotify
+    }
+
     func stop() {
     }
 }
 
 ///A class that generates sound events from the MIDI notifications to exercise processes
-///
 class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
-    
     func start() {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.midiManagerNotificationTarget(msg:))
-        if let testMidiNotes = midiManager.testMidiNotes {
-            self.sendTestMidiNotes(notes: testMidiNotes)
-        }
     }
 
     ///Call the feature function that is specified when a new MIDI notification arrives
@@ -49,27 +49,9 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             notify(msg.midi)
         }
     }
-    
-    func sendTestMidiNotes(notes:TestMidiNotes) {
-        if let notify = self.functionToNotify {
-            DispatchQueue.global(qos: .background).async {
-                for noteSet in notes.noteSets {
-                    DispatchQueue.main.async {
-                        for note in noteSet.notes {
-                            //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
-                            notify(note)
-                        }
-                        usleep(UInt32(0.2 * 1000000))
-                    }
-                    let noteSetDelay = UInt32(1000000 * notes.noteSetWait)
-                    usleep(noteSetDelay)
-                }
-            }
-        }
-    }
 }
 
-///A class that generates sound events from the microphone to exercise processes
+///A class that generates sound events from the microphone acoustic input to exercise processes
 ///
 class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     let bufferSize = 4096

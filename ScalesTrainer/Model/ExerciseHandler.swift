@@ -78,6 +78,9 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         if self.exerciseType == .followingScale {
             hilightKey(scaleIndex: 0)
         }
+        if MIDIManager.shared.testMidiNotes != nil {
+            MIDIManager.shared.playTestMidiNotes(soundHandler: soundHandler)
+        }
     }
     
     func applySerialLock() -> Bool {
@@ -390,6 +393,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                 }
                 exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, "Wrong Note")
                 scalesModel.exerciseCompletedNotify()
+                MIDIManager.shared.testMidiNotesStopPlaying = true
                 break
             }
         }

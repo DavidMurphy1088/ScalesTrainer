@@ -321,25 +321,28 @@ struct MainContentView: View {
         //ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
-            scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .major,
-                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 2, hands: [0,1],
+            let scale = scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
+            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.3, withErrors: false)
         }
     }
         
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
-            if Settings.shared.isDeveloperMode1() {
+            if true && Settings.shared.isDeveloperMode1() {
                 if Settings.shared.aValidUserIsDefined() {
-                    //HomeView()
-                    ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
-                        .tabItem {
-                            Label("SCALE", systemImage: "house")
-                        }
-                        .tag(1)
-                        .environmentObject(viewManager)
+                    //NavigationStack {
+                        //HomeView()
+                        ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
+                            .tabItem {
+                                Label("SCALE", systemImage: "house")
+                            }
+                            .tag(1)
+                            .environmentObject(viewManager)
+                    //}
                 }
             }
             
@@ -410,13 +413,12 @@ struct MainContentView: View {
 //                    .tag(60)
 //                    .environmentObject(viewManager)
                 
-                
-                CalibrationView()
-                    .tabItem {
-                        Label("Calibration", systemImage: "lines.measurement.vertical")
-                    }
-                    .tag(70)
-                    .environmentObject(viewManager)
+//                CalibrationView()
+//                    .tabItem {
+//                        Label("Calibration", systemImage: "lines.measurement.vertical")
+//                    }
+//                    .tag(70)
+//                    .environmentObject(viewManager)
                 
 //                ScalesLibraryView()
 //                    .tabItem {
@@ -426,17 +428,17 @@ struct MainContentView: View {
 //                    .environmentObject(viewManager)
 //                
                 
-                DeveloperView()
-                    .tabItem {
-                        Label("Dev", systemImage: "book.pages")
-                    }
-                    .tag(100)
-                    .environmentObject(viewManager)
+//                DeveloperView()
+//                    .tabItem {
+//                        Label("Dev", systemImage: "book.pages")
+//                    }
+//                    .tag(100)
+//                    .environmentObject(viewManager)
             }
         }      
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        //.ignoresSafeArea(.keyboard, edges: .bottom)
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)
         .onAppear {
@@ -453,7 +455,6 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
-    //@StateObject private var orientationInfo = OrientationInfo()
     let launchTimeSecs = 3.0
 
     init() {
@@ -465,7 +466,6 @@ struct ScalesTrainerApp: App {
             AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
-        //OrientationManager.appDelegate = appDelegate
     }
     
     var body: some Scene {
@@ -473,13 +473,16 @@ struct ScalesTrainerApp: App {
             VStack {
                 if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
                     MainContentView()
-                        //.environmentObject(orientationInfo)
                 }
                 else {
                     if launchScreenState.state != .finished {
                         LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
                     }
                 }
+            }
+            .onAppear {
+                ///In an iOS app using CoreMIDI, you should check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
+                MIDIManager.shared.setupMIDI()
             }
             .task {
                 DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {

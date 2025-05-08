@@ -423,6 +423,38 @@ class MusicBoardAndGrade: Codable, Identifiable {
         
         return scales
     }
+    static func scalesGeneric(grade:Int) -> [Scale] {
+        var scales:[Scale] = []
+        let dynamicTypes = [DynamicType.mf]
+        let articulationTypes = [ArticulationType.legato]
+        
+        let minTempo = 60
+        let octaves = 1
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 2, hands: [0],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 2, hands: [1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 2, hands: [0],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 2, hands: [1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [1],
+                            minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+        return scales
+    }
     
     static func getScales(boardName:String, grade:Int) -> [Scale] {
         let scales:[Scale] = []
@@ -431,6 +463,11 @@ class MusicBoardAndGrade: Codable, Identifiable {
             return scalesTrinity(grade:grade)
         case "ABRSM":
             return scalesABRSM(grade:grade)
+        case "NZMEB":
+            return scalesGeneric(grade:grade)
+        case "AMEB":
+            return scalesGeneric(grade:grade)
+
         default:
             return scales
         }
@@ -502,7 +539,9 @@ class MusicBoard : Identifiable, Codable, Hashable {
             gradesOffered.append(1)
             gradesOffered.append(2)
         default:
-            gradesOffered = []
+            gradesOffered.append(1)
+            gradesOffered.append(2)
+
         }
     }
     

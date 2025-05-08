@@ -281,29 +281,15 @@ class PracticeChart: Codable {
             let url = dir.appendingPathComponent(fileName)
             if let data = self.convertToJSON() {
                 try data.write(to: url)  // Write the data to the file
-                AppLogger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
+                //AppLogger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
             }
             else {
-                AppLogger.shared.log(self, "Cannot convert PracticeChart")
+                AppLogger.shared.reportError(self, "Cannot convert PracticeChart")
             }
         } catch {
             AppLogger.shared.reportError(self, "Failed to save PracticeChart \(error)")
         }
     }
-    
-//    func deleteFile() {
-//        do {
-//            guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-//                Logger.shared.reportError(self, "Failed to save PracticeChart")
-//                return
-//            }
-//            let url = dir.appendingPathComponent(PracticeChart.getFileName())
-//            try FileManager.default.removeItem(at: url)
-//            Logger.shared.log(self, "PracticeChart deleted: \(url.path)")
-//        } catch {
-//            Logger.shared.reportError(self, "Failed to delete PracticeChart \(error)")
-//        }
-//    }
     
     static func getFileName(user:User, board:String, grade:Int) -> String {
         return "_" + user.name + "_" + board + "_" + String(grade)
@@ -340,7 +326,7 @@ class PracticeChart: Codable {
                     }
                 }
             }
-            AppLogger.shared.log(self, "Loaded PracticeChart from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
+//            AppLogger.shared.log(self, "Loaded PracticeChart from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
             chart.adjustForStartDay()
             return chart
         } catch {

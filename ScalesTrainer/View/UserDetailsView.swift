@@ -24,8 +24,8 @@ struct UserDetailsView: View {
     @State private var userName = ""
     @State private var showWelcomeToFirstUser = false
     @State private var isFirstUser = false
-    @State private var firstUseForUserStep2 = false
-    @State private var selectedGrade = 0
+    //@State private var firstUseForUserStep2 = false
+    //@State private var selectedGrade = 0
 
     let width = UIScreen.main.bounds.width * 0.7
     
@@ -81,15 +81,16 @@ struct UserDetailsView: View {
             //.screenBackgroundStyle()
         }
 
-        .onChange(of: selectedGrade, {
-            if isFirstUser {
-                if self.firstName.count > 0 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        firstUseForUserStep2 = true
-                    }
-                }
-            }
-        })
+//        .onChange(of: selectedGrade, {
+//            if isFirstUser {
+//                if self.firstName.count > 0 {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                        firstUseForUserStep2 = true
+//                    }
+//                }
+//            }
+//        })
+        
         .sheet(isPresented: $showWelcomeToFirstUser) {
             VStack(spacing: 20) {
                 let imageSize = UIScreen.main.bounds.width * 0.6
@@ -148,7 +149,7 @@ struct UserDetailsView: View {
             self.firstName = user.name
             self.emailAddress = user.email
             showWelcomeToFirstUser = false
-            if settings.users.count == 0 {
+            if !settings.aValidUserIsDefined() {
                 showWelcomeToFirstUser = true
                 isFirstUser = true
             }

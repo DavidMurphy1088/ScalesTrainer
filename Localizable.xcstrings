@@ -181,9 +181,6 @@
     "But here you can practise %@ hands separately." : {
 
     },
-    "Calibration" : {
-
-    },
     "Cancel" : {
 
     },
@@ -216,9 +213,6 @@
 
     },
     "Detected Pitch: %.0f Hz" : {
-
-    },
-    "Dev" : {
 
     },
     "Disconnect All MIDI Sources" : {
@@ -664,9 +658,6 @@
 
     },
     "Shuffle" : {
-
-    },
-    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {

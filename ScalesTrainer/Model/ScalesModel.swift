@@ -69,7 +69,6 @@ public class ScalesModel : ObservableObject {
         return self.score1
     }
     @Published var recordingIsPlaying = false
-    //@Published var synchedIsPlaying = false
 
     private let setProcessLock = NSLock()
     
@@ -121,17 +120,6 @@ public class ScalesModel : ObservableObject {
         self.tapEventSet = value
     }
 
-//    @Published private(set) var spinStatePublished:SpinState = .notStarted
-//    private(set) var spinState:SpinState = .notStarted
-//    func setSpinState(_ value:SpinState, publish:Bool) {
-//        self.spinState = value
-//        if publish {
-//            DispatchQueue.main.async {
-//                self.spinStatePublished = value
-//            }
-//        }
-//    }
-
     ///Speech
     @Published var speechListenMode = false
     @Published var speechLastWord = ""
@@ -140,7 +128,7 @@ public class ScalesModel : ObservableObject {
     ///ResultDisplay is the published version
     private(set) var resultInternal:Result?
     func setResultInternal(_ result:Result?, _ ctx:String) {
-        let noErrors = result == nil ? true : result!.noErrors()
+        //let noErrors = result == nil ? true : result!.noErrors()
         self.resultInternal = result
         DispatchQueue.main.async {
             self.resultPublished = result
@@ -355,7 +343,7 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
-            if user.settings.useMidiConnnections {
+            if user.settings.useMidiSources {
                 soundHandler = MIDISoundEventHandler(scale: scale)
                 self.midiTestHander = soundHandler as? MIDISoundEventHandler
             }
@@ -366,7 +354,7 @@ public class ScalesModel : ObservableObject {
             //self.exerciseBadge = Badge.getRandomExerciseBadge()
             let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
             exerciseProcess.start(soundHandler: soundHandler)
-            if !user.settings.useMidiConnnections {
+            if !user.settings.useMidiSources {
                 self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
             }
         }
@@ -858,7 +846,7 @@ public class ScalesModel : ObservableObject {
     
     func setScale(scale:Scale) {
         ///Deep copy to ensure reset of the scale segments
-        self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion,
+        _ = self.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion: scale.scaleMotion,
                                    minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands, 
                                    dynamicTypes: scale.dynamicTypes,
                                    articulationTypes: scale.articulationTypes,
@@ -868,7 +856,7 @@ public class ScalesModel : ObservableObject {
     func setScaleByRootAndType(scaleRoot: ScaleRoot, scaleType:ScaleType, scaleMotion:ScaleMotion, minTempo:Int, octaves:Int, hands:[Int],
                                dynamicTypes:[DynamicType], articulationTypes:[ArticulationType], ctx:String="",
                                scaleCustomisation:ScaleCustomisation? = nil, 
-                               debugOn:Bool = false, callback: ((Scale, Score) -> Void)? = nil) {
+                               debugOn:Bool = false, callback: ((Scale, Score) -> Void)? = nil) -> Scale {
         //let name = scale.getScaleName(handFull: true, octaves: true)
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
@@ -878,6 +866,7 @@ public class ScalesModel : ObservableObject {
                           scaleCustomisation: scaleCustomisation,
                           debugOn: debugOn)
         setKeyboardAndScore(scale: scale, callback:callback)
+        return scale
     }
 
     public func setKeyboardAndScore(scale:Scale, callback: ((Scale, Score) -> Void)?) {

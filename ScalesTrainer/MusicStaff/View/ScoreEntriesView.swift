@@ -73,7 +73,6 @@ struct ScoreEntriesView: View {
     }
         
     func log(_ s:String) -> Bool {
-        //print("=========== ScoreEntriesView", self.score.lineSpacing)
         return true
     }
     

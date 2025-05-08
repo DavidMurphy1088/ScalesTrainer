@@ -1,8 +1,6 @@
 import Foundation
 import CoreMIDI
 
-// MARK: - MIDIObjectType Enumeration
-
 class MIDIMessage {
     let messageType:Int
     let midi:Int
@@ -93,22 +91,47 @@ func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: U
     }
 }
 
-// MARK: - MIDIManager Class
-
 class MIDIManager : ObservableObject {
     static let shared = MIDIManager()
-    @Published var connectionsPublished:[String] = []
+    
+    @Published var connectionSourcesPublished:[String] = []
+    private var connectedSources: Set<MIDIEndpointRef> = []
 
     private var midiClient: MIDIClientRef = 0
     private var inputPort: MIDIPortRef = 0
-    private var connectedSources: Set<MIDIEndpointRef> = []
     private let log = AppLogger.shared
     var lastNoteOn:Date? = nil
     
     var testMidiNotes:TestMidiNotes?
+    var testMidiNotesStopPlaying = false
+    
     private var installedNotificationTarget: ((MIDIMessage) -> Void)?
 
     init() {
+    }
+    
+    func playTestMidiNotes(soundHandler:SoundEventHandlerProtocol) {
+        testMidiNotesStopPlaying = false
+        if let notify = soundHandler.getFunctionToNotify() {
+            if let testNotes = self.testMidiNotes {
+                DispatchQueue.global(qos: .background).async {
+                    for noteSet in testNotes.noteSets {
+                        if self.testMidiNotesStopPlaying {
+                            break
+                        }
+                        DispatchQueue.main.async {
+                            for note in noteSet.notes {
+                                //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
+                                notify(note)
+                            }
+                            usleep(UInt32(0.2 * 1000000))
+                        }
+                        let noteSetDelay = UInt32(1000000 * testNotes.noteSetWait)
+                        usleep(noteSetDelay)
+                    }
+                }
+            }
+        }
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
@@ -142,11 +165,16 @@ class MIDIManager : ObservableObject {
         scanMIDISources()
     }
     
-    func scanMIDISources() {
+    public func scanMIDISources() {
         self.disconnectAll()
         let numSources = MIDIGetNumberOfSources()
+        if numSources == 0 {
+            return
+        }
+        log.log(self, "Scanning MIDI sources")
+
         for i in 0..<numSources {
-            let source = MIDIGetSource(i)
+            let source:MIDIEndpointRef = MIDIGetSource(i)
             if !connectedSources.contains(source) {
                 connectToSource(source)
             }
@@ -154,22 +182,21 @@ class MIDIManager : ObservableObject {
         ///Clients should usually use MIDIGetNumberOfSources, MIDIGetSource,
         ///MIDIGetNumberOfDestinations and MIDIGetDestination, rather iterating through devices and
         ///entities to locate endpoints.
-        ///let numberOfDevices = MIDIGetNumberOfDevices()
     }
 
     private func connectToSource(_ source: MIDIEndpointRef) {
-        let name = getDeviceName(from: source)
+        let endPointDetails = getEndpointDetails(source)
         let result = MIDIPortConnectSource(inputPort, source, nil)
         
         if result != noErr {
-            log.reportError(self, "Failed to connect to source \(name): \(result)")
-            notifyUser(ofError: "Failed to connect to MIDI Source: \(name)")
+            log.log(self, "Failed to connect to source \(endPointDetails): \(result)")
+            notifyUser(ofError: "Failed to connect to MIDI Source: \(endPointDetails)")
             return
         }
         connectedSources.insert(source)
-        log.log(self, "Connected to MIDI source. Name:\(name), id:\(source.description)")
+        log.log(self, "Connected to MIDI source. \(endPointDetails)")
         DispatchQueue.main.async {
-            self.connectionsPublished.append(name)
+            self.connectionSourcesPublished.append(endPointDetails)
         }
 
         // Notify UI about device change
@@ -177,27 +204,47 @@ class MIDIManager : ObservableObject {
     }
     
    private func disconnectFromSource(_ source: MIDIEndpointRef) {
-        let name = getDeviceName(from: source)
-        let result = MIDIPortDisconnectSource(inputPort, source)
-        if result != noErr {
-            log.reportError(self, "Failed to disconnect from source \(name): \(result)")
+       let endPointDetails = getEndpointDetails(source)
+       let result = MIDIPortDisconnectSource(inputPort, source)
+       if result != noErr {
+            log.reportError(self, "Failed to disconnect from source \(endPointDetails): \(result)")
             return
-        }
-        connectedSources.remove(source)
-        log.log(self, "Disconnected from source: \(name)")
-        
-        // Notify UI about device change
-        NotificationCenter.default.post(name: .midiDeviceChanged, object: nil)
+       }
+       connectedSources.remove(source)
+//       DispatchQueue.main.async {
+//           self.connectionSourcesPublished.remove(endPointDetails)
+//       }
+
+       log.log(self, "Disconnected from source: \(endPointDetails)")
+       // Notify UI about device change
+       NotificationCenter.default.post(name: .midiDeviceChanged, object: nil)
     }
     
-    private func getDeviceName(from endpoint: MIDIEndpointRef) -> String {
-        var paramName: Unmanaged<CFString>?
-        let result = MIDIObjectGetStringProperty(endpoint, kMIDIPropertyName, &paramName)
-        if result == noErr, let name = paramName?.takeUnretainedValue() {
-            return name as String
+    func getMIDIProperty(_ endpoint: MIDIEndpointRef, _ property: CFString) -> String? {
+        var unmanaged: Unmanaged<CFString>?
+        let status = MIDIObjectGetStringProperty(endpoint, property, &unmanaged)
+        if status == noErr, let value = unmanaged?.takeUnretainedValue() {
+            return value as String
         }
-        return "Unknown"
+        return nil
     }
+    
+    func getEndpointDetails(_ endpoint: MIDIEndpointRef) -> String {
+        let name = getMIDIProperty(endpoint, kMIDIPropertyName) ?? "Unknown"
+        let model = getMIDIProperty(endpoint, kMIDIPropertyModel) ?? "Unknown"
+        let driver = getMIDIProperty(endpoint, kMIDIPropertyDriverOwner) ?? "Unknown"
+        //let desc = endpoint.description
+        return "Name:\(name) Model:\(model) Driver:\(driver)"
+    }
+    
+//    private func getDeviceName(from endpoint: MIDIEndpointRef) -> String {
+//        var paramName: Unmanaged<CFString>?
+//        let result = MIDIObjectGetStringProperty(endpoint, kMIDIPropertyName, &paramName)
+//        if result == noErr, let name = paramName?.takeUnretainedValue() {
+//            return name as String
+//        }
+//        return "Unknown"
+//    }
     
     ///https://developer.apple.com/documentation/coremidi/midiobjectref
     ///This function disabled 8Jan2025. Cant figure out how to determine type of endpoint and connection attempt always fails.
@@ -223,26 +270,14 @@ class MIDIManager : ObservableObject {
 //            }
         //}
     }
-    
-//   private func getMIDIObjectType(_ midiObject: MIDIObjectRef) -> MIDIObjectType? {
-//        var objectType: Int32 = 0
-//        //let kMIDIPropertyType = "type" as CFString
-//        let result = MIDIObjectGetIntegerProperty(midiObject, kMIDIPropertyUniqueID, &objectType)
-//        if result == noErr {
-//            return MIDIObjectType(rawValue: objectType)
-//        } else {
-//            log.reportError(self, "Error retrieving MIDI object type: \(result)")
-//            return nil
-//        }
-//    }
-    
+
     func disconnectAll() {
         for source in connectedSources {
             disconnectFromSource(source)
         }
         self.connectedSources = []
         DispatchQueue.main.async {
-            self.connectionsPublished = []
+            self.connectionSourcesPublished = []
         }
     }
     
@@ -418,7 +453,7 @@ class TestMidiNotes {
         print("==== NoteSet Debug \(ctx)", msg)
     }
     
-    init(scale:Scale, hands:[Int], noteSetWait:Double) {
+    init(scale:Scale, hands:[Int], noteSetWait:Double, withErrors:Bool) {
         let totalNotes = scale.getScaleNoteCount()
         self.noteSetWait = noteSetWait
         self.noteSets = []
@@ -428,7 +463,10 @@ class TestMidiNotes {
             var noteSet:[Int] = []
             for hand in hands {
                 if let noteState = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: n) {
-                    let midi = noteState.midi
+                    var midi = noteState.midi
+                    if n == 4 && withErrors {
+                        midi += 1
+                    }
                     ///When contrary starting and ending LH and RH on same note the student will only play one note. So only generate that note, not one for each hand
                     if scale.scaleMotion == .contraryMotion && hands.count > 1 {
                         if hand == 0 {

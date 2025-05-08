@@ -31,7 +31,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         var backingSamplerPreset:Int = 0
         var badgeStyle = 0
         var practiceChartGamificationOn = true
-        var useMidiConnnections = false
+        var useMidiSources = false
         var scaleLeadInBeatCountIndexOld:Int = 2
         
         public func getLeadInBeatsOld() -> Int {

@@ -249,7 +249,7 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if user.settings.useMidiConnnections {
+        if user.settings.useMidiSoundInput {
             return true
         }
         return scale.hands.count == 1

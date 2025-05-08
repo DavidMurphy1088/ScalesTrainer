@@ -228,7 +228,7 @@ final class ScoreTest: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
         var writtenStaffData = ""
-        let musicBoard = MusicBoard(name: "Trinity")
+        let musicBoard = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity") //MusicBoard(name: "Trinity")
         processBoard(musicBoard: musicBoard, gradeFilter: [], typeFilter: [])
     }
     
