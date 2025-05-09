@@ -164,7 +164,7 @@ class MIDIManager : ObservableObject {
         
         scanMIDISources()
     }
-    
+
     public func scanMIDISources() {
         self.disconnectAll()
         let numSources = MIDIGetNumberOfSources()
@@ -172,16 +172,22 @@ class MIDIManager : ObservableObject {
             return
         }
         log.log(self, "Scanning MIDI sources")
-
+        
         for i in 0..<numSources {
-            let source:MIDIEndpointRef = MIDIGetSource(i)
-            if !connectedSources.contains(source) {
-                connectToSource(source)
+            let endpoint:MIDIEndpointRef = MIDIGetSource(i)
+            if let driver = getMIDIProperty(endpoint, kMIDIPropertyDriverOwner) {
+                ///Filter out Apple virtual network driver or connections from other Apple devices
+                if !Settings.shared.isDeveloperMode1() {
+                    if driver.lowercased().contains("apple") {
+                        continue
+                    }
+                }
+                if !connectedSources.contains(endpoint) {
+                    connectToSource(endpoint)
+                }
             }
         }
-        ///Clients should usually use MIDIGetNumberOfSources, MIDIGetSource,
-        ///MIDIGetNumberOfDestinations and MIDIGetDestination, rather iterating through devices and
-        ///entities to locate endpoints.
+        log.log(self, "Connected MIDI sources count:\(self.connectedSources.count)")
     }
 
     private func connectToSource(_ source: MIDIEndpointRef) {
@@ -403,12 +409,12 @@ private let midiSetupNotifyProc: MIDINotifyProc = { (message, refCon) in
 
     switch messageID {
     case .msgObjectAdded:
-        AppLogger.shared.log(MIDIManager.shared, "MIDI Object Added")
+        //AppLogger.shared.log(MIDIManager.shared, "MIDI Object Added")
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
         midiManager.handleDeviceAdded(notification.child)
         
     case .msgObjectRemoved:
-        AppLogger.shared.log(MIDIManager.shared, "MIDI Object Removed")
+        //AppLogger.shared.log(MIDIManager.shared, "MIDI Object Removed")
         let notification = message.withMemoryRebound(to: MIDIObjectAddRemoveNotification.self, capacity: 1) { $0.pointee }
         midiManager.handleDeviceRemoved(notification.child)
         

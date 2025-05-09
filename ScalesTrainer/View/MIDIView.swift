@@ -44,9 +44,9 @@ struct MIDIView: View {
             Text("Connected MIDI Sources")
                 .font(.title)
                 .padding()
-            List(midiManager.connectionsPublished, id: \.self) { string in
-                Text(string)
-            }
+//            List(midiManager.connectionsPublished, id: \.self) { string in
+//                Text(string)
+//            }
             
             Button(action: {
                 showingBTMIDIPanel = true

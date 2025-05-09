@@ -50,7 +50,6 @@ class Badge : Encodable, Decodable {
 class ExerciseBadgesList : ObservableObject {
     static let shared = ExerciseBadgesList()
 
-    //@Published var badges:[Badge] = []
     @Published private(set) var totalBadgesPublished: Int = 0
 
     var totalBadges: Int = 0

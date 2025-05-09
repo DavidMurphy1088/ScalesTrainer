@@ -25,7 +25,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     var midisWithOneKeyPress: [Int] = []
     let scale:Scale
     let scalesModel:ScalesModel
-    var nextExpectedNoteForHandIndex:[HandType:Int]
+    var nextExpectedNoteIndexForHand:[HandType:Int]
     var nextExpectedStaffSegment:[HandType:Int]
     let exerciseState:ExerciseState
     let exerciseBadgesList:ExerciseBadgesList ///The badges earned on a per note basis for the exercise
@@ -38,6 +38,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     var lastMatchedMidi:Int? = nil
     var lastKeyHilighted:PianoKeyModel? = nil
     let scaleMinxMaxMidis:(Int, Int)
+    let user:User
     var noteNotificationNumber = 0
     
     init(exerciseType:RunningProcess, scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
@@ -45,21 +46,22 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         self.scalesModel = scalesModel
         self.exerciseState = ExerciseState.shared
         self.exerciseBadgesList = ExerciseBadgesList.shared
-        self.nextExpectedNoteForHandIndex = [:]
+        self.nextExpectedNoteIndexForHand = [:]
         nextExpectedStaffSegment = [:]
         self.metronome = metronome
         self.scale = scalesModel.scale
         self.practiceChart = practiceChart
         self.practiceChartCell = practiceChartCell
         self.scaleMinxMaxMidis = scale.getMinMaxMidis()
+        self.user = Settings.shared.getCurrentUser()
     }
     
     func start(soundHandler:SoundEventHandlerProtocol) {
         self.exerciseBadgesList.setTotalBadges(0)
         scale.resetMatchedData()
         exerciseState.resetTotalCorrect()
-        nextExpectedNoteForHandIndex[.left] = 0
-        nextExpectedNoteForHandIndex[.right] = 0
+        nextExpectedNoteIndexForHand[.left] = 0
+        nextExpectedNoteIndexForHand[.right] = 0
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
@@ -78,8 +80,13 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         if self.exerciseType == .followingScale {
             hilightKey(scaleIndex: 0)
         }
-        if MIDIManager.shared.testMidiNotes != nil {
-            MIDIManager.shared.playTestMidiNotes(soundHandler: soundHandler)
+        if Settings.shared.isDeveloperMode1() {
+            let user = Settings.shared.getCurrentUser()
+            if user.settings.useMidiSources {
+                if MIDIManager.shared.testMidiNotes != nil {
+                    MIDIManager.shared.playTestMidiNotes(soundHandler: soundHandler)
+                }
+            }
         }
     }
     
@@ -113,15 +120,16 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         ///But note based badge matching requires that both LH and RH of the scale are matched, so send the midi again.
         
         ///Filter out harmonics and overtones that cause wrong note notification.
-        let margin = 3
-        //let margin = 12 + 2
-        if midi < self.scaleMinxMaxMidis.0 - margin {
-            return
+        if !user.settings.useMidiSources {
+            let margin = 3
+            if midi < self.scaleMinxMaxMidis.0 - margin {
+                return
+            }
+            if midi > self.scaleMinxMaxMidis.1 + margin {
+                return
+            }
         }
-        if midi > self.scaleMinxMaxMidis.1 + margin {
-            return
-        }
-
+        ///A contrary motion scale with LH and RH starting on the same note needs to generate a call for each hand
         let callCount = midisWithOneKeyPress.contains(midi) ? 2 : 1
         for call in 0..<callCount {
             if self.applySerialLock() {
@@ -155,16 +163,29 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             ///Otherwise we can't know the correct hand for sure.
             handsToSearch.append(.left)
             handsToSearch.append(.right)
+            var nextExpectedNotes:[Int] = []
             for hand in handsToSearch {
-                if let nextExpectedIndex = self.nextExpectedNoteForHandIndex[hand] {
+                if let nextExpectedIndex = self.nextExpectedNoteIndexForHand[hand] {
                     if nextExpectedIndex < scale.getScaleNoteCount() {
                         if let nextExpected = scale.getScaleNoteState(handType: hand, index: nextExpectedIndex) {
                             if midi == nextExpected.midi {
                                 handThatPlayedNote = hand
                                 break
                             }
+                            else {
+                                nextExpectedNotes.append(nextExpected.midi)
+                            }
                         }
                     }
+                }
+            }
+            ///If the note was not in the scale for either hand decide which was the most likley hand given the note's distance to the hand's expected note.
+            if handThatPlayedNote == nil && nextExpectedNotes.count >= 2 {
+                if abs(midi - nextExpectedNotes[0]) < abs(midi - nextExpectedNotes[1]) {
+                    handThatPlayedNote = HandType.left
+                }
+                else {
+                    handThatPlayedNote = HandType.right
                 }
             }
         }
@@ -231,48 +252,58 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
             }
         }
 
-        let handType:HandType?
-//        if callNumber == 1 { ???? 🥵
-//            hand = .right
-//        }
-//        else {
-            handType = handThatPlayedNote
-//        }
-        if let handType = handType, let keyboard = keyboardThatPlayedNote {
+        if let handType = handThatPlayedNote, let keyboard = keyboardThatPlayedNote {
             notifyPlayedKey(Keyboard: keyboard, midi: midi, handType: handType)
         }
     }
     
     func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType) {
+        var expectedNotes:[RequiredNote] = []
+        func log(_ m:String) {
+            print("=======\(self.noteNotificationNumber)", m)
+            for n in expectedNotes {
+                print("  ", n.midi, "hand", n.handType, "matched", n.matched)
+            }
+        }
+        
         ///Gather the expected next midi(s) in each hand. We look ahead usualy 2 notes for a match.
         ///Thats because at faster tempos there may be failure to get notified of correct notes the student plays.
-        var requiredNotes:[RequiredNote] = []
-        
-        if requiredNotes.count == 0 {
+        if expectedNotes.count == 0 {
             for h in scale.hands {
                 let handType = h==0 ? HandType.right : .left
-                if let expectedOffset = self.nextExpectedNoteForHandIndex[handType] {
+                if let expectedOffset = self.nextExpectedNoteIndexForHand[handType] {
                     ///A trailing pitch from ascending might match itself going back down if looking ahead > 1
                     let atScaleMiddle = expectedOffset == self.scale.getScaleNoteCount()/2
-                    let lookahead = atScaleMiddle ? 1 : 2
+                    let lookahead:Int
+                    if user.settings.useMidiSources {
+                        lookahead = 1
+                    }
+                    else {
+                        lookahead = atScaleMiddle ? 1 : 2
+                    }
                     for i in 0..<lookahead {
                         if let nextExpectedNote = scale.getScaleNoteState(handType: handType, index: expectedOffset + i) {
                             let expectedMidi = nextExpectedNote.midi
-                            requiredNotes.append(RequiredNote(sequenceNum: i, midi: expectedMidi, handType: handType))
+                            expectedNotes.append(RequiredNote(sequenceNum: i, midi: expectedMidi, handType: handType))
                         }
                     }
                 }
             }
         }
-
-        for requiredNote in requiredNotes {
+        log("start")
+        for expectedNote in expectedNotes {
             ///16Mar2025 - sometimes get wrong octave of note played so allow it
-            let allowed = [requiredNote.midi-24, requiredNote.midi-12, requiredNote.midi, requiredNote.midi+12, requiredNote.midi+24]
-            //if requiredNote.midi == midi && requiredNote.handType == handType {
-            if allowed.contains(midi) && requiredNote.handType == handType {
-                requiredNote.matched = true
-                for previousNote in requiredNotes {
-                    if previousNote.sequenceNum < requiredNote.sequenceNum {
+            let allowed:[Int]
+            if user.settings.useMidiSources {
+                allowed = [expectedNote.midi]
+            }
+            else {
+                allowed = [expectedNote.midi-24, expectedNote.midi-12, expectedNote.midi, expectedNote.midi+12, expectedNote.midi+24]
+            }
+            if allowed.contains(midi) && expectedNote.handType == handType {
+                expectedNote.matched = true
+                for previousNote in expectedNotes {
+                    if previousNote.sequenceNum < expectedNote.sequenceNum {
                         previousNote.matched = true
                     }
                 }
@@ -281,20 +312,14 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         }
         
         var matchedCount = 0
-        for requiredNote in requiredNotes {
+        for requiredNote in expectedNotes {
             if requiredNote.matched {
                 matchedCount += 1
-
-                exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 self.lastMatchedMidi = requiredNote.midi
-                //for requiredNote in requiredNotes {
-                //if let hand = handType {
-                if self.nextExpectedNoteForHandIndex.keys.contains(handType) {
-                    nextExpectedNoteForHandIndex[requiredNote.handType]! += 1
+                if self.nextExpectedNoteIndexForHand.keys.contains(handType) {
+                    nextExpectedNoteIndexForHand[requiredNote.handType]! += 1
                 }
-                //}
-                //}
-                if let index = nextExpectedNoteForHandIndex[handType] {
+                if let index = nextExpectedNoteIndexForHand[handType] {
                     if index < scale.getScaleNoteCount() {
                         if let scaleNote = scale.getScaleNoteState(handType: handType, index: index) {
                             scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
@@ -303,18 +328,30 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                     if self.exerciseType == .followingScale {
                         hilightKey(scaleIndex: index)
                     }
-                    awardChartBadge()
-                    _ = testForEndOfExercise()
                 }
             }
         }
-        
-        //requiredNotes.removeAll { $0.matched }
-        
         if matchedCount == 0 {
-            testForFailExercise(midi: midi, requiredNotes: requiredNotes, keyboard: Keyboard)
+            testForFailExercise(midi: midi, requiredNotes: expectedNotes, keyboard: Keyboard)
         }
-        
+        else {
+            var awardBadge = false
+            if scale.hands.count == 1 {
+                awardBadge = true
+            }
+            else {
+                if nextExpectedNoteIndexForHand[HandType.right] == nextExpectedNoteIndexForHand[HandType.left] {
+                    awardBadge = true
+                }
+            }
+            if awardBadge {
+                exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
+                awardChartBadge()
+            }
+            testForEndOfExercise()
+        }
+                
+        log("end")
         ///Check notes in both hands are matched before moving on, otherwise wait for the other hand
 //        if matchedCount == scale.hands.count {
 //            exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
@@ -399,29 +436,26 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         }
     }
     
-    func testForEndOfExercise() -> Bool {
+    func testForEndOfExercise()  {
         let atEnd:Bool
         if scale.hands.count == 1 {
-            atEnd = self.nextExpectedNoteForHandIndex[.left]! >= scale.getScaleNoteCount() ||
-            self.nextExpectedNoteForHandIndex[.right]! >= scale.getScaleNoteCount()
+            atEnd = self.nextExpectedNoteIndexForHand[.left]! >= scale.getScaleNoteCount() ||
+            self.nextExpectedNoteIndexForHand[.right]! >= scale.getScaleNoteCount()
         }
         else {
-            atEnd = self.nextExpectedNoteForHandIndex[.left]! >= scale.getScaleNoteCount() &&
-                    self.nextExpectedNoteForHandIndex[.right]! >= scale.getScaleNoteCount()
+            atEnd = self.nextExpectedNoteIndexForHand[.left]! >= scale.getScaleNoteCount() &&
+                    self.nextExpectedNoteIndexForHand[.right]! >= scale.getScaleNoteCount()
         }
         if atEnd {
             scalesModel.exerciseCompletedNotify()
             scalesModel.setRunningProcess(.none)
+            ///If the exercise has not been set to won by earning enough badges and its now over then its lost
             if exerciseState.getState() == .exerciseStarted {
                 exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
             }
             if let practiceChart {
                 practiceChart.savePracticeChartToFile()
             }
-            return true
-        }
-        else {
-            return false
         }
     }
 

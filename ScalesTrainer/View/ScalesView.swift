@@ -249,7 +249,7 @@ struct ScalesView: View {
     }
     
     func scaleIsAcousticCapable(scale:Scale) -> Bool {
-        if user.settings.useMidiSoundInput {
+        if user.settings.useMidiSources {
             return true
         }
         return scale.hands.count == 1
@@ -265,7 +265,9 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
-                            self.exerciseState.setExerciseState("Follow", .exerciseAboutToStart)
+                            self.exerciseState.setExerciseState("Follow", settings.isDeveloperMode1() ?
+                                                                ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
+
                             self.directionIndex = 0
                         }) {
                             Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
@@ -300,7 +302,8 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("Lead the Scale", .exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperMode1() ?
+                                                                    ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
                             }
                             self.directionIndex = 0
                         }) {

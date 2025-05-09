@@ -28,9 +28,6 @@ enum RunningProcess {
     case recordingScale
     case playingAlongWithScale
     case backingOn
-    //case recordingScaleForAssessment
-    //case recordScaleWithFileData
-    //case syncRecording
 
     var description: String {
         switch self {

@@ -307,30 +307,20 @@ struct MainContentView: View {
     }
     
     func setupDev() {
-        //let hands = [0,1]
-        //let scaleCustomisation = ScaleCustomisation(maxAccidentalLookback: nil)
-        
-        //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-        //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: hands)
-        
-        //                    ScalesModel.shared.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic,
-        //                        scaleMotion: .contraryMotion, minTempo: 50, octaves: 1, hands: [0,1])
         let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
                                                customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
                                                customScaleNameWheel: "Chrom Contrary, LH C, RH E")
-        //ScalesModel.shared = ScalesModel()
         let scalesModel = ScalesModel.shared
         if true {
             let scale = scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
+                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
-            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.3, withErrors: false)
+            //MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.3, withErrors: false)
         }
     }
-        
-    var body: some View {
+        var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if true && Settings.shared.isDeveloperMode1() {
                 if Settings.shared.aValidUserIsDefined() {

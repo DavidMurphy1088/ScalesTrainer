@@ -1,5 +1,7 @@
 ==== TODO
 enable all scales for lead and follow
+follow must hilight two notes to start
+test follow with contrary motion - one keyboard
 offer competition ladder
 
 iOS doesn't natively advertise as a Bluetooth MIDI device without a supporting app. You can use apps such as:

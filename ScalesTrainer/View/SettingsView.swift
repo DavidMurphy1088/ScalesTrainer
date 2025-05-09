@@ -151,6 +151,7 @@ struct SettingsView: View {
                 }
                 .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
                 
+                ///Only show the enable MIDI if some MIDI endpoints are connected. Even if they are, below lets the user not use them.
                 if MIDIManager.shared.connectionSourcesPublished.count > 0  {
                     Spacer()
                     HStack {
@@ -164,13 +165,6 @@ struct SettingsView: View {
                         Spacer()
                     }
                     .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-//                    if useMidiConnnections {
-//                        VStack(spacing: 20) {
-//                            NavigationLink("MIDI Connections", destination: MIDIView())
-//                            //Text("Hello, SwiftUI!")
-//                        }
-//                        .navigationTitle("Settings") // Title for the navigation bar
-//                    }
                 }
                 
                 Spacer()
