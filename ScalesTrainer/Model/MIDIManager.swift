@@ -2,11 +2,22 @@ import Foundation
 import CoreMIDI
 
 class MIDIMessage {
-    let messageType:Int
+    enum MIDIStatus: UInt8 {
+        case noteOff        = 0x80
+        case noteOn         = 0x90
+        case polyAftertouch = 0xA0
+        case controlChange  = 0xB0
+        case programChange  = 0xC0
+        case channelPressure = 0xD0
+        case pitchBend      = 0xE0
+    }
+    let messageType:MIDIStatus
     let midi:Int
-    init(messageType:Int, midi:Int) {
+    let velocity:Int
+    init(messageType:MIDIStatus, midi:Int, velocity:Int) {
         self.messageType = messageType
         self.midi = midi
+        self.velocity = velocity
     }
 }
 
@@ -91,6 +102,96 @@ func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: U
     }
 }
 
+///The notes matched in a scale
+class MatchedNotes {
+    ///A note that was matched to the scale
+    class Note {
+        let sequenceNum: Int
+        let timestamp:Date
+        let midi:Int
+        let handType:HandType
+        let velocity:Int
+        var duration:Double?
+        
+        init(midi:Int, handType:HandType, velocity:Int) {
+            self.timestamp = Date()
+            self.sequenceNum = 0
+            self.midi = midi
+            self.handType = handType
+            self.velocity = velocity
+        }
+    }
+    var hands:[HandType] = []
+    var notes:[Note] = []
+    var startTimestamp:Date?
+    
+    init () {
+    }
+    
+    func start(hands:[HandType]) {
+        startTimestamp = nil
+        self.notes = []
+        self.hands = hands
+    }
+    
+    func applyToScore(score:Score) {
+        debug1("ResultView OnAppear")
+        for ts in score.getAllTimeSlices() {
+            for note in ts.getTimeSliceNotes(handType: .right) {
+                let status = StaffNoteResultStatus()
+                note.staffNoteResultStatus = status
+            }
+        }
+    }
+    func resetScore(score:Score) {
+        debug1("ResultView OnAppear")
+        for ts in score.getAllTimeSlices() {
+            for note in ts.getTimeSliceNotes(handType: .right) {
+                note.staffNoteResultStatus = nil
+            }
+        }
+    }
+    
+    func debug1(_ msg:String) {
+        print("======== Matched Notes \(msg) =======")
+        //let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm:ss.SSS"
+        for note in self.notes {
+            var timeFromStart = 0.0
+            if let startTimestamp = self.startTimestamp {
+                timeFromStart = note.timestamp.timeIntervalSince(startTimestamp)
+            }
+            var dur = ""
+            if let duration = note.duration {
+                dur = String(format: "%.2f", duration)
+            }
+            print("   ", String(format: "%.2f", timeFromStart),
+                  "Hand:\(note.handType) \tMidi:\(note.midi) \tVel:\(note.velocity) \tDuration:\(dur)")
+        }
+    }
+    
+    func processNoteOn(midi: Int, handType: HandType, velocity: Int) {
+        let note = Note(midi: midi, handType: handType, velocity: velocity)
+        self.notes.append(note)
+        if self.startTimestamp == nil {
+            self.startTimestamp = note.timestamp
+        }
+        //debug("NoteOn")
+    }
+    func processNoteOff(midi: Int) {
+        for n in self.notes.reversed() {
+            if n.midi == midi {
+                let diff = Date().timeIntervalSince(n.timestamp)
+                n.duration = diff
+                break
+            }
+        }
+        //debug("NoteOff")
+    }
+
+}
+
 class MIDIManager : ObservableObject {
     static let shared = MIDIManager()
     
@@ -100,14 +201,15 @@ class MIDIManager : ObservableObject {
     private var midiClient: MIDIClientRef = 0
     private var inputPort: MIDIPortRef = 0
     private let log = AppLogger.shared
-    var lastNoteOn:Date? = nil
     
     var testMidiNotes:TestMidiNotes?
     var testMidiNotesStopPlaying = false
+    var matchedNotes:MatchedNotes
     
     private var installedNotificationTarget: ((MIDIMessage) -> Void)?
 
     init() {
+        matchedNotes = MatchedNotes()
     }
     
     func playTestMidiNotes(soundHandler:SoundEventHandlerProtocol) {
@@ -122,7 +224,10 @@ class MIDIManager : ObservableObject {
                         DispatchQueue.main.async {
                             for note in noteSet.notes {
                                 //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
-                                notify(note)
+                                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: note, velocity: 50))
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: note, velocity: 0))
+                                }
                             }
                             usleep(UInt32(0.2 * 1000000))
                         }
@@ -319,11 +424,7 @@ class MIDIManager : ObservableObject {
                     let note = bytes[1]
                     let velocity = bytes[2]
                     var out = "Note Off - Channel \(channel + 1), Note \(note), Velocity \(velocity)"
-                    if let lastOn = self.lastNoteOn {
-                        let diff = self.timeDifference(startDate: lastOn, endDate: Date())
-                        out += " Value:" + diff
-                    }
-                    return nil
+                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: Int(note), velocity: Int(velocity))
                 }
             case 0x90:
                 // Note On
@@ -332,14 +433,14 @@ class MIDIManager : ObservableObject {
                     let velocity = bytes[2]
                     let noteStatus = velocity == 0 ? "Note Off" : "Note On"
                     var out = "\(noteStatus) - Channel \(channel + 1), Note \(note), Velocity \(velocity)"
-                    if let lastOn = self.lastNoteOn {
-                        let diff = self.timeDifference(startDate: lastOn, endDate: Date())
-                        out += " Value:" + diff
-                    }
-                    if velocity != 0 {
-                        self.lastNoteOn = Date()
-                    }
-                    return MIDIMessage(messageType: Int(messageType), midi: Int(note))
+//                    if let lastOn = self.lastNoteOn {
+//                        let diff = self.timeDifference(startDate: lastOn, endDate: Date())
+//                        out += " Value:" + diff
+//                    }
+//                    if velocity != 0 {
+//                        self.lastNoteOn = Date()
+//                    }
+                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: Int(note), velocity: Int(velocity))
                 }
             case 0xA0:
                 // Polyphonic Key Pressure (Aftertouch)

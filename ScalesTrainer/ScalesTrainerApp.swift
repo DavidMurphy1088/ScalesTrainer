@@ -313,11 +313,11 @@ struct MainContentView: View {
         let scalesModel = ScalesModel.shared
         if true {
             let scale = scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0,1],
+                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
-            //MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.3, withErrors: false)
+            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
         }
     }
         var body: some View {

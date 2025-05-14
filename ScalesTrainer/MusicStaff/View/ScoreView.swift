@@ -7,10 +7,12 @@ public struct ScoreView: View {
     @ObservedObject var score:Score
     @State private var dragOffset = CGSize.zero
     @State var logCtr = 0
+    @State var showResults:Bool
     
-    public init(scale:Scale, score:Score) {
+    public init(scale:Scale, score:Score, showResults:Bool) {
         self.scale = scale
         self.score = score
+        self.showResults = showResults
     }
     
     public var body: some View {
@@ -33,7 +35,7 @@ public struct ScoreView: View {
 
             VStack(spacing: 0) {
                 ForEach(score.getStaffs(), id: \.self.id) { staff in
-                    StaffView(scale: scale, score: score, staff: staff, scoreView: self)
+                    StaffView(scale: scale, score: score, staff: staff, scoreView: self, showResults: showResults)
                         .frame(height: score.getStaffHeight())
                 }
             }

@@ -66,30 +66,13 @@ public class TimeSliceEntry : ObservableObject, Codable, Identifiable, Equatable
         return self.value
     }
 
-    public func getColor(staff:Staff) -> Color {
+    public func getColor(staff:Staff, resultStatus:StaffNoteResultStatus? = nil) -> Color {
+        if let resultStatus = resultStatus {
+            if resultStatus.rhythmOffset == 0 {
+                return Color.green
+            }
+        }
         return Color.black
-//        var out:Color? = nil
-//
-//        if timeSlice.statusTag == .pitchError {
-//            out = Color(.red)
-//        }
-//        if timeSlice.statusTag == .missingError {
-//            out = Color(.yellow)
-//        }
-////        if adjustFor {
-////            if Int.random(in: 0...10) < 5  {
-////                if Int.random(in: 0...10) < 5  {
-////                    out = Color(red: Double.random(in: 0.5...0.9), green: 0, blue: 0)
-////                }
-////                else {
-////                    out = Color(red: 0, green: 0, blue: Double.random(in: 0.5...0.9))
-////                }
-////            }
-////        }
-//        if out == nil {
-//            out = Color(.black)
-//        }
-//        return out!
     }
 
     func setValue(value:Double) {

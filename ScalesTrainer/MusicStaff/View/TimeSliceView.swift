@@ -192,15 +192,25 @@ struct StaffNoteView: View {
             let placement = note.noteStaffPlacement // note.getNoteDisplayCharacteristics(staff: staff)
             let offsetFromStaffMiddle = placement.offsetFromStaffMidline
             let accidental = placement.accidental
-
             let noteEllipseMidpoint:Double = geometry.size.height/2.0 - Double(offsetFromStaffMiddle) * lineSpacing / 2.0
-
             let noteValueUnDotted = note.getValue() //* 2.0/3.0 : note.getValue()
-
+            
             if note.showIsPlaying {
                 NoteHiliteView(entry: note, x: noteFrameWidth/2, y: noteEllipseMidpoint, width: noteWidth * 1.7)
             }
             
+
+            ///StaffNoteResultStatus describes results for each note after exercise done
+            if let resultStatus = note.staffNoteResultStatus {
+                if resultStatus.rhythmOffset != 0 {
+                    Text(resultStatus.ui().0 < 0 ? "← " : " →")
+                        .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0) + resultStatus.ui().0, y: noteEllipseMidpoint)
+                        .foregroundColor(resultStatus.ui().1)
+                        .bold()
+                        .zIndex(1)
+                }
+            }
+
             if let accidental = accidental {
                 let yOffset = accidental == 1 ? lineSpacing / 5 : 0.0
                 Text(getAccidental(accidental: accidental))
@@ -212,11 +222,10 @@ struct StaffNoteView: View {
                         y: noteEllipseMidpoint + yOffset)
                     .foregroundColor(note.getColor(staff: staff))
             }
+            
             if [StaffNote.VALUE_QUARTER, StaffNote.VALUE_QUAVER, StaffNote.VALUE_SEMIQUAVER, StaffNote.VALUE_TRIPLET].contains(noteValueUnDotted ) {
                 Ellipse()
-                //Closed ellipse
-                    //.stroke(note.getColor(staff: staff), lineWidth: 2)
-                    .foregroundColor(note.getColor(staff: staff))
+                    .foregroundColor(note.getColor(staff: staff, resultStatus: note.staffNoteResultStatus))
                     .frame(width: noteWidth * self.sizeMultiplier(), height: CGFloat(Double(lineSpacing) * 1.0) * self.sizeMultiplier())
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
             }
@@ -224,7 +233,7 @@ struct StaffNoteView: View {
                 Ellipse()
                 //Open ellipse
                     .stroke(note.getColor(staff: staff), lineWidth: 2)
-                    .foregroundColor(note.getColor(staff: staff))
+                    .foregroundColor(note.getColor(staff: staff, resultStatus: note.staffNoteResultStatus))
                     .frame(width: noteWidth, height: CGFloat(Double(lineSpacing) * 0.9))
                     .position(x: noteFrameWidth/2 - (note.rotated ? noteWidth : 0), y: noteEllipseMidpoint)
             }
@@ -239,7 +248,7 @@ struct StaffNoteView: View {
                     //.position(x: noteFrameWidth/2 + noteWidth/1.1, y: noteEllipseMidpoint - yOffset)
                     //.position(x: noteFrameWidth/2 + noteWidth/1.3, y: noteEllipseMidpoint - yOffset)
                     .position(x: noteFrameWidth/2 + noteWidth/1, y: noteEllipseMidpoint - yOffset)
-                    .foregroundColor(note.getColor(staff: staff))
+                    .foregroundColor(note.getColor(staff: staff, resultStatus: note.staffNoteResultStatus))
             }
             
             ///Ledger lines
@@ -419,10 +428,6 @@ public struct TimeSliceView: View {
                             if (staffNote.handType == .right && self.staff.handType == .right) || (staffNote.handType == .left && self.staff.handType == .left) {
                                 StaffNoteView(staff: staff, timeSlice: timeSlice, note: entry as! StaffNote, noteFrameWidth: noteFrameWidth,
                                               geometry: geometry, noteWidth: noteWidth, lineSpacing: lineSpacing)
-//                                StaffNoteView(timeslice: timeSlice, note: entry as! StaffNote, noteFrameWidth: noteFrameWidth,
-//                                              geometry: geometry, noteWidth: noteWidth, staff:staff)
-//                                              //statusTag: timeSlice.statusTag)
-                                //.border(Color.green)
                             }
                         }
                         if entry is Rest {
@@ -435,40 +440,40 @@ public struct TimeSliceView: View {
                 
                 ///Error status or tempo indication if no error
                 
-                if let result = scalesModel.resultInternal {
-                    VStack {
-                        Spacer()
-                        if result.noErrors() {
-                            let duration = timeSlice.tapDurationNormalised
-                            let showTempo = duration != nil && (duration! >= 1.5 || duration! < 0.66)
-                            if showTempo {
-                                Rectangle()
-                                    .fill(getTempoGradient(valueNormalized: duration!))
-                                    //.opacity(1)
-                                    .frame(width: noteFrameWidth, height: 12)
-                            }
-                            else {
-                                if timeSlice.statusTag == .correct {
-                                    Circle()
-                                        .fill(Color.green.opacity(0.4))
-                                        .frame(width: statusWidth())
-                                }
-                            }
-                        }
-                        else {
-                            if timeSlice.statusTag == .missingError {
-                                Circle()
-                                    .fill(Color.yellow.opacity(0.4))
-                                    .frame(width: statusWidth())
-                            }
-                            if timeSlice.statusTag == .correct {
-                                Circle()
-                                    .fill(Color.green.opacity(0.4))
-                                    .frame(width: statusWidth())
-                            }
-                        }
-                    }
-                }
+//                if let result = scalesModel.resultInternal {
+//                    VStack {
+//                        Spacer()
+//                        if result.noErrors() {
+//                            let duration = timeSlice.tapDurationNormalised
+//                            let showTempo = duration != nil && (duration! >= 1.5 || duration! < 0.66)
+//                            if showTempo {
+//                                Rectangle()
+//                                    .fill(getTempoGradient(valueNormalized: duration!))
+//                                    //.opacity(1)
+//                                    .frame(width: noteFrameWidth, height: 12)
+//                            }
+//                            else {
+//                                if timeSlice.statusTag == .correct {
+//                                    Circle()
+//                                        .fill(Color.green.opacity(0.4))
+//                                        .frame(width: statusWidth())
+//                                }
+//                            }
+//                        }
+//                        else {
+//                            if timeSlice.statusTag == .missingError {
+//                                Circle()
+//                                    .fill(Color.yellow.opacity(0.4))
+//                                    .frame(width: statusWidth())
+//                            }
+//                            if timeSlice.statusTag == .correct {
+//                                Circle()
+//                                    .fill(Color.green.opacity(0.4))
+//                                    .frame(width: statusWidth())
+//                            }
+//                        }
+//                    }
+//                }
             }
 
         }

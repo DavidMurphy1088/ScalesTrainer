@@ -5,15 +5,14 @@ struct TestInputView: View {
     let octaves = 2 //UIDevice.current.userInterfaceIdiom == .phone ? 1 : 2
     
     func noteTapped(_ midiNumber:Int) {
-        let msg = MIDIMessage(messageType: 0, midi: midiNumber)
+        let msg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midiNumber, velocity: 50)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
             midiManager.processMidiMessage(MIDImessage: msg)
         }
-//        if let midiTestHandler = ScalesModel.shared.midiTestHander {
-//            let noteSet = TestMidiNotes.NoteSet([midiNumber])
-//            let notes:TestMidiNotes = TestMidiNotes([noteSet], noteWait: 2)
-//            midiTestHandler .sendTestMidiNotes(notes: notes)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let offMsg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: midiNumber, velocity: 0)
+            midiManager.processMidiMessage(MIDImessage: offMsg)
+        }
     }
     
     func noteName(_ midi:Int) -> String {
@@ -51,6 +50,8 @@ struct TestInputView: View {
                             Text("\(noteName(midi))").font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                         }
                         .padding(UIDevice.current.userInterfaceIdiom == .phone ? 3 : 10)
+                        .background(Color.white)
+                        .opacity(1.0)
                         .border(Color.black)
                     }
                 }
@@ -68,9 +69,12 @@ struct TestInputView: View {
                         Text("\(noteName(midi))").font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }
                     .padding(UIDevice.current.userInterfaceIdiom == .phone ? 3 : 10)
+                    .background(Color.white)  // 👈 This makes it opaque
+                    .opacity(1.0)
                     .border(Color.black)
                 }
             }
+            Spacer()
         }
         .padding()
     }

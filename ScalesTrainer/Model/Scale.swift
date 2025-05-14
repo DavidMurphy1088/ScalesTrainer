@@ -607,6 +607,18 @@ public class Scale : Codable {
         Scale.createCount += 1
     }
     
+    func getHandTypes() -> [HandType] {
+        if self.hands.count == 2 {
+            return [HandType.left, HandType.right]
+        }
+        if self.hands[0] == 0 {
+            return [HandType.left]
+        }
+        else {
+            return [HandType.right]
+        }
+    }
+
     func getMinMaxSegments() -> (min:Int, max:Int) {
         var scaleMin:Int = Int.max
         var scaleMax:Int = Int.min

@@ -21,7 +21,8 @@ class ExerciseState : ObservableObject {
         case exerciseLost
         case exerciseAborted
         case exerciseWon
-        
+        case exerciseShowResults
+
         case exerciseWithoutBadgesAboutToStart
         case exerciseWithoutBadgesStarted
 

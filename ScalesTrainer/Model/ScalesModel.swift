@@ -123,17 +123,17 @@ public class ScalesModel : ObservableObject {
 
     ///Result cannot be published since it needs to be updated on the main thread. e.g. for rapid callibration analyses
     ///ResultDisplay is the published version
-    private(set) var resultInternal:Result?
-    func setResultInternal(_ result:Result?, _ ctx:String) {
-        //let noErrors = result == nil ? true : result!.noErrors()
-        self.resultInternal = result
-        DispatchQueue.main.async {
-            self.resultPublished = result
-            PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.redraw()
-        }
-    }
-    @Published private(set) var resultPublished:Result?
+//    private(set) var resultInternal:Result?
+//    func setResultInternal(_ result:Result?, _ ctx:String) {
+//        //let noErrors = result == nil ? true : result!.noErrors()
+//        self.resultInternal = result
+//        DispatchQueue.main.async {
+//            self.resultPublished = result
+//            PianoKeyboardModel.sharedRH.redraw()
+//            PianoKeyboardModel.sharedLH.redraw()
+//        }
+//    }
+//    @Published private(set) var resultPublished:Result?
 
     enum DirectionOfPlay {
         case upwards
@@ -327,9 +327,9 @@ public class ScalesModel : ObservableObject {
         self.setShowKeyboard(true)
         self.setShowLegend(true)
         self.setSelectedScaleSegment(0)
-        if resultInternal != nil {
-            self.setShowStaff(true)
-        }
+//        if resultInternal != nil {
+//            self.setShowStaff(true)
+//        }
         
         PianoKeyboardModel.sharedRH.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.sharedRH.redraw()

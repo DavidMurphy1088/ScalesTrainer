@@ -150,7 +150,7 @@ public struct StaffView: View {
     var entryPositions:[Double] = []
     var totalDuration = 0.0
     
-    init (scale:Scale, score:Score, staff:Staff, scoreView:ScoreView) {
+    init (scale:Scale, score:Score, staff:Staff, scoreView:ScoreView, showResults:Bool) {
         self.scale = scale
         self.score = score
         self.staff = staff
@@ -213,9 +213,6 @@ public struct StaffView: View {
     
     public var body: some View {
         ZStack {
-            StaffLinesView(score:score, staff: staff)
-                .frame(height: score.getStaffHeight())
-                .padding([.leading, .trailing], 0)
             HStack(spacing: 0) {
                 if staff.linesInStaff != 1 {
                     let w:Double = getClefWidthAdjust(lineSpacing: score.lineSpacing)
@@ -241,6 +238,11 @@ public struct StaffView: View {
                     .coordinateSpace(name: "StaffNotesView")
             }
             .padding([.leading, .trailing], 0)
+            
+            ///Make sure the lines are over the top of all notes. The notes in the staff may not be black but the staff line must show black.
+            StaffLinesView(score:score, staff: staff)
+                .frame(height: score.getStaffHeight())
+                .padding([.leading, .trailing], 0)
         }
         .coordinateSpace(name: "StaffView.ZStack")
         .frame(height: score.getStaffHeight())

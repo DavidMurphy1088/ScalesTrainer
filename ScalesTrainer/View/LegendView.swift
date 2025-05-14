@@ -89,9 +89,9 @@ struct LegendViewUNUSED: View {
             title = "Practice"
         }
         else {
-            if scalesModel.resultPublished != nil {
-                title = "Results"
-            }
+//            if scalesModel.resultPublished != nil {
+//                title = "Results"
+//            }
         }
         return title
     }
@@ -106,7 +106,7 @@ struct LegendViewUNUSED: View {
                     .background(Color.green)
                     .cornerRadius(6)
             }
-            if scalesModel.resultPublished == nil {
+            //if scalesModel.resultPublished == nil {
                 if scalesModel.showKeyboard {
                     if scalesModel.showFingers {
                         HStack(spacing: 0) {
@@ -121,7 +121,7 @@ struct LegendViewUNUSED: View {
                         }
                     }
                 }
-            }
+            //}
 //            if false && scalesModel.runningProcess == .leadingTheScale {
 //                Spacer()
 //                Circle()

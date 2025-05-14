@@ -6,6 +6,8 @@ struct ScoreEntriesView: View {
 
     @ObservedObject var score:Score
     @ObservedObject var staff:Staff
+    @State var resultWidth:CGFloat = 0
+    
     let scoreView:ScoreView
     
     static var viewNum:Int = 0
@@ -124,8 +126,9 @@ struct ScoreEntriesView: View {
                     ZStack {
                         if entry is TimeSlice {
                             let timeSlice = entry as! TimeSlice
+                            
                             ZStack { // Each note frame in the timeslice shares the same same vertical space
-                                GeometryReader { proxy in
+                                GeometryReader { proxy1 in
                                     TimeSliceView(staff: staff,
                                                   timeSlice: timeSlice,
                                                   noteWidth: noteWidth,
@@ -139,9 +142,11 @@ struct ScoreEntriesView: View {
                                             [(scoreEntry: timeSlice, position: anchor, orientation.isPortrait)]
                                         }
                                     )
+                                    //.border(Color.green)
                                 }
+
                             }
-                        }
+                         }
                         
                         if entry is BarLine {
                             let barLine = entry as! BarLine
@@ -265,7 +270,7 @@ struct ScoreEntriesView: View {
                             path.move(to: CGPoint(x: midX, y: midY - offsetY))
                             path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength(notes: notes) - inErrorAjdust))))
                         }
-                        .stroke(notes[0].getColor(staff: staff), lineWidth: 1.5)
+                        .stroke(notes[0].getColor(staff: staff, resultStatus: nil), lineWidth: 1.5)
                     }
                 }
                 else {

@@ -8,8 +8,8 @@ import UIKit
 
 ///A class that sends sounds events to exercise processes
 protocol SoundEventHandlerProtocol {
-    func setFunctionToNotify(functionToNotify: ((Int) -> Void)?)
-    func getFunctionToNotify() -> ((Int) -> Void)?
+    func setFunctionToNotify(functionToNotify: ((MIDIMessage) -> Void)?)
+    func getFunctionToNotify() -> ((MIDIMessage) -> Void)?
     func start()
     func stop()
 }
@@ -18,17 +18,17 @@ class SoundEventHandler  {
     let scale:Scale
     
     ///The exercise function that is called when a new acoustic or MIDI notification arrives
-    var functionToNotify: ((Int) -> Void)?
+    var functionToNotify: ((MIDIMessage) -> Void)?
 
     required init(scale: Scale) {
         self.scale = scale
     }
     
-    func setFunctionToNotify(functionToNotify: ((Int) -> Void)?) {
+    func setFunctionToNotify(functionToNotify: ((MIDIMessage) -> Void)?) {
         self.functionToNotify = functionToNotify
     }
     
-    func getFunctionToNotify() -> ((Int) -> Void)? {
+    func getFunctionToNotify() -> ((MIDIMessage) -> Void)? {
         return self.functionToNotify
     }
 
@@ -38,6 +38,7 @@ class SoundEventHandler  {
 
 ///A class that generates sound events from the MIDI notifications to exercise processes
 class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
+
     func start() {
         let midiManager = MIDIManager.shared
         midiManager.installNotificationTarget(target: self.midiManagerNotificationTarget(msg:))
@@ -46,7 +47,7 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     ///Call the feature function that is specified when a new MIDI notification arrives
     func midiManagerNotificationTarget(msg:MIDIMessage) {
         if let notify = self.functionToNotify {
-            notify(msg.midi)
+            notify(msg)
         }
     }
 }
@@ -128,7 +129,8 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             }
             
             if let notify = self.functionToNotify {
-                notify(midi)
+                //notify(midi, Int(amplitude))
+                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midi, velocity: Int(amplitude)))
             }
         }
     }

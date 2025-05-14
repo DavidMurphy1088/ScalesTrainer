@@ -95,7 +95,7 @@ struct EndOfExerciseView: View {
     let badge: Badge
     let scalesModel:ScalesModel
     let exerciseMessage:String?
-    let callback: (_ retry:Bool) -> Void
+    let callback: (_ retry:Bool, _ showResult:Bool) -> Void
     let failed:Bool
     
     @State private var countdown = 0
@@ -114,13 +114,13 @@ struct EndOfExerciseView: View {
                     }
                     HStack {
                         Button("Cancel") {
-                            callback(false)
+                            callback(false, false)
                         }
                         .font(.title)
                         .padding()
                         
                         Button("Retry") {
-                            callback(true)
+                            callback(true, false)
                         }
                         .font(.title)
                         .padding()
@@ -137,12 +137,24 @@ struct EndOfExerciseView: View {
                     .scaledToFit()
                     .frame(width: 120, height: 120)
                     .padding()
-                Button("OK") {
-                    callback(false)
+                
+                HStack {
+                    Button("OK") {
+                        callback(false, false)
+                    }
+                    .font(.title)
+                    .disabled(isCountingDown)
+                    .padding()
+                    
+                    if Settings.shared.isDeveloperMode1() {
+                        Button("Results") {
+                            callback(false, true)
+                        }
+                        .font(.title)
+                        .disabled(isCountingDown)
+                        .padding()
+                    }
                 }
-                .font(.title)
-                .disabled(isCountingDown)
-                .padding()
             }
         }
         .background(Color.white.opacity(1.0))

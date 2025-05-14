@@ -10,6 +10,12 @@
     "                  " : {
 
     },
+    "   ←" : {
+
+    },
+    "   →" : {
+
+    },
     "  %@  " : {
 
     },
@@ -20,6 +26,9 @@
 
     },
     " %lld" : {
+
+    },
+    " →" : {
 
     },
     " =" : {
@@ -88,10 +97,22 @@
     "© 2025 Musicmaster Education LLC." : {
 
     },
+    "← " : {
+
+    },
     "⊙" : {
 
     },
     "●" : {
+
+    },
+    "♩  Ahead  " : {
+
+    },
+    "♩  Late  " : {
+
+    },
+    "⭐️ Leader Board ⭐️" : {
 
     },
     "𝄞" : {
@@ -120,6 +141,9 @@
     },
     "Activities" : {
       "comment" : "Menu"
+    },
+    "Add Me To The Leader Board 👍" : {
+
     },
     "Add New User" : {
 
@@ -196,20 +220,13 @@
     "Connected MIDI Sources" : {
 
     },
-    "Correct Notes:%lld Errors:%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Correct Notes:%1$lld Errors:%2$lld"
-          }
-        }
-      }
-    },
     "Current Amplitude Filter:%@" : {
 
     },
     "Delete Correct" : {
+
+    },
+    "Details Content" : {
 
     },
     "Detected Pitch: %.0f Hz" : {
@@ -553,6 +570,9 @@
     "Restore Subscriptions" : {
 
     },
+    "Results" : {
+
+    },
     "Retry" : {
 
     },
@@ -619,6 +639,9 @@
     "Scan and connect MIDI Sources" : {
 
     },
+    "Score B+" : {
+
+    },
     "Select" : {
 
     },
@@ -651,10 +674,16 @@
         }
       }
     },
+    "Settings Content" : {
+
+    },
     "Show Tap Data" : {
 
     },
     "Shuffle" : {
+
+    },
+    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
@@ -676,9 +705,6 @@
 
     },
     "Stats: %@" : {
-
-    },
-    "Status: %lld" : {
 
     },
     "Stop Analysis" : {
@@ -727,6 +753,9 @@
           }
         }
       }
+    },
+    "Tempo ♩=80" : {
+
     },
     "Tempo: %.2f notes/sec, Smoothing: %.2f" : {
       "localizations" : {

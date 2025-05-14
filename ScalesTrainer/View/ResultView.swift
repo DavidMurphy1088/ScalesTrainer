@@ -1,193 +1,223 @@
 import SwiftUI
 
 struct ResultView: View {
-    var keyboardModel:PianoKeyboardModel
-    let result:Result
+    let parentScore:Score
+    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
+
     let scalesModel = ScalesModel.shared
+    let callback: (_ retry:Bool) -> Void
     
-    func getAllCorrect() -> Bool {
-        return result.missedFromScaleCountAsc == 0 && result.missedFromScaleCountDesc == 0 && result.playedAndWrongCountAsc == 0 && result.playedAndWrongCountDesc == 0
-    }
-    
-    func recordStatus() -> (Bool, String) {
-        var status = ""
-        if getAllCorrect() {
-            status = "Good job, your scale was correct."
-        }
-        else {
-            status = "Your scale was not correct. "
-            if result.playedAndWrongCountAsc > 0 {
-                status += "\n⏺ You played \(result.playedAndWrongCountAsc) wrong \(result.playedAndWrongCountAsc > 1 ? "notes" : "note") ascending. "
-            }
-            else {
-                ///Only show this if there were no wrong notes
-                if result.missedFromScaleCountAsc > 0 {
-                    status += "\n⏺ You missed \(result.missedFromScaleCountAsc) \(result.missedFromScaleCountAsc > 1 ? "notes" : "note") ascending. "
-                }
-            }
-            if result.playedAndWrongCountDesc > 0 {
-                status += "\n⏺ You played \(result.playedAndWrongCountDesc) wrong \(result.playedAndWrongCountDesc > 1 ? "notes" : "note") descending. "
-            }
-            else {
-                if result.missedFromScaleCountDesc > 0 {
-                    status += "\n⏺ You missed \(result.missedFromScaleCountDesc) \(result.missedFromScaleCountDesc > 1 ? "notes" : "note") descending. "
-                }
-            }
-        }
-        if getAllCorrect() {
-            if let tempo = ScalesModel.shared.scale.setNoteNormalizedValues() {
-                let metronome = Metronome.shared
-                status += "\n⏺ Your tempo was \(metronome.getTempoString(tempo)) "
-                var appTempoString = "" //ScalesModel.shared.tempoSettings[ScalesModel.shared.selectedTempoIndex]
-                if appTempoString.count >= 2 {
-                    ///Remove to noteType = prefix in tempo setting
-                    let index = appTempoString.index(appTempoString.startIndex, offsetBy: 2)
-                    appTempoString = String(appTempoString[index...])
-                    let appTempo = Int(appTempoString)
-                    if let appTempo = appTempo {
-                        status += "and the metronome setting was \(metronome.getTempoString(appTempo))."
-                    }
-                }
-            }
-        }
-        return (getAllCorrect(), status)
+    @State var score:Score?
+    enum Section: String, CaseIterable {
+        case overview = "Rhythm Accuracy"
+        case details = "Dynamics Accuracy"
+        case settings = "Articulation Accuracy"
     }
 
-//    func getResultStatus() -> (Bool, String)? {
-//        if [.recordingScaleForAssessment, .recordScaleWithFileData].contains(self.result.fromProcess) {
-//            return recordStatus()
-//        }
-//        if self.result.fromProcess == .followingScale {
-//            return (true, self.result.userMessage)
-//        }
-//        return nil
-//    }
+    @State private var selectedSection: Section = .overview
     
+    private func openWebPage(urlString: String) {
+        guard let url = URL(string: urlString),
+              UIApplication.shared.canOpenURL(url) else {
+            return
+        }
+        UIApplication.shared.open(url)
+    }
+
+    struct ScaleSubmission: Codable {
+        let student: String
+        let scale: String
+        let score: Int
+        let timestamp: TimeInterval
+    }
+
+    func submitScaleScore() {
+        // 1. Replace with your actual Cloud Run URL
+        guard let url = URL(string: "https://fastapi-leaderboard-867324319098.us-central1.run.app/submit") else {
+            print("Invalid URL")
+            return
+        }
+
+        // 2. Create a sample submission
+        let submission = ScaleSubmission(
+            student: "David Murphy",
+            scale: "C Major HT",
+            score: Int.random(in: 80...99),
+            timestamp: Date().timeIntervalSince1970
+        )
+
+        // 3. Prepare JSON body
+        guard let jsonData = try? JSONEncoder().encode(submission) else {
+            print("Failed to encode JSON")
+            return
+        }
+
+        // 4. Create POST request
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+
+        // 5. Send request
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error:", error)
+                return
+            }
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("No HTTP response")
+                return
+            }
+
+            if httpResponse.statusCode == 200 {
+                print("✅ Submission successful")
+            } else {
+                print("❌ Submission failed: \(httpResponse.statusCode)")
+            }
+
+            if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                print("Response body:", responseString)
+            }
+        }
+
+        task.resume()
+    }
+
+    /// Uploads a string (HTML content) to a Google Cloud Storage signed URL
+    func uploadToSignedURL(signedURLString: String, htmlContent: String) {
+        guard let url = URL(string: signedURLString) else {
+            print("Invalid signed URL")
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("text/html", forHTTPHeaderField: "Content-Type")
+        request.httpBody = htmlContent.data(using: .utf8)
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Upload failed: \(error.localizedDescription)")
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Upload complete. Status code: \(httpResponse.statusCode)")
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    print("Response body: \(responseString)")
+                }
+            }
+        }
+
+        task.resume()
+    }
+
     var body: some View {
         VStack {
-//            HStack {
-//                //Text("  \(scalesModel.scale.getScaleName())  ").hilighted()
-//                if let status = getResultStatus() {
-//                    if status.0 {
-//                        Text("😊").font(.system(size: 45))
-//                    }
-//                    else {
-//                        Text("😔").font(.system(size: 45))
-//                    }
-//                    Text(status.1).padding()
-//                }
-//            }
-        }
-    }
-}
-
-struct TapDataView: View {
-    let scalesModel = ScalesModel.shared
-    var keyboardModel:PianoKeyboardModel
-        
-    func amplData(key:PianoKeyModel) -> String {
-        var asc:String = "______"
-        if let a = key.keyWasPlayedState.tappedAmplitudeAscending {
-            asc = String(format: "%.4f", a)
-        }
-        return asc
-    }
-    
-    func getColor(_ event:TapStatusRecord) -> Color {
-        //var color = event.ascending ? Color.gray : Color.green
-        var color = Color.gray
-//        if event.status == .pressNextScaleMatch {
-//            color = event.ascending ? .blue : .green
-//        }
-//        if event.status == .pressFollowingScaleMatch {
-//            color = .purple
-//        }
-//        if event.status  == .wrongButWaitForNext {
-//            color = .purple
-//        }
-//        if event.status == .pressWithoutScaleMatch {
-//            color = .red
-//        }
-//        if event.status == .farFromExpected {
-//            color = AppOrange
-//        }
-        if event.status == .belowAmplitudeFilter {
-            color = .brown
-        }
-        if event.status == .keyPressed {
-            color = event.ascending ? .purple : .green
-        }
-        if event.status == .waitForMore {
-            color = .cyan
-        }
-        return color
-    }
-    
-    func getColor(_ event:TapEvent) -> Color {
-        var color = Color.black
-        if Double(event.amplitude) < Settings.shared.amplitudeFilter {
-            color = .gray
-        }
-        else {
-            if event.status == .inScale {
-                color = .green
-            }
-            if event.status == .outOfScale {
-                color = .red
-            }
-        }
-        return color
-    }
-    
-    var body: some View {
-        VStack {
-            Text("Taps AmpFilter:\(Settings.shared.amplitudeFilter) RequiredConcurrent:\(Settings.shared.requiredConsecutiveCount)")
-                .foregroundColor(Color .blue).font(.title3)//.padding()
-            
-            ///Process raw taps
-            if let tapEventSet = scalesModel.tapEventSet {
-                ScrollView {
-                    ForEach(tapEventSet.events, id: \.self) { event in
-                        Text(event.tapData())
-                            .foregroundColor(getColor(event))
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
+            Text("Results").font(.title)
+            HStack {
+                Text("Score B+").font(.title2)
+                Text("Tempo ♩=80").font(.title2)
             }
 
-            ///Process events with statuses
-            if let tapStatusRecordSet = scalesModel.processedEventSet {
-                Text("\(tapStatusRecordSet.description)").foregroundColor(Color .blue).font(.title3)
-//
-//                ScrollView {
-//                    ForEach(tapEventSet.events, id: \.self) { event in
-//                        if getColor(event) == .black {
-//                            Text(event.tapData()).foregroundColor(getColor(event))
-//                        }
-//                        else {
-//                            Text(event.tapData()).foregroundColor(getColor(event)).bold()
-//                        }
-//                    }
-//                }
-                ScrollView {
-                    ForEach(tapStatusRecordSet.events, id: \.self) { event in
-                        if getColor(event) == .black {
-                            Text(event.tapData())
-                                .foregroundColor(getColor(event))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        } else {
-                            Text(event.tapData())
-                                .foregroundColor(getColor(event))
-                                .bold()
-                                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(spacing: 0) {
+                // Title Bar
+                HStack(spacing: 0) {
+                    ForEach(Section.allCases, id: \.self) { section in
+                        Button(action: {
+                            selectedSection = section
+                        }) {
+                            Text(section.rawValue)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(selectedSection == section ? Color.blue.opacity(0.2) : Color.clear)
+                                .border(Color.gray)
                         }
                     }
                 }
+                .background(Color.gray.opacity(0.1))
+                .border(Color.gray)
+                .padding()
+                
+                ZStack {
+                    switch selectedSection {
+                    case .overview:
+                        VStack {
+                            if let score = score {
+                                VStack(spacing: 0) {
+                                    if scalesModel.showStaff {
+                                        ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: true)
+                                        HStack {
+                                            VStack {
+                                                HStack {
+                                                    Text("   ←").foregroundColor(.red).bold().padding(.horizontal, 0)
+                                                    Text("♩  Ahead  ").padding(.horizontal, 0)
+                                                }
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                HStack {
+                                                    Text("   →").foregroundColor(.red).bold().padding(.horizontal, 0)
+                                                    Text("♩  Late  ").padding(.horizontal, 0)
+                                                }
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                            }
+                                            //.outlinedStyleView()
+                                            Spacer()
+                                        }
+                                    }
+                                }
+                                .padding(.bottom, spacingVertical)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        //.background(Color.yellow.opacity(0.3))
+                    case .details:
+                        Text("Details Content")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color.green.opacity(0.3))
+                    case .settings:
+                        Text("Settings Content")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color.orange.opacity(0.3))
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .border(Color.black)
+                .padding()
             }
-            if let eventSet = scalesModel.processedEventSet {
-                Text("Stats: \(eventSet.minMax())").foregroundColor(Color .blue).font(.title3)
+            
+            HStack {
+                Button("⭐️ Leader Board ⭐️") {
+                    openWebPage(urlString: "https://www.musicmastereducation.co.nz/ScalesAcademy/leaderboard2.html")
+                }
+                .font(.title)
+                .padding()
+                Button("Add Me To The Leader Board 👍") {
+                    submitScaleScore()
+                }
+                .font(.title)
+                .padding()
             }
+            Button("OK") {
+                callback(false)
+            }
+            .font(.title)
+            .padding()
+
+        }
+        .background(Color.white.opacity(1.0))
+        .cornerRadius(30)
+        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.blue, lineWidth: 3))
+        .shadow(radius: 10)
+        .onAppear {
+            //if let parentScore = parentScore {
+                self.score = parentScore
+                //Score(scale: parentScore.getScale(), key: parentScore.key, timeSignature: parentScore.timeSignature, linesPerStaff: 5, debugOn: false)
+                MIDIManager.shared.matchedNotes.applyToScore(score: score!)
+            //}
+        }
+        .onDisappear() {
+            MIDIManager.shared.matchedNotes.resetScore(score: score!)
         }
     }
 }

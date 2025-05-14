@@ -65,6 +65,30 @@ public class NoteStaffPlacement : Encodable {
     }
 }
 
+public class StaffNoteResultStatus {
+    var rhythmOffset:Int
+    init() {
+        let rx = [-1, 0 , 0, 0, 1]
+        let r = Int.random(in: 0...rx.count-1)
+        rhythmOffset = rx[r]
+    }
+    func ui() -> (CGFloat, Color) {
+        let offset = 12.0
+        if rhythmOffset == 0 {
+            return (0, Color.green)
+        }
+        else {
+            if rhythmOffset < 0 {
+                return (0 - offset, Color.red)
+            }
+            else {
+                return (offset, Color.red)
+            }
+        }
+    }
+
+}
+
 ///Contains the layout of how a note is displayed on a staff
 public class StaffNote : TimeSliceEntry, Comparable {
     static let MIDDLE_C = 60 //Midi pitch for C4
@@ -102,6 +126,7 @@ public class StaffNote : TimeSliceEntry, Comparable {
     static func isSameNote(note1:Int, note2:Int) -> Bool {
         return (note1 % 12) == (note2 % 12)
     }
+    var staffNoteResultStatus:StaffNoteResultStatus? = nil
     
     public init(timeSlice:TimeSlice, midi:Int, value:Double, handType:HandType, segments:[Int], writtenAccidental:Int?=nil) {
         self.midi = midi

@@ -98,15 +98,15 @@ public struct CalibrationView: View {
             Text(getScaleName()).padding()
 
             if let score = scalesModel.getScore() {
-                ScoreView(scale: ScalesModel.shared.scale, score: score).padding()
+                ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false).padding()
             }
             
             if !playingScale {
                 VStack {
                     Spacer()
-                    if let result = scalesModel.resultPublished {
-                        Text("Correct Notes:\(result.correctNotes) Errors:\(result.getTotalErrors())").font(.title3).padding().font(.title3).padding()
-                    }
+//                    if let result = scalesModel.resultPublished {
+//                        Text("Correct Notes:\(result.correctNotes) Errors:\(result.getTotalErrors())").font(.title3).padding().font(.title3).padding()
+//                    }
                     Text("Current Amplitude Filter:\(String(format: "%.4f", Settings.shared.amplitudeFilter))").font(.title3).padding()
                     Text("New Amplitude Filter:\(String(format: "%.4f", self.amplitudeFilter))").font(.title3).padding()
                     HStack {
@@ -137,13 +137,13 @@ public struct CalibrationView: View {
             }
 
             HStack {
-                if self.analysingResults {
-                    Spacer()
-                    if let results = ScalesModel.shared.resultPublished {
-                        Spacer()
-                        Text("Status: \(results.getTotalErrors())")
-                    }
-                }
+//                if self.analysingResults {
+//                    Spacer()
+//                    if let results = ScalesModel.shared.resultPublished {
+//                        Spacer()
+//                        Text("Status: \(results.getTotalErrors())")
+//                    }
+//                }
 
                 Spacer()
                 if playingScale {

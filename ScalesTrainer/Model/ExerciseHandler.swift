@@ -3,10 +3,7 @@ import AVFoundation
 import Combine
 import SwiftUI
 
-protocol ExerciseHandlerProtocol: AnyObject {
-    func applySerialLock() -> Bool
-}
-
+///A note required next in the scale
 class RequiredNote {
     let sequenceNum: Int
     let midi:Int
@@ -18,8 +15,10 @@ class RequiredNote {
         self.handType = handType
     }
 }
+
+
 ///Base class to handle exercises
-class ExerciseHandler : ExerciseHandlerProtocol  {
+class ExerciseHandler  {
     let exerciseType:RunningProcess
     
     var midisWithOneKeyPress: [Int] = []
@@ -65,6 +64,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
+        MIDIManager.shared.matchedNotes.start(hands: scale.getHandTypes())
         let numberToWin = scale.getScaleNoteCount()
         exerciseState.setNumberToWin(numberToWin)
         if scale.scaleMotion == .contraryMotion {
@@ -72,7 +72,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                 midisWithOneKeyPress.append(scale.getScaleNoteState(handType: .left, index: 0)!.midi)
             }
         }
-        soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midi:))
+        soundHandler.setFunctionToNotify(functionToNotify: self.notifiedOfSound(midiMsg:))
         cancelled = false
         soundHandler.start()
         lastKeyHilighted = nil
@@ -115,10 +115,14 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     }
     
     ///Called by sound handler on receipt of new sound
-    func notifiedOfSound(midi:Int) {
+    func notifiedOfSound(midiMsg:MIDIMessage) {
+        if midiMsg.messageType == MIDIMessage.MIDIStatus.noteOff {
+            MIDIManager.shared.matchedNotes.processNoteOff(midi: midiMsg.midi)
+            return
+        }
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
         ///But note based badge matching requires that both LH and RH of the scale are matched, so send the midi again.
-        
+        let midi = midiMsg.midi
         ///Filter out harmonics and overtones that cause wrong note notification.
         if !user.settings.useMidiSources {
             let margin = 3
@@ -134,11 +138,11 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         for call in 0..<callCount {
             if self.applySerialLock() {
                 accessQueue.sync {
-                    processSound(midi: midi, callNumber: call)
+                    processSound(callNumber: call, midi: midi, velocity: midiMsg.velocity)
                 }
             }
             else {
-                processSound(midi: midi, callNumber: call)
+                processSound(callNumber: call, midi: midi, velocity: midiMsg.velocity)
             }
         }
         self.noteNotificationNumber += 1
@@ -148,7 +152,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
     ///Then set the key on that keyboard playing. Also hilight the associated staff note.
     ///The specific exercise sets the callback on the key to have its code executed once the key is set playing.
     ///
-    public func processSound(midi:Int, callNumber:Int) {
+    public func processSound(callNumber:Int, midi:Int, velocity:Int) {
         ///Determine which hand the next expected note was played with if possible.
         var handThatPlayedNote:HandType?
         var handsToSearch:[HandType] = []
@@ -253,13 +257,13 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
         }
 
         if let handType = handThatPlayedNote, let keyboard = keyboardThatPlayedNote {
-            notifyPlayedKey(Keyboard: keyboard, midi: midi, handType: handType)
+            notifyPlayedKey(Keyboard: keyboard, midi: midi, handType: handType, velocity: velocity)
         }
     }
     
-    func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType) {
+    func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Int) {
         var expectedNotes:[RequiredNote] = []
-        func log(_ m:String) {
+        func log1(_ m:String) {
             print("=======\(self.noteNotificationNumber)", m)
             for n in expectedNotes {
                 print("  ", n.midi, "hand", n.handType, "matched", n.matched)
@@ -290,7 +294,7 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                 }
             }
         }
-        log("start")
+        //log("start")
         for expectedNote in expectedNotes {
             ///16Mar2025 - sometimes get wrong octave of note played so allow it
             let allowed:[Int]
@@ -348,35 +352,11 @@ class ExerciseHandler : ExerciseHandlerProtocol  {
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 awardChartBadge()
             }
+            MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: velocity)
             testForEndOfExercise()
         }
                 
-        log("end")
-        ///Check notes in both hands are matched before moving on, otherwise wait for the other hand
-//        if matchedCount == scale.hands.count {
-//            exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
-//            self.lastMatchedMidi = midi
-//            for requiredNote in requiredNotes {
-//                self.nextExpectedNoteForHandIndex[requiredNote.hand]! += 1
-//            }
-//            self.requiredNotes = []
-//            let index = nextExpectedNoteForHandIndex[hand!]!
-//            if index < scale.getScaleNoteCount() {
-//                if let scaleNote = scale.getScaleNoteState(handType: hand!, index: index) {
-//                    scalesModel.setSelectedScaleSegment(scaleNote.segments[0])
-//                }
-//            }
-//            if self.exerciseType == .followingScale {
-//                hilightKeys(scaleIndex: index)
-//            }
-//            awardChartBadge()
-//            _ = testForEndOfExercise()
-//        }
-//        else {
-//            if midi != lastMatchedMidi {
-//                testForFailExercise(midi: midi, requiredNotes: self.requiredNotes)
-//            }
-//        }
+        //log("end")
     }
         
     func awardChartBadge() {
