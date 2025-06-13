@@ -187,16 +187,29 @@ struct ResultView: View {
             }
             
             HStack {
-                Button("⭐️ Leader Board ⭐️") {
-                    openWebPage(urlString: "https://www.musicmastereducation.co.nz/ScalesAcademy/leaderboard2.html")
+                Spacer()
+                Image("leaderboard")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 150)
+                VStack {
+                    HStack {
+                        Button("Leader Board") {
+                            openWebPage(urlString: "https://www.musicmastereducation.co.nz/ScalesAcademy/leaderboard2.html")
+                        }
+                        .font(.title)
+                        Spacer()
+                    }
+                    HStack {
+                        Button("Add Me To The Leader Board") {
+                            submitScaleScore()
+                        }
+                        .font(.title)
+                        Spacer()
+                    }
                 }
-                .font(.title)
-                .padding()
-                Button("Add Me To The Leader Board 👍") {
-                    submitScaleScore()
-                }
-                .font(.title)
-                .padding()
+                Spacer()
+                
             }
             Button("OK") {
                 callback(false)

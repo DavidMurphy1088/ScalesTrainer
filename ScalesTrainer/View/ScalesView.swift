@@ -808,22 +808,15 @@ struct ScalesView: View {
             }
             self.directionIndex = 0
             self.numberOfOctaves = scalesModel.scale.octaves
-            if let tempoIndex = scalesModel.tempoSettings.firstIndex(where: { $0.contains("\(scalesModel.scale.minTempo)") }) {
+            scalesModel.setTempos(scale: scalesModel.scale)
+
+            if let tempoIndex = scalesModel.tempoSettings.firstIndex(of: scalesModel.scale.minTempo) {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)
             exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
-            
-//            if UIDevice.current.userInterfaceIdiom == .phone {
-//                if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.octaves > 1 {
-//                    OrientationManager.lockOrientation(.landscape, andRotateTo: .landscapeLeft)
-//                }
-//                else {
-//                    OrientationManager.lockOrientation(.portrait, andRotateTo: .portrait)
-//                }
-//            }
         }
         
         .onDisappear {

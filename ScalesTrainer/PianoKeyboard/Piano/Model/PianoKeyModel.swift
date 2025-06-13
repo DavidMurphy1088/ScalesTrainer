@@ -41,10 +41,29 @@ public class PianoKeyModel: Identifiable, Hashable {
     var keyWasPlayedState:PianoKeyPlayedState
     
     ///The note in the scale to which the key currently maps. The mapping changes between ascending and descending
-    private(set) var scaleNoteState:ScaleNoteState?
+    private var _scaleNoteState: ScaleNoteState?
+    private let accessQueue1 = DispatchQueue(label: "com.musicmastereducation.scalesacademy.PianoKeyModel.state")
+    var scaleNoteState: ScaleNoteState? {
+        get {
+            return accessQueue1.sync { _scaleNoteState }
+        }
+        set {
+            accessQueue1.sync { _scaleNoteState = newValue }
+        }
+    }
     
     /// The key was just played and its note is sounding
-    var keyIsSounding = false
+    var _keyIsSounding = false
+    private let accessQueue2 = DispatchQueue(label: "com.musicmastereducation.scalesacademy.PianoKeyModel.sounding")
+    var keyIsSounding: Bool {
+        get {
+            return accessQueue2.sync { _keyIsSounding }
+        }
+        set {
+            accessQueue2.sync { _keyIsSounding = newValue }
+        }
+    }
+
     /// How long the key stays hilighed when played
     //swcdstatic let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
     static let keySoundingSeconds:Double = 0.8 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :

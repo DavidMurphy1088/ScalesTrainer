@@ -81,8 +81,9 @@ public class ScalesModel : ObservableObject {
     
     var handTypes = ["Right", "Left"]
 
-    public let tempoSettings:[String]
-    
+    //public var tempoSettings:[String]
+    public var tempoSettings:[Int]
+
     @Published var tempoChangePublished = false
     private var selectedTempoIndex = 0 //5 //60=2
 
@@ -234,13 +235,27 @@ public class ScalesModel : ObservableObject {
     init(_ ctx:String) {
         self.scale = Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0],
                           minTempo: 90, dynamicTypes: [.mf], articulationTypes: [.legato])
+//        if scale.timeSignature.top == 3 {
+//            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
+//        }
+//        else {
+//            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
+//        }
+        self.id = UUID()
+        self.tempoSettings = []
+    }
+    
+    func setTempos(scale:Scale) {
         if scale.timeSignature.top == 3 {
-            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
+            self.tempoSettings = [42, 44, 46, 48, 50, 52, 54, 56, 58, 60]
         }
         else {
-            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
+            self.tempoSettings = [40, 50, 60, 70, 80, 90, 100, 110, 120, 130]
         }
-        self.id = UUID()
+        if !self.tempoSettings.contains(scale.minTempo) {
+            self.tempoSettings.append(scale.minTempo)
+            tempoSettings.sort()
+        }
     }
     
     func exerciseCompletedNotify() {
@@ -533,8 +548,9 @@ public class ScalesModel : ObservableObject {
     ///Get tempo for 1/4 note
     func getTempo(_ ctx: String) -> Int {
         var selected = self.tempoSettings[self.selectedTempoIndex]
-        selected = String(selected)
-        return Int(selected) ?? 60
+        //selected = String(selected)
+        //return Int(selected) ?? 60
+        return selected
     }
     
     ///Add the required scales notes to the score as timeslices.

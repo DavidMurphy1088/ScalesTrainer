@@ -112,9 +112,6 @@
     "♩  Late  " : {
 
     },
-    "⭐️ Leader Board ⭐️" : {
-
-    },
     "𝄞" : {
 
     },
@@ -142,7 +139,7 @@
     "Activities" : {
       "comment" : "Menu"
     },
-    "Add Me To The Leader Board 👍" : {
+    "Add Me To The Leader Board" : {
 
     },
     "Add New User" : {
@@ -441,6 +438,9 @@
           }
         }
       }
+    },
+    "Leader Board" : {
+
     },
     "Left Hand" : {
       "extractionState" : "manual",

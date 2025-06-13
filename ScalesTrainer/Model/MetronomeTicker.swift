@@ -7,19 +7,27 @@ import AudioKitEX
 
 class MetronomeTicker : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
-    var callNum = 0
     var metronomeAudioPlayerLow:AVAudioPlayer?
-    var tickNum = 0
     
+    //var tickNum = 0
+    var _tickNum = 0
+    private let accessQueue = DispatchQueue(label: "com.musicmastereducation.scalesacademy.metronometicker.tickNum")
+    var tickNum: Int {
+        get {
+            return accessQueue.sync { _tickNum }
+        }
+        set {
+            accessQueue.sync {_tickNum = newValue}
+        }
+    }
+
     init() {
     }
     
     func metronomeStart() {
         metronomeAudioPlayerLow = audioManager.loadAudioPlayer(name: "metronome_mechanical_low")
         metronomeAudioPlayerLow?.volume = 0.1
-        //metronomeAudioPlayerHigh = audioManager.loadAudioPlayer(name: "metronome_mechanical_high")
-        //metronomeAudioPlayerHigh?.volume = 0.2
-        tickNum = 0
+        _tickNum = 0
     }
     
     func metronomeTickNotification(timerTickerNumber: Int)  {
@@ -33,7 +41,6 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
                 player.play()
             }
             self.tickNum += 1
-            //metronome.setTimerTickerCountPublished(count: self.tickNum)
         }
     }
     

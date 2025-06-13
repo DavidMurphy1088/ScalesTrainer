@@ -21,24 +21,32 @@ enum MetronomeStatus {
 class Metronome:ObservableObject {
     public static let shared = Metronome()
     
-    private(set) var status:MetronomeStatus
-    @Published private(set) var statusPublished:MetronomeStatus
-    func setStatus(status:MetronomeStatus) {
-        self.status = status
-        DispatchQueue.main.async {
-            self.statusPublished = status
+   @Published private(set) var statusPublished:MetronomeStatus
+    var _status = MetronomeStatus.notStarted
+    private let accessQueue = DispatchQueue(label: "com.musicmastereducation.scalesacademy.metronome.status")
+    var status: MetronomeStatus {
+        get {
+            return accessQueue.sync { _status }
+        }
+        set {
+            accessQueue.sync {
+                _status = newValue
+                DispatchQueue.main.async {
+                    self.statusPublished = self._status
+                }
+            }
         }
     }
-
+    func setStatus(status:MetronomeStatus) {
+        self.status = status
+    }
+    
     private var standbyCount:Int?
 
     private var leadInCount:Int?
     @Published private(set) var leadInCountdownPublished:Int? = nil
 
     @Published var tickedCountPublished = 0
-    
-    //private var isTicking:Bool
-    //@Published var isTickingPublished:Bool
 
     public var threadRunCount = 0
     private let scalesModel = ScalesModel.shared
@@ -47,12 +55,10 @@ class Metronome:ObservableObject {
     private let ticker:MetronomeTicker
     
     init() {
-        self.status = .notStarted
+        self._status = .notStarted
         self.statusPublished = .notStarted
-        //self.isTicking = false
         self.ticker = MetronomeTicker()
         self.ticker.metronomeStart()
-        //self.isTickingPublished = false
     }
     
     func getNotesPerClick() -> Int{
