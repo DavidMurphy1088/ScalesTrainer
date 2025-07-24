@@ -53,6 +53,7 @@ enum RunningProcess {
     }
 }
 
+
 public class ScalesModel : ObservableObject {
     static public var shared = ScalesModel("static init")
     private let id:UUID
