@@ -22,6 +22,10 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         hasher.combine(id) // Combine the `id` property into the hasher
     }
     
+    func debug() {
+        print("===== User", self.name, self.board, "Grade:", self.grade)
+    }
+    
     ///User settings irrespective of the grade the student is in.
     class UserSettings : Encodable, Decodable {
         //var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]

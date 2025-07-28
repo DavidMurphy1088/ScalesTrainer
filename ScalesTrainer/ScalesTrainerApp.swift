@@ -13,7 +13,7 @@ import UIKit
 
 enum LaunchScreenStep {
     case firstStep
-    case secondStep
+    //case secondStep
     case finished
 }
 
@@ -21,49 +21,15 @@ final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep = .firstStep
     @MainActor func dismiss() {
         Task {
-            state = .secondStep
-            sleep(1)
+            //state = .secondStep
+            //sleep(1)
             self.state = .finished
         }
     }
 }
 
-class Opacity : ObservableObject {
-    @Published var imageOpacity: Double = 0.0
-    var launchTimeSecs:Double
-    var timer:Timer?
-    var ticksPerSec = 30.0
-    var duration = 0.0
-    
-    init(launchTimeSecs:Double) {
-        self.launchTimeSecs = launchTimeSecs
-        let timeInterval = 1.0 / ticksPerSec
-        timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true) { _ in
-            DispatchQueue.main.async {
-                let opacity = sin((self.duration * Double.pi * 1.0) / self.launchTimeSecs)
-                self.imageOpacity = opacity
-                if self.duration >= self.launchTimeSecs {
-                    self.timer?.invalidate()
-                }
-                self.duration += timeInterval
-            }
-        }
-    }
-}
-
 struct LaunchScreenView: View {
-    static var staticId = 0
-    var id = 0
-    @ObservedObject var opacity:Opacity
-    @State var durationSeconds:Double
     @EnvironmentObject private var launchScreenState: LaunchScreenStateManager // Mark 1
-    
-    init(launchTimeSecs:Double) {
-        self.opacity = Opacity(launchTimeSecs: launchTimeSecs)
-        self.durationSeconds = launchTimeSecs
-        self.id = LaunchScreenView.staticId
-        LaunchScreenView.staticId += 1
-    }
 
     func appVersion() -> String {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
@@ -82,44 +48,27 @@ struct LaunchScreenView: View {
         return imageSize
     }
     
-    @ViewBuilder
-    private var image: some View {  // Mark 3
-        GeometryReader { geo in
-            //hack: for some reason there are 2 instances of LaunchScreenView. The first starts showing too early ??
-            VStack {
-                ///Image causes title to be truncated on phone
+    var body: some View {
+        VStack {
+            GeometryReader { geo in
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        let imageSize = getImageSize(geo: geo)
-                        Image("GrandPiano")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: imageSize )
-                                .cornerRadius(imageSize * 0.1)
-                                .opacity(self.opacity.imageOpacity)
+                        Image("figma_logo_vertical")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: getImageSize(geo: geo))
                         Spacer()
+                    }
+                    VStack(alignment: .center) {
+                        Text("© 2025 Musicmaster Education LLC.")
+                        Text("Version \(appVersion())")
                     }
                     Spacer()
                 }
-                VStack(alignment: .center) {
-                    Text("Scales Academy").font(.title)
-                    Text("")
-                    Text("© 2025 Musicmaster Education LLC.")//.font(.title3)
-                    //.position(x: geo.size.width * 0.5, y: geo.size.height * 0.85)
-                    //.opacity(self.opacity.imageOpacity)
-                    Text("Version \(appVersion())")
-                    Text("")
-                    Text("")
-                }
             }
-        }
-    }
-    
-    var body: some View {
-        ZStack {
-            image
+            .background(Figma.background)
         }
     }
 }
@@ -230,22 +179,26 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         return true
     }
     
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-//        if UIDevice.current.userInterfaceIdiom == .phone {
-//            //return [.portrait]
-//            return [.portrait, .landscapeLeft, .landscapeRight]
-//        } else {
-//            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
-//        }
-        
-        //return orientationLock
-        return UIInterfaceOrientationMask.landscape
-    }
+//    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+////        if UIDevice.current.userInterfaceIdiom == .phone {
+////            //return [.portrait]
+////            return [.portrait, .landscapeLeft, .landscapeRight]
+////        } else {
+////            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
+////        }
+//        
+//        //return orientationLock
+//        return UIInterfaceOrientationMask.landscape
+//    }
 }
 
 ///------------------------------------------------------------
 
 class ViewManager: ObservableObject {
+    static let TAB_WELCOME = 100
+    static let TAB_ACTIVITES = 10
+    static let TAB_USERS = 20
+
     static var shared = ViewManager()
     @Published var selectedTab: Int = 0
     @Published var publishedUser: User?
@@ -257,15 +210,16 @@ class ViewManager: ObservableObject {
         let settings  = Settings.shared
         settings.load()
         Settings.shared.load()
-        DispatchQueue.main.async {
-            if Settings.shared.aValidUserIsDefined() {
-                self.publishedUser = settings.getCurrentUser()
-                self.selectedTab = MainContentView.TAB_ACTIVITES
-            }
-            else {
-                self.selectedTab = MainContentView.TAB_USERS
-            }
-        }
+        self.selectedTab = 0
+//        DispatchQueue.main.async {
+//            if Settings.shared.aValidUserIsDefined() {
+//                self.publishedUser = settings.getCurrentUser()
+//                self.selectedTab = TabContainerView.TAB_ACTIVITES
+//            }
+//            else {
+//                self.selectedTab = TabContainerView.TAB_USERS
+//            }
+//        }
     }
     
     func updatePublishedUser() {
@@ -283,10 +237,8 @@ class ViewManager: ObservableObject {
     }
 }
 
-struct MainContentView: View {
+struct TabContainerView: View {
     @ObservedObject private var viewManager = ViewManager.shared
-    static let TAB_USERS = 10
-    static let TAB_ACTIVITES = 20
     
     init() {
         // Customize tab bar appearance (System-wide)
@@ -296,11 +248,6 @@ struct MainContentView: View {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground() // Ensures the tab bar is solid
         appearance.backgroundColor = UIColor.white //
-        
-//        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = selectedColor
-//        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor, .font: UIFont.systemFont(ofSize: 12, weight: .bold)] // **Bold, larger text**
-//        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = unselectedColor
-//        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: unselectedColor, .font: UIFont.systemFont(ofSize: 12, weight: .medium)]
 
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
@@ -320,7 +267,8 @@ struct MainContentView: View {
             MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
         }
     }
-        var body: some View {
+    
+    var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if true && Settings.shared.isDeveloperMode1() {
                 if Settings.shared.aValidUserIsDefined() {
@@ -335,6 +283,30 @@ struct MainContentView: View {
                     //}
                 }
             }
+                        
+            if Settings.shared.aValidUserIsDefined() {
+                ActivitiesView()
+                        .tabItem {
+                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                        }
+                        .tag(ViewManager.TAB_ACTIVITES)
+                        .environmentObject(viewManager)
+                    
+                SettingsView(user:Settings.shared.getCurrentUser())
+                    .tabItem {
+                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                    }
+                    .tag(30)
+                    .environmentObject(viewManager)
+                
+                LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+                    .tabItem {
+                        Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+                    }
+                    .tag(40)
+                    .environmentObject(viewManager)
+                //}
+            }
             
             UserListView()
                 .tabItem {
@@ -344,41 +316,19 @@ struct MainContentView: View {
                         Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
                     }
                 }
-                .tag(MainContentView.TAB_USERS)
+                .tag(ViewManager.TAB_USERS)
                 .environmentObject(viewManager)
             
-            if Settings.shared.aValidUserIsDefined() {
-                if ViewManager.shared.publishedUser != nil {
-                    ActivitiesView()
-                        .tabItem {
-                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                        }
-                        .tag(MainContentView.TAB_ACTIVITES)
-                        .environmentObject(viewManager)
-                    
-                    SettingsView(user:Settings.shared.getCurrentUser())
-                        .tabItem {
-                            Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                        }
-                        .tag(30)
-                        .environmentObject(viewManager)
-                    
-                    LicenseManagerView(contentSection: ContentSection(), email: "email.com")
-                        .tabItem {
-                            Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
-                        }
-                        .tag(40)
-                        .environmentObject(viewManager)
-                }
-            }
+//            FeatureReportView()
+//                .tabItem {
+//                    Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
+//                }
+//                .tag(50)
+//                .environmentObject(viewManager)
             
-            FeatureReportView()
-                .tabItem {
-                    Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
-                }
-                .tag(50)
-                .environmentObject(viewManager)
-            
+            WelcomeView()
+                .tag(ViewManager.TAB_WELCOME)
+
             if Settings.shared.isDeveloperMode1() {
                 MIDIView()
                     .tabItem {
@@ -428,10 +378,12 @@ struct MainContentView: View {
         }      
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
-        //.ignoresSafeArea(.keyboard, edges: .bottom)
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)
         .onAppear {
+            ///In an iOS app using CoreMIDI, you should check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
+            MIDIManager.shared.setupMIDI()
+
             if Settings.shared.isDeveloperMode1() {
                 self.setupDev()
                 ViewManager.shared.setTab(tab: 1)
@@ -460,23 +412,37 @@ struct ScalesTrainerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            VStack {
-                if launchScreenState.state == .finished || Settings.shared.isDeveloperMode1() {
-                    MainContentView()
-                }
-                else {
+            if false && Settings.shared.isDeveloperMode1() {
+                WelcomeView()
+                //TabContainerView()
+            }
+            else {
+                VStack {
                     if launchScreenState.state != .finished {
-                        LaunchScreenView(launchTimeSecs: self.launchTimeSecs)
+                        LaunchScreenView()
+                    }
+                    else {
+                        //if Settings.shared.hasUsers() {
+                            TabContainerView()
+                        //}
+                        //else {
+                            //WelcomeView()
+                        //}
                     }
                 }
-            }
-            .onAppear {
-                ///In an iOS app using CoreMIDI, you should check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
-                MIDIManager.shared.setupMIDI()
-            }
-            .task {
-                DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
-                    self.launchScreenState.dismiss()
+                .onAppear {
+                    if Settings.shared.hasUsers() {
+                        ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
+                    }
+                    else {
+                        ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
+                    }
+                }
+
+                .task {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
+                        self.launchScreenState.dismiss()
+                    }
                 }
             }
         }

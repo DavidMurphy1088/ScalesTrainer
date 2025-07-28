@@ -7,6 +7,9 @@
     " " : {
 
     },
+    "  " : {
+
+    },
     "                  " : {
 
     },
@@ -81,6 +84,9 @@
     "%@ Badges" : {
 
     },
+    "%@ Grade Selection" : {
+
+    },
     "%@ Grade-%@" : {
       "localizations" : {
         "en" : {
@@ -116,9 +122,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "😊 Welcome 😊" : {
 
     },
     "😊 You  Won %@" : {
@@ -232,7 +235,7 @@
     "Disconnect All MIDI Sources" : {
 
     },
-    "Email" : {
+    "Done" : {
 
     },
     "Email %@" : {
@@ -273,12 +276,6 @@
 
     },
     "Firebase Write" : {
-
-    },
-    "First name" : {
-
-    },
-    "First Name" : {
 
     },
     "Follow the Scale" : {
@@ -483,6 +480,9 @@
     "Motion:" : {
 
     },
+    "name" : {
+
+    },
     "New Amplitude Filter:%@" : {
 
     },
@@ -492,13 +492,13 @@
     "No name or grade has been setup." : {
 
     },
+    "Note: Only one grade can be active at one time." : {
+
+    },
     "Octaves:" : {
 
     },
     "OK" : {
-
-    },
-    "Optional Email" : {
 
     },
     "Piano Calibration" : {
@@ -517,6 +517,12 @@
       }
     },
     "Play The Scale" : {
+
+    },
+    "Please enter your name:" : {
+
+    },
+    "Please select yout grade" : {
 
     },
     "Please setup your name and grade." : {
@@ -587,6 +593,9 @@
         }
       }
     },
+    "Save" : {
+
+    },
     "Save Configuration" : {
 
     },
@@ -643,6 +652,9 @@
 
     },
     "Select" : {
+
+    },
+    "Select Grade" : {
 
     },
     "Select Value" : {
@@ -843,7 +855,19 @@
     "We hope you enjoy your experience using Scales Academy." : {
 
     },
+    "Welcome" : {
+
+    },
+    "Welcome to " : {
+
+    },
+    "Welcome, let’s set up your account" : {
+
+    },
     "Your current subscription is " : {
+
+    },
+    "Your Grade" : {
 
     }
   },

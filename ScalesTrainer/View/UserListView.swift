@@ -126,9 +126,9 @@ struct UserListView: View {
                 }
                 .frame(height: UIScreen.main.bounds.height * 0.70)
                 .outlinedStyleView()
-                .navigationDestination(item: $selectedUserForDetailing) { user in
-                    UserDetailsView(user: user, listUpdated: $listUpdated)
-                }
+//                .navigationDestination(item: $selectedUserForDetailing) { user in
+//                    UserDetailsView(user: user, listUpdated: $listUpdated)
+//                }
                 Spacer()
             }
             .padding()

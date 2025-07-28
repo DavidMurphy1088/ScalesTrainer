@@ -1,10 +1,104 @@
 import SwiftUI
 
-let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
+class Figma {
+    static let background = Color(rgbHex: "#FEFEFE")
+    //static let backgroundColor = UIColor(red: 0.996, green: 0.996, blue: 0.996, alpha: 1)
+    struct AppButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .background(background)
+        }
+    }
+}
+
+extension Color {
+    init(rgbHex: String) {
+        var hex = rgbHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        if hex.count == 3 {
+            // Convert shorthand hex (e.g., F90 → FF9900)
+            hex = hex.map { "\($0)\($0)" }.joined()
+        }
+        
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+
+        let r = Double((int >> 16) & 0xFF) / 255
+        let g = Double((int >> 8) & 0xFF) / 255
+        let b = Double(int & 0xFF) / 255
+
+        self.init(red: r, green: g, blue: b)
+    }
+}
+
+struct FigmaNavLink<Label: View, Destination: View>: View {
+    var destination: Destination
+    var font: Font
+    var label: () -> Label
+
+    init(
+        destination: Destination,
+        font: Font, // = .title2, // default value
+        @ViewBuilder label: @escaping () -> Label
+    ) {
+        self.destination = destination
+        self.font = font
+        self.label = label
+    }
+
+    var body: some View {
+        NavigationLink(destination: destination) {
+            label()
+            .font(font)
+            .foregroundColor(.black)
+            .padding()
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white)
+                        .shadow(color: .black.opacity(0.7), radius: 3, x: 4, y: 4)
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.black, lineWidth: 1)
+                }
+            )
+        }
+    }
+}
+
+struct FigmaButton<Label: View>: View {
+    //var font: Font
+    var label: () -> Label
+    var action: () -> Void
+
+    init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
+    //init(font: Font = .title2, action: @escaping () -> Void) {
+        self.action = action
+        //self.font = font
+        self.label = label
+    }
+
+    var body: some View {
+        Button(action: action) {
+            label()
+                //.font(font)
+                .foregroundColor(.black)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.7), radius: 3, x: 4, y: 4)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.black, lineWidth: 1)
+                    }
+                )
+        }
+    }
+}
 
 ///Equivalent of Swiftui Color.green for canvas drawing
 //let AppGreen = Color(red: 0.20392156, green: 0.7803921, blue: 0.349019607)
 //Red: 0.20392156862745098, Green: 0.7803921568627451, Blue: 0.34901960784313724, Alpha: 1.0
+let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
 
 class UIGlobals {
     static let shared = UIGlobals()

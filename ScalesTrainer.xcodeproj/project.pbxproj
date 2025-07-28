@@ -30,7 +30,6 @@
 		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */ = {isa = PBXBuildFile; fileRef = 793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */; };
-		793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
 		7943AE622BD653AF00E94AC7 /* SpriteKitAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */; };
 		794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC42C2B73770001297E /* ScaleIntervals.swift */; };
@@ -63,9 +62,11 @@
 		797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */; };
 		797013962BEE3E45009F85D6 /* StaffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013912BEE3E45009F85D6 /* StaffView.swift */; };
 		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
+		797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797F49FF2E33887F00E04DD9 /* WelcomeView.swift */; };
 		79891CD92D38D278009405C3 /* ScoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79891CD82D38D278009405C3 /* ScoreTest.swift */; };
 		799381772C755F2300734FDE /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelView.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
+		79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79980DD62E34CDFE00CF242B /* UserEditView.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
@@ -172,7 +173,6 @@
 		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
-		793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMusicBoardView.swift; sourceTree = "<group>"; };
 		794180902D40E2E900FE149B /* ScalesStar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScalesStar.entitlements; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
 		7943AE612BD653AF00E94AC7 /* SpriteKitAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteKitAudio.swift; sourceTree = "<group>"; };
@@ -205,10 +205,12 @@
 		797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreEntriesView.swift; sourceTree = "<group>"; };
 		797013912BEE3E45009F85D6 /* StaffView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffView.swift; sourceTree = "<group>"; };
 		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
+		797F49FF2E33887F00E04DD9 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		79891CCF2D38D21F009405C3 /* ScalesStarTests1.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests1.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79891CD82D38D278009405C3 /* ScoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreTest.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		79980DD62E34CDFE00CF242B /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
@@ -506,7 +508,6 @@
 				79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
-				793ED01B2C5F7D540068278B /* SelectMusicBoardView.swift */,
 				799381782C75D1A400734FDE /* SettingsView.swift */,
 				799381762C755F2300734FDE /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
@@ -515,7 +516,9 @@
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
+				79980DD62E34CDFE00CF242B /* UserEditView.swift */,
 				79CF5D712BEE46C900454BB6 /* UserListView.swift */,
+				797F49FF2E33887F00E04DD9 /* WelcomeView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -835,6 +838,7 @@
 				79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
+				79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */,
 				79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
@@ -859,9 +863,9 @@
 				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
 				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
 				79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */,
-				793ED01C2C5F7D540068278B /* SelectMusicBoardView.swift in Sources */,
 				79AFF13C2DD490D10049479F /* LeaderBoard.txt in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
+				797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
 				791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,

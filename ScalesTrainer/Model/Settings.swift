@@ -20,6 +20,14 @@ class Settings : Encodable, Decodable {
         self.amplitudeFilter = 0.04
     }
     
+    func saveUser(user: User) {
+        if let user = getUser(name: user.name) {
+            deleteUser(by: user.id)
+        }
+        addUser(user: user)
+        save()
+    }
+    
     func aValidUserIsDefined() -> Bool {
         if Settings.shared.users.count == 0 {
             return false
@@ -73,6 +81,10 @@ class Settings : Encodable, Decodable {
         }
     }
     
+    func hasUsers() -> Bool {
+        return self.users.count > 0
+    }
+    
     func addUser(user:User) {
         self.users.append(user)
     }
@@ -106,7 +118,7 @@ class Settings : Encodable, Decodable {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
                 let currentUser = self.getCurrentUser()
-                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name)")
+                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
                 AppLogger.shared.reportError(self, "save cannot form JSON")
