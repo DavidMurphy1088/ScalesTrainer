@@ -1,5 +1,48 @@
 import SwiftUI
 
+// =========== Toolbar =======
+
+struct CommonToolbarModifier: ViewModifier {
+    let title: String
+    let onBack: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        content
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        Image("figma_icon")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 40)
+                            .padding()
+                        Text(title)
+                            .font(.title)
+                    }
+                }
+
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarTitleView(screenName: title)
+                        .padding(.vertical, 0)
+                }
+            }
+    }
+}
+extension View {
+    func commonToolbar(
+        title: String,
+        //showBackButton: Bool = true,
+        //backTitle: String = "Back",
+        onBack: (() -> Void)? = nil
+    ) -> some View {
+        self.modifier(CommonToolbarModifier(
+            title: title,
+            onBack: onBack
+        ))
+    }
+}
+
+//========== Figma
 class Figma {
     static let background = Color(rgbHex: "#FEFEFE")
     //static let backgroundColor = UIColor(red: 0.996, green: 0.996, blue: 0.996, alpha: 1)
@@ -153,41 +196,34 @@ extension Button {
 }
 
 
-/// Title view at the top of every screen
-struct ScreenTitleView: View {
-    @ObservedObject var viewManager = ViewManager.shared
+/// Title view at the top of every nav stack
+struct ToolbarTitleView: View {
     let screenName: String
-
-    func getUserTitle() -> String {
-        var title = ""
-        if let user = viewManager.publishedUser {
-            title = user.getTitle()
-        }
-        return title
-    }
     
     var body: some View {
-        HStack() {
-            let screenNameTitle = screenName + (getUserTitle().isEmpty ? "" : " - ")
-            Text(screenNameTitle)
-                .font(UIDevice.current.userInterfaceIdiom == .phone ? .title2 : .largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-
-            if let user = viewManager.publishedUser {
-                Text(getUserTitle())
-                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title2 : .largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+        HStack {
+            HStack {
+                Text("?")
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                Rectangle()
+                    .fill(Color.gray)
+                    .frame(width: 1, height: 50)
+                ZStack {
+                    Circle()
+                        .fill(Color(red: 156 / 255.0, green: 215 / 255.0, blue: 98 / 255.0))
+                        .frame(width: 50, height: 50)
+                    Text("J")
+                }
+                VStack {
+                    Text("Julia")
+                    Text("Trinity Grade 1").font(.caption)
+                }
             }
         }
-        .padding(.vertical, 0) // Keeps height minimal
-        .frame(maxWidth: .infinity) // Makes it take full device width
-        .background(
-            LinearGradient(colors: [Color.purple.opacity(0.6), Color.blue.opacity(0.6)],
-                           startPoint: .topLeading, endPoint: .bottomTrailing)
-        )
-        //.border(Color.green, width: 1)
     }
 }
 

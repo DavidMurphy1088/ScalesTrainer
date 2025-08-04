@@ -104,7 +104,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             let maxAccidentalLoopbackCustomisation = ScaleCustomisation(maxAccidentalLookback: 1)
             
             ///Row 1
-            if false && Settings.shared.isDeveloperMode1() {
+            if false && Settings.shared.isDeveloperModeOn() {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
@@ -583,8 +583,6 @@ class MusicBoard : Identifiable, Codable, Hashable {
         var result:[MusicBoard] = []
         result.append(MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"))
         result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the\nRoyal Schools of Music", imageName: "abrsm"))
-        //result.append(MusicBoard(name: "KOMCA", fullName: "Korea Music Association", imageName: "Korea_SJAlogo"))
-        //result.append(MusicBoard(name: "中央", fullName: "Central Conservatory of Music", imageName: "Central_Conservatory_of_Music_logo"))
         result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music\nExaminations Board", imageName: "nzmeb"))
         result.append(MusicBoard(name: "AMEB", fullName: "Australian Music\nExaminations Board", imageName: "AMEB"))
         return result

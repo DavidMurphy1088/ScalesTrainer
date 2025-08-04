@@ -197,7 +197,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     }
     
     public func emailIsLicensed(email:String) -> Bool {
-        if Settings.shared.isDeveloperMode1() {
+        if Settings.shared.isDeveloperModeOn() {
             return true
         }
         let toCheck:String = email.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -650,7 +650,7 @@ public struct LicenseManagerView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                ScreenTitleView(screenName: "Licence Subscriptions").padding(.vertical, 0)
+                ToolbarTitleView(screenName: "Licence Subscriptions").padding(.vertical, 0)
                 DetailedLicensesView()
                     //.screenBackgroundStyle()
                     .padding()

@@ -307,7 +307,7 @@ struct CellView: View {
             starView()
             Spacer()
             badgeView()
-            if Settings.shared.isDeveloperMode1() {
+            if Settings.shared.isDeveloperModeOn() {
                 Button(action: {
                     if !isCorrectSet() {
                         ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
@@ -357,7 +357,7 @@ struct CellView: View {
     }
 }
 
-struct PracticeChartView: View {
+struct PracticeChartViewOld: View {
     @Environment(\.dismiss) var dismiss
     let user:User
     @State private var practiceChart:PracticeChart
@@ -399,7 +399,7 @@ struct PracticeChartView: View {
     
     var body: some View {
         VStack(spacing: 0)  {
-            ScreenTitleView(screenName: "Practice Chart").padding(.vertical, 0)
+            //ScreenTitleView(screenName: "Practice Chart").padding(.vertical, 0)
             VStack {
                 ///Tried using GeometryReader since it supposedly reacts to orientation changes.
                 ///But using it casues all the child view centering not to work
@@ -533,7 +533,7 @@ struct PracticeChartView: View {
         .onAppear() {
             self.minorScaleTypes = self.practiceChart.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = practiceChart.minorScaleType
-            if Settings.shared.isDeveloperMode1() {
+            if Settings.shared.isDeveloperModeOn() {
                 Firebase.shared.readAllScales(board: self.practiceChart.board, grade:self.practiceChart.grade) { scalesAndScores in
                     self.scalesInChart = scalesAndScores.map { $0.0 }
                 }
@@ -552,3 +552,20 @@ struct PracticeChartView: View {
     }
 }
 
+struct PracticeChartView: View {
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        VStack {
+            Text("")
+            Text("")
+            Text("...Practice Chart somewhere here...")
+            Spacer()
+        }
+        .commonToolbar(
+            title: "Practice Chart",
+            //showBackButton: true,
+            //backTitle: "Activities",
+            onBack: { dismiss() }
+        )
+    }
+}

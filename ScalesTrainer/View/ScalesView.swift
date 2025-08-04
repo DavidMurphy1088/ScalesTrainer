@@ -265,7 +265,7 @@ struct ScalesView: View {
                         Button(action: {
                             scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
-                            self.exerciseState.setExerciseState("Follow", settings.isDeveloperMode1() ?
+                            self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
                                                                 ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
 
                             self.directionIndex = 0
@@ -302,7 +302,7 @@ struct ScalesView: View {
                             else {
                                 scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperMode1() ?
+                                self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperModeOn() ?
                                                                     ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
                             }
                             self.directionIndex = 0
@@ -738,7 +738,7 @@ struct ScalesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
             }
-            if Settings.shared.isDeveloperMode1()  {
+            if Settings.shared.isDeveloperModeOn()  {
                 if user.settings.useMidiSources {
                     HStack {
                         TestInputView()
@@ -763,7 +763,7 @@ struct ScalesView: View {
             //let offScreenoffset = UIScreen.main.bounds.height / 4
             
             if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                if false && Settings.shared.isDeveloperMode1() {
+                if false && Settings.shared.isDeveloperModeOn() {
                     exerciseState.setExerciseState("ScalesView, exercise started", .exerciseStarted)
                 }
                 else {
@@ -829,7 +829,7 @@ struct ScalesView: View {
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt
-                if Settings.shared.isDeveloperMode1()  {
+                if Settings.shared.isDeveloperModeOn()  {
                     let fileManager = FileManager.default
                     if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                         do {

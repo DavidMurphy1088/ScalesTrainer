@@ -18,6 +18,7 @@
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
+		790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790FF4242E3F687700D53BF6 /* UserListView.swift */; };
 		7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C00B2D605B5D0030928B /* UserDetailsView.swift */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* LicenseManagerView.swift */; };
@@ -102,7 +103,7 @@
 		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
 		79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB56202C599D9F00BB328F /* PracticeChart.swift */; };
 		79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D6F2BEE426B00454BB6 /* Staff.swift */; };
-		79CF5D722BEE46C900454BB6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserListView.swift */; };
+		79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */; };
 		79CFA1F02C3808A90018DC8A /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA1EF2C3808A90018DC8A /* Test.swift */; };
 		79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
@@ -161,6 +162,7 @@
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
+		790FF4242E3F687700D53BF6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		7910C00B2D605B5D0030928B /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		791F6C302CD18939006BAEBD /* LicenseManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManagerView.swift; sourceTree = "<group>"; };
@@ -242,7 +244,7 @@
 		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		79CB56202C599D9F00BB328F /* PracticeChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChart.swift; sourceTree = "<group>"; };
 		79CF5D6F2BEE426B00454BB6 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
-		79CF5D712BEE46C900454BB6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
+		79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewOLD.swift; sourceTree = "<group>"; };
 		79CFA1EF2C3808A90018DC8A /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureReportView.swift; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
@@ -517,7 +519,8 @@
 				79C979042C1AD4D7001C286F /* TestView.swift */,
 				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
 				79980DD62E34CDFE00CF242B /* UserEditView.swift */,
-				79CF5D712BEE46C900454BB6 /* UserListView.swift */,
+				790FF4242E3F687700D53BF6 /* UserListView.swift */,
+				79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */,
 				797F49FF2E33887F00E04DD9 /* WelcomeView.swift */,
 			);
 			path = View;
@@ -811,6 +814,7 @@
 				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
 				79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */,
 				79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */,
+				790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */,
 				794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */,
 				79D931112CA222760035EA6B /* ScaleTitleView.swift in Sources */,
 				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,
@@ -824,7 +828,7 @@
 				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
 				79CB56212C599D9F00BB328F /* PracticeChart.swift in Sources */,
 				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
-				79CF5D722BEE46C900454BB6 /* UserListView.swift in Sources */,
+				79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */,
 				790614472D968A0A009E7A8D /* User.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,

@@ -158,16 +158,17 @@ class Settings : Encodable, Decodable {
         print()
     }
         
-    public func isDeveloperMode1() -> Bool {
-        if users.count == 0 {
-            return false
-        }
-        for user in self.users {
-            if user.name.range(of: "dev", options: .caseInsensitive) != nil {
-                return true
-            }
-        }
+    public func isDeveloperModeOn() -> Bool {
         return false
+//        if users.count == 0 {
+//            return false
+//        }
+//        for user in self.users {
+//            if user.name.range(of: "dev", options: .caseInsensitive) != nil {
+//                return true
+//            }
+//        }
+//        return false
     }
 }
 

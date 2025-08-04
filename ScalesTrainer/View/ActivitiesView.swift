@@ -79,7 +79,7 @@ struct ActivityEntriesView: View {
                         tabSelectionManager.isPracticeChartActive = true
                     },
                     isActive: $tabSelectionManager.isPracticeChartActive,
-                    destination: PracticeChartView(user: user, practiceChart: practiceChart))
+                    destination: PracticeChartViewOld(user: user, practiceChart: practiceChart))
             }
             .frame(width: UIScreen.main.bounds.width * 0.3)
             //.border(Color.red)
@@ -144,74 +144,52 @@ struct ActivitiesView: View {
     @State var userGrade:Int?
     
     var body: some View {
-        VStack(spacing: 0) {
-            NavigationStack {
-                VStack(spacing: 0) {
-                    ScreenTitleView(screenName: "Activities").padding(.vertical, 0)
-                    VStack {
-                        if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
-                            if let practiceChart = user.getPracticeChart() {
-                                ActivityEntriesView(user: user, practiceChart: practiceChart)
-                                //.background(Color.clear)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .screenBackgroundStyle()
-                            }
+        NavigationStack {
+            VStack(spacing: 0) {
+                VStack {
+                    Text("")
+                    Text("")
+                    Text("How do you want to practise?").padding()
+                    HStack {
+                        FigmaNavLink(destination: PracticeChartView(), font: .title2) {
+                            Text("Practice Chart")
                         }
-                        else {
-                            VStack {
-                                Spacer()
-                                Text("No name or grade has been setup.").font(.title2).padding()
-                                Text("Please setup your name and grade.").font(.title2).padding()
-                            }
-                            .screenBackgroundStyle()
+                        FigmaNavLink(destination: PracticeChartView(), font: .title2) {
+                            Text("Spin Wheel")
                         }
                     }
-                    .padding(.vertical, 0)
-                    //.navigationBarTitleDisplayMode(.inline) // or .large
+//                        if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
+//                            if let practiceChart = user.getPracticeChart() {
+//                                ActivityEntriesView(user: user, practiceChart: practiceChart)
+//                                //.background(Color.clear)
+//                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                                    .screenBackgroundStyle()
+//                            }
+//                        }
+//                        else {
+//                            VStack {
+//                                Spacer()
+//                                Text("No name or grade has been setup.").font(.title2).padding()
+//                                Text("Please setup your name and grade.").font(.title2).padding()
+//                            }
+//                            .screenBackgroundStyle()
+//                        }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Spacer()
+                .navigationTitle("Activities") //Required to use to set as "back" name in child views
+                .navigationBarTitleDisplayMode(.inline) //Required to use a custom toolbar .commonToolbar at the top of the nav stack
             }
-            .onAppear() {
-                ///Force the view to redraw by updating these @State variables
-                let user = Settings.shared.getCurrentUser()
-                self.userName = user.name
-                self.userGrade = user.grade
-                
-            }
+            .commonToolbar(
+                title: "Activities",
+                onBack: {}
+            )
         }
-        .screenBackgroundStyle()
+        .onAppear() {
+            ///Force the view to redraw by updating these @State variables
+            let user = Settings.shared.getCurrentUser()
+            self.userName = user.name
+            self.userGrade = user.grade
+            
+        }
     }
-        
-        //    var body1: some View {
-        //        VStack(spacing: 0) {
-        //            NavigationView {
-        //                VStack {
-        //                    ScreenTitleView(screenName: "Activities", showUser: true).padding(.vertical, 0)
-        //                    ///A view refresh (and chart load) **must** be triggered by either a change in name or grade
-        //                    if let user = Settings.shared.getUser(name: self.userName), let grade = self.userGrade {
-        //                        //if let practiceChart = PracticeChart.loadChartForUser(user: user) {
-        //                        if let practiceChart = user.getPracticeChart() {
-        //                            ActivityEntriesView(user: user, practiceChart: practiceChart)
-        //                        }
-        //                    }
-        //                    else {
-        //                        VStack {
-        //                            Spacer()
-        //                            Text("No name or grade has been setup.").font(.title2).padding()
-        //                            Text("Please setup your name and grade.").font(.title2).padding()
-        //                        }
-        //                        .screenBackgroundStyle()
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        .navigationViewStyle(StackNavigationViewStyle())
-        //        .onAppear() {
-        //            ///Force the view to redraw by updating these @State variables
-        //            let user = Settings.shared.getCurrentUser()
-        //            self.userName = user.name
-        //            self.userGrade = user.grade
-        //        }
-        //    }
-        
-    }
+}

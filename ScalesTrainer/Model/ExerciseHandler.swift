@@ -80,7 +80,7 @@ class ExerciseHandler  {
         if self.exerciseType == .followingScale {
             hilightKey(scaleIndex: 0)
         }
-        if Settings.shared.isDeveloperMode1() {
+        if Settings.shared.isDeveloperModeOn() {
             let user = Settings.shared.getCurrentUser()
             if user.settings.useMidiSources {
                 if MIDIManager.shared.testMidiNotes != nil {

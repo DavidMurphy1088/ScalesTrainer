@@ -282,7 +282,7 @@ class MIDIManager : ObservableObject {
             let endpoint:MIDIEndpointRef = MIDIGetSource(i)
             if let driver = getMIDIProperty(endpoint, kMIDIPropertyDriverOwner) {
                 ///Filter out Apple virtual network driver or connections from other Apple devices
-                if !Settings.shared.isDeveloperMode1() {
+                if !Settings.shared.isDeveloperModeOn() {
                     if driver.lowercased().contains("apple") {
                         continue
                     }

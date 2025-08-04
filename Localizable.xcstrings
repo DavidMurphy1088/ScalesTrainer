@@ -68,6 +68,9 @@
     "......" : {
 
     },
+    "...Practice Chart somewhere here..." : {
+
+    },
     "%@" : {
 
     },
@@ -86,16 +89,6 @@
     },
     "%@ Grade Selection" : {
 
-    },
-    "%@ Grade-%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ Grade-%2$@"
-          }
-        }
-      }
     },
     "%lld" : {
 
@@ -145,7 +138,7 @@
     "Add Me To The Leader Board" : {
 
     },
-    "Add New User" : {
+    "Add User" : {
 
     },
     "Adjust:" : {
@@ -155,9 +148,6 @@
 
     },
     "Amplitude: %.4f" : {
-
-    },
-    "Are you sure you want remove %@" : {
 
     },
     "Available Subscriptions" : {
@@ -214,9 +204,6 @@
     "Choose your keyboard colour " : {
 
     },
-    "Confirm Remove User?" : {
-
-    },
     "Connected MIDI Sources" : {
 
     },
@@ -236,6 +223,9 @@
 
     },
     "Done" : {
+
+    },
+    "Edit User" : {
 
     },
     "Email %@" : {
@@ -329,6 +319,9 @@
         }
       }
     },
+    "Grade %@" : {
+
+    },
     "Grade %lld" : {
 
     },
@@ -383,6 +376,9 @@
         }
       }
     },
+    "How do you want to practise?" : {
+
+    },
     "If the issue persists, try opening the Mail app and attempting to send an email manually. This can provide additional error messages to help troubleshoot the problem." : {
 
     },
@@ -393,6 +389,12 @@
 
     },
     "It seems your device is not configured to send emails. Here are some steps you can follow to fix this issue:" : {
+
+    },
+    "J" : {
+
+    },
+    "Julia" : {
 
     },
     "Key" : {
@@ -456,9 +458,6 @@
     "Major Scales" : {
 
     },
-    "Make Current User" : {
-
-    },
     "Make sure your device has an active internet connection. Without internet, emails cannot be sent." : {
 
     },
@@ -487,9 +486,6 @@
 
     },
     "Next: %lld" : {
-
-    },
-    "No name or grade has been setup." : {
 
     },
     "Note: Only one grade can be active at one time." : {
@@ -525,7 +521,7 @@
     "Please select yout grade" : {
 
     },
-    "Please setup your name and grade." : {
+    "Practice Chart" : {
 
     },
     "Practise Hands Together" : {
@@ -566,9 +562,6 @@
           }
         }
       }
-    },
-    "Remove" : {
-
     },
     "Required Consecutive Count" : {
 
@@ -618,9 +611,6 @@
           }
         }
       }
-    },
-    "SCALE" : {
-
     },
     "Scale:" : {
 
@@ -672,9 +662,6 @@
     "Set Correct" : {
 
     },
-    "Set Grade" : {
-
-    },
     "Settings" : {
       "comment" : "Menu",
       "localizations" : {
@@ -705,6 +692,9 @@
 
     },
     "Sorry, no subscription is available yet" : {
+
+    },
+    "Spin Wheel" : {
 
     },
     "Start" : {
@@ -812,6 +802,9 @@
       }
     },
     "To get started please enter your name, Music Board and Grade." : {
+
+    },
+    "Trinity Grade 1" : {
 
     },
     "Try again?" : {

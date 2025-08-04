@@ -146,7 +146,7 @@ struct EndOfExerciseView: View {
                     .disabled(isCountingDown)
                     .padding()
                     
-                    if Settings.shared.isDeveloperMode1() {
+                    if Settings.shared.isDeveloperModeOn() {
                         Button("Results") {
                             callback(false, true)
                         }

@@ -205,7 +205,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenTitleView(screenName: "Settings")
+            ToolbarTitleView(screenName: "Settings")
                 .frame(maxWidth: .infinity)
             DetailedCustomSettingsView(user:user)
                 .frame(maxWidth: .infinity)

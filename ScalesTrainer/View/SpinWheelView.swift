@@ -225,7 +225,7 @@ struct SpinWheelView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScreenTitleView(screenName: "Spin The Wheel").padding(.vertical, 0)
+            ToolbarTitleView(screenName: "Spin The Wheel").padding(.vertical, 0)
             VStack {
                 ZStack {
                     SegmentedCircleView(elements: getScaleNames(), rotation: rotation, wheelSize: wheelSize)

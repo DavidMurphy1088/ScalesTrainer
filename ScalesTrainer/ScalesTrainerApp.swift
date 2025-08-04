@@ -155,7 +155,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
-        if !Settings.shared.isDeveloperMode1() {
+        if !Settings.shared.isDeveloperModeOn() {
             LicenceManager.shared.getFreeLicenses()
         }
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
@@ -186,7 +186,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 ////        } else {
 ////            return [.portrait, .landscapeLeft, .landscapeRight] // Allow both on iPad
 ////        }
-//        
+//
 //        //return orientationLock
 //        return UIInterfaceOrientationMask.landscape
 //    }
@@ -231,7 +231,7 @@ class ViewManager: ObservableObject {
     
     func setTab(tab:Int) {
         DispatchQueue.main.async {
-            self.objectWillChange.send() 
+            self.objectWillChange.send()
             self.selectedTab = tab
         }
     }
@@ -252,62 +252,31 @@ struct TabContainerView: View {
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
     }
-    
-    func setupDev() {
-        let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
-                                               customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
-                                               customScaleNameWheel: "Chrom Contrary, LH C, RH E")
-        let scalesModel = ScalesModel.shared
-        if true {
-            let scale = scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
-                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
-                                            dynamicTypes: [.mf], articulationTypes: [.legato],
-                                            //scaleCustomisation: scaleCustomisation,
-                                            debugOn: true)
-            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
-        }
-    }
-    
+        
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
-            if true && Settings.shared.isDeveloperMode1() {
-                if Settings.shared.aValidUserIsDefined() {
-                    //NavigationStack {
-                        //HomeView()
-                        ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
-                            .tabItem {
-                                Label("SCALE", systemImage: "house")
-                            }
-                            .tag(1)
-                            .environmentObject(viewManager)
-                    //}
-                }
-            }
+//            if true && Settings.shared.isDeveloperModeOn() {
+//                if Settings.shared.aValidUserIsDefined() {
+//                    //NavigationStack {
+//                        //HomeView()
+//                        ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
+//                            .tabItem {
+//                                Label("SCALE", systemImage: "house")
+//                            }
+//                            .tag(1)
+//                            .environmentObject(viewManager)
+//                    //}
+//                }
+//            }
                         
-            if Settings.shared.aValidUserIsDefined() {
-                ActivitiesView()
-                        .tabItem {
-                            Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                        }
-                        .tag(ViewManager.TAB_ACTIVITES)
-                        .environmentObject(viewManager)
+            //if Settings.shared.aValidUserIsDefined() {
+            ActivitiesView()
+                    .tabItem {
+                        Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
+                    }
+                    .tag(ViewManager.TAB_ACTIVITES)
+                    .environmentObject(viewManager)
                     
-                SettingsView(user:Settings.shared.getCurrentUser())
-                    .tabItem {
-                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                    }
-                    .tag(30)
-                    .environmentObject(viewManager)
-                
-                LicenseManagerView(contentSection: ContentSection(), email: "email.com")
-                    .tabItem {
-                        Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
-                    }
-                    .tag(40)
-                    .environmentObject(viewManager)
-                //}
-            }
-            
             UserListView()
                 .tabItem {
                     Label {
@@ -319,6 +288,22 @@ struct TabContainerView: View {
                 .tag(ViewManager.TAB_USERS)
                 .environmentObject(viewManager)
             
+            LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+                .tabItem {
+                    Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+                }
+                .tag(40)
+                .environmentObject(viewManager)
+
+            SettingsView(user:Settings.shared.getCurrentUser())
+                .tabItem {
+                    Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                }
+                .tag(30)
+                .environmentObject(viewManager)
+                
+            //}
+                        
 //            FeatureReportView()
 //                .tabItem {
 //                    Label(NSLocalizedString("MessageUs", comment: "Menu"), systemImage: "arrow.up.message")
@@ -329,7 +314,7 @@ struct TabContainerView: View {
             WelcomeView()
                 .tag(ViewManager.TAB_WELCOME)
 
-            if Settings.shared.isDeveloperMode1() {
+            if Settings.shared.isDeveloperModeOn() {
                 MIDIView()
                     .tabItem {
                         Label("MIDI", systemImage: "house")
@@ -366,7 +351,7 @@ struct TabContainerView: View {
 //                    }
 //                    .tag(80)
 //                    .environmentObject(viewManager)
-//                
+//
                 
 //                DeveloperView()
 //                    .tabItem {
@@ -375,20 +360,11 @@ struct TabContainerView: View {
 //                    .tag(100)
 //                    .environmentObject(viewManager)
             }
-        }      
+        }
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)
-        .onAppear {
-            ///In an iOS app using CoreMIDI, you should check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
-            MIDIManager.shared.setupMIDI()
-
-            if Settings.shared.isDeveloperMode1() {
-                self.setupDev()
-                ViewManager.shared.setTab(tab: 1)
-            }
-        }
     }
 }
 
@@ -410,11 +386,28 @@ struct ScalesTrainerApp: App {
 #endif
     }
     
+    func setupDev() {
+        let scaleCustomisation = ScaleCustomisation(startMidiRH: 64, startMidiLH: 48, clefSwitch: false,
+                                               customScaleName: "Chromatic, Contrary Motion, LH starting C, RH starting E",
+                                               customScaleNameWheel: "Chrom Contrary, LH C, RH E")
+        let scalesModel = ScalesModel.shared
+        if true {
+            let scale = scalesModel.setScaleByRootAndType(scaleRoot: ScaleRoot(name: "C"), scaleType: .major,
+                                            scaleMotion: .similarMotion, minTempo: 50, octaves: 1, hands: [0],
+                                            dynamicTypes: [.mf], articulationTypes: [.legato],
+                                            //scaleCustomisation: scaleCustomisation,
+                                            debugOn: true)
+            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            if false && Settings.shared.isDeveloperMode1() {
-                WelcomeView()
-                //TabContainerView()
+            if Settings.shared.isDeveloperModeOn() {
+                UserListView()
+                    .onAppear() {
+                        self.setupDev()
+                    }
             }
             else {
                 VStack {
@@ -422,12 +415,7 @@ struct ScalesTrainerApp: App {
                         LaunchScreenView()
                     }
                     else {
-                        //if Settings.shared.hasUsers() {
-                            TabContainerView()
-                        //}
-                        //else {
-                            //WelcomeView()
-                        //}
+                        TabContainerView()
                     }
                 }
                 .onAppear {
@@ -437,8 +425,10 @@ struct ScalesTrainerApp: App {
                     else {
                         ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
                     }
+                    ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
+                    MIDIManager.shared.setupMIDI()
                 }
-
+                
                 .task {
                     DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
                         self.launchScreenState.dismiss()

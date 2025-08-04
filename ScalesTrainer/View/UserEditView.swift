@@ -59,10 +59,6 @@ struct UserEditView: View {
     @State var user: User
     let settings = Settings.shared
 
-    func getBoard(_ name: String) -> MusicBoard {
-        return MusicBoard.getSupportedBoards().first { $0.name == name }!
-    }
-
     var body: some View {
         HStack {
             Text("  ")
@@ -136,18 +132,10 @@ struct UserEditView: View {
         }) { board in
             SelectGradeView(board: board, selectedGrade: $selectedGrade)
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                FigmaButton(label: {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                    }
-                }, action: {
-                    dismiss()
-                })
-            }
-        }
+        .commonToolbar(
+            title: "User Edit",
+            onBack: { dismiss() }
+        )
         .onAppear {
             name = user.name
         }

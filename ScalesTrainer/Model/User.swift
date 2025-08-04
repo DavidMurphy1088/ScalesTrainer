@@ -97,7 +97,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.name = ""
         self.email = ""
         self.board = board
-        self.grade = 1
+        self.grade = 0
         self.settings = UserSettings()
         self.isCurrentUser = false
     }
