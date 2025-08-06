@@ -103,6 +103,16 @@ public class ScalesModel : ObservableObject {
     ///Just used for receiving MIDI messages locally generated for testing
     var midiTestHander:MIDISoundEventHandler?
     
+    @Published var userPublished:UserPublished = UserPublished()
+    func updateUserPublished(user:User) {
+        DispatchQueue.main.async {
+            self.userPublished.name = user.name
+            self.userPublished.board = user.board
+            self.userPublished.grade = user.grade
+            self.userPublished.color = user.color
+        }
+    }
+    
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
     func setProcessedEventSet(_ value:TapStatusRecordSet?, publish:Bool) {

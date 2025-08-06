@@ -22,7 +22,7 @@ struct WelcomeView: View {
                 Text("")
                 Text("")
 
-                FigmaNavLink(destination: UserEditView(user: User(board: "")), font: .title2) {
+                FigmaNavLink(destination: UserEditView(addingFirstUser: true, user: User(board: "")), font: .title2) {
                     Text("Get Started")
                 }
 

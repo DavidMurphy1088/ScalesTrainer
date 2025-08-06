@@ -554,6 +554,7 @@ struct PracticeChartViewOld: View {
 
 struct PracticeChartView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var currentUser: User = Settings.shared.getCurrentUser()
     var body: some View {
         VStack {
             Text("")
@@ -563,8 +564,6 @@ struct PracticeChartView: View {
         }
         .commonToolbar(
             title: "Practice Chart",
-            //showBackButton: true,
-            //backTitle: "Activities",
             onBack: { dismiss() }
         )
     }

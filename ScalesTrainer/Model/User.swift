@@ -5,6 +5,13 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
+class UserPublished : ObservableObject {
+    @Published var name = ""
+    @Published var board = ""
+    @Published var grade = 0
+    @Published var color = ""
+}
+
 class User : Encodable, Decodable, Hashable, Identifiable {
     var id:UUID
     var board:String
@@ -13,9 +20,53 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     var settings:UserSettings
     var isCurrentUser:Bool
     var grade:Int
+    var color:String
     
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
+    }
+    
+    init(board:String) {
+        self.id = UUID()
+        self.name = ""
+        self.email = ""
+        self.board = board
+        self.grade = 0
+        self.settings = UserSettings()
+        self.isCurrentUser = false
+        let colorNames = [
+            "red", "orange", "yellow", "green",
+            "mint", "teal", "cyan", "blue",
+            "indigo", "purple", "pink"
+        ]
+        self.color = colorNames.randomElement()!
+    }
+    
+    func updateFromUser(user:User) {
+        self.name = user.name
+        self.email = user.email
+        self.board = user.board
+        self.grade = user.grade
+        self.settings = user.settings
+        self.isCurrentUser = user.isCurrentUser
+        self.color = user.color
+    }
+    
+    static func color(from name: String) -> Color {
+        switch name.lowercased() {
+        case "red": return .red
+        case "orange": return .orange
+        case "yellow": return .yellow
+        case "green": return .green
+        case "mint": return .mint
+        case "teal": return .teal
+        case "cyan": return .cyan
+        case "blue": return .blue
+        case "indigo": return .indigo
+        case "purple": return .purple
+        case "pink": return .pink
+        default: return .gray // fallback
+        }
     }
     
     func hash(into hasher: inout Hasher) {
@@ -90,16 +141,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
             self.keyboardColor = [Double(red), Double(green), Double(blue), Double(alpha)]
         }
-    }
-    
-    init(board:String) {
-        self.id = UUID()
-        self.name = ""
-        self.email = ""
-        self.board = board
-        self.grade = 0
-        self.settings = UserSettings()
-        self.isCurrentUser = false
     }
     
     func getTitle() -> String {

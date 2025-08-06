@@ -52,11 +52,16 @@ struct SelectGradeView: View {
 }
 
 struct UserEditView: View {
+    let addingFirstUser: Bool
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var nameFieldFocused: Bool
     @State private var name: String = ""
     @State private var selectedGrade: Int = 1
     @State private var showGradesBoard: MusicBoard? = nil
     @State var user: User
+    @State private var errorMessage: String = ""
+    @State private var showErrorAlert = false
+    
     let settings = Settings.shared
 
     var body: some View {
@@ -64,17 +69,38 @@ struct UserEditView: View {
             Text("  ")
             VStack(alignment: .leading) {
                 HStack {
-                    Text("Welcome, let’s set up your account").font(.title2)
-                    Spacer()
-                    Button("Save") {
-                        user.name = name
-                        user.isCurrentUser = true
-                        settings.saveUser(user: user)
-                        dismiss()
-                        ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                    if addingFirstUser {
+                        Text("Welcome, let’s set up your account").font(.title2)
                     }
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-
+                    Spacer()
+                    HStack {
+                        Button("Save") {
+                            if user.grade > 0 {
+                                errorMessage = ""
+                                user.name = name
+                                user.isCurrentUser = true
+                                settings.setUser(user: user)
+                                dismiss()
+                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                            } else {
+                                errorMessage = "Please select a grade before saving."
+                                showErrorAlert = true
+                            }
+                        }
+                        .padding()
+                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        if user.grade > 0 {
+                            Button(action: {
+                                user.name = name
+                                settings.deleteUser(user: user)
+                                dismiss()
+                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                            }) {
+                                Text("Remove User").foregroundColor(.red)
+                            }
+                            .padding()
+                        }
+                    }
                     Spacer()
                 }
 
@@ -83,6 +109,7 @@ struct UserEditView: View {
                 Text("Please enter your name:")
 
                 TextField("name", text: $name)
+                    .focused($nameFieldFocused)
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(8)
@@ -138,6 +165,16 @@ struct UserEditView: View {
         )
         .onAppear {
             name = user.name
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                nameFieldFocused = true
+            }
+        }
+        .alert(isPresented: $showErrorAlert) {
+            Alert(
+                title: Text("Missing Grade"),
+                message: Text(errorMessage),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 }

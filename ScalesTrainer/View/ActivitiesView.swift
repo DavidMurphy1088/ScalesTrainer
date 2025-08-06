@@ -142,6 +142,7 @@ struct ActivitiesView: View {
     ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
     @State var userName:String = ""
     @State var userGrade:Int?
+    @State private var currentUser: User = Settings.shared.getCurrentUser()
     
     var body: some View {
         NavigationStack {
@@ -180,8 +181,7 @@ struct ActivitiesView: View {
                 .navigationBarTitleDisplayMode(.inline) //Required to use a custom toolbar .commonToolbar at the top of the nav stack
             }
             .commonToolbar(
-                title: "Activities",
-                onBack: {}
+                title: "Activities", onBack: {}
             )
         }
         .onAppear() {

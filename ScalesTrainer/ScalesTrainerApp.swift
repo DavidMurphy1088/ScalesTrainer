@@ -255,54 +255,39 @@ struct TabContainerView: View {
         
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
-//            if true && Settings.shared.isDeveloperModeOn() {
-//                if Settings.shared.aValidUserIsDefined() {
-//                    //NavigationStack {
-//                        //HomeView()
-//                        ScalesView(user: Settings.shared.getCurrentUser(), practiceChart: nil, practiceChartCell: nil, practiceModeHand: nil)
-//                            .tabItem {
-//                                Label("SCALE", systemImage: "house")
-//                            }
-//                            .tag(1)
-//                            .environmentObject(viewManager)
-//                    //}
-//                }
-//            }
-                        
-            //if Settings.shared.aValidUserIsDefined() {
-            ActivitiesView()
+            if ViewManager.shared.selectedTab != ViewManager.TAB_WELCOME {
+                ActivitiesView()
                     .tabItem {
                         Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
                     }
                     .tag(ViewManager.TAB_ACTIVITES)
                     .environmentObject(viewManager)
-                    
-            UserListView()
-                .tabItem {
-                    Label {
-                        Text(NSLocalizedString("Users", comment: "Menu")).background(.white).bold()
-                    } icon: {
-                        Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
-                    }
-                }
-                .tag(ViewManager.TAB_USERS)
-                .environmentObject(viewManager)
-            
-            LicenseManagerView(contentSection: ContentSection(), email: "email.com")
-                .tabItem {
-                    Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
-                }
-                .tag(40)
-                .environmentObject(viewManager)
-
-            SettingsView(user:Settings.shared.getCurrentUser())
-                .tabItem {
-                    Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                }
-                .tag(30)
-                .environmentObject(viewManager)
                 
-            //}
+                UserListView()
+                    .tabItem {
+                        Label {
+                            Text(NSLocalizedString("Users", comment: "Menu")).background(.white).bold()
+                        } icon: {
+                            Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
+                        }
+                    }
+                    .tag(ViewManager.TAB_USERS)
+                    .environmentObject(viewManager)
+                
+                LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+                    .tabItem {
+                        Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+                    }
+                    .tag(40)
+                    .environmentObject(viewManager)
+                
+                SettingsView(user:Settings.shared.getCurrentUser())
+                    .tabItem {
+                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                    }
+                    .tag(30)
+                    .environmentObject(viewManager)
+            }
                         
 //            FeatureReportView()
 //                .tabItem {

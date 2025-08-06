@@ -99,6 +99,9 @@
     "← " : {
 
     },
+    "+" : {
+
+    },
     "⊙" : {
 
     },
@@ -136,9 +139,6 @@
       "comment" : "Menu"
     },
     "Add Me To The Leader Board" : {
-
-    },
-    "Add User" : {
 
     },
     "Adjust:" : {
@@ -223,9 +223,6 @@
 
     },
     "Done" : {
-
-    },
-    "Edit User" : {
 
     },
     "Email %@" : {
@@ -319,9 +316,6 @@
         }
       }
     },
-    "Grade %@" : {
-
-    },
     "Grade %lld" : {
 
     },
@@ -389,12 +383,6 @@
 
     },
     "It seems your device is not configured to send emails. Here are some steps you can follow to fix this issue:" : {
-
-    },
-    "J" : {
-
-    },
-    "Julia" : {
 
     },
     "Key" : {
@@ -474,6 +462,9 @@
 
     },
     "Minor Scales" : {
+
+    },
+    "Missing Grade" : {
 
     },
     "Motion:" : {
@@ -562,6 +553,9 @@
           }
         }
       }
+    },
+    "Remove User" : {
+
     },
     "Required Consecutive Count" : {
 
@@ -802,9 +796,6 @@
       }
     },
     "To get started please enter your name, Music Board and Grade." : {
-
-    },
-    "Trinity Grade 1" : {
 
     },
     "Try again?" : {

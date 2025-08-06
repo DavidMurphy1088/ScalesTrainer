@@ -20,14 +20,28 @@ class Settings : Encodable, Decodable {
         self.amplitudeFilter = 0.04
     }
     
-    func saveUser(user: User) {
-        if let user = getUser(name: user.name) {
-            deleteUser(by: user.id)
+    ///User could be new or existing
+    func setUser(user: User) {
+        var found = false
+        for usr in users {
+            if usr.id == user.id {
+                usr.updateFromUser(user: user)
+                found = true
+                break
+            }
         }
-        addUser(user: user)
+        if !found {
+            self.users.append(user)
+        }
+        ScalesModel.shared.updateUserPublished(user: user)
         save()
     }
-    
+
+    func deleteUser(user: User) {
+        users.removeAll {$0.id == user.id}
+        save()
+    }
+
     func aValidUserIsDefined() -> Bool {
         if Settings.shared.users.count == 0 {
             return false
@@ -51,14 +65,14 @@ class Settings : Encodable, Decodable {
         return nil
     }
     
-    func getUser(name:String) -> User? {
-        for user in users {
-            if user.name == name {
-                return user
-            }
-        }
-        return nil
-    }
+//    func getUser(name:String) -> User? {
+//        for user in users {
+//            if user.name == name {
+//                return user
+//            }
+//        }
+//        return nil
+//    }
 
     func getDefaultBackgroundColor() -> Color {
         let red = CGFloat(0.8219926357269287)
@@ -85,16 +99,6 @@ class Settings : Encodable, Decodable {
         return self.users.count > 0
     }
     
-    func addUser(user:User) {
-        self.users.append(user)
-    }
-    
-    func deleteUser(by id: UUID) {
-        if users.count > 1 {
-            users.removeAll { $0.id == id }
-        }
-    }
-    
     func getCurrentUser() -> User {
         for user in self.users {
             if user.isCurrentUser {
@@ -103,7 +107,7 @@ class Settings : Encodable, Decodable {
         }
         fatalError("No current user. Count:\(self.users.count)")
     }
-
+    
     func save() {
         guard self.users.count > 0 else {
             return
@@ -143,6 +147,7 @@ class Settings : Encodable, Decodable {
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
                 let currentUser = self.getCurrentUser()
+                ScalesModel.shared.updateUserPublished(user: currentUser)
                 AppLogger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser.name)")
             } catch {
                 AppLogger.shared.reportError(self, "load:" + error.localizedDescription)
@@ -153,7 +158,7 @@ class Settings : Encodable, Decodable {
     func debug11(_ ctx:String) {
         print("Settings debug ============= \(ctx)")
         for user in users {
-            print("  User", user.name, "Grade:", user.grade ?? "")
+            print("  User", user.name, "Grade:", user.grade)
         }
         print()
     }

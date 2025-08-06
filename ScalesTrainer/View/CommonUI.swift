@@ -5,34 +5,36 @@ import SwiftUI
 struct CommonToolbarModifier: ViewModifier {
     let title: String
     let onBack: (() -> Void)?
-
+    
     func body(content: Content) -> some View {
-        content
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack {
-                        Image("figma_icon")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 40)
-                            .padding()
-                        Text(title)
-                            .font(.title)
-                    }
-                }
+        ZStack {
+            content
+        }
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    ToolbarTitleView(screenName: title)
-                        .padding(.vertical, 0)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Image("figma_icon")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 40)
+                        .padding()
+                    Text(title)
+                        .font(.title)
                 }
             }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarTitleView(screenName: title)
+                    .padding(.vertical, 0)
+            }
+        }
     }
 }
+
 extension View {
     func commonToolbar(
         title: String,
-        //showBackButton: Bool = true,
-        //backTitle: String = "Back",
         onBack: (() -> Void)? = nil
     ) -> some View {
         self.modifier(CommonToolbarModifier(
@@ -195,32 +197,42 @@ extension Button {
     }
 }
 
-
 /// Title view at the top of every nav stack
 struct ToolbarTitleView: View {
     let screenName: String
+    @ObservedObject var user:UserPublished = ScalesModel.shared.userPublished
+    
+    func firstLetter(user:UserPublished) -> String {
+        guard let first = user.name.first else {
+            return ""
+        }
+        return first.uppercased() 
+    }
     
     var body: some View {
         HStack {
             HStack {
-                Text("?")
-                    .padding(8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                Rectangle()
-                    .fill(Color.gray)
-                    .frame(width: 1, height: 50)
-                ZStack {
-                    Circle()
-                        .fill(Color(red: 156 / 255.0, green: 215 / 255.0, blue: 98 / 255.0))
-                        .frame(width: 50, height: 50)
-                    Text("J")
-                }
-                VStack {
-                    Text("Julia")
-                    Text("Trinity Grade 1").font(.caption)
+                if user.grade > 0 {
+                    Text("?")
+                        .padding(8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.gray, lineWidth: 1)
+                        )
+                
+                    Rectangle()
+                        .fill(Color.gray)
+                        .frame(width: 1, height: 50)
+                    ZStack {
+                        Circle()
+                            .fill(User.color(from: user.color).opacity(0.5))
+                            .frame(width: 50, height: 50)
+                        Text(firstLetter(user: user))
+                    }
+                    VStack {
+                        Text(user.name)
+                        Text(user.board + "\(user.grade)").font(.caption)
+                    }
                 }
             }
         }
