@@ -110,28 +110,25 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
 }
 
 struct FigmaButton<Label: View>: View {
-    //var font: Font
     var label: () -> Label
     var action: () -> Void
 
     init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
-    //init(font: Font = .title2, action: @escaping () -> Void) {
         self.action = action
-        //self.font = font
         self.label = label
     }
 
     var body: some View {
         Button(action: action) {
             label()
-                //.font(font)
                 .foregroundColor(.black)
                 .padding()
                 .background(
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.white)
-                            .shadow(color: .black.opacity(0.7), radius: 3, x: 4, y: 4)
+                            //radius: A measure of how much to blur the shadow. Larger values result in more blur.
+                            .shadow(color: .black.opacity(0.8), radius: 0, x: 2, y: 2)
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.black, lineWidth: 1)
                     }
@@ -319,10 +316,10 @@ struct FancyTextStyle: ViewModifier {
 }
 
 extension View {
-    func screenBackgroundStyle (backgroundColor: Color? = nil) -> some View {
-        modifier(screenBackgroundStyleView(cornerRadius: 10, borderColor: .blue,borderWidth: 1
-        ))
-    }
+//    func screenBackgroundStyle (backgroundColor: Color? = nil) -> some View {
+//        modifier(screenBackgroundStyleView(cornerRadius: 10, borderColor: .blue,borderWidth: 1
+//        ))
+//    }
 
     func hilighted(backgroundColor: Color = .green) -> some View {
         modifier(Hilighted(backgroundColor: backgroundColor))

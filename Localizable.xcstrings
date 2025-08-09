@@ -62,9 +62,6 @@
     "." : {
 
     },
-    ".." : {
-
-    },
     "......" : {
 
     },
@@ -186,6 +183,12 @@
     "Badge Styles" : {
 
     },
+    "badges" : {
+
+    },
+    "Badges" : {
+      "comment" : "Menu"
+    },
     "Base %lld" : {
 
     },
@@ -193,6 +196,9 @@
 
     },
     "But here you can practise %@ hands separately." : {
+
+    },
+    "C:%lld" : {
 
     },
     "Cancel" : {
@@ -208,9 +214,6 @@
 
     },
     "Current Amplitude Filter:%@" : {
-
-    },
-    "Delete Correct" : {
 
     },
     "Details Content" : {
@@ -325,6 +328,9 @@
     "Hands ready?" : {
 
     },
+    "Harmonic Minor" : {
+
+    },
     "Hide Fingers" : {
       "comment" : "LegendView",
       "localizations" : {
@@ -377,9 +383,6 @@
 
     },
     "In the exam %@ must be played with both hands." : {
-
-    },
-    "Instructions" : {
 
     },
     "It seems your device is not configured to send emails. Here are some steps you can follow to fix this issue:" : {
@@ -641,6 +644,9 @@
     "Select Grade" : {
 
     },
+    "Select the Minor Type" : {
+
+    },
     "Select Value" : {
 
     },
@@ -651,9 +657,6 @@
 
     },
     "Sensitivity: %.3f" : {
-
-    },
-    "Set Correct" : {
 
     },
     "Settings" : {
@@ -688,9 +691,6 @@
     "Sorry, no subscription is available yet" : {
 
     },
-    "Spin Wheel" : {
-
-    },
     "Start" : {
 
     },
@@ -722,9 +722,6 @@
           }
         }
       }
-    },
-    "Subscription Required" : {
-
     },
     "Subscriptions" : {
       "comment" : "Menu"

@@ -29,6 +29,8 @@
 		79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */; };
 		79312DB72C118B41005FDE8B /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB62C118B41005FDE8B /* HelpView.swift */; };
 		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
+		7932928F2E46185A00890198 /* Todo in Sources */ = {isa = PBXBuildFile; fileRef = 7932928E2E46185600890198 /* Todo */; };
+		793292912E46BEB800890198 /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793292902E46BEA800890198 /* BadgesView.swift */; };
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */ = {isa = PBXBuildFile; fileRef = 793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
@@ -173,6 +175,8 @@
 		79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIsUnderwayView.swift; sourceTree = "<group>"; };
 		79312DB62C118B41005FDE8B /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
+		7932928E2E46185600890198 /* Todo */ = {isa = PBXFileReference; lastKnownFileType = text; path = Todo; sourceTree = "<group>"; };
+		793292902E46BEA800890198 /* BadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesView.swift; sourceTree = "<group>"; };
 		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
 		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
 		794180902D40E2E900FE149B /* ScalesStar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScalesStar.entitlements; sourceTree = "<group>"; };
@@ -487,6 +491,7 @@
 			isa = PBXGroup;
 			children = (
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
+				793292902E46BEA800890198 /* BadgesView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
 				799BE2A72BFF4322004B19F6 /* CalibrationView.swift */,
 				794A9FC62C2BD24C0001297E /* CoinBankView.swift */,
@@ -581,6 +586,7 @@
 		79F6CD792D167B7800FF2681 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				7932928E2E46185600890198 /* Todo */,
 				79AFF13B2DD490CA0049479F /* LeaderBoard.txt */,
 				793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */,
 				79F6CD742D14020200FF2681 /* MidiNotes */,
@@ -853,6 +859,7 @@
 				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
 				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
 				79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */,
+				793292912E46BEB800890198 /* BadgesView.swift in Sources */,
 				79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */,
 				79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */,
 				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
@@ -884,6 +891,7 @@
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
 				794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */,
+				7932928F2E46185A00890198 /* Todo in Sources */,
 				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,
 				79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */,
 				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,

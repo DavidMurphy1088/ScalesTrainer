@@ -267,14 +267,14 @@ struct SpinWheelView: View {
                 }
                 Spacer()
             }
-            .screenBackgroundStyle()
+            //.screenBackgroundStyle()
         }
         .onAppear() {
             self.spinState = .notStarted
             //self.wheelSize = orientationInfo.isPortrait ? 0.95 * UIScreen.main.bounds.width : 0.55 * UIScreen.main.bounds.width
             self.wheelSize = 0.45 * UIScreen.main.bounds.width
         }
-        .onChange(of: ViewManager.shared.isSpinWheelActive) { newValue in
+        .onChange(of: ViewManager.shared.isSpinWheelActive) {oldValue, newValue in
             if newValue == false {
                 dismiss()
             }

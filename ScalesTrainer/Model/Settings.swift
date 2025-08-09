@@ -8,11 +8,11 @@ import AudioKit
 class Settings : Encodable, Decodable {
     static var shared = Settings()
     var users:[User]
-    
     var isDeveloperMode = false
     var requiredConsecutiveCount = 2
     var defaultOctaves = 2
     var amplitudeFilter:Double
+    var currentUserId:UUID? = nil
     
     init() {
         self.users = []
@@ -33,6 +33,7 @@ class Settings : Encodable, Decodable {
         if !found {
             self.users.append(user)
         }
+        self.setCurrentUser(id: user.id)
         ScalesModel.shared.updateUserPublished(user: user)
         save()
     }
@@ -84,14 +85,20 @@ class Settings : Encodable, Decodable {
     }
     
     func setCurrentUser(id:UUID) {
+        self.currentUserId = id
+        var fnd = false
         for user in users {
             if user.id == id {
-                user.isCurrentUser = true
-                ViewManager.shared.updatePublishedUser()
+                ViewManager.shared.updatePublishedUser(user: user)
+                fnd = true
+                break
             }
-            else {
-                user.isCurrentUser = false
-            }
+        }
+        if fnd {
+            self.save()
+        }
+        else {
+            fatalError("Cant set current user. id:\(String(id.uuidString.suffix(4))) UsersCount:\(self.users.count)")
         }
     }
     
@@ -100,12 +107,14 @@ class Settings : Encodable, Decodable {
     }
     
     func getCurrentUser() -> User {
-        for user in self.users {
-            if user.isCurrentUser {
-                return user
+        if self.currentUserId != nil {
+            for user in self.users {
+                if user.id == self.currentUserId {
+                    return user
+                }
             }
         }
-        fatalError("No current user. Count:\(self.users.count)")
+        fatalError("No current user. CurrentIdL \(String(self.currentUserId?.uuidString.suffix(4) ?? "nil")) Count:\(self.users.count)")
     }
     
     func save() {
@@ -136,7 +145,7 @@ class Settings : Encodable, Decodable {
         if let jsonString = UserDefaults.standard.string(forKey: "settings") {
             do {
                 guard let jsonData = jsonString.data(using: .utf8) else {
-                    AppLogger.shared.reportError(self, "load: cannot conver to JSON")
+                    AppLogger.shared.reportError(self, "load: cannot convert to JSON")
                     return
                 }
                 let jsonDecoder = JSONDecoder()
@@ -146,6 +155,7 @@ class Settings : Encodable, Decodable {
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
+                self.currentUserId = decoded.currentUserId
                 let currentUser = self.getCurrentUser()
                 ScalesModel.shared.updateUserPublished(user: currentUser)
                 AppLogger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser.name)")

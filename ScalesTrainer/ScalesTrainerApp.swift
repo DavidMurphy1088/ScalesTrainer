@@ -197,6 +197,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 class ViewManager: ObservableObject {
     static let TAB_WELCOME = 100
     static let TAB_ACTIVITES = 10
+    static let TAB_BADGES = 12
     static let TAB_USERS = 20
 
     static var shared = ViewManager()
@@ -222,9 +223,9 @@ class ViewManager: ObservableObject {
 //        }
     }
     
-    func updatePublishedUser() {
+    func updatePublishedUser(user:User) {
         DispatchQueue.main.async {
-            let user = Settings.shared.getCurrentUser()
+            //let user = Settings.shared.getCurrentUser()
             self.publishedUser = user
         }
     }
@@ -263,6 +264,13 @@ struct TabContainerView: View {
                     .tag(ViewManager.TAB_ACTIVITES)
                     .environmentObject(viewManager)
                 
+                BadgesView()
+                    .tabItem {
+                        Label(NSLocalizedString("Badges", comment: "Menu"), systemImage: "circle.badge.checkmark")
+                    }
+                    .tag(ViewManager.TAB_BADGES)
+                    .environmentObject(viewManager)
+
                 UserListView()
                     .tabItem {
                         Label {
@@ -389,10 +397,11 @@ struct ScalesTrainerApp: App {
     var body: some Scene {
         WindowGroup {
             if Settings.shared.isDeveloperModeOn() {
-                UserListView()
-                    .onAppear() {
-                        self.setupDev()
-                    }
+//                UserListView()
+//                    .onAppear() {
+//                        self.setupDev()
+//                    }
+                ActivitiesView()
             }
             else {
                 VStack {

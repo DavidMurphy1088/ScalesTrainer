@@ -15,6 +15,49 @@ struct BlankCellView: View {
         .frame(width: cellWidth) //, height: cellHeight)
     }
 }
+struct MinorTypePopup: View {
+    let items: [String] = ["Harmonic Minor", "Melodic Minor", "Natural Minor"]
+    @Binding var selectedItem: String?
+    @Binding var isPresented: Bool
+    var onDone: () -> Void
+    
+    @State private var tempSelection: String? = nil
+
+    var body: some View {
+        NavigationView {
+            List(items, id: \.self) { item in
+                HStack {
+                    Text(item)
+                    Spacer()
+                    if tempSelection == item {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(.blue)
+                    }
+                }
+                .contentShape(Rectangle()) // make whole row tappable
+                .onTapGesture {
+                    tempSelection = item
+                }
+            }
+            .navigationTitle("Select the Minor Type")
+            .navigationBarItems(
+                leading: Button("Cancel") {
+                    isPresented = false
+                },
+                trailing: Button("Done") {
+                    selectedItem = tempSelection
+                    isPresented = false
+                    onDone()
+                    
+                }
+                .disabled(tempSelection == nil) // disable until picked
+            )
+            .onAppear {
+                tempSelection = selectedItem // show existing selection
+            }
+        }
+    }
+}
 
 struct SelectHandForPractice: View {
     let user:User
@@ -128,17 +171,16 @@ struct SelectHandForPractice: View {
 
 struct CellView: View {
     let user:User
-    let column:Int
     let practiceChart:PracticeChart
     @Binding var scalesInChart: [String]
     
     @ObservedObject var practiceCell: PracticeChartCell
-    var cellWidth:CGFloat
-    var cellHeight:CGFloat
-    var cellPadding:CGFloat
-    @Binding var opacityValue:Double
-    @Binding var showHands: Bool
-    
+    let cellWidth:CGFloat
+    let cellHeight:CGFloat
+    let cellPadding:CGFloat
+    @Binding var opacityValue: Double
+    @State var shuffleCount:Int
+
     var barHeight = 8.0
     @State private var sheetHeight: CGFloat = .zero
     @State var navigateToScaleDirectly = false
@@ -146,53 +188,11 @@ struct CellView: View {
     @State var practiceModeHand:HandType? = nil
     @State var showLicenceRequiredScale = false
     @State var licenceRequiredMessage:String = ""
-    
+
     let padding = 5.0
 
-    
     func getColor() -> Color {
         return .green
-    }
-    
-    func progress() -> Double {
-        if Int.random(in: 0...3) == 0 {
-            return 0.0
-        }
-        else {
-            return Double.random(in: 0.3...0.6)
-        }
-    }
-    
-    func setStarred(scale:Scale) {
-        for row in practiceChart.rows {
-            for chartCell in row {
-                if chartCell.scale.getScaleIdentificationKey() == scale.getScaleIdentificationKey(){
-                    chartCell.setStarred(way: !chartCell.isStarred)
-                }
-            }
-        }
-    }
-
-    
-    func starView() -> some View {
-        HStack {
-            HStack {
-                Button(action: {
-                    setStarred(scale: practiceCell.scale)
-                }) {
-                    let name = practiceCell.isStarredPublished ? "star.fill" : "star"
-                    Image(systemName: name)
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(Color(red: 1.0, green: 0.843, blue: 0.0))
-                        .frame(height: cellHeight * 0.4)
-                }
-                .padding(.vertical, 0)
-                .padding(.horizontal)
-            }
-            .padding(self.padding)
-            .padding(.vertical, 0)
-        }
     }
     
     func getMinBadgeIndex() -> Int {
@@ -203,47 +203,20 @@ struct CellView: View {
         return min
     }
     
-    func badgeView() -> some View {
-        HStack {
-            if practiceCell.badges.count > 0 {
-                Text(" \(practiceCell.badges.count)").font(.custom("MarkerFelt-Wide", size: 24)).foregroundColor(.purple).bold()
-//                    .padding(4) // Adds spacing so the text isn't touching the circle
-//                        .background(
-//                            Circle()
-//                                .stroke(Color.purple, lineWidth: 2) 
-//                        )
-            }
-            ForEach(0..<practiceCell.badges.count, id: \.self) {index in
-                if index < self.getMinBadgeIndex() {
-                    if index == 0 {
-                        Text("..").font(.title2)
-                    }
-                }
-                else {
-                    Image(practiceCell.badges[index].imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 30)
-                }
-            }
-        }
-        .opacity(opacityValue)
-    }
-    
     func getName() -> String {
         var cellName = ""
-        let scale = practiceCell.scale
-        if scale.scaleType == .chromatic {
-            
-        }
-        if let customisation = scale.scaleCustomisation {
-            if let name = customisation.customScaleName {
-                cellName = name
-            }
-        }
-        if cellName.count == 0 {
-            cellName = practiceCell.scale.getScaleName(handFull: true)
-        }
+//        let scale = practiceCell.scale
+//        if scale.scaleType == .chromatic {
+//            
+//        }
+//        if let customisation = scale.scaleCustomisation {
+//            if let name = customisation.customScaleName {
+//                cellName = name
+//            }
+//        }
+        //if cellName.count == 0 {
+        cellName = practiceCell.scale.getScaleName(handFull: false)
+        //}
         return cellName
     }
     
@@ -264,72 +237,59 @@ struct CellView: View {
                                                  scaleCustomisation:practiceCell.scale.scaleCustomisation)
     }
     
+    func color(from string: String) -> Color {
+        switch string.lowercased() {
+        case "blue": return .blue
+        case "cyan": return .cyan
+        case "green": return .green
+        case "indigo": return .indigo
+        case "mint": return .mint
+        case "orange": return .orange
+        case "pink": return .pink
+        case "purple": return .purple
+        case "red": return .red
+        case "teal": return .teal
+        case "white": return .white
+        case "yellow": return .yellow
+        default:
+            return .clear // fallback if name is unrecognized
+        }
+    }
+
     var body: some View {
-        VStack {
-            Button(action: {
-                if practiceCell.isLicensed {
-                    if practiceCell.scale.hands.count == 1 {
-                        let chartHands = practiceCell.scale.hands
-                        if chartHands.count > 1 {
-                            setScale(requiredHands: [0,1])
-                        }
-                        else {
-                            setScale(requiredHands: [chartHands[0]])
-                        }
-                        navigateToScaleDirectly = true
-                    }
-                    else {
-                        navigateToSelectHands = true
-                    }
+        Button(action: {
+            if practiceCell.scale.hands.count == 1 {
+                let chartHands = practiceCell.scale.hands
+                if chartHands.count > 1 {
+                    setScale(requiredHands: [0,1])
                 }
                 else {
-                    self.showLicenceRequiredScale = true
-                    self.licenceRequiredMessage = "A subscription is required to access \n" + practiceCell.scale.getScaleName(handFull: true)
+                    setScale(requiredHands: [chartHands[0]])
                 }
-            }) {
-                HStack {
-                    Text(getName())
-                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
-                        .foregroundColor(practiceCell.isLicensed ? .blue : .gray)
-                        .opacity(opacityValue)
-                    if !practiceCell.isLicensed {
-                        Image(systemName: "lock")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(Color.gray)
-                        .frame(height: cellHeight * 0.3)
-                    }
-                }
+                navigateToScaleDirectly = true
             }
-            .padding(self.padding)
-            
-            //Spacer()
-            starView()
-            Spacer()
-            badgeView()
-            if Settings.shared.isDeveloperModeOn() {
-                Button(action: {
-                    if !isCorrectSet() {
-                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
-                            //score.debug11(ctx: "", handType: .none)
-                            Firebase.shared.writeKnownCorrect(scale: practiceCell.scale, score: score, board: practiceChart.board, grade: self.practiceChart.grade)
-                        })
-                        //self.isCorrectSet = true
-                    }
-                    else {
-                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
-                            let key = practiceCell.scale.getScaleIdentificationKey()
-                            Firebase.shared.deleteFromRealtimeDatabase(board: practiceChart.board, grade: self.practiceChart.grade, key: key,
-                                                                       callback:{_ in })
-                        })
-                    }
-                }) {
-                    let correctSet = self.isCorrectSet()
-                    Text(correctSet ? "Delete Correct" : "Set Correct").foregroundColor(correctSet ? .black : .red)
-                }
-                .buttonStyle(.bordered)
+            else {
+                navigateToSelectHands = true
             }
-            Spacer()
+        }) {
+            VStack {
+                Text(getName())
+                    .font(.headline)
+                Text("C:\(shuffleCount)")
+            }
+            .padding()
+            .foregroundColor(.black).opacity(opacityValue)
+            .frame(width: cellWidth, height: cellHeight)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(color(from: practiceCell.color).opacity(opacityValue))
+                    .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
+            )
+            .padding(.horizontal, cellPadding)
+            .padding(.bottom, 8)   // <- room for shadow
+            .padding(.trailing, 8) // <- room for shadow
+            .navigationTitle("Practice Chart")
+
         }
         .navigationDestination(isPresented: $navigateToScaleDirectly) {
             ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
@@ -337,214 +297,221 @@ struct CellView: View {
         .navigationDestination(isPresented: $navigateToSelectHands) {
             SelectHandForPractice(user:user, practiceChart: practiceChart, practiceCell: practiceCell)
         }
-        .frame(width: cellWidth) //, height: cellHeight)
-        .background(Color.white)
-        .cornerRadius(10)
-        ///Border?
-//        .overlay(
-//            RoundedRectangle(cornerRadius: 10).stroke(Color.gray, lineWidth: 2)
-//        )
-        .onAppear() {
-            let scaleName = self.practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
-        }
-        .alert(isPresented: $showLicenceRequiredScale) {
-            Alert(
-                title: Text("Subscription Required"),
-                message: Text(self.licenceRequiredMessage),
-                dismissButton: .default(Text("OK"))
-            )
-        }
     }
+    
+    //    func badgeView() -> some View {
+    //        HStack {
+    //            if practiceCell.badges.count > 0 {
+    //                Text(" \(practiceCell.badges.count)").font(.custom("MarkerFelt-Wide", size: 24)).foregroundColor(.purple).bold()
+    //            }
+    //            ForEach(0..<practiceCell.badges.count, id: \.self) {index in
+    //                if index < self.getMinBadgeIndex() {
+    //                    if index == 0 {
+    //                        Text("..").font(.title2)
+    //                    }
+    //                }
+    //                else {
+    //                    Image(practiceCell.badges[index].imageName)
+    //                        .resizable()
+    //                        .scaledToFit()
+    //                        .frame(height: 30)
+    //                }
+    //            }
+    //        }
+    //        .opacity(opacityValue)
+    //    }
 }
 
-struct PracticeChartViewOld: View {
+struct PracticeChartView: View {
     @Environment(\.dismiss) var dismiss
-    let user:User
-    @State private var practiceChart:PracticeChart
-    var daysOfWeek:[String] = []
+    @State private var user:User?
+    @State private var practiceChart:PracticeChart?
+    @State var currentDayOfWeekNum = 0
+    @State var daysOfWeek = Array(0...6)
+    @State var dayNames:[String] = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+
     @State var minorTypeIndex:Int = 0
     @State private var reloadTrigger = false
     @State private var redrawCounter = 0
     @State private var helpShowing = false
-    @State private var cellOpacityValue: Double = 1.0
     @State private var showHands = false
     @State var minorScaleTypes:[String] = []
     @State var scalesInChart:[String] = []
+    @State private var selectedDayColumn:Int = 0
+    @State private var cellOpacity:Double = 1.0
+    @State private var doShuffleCount:Int = 0
+    @State private var showPopup = false
+    @State private var minorTypeSelection: String? = nil
     
-    init(user:User, practiceChart:PracticeChart) {
-        self.user = user
-        self.practiceChart = practiceChart
-        self.daysOfWeek = getDaysOfWeek()
-    }
-
-    func getDaysOfWeek() -> [String] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale.current
-        guard let dayNames = dateFormatter.weekdaySymbols else {
-            return []
-        }
-        let calendar = Calendar.current
-        //let todayIndex = calendar.component(.weekday, from: Date()) - 1 // Calendar component .weekday returns 1 for Sunday, 2 for Monday, etc.
-        //let reorderedDayNames = Array(dayNames[todayIndex...] + dayNames[..<todayIndex])
-        let reorderedDayNames = Array(dayNames[practiceChart.firstColumnDayOfWeekNumber...] + dayNames[..<practiceChart.firstColumnDayOfWeekNumber])
-        return reorderedDayNames
-    }
-    
-    func doShuffle(update:Bool) {
-        for _ in 0..<24 {
+    func doShuffle() {
+        if let practiceChart = practiceChart {
             practiceChart.shuffle()
+            self.redrawCounter += 1
         }
-        self.redrawCounter += 1
     }
     
-    var body: some View {
-        VStack(spacing: 0)  {
-            //ScreenTitleView(screenName: "Practice Chart").padding(.vertical, 0)
-            VStack {
-                ///Tried using GeometryReader since it supposedly reacts to orientation changes.
-                ///But using it casues all the child view centering not to work
-                let screenWidth = UIScreen.main.bounds.size.width //geometry.size.width
-                let screenHeight = UIScreen.main.bounds.size.height //geometry.size.height
-                let cellWidth = (screenWidth / CGFloat(practiceChart.columns + 1)) * 1.2 // Slightly smaller width
-                let cellHeight: CGFloat = screenHeight / 12.0
-                let cellPadding = cellWidth * 0.015 // 2% of the cell width as padding
-                VStack {
-                    VStack(spacing: 0) {
-                        HStack {
-                            Spacer()
-                            let title = UIDevice.current.userInterfaceIdiom == .phone ? "Minor" : "MinorType"
-                            Text(LocalizedStringResource("\(title)")).font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .body).padding(0)
-                            Picker("Select Value", selection: $minorTypeIndex) {
-                                ForEach(minorScaleTypes.indices, id: \.self) { index in
-                                    Text("\(minorScaleTypes[index])").font(.body)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .onChange(of: minorTypeIndex, {
-                                let newType:ScaleType
-                                switch minorTypeIndex {
-                                case 0:newType = .harmonicMinor
-                                case 1:newType = .melodicMinor
-                                default:newType = .naturalMinor
-                                }
-                                practiceChart.minorScaleType = minorTypeIndex
-                                practiceChart.changeScaleTypes(selectedTypes: [.harmonicMinor, .naturalMinor, .melodicMinor],
-                                                               selectedMotions:[.similarMotion], newType: newType)
-                                practiceChart.savePracticeChartToFile()
-                                self.reloadTrigger = !self.reloadTrigger
-                            })
-                            Text("\(self.redrawCounter)").opacity(0.0).padding(0)
-                            
-                            if UIDevice.current.userInterfaceIdiom != .phone {
-                                Spacer()
-                                Button(action: {
-                                    helpShowing = true
-                                }) {
-                                    Text("Instructions")
-                                }
-                                //.buttonStyle(.bordered)
-                                //.padding()
-                            }
-                            
-//                            Spacer()
-//                            Button(action: {
-//                                self.showHands.toggle()
-//                            }) {
-//                                if UIDevice.current.userInterfaceIdiom == .phone {
-//                                    Text(self.showHands ? "Hide" : "Hands")
-//                                }
-//                                else {
-//                                    Text(self.showHands ? "Hide Hands" : "Show Hands")
-//                                }
+    struct SelectDayOfWeek: View {
+        let dayNames:[String]
+        let daysToShow:Int
+        let currentDayOfWeekNum:Int
+        @Binding var selectedDayColumn:Int
+        @Binding var opacity:Double
+
+        var body: some View {
+            HStack(spacing: 12) {
+                HStack {
+                    ForEach(0..<daysToShow, id: \.self) { dayIndex in
+                        let dayNameIndex = (currentDayOfWeekNum + dayIndex) % dayNames.count
+                        Button(action: {
+                            selectedDayColumn = dayIndex
+//                            opacity = 0.0
+//                            withAnimation(.easeIn(duration: 1.5)) {
+//                                opacity = 0.6
 //                            }
-                            
-                            Spacer()
-                            Button(action: {
-                                cellOpacityValue = 0.1
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    sleep(1)
-                                    doShuffle(update: true)
-                                    withAnimation(.linear(duration: 1.0)) {
-                                        cellOpacityValue = 1.0
-                                    }
-                                    practiceChart.savePracticeChartToFile()
-                                }
-                            }) {
-                                Text("Shuffle")
-                            }
-                            //.buttonStyle(.bordered)
-                            //.padding()
-                            
-                            Spacer()
-                        }
-                        .outlinedStyleView()
-                    }
-                    
-                    VStack(spacing: 0) {
-                        // Column Headers
-                        HStack(spacing: 0) {
-                            ForEach(0..<practiceChart.columns, id: \.self) { index in
-                                VStack {
-                                    Text(self.daysOfWeek[index])
-                                }
-                                .frame(width: cellWidth, height: cellHeight / 1.5) // Smaller height for headers
-                                .background(index == practiceChart.todaysColumn ? Color.blue : Color.gray)
-                                .foregroundColor(.white).bold()
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.white, lineWidth: 3)
+                        }) {
+                            Text("\(dayNames[dayNameIndex])")
+                                .foregroundColor(dayIndex == selectedDayColumn ? .white : .primary)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                        .fill(dayIndex == selectedDayColumn ? Color.black : Color.clear)
                                 )
-                                .padding(cellPadding)
-                            }
                         }
-                        ScrollView(.vertical) {
-                            ///Rows
-                            ForEach(0..<practiceChart.rows.count, id: \.self) { row in
-                                HStack(spacing: 0) {
-                                    ForEach(0..<practiceChart.columns, id: \.self) { column in
-                                        if column < practiceChart.rows[row].count {
-                                            CellView(user: user, column: column, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][column],
-                                                     cellWidth: cellWidth, cellHeight: cellHeight, cellPadding: cellPadding, opacityValue: $cellOpacityValue, showHands: $showHands)
-                                            .outlinedStyleView()
-                                            .padding(cellPadding)
-                                        }
-                                        else {
-                                            BlankCellView(cellWidth: cellWidth, cellHeight: cellHeight)
-                                                .outlinedStyleView()
-                                                .padding(cellPadding)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .id(reloadTrigger)
-                        //.frame(height: UIScreen.main.bounds.size.height * 0.67)
-                        Spacer()
                     }
                 }
-                //.padding() ///DO NOT DELETE - else the scroller underlaps the TabView at bottom
             }
-            .screenBackgroundStyle()
+            .padding(8)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color(.systemGray6))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color(.systemGray3), lineWidth: 1)
+            )
+            .padding(.horizontal)
         }
+    }
+
+    var body: some View {
+        VStack(spacing: 0)  {
+            VStack {
+                let screenWidth = UIScreen.main.bounds.size.width
+                let screenHeight = UIScreen.main.bounds.size.height
+                let cellWidth = screenWidth * 0.16
+                let cellHeight = screenHeight * 0.1
+                let cellPadding = screenWidth * 0.002
+                let leftEdge = screenWidth * 0.04
+                
+                VStack {
+                    Text("")
+                    HStack {
+                        FigmaButton(label: {
+                            Text("Harmonic Minor")
+                        }, action: {
+                            showPopup = true
+                            //selectedItem: String? = nil
+                        })
+                        FigmaButton(label: {
+                            Text("Shuffle")
+                        }, action: {
+                            cellOpacity = 0.0
+                            doShuffle()
+                            withAnimation(.easeIn(duration: 3.0)) {
+                                cellOpacity = 1.0
+                            }
+                            doShuffleCount += 1
+                        })
+                        Spacer()
+                        SelectDayOfWeek(dayNames: self.dayNames, daysToShow: 3, currentDayOfWeekNum: self.currentDayOfWeekNum,
+                                        selectedDayColumn: $selectedDayColumn, opacity: $cellOpacity)
+                            .frame(width: UIScreen.main.bounds.width * 0.3)
+                    }
+                    .padding(.leading, leftEdge)
+                    
+                    Text("")
+                    
+                    VStack(spacing: 0) {
+                        //ScrollView(.horizontal) {
+                        let cellsPerRow = 5
+                        if let practiceChart = self.practiceChart, let user = self.user {
+                            HStack(spacing: 0) {
+                                ///In the chart columns are days. e.g. column 0 is day 0, 1 is day 1 etc
+                                
+                                ForEach(0..<cellsPerRow, id: \.self) { row in
+                                    if row < practiceChart.rows.count {
+                                        if practiceChart.rows[row].count > selectedDayColumn {
+                                            CellView(user: user,
+                                                     practiceChart: practiceChart,
+                                                     scalesInChart: $scalesInChart,
+                                                     practiceCell: practiceChart.rows[row][selectedDayColumn],
+                                                     cellWidth: cellWidth, cellHeight: cellHeight,
+                                                     cellPadding: cellPadding,
+                                                     opacityValue: $cellOpacity,
+                                                     shuffleCount: doShuffleCount)
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading) //required to make the HStack left align
+                            .padding(.leading, leftEdge)
+                            HStack(spacing: 0) {
+                                if cellsPerRow < practiceChart.rows.count {
+                                    ForEach(cellsPerRow..<practiceChart.rows.count, id: \.self) { row in
+                                        if practiceChart.rows[row].count > selectedDayColumn {
+                                            CellView(user: user, practiceChart: practiceChart, scalesInChart: $scalesInChart, practiceCell: practiceChart.rows[row][selectedDayColumn],
+                                                     cellWidth: cellWidth, cellHeight: cellHeight,
+                                                     cellPadding: cellPadding,
+                                                     opacityValue: $cellOpacity,
+                                                     shuffleCount: doShuffleCount)
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, leftEdge)
+                        }
+                    //}
+                    }
+                    Spacer()
+                }
+            }
+        }
+        .commonToolbar(
+            title: "Practice Chart",
+            onBack: { dismiss() }
+        )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        //.navigationBarHidden(true)
-        //.navigationViewStyle(StackNavigationViewStyle())
         .onAppear() {
-            self.minorScaleTypes = self.practiceChart.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
+            self.currentDayOfWeekNum = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
+            let user = Settings.shared.getCurrentUser()
+            self.user = user
+            let practiceChart = user.getPracticeChart()
+            self.practiceChart = practiceChart
+            self.minorScaleTypes = self.practiceChart!.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = practiceChart.minorScaleType
             if Settings.shared.isDeveloperModeOn() {
-                Firebase.shared.readAllScales(board: self.practiceChart.board, grade:self.practiceChart.grade) { scalesAndScores in
+                Firebase.shared.readAllScales(board: practiceChart.board, grade:practiceChart.grade) { scalesAndScores in
                     self.scalesInChart = scalesAndScores.map { $0.0 }
                 }
             }
         }
         .onDisappear() {
         }
-        .sheet(isPresented: $helpShowing) {
-            HelpView(topic: "Practice Chart")
+        .sheet(isPresented: $showPopup) {
+            MinorTypePopup (
+                selectedItem: $minorTypeSelection,
+                isPresented: $showPopup,
+                onDone: {
+                    print("======= XXX", minorTypeSelection)
+                }
+            )
         }
-        .onChange(of: ViewManager.shared.isPracticeChartActive) { newValue in
+//        .sheet(isPresented: $helpShowing) {
+//            HelpView(topic: "Practice Chart")
+//        }
+        .onChange(of: ViewManager.shared.isPracticeChartActive) {oldValue, newValue in
             if newValue == false {
                 dismiss()
             }
@@ -552,7 +519,7 @@ struct PracticeChartViewOld: View {
     }
 }
 
-struct PracticeChartView: View {
+struct PracticeChartViewNew: View {
     @Environment(\.dismiss) private var dismiss
     @State private var currentUser: User = Settings.shared.getCurrentUser()
     var body: some View {
@@ -568,3 +535,92 @@ struct PracticeChartView: View {
         )
     }
 }
+
+
+//PracticeChart var bodyOld: some View {
+//        VStack {
+//            Button(action: {
+//                if practiceCell.isLicensed {
+//                    if practiceCell.scale.hands.count == 1 {
+//                        let chartHands = practiceCell.scale.hands
+//                        if chartHands.count > 1 {
+//                            setScale(requiredHands: [0,1])
+//                        }
+//                        else {
+//                            setScale(requiredHands: [chartHands[0]])
+//                        }
+//                        navigateToScaleDirectly = true
+//                    }
+//                    else {
+//                        navigateToSelectHands = true
+//                    }
+//                }
+//                else {
+//                    self.showLicenceRequiredScale = true
+//                    self.licenceRequiredMessage = "A subscription is required to access \n" + practiceCell.scale.getScaleName(handFull: true)
+//                }
+//            }) {
+//                HStack {
+//                    Text(getName())
+//                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title2)
+//                        .foregroundColor(practiceCell.isLicensed ? .blue : .gray)
+//                        .opacity(opacityValue)
+//                    if !practiceCell.isLicensed {
+//                        Image(systemName: "lock")
+//                            .resizable()
+//                            .scaledToFit()
+//                            .foregroundColor(Color.gray)
+//                        .frame(height: cellHeight * 0.3)
+//                    }
+//                }
+//            }
+//            .padding(self.padding)
+//
+//            //Spacer()
+//            //starView()
+//            Spacer()
+//            badgeView()
+//            if false && Settings.shared.isDeveloperModeOn() {
+//                Button(action: {
+//                    if !isCorrectSet() {
+//                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
+//                            //score.debug11(ctx: "", handType: .none)
+//                            Firebase.shared.writeKnownCorrect(scale: practiceCell.scale, score: score, board: practiceChart.board, grade: self.practiceChart.grade)
+//                        })
+//                        //self.isCorrectSet = true
+//                    }
+//                    else {
+//                        ScalesModel.shared.setKeyboardAndScore(scale: practiceCell.scale, callback: {_,score in
+//                            let key = practiceCell.scale.getScaleIdentificationKey()
+//                            Firebase.shared.deleteFromRealtimeDatabase(board: practiceChart.board, grade: self.practiceChart.grade, key: key,
+//                                                                       callback:{_ in })
+//                        })
+//                    }
+//                }) {
+//                    let correctSet = self.isCorrectSet()
+//                    Text(correctSet ? "Delete Correct" : "Set Correct").foregroundColor(correctSet ? .black : .red)
+//                }
+//                .buttonStyle(.bordered)
+//            }
+//            Spacer()
+//        }
+//        .navigationDestination(isPresented: $navigateToScaleDirectly) {
+//            ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
+//        }
+//        .navigationDestination(isPresented: $navigateToSelectHands) {
+//            SelectHandForPractice(user:user, practiceChart: practiceChart, practiceCell: practiceCell)
+//        }
+//        .frame(width: cellWidth) //, height: cellHeight)
+//        .background(Color.white)
+//        .cornerRadius(10)
+//        .onAppear() {
+//            let scaleName = self.practiceCell.scale.getScaleName(handFull: true, motion:true, octaves: true)
+//        }
+//        .alert(isPresented: $showLicenceRequiredScale) {
+//            Alert(
+//                title: Text("Subscription Required"),
+//                message: Text(self.licenceRequiredMessage),
+//                dismissButton: .default(Text("OK"))
+//            )
+//        }
+//    }

@@ -46,6 +46,7 @@ struct UserListView: View {
                                                height: UIScreen.main.bounds.width * boxSize)
                                     Text(user.name)
                                         .font(.headline)
+                                        .underline(user.id == Settings.shared.getCurrentUser().id)
                                 }
                             }
                             Text("")

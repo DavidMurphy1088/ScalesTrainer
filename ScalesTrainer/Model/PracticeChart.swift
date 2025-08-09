@@ -3,7 +3,7 @@ import Foundation
 
 ///Requires custom CODABLE due to the @Published member
 class PracticeChartCell: ObservableObject, Codable {
-    @Published var isStarredPublished: Bool = false
+    @Published var updateCount: Int = 0
     @Published var badges:[Badge] = []
     
     weak var chart: PracticeChart?
@@ -13,6 +13,7 @@ class PracticeChartCell: ObservableObject, Codable {
     var scale: Scale
     var isStarred: Bool = false
     var isLicensed:Bool = false
+    var color:String
     
     enum CodingKeys: String, CodingKey {
         case board
@@ -21,18 +22,20 @@ class PracticeChartCell: ObservableObject, Codable {
         case isStarred
         case badges
         case isLicensed
+        case color
     }
     
-    init(chart:PracticeChart?, board:String, grade:Int, scaleIDKey: String, isLicensed:Bool) {
+    init(chart:PracticeChart?, board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, color:String) {
         self.chart = chart
         self.board = board
         self.grade = grade
         self.scaleIDKey = scaleIDKey
         self.scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey)!
         self.isStarred = false
-        self.isStarredPublished = false
+        //self.isStarredPublished = false
         self.badges = []
         self.isLicensed = isLicensed
+        self.color = color
     }
         
     func addBadge(badge:Badge, callback:@escaping ()->Void) {
@@ -49,6 +52,7 @@ class PracticeChartCell: ObservableObject, Codable {
         scaleIDKey = try container.decode(String.self, forKey: .scaleIDKey)
         isStarred = try container.decode(Bool.self, forKey: .isStarred)
         isLicensed = try container.decode(Bool.self, forKey: .isLicensed)
+        color = try container.decode(String.self, forKey: .color)
         badges = try container.decode([Badge].self, forKey: .badges)
         
         if let scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey) {
@@ -57,7 +61,7 @@ class PracticeChartCell: ObservableObject, Codable {
         else {
             fatalError("PracticeChartCell - no scale for board:\(board), grade:\(grade) scaleKey:\(scaleIDKey)")
         }
-        self.isStarredPublished = self.isStarred
+        //self.isStarredPublished = self.isStarred
     }
     
     func encode(to encoder: Encoder) throws {
@@ -67,17 +71,8 @@ class PracticeChartCell: ObservableObject, Codable {
         try container.encode(scaleIDKey, forKey: .scaleIDKey)
         try container.encode(isStarred, forKey: .isStarred)
         try container.encode(isLicensed, forKey: .isLicensed)
+        try container.encode(color, forKey: .color)
         try container.encode(badges, forKey: .badges)
-    }
-    
-    func setStarred(way: Bool) {
-        self.isStarred = way
-        DispatchQueue.main.async {
-            self.isStarredPublished = way
-        }
-        if let chart = self.chart {
-            chart.savePracticeChartToFile()
-        }
     }
 }
 
@@ -85,7 +80,7 @@ class PracticeChart: Codable {
     let user:User
     var board:String
     var grade:Int
-    var columns: Int
+    var daysWidth: Int
     var rows: [[PracticeChartCell]]
     var minorScaleType: Int
     var firstColumnDayOfWeekNumber:Int
@@ -95,7 +90,7 @@ class PracticeChart: Codable {
         self.user = user
         self.board = board
         self.grade = grade
-        self.columns = 3
+        self.daysWidth = 3
         self.rows = []
         self.minorScaleType = minorScaleType
         
@@ -106,6 +101,13 @@ class PracticeChart: Codable {
         
         var scaleCtr = 0
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
+        
+        let colors = ["blue", "cyan", "indigo",
+                      "green", "mint", "orange",
+                      "pink", "purple", "red",
+                      "teal", "yellow", "green"]
+        var colorIndex = 0
+        
         while true {
             var rowCells:[PracticeChartCell]=[]
             if scaleCtr < scales.count {
@@ -113,9 +115,10 @@ class PracticeChart: Codable {
                     if scaleCtr < scales.count {
                         rowCells.append(PracticeChartCell(chart:self, board:self.board, grade:self.grade,
                                                           scaleIDKey: scales[scaleCtr].getScaleIdentificationKey(),
-                                                          isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed()
-                                                        ))
+                                                          isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed(),
+                                                          color: colors[colorIndex % colors.count]))
                         scaleCtr += 1
+                        colorIndex += 1
                     }
                     else {
                         break
@@ -128,14 +131,13 @@ class PracticeChart: Codable {
             }
         }
     }
-    
+        
     func convertToJSON() -> Data? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         do {
             let data = try encoder.encode(self)
-            let jsonString = String(data: data, encoding: .utf8)
-            //print("\n", jsonString ?? "")
+            //let jsonString = String(data: data, encoding: .utf8)
             return data
         } catch {
             AppLogger.shared.reportError(self, "Failed to save PracticeChart \(error)")
@@ -219,29 +221,33 @@ class PracticeChart: Codable {
     }
     
     func shuffle() {
-        let rows = self.rows.count
-        let cells = self.rows[0].count
-        let srcRow = (Int.random(in: 0..<rows))
-        let srcCol = (Int.random(in: 0..<cells))
-        let tarRow = (Int.random(in: 0..<rows))
-        let tarCol = (Int.random(in: 0..<cells))
-        if srcCol >= self.rows[srcRow].count {
-            return
-        }
-        if tarCol >= self.rows[tarRow].count {
-            return
-        }
-        let cell:PracticeChartCell = self.rows[srcRow][srcCol]
-        self.rows[srcRow][srcCol] = self.rows[tarRow][tarCol]
-        self.rows[tarRow][tarCol] = cell
-        let secs = Double.random(in: 0..<0.75)
-        DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
-            cell.isStarredPublished = !cell.isStarredPublished
-            let secs = Double.random(in: 0..<0.75)
-            DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
-                cell.isStarredPublished = !cell.isStarredPublished
+        for _ in 0..<64 {
+            let rows = self.rows.count
+            let cells = self.rows[0].count
+            let srcRow = (Int.random(in: 0..<rows))
+            let srcCol = (Int.random(in: 0..<cells))
+            let tarRow = (Int.random(in: 0..<rows))
+            let tarCol = (Int.random(in: 0..<cells))
+            if srcCol >= self.rows[srcRow].count {
+                return
             }
+            if tarCol >= self.rows[tarRow].count {
+                return
+            }
+            let cell:PracticeChartCell = self.rows[srcRow][srcCol]
+            self.rows[srcRow][srcCol] = self.rows[tarRow][tarCol]
+            self.rows[tarRow][tarCol] = cell
         }
+        savePracticeChartToFile()
+        //let secs = Double.random(in: 0..<0.75)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
+//            cell.updateCount += 1
+//            let secs = Double.random(in: 0..<0.75)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + secs) {
+//                cell.updateCount += 1
+//                //cell.isStarredPublished = !cell.isStarredPublished
+//            }
+//        }
     }
     
     func getScales() -> [Scale] {

@@ -78,7 +78,6 @@ struct UserEditView: View {
                             if user.grade > 0 {
                                 errorMessage = ""
                                 user.name = name
-                                user.isCurrentUser = true
                                 settings.setUser(user: user)
                                 dismiss()
                                 ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)

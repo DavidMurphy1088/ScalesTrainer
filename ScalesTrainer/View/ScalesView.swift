@@ -11,6 +11,7 @@ enum ActiveSheet: Identifiable {
 }
 
 struct ScalesView: View {
+    @Environment(\.dismiss) var dismiss
     let user:User
     let practiceChart:PracticeChart?
     let practiceChartCell:PracticeChartCell?
@@ -88,7 +89,6 @@ struct ScalesView: View {
                 scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
             })
 
-            
             if false {
                 Spacer()
                 Text(LocalizedStringResource("Viewing Direction"))
@@ -660,7 +660,7 @@ struct ScalesView: View {
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
-                .screenBackgroundStyle()
+                //.screenBackgroundStyle()
             }
 
             ///-------- Exercise state displays ----------
@@ -748,7 +748,11 @@ struct ScalesView: View {
             }
 
         }
-        .toolbar(.hidden, for: .tabBar) // Hide the TabView
+        .commonToolbar(
+            title: ScalesModel.shared.scale.getScaleDescription(name: true),
+            onBack: { dismiss() }
+        )
+        //.toolbar(.hidden, for: .tabBar) // Hide the TabView
         .edgesIgnoringSafeArea(.bottom)
         
         .sheet(isPresented: $helpShowing) {

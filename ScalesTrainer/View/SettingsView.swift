@@ -209,7 +209,7 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
             DetailedCustomSettingsView(user:user)
                 .frame(maxWidth: .infinity)
-                .screenBackgroundStyle()
+                //.screenBackgroundStyle()
         }
         
         .onAppear() {

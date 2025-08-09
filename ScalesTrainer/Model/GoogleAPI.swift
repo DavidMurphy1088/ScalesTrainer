@@ -175,7 +175,8 @@ public class GoogleAPI {
             return
         }
         let session = URLSession.shared
-        let task = session.dataTask(with: url) { (data, response, error) in
+        let task = session.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self else { return }
             if let error = error {
                 self.logger.reportError(self, "DataTask Error \(error.localizedDescription)")
                 onDone(.failed, nil)

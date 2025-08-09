@@ -18,7 +18,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     var name:String
     var email:String
     var settings:UserSettings
-    var isCurrentUser:Bool
     var grade:Int
     var color:String
     
@@ -33,7 +32,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.board = board
         self.grade = 0
         self.settings = UserSettings()
-        self.isCurrentUser = false
         let colorNames = [
             "red", "orange", "yellow", "green",
             "mint", "teal", "cyan", "blue",
@@ -48,7 +46,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.board = user.board
         self.grade = user.grade
         self.settings = user.settings
-        self.isCurrentUser = user.isCurrentUser
         self.color = user.color
     }
     
@@ -156,15 +153,12 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         return title
     }
     
-    func getPracticeChart() -> PracticeChart? {
-        //if let grade = self.grade {
-            if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: self, board: self.board, grade: grade) {
-                return loadedChart
-            }
-            else {
-                return PracticeChart(user: self, board: self.board, grade: grade)
-            }
-        //}
-        //return nil
+    func getPracticeChart() -> PracticeChart {
+        if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: self, board: self.board, grade: grade) {
+            return loadedChart
+        }
+        else {
+            return PracticeChart(user: self, board: self.board, grade: grade)
+        }
     }
 }

@@ -115,7 +115,8 @@ class Metronome:ObservableObject {
         let threadWaitInSeconds = (60.0 / tempo) / Double(notesPerClick)
         AppLogger.shared.log(self, "Metronome thread starting, tempo:\(tempo)")
         
-        Task.detached(priority: .background) {
+        Task.detached(priority: .background) { [weak self] in
+            guard let self = self else { return }
             while (self.status != .notStarted) {
                 var remaining = 0
                 if let leadInCount = self.leadInCount, let standbyCount = self.standbyCount {
