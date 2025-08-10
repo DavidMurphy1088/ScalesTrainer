@@ -18,7 +18,8 @@ enum LaunchScreenStep {
 }
 
 final class LaunchScreenStateManager: ObservableObject {
-    @MainActor @Published private(set) var state: LaunchScreenStep = .firstStep
+    @MainActor @Published private(set) var state: LaunchScreenStep =
+        Settings.shared.isDeveloperModeOn() ? .finished : .firstStep
     @MainActor func dismiss() {
         Task {
             //state = .secondStep
@@ -396,14 +397,11 @@ struct ScalesTrainerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if Settings.shared.isDeveloperModeOn() {
-//                UserListView()
-//                    .onAppear() {
-//                        self.setupDev()
-//                    }
-                ActivitiesView()
-            }
-            else {
+//            if Settings.shared.isDeveloperModeOn() {
+//                //UserListView().onAppear() {self.setupDev()}
+//                BadgesView().onAppear() {self.setupDev()}
+//            }
+//            else {
                 VStack {
                     if launchScreenState.state != .finished {
                         LaunchScreenView()
@@ -428,7 +426,7 @@ struct ScalesTrainerApp: App {
                         self.launchScreenState.dismiss()
                     }
                 }
-            }
+//            }
         }
     }
     

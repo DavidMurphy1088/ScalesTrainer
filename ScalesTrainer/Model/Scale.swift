@@ -618,7 +618,7 @@ public class Scale : Codable {
             return [HandType.right]
         }
     }
-
+    
     func getMinMaxSegments() -> (min:Int, max:Int) {
         var scaleMin:Int = Int.max
         var scaleMax:Int = Int.min
@@ -649,25 +649,25 @@ public class Scale : Codable {
         }
         return self.hands == scale.hands
     }
-
-//    func getArticulationsDescription() -> String {
-//        var desc = ""
-//        var d = 0
-//        for articulationType in articulationTypes {
-//            if d > 0 {
-//                desc += " or "
-//            }
-//            desc += String(articulationType.description)
-//            d += 1
-//        }
-//        return desc
-//    }
-
     
-//    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
-//        let states = self.scaleNoteState[handType == .right ? 0 : 1]
-//        return states[index]
-//    }
+    //    func getArticulationsDescription() -> String {
+    //        var desc = ""
+    //        var d = 0
+    //        for articulationType in articulationTypes {
+    //            if d > 0 {
+    //                desc += " or "
+    //            }
+    //            desc += String(articulationType.description)
+    //            d += 1
+    //        }
+    //        return desc
+    //    }
+    
+    
+    //    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
+    //        let states = self.scaleNoteState[handType == .right ? 0 : 1]
+    //        return states[index]
+    //    }
     func getScaleNoteState(handType: HandType, index: Int) -> ScaleNoteState? {
         guard index < self.scaleNoteState[0].count else {
             return nil
@@ -678,7 +678,7 @@ public class Scale : Codable {
     func getScaleNoteStates(handType:KeyboardType) -> [ScaleNoteState] {
         return self.scaleNoteState[handType == .right ? 0 : 1]
     }
-
+    
     ///Return the remaining number of beats for a specified time signature for the scale's last bar. Remaining is the full bar minus the scale's last note value.l
     func getRemainingBeatsInLastBar(timeSignature:TimeSignature) -> Int {
         if timeSignature.top == 3 {
@@ -702,7 +702,7 @@ public class Scale : Codable {
                 if scaleNote.isWhiteKey() {
                     //scaleNote.fingerSequenceBreak = [0, 5].contains(scaleNote.midi % 12) ? false : true
                     scaleNote.keyboardColourType = [0, 5].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
-                    }
+                }
             }
             if hand == 1 {
                 if scaleMotion == .contraryMotion {
@@ -795,7 +795,7 @@ public class Scale : Codable {
             scaleOffsets = [4,3,4,1]
         case .arpeggioMinorSeventh:
             scaleOffsets = [3,4,3,2]
-
+            
         case .arpeggioHalfDiminished:
             scaleOffsets = [3,3,4,2]
         case .arpeggioDiminishedSeventh:
@@ -835,7 +835,7 @@ public class Scale : Codable {
         if [.arpeggioDiminished, .arpeggioDiminishedSeventh, .arpeggioMajor, .arpeggioMinor, .arpeggioMajorSeventh, .arpeggioMinorSeventh].contains(scaleType) {
             backingChords = BackingChords(scaleType: self.scaleType, hands: self.hands, octaves: self.octaves)
         }
-
+        
         guard let backingChords = backingChords else {
             return nil
         }
@@ -959,7 +959,7 @@ public class Scale : Codable {
             guard timedNotesCount > 0 else {
                 return 0
             }
-        
+            
             let tempo = 60.0 / (sumOfDurations / Double(timedNotesCount))
             if tempo.isFinite && !tempo.isNaN {
                 tempoSum += Int(tempo)
@@ -1008,7 +1008,7 @@ public class Scale : Codable {
         for note in self.scaleNoteState[hand] {
             note.keyboardColourType = .none
         }
-
+        
         let halfway = self.scaleNoteState[hand].count/2-1
         if hand == 0 {
             var lastFinger = self.scaleNoteState[hand][0].finger
@@ -1057,7 +1057,7 @@ public class Scale : Codable {
             }
         }
     }
-
+    
     
     func getMinMaxMidis() -> (Int, Int) {
         var min = 0
@@ -1100,7 +1100,7 @@ public class Scale : Codable {
         }
         return states
     }
-
+    
     func stringIndexToInt(index:Int, fingers:String) -> Int {
         if fingers.count == 0 {
             return 0
@@ -1160,11 +1160,11 @@ public class Scale : Codable {
                 else {
                     fingers = hand == 0 ? "2312341" : "4123123"
                 }
-//            case "F#":
-//                ///Variants beside melodic minor can default
-//                if scaleType == .melodicMinor {
-//                    fingers = hand == 0 ? "2312341" : "4123123"
-//                }
+                //            case "F#":
+                //                ///Variants beside melodic minor can default
+                //                if scaleType == .melodicMinor {
+                //                    fingers = hand == 0 ? "2312341" : "4123123"
+                //                }
             case "G#":
                 fingers = hand == 0 ? "3412312" : "212341231234123"
                 if scaleType == .melodicMinor {
@@ -1191,7 +1191,7 @@ public class Scale : Codable {
                 }
             case "A♭":
                 fingers = hand == 0 ? "3412312" : "3123412" ///probably need different for minor vs. harmonic minor
-
+                
             case "C#","D♭":
                 if scaleType == .major {
                     fingers = hand == 0 ? "2312341" : "3123412"
@@ -1214,9 +1214,9 @@ public class Scale : Codable {
         if fingers.count == 0 {
             fingers = defaultfingers
         }
-                
+        
         ///Three note arpeggio
-
+        
         if scaleShapeForFingering == .arpgeggio {
             if self.debugOn {
             }
@@ -1315,10 +1315,10 @@ public class Scale : Codable {
             fingers = hand == 0 ? "135125135" : "531531521"
         }
         
-        /// Set fingering now given the finger sequence 
+        /// Set fingering now given the finger sequence
         if self.debugOn {
         }
-
+        
         var handled = false
         if scaleType == .chromatic {
             applyChromaticFingers()
@@ -1332,7 +1332,7 @@ public class Scale : Codable {
             fingeringSpecifiedByNote = [1,2,4, 2,1]
             handled = true
         }
-
+        
         ///Fingering is simply the fingers in the specified array
         if let fingeringSpecifiedByNote = fingeringSpecifiedByNote {
             if fingeringSpecifiedByNote.count != self.scaleNoteState[hand].count {
@@ -1343,7 +1343,7 @@ public class Scale : Codable {
             }
             handled = true
         }
-
+        
         if !handled {
             ///Apply the regular (as defined above) finger patterns for ascending and descending. The finger pattern used is the pattern for the right hand ascending.
             ///For LH ascending the pattern is applied to the middle of the LH scale. For LH contrary motion its applied to the start of the LH scale (the highest note)
@@ -1367,7 +1367,7 @@ public class Scale : Codable {
                 for n in 0..<scaleNoteState[0].count-1 {
                     let state = self.scaleNoteState[hand][n]
                     if state.isWhiteKey() {
-                       break
+                        break
                     }
                     else {
                         state.finger = 2 + n
@@ -1405,7 +1405,7 @@ public class Scale : Codable {
             var highNoteFinger = stringIndexToInt(index: fingers.count - 1, fingers: fingers) + 1
             if scaleShapeForFingering == .arpgeggio {
                 if highNoteFinger < 5 {
-                   highNoteFinger += rightHandLastFingerJump
+                    highNoteFinger += rightHandLastFingerJump
                 }
             }
             scaleNoteState[hand][halfway].finger = highNoteFinger
@@ -1431,10 +1431,10 @@ public class Scale : Codable {
                 }
                 f += 1
             }
-
+            
             //if startsOnBlack {
-                ///Highest note
-//                scaleNoteState[hand][halfway].finger = 2
+            ///Highest note
+            //                scaleNoteState[hand][halfway].finger = 2
             //}
             
             if leftHandLastFingerJump > 0  {
@@ -1530,12 +1530,12 @@ public class Scale : Codable {
         return key
     }
     
-    func getScaleDescription(name:Bool? = nil, hands:Bool?=nil, motion:Bool? = nil, octaves:Bool? = nil, tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
+    func getScaleDescriptionParts(name:Bool? = nil, hands:Bool?=nil, octaves:Bool? = nil, tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
         var description = ""
         if let name = name {
             description = scaleRoot.name + " " + scaleType.description
-            if scaleMotion == .contraryMotion || motion == true {
-                description += ", " + scaleMotion.description
+            if scaleMotion == .contraryMotion {
+                description += " " + scaleMotion.description
             }
         }
         if let hands = hands {

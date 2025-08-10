@@ -54,6 +54,7 @@
 		79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79566AD52CB9259C00581A57 /* BackingChords.swift */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
+		796ED5D82E48903200771D3A /* BadgeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796ED5D72E48902D00771D3A /* BadgeContainer.swift */; };
 		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
 		797013842BEE36E2009F85D6 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137C2BEE36E1009F85D6 /* Score.swift */; };
 		797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137E2BEE36E1009F85D6 /* StaffNote.swift */; };
@@ -200,6 +201,7 @@
 		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		796ED5D72E48902D00771D3A /* BadgeContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeContainer.swift; sourceTree = "<group>"; };
 		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
 		7970137C2BEE36E1009F85D6 /* Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		7970137E2BEE36E1009F85D6 /* StaffNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffNote.swift; sourceTree = "<group>"; };
@@ -537,6 +539,7 @@
 				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
+				796ED5D72E48902D00771D3A /* BadgeContainer.swift */,
 				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
 				79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */,
@@ -850,6 +853,7 @@
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
 				79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */,
 				79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */,
+				796ED5D82E48903200771D3A /* BadgeContainer.swift in Sources */,
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
 				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,

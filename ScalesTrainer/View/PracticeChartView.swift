@@ -519,22 +519,22 @@ struct PracticeChartView: View {
     }
 }
 
-struct PracticeChartViewNew: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var currentUser: User = Settings.shared.getCurrentUser()
-    var body: some View {
-        VStack {
-            Text("")
-            Text("")
-            Text("...Practice Chart somewhere here...")
-            Spacer()
-        }
-        .commonToolbar(
-            title: "Practice Chart",
-            onBack: { dismiss() }
-        )
-    }
-}
+//struct PracticeChartViewNew: View {
+//    @Environment(\.dismiss) private var dismiss
+//    @State private var currentUser: User = Settings.shared.getCurrentUser()
+//    var body: some View {
+//        VStack {
+//            Text("")
+//            Text("")
+//            Text("...Practice Chart somewhere here...")
+//            Spacer()
+//        }
+//        .commonToolbar(
+//            title: "Practice Chart",
+//            onBack: { dismiss() }
+//        )
+//    }
+//}
 
 
 //PracticeChart var bodyOld: some View {

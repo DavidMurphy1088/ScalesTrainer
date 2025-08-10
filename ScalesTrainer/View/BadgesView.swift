@@ -1,24 +1,55 @@
 import Foundation
 import SwiftUI
 import Combine
-import SwiftUI
 import AVFoundation
 import AudioKit
 
 struct BadgesView: View {
-    //@State var user:User
-    ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
-    ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
-    //@State var userName:String = ""
-    //@State var userGrade:Int?
-    @State private var currentUser: User = Settings.shared.getCurrentUser()
-    @State var imgSize = UIScreen.main.bounds.width * 0.2
+    @Environment(\.dismiss) private var dismiss
+    @State var user:User?
+    @State var badgeContainer:BadgeContainer?
     
+    func sortBadges() -> [BadgeContainer.ScaleBadges] {
+//        guard let user = user else {
+//            return []
+//        }
+        if let badgeContainer = badgeContainer {
+            return badgeContainer.sortedScaleBadgesByBadgeCount()
+        }
+        else {
+            return []
+        }
+    }
+    
+    func name(scale:Scale) -> String {
+        return scale.getScaleDescriptionParts(name:true)
+    }
     var body: some View {
         NavigationStack {
             VStack {
-                Text("badges")
+                List {
+                    ForEach(Array(sortBadges().enumerated()), id: \.offset) { index, scalesBadges in
+                        HStack() {
+                            Text("OnSyllabus:\(scalesBadges.onSyllabus)")
+                            if !scalesBadges.onSyllabus {
+                                Text("   ")
+                            }
+                            Text("\(scalesBadges.scaleRoot.name)")
+                            Text("\(scalesBadges.scaleType.description)")
+                            Text("Hands: \(scalesBadges.hands.count)")
+                        }
+                    }
+                }
+            }
+            .commonToolbar(
+                title: "Badges", onBack: {}
+            )
+            .onAppear {
+                self.user = Settings.shared.getCurrentUser()
+                badgeContainer = user!.getBadgeContainer()
             }
         }
+        
     }
+    
 }

@@ -131,7 +131,11 @@ class PracticeChart: Codable {
             }
         }
     }
-        
+    
+    func allCells() -> [PracticeChartCell] {
+        return rows.flatMap { $0 }
+    }
+    
     func convertToJSON() -> Data? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted

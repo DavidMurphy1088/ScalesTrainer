@@ -749,7 +749,7 @@ struct ScalesView: View {
 
         }
         .commonToolbar(
-            title: ScalesModel.shared.scale.getScaleDescription(name: true),
+            title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView

@@ -11,18 +11,18 @@ struct ScaleTitleView: View {
     
     var body: some View {
         VStack {
-            let mainTitle = scale.getScaleDescription(name: true)
+            let mainTitle = scale.getScaleDescriptionParts(name: true)
             let compact = UIDevice.current.userInterfaceIdiom == .phone
             Text("\(mainTitle)").font(compact ? .body :  .title2).foregroundColor(.blue)
             HStack {
                 Spacer()
-                let line = scale.getScaleDescription(hands: true) + ", " + scale.getScaleDescription(octaves:true) + ", " + scale.getScaleDescription(tempo:true)
+                let line = scale.getScaleDescriptionParts(hands: true) + ", " + scale.getScaleDescriptionParts(octaves:true) + ", " + scale.getScaleDescriptionParts(tempo:true)
                 Text("\(line)").font(compact ? .footnote : .body)
                 Spacer()
             }
             HStack {
                 Spacer()
-                Text("\(scale.getScaleDescription(dynamics: true))").italic().font(compact ? .footnote : .body)
+                Text("\(scale.getScaleDescriptionParts(dynamics: true))").italic().font(compact ? .footnote : .body)
 //                if practiceModeHand != nil {
 //                    //Spacer()
 //                    Text("Separate Hand Practice Only").italic().foregroundColor(.blue).font(compact ? .footnote : .body)
