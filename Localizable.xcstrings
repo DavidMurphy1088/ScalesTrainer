@@ -10,9 +10,6 @@
     "  " : {
 
     },
-    "   " : {
-
-    },
     "                  " : {
 
     },
@@ -192,6 +189,9 @@
     "Bluetooth MIDI Devices" : {
 
     },
+    "Both Hands" : {
+
+    },
     "But here you can practise %@ hands separately." : {
 
     },
@@ -323,9 +323,6 @@
 
     },
     "Hands ready?" : {
-
-    },
-    "Hands: %lld" : {
 
     },
     "Harmonic Minor" : {

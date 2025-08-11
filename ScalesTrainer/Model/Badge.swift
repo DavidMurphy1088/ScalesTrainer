@@ -6,8 +6,7 @@ import WebKit
 class Badge : Encodable, Decodable {
     static let imageNames = ["badge_1", "badge_2", "badge_3", "badge_4", "badge_5", "badge_6", "badge_7", "badge_8", "badge_9", "badge_10",
                         "badge_11", "badge_12", "badge_13", "badge_14", "badge_15", "badge_16"]
-    static let names = ["Stripey", "Pandy", "Hippo-Hop", "Cheeky Paws", "Peekaboo", "Trunky", "Whiskers", "Mittens", "Mango", "Cuddles", "Chipper", "Zippy", "Chomper",
-                        "Rambo","Foxy","Mischief"]
+    static let names = ["Stripey", "Pandy", "Hippo-Hop", "Cheeky Paws", "Peekaboo", "Trunky", "Whiskers", "Mittens", "Mango", "Cuddles", "Chipper", "Zippy", "Chomper","Rambo","Foxy","Mischief"]
     static var lastIdIssued:Int?
     
     let id:Int
@@ -47,18 +46,4 @@ class Badge : Encodable, Decodable {
     }
 }
 
-class ExerciseBadgesList : ObservableObject {
-    static let shared = ExerciseBadgesList()
-
-    @Published private(set) var totalBadgesPublished: Int = 0
-
-    var totalBadges: Int = 0
-    func setTotalBadges(_ value:Int) {
-        self.totalBadges = value
-        DispatchQueue.main.async {
-            self.totalBadgesPublished = self.totalBadges
-        }
-    }
-    
-}
 

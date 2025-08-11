@@ -11,7 +11,7 @@
 		790614452D940943009E7A8D /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614442D94093A009E7A8D /* MetronomeView.swift */; };
 		790614472D968A0A009E7A8D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614462D968A06009E7A8D /* User.swift */; };
 		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
-		79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */; };
+		79064CA82D08349C002490A8 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* Badge.swift */; };
 		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
 		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
 		79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */; };
@@ -158,7 +158,7 @@
 		790614442D94093A009E7A8D /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
 		790614462D968A06009E7A8D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
-		79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesList.swift; sourceTree = "<group>"; };
+		79064CA72D08349C002490A8 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
 		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
 		79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHandler.swift; sourceTree = "<group>"; };
@@ -539,10 +539,10 @@
 				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
+				79064CA72D08349C002490A8 /* Badge.swift */,
 				796ED5D72E48902D00771D3A /* BadgeContainer.swift */,
 				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
-				79064CA72D08349C002490A8 /* ExerciseBadgesList.swift */,
 				79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */,
 				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
 				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
@@ -842,7 +842,7 @@
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
-				79064CA82D08349C002490A8 /* ExerciseBadgesList.swift in Sources */,
+				79064CA82D08349C002490A8 /* Badge.swift in Sources */,
 				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
 				799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */,
 				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,

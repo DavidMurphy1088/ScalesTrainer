@@ -1,6 +1,47 @@
 import SwiftUI
 import Foundation
 
+class ScaleID: Codable, Comparable, Hashable  {
+    var scaleRoot: ScaleRoot
+    var scaleType: ScaleType
+    var scaleMotion: ScaleMotion
+    var octaves:Int
+
+    init(scaleRoot: ScaleRoot, scaleType: ScaleType, scaleMotion:ScaleMotion, octaves:Int) {
+        self.scaleRoot = scaleRoot
+        self.scaleType = scaleType
+        self.scaleMotion = scaleMotion
+        self.octaves = octaves
+    }
+    
+    static func == (lhs: ScaleID, rhs: ScaleID) -> Bool {
+        return lhs.scaleRoot.name == rhs.scaleRoot.name &&
+            lhs.scaleType.description == rhs.scaleType.description &&
+            lhs.scaleMotion.description == rhs.scaleMotion.description &&
+            lhs.octaves == rhs.octaves
+    }
+    
+    static func < (lhs: ScaleID, rhs: ScaleID) -> Bool {
+        if lhs.scaleRoot.name != rhs.scaleRoot.name {
+                return lhs.scaleRoot.name < rhs.scaleRoot.name
+        }
+        if lhs.scaleType.description != rhs.scaleType.description {
+            return lhs.scaleType.description < rhs.scaleType.description
+        }
+        if lhs.scaleMotion.description != rhs.scaleMotion.description {
+            return lhs.scaleMotion.description < rhs.scaleMotion.description
+        }
+        return lhs.octaves < rhs.octaves
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(scaleRoot)
+        hasher.combine(scaleType)
+        hasher.combine(scaleMotion)
+        hasher.combine(octaves)
+    }
+}
+
 class BadgeContainer: ObservableObject, Codable {
     let user: User
     let board: String
@@ -8,30 +49,20 @@ class BadgeContainer: ObservableObject, Codable {
 
     class ScaleBadges: Codable, Identifiable {
         var id = UUID()
-        var scaleRoot: ScaleRoot
-        var scaleType: ScaleType
-        var scaleMotion: ScaleMotion
-        var octaves:Int
+        var scaleId:ScaleID
         var badges: [Badge]
         var hands:[Int]
         var onSyllabus:Bool
         
-        init(scaleRoot: ScaleRoot, scaleType: ScaleType, scaleMotion:ScaleMotion, octaves:Int, hands:[Int], onSyllabus:Bool) {
-            //self.scaleIDKey = scaleIDKey
-            self.scaleRoot = scaleRoot
-            self.scaleType = scaleType
-            self.scaleMotion = scaleMotion
-            self.octaves = octaves
+        init(_ scaleId: ScaleID, hands:[Int], onSyllabus:Bool) {
+            self.scaleId = scaleId
             self.hands = hands
             self.onSyllabus = onSyllabus
             self.badges = []
         }
 
         enum CodingKeys: String, CodingKey {
-            case scaleRoot
-            case scaleType
-            case scaleMotion
-            case octaves
+            case scaleId
             case hands
             case badges
             case onSyllabus
@@ -39,10 +70,6 @@ class BadgeContainer: ObservableObject, Codable {
     }
     
     var scaleBadges: [ScaleBadges] = []
-    
-    func sortedScaleBadgesByBadgeCount() -> [ScaleBadges] {
-        return scaleBadges.sorted { $0.badges.count > $1.badges.count }
-    }
     
     enum CodingKeys: String, CodingKey {
         case user
@@ -58,21 +85,39 @@ class BadgeContainer: ObservableObject, Codable {
         self.scaleBadges = []
         let scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
         for scale in scales {
-            let syllabusBadges = ScaleBadges(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion:scale.scaleMotion,
-                                             octaves:scale.octaves, hands:scale.hands, onSyllabus: true)
+            let scaleId = ScaleID(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion:scale.scaleMotion,
+                            octaves:scale.octaves)
+            let syllabusBadges = ScaleBadges(scaleId, hands:scale.hands, onSyllabus: true)
             self.scaleBadges.append(syllabusBadges)
+            
             ///Add places for badges if the scale can be practiced LH and Rh separately
             if scale.hands.count != 1 {
-                let syllabusBadgesRH = ScaleBadges(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion:scale.scaleMotion,
-                                                 octaves:scale.octaves, hands:[0], onSyllabus: false)
+                let syllabusBadgesRH = ScaleBadges(scaleId, hands:[0], onSyllabus: false)
                 self.scaleBadges.append(syllabusBadgesRH)
-                let syllabusBadgesLH = ScaleBadges(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType, scaleMotion:scale.scaleMotion,
-                                                 octaves:scale.octaves, hands:[1], onSyllabus: false)
+                let syllabusBadgesLH = ScaleBadges(scaleId, hands:[1], onSyllabus: false)
                 self.scaleBadges.append(syllabusBadgesLH)
             }
         }
     }
-
+    
+    func debug() {
+        print("======== Badge Container")
+        for row in scaleBadges {
+            print (row.scaleId.scaleRoot.name, row.scaleId.scaleType.description, "\t", "Hands: \(row.hands)", "Badges:", row.badges.count)
+        }
+    }
+    
+    func addBadge(scaleId:ScaleID, hands:[Int], badge:Badge) {
+        for scaleBadges in self.scaleBadges {
+            if scaleBadges.scaleId == scaleId {
+                if scaleBadges.hands == hands {
+                    scaleBadges.badges.append(badge)
+                    break
+                }
+            }
+        }
+    }
+    
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         user = try container.decode(User.self, forKey: .user)

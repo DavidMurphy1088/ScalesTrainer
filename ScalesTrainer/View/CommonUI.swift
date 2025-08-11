@@ -228,7 +228,7 @@ struct ToolbarTitleView: View {
                     }
                     VStack {
                         Text(user.name)
-                        Text(user.board + "\(user.grade)").font(.caption)
+                        Text(user.board + ", Grade \(user.grade)").font(.caption)
                     }
                 }
             }

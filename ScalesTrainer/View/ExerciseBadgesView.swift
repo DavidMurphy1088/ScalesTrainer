@@ -1,5 +1,20 @@
 import SwiftUI
 
+class ExerciseBadgesList : ObservableObject {
+    static let shared = ExerciseBadgesList()
+
+    @Published private(set) var totalBadgesPublished: Int = 0
+
+    var totalBadges: Int = 0
+    func setTotalBadges(_ value:Int) {
+        self.totalBadges = value
+        DispatchQueue.main.async {
+            self.totalBadgesPublished = self.totalBadges
+        }
+    }
+    
+}
+
 struct HexagramShape: View {
     var size1: CGFloat
     var offset: CGFloat

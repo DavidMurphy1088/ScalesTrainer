@@ -1,6 +1,6 @@
 import Foundation
 
-public class ScaleRoot : Codable {
+public class ScaleRoot : Codable, Hashable {
     let sharps:Int
     let flats:Int
     var name:String
@@ -129,5 +129,18 @@ public class ScaleRoot : Codable {
             midi = 60
         }
         return midi
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+            hasher.combine(sharps)
+            hasher.combine(flats)
+            hasher.combine(name)
+        }
+
+    // Equatable (required for Hashable)
+    public static func == (lhs: ScaleRoot, rhs: ScaleRoot) -> Bool {
+        return lhs.sharps == rhs.sharps &&
+               lhs.flats == rhs.flats &&
+               lhs.name == rhs.name
     }
 }
