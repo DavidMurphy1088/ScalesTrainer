@@ -19,7 +19,7 @@ struct SelectGradeView: View {
                 Spacer()
                 Text("\(board.name) Grade Selection").font(.title2)
                 Spacer()
-                Button("Done") {
+                Button("Confirm") {
                     dismiss()
                 }
                 .padding()
@@ -61,33 +61,51 @@ struct UserEditView: View {
     @State var user: User
     @State private var errorMessage: String = ""
     @State private var showErrorAlert = false
-    
+    let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
 
     var body: some View {
         HStack {
             Text("  ")
             VStack(alignment: .leading) {
+                ///Header area
                 HStack {
                     if addingFirstUser {
-                        Text("Welcome, let’s set up your account").font(.title2)
+                        HStack {
+                            Spacer()
+                            Text("Let’s set up your account").font(.title2)
+                            Spacer()
+                        }
                     }
                     Spacer()
                     HStack {
-                        Button("Save") {
-                            if user.grade > 0 {
-                                errorMessage = ""
-                                user.name = name
-                                settings.setUser(user: user)
-                                dismiss()
-                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
-                            } else {
-                                errorMessage = "Please select a grade before saving."
-                                showErrorAlert = true
-                            }
+                        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            FigmaButton(
+                                label: {
+                                    HStack {
+                                        Image("figma_tickmark")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
+                                        Text("Confirm")
+                                    }
+                                },
+                                action: {
+                                    if user.grade > 0 {
+                                        errorMessage = ""
+                                        user.name = name
+                                        settings.setUser(user: user)
+                                        dismiss()
+                                        ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                    } else {
+                                        errorMessage = "Please select a grade before saving"
+                                        showErrorAlert = true
+                                    }
+                                }
+                            )
+                            .padding()
                         }
-                        .padding()
-                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        
                         if user.grade > 0 {
                             Button(action: {
                                 user.name = name
@@ -104,35 +122,37 @@ struct UserEditView: View {
                 }
 
                 Text("")
-                Text("")
-                Text("Please enter your name:")
-
-                TextField("name", text: $name)
-                    .focused($nameFieldFocused)
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(8)
-                    .foregroundColor(.black)
-                    .font(.body)
-                    .frame(width: UIScreen.main.bounds.width * 0.2)
-
-                Text("")
-                Text("Your Grade")
-                Text("Note: Only one grade can be active at one time.").font(.caption)
+                //Text("Please add your name:")
+                VStack(alignment: .leading) {
+                    TextField("Please add your name", text: $name)
+                        .focused($nameFieldFocused)
+                        .padding()
+                        .background(Color(UIColor.systemGray6))
+                        .cornerRadius(8)
+                        .foregroundColor(.black)
+                        .font(.body)
+                        .frame(width: UIScreen.main.bounds.width * 0.2)
+                    
+                    Text("")
+                    Text("Your Grade").font(.title2)
+                    Text("Note: Only one grade can be active at one time.")
+                }
+                .padding()
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
                             VStack {
+                                let boxWidth = screenWidth * 0.08
                                 Image(board.imageName)
                                     .resizable()
                                     .scaledToFill()
-                                    .frame(width: 80, height: 80)
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                                Text(board.name).font(.footnote)
-                                Text(board.fullName).font(.caption)
-
+                                    .frame(width: boxWidth, height: boxWidth)
+                                    .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
+                                Text("")
+                                Text(board.name).font(.title2)
+                                Text(board.fullName)//.font(.caption)
+                                Text("")
                                 FigmaButton(label: {
                                     Text("Select Grade")
                                 }, action: {
@@ -141,11 +161,10 @@ struct UserEditView: View {
                                         self.showGradesBoard = board
                                     }
                                 })
-
                                 Text("")
                             }
-                            .frame(width: UIScreen.main.bounds.width * 0.2,
-                                   height: UIScreen.main.bounds.height * 0.3)
+                            .frame(width: UIScreen.main.bounds.width * 0.2)
+                                   //,height: UIScreen.main.bounds.height * 0.3)
                         }
                     }
                 }
@@ -170,8 +189,7 @@ struct UserEditView: View {
         }
         .alert(isPresented: $showErrorAlert) {
             Alert(
-                title: Text("Missing Grade"),
-                message: Text(errorMessage),
+                title: Text(errorMessage),
                 dismissButton: .default(Text("OK"))
             )
         }

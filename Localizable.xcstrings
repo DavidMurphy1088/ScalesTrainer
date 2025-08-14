@@ -195,16 +195,19 @@
     "But here you can practise %@ hands separately." : {
 
     },
-    "C:%lld" : {
+    "Cancel" : {
 
     },
-    "Cancel" : {
+    "chhose..." : {
 
     },
     "Choose your keyboard colour" : {
 
     },
     "Choose your keyboard colour " : {
+
+    },
+    "Confirm" : {
 
     },
     "Connected MIDI Sources" : {
@@ -440,6 +443,9 @@
         }
       }
     },
+    "Let’s set up your account" : {
+
+    },
     "Log" : {
 
     },
@@ -464,13 +470,7 @@
     "Minor Scales" : {
 
     },
-    "Missing Grade" : {
-
-    },
     "Motion:" : {
-
-    },
-    "name" : {
 
     },
     "New Amplitude Filter:%@" : {
@@ -506,7 +506,7 @@
     "Play The Scale" : {
 
     },
-    "Please enter your name:" : {
+    "Please add your name" : {
 
     },
     "Please select yout grade" : {
@@ -579,9 +579,6 @@
           }
         }
       }
-    },
-    "Save" : {
-
     },
     "Save Configuration" : {
 
@@ -686,6 +683,9 @@
 
     },
     "Sorry, no subscription is available yet" : {
+
+    },
+    "Spin.." : {
 
     },
     "Start" : {
@@ -837,9 +837,6 @@
 
     },
     "Welcome to " : {
-
-    },
-    "Welcome, let’s set up your account" : {
 
     },
     "Your current subscription is " : {

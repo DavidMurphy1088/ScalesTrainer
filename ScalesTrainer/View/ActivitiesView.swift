@@ -152,6 +152,14 @@ struct ActivitiesView: View {
                     Text("How do you want to practise?").font(.title).padding()
                     let chart = currentUser.getPracticeChart()
                     HStack {
+                        NavigationLink(destination: ChooseYourExerciseView()) {
+                            Image("activity_pick_exercise")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: imgSize, height: imgSize)
+                                .padding()
+                        }
+
                         NavigationLink(destination: PracticeChartView()) {
                             Image("activity_practice_chart")
                                 .resizable()
@@ -159,9 +167,8 @@ struct ActivitiesView: View {
                                 .frame(width: imgSize, height: imgSize)
                                 .padding()
                         }
-                        //.buttonStyle(PlainButtonStyle())
                         
-                        NavigationLink(destination: PracticeChartView()) {
+                        NavigationLink(destination: SpinTheWheelView()) {
                             Image("activity_spin_wheel")
                                 .resizable()
                                 .scaledToFit()

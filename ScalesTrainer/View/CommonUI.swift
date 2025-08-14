@@ -112,7 +112,7 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
 struct FigmaButton<Label: View>: View {
     var label: () -> Label
     var action: () -> Void
-
+    
     init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
         self.action = action
         self.label = label

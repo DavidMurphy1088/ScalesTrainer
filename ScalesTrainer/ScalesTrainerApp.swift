@@ -243,58 +243,73 @@ struct TabContainerView: View {
     @ObservedObject private var viewManager = ViewManager.shared
     
     init() {
-        // Customize tab bar appearance (System-wide)
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithOpaqueBackground()
-        
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground() // Ensures the tab bar is solid
-        appearance.backgroundColor = UIColor.white //
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.white // background color
 
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        let tabBar = UITabBar.appearance()
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
+        tabBar.tintColor = UIColor.black                  // selected icon/text
+        tabBar.unselectedItemTintColor = UIColor.gray
     }
         
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if ViewManager.shared.selectedTab != ViewManager.TAB_WELCOME {
                 ActivitiesView()
-                    .tabItem {
-                        Label(NSLocalizedString("Activities", comment: "Menu"), systemImage: "house")
-                    }
                     .tag(ViewManager.TAB_ACTIVITES)
                     .environmentObject(viewManager)
-                
-                BadgesView()
-                    .tabItem {
-                        Label(NSLocalizedString("Badges", comment: "Menu"), systemImage: "circle.badge.checkmark")
-                    }
-                    .tag(ViewManager.TAB_BADGES)
-                    .environmentObject(viewManager)
-
-                UserListView()
                     .tabItem {
                         Label {
-                            Text(NSLocalizedString("Users", comment: "Menu")).background(.white).bold()
+                            Text("Activities")
                         } icon: {
-                            Image(systemName: "graduationcap.fill").renderingMode(.original).foregroundColor(.green)
+                            Image("figma_tab_activities")
+                                .renderingMode(.template)
                         }
                     }
+                
+                BadgesView()
+                    .tag(ViewManager.TAB_BADGES)
+                    .environmentObject(viewManager)
+                    .tabItem {
+                        Label {
+                            Text("Badges")
+                        } icon: {
+                            Image("figma_tab_badges")
+                                .renderingMode(.template)
+                        }
+                    }
+
+                UserListView()
                     .tag(ViewManager.TAB_USERS)
                     .environmentObject(viewManager)
+                    .tabItem {
+                        Label {
+                            Text("Users")
+                        } icon: {
+                            Image("figma_tab_users")
+                                .renderingMode(.template)
+                        }
+                    }
                 
+                SettingsView(user: Settings.shared.getCurrentUser())
+                    .tabItem {
+                        Label(
+                            NSLocalizedString("Settings", comment: "Menu"),
+                            systemImage: "gear"
+                        )
+                        //.foregroundColor(.black) // set color
+                        .labelStyle(.titleAndIcon)
+                    }
+                    .tag(30)
+                    .environmentObject(viewManager)
+                        
                 LicenseManagerView(contentSection: ContentSection(), email: "email.com")
                     .tabItem {
                         Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                     }
                     .tag(40)
-                    .environmentObject(viewManager)
-                
-                SettingsView(user:Settings.shared.getCurrentUser())
-                    .tabItem {
-                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
-                    }
-                    .tag(30)
                     .environmentObject(viewManager)
             }
                         
@@ -367,7 +382,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
-    let launchTimeSecs = 3.0
+    let launchTimeSecs = 3.0 
 
     init() {
 #if os(iOS)
@@ -407,7 +422,12 @@ struct ScalesTrainerApp: App {
                         LaunchScreenView()
                     }
                     else {
-                        TabContainerView()
+                        if Settings.shared.hasUsers()  {
+                            TabContainerView()
+                        }
+                        else {
+                            WelcomeView()
+                        }
                     }
                 }
                 .onAppear {

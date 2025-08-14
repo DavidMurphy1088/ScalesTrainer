@@ -102,7 +102,7 @@ class PracticeChart: Codable {
         var scaleCtr = 0
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
         
-        let colors = ["blue", "cyan", "indigo",
+        let colors = ["cyan", "indigo",
                       "green", "mint", "orange",
                       "pink", "purple", "red",
                       "teal", "yellow", "green"]

@@ -203,21 +203,32 @@ struct CellView: View {
         return min
     }
     
-    func getName() -> String {
-        var cellName = ""
-//        let scale = practiceCell.scale
-//        if scale.scaleType == .chromatic {
-//            
-//        }
-//        if let customisation = scale.scaleCustomisation {
-//            if let name = customisation.customScaleName {
-//                cellName = name
-//            }
-//        }
-        //if cellName.count == 0 {
-        cellName = practiceCell.scale.getScaleName(handFull: false)
-        //}
-        return cellName
+    func getScaleName() -> [String] {
+        var scaleName:[String] = ["",""] //,""]
+        let scale = practiceCell.scale.getScaleName(showHands: false, handFull: false, octaves: false)
+        //let scale = "D Minor Broekn Chords"
+        let words = scale.components(separatedBy: " ")
+        var nextLine = ""
+        var index = 0
+        for word in words {
+            if (nextLine.count >= 7) {
+                if index < scaleName.count {
+                    scaleName[index] = nextLine
+                }
+                index += 1
+                nextLine = ""
+            }
+            if nextLine.count > 0 {
+                nextLine += " "
+            }
+            nextLine += word
+        }
+        if (nextLine.count > 0) {
+            if index < scaleName.count {
+                scaleName[index] = nextLine
+            }
+        }
+        return scaleName
     }
     
     ///Does this chart cell have its scale in the known-correct list
@@ -255,7 +266,23 @@ struct CellView: View {
             return .clear // fallback if name is unrecognized
         }
     }
-
+    func handNameAndImage(scale:Scale) -> (String, String) {
+        if scale.hands.count < 1 {
+            return ("","")
+        }
+        if scale.hands.count == 2 {
+            return ("Together","figma_hands_together")
+        }
+        else {
+            if practiceCell.scale.hands[0] == 0 {
+                return ("Right Hand", "figma_right_hand")
+            }
+            else {
+                return ("Left Hand", "figma_left_hand")
+            }
+        }
+    }
+    
     var body: some View {
         Button(action: {
             if practiceCell.scale.hands.count == 1 {
@@ -272,10 +299,32 @@ struct CellView: View {
                 navigateToSelectHands = true
             }
         }) {
-            VStack {
-                Text(getName())
-                    .font(.headline)
-                Text("C:\(shuffleCount)")
+            VStack(alignment: .leading) {
+                let scaleNameWords:[String] = self.getScaleName()
+                VStack(alignment: .leading) {
+                    ForEach(scaleNameWords, id: \.self) { word in
+                        Text(word).font(.title2)
+                    }
+                }
+                .frame(height: cellHeight * 0.4)
+                //.border(.white)
+                HStack() {
+                    Image(handNameAndImage(scale: practiceCell.scale).1)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.black)
+                        .frame(height: cellWidth * 0.15)
+                    Text(handNameAndImage(scale: practiceCell.scale).0)
+                }
+
+                HStack {
+                    Spacer()
+                    let forwardSize = cellWidth * 0.2
+                    Image("figma_forward_button")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: forwardSize, height: forwardSize)
+                }
             }
             .padding()
             .foregroundColor(.black).opacity(opacityValue)
@@ -285,11 +334,9 @@ struct CellView: View {
                     .fill(color(from: practiceCell.color).opacity(opacityValue))
                     .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
             )
-            .padding(.horizontal, cellPadding)
             .padding(.bottom, 8)   // <- room for shadow
             .padding(.trailing, 8) // <- room for shadow
             .navigationTitle("Practice Chart")
-
         }
         .navigationDestination(isPresented: $navigateToScaleDirectly) {
             ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
@@ -400,7 +447,7 @@ struct PracticeChartView: View {
                 let screenWidth = UIScreen.main.bounds.size.width
                 let screenHeight = UIScreen.main.bounds.size.height
                 let cellWidth = screenWidth * 0.16
-                let cellHeight = screenHeight * 0.1
+                let cellHeight = screenHeight * 0.2
                 let cellPadding = screenWidth * 0.002
                 let leftEdge = screenWidth * 0.04
                 

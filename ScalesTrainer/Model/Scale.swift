@@ -1483,10 +1483,10 @@ public class Scale : Codable {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
     
-    func getScaleName(showHands:Bool=true, handFull:Bool, motion:Bool? = nil, octaves:Bool? = nil) -> String {
+    func getScaleName(showHands:Bool=true, handFull:Bool, octaves:Bool? = nil) -> String {
         var name = scaleRoot.name + " " + scaleType.description
-        if scaleMotion == .contraryMotion || motion == true {
-            name += ", " + scaleMotion.description
+        if scaleMotion == .contraryMotion {
+            name += " " + scaleMotion.description
         }
         if showHands {
             if self.scaleMotion != .contraryMotion {
@@ -1523,7 +1523,7 @@ public class Scale : Codable {
     
     ///Firebase Realtime causes exception with a label with a '#'
     func getScaleIdentificationKey() -> String {
-        var key = self.getScaleName(handFull: false, motion: true, octaves: true)
+        var key = self.getScaleName(handFull: false, octaves: true)
         key = key.replacingOccurrences(of: "#", with: "Sharp")
         key = key.replacingOccurrences(of: " ", with: "_")
         key = key.replacingOccurrences(of: ",", with: "")
