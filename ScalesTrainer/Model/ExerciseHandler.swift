@@ -16,11 +16,9 @@ class RequiredNote {
     }
 }
 
-
 ///Base class to handle exercises
 class ExerciseHandler  {
     let exerciseType:RunningProcess
-    
     var midisWithOneKeyPress: [Int] = []
     let scale:Scale
     let scalesModel:ScalesModel
@@ -29,8 +27,8 @@ class ExerciseHandler  {
     let exerciseState:ExerciseState
     let exerciseBadgesList:ExerciseBadgesList ///The badges earned on a per note basis for the exercise
     let metronome:Metronome
-    let practiceChart:PracticeChart?
-    let practiceChartCell:PracticeChartCell?
+    //let practiceChart:PracticeChart?
+    //let practiceChartCell:PracticeChartCell?
     var currentScoreSegment = 0
     var cancelled = false
     let accessQueue = DispatchQueue(label: "ExerciseHandlerQueue")
@@ -40,7 +38,8 @@ class ExerciseHandler  {
     let user:User
     var noteNotificationNumber = 0
     
-    init(exerciseType:RunningProcess, scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, metronome:Metronome) {
+    //init(exerciseType:RunningProcess, scalesModel:ScalesModel, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?,
+    init(exerciseType:RunningProcess, scalesModel:ScalesModel, metronome:Metronome) {
         self.exerciseType = exerciseType
         self.scalesModel = scalesModel
         self.exerciseState = ExerciseState.shared
@@ -49,8 +48,8 @@ class ExerciseHandler  {
         nextExpectedStaffSegment = [:]
         self.metronome = metronome
         self.scale = scalesModel.scale
-        self.practiceChart = practiceChart
-        self.practiceChartCell = practiceChartCell
+        //self.practiceChart = practiceChart
+        //self.practiceChartCell = practiceChartCell
         self.scaleMinxMaxMidis = scale.getMinMaxMidis()
         self.user = Settings.shared.getCurrentUser()
     }
@@ -367,11 +366,11 @@ class ExerciseHandler  {
             let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
             if !wonStateOld && wonStateNew {
                 if let exerciseBadge = scalesModel.exerciseBadge {
-                    if let practiceChartCell = practiceChartCell {
-                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
-                            self.practiceChart?.savePracticeChartToFile()
-                        })
-                    }
+//                    if let practiceChartCell = practiceChartCell {
+//                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
+//                            //self.practiceChart?.savePracticeChartToFile()
+//                        })
+//                    }
                 }
             }
         }
@@ -433,9 +432,9 @@ class ExerciseHandler  {
             if exerciseState.getState() == .exerciseStarted {
                 exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
             }
-            if let practiceChart {
-                practiceChart.savePracticeChartToFile()
-            }
+//            if let practiceChart {
+//                practiceChart.savePracticeChartToFile()
+//            }
         }
     }
 

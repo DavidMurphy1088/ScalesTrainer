@@ -19,9 +19,6 @@
     "   →" : {
 
     },
-    "  %@  " : {
-
-    },
     "  %@   " : {
 
     },
@@ -44,6 +41,7 @@
 
     },
     " Go To Scale %@ - Good Luck 😊" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -52,9 +50,6 @@
           }
         }
       }
-    },
-    " Spin The Wheel " : {
-
     },
     "?" : {
 
@@ -234,6 +229,9 @@
     "Ensure your email account supports sending emails and is not restricted (e.g., by parental controls or device management settings)." : {
 
     },
+    "exercise to practise" : {
+
+    },
     "Famous Quotes" : {
 
     },
@@ -320,9 +318,6 @@
       }
     },
     "Grade %lld" : {
-
-    },
-    "Hand:" : {
 
     },
     "Hands ready?" : {
@@ -449,9 +444,6 @@
     "Log" : {
 
     },
-    "Major Scales" : {
-
-    },
     "Make sure your device has an active internet connection. Without internet, emails cannot be sent." : {
 
     },
@@ -467,12 +459,6 @@
     "MIDI: %@" : {
 
     },
-    "Minor Scales" : {
-
-    },
-    "Motion:" : {
-
-    },
     "New Amplitude Filter:%@" : {
 
     },
@@ -480,9 +466,6 @@
 
     },
     "Note: Only one grade can be active at one time." : {
-
-    },
-    "Octaves:" : {
 
     },
     "OK" : {
@@ -513,6 +496,9 @@
 
     },
     "Practice Chart" : {
+
+    },
+    "Practice Now" : {
 
     },
     "Practise Hands Together" : {
@@ -583,9 +569,6 @@
     "Save Configuration" : {
 
     },
-    "SC" : {
-
-    },
     "Scale" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -603,9 +586,6 @@
         }
       }
     },
-    "Scale:" : {
-
-    },
     "ScaleLibrary" : {
       "comment" : "Menu"
     },
@@ -621,9 +601,6 @@
       }
     },
     "Scales Academy" : {
-
-    },
-    "Scales Library" : {
 
     },
     "Scan and connect MIDI Sources" : {
@@ -685,7 +662,13 @@
     "Sorry, no subscription is available yet" : {
 
     },
-    "Spin.." : {
+    "Spin Now" : {
+
+    },
+    "Spin the Wheel" : {
+
+    },
+    "Spin the wheel and get a surprise" : {
 
     },
     "Start" : {
@@ -795,9 +778,6 @@
     "Try again?" : {
 
     },
-    "Type:" : {
-
-    },
     "Unable to Send Email" : {
 
     },
@@ -837,6 +817,12 @@
 
     },
     "Welcome to " : {
+
+    },
+    "What will you play today?" : {
+
+    },
+    "You’ve landed on..." : {
 
     },
     "Your current subscription is " : {

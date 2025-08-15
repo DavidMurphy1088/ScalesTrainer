@@ -162,8 +162,9 @@ struct SelectHandForPractice: View {
             //navigateToScale = false ///Having this here casues the back navigation to screw up. No idea why 😰
         }
         .navigationDestination(isPresented: $navigateToScale) {
-            ScalesView(user: user, practiceChart: practiceChart,
-                       practiceChartCell: practiceCell,
+            ScalesView(user: user,
+                       //practiceChart: practiceChart,
+                       //practiceChartCell: practiceCell,
                        practiceModeHand: practiceModeHand)
         }
     }
@@ -339,7 +340,8 @@ struct CellView: View {
             .navigationTitle("Practice Chart")
         }
         .navigationDestination(isPresented: $navigateToScaleDirectly) {
-            ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
+            //ScalesView(user:user, practiceChart: self.practiceChart, practiceChartCell: self.practiceCell, practiceModeHand: nil)
+            ScalesView(user:user, practiceModeHand: nil)
         }
         .navigationDestination(isPresented: $navigateToSelectHands) {
             SelectHandForPractice(user:user, practiceChart: practiceChart, practiceCell: practiceCell)

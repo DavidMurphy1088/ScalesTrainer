@@ -54,6 +54,14 @@ class Figma {
                 .background(background)
         }
     }
+    static func colorFromRGB(_ red: Int, _ green: Int, _ blue: Int) -> Color {
+        Color(
+            red: Double(red) / 255.0,
+            green: Double(green) / 255.0,
+            blue: Double(blue) / 255.0
+        )
+    }
+
 }
 
 extension Color {
@@ -117,25 +125,59 @@ struct FigmaButton<Label: View>: View {
         self.action = action
         self.label = label
     }
-
+    
     var body: some View {
         Button(action: action) {
             label()
                 .foregroundColor(.black)
                 .padding()
                 .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.white)
-                            //radius: A measure of how much to blur the shadow. Larger values result in more blur.
-                            .shadow(color: .black.opacity(0.8), radius: 0, x: 2, y: 2)
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.black, lineWidth: 1)
-                    }
+                    RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
                 )
+                .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
+//                .background(
+//                    ZStack {
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .fill(Color.white)
+//                            //radius: A measure of how much to blur the shadow. Larger values result in more blur.
+//                            //.shadow(color: .black.opacity(0.8), radius: 0, x: 2, y: 2)
+//                            .shadow(color: .black.opacity(1.0), radius: 0, x: 0, y: 2)
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .stroke(Color.black, lineWidth: 1)
+//                    }
+//                )
         }
     }
 }
+
+struct RoundedBackgroundModifier: ViewModifier {
+    var fillColor: Color = .gray
+    var opacityValue: Double = 1.0
+    let radius = 12.0
+    let shadowOffset = 2.0
+    
+    func body(content: Content) -> some View {
+        content
+            .background(
+                ZStack {
+                    //shadow box
+                    RoundedRectangle(cornerRadius: radius).fill(Figma.colorFromRGB(62, 42, 80)).offset(y: 4)
+                        .blur(radius: 0) // set >0 if you want soft shadow
+                    //opaque over shadow in case the top color has opacity < 1.0
+                    RoundedRectangle(cornerRadius: radius).fill(Color.white)
+                    RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue))
+                }
+            )
+    }
+}
+
+extension View {
+    func figmaRoundedBackground(fillColor: Color = .gray, opacity opacityValue: Double = 1.0) -> some View {
+        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue))
+    }
+}
+
+//=============== End of Figma ==============
 
 ///Equivalent of Swiftui Color.green for canvas drawing
 //let AppGreen = Color(red: 0.20392156, green: 0.7803921, blue: 0.349019607)
@@ -198,7 +240,7 @@ extension Button {
 struct ToolbarTitleView: View {
     let screenName: String
     @ObservedObject var user:UserPublished = ScalesModel.shared.userPublished
-    
+    let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 50.0
     func firstLetter(user:UserPublished) -> String {
         guard let first = user.name.first else {
             return ""
@@ -223,7 +265,7 @@ struct ToolbarTitleView: View {
                     ZStack {
                         Circle()
                             .fill(User.color(from: user.color).opacity(0.5))
-                            .frame(width: 50, height: 50)
+                            .frame(width: circleWidth, height: circleWidth)
                         Text(firstLetter(user: user))
                     }
                     VStack {

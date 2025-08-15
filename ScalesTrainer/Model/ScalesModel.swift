@@ -302,7 +302,7 @@ public class ScalesModel : ObservableObject {
 //        }
 //    }
     
-    func setRunningProcess(_ setProcess: RunningProcess, practiceChart:PracticeChart? = nil, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
+    func setRunningProcess(_ setProcess: RunningProcess, practiceChartCell:PracticeChartCell? = nil, amplitudeFilter:Double? = nil) {
         let user = Settings.shared.getCurrentUser()
 
         if setProcess == self.runningProcess {
@@ -375,7 +375,7 @@ public class ScalesModel : ObservableObject {
             }
             self.soundEventHandlers.append(soundHandler)
             //self.exerciseBadge = Badge.getRandomExerciseBadge()
-            let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, practiceChart: practiceChart, practiceChartCell: practiceChartCell, metronome: metronome)
+            let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, metronome: metronome)
             exerciseProcess.start(soundHandler: soundHandler)
             if !user.settings.useMidiSources {
                 self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)

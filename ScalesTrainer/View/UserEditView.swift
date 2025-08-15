@@ -70,14 +70,16 @@ struct UserEditView: View {
             VStack(alignment: .leading) {
                 ///Header area
                 HStack {
-                    if addingFirstUser {
-                        HStack {
-                            Spacer()
-                            Text("Let’s set up your account").font(.title2)
-                            Spacer()
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        if addingFirstUser {
+                            HStack {
+                                Spacer()
+                                Text("Let’s set up your account").font(.title2)
+                                Spacer()
+                            }
                         }
+                        Spacer()
                     }
-                    Spacer()
                     HStack {
                         if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             FigmaButton(
@@ -132,10 +134,11 @@ struct UserEditView: View {
                         .foregroundColor(.black)
                         .font(.body)
                         .frame(width: UIScreen.main.bounds.width * 0.2)
-                    
-                    Text("")
-                    Text("Your Grade").font(.title2)
-                    Text("Note: Only one grade can be active at one time.")
+                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        Text("")
+                        Text("Your Grade").font(.title2)
+                        Text("Note: Only one grade can be active at one time.")
+                    }
                 }
                 .padding()
 
@@ -143,7 +146,7 @@ struct UserEditView: View {
                     HStack {
                         ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
                             VStack {
-                                let boxWidth = screenWidth * 0.08
+                                let boxWidth = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.08)
                                 Image(board.imageName)
                                     .resizable()
                                     .scaledToFill()
@@ -151,7 +154,9 @@ struct UserEditView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
                                 Text("")
                                 Text(board.name).font(.title2)
-                                Text(board.fullName)//.font(.caption)
+                                if UIDevice.current.userInterfaceIdiom != .phone {
+                                    Text(board.fullName)//.font(.caption)
+                                }
                                 Text("")
                                 FigmaButton(label: {
                                     Text("Select Grade")

@@ -81,7 +81,6 @@
 		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
 		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
 		79A811012E4DD4A50019F866 /* ChooseYourExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */; };
-		79A811032E4DD5980019F866 /* SpinTheWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A811022E4DD5890019F866 /* SpinTheWheelView.swift */; };
 		79AF165C2D4E1D18003033E4 /* scale_4_oct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */; };
 		79AF165D2D4E1D18003033E4 /* scale_4_oct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */; };
 		79AFF13C2DD490D10049479F /* LeaderBoard.txt in Sources */ = {isa = PBXBuildFile; fileRef = 79AFF13B2DD490CA0049479F /* LeaderBoard.txt */; };
@@ -140,6 +139,7 @@
 		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
 		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
 		79FF0D612DD0253A00126573 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF0D602DD0253200126573 /* ResultView.swift */; };
+		79FF42FE2E4F248B00042814 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF42FD2E4F248300042814 /* SpinWheelView.swift */; };
 		818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */; };
 /* End PBXBuildFile section */
 
@@ -231,7 +231,6 @@
 		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
 		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
 		79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseYourExerciseView.swift; sourceTree = "<group>"; };
-		79A811022E4DD5890019F866 /* SpinTheWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinTheWheelView.swift; sourceTree = "<group>"; };
 		79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scale_4_oct.wav; sourceTree = "<group>"; };
 		79AFF13B2DD490CA0049479F /* LeaderBoard.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LeaderBoard.txt; sourceTree = "<group>"; };
 		79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -284,6 +283,7 @@
 		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
 		79FF0D602DD0253200126573 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		79FF42FD2E4F248300042814 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -523,7 +523,7 @@
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
 				799381782C75D1A400734FDE /* SettingsView.swift */,
-				79A811022E4DD5890019F866 /* SpinTheWheelView.swift */,
+				79FF42FD2E4F248300042814 /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				799381762C755F2300734FDE /* SpinWheelViewOLD.swift */,
 				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
@@ -863,6 +863,7 @@
 				794D49582BCD29390005A173 /* ScaleMatcher.swift in Sources */,
 				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
 				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
+				79FF42FE2E4F248B00042814 /* SpinWheelView.swift in Sources */,
 				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
 				794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */,
 				79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */,
@@ -901,7 +902,6 @@
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
-				79A811032E4DD5980019F866 /* SpinTheWheelView.swift in Sources */,
 				794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */,
 				7932928F2E46185A00890198 /* Todo in Sources */,
 				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,

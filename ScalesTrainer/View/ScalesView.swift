@@ -13,8 +13,8 @@ enum ActiveSheet: Identifiable {
 struct ScalesView: View {
     @Environment(\.dismiss) var dismiss
     let user:User
-    let practiceChart:PracticeChart?
-    let practiceChartCell:PracticeChartCell?
+    //let practiceChart:PracticeChart?
+    //let practiceChartCell:PracticeChartCell?
     let practiceModeHand:HandType?
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var exerciseState = ExerciseState.shared
@@ -46,10 +46,11 @@ struct ScalesView: View {
     @State private var spacingHorizontal:CGFloat = 12
     let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
 
-    init(user:User, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+    //init(user:User, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
+    init(user:User, practiceModeHand:HandType?) {
         self.user = user
-        self.practiceChart = practiceChart
-        self.practiceChartCell = practiceChartCell
+//        self.practiceChart = practiceChart
+//        self.practiceChartCell = practiceChartCell
         self.practiceModeHand = practiceModeHand
     }
 
@@ -781,7 +782,7 @@ struct ScalesView: View {
 
             if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
                 if let process = self.exerciseProcess {
-                    scalesModel.setRunningProcess(process, practiceChart: practiceChart, practiceChartCell: practiceChartCell)
+                    scalesModel.setRunningProcess(process)
                 }
             }
             
