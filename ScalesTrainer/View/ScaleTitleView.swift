@@ -3,7 +3,7 @@ import SwiftUI
         
 struct ScaleTitleView: View {
     let scale:Scale
-    let practiceModeHand:HandType?
+    //let practiceModeHand:HandType?
     
     func getHelp(topic:String) -> String? {
         return HelpMessages.shared.messages[topic] ?? ""

@@ -25,6 +25,7 @@ public enum KeyboardType {
 }
 
 public enum HandType {
+    case both
     case left
     case right
 }

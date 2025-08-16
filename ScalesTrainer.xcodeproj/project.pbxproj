@@ -54,6 +54,7 @@
 		79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79566AD52CB9259C00581A57 /* BackingChords.swift */; };
 		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
 		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
+		796D16192E508035009FB741 /* SelectHandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796D16182E508027009FB741 /* SelectHandsView.swift */; };
 		796ED5D82E48903200771D3A /* BadgeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796ED5D72E48902D00771D3A /* BadgeContainer.swift */; };
 		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
 		797013842BEE36E2009F85D6 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137C2BEE36E1009F85D6 /* Score.swift */; };
@@ -203,6 +204,7 @@
 		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
 		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
 		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		796D16182E508027009FB741 /* SelectHandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectHandsView.swift; sourceTree = "<group>"; };
 		796ED5D72E48902D00771D3A /* BadgeContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeContainer.swift; sourceTree = "<group>"; };
 		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
 		7970137C2BEE36E1009F85D6 /* Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
@@ -522,6 +524,7 @@
 				79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
 				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
+				796D16182E508027009FB741 /* SelectHandsView.swift */,
 				799381782C75D1A400734FDE /* SettingsView.swift */,
 				79FF42FD2E4F248300042814 /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
@@ -846,6 +849,7 @@
 				79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */,
 				790614472D968A0A009E7A8D /* User.swift in Sources */,
 				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
+				796D16192E508035009FB741 /* SelectHandsView.swift in Sources */,
 				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
 				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
 				79064CA82D08349C002490A8 /* Badge.swift in Sources */,

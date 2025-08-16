@@ -14,6 +14,8 @@ struct SpinTheWheelView: View {
     @State var totalSpinSeconds: Double = 0
     @State var totalRotation: Double = 0
     @State var navigateToScale = false
+    @State var scales:[Scale] = []
+    @State var scaleChoosen:Scale?
     
     private func getMaxScreenDimensionSize() -> CGFloat {
         if UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height {
@@ -25,12 +27,17 @@ struct SpinTheWheelView: View {
     }
     
     private func spinWheel() {
-          // seconds
-        //let totalRotation: Double = 1440 // degrees (4 full spins)
         // Animate using easeOut to slow down gradually
         withAnimation(.easeOut(duration: totalSpinSeconds)) {
             rotation += totalRotation
         }
+    }
+    
+    func setScaleChoosen() {
+        let r = Int.random(in: 0...self.scales.count-1)
+        let scale = self.scales[r]
+        self.scaleChoosen = scale
+        let _ = ScalesModel.shared.setScale(scale: scale)
     }
     
     var body: some View {
@@ -59,29 +66,38 @@ struct SpinTheWheelView: View {
             }
 
             HStack {
-                Text("").padding()
-                Text("").padding()
+                if UIDevice.current.userInterfaceIdiom != .phone {
+                    Text("").padding()
+                    Text("").padding()
+                }
                 HStack {
                     Text("").padding()
                     VStack(alignment: .leading) {
                         Text("")
                         if wasSpun {
-                            Text("You’ve landed on...").font(.title)
-                            Text("")
-                            //Text("Spin the wheel and get a surprise")
-                            //Text("exercise to practise")
-                            Text("")
-                            Text("")
-                            Text("")
-                            FigmaButton(label: {
-                                Text("Practice Now").bold()
-                            }, action: {
-                                if let user = user {
-                                    navigateToScale = true
-//                                    ScalesView(user: user,
-//                                               practiceModeHand: .right)
+                            if let scale = self.scaleChoosen {
+                                Text("You’ve landed on...")
+                                Text("")
+                                Text("")
+                                Text("")
+                                let title = scale.getScaleDescriptionParts(name: true)
+                                Text(title).font(.title).bold()
+                                HStack {
+                                    Image(scale.getHandsImageName())
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: getMaxScreenDimensionSize() * 0.1)
+                                    Text(scale.getScaleDescriptionParts(hands: true))
                                 }
-                            })
+                                Text("")
+                                Text("")
+                                Text("")
+                                FigmaButton(label: {
+                                    Text("Practice Now").bold()
+                                }, action: {
+                                    navigateToScale = true
+                                })
+                            }
                         }
                         else {
                             Text("What will you play today?").font(.title)
@@ -97,6 +113,7 @@ struct SpinTheWheelView: View {
                                 spinWheel()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + totalSpinSeconds + 0.5) {
                                     self.wasSpun = true
+                                    self.setScaleChoosen()
                                 }
                             })
                         }
@@ -106,7 +123,7 @@ struct SpinTheWheelView: View {
                     }
                     Text("").padding()
                 }
-                .figmaRoundedBackground(fillColor: Figma.colorFromRGB(236, 234, 238), opacity: 1.0)
+                .figmaRoundedBackground()
                 .padding()
                 Spacer()
             }
@@ -119,7 +136,7 @@ struct SpinTheWheelView: View {
         .onAppear() {
             let user = Settings.shared.getCurrentUser()
             self.user = user
-            //let practiceChart = user.getPracticeChart()
+            self.scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
             wasSpun = false
             totalSpinSeconds = 3.0 + Double.random(in: 0...1.0)
             ///Make sure it centers on a slice
@@ -127,14 +144,14 @@ struct SpinTheWheelView: View {
         }
         .navigationDestination(isPresented: $navigateToScale) {
             if let user = user {
-                ScalesView(user: user,
-                           //practiceChart: practiceChart,
-                           //practiceChartCell: practiceCell,
-                           practiceModeHand: .right)
+                if let scale = self.scaleChoosen {
+                    ScalesView(user: user,
+                               scale: scale)
+                               //practiceModeHand: .right)
+                }
             }
         }
         .navigationTitle("Spin the Wheel")
-
     }
 }
 

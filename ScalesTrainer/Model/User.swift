@@ -169,5 +169,5 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             return BadgeContainer(user: self, board: self.board, grade: grade)
         }
     }
-
+    
 }

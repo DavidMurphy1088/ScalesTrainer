@@ -1506,10 +1506,12 @@ public class Scale : Codable {
                         default: handName = "Together"
                         }
                     }
-                    name += ", " + handName
+                    //name += ", " + handName
+                    name += " " + handName
                 }
                 else {
-                    name += handFull ? ", Together" : ", Together"
+                    //name += handFull ? ", Together" : ", Together"
+                    name += " Together" //handFull ? " Together" : " Together"
                 }
             }
         }
@@ -1618,7 +1620,19 @@ public class Scale : Codable {
         }
         return name
     }
-
+    
+    func getHandsImageName() -> String {
+        if hands.isEmpty {
+            return ""
+        }
+        if self.hands.count == 2 {
+            return "figma_hands_together"
+        }
+        else {
+            return self.hands[0] == 0 ? "figma_right_hand" : "figma_left_hand"
+        }
+    }
+    
     static func getScaleType(name:String) -> ScaleType {
         switch name {
         case "Natural Minor":

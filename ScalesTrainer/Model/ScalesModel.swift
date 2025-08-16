@@ -882,6 +882,7 @@ public class ScalesModel : ObservableObject {
                                scaleCustomisation:ScaleCustomisation? = nil, 
                                debugOn:Bool = false, callback: ((Scale, Score) -> Void)? = nil) -> Scale {
         //let name = scale.getScaleName(handFull: true, octaves: true)
+
         let scale = Scale(scaleRoot: ScaleRoot(name: scaleRoot.name),
                           scaleType: scaleType, scaleMotion: scaleMotion,
                           octaves: octaves,

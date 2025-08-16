@@ -1,5 +1,27 @@
 import SwiftUI
 
+struct CodableColor: Codable {
+    var red: Double
+    var green: Double
+    var blue: Double
+    var alpha: Double
+    
+    init(_ color: Color) {
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        self.red = Double(r) / 255.0
+        self.green = Double(g) / 255.0
+        self.blue = Double(b) / 255.0
+        self.alpha = 1.0 //Double(a)
+    }
+    
+    func getColor() -> Color {
+        return Color(red: red, green: green, blue: blue) //, opacity: alpha)
+        //return .blue
+    }
+}
+
 // =========== Toolbar =======
 
 struct CommonToolbarModifier: ViewModifier {
@@ -47,7 +69,11 @@ extension View {
 //========== Figma
 class Figma {
     static let background = Color(rgbHex: "#FEFEFE")
-    //static let backgroundColor = UIColor(red: 0.996, green: 0.996, blue: 0.996, alpha: 1)
+    static let red = Color(red: 255, green: 83, blue: 108, opacity: 1.0)
+    static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
+    static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
+    static let blue = Color(red: 98, green: 202, blue: 215, opacity: 1.0)
+    
     struct AppButtonStyle: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
@@ -71,14 +97,11 @@ extension Color {
             // Convert shorthand hex (e.g., F90 → FF9900)
             hex = hex.map { "\($0)\($0)" }.joined()
         }
-        
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
-
         let r = Double((int >> 16) & 0xFF) / 255
         let g = Double((int >> 8) & 0xFF) / 255
         let b = Double(int & 0xFF) / 255
-
         self.init(red: r, green: g, blue: b)
     }
 }
@@ -170,9 +193,10 @@ struct RoundedBackgroundModifier: ViewModifier {
             )
     }
 }
-
+//236, 234, 238
 extension View {
-    func figmaRoundedBackground(fillColor: Color = .gray, opacity opacityValue: Double = 1.0) -> some View {
+    func figmaRoundedBackground(fillColor: Color = Figma.colorFromRGB(236, 234, 238),
+                                opacity opacityValue: Double = 1.0) -> some View {
         self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue))
     }
 }

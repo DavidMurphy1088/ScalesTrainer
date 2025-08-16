@@ -13,9 +13,9 @@ enum ActiveSheet: Identifiable {
 struct ScalesView: View {
     @Environment(\.dismiss) var dismiss
     let user:User
-    //let practiceChart:PracticeChart?
-    //let practiceChartCell:PracticeChartCell?
-    let practiceModeHand:HandType?
+    let scale:Scale
+    //let handType:HandType
+    
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var exerciseState = ExerciseState.shared
 
@@ -46,12 +46,10 @@ struct ScalesView: View {
     @State private var spacingHorizontal:CGFloat = 12
     let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
 
-    //init(user:User, practiceChart:PracticeChart?, practiceChartCell:PracticeChartCell?, practiceModeHand:HandType?) {
-    init(user:User, practiceModeHand:HandType?) {
+    init(user:User, scale:Scale) {//}, handType:HandType) {
         self.user = user
-//        self.practiceChart = practiceChart
-//        self.practiceChartCell = practiceChartCell
-        self.practiceModeHand = practiceModeHand
+        //self.handType = handType
+        self.scale = scale
     }
 
     func showHelp(_ topic:String) {
@@ -66,7 +64,7 @@ struct ScalesView: View {
                 //.padding()
             Spacer()
             HStack(spacing: 0) {
-                let compoundTime = scalesModel.scale.timeSignature.top % 3 == 0
+                let compoundTime = self.scale.timeSignature.top % 3 == 0
                 Image(compoundTime ? "crotchetDotted" : "crotchet")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -205,30 +203,6 @@ struct ScalesView: View {
                 }
             }
             
-//            if [RunningProcess.recordingScaleForAssessment].contains(scalesModel.runningProcessPublished) {
-//                Spacer()
-//                VStack {
-//                    //let name = scalesModel.scale.getScaleName(handFull: true, octaves: true, tempo: true, dynamic:true, articulation:true)
-//                    let name = scalesModel.scale.getScaleIdentificationKey()
-//                    Text("Recording \(name)").font(.title).padding()
-//                    //ScaleStartView()
-//                    RecordingIsUnderwayView()
-//                    Button(action: {
-//                        scalesModel.setRunningProcess(.none)
-//                    }) {
-//                        VStack {
-//                            Text("Stop Recording Scale")//.padding().font(.title2).hilighted(backgroundColor: .blue)
-//                        }
-//                    }
-//                    .buttonStyle(.borderedProminent)
-////                    if coinBank.lastBet > 0 {
-////                        CoinStackView(totalCoins: coinBank.lastBet, compactView: false).padding()
-////                    }
-//                }
-//                //.commonFrameStyle()
-//                Spacer()
-//            }
-            
             if scalesModel.recordingIsPlaying {
                 Button(action: {
                     AudioManager.shared.stopPlayingRecordedFile()
@@ -259,7 +233,7 @@ struct ScalesView: View {
     func SelectActionView() -> some View {
         VStack(spacing:0) {
             HStack(alignment: .top) {
-                if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if self.scaleIsAcousticCapable(scale: self.scale) {
                     Spacer()
                     HStack()  {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
@@ -292,7 +266,7 @@ struct ScalesView: View {
                     //.padding(.horizontal, 0)
                 }
                 
-                if self.scaleIsAcousticCapable(scale: self.scalesModel.scale) {
+                if self.scaleIsAcousticCapable(scale: self.scale) {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
@@ -342,7 +316,7 @@ struct ScalesView: View {
                 }
                 .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 
-                if scalesModel.scale.getBackingChords() != nil {
+                if self.scale.getBackingChords() != nil {
                     Spacer()
                     HStack {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
@@ -445,7 +419,7 @@ struct ScalesView: View {
     func getKeyboardHeight(keyboardCount:Int, showingStaff:Bool) -> CGFloat {
         var height:Double
         
-        if scalesModel.scale.needsTwoKeyboards() {
+        if self.scale.needsTwoKeyboards() {
             //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
             //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
             ///16 Feb 2025 Can be a bit longer due to just minimizing some other UI heights in landscape
@@ -460,7 +434,7 @@ struct ScalesView: View {
             //height = UIScreen.main.bounds.size.height / (isLandscape  ? 3 : 4)
             height = UIScreen.main.bounds.size.height * (isLandscape  ? 0.33 : 0.33)
         }
-        if scalesModel.scale.octaves > 1 {
+        if self.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
             height = height * 0.7
         }
@@ -480,13 +454,13 @@ struct ScalesView: View {
         var canFit = true
         ///01Feb2025 - decided chromatic cant display well on any device or orientation
         //if UIDevice.current.userInterfaceIdiom == .phone {
-            if scalesModel.scale.scaleType == .chromatic &&
-                //scalesModel.scale.scaleMotion == .contraryMotion &&
-                scalesModel.scale.octaves > 1 {
+            if self.scale.scaleType == .chromatic &&
+                //self.scale.scaleMotion == .contraryMotion &&
+                self.scale.octaves > 1 {
                 canFit = false
             }
         //}
-        if scalesModel.scale.hands.count > 1 {
+        if self.scale.hands.count > 1 {
             return false
         }
         return canFit
@@ -545,7 +519,7 @@ struct ScalesView: View {
                 VStack() {
                     if !self.badgesShowing {
                         HStack {
-                            ScaleTitleView(scale: scalesModel.scale, practiceModeHand: practiceModeHand)
+                            ScaleTitleView(scale: self.scale)
                                 .frame(height: UIScreen.main.bounds.height * headerScale)
                                 .background(
                                     LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
@@ -569,22 +543,22 @@ struct ScalesView: View {
                             if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                                 ///Scale is contrary with LH and RH joined on one keyboard
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
+                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                             }
                             else {
-                                if scalesModel.scale.needsTwoKeyboards() {
+                                if self.scale.needsTwoKeyboards() {
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
-                                        .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
+                                        .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                                         .padding(.bottom, spacingVertical)
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
+                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                                 else {
-                                    let keyboard = scalesModel.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
+                                    let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: scalesModel.scale.hands.count, showingStaff: staffCanFit()))
+                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                             }
                         }
@@ -593,9 +567,9 @@ struct ScalesView: View {
                         .padding(.horizontal, spacingHorizontal)
                         
                         //if UIDevice.current.userInterfaceIdiom != .phone {
-                        //                            if ![.brokenChordMajor, .brokenChordMinor].contains(scalesModel.scale.scaleType) {
+                        //                            if ![.brokenChordMajor, .brokenChordMinor].contains(self.scale.scaleType) {
                         //                                if scalesModel.showLegend {
-                        //                                    LegendView(hands: scalesModel.scale.hands, scale: scalesModel.scale)
+                        //                                    LegendView(hands: self.scale.hands, scale: self.scale)
                         //                                        .padding(.bottom, spacingVertical)
                         //                                        .padding(.horizontal)
                         //                                    //.border(Color.red, width: 1)
@@ -608,7 +582,8 @@ struct ScalesView: View {
                         if let score = scalesModel.getScore() {
                             VStack(spacing: 0) {
                                 if scalesModel.showStaff {
-                                    ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false)
+                                    //ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false)
+                                    ScoreView(scale: self.scale, score: score, showResults: false)
                                 }
                             }
                             .outlinedStyleView()
@@ -635,7 +610,7 @@ struct ScalesView: View {
                             ///Show the horizontal row of badges
                             VStack(spacing:0) {
                                 if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
-                                    ExerciseBadgesView(user: user, scale: scalesModel.scale,
+                                    ExerciseBadgesView(user: user, scale: self.scale,
                                                        exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
                                                        onClose: {
                                         exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
@@ -667,7 +642,7 @@ struct ScalesView: View {
             ///-------- Exercise state displays ----------
             if scalesModel.runningProcess != .none {
                 if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
-                    StartCountdownView(scale: scalesModel.scale, activityName: exerciseState.activityName, callback: {status in
+                    StartCountdownView(scale: self.scale, activityName: exerciseState.activityName, callback: {status in
                         if status == ExerciseState.State.exerciseStarted {
                             exerciseState.setExerciseState("", .exerciseWithoutBadgesStarted)
                         }
@@ -750,7 +725,8 @@ struct ScalesView: View {
 
         }
         .commonToolbar(
-            title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
+            //title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
+            title: self.scale.getScaleDescriptionParts(name: true),
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView
@@ -793,14 +769,31 @@ struct ScalesView: View {
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
+//            var hands:[Int]
+//            switch handType {
+//            case .both:
+//                 hands = [0,1]
+//            case .left:
+//                hands = [1]
+//            case .right:
+//                hands = [0]
+//            }
+            let _ = ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
+                                                             scaleMotion: scale.scaleMotion,
+                                                             minTempo: scale.minTempo, octaves: scale.octaves,
+                                                             hands: scale.hands,
+                                                             dynamicTypes: scale.dynamicTypes,
+                                                             articulationTypes: scale.articulationTypes,
+                                                             ctx: "PracticeChartHands",
+                                                             scaleCustomisation:scale.scaleCustomisation)
             PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
-            if scalesModel.scale.scaleMotion == .contraryMotion && scalesModel.scale.hands.count == 2 {
+            if self.scale.scaleMotion == .contraryMotion && self.scale.hands.count == 2 {
                 if let score = scalesModel.getScore() {
-                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: scalesModel.scale, handType: .right)
+                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale, handType: .right)
                 }
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    if let firstNote = scalesModel.scale.getScaleNoteState(handType: .right, index: 0) {
+                    if let firstNote = self.scale.getScaleNoteState(handType: .right, index: 0) {
                         let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstNote.midi)
                         if let middleKeyIndex = middleKeyIndex {
                             combined.pianoKeyModel[middleKeyIndex].hilightType = .middleOfKeyboard
@@ -812,10 +805,10 @@ struct ScalesView: View {
                 PianoKeyboardModel.sharedCombined = nil
             }
             self.directionIndex = 0
-            self.numberOfOctaves = scalesModel.scale.octaves
-            scalesModel.setTempos(scale: scalesModel.scale)
+            self.numberOfOctaves = self.scale.octaves
+            scalesModel.setTempos(scale: self.scale)
 
-            if let tempoIndex = scalesModel.tempoSettings.firstIndex(of: scalesModel.scale.minTempo) {
+            if let tempoIndex = scalesModel.tempoSettings.firstIndex(of: self.scale.minTempo) {
                 self.tempoIndex = tempoIndex
             }
             scalesModel.setShowStaff(true)

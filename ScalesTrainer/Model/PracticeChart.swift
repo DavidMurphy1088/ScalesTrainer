@@ -11,31 +11,28 @@ class PracticeChartCell: ObservableObject, Codable {
     let grade:Int
     var scaleIDKey:String
     var scale: Scale
-    var isStarred: Bool = false
     var isLicensed:Bool = false
-    var color:String
+    var color:CodableColor
     
     enum CodingKeys: String, CodingKey {
         case board
         case grade
         case scaleIDKey
-        case isStarred
-        case badges
+        //case isStarred
+        //case badges
         case isLicensed
         case color
     }
     
-    init(chart:PracticeChart?, board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, color:String) {
+    init(chart:PracticeChart?, board:String, grade:Int, scaleIDKey: String, isLicensed:Bool, color1:CodableColor) {
         self.chart = chart
         self.board = board
         self.grade = grade
         self.scaleIDKey = scaleIDKey
         self.scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey)!
-        self.isStarred = false
-        //self.isStarredPublished = false
         self.badges = []
         self.isLicensed = isLicensed
-        self.color = color
+        self.color = color1
     }
         
     func addBadge(badge:Badge, callback:@escaping ()->Void) {
@@ -50,10 +47,10 @@ class PracticeChartCell: ObservableObject, Codable {
         board = try container.decode(String.self, forKey: .board)
         grade = try container.decode(Int.self, forKey: .grade)
         scaleIDKey = try container.decode(String.self, forKey: .scaleIDKey)
-        isStarred = try container.decode(Bool.self, forKey: .isStarred)
+        //isStarred = try container.decode(Bool.self, forKey: .isStarred)
         isLicensed = try container.decode(Bool.self, forKey: .isLicensed)
-        color = try container.decode(String.self, forKey: .color)
-        badges = try container.decode([Badge].self, forKey: .badges)
+        color = try container.decode(CodableColor.self, forKey: .color)
+        //badges = try container.decode([Badge].self, forKey: .badges)
         
         if let scale = MusicBoardAndGrade.getScale(boardName: board, grade: grade, scaleKey: scaleIDKey) {
             self.scale = scale
@@ -69,10 +66,10 @@ class PracticeChartCell: ObservableObject, Codable {
         try container.encode(board, forKey: .board)
         try container.encode(grade, forKey: .grade)
         try container.encode(scaleIDKey, forKey: .scaleIDKey)
-        try container.encode(isStarred, forKey: .isStarred)
+        //try container.encode(isStarred, forKey: .isStarred)
         try container.encode(isLicensed, forKey: .isLicensed)
         try container.encode(color, forKey: .color)
-        try container.encode(badges, forKey: .badges)
+        //try container.encode(badges, forKey: .badges)
     }
 }
 
@@ -102,10 +99,9 @@ class PracticeChart: Codable {
         var scaleCtr = 0
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
         
-        let colors = ["cyan", "indigo",
-                      "green", "mint", "orange",
-                      "pink", "purple", "red",
-                      "teal", "yellow", "green"]
+        let colors:[CodableColor] = [CodableColor(Figma.blue), CodableColor(Figma.red),
+                                     CodableColor(Figma.orange), CodableColor(Figma.green)]
+        
         var colorIndex = 0
         
         while true {
@@ -116,7 +112,7 @@ class PracticeChart: Codable {
                         rowCells.append(PracticeChartCell(chart:self, board:self.board, grade:self.grade,
                                                           scaleIDKey: scales[scaleCtr].getScaleIdentificationKey(),
                                                           isLicensed: rowCells.count == 0 || LicenceManager.shared.isLicensed(),
-                                                          color: colors[colorIndex % colors.count]))
+                                                          color1: colors[colorIndex % colors.count]))
                         scaleCtr += 1
                         colorIndex += 1
                     }
