@@ -176,7 +176,7 @@ struct PianoStartNoteIllustrationView: View {
                 .frame(width:7 * keyHeight, height: keyHeight)
                 .cornerRadius(16)
                 .padding(.bottom, 0)
-                .outlinedStyleView()
+                .figmaRoundedBackground()
             Text("Middle C").font(.callout)
         }
         .onAppear() {

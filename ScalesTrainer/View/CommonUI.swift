@@ -391,10 +391,10 @@ extension View {
         modifier(Hilighted(backgroundColor: backgroundColor))
     }
     
-    ///A gray border around the view
-    func outlinedStyleView(shadowOpacity:Double = 0.3, color:Color = Color.white) -> some View {
-        modifier(OutlinedStyleView(shadowOpacity: shadowOpacity, color: color))
-    }
+//    ///A gray border around the view
+//    func outlinedStyleView(shadowOpacity:Double = 0.3, color:Color = Color.white) -> some View {
+//        modifier(OutlinedStyleView(shadowOpacity: shadowOpacity, color: color))
+//    }
     
     func fancyTextStyle() -> some View {
         modifier(FancyTextStyle())

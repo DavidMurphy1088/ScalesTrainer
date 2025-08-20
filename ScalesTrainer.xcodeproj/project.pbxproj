@@ -139,6 +139,7 @@
 		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
 		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
 		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
+		79FD7DD72E55B9A9001D890C /* ScalesGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */; };
 		79FF0D612DD0253A00126573 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF0D602DD0253200126573 /* ResultView.swift */; };
 		79FF42FE2E4F248B00042814 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF42FD2E4F248300042814 /* SpinWheelView.swift */; };
 		818BE01476C1FE1AE16FC5F4 /* Pods_ScalesStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */; };
@@ -284,6 +285,7 @@
 		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
 		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
 		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
+		79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesGridView.swift; sourceTree = "<group>"; };
 		79FF0D602DD0253200126573 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		79FF42FD2E4F248300042814 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 		E57CBB52EE896A3B349E6065 /* Pods_ScalesStar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScalesStar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -498,6 +500,7 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */,
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
 				793292902E46BEA800890198 /* BadgesView.swift */,
 				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
@@ -858,6 +861,7 @@
 				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,
 				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
 				796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */,
+				79FD7DD72E55B9A9001D890C /* ScalesGridView.swift in Sources */,
 				79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */,
 				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
 				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,

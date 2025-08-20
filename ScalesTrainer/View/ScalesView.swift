@@ -305,14 +305,20 @@ struct ScalesView: View {
                 Spacer()
                 HStack {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
-                    Button(action: {
+                    FigmaButton(label: {
+                        //Text("Harmonic Minor")
+                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
+                    }, action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
                         exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
-                        //self.directionIndex = 0
-                    }) {
-                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                    }
-                    .appButtonStyle(trim: true)
+                    })
+//                    Button(action: {
+//                        
+//                    }) {
+//                        
+//                    }
+                    //.appButtonStyle(trim: true)
+                    .figmaRoundedBackground()
                 }
                 .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 
@@ -521,18 +527,19 @@ struct ScalesView: View {
                         HStack {
                             ScaleTitleView(scale: self.scale)
                                 .frame(height: UIScreen.main.bounds.height * headerScale)
-                                .background(
-                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
-                                                   startPoint: .topLeading, endPoint: .bottomTrailing)                                                )
-                                .outlinedStyleView()
+//                                .background(
+//                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
+//                                                   startPoint: .topLeading, endPoint: .bottomTrailing)                                                )
+//                                .outlinedStyleView()
+                                .figmaRoundedBackground()
                             Spacer()
                             HeaderView()
                                 .frame(height: UIScreen.main.bounds.height * headerScale)
-                                .background(
-                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
-                                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-                                )
-                                .outlinedStyleView()
+//                                .background(
+//                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
+//                                                   startPoint: .topLeading, endPoint: .bottomTrailing)
+//                                )
+                                .figmaRoundedBackground()
                         }
                         .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
@@ -586,7 +593,7 @@ struct ScalesView: View {
                                     ScoreView(scale: self.scale, score: score, showResults: false)
                                 }
                             }
-                            .outlinedStyleView()
+                            .figmaRoundedBackground()
                             .padding(.bottom, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
                         }
@@ -615,7 +622,7 @@ struct ScalesView: View {
                                                        onClose: {
                                         exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
                                     })
-                                    .outlinedStyleView()
+                                    .figmaRoundedBackground()
                                     .padding(.bottom, self.spacingVertical)
                                     .onAppear() {
                                         if UIDevice.current.userInterfaceIdiom == .phone {

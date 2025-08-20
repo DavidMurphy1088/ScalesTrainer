@@ -495,9 +495,6 @@
     "Please select yout grade" : {
 
     },
-    "Practice Chart" : {
-
-    },
     "Practice Now" : {
 
     },
@@ -602,6 +599,16 @@
     },
     "Scales Academy" : {
 
+    },
+    "scales Block redraw:%lld count:%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "scales Block redraw:%1$lld count:%2$lld"
+          }
+        }
+      }
     },
     "Scan and connect MIDI Sources" : {
 
