@@ -41,25 +41,25 @@ struct UnderConstructionView: View {
     }
 }
 
-struct FamousQuotesView: View {
-    var body: some View {
-        VStack {
-            let quotes = FamousQuotes.shared
-            let quote = quotes.getQuote()
-            VStack {
-                Text("Famous Quotes").font(.title).padding()
-                VStack {
-                    Text(quote.0).italic().padding()
-                    Text(quote.1).padding()
-                }
-                .padding()
-                Spacer()
-            }
-        }
-        //.commonFrameStyle()
-        .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
-    }
-}
+//struct FamousQuotesView: View {
+//    var body: some View {
+//        VStack {
+//            let quotes = FamousQuotes.shared
+//            let quote = quotes.getQuote()
+//            VStack {
+//                Text("Famous Quotes").font(.title).padding()
+//                VStack {
+//                    Text(quote.0).italic().padding()
+//                    Text(quote.1).padding()
+//                }
+//                .padding()
+//                Spacer()
+//            }
+//        }
+//        //.commonFrameStyle()
+//        .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
+//    }
+//}
 
 //struct ActivityEntriesView: View {
 //    @EnvironmentObject var tabSelectionManager: ViewManager
@@ -150,7 +150,7 @@ struct ActivitiesView: View {
             VStack {
                 VStack {
                     Text("How do you want to practise?").font(.title).padding()
-                    let chart = currentUser.getPracticeChart()
+                    let chart = currentUser.getStudentScales()
                     HStack {
                         NavigationLink(destination: ChooseYourExerciseView()) {
                             Image("activity_pick_exercise")

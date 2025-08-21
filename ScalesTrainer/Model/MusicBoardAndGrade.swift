@@ -3,7 +3,7 @@ import Foundation
 class MusicBoardAndGrade: Codable, Identifiable {
     let board:MusicBoard
     let grade:Int
-    var practiceChart:PracticeChart? = nil
+    //var practiceChart:StudentScales? = nil
     
     init(board:MusicBoard, grade:Int) {
         self.board = board
@@ -542,6 +542,16 @@ class MusicBoardAndGrade: Codable, Identifiable {
         default:
             return scales
         }
+    }
+    
+    static func getScale(boardName:String, grade:Int, scaleId:String) -> Scale? {
+        let scales = MusicBoardAndGrade.getScales(boardName: boardName, grade: grade)
+        for gradeScale in scales {
+            if gradeScale.getScaleIdentificationKey() == scaleId {
+                return gradeScale
+            }
+        }
+        return nil
     }
     
     static func getScale(boardName:String, grade:Int, scaleKey:String) -> Scale? {

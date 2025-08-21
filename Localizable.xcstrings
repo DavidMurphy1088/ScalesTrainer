@@ -193,9 +193,6 @@
     "Cancel" : {
 
     },
-    "chhose..." : {
-
-    },
     "Choose your keyboard colour" : {
 
     },
@@ -230,9 +227,6 @@
 
     },
     "exercise to practise" : {
-
-    },
-    "Famous Quotes" : {
 
     },
     "FFT Analyzer" : {
@@ -412,6 +406,9 @@
     "Key 4" : {
       "extractionState" : "manual"
     },
+    "Keys" : {
+
+    },
     "Lead the Scale" : {
       "comment" : "Menu",
       "extractionState" : "stale",
@@ -493,6 +490,9 @@
 
     },
     "Please select yout grade" : {
+
+    },
+    "Practice Chart" : {
 
     },
     "Practice Now" : {
@@ -600,12 +600,12 @@
     "Scales Academy" : {
 
     },
-    "scales Block redraw:%lld count:%lld" : {
+    "ScalesGridView - scalesCount:%lld layout:%lld" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "scales Block redraw:%1$lld count:%2$lld"
+            "value" : "ScalesGridView - scalesCount:%1$lld layout:%2$lld"
           }
         }
       }
@@ -620,6 +620,9 @@
 
     },
     "Select Grade" : {
+
+    },
+    "Select One" : {
 
     },
     "Select the Minor Type" : {

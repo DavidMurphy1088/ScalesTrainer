@@ -153,12 +153,12 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         return title
     }
     
-    func getPracticeChart() -> PracticeChart {
-        if let loadedChart = PracticeChart.loadPracticeChartFromFile(user: self, board: self.board, grade: grade) {
+    func getStudentScales() -> StudentScales {
+        if let loadedChart = StudentScales.loadFromFile(user: self, board: self.board, grade: grade) {
             return loadedChart
         }
         else {
-            return PracticeChart(user: self, board: self.board, grade: grade)
+            return StudentScales(user: self, board: self.board, grade: grade)
         }
     }
     func getBadgeContainer() -> BadgeContainer {

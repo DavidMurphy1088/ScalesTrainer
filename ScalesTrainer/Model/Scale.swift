@@ -53,6 +53,7 @@ public enum ArticulationType: CaseIterable, Comparable, Codable {
 }
 
 public enum ScaleType: CaseIterable, Comparable, Codable {
+    case any
     case major
     case naturalMinor
     case harmonicMinor
@@ -80,6 +81,8 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
     
     var description: String {
         switch self {
+        case .any:
+            return "Any Type"
         case .major:
             return "Major"
         case .naturalMinor:
@@ -774,6 +777,8 @@ public class Scale : Codable {
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
         var scaleOffsets:[Int] = []
         switch scaleType {
+        case .any:
+            scaleOffsets = []
         case .major:
             scaleOffsets = [2,2,1,2,2,2,1]
         case .naturalMinor:
@@ -1534,13 +1539,13 @@ public class Scale : Codable {
     
     func getScaleDescriptionParts(name:Bool? = nil, hands:Bool?=nil, octaves:Bool? = nil, tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
         var description = ""
-        if let name = name {
+        if name != nil {
             description = scaleRoot.name + " " + scaleType.description
             if scaleMotion == .contraryMotion {
                 description += " " + scaleMotion.description
             }
         }
-        if let hands = hands {
+        if hands != nil {
             //if self.scaleMotion != .contraryMotion {
                 if self.hands.count == 1 {
                     var handName = ""
@@ -1570,7 +1575,7 @@ public class Scale : Codable {
                 description = "\(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
             }
         }
-        if let tempo = tempo {
+        if tempo != nil {
             description = "\u{2669}"
             if self.timeSignature.top % 3 == 0 {
                 description += String("\u{00B7}")
@@ -1578,7 +1583,7 @@ public class Scale : Codable {
             }
             description += "=\(self.minTempo)"
         }
-        if let dynamics = dynamics {
+        if dynamics != nil {
             var d = 0
             description = ""
             for dynamic in self.dynamicTypes {

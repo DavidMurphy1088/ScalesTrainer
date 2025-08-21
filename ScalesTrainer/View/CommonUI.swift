@@ -210,10 +210,10 @@ let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
 
 class UIGlobals {
     static let shared = UIGlobals()
-    func getBackground1() -> String {
-        let r = Int.random(in: 0...10)
-        return "app_background_\(r)"
-    }
+//    func getBackground1() -> String {
+//        let r = Int.random(in: 0...10)
+//        return "app_background_\(r)"
+//    }
     
     let screenImageBackgroundOpacity = 0.5
     let screenWidth = 0.9
