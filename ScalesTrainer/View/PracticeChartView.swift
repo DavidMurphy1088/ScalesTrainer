@@ -60,6 +60,7 @@ struct PracticeChartView: View {
     @State private var showPopup = false
     @State private var minorTypeSelection: String? = nil
     @State private var forceRefreshChart = 0
+    let screenWidth = UIScreen.main.bounds.size.width
     
     let daysInChart = 3
     @State var dayNames:[String] = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
@@ -133,14 +134,15 @@ struct PracticeChartView: View {
     }
 
     var body: some View {
+        let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
         VStack(spacing: 0)  {
-            VStack {
+            //VStack {
                 let screenWidth = UIScreen.main.bounds.size.width
                 let screenHeight = UIScreen.main.bounds.size.height
-                let cellWidth = screenWidth * 0.16
-                let cellHeight = screenHeight * 0.2
-                let cellPadding = screenWidth * 0.002
-                let leftEdge = screenWidth * 0.04
+//                let cellWidth = screenWidth * 0.16
+//                let cellHeight = screenHeight * 0.2
+//                let cellPadding = screenWidth * 0.002
+//                let leftEdge = screenWidth * 0.04
                 
                 VStack {
                     //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
@@ -165,7 +167,6 @@ struct PracticeChartView: View {
                                         selectedDayColumn: $selectedDayOffset, opacity: $cellOpacity)
                             .frame(width: UIScreen.main.bounds.width * 0.3)
                     }
-                    .padding(.leading, leftEdge)
                     
                     Text("")
                     
@@ -176,8 +177,9 @@ struct PracticeChartView: View {
                     }
                     Spacer()
                 }
-            }
+            //}
         }
+        .padding(.leading, leftEdge)
         .commonToolbar(
             title: "Practice Chart",
             onBack: { dismiss() }

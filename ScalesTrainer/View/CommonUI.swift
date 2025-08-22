@@ -264,7 +264,7 @@ extension Button {
 struct ToolbarTitleView: View {
     let screenName: String
     @ObservedObject var user:UserPublished = ScalesModel.shared.userPublished
-    let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 50.0
+    let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 35.0
     func firstLetter(user:UserPublished) -> String {
         guard let first = user.name.first else {
             return ""

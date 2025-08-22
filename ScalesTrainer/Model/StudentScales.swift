@@ -12,9 +12,11 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
     let id: UUID
     let scaleId: String
     var practiceDay: Int
+    var scale: Scale?
     
-    init(scaleId: String, visible:Bool, day:Int) {
+    init(scale:Scale, scaleId: String, visible:Bool, day:Int) {
         self.id = UUID()
+        self.scale = scale
         self.scaleId = scaleId
         self.practiceDay = day
     }
@@ -66,21 +68,16 @@ class StudentScales: Codable {
         self.grade = grade
         self.scalesPerDay = 3
         self.minorScaleType = minorScaleType
-        
-        //let currentDate = Date()
-        //let calendar = Calendar.current
-        
-        var scaleCtr = 0
-        let colors:[CodableColor] = [CodableColor(Figma.blue), CodableColor(Figma.red),
-                                     CodableColor(Figma.orange), CodableColor(Figma.green)]
-        var colorIndex = 0
+
+//        let colors:[CodableColor] = [CodableColor(Figma.blue), CodableColor(Figma.red),
+//                                     CodableColor(Figma.orange), CodableColor(Figma.green)]
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
         self.studentScales = []
         var dayCount = 0
         self.createdDayOfWeek = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
         for scale in scales {
             let dayOffset = (dayCount / scalesPerDay) % scalesPerDay
-            self.studentScales.append(StudentScale(scaleId: scale.getScaleIdentificationKey(),
+            self.studentScales.append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
                                                    visible: true, day: dayOffset))
             dayCount += 1
         }

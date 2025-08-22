@@ -1537,7 +1537,8 @@ public class Scale : Codable {
         return key
     }
     
-    func getScaleDescriptionParts(name:Bool? = nil, hands:Bool?=nil, octaves:Bool? = nil, tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
+    func getScaleDescriptionParts(name:Bool? = nil, hands:Bool?=nil, octaves:Bool? = nil,
+                                  tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
         var description = ""
         if name != nil {
             description = scaleRoot.name + " " + scaleType.description

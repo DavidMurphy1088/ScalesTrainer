@@ -111,7 +111,6 @@ struct ChooseYourExerciseView: View {
         for i in 0..<self.scaleTypes.count {
             if self.scaleTypes[i] == self.selectedType {
                 return i
-                break
             }
         }
         return 0
@@ -121,11 +120,11 @@ struct ChooseYourExerciseView: View {
         VStack(spacing: 0)  {
             VStack {
                 let screenWidth = UIScreen.main.bounds.size.width
-                let screenHeight = UIScreen.main.bounds.size.height
-                let cellWidth = screenWidth * 0.16
-                let cellHeight = screenHeight * 0.2
-                let cellPadding = screenWidth * 0.002
-                let leftEdge = screenWidth * 0.04
+//                let screenHeight = UIScreen.main.bounds.size.height
+//                let cellWidth = screenWidth * 0.16
+//                let cellHeight = screenHeight * 0.2
+//                let cellPadding = screenWidth * 0.002
+                let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
                 
                 VStack {
                     headerView()

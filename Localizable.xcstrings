@@ -600,16 +600,6 @@
     "Scales Academy" : {
 
     },
-    "ScalesGridView - scalesCount:%lld layout:%lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "ScalesGridView - scalesCount:%1$lld layout:%2$lld"
-          }
-        }
-      }
-    },
     "Scan and connect MIDI Sources" : {
 
     },
