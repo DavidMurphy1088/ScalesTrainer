@@ -98,7 +98,7 @@ class ExerciseState : ObservableObject {
         }
     }
     
-    func getExerciseStatusMessage(badge:Badge) -> String {
+    func getExerciseStatusMessage(badge:ExerciseBadge) -> String {
         var msg = ""
         let name = badge.name
         switch self.statePublished {

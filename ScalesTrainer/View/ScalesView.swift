@@ -82,7 +82,7 @@ struct ScalesView: View {
             }
             .pickerStyle(.menu)
 //            .onChange(of: tempoIndex, {
-//                
+//
 //            })
             .onChange(of: tempoIndex, {
                 scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
@@ -238,7 +238,7 @@ struct ScalesView: View {
                     HStack()  {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
                         Button(action: {
-                            scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                            scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
                             self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
                                                                 ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
@@ -275,7 +275,7 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                                scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
                                 self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperModeOn() ?
                                                                     ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
@@ -313,9 +313,9 @@ struct ScalesView: View {
                         exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
                     })
 //                    Button(action: {
-//                        
+//
 //                    }) {
-//                        
+//
 //                    }
                     //.appButtonStyle(trim: true)
                     .figmaRoundedBackground()
@@ -760,7 +760,7 @@ struct ScalesView: View {
             }
             if [ExerciseState.State.exerciseNotStarted].contains(exerciseState.statePublished) {
                 scalesModel.setRunningProcess(.none)
-                scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+                scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             }
 
             if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
@@ -821,7 +821,7 @@ struct ScalesView: View {
             scalesModel.setShowStaff(true)
             exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
-            scalesModel.exerciseBadge = Badge.getRandomExerciseBadge()
+            scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
         }
         
         .onDisappear {
@@ -877,4 +877,3 @@ struct ScalesView: View {
         }
     }
 }
-

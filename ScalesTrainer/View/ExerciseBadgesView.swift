@@ -64,7 +64,7 @@ struct HexagramShape: View {
     }
 }
 
-///The badge view for the exercise 
+///The badge view for the exercise
 struct ExerciseBadgesView: View {
     @ObservedObject var exerciseBadgesList:ExerciseBadgesList
     let user:User
@@ -246,7 +246,7 @@ struct ExerciseBadgesView: View {
 //    let msg:String
 //    let imageName:String
 //    @Binding var badgeImageRotationAngle:Double
-//    
+//
 //    var body: some View {
 //        VStack {
 //            HStack {
@@ -256,7 +256,7 @@ struct ExerciseBadgesView: View {
 //                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title2)
 //                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
 //                    .zIndex(1) // Keeps it above other views
-//                
+//
 //                ///Practice chart badge position is based on exercise state
 //                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
 //                Image(imageName)
@@ -285,4 +285,3 @@ struct ExerciseBadgesView: View {
 //        }
 //    }
 //}
-

@@ -262,6 +262,7 @@ class ExerciseHandler  {
     
     func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Int) {
         var expectedNotes:[RequiredNote] = []
+        
         func log1(_ m:String) {
             print("=======\(self.noteNotificationNumber)", m)
             for n in expectedNotes {
@@ -354,10 +355,19 @@ class ExerciseHandler  {
             MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: velocity)
             testForEndOfExercise()
         }
-                
-        //log("end")
+
     }
-        
+    
+//    func awardChartBadge() {
+//        let user = Settings.shared.getCurrentUser()
+//        let studentScales = user.getStudentScales()
+//        for studentScale in studentScales.studentScales {
+//            if studentScale.scaleId == self.scale.getScaleIdentificationKey() {
+//                studentScale.badgeCount += 1
+//            }
+//        }
+//    }
+    
     func awardChartBadge() {
         let user = Settings.shared.getCurrentUser()
         if user.settings.practiceChartGamificationOn {

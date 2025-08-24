@@ -161,13 +161,14 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             return StudentScales(user: self, board: self.board, grade: grade)
         }
     }
-    func getBadgeContainer() -> BadgeContainer {
-        if let loaded = BadgeContainer.loadFromFile(user: self, board: self.board, grade: grade) {
-            return loaded
-        }
-        else {
-            return BadgeContainer(user: self, board: self.board, grade: grade)
-        }
-    }
+    
+//    func getBadgeContainer() -> BadgeContainer {
+//        if let loaded = BadgeContainer.loadFromFile(user: self, board: self.board, grade: grade) {
+//            return loaded
+//        }
+//        else {
+//            return BadgeContainer(user: self, board: self.board, grade: grade)
+//        }
+//    }
     
 }

@@ -92,7 +92,7 @@ struct StartCountdownView: View {
 /// ------------------ With badges exercises -----------------
 
 struct EndOfExerciseView: View {
-    let badge: Badge
+    let badge: ExerciseBadge
     let scalesModel:ScalesModel
     let exerciseMessage:String?
     let callback: (_ retry:Bool, _ showResult:Bool) -> Void
@@ -190,7 +190,7 @@ struct PianoStartNoteIllustrationView: View {
 ///Prepare a Follow, Lead and start the exercise when the user hits start. No metronome
 ///
 struct StartFollowLeadView: View {
-    let badge: Badge
+    let badge: ExerciseBadge
     let scalesModel:ScalesModel
     let activityName:String
     let callback: (_ cancelled: Bool) -> Void

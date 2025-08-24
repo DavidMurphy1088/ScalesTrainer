@@ -88,7 +88,7 @@ public class ScalesModel : ObservableObject {
     @Published var tempoChangePublished = false
     private var selectedTempoIndex = 0 //5 //60=2
 
-    var exerciseBadge:Badge?
+    var exerciseBadge:ExerciseBadge?
     
     let bufferSizeValues = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 2048+1024, 4096, 2*4096, 4*4096, 8*4096, 16*4096]
     let startMidiValues = [12, 24, 36, 48, 60, 72, 84, 96]
@@ -374,7 +374,7 @@ public class ScalesModel : ObservableObject {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
             }
             self.soundEventHandlers.append(soundHandler)
-            //self.exerciseBadge = Badge.getRandomExerciseBadge()
+            self.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, metronome: metronome)
             exerciseProcess.start(soundHandler: soundHandler)
             if !user.settings.useMidiSources {

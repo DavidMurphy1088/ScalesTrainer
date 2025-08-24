@@ -13,12 +13,14 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
     let scaleId: String
     var practiceDay: Int
     var scale: Scale?
+    var badgeCount:Int
     
     init(scale:Scale, scaleId: String, visible:Bool, day:Int) {
         self.id = UUID()
         self.scale = scale
         self.scaleId = scaleId
         self.practiceDay = day
+        self.badgeCount = 0
     }
     
     func setVisible(way:Bool) {
@@ -36,6 +38,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         case scaleId
         //case visible
         case practiceDay
+        case badgeCount
     }
     
     required init(from decoder: Decoder) throws {
@@ -43,6 +46,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         id = try container.decode(UUID.self, forKey: .id)
         scaleId = try container.decode(String.self, forKey: .scaleId)
         practiceDay = try container.decode(Int.self, forKey: .practiceDay)
+        badgeCount = try container.decode(Int.self, forKey: .badgeCount)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -50,6 +54,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         try container.encode(id, forKey: .id)
         try container.encode(scaleId, forKey: .scaleId)
         try container.encode(practiceDay, forKey: .practiceDay)
+        try container.encode(badgeCount, forKey: .badgeCount)
     }
 }
 
@@ -69,8 +74,6 @@ class StudentScales: Codable {
         self.scalesPerDay = 3
         self.minorScaleType = minorScaleType
 
-//        let colors:[CodableColor] = [CodableColor(Figma.blue), CodableColor(Figma.red),
-//                                     CodableColor(Figma.orange), CodableColor(Figma.green)]
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
         self.studentScales = []
         var dayCount = 0
@@ -83,10 +86,6 @@ class StudentScales: Codable {
         }
         debug("Init")
     }
-    
-    //    func allCells() -> [PracticeChartCell] {
-    //        return rows.flatMap { $0 }
-    //    }
     
     func convertToJSON() -> Data? {
         let encoder = JSONEncoder()
@@ -154,7 +153,7 @@ class StudentScales: Codable {
         }
     }
     
-//    func getScales() -> [Scale] {
+//    func getScale() -> [Scale] {
 //        var result:[Scale] = []
 //        for cs in self.chartScales {
 //            result.append(cs.scale)
@@ -170,22 +169,6 @@ class StudentScales: Codable {
         return result
     }
 
-//    func changeScaleTypes(selectedTypes:[ScaleType], selectedMotions:[ScaleMotion], newType:ScaleType) {
-//        for row in rows {
-//            for chartCell in row {
-//                if selectedTypes.contains(chartCell.scale.scaleType) {
-//                    if selectedMotions.contains(chartCell.scale.scaleMotion) {
-//                        chartCell.scale = Scale(scaleRoot: chartCell.scale.scaleRoot, scaleType: newType, scaleMotion: chartCell.scale.scaleMotion,
-//                                                octaves: chartCell.scale.octaves, hands: chartCell.scale.hands, minTempo: chartCell.scale.minTempo,
-//                                                dynamicTypes: chartCell.scale.dynamicTypes, articulationTypes: chartCell.scale.articulationTypes,
-//                                                scaleCustomisation: chartCell.scale.scaleCustomisation)
-//                        chartCell.scaleIDKey = chartCell.scale.getScaleIdentificationKey()
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     func saveToFile() {
         do {
             //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY

@@ -4,208 +4,128 @@ import Combine
 import AVFoundation
 import AudioKit
 
+class ScaleBadges {
+    let title:String
+    let badges:Int
+    
+    init(title:String, badges:Int) {
+        self.title = title
+        self.badges = badges
+    }
+}
+
+struct PulsatingChalice: View {
+    let badgeSize: CGFloat
+    @State private var pulsate = false
+    
+    var body: some View {
+        Image("badge_chalice")
+            .resizable()
+            .scaledToFit()
+            .frame(width: badgeSize, height: badgeSize)
+            .scaleEffect(pulsate ? 1.1 : 1.0)        // Slight size pulsation
+            .brightness(pulsate ? 0.2 : 0.0)         // Slight brightness pulsation
+            .onAppear {
+                withAnimation(
+                    Animation.easeInOut(duration: 1.0)
+                        .repeatForever(autoreverses: true)
+                ) {
+                    pulsate.toggle()
+                }
+            }
+    }
+}
+
 struct BadgesView: View {
     @Environment(\.dismiss) private var dismiss
     @State var user:User?
-    @State var badgeContainer:BadgeContainer?
-    @State var sortedScaleBadges:[BadgeContainer.ScaleBadges] = []
-    @State var groupByScaleBadges:[[BadgeContainer.ScaleBadges]] = []
+    //@State var badgeContainer:BadgeContainer?
+    //@State var sortedScaleBadges:[BadgeContainer.ScaleBadges] = []
+    //@State var groupByScaleBadges:[[BadgeContainer.ScaleBadges]] = []
     let badgeSize = UIScreen.main.bounds.width * 0.03
-    
-    func sortBadges() -> [BadgeContainer.ScaleBadges] {
-        guard let badgeContainer = badgeContainer else {
-            return []
-        }
-//        for row in badgeContainer.scaleBadges {
-//            print("------", row.scaleId.scaleRoot.name, row.hands, row.badges.count)
-//        }
-        let sortedById = badgeContainer.scaleBadges.sorted { $0.scaleId < $1.scaleId }
-        var lastRowId:ScaleID?
-        var maxBadgeCount:Int = 0
-        var maxBadgesperScaleId: [ScaleID: Int] = [:]
-        
-        ///A scale set is the syllabus scale plus any off-syllabus RH or LH scales as add-ons
-        ///For each scale set determine its sort position based on the max number of badges for any of its syllabus or add-on scales
-        //////ScaleID is the ID of the row's scale without its hands attribute. i.e. all hand variations of scale have the same ScaleID
-        for row in sortedById {
-            //print("========", row.scaleId.scaleRoot.name, row.badges.count)
-            if let lastRowId = lastRowId {
-                if row.scaleId != lastRowId {
-                    maxBadgesperScaleId[lastRowId] = maxBadgeCount
-                    //print("  ========>setmax", lastRowId.scaleRoot.name, maxBadgeCount)
-                    maxBadgeCount = 0
-                }
+    @State var scaleBadges:[ScaleBadges] = []
+    let screenWidth = UIScreen.main.bounds.size.width
+    func getScreenTitle() -> String {
+        var title = "Exercise Badges"
+        if let user = self.user {
+            if let firstWord = user.name.split(separator: " ").first {
+                title = "\(firstWord)'s \(title)"
             }
-            if row.badges.count > maxBadgeCount {
-                maxBadgeCount = row.badges.count
-            }
-
-            lastRowId = row.scaleId
         }
-        let sortedByBadgeCount = badgeContainer.scaleBadges.sorted {maxBadgesperScaleId[$0.scaleId] ?? -1 > maxBadgesperScaleId[$1.scaleId] ?? -1}
-        return sortedByBadgeCount
-    }
-    
-    func groupByScale() -> [[BadgeContainer.ScaleBadges]] {
-        var lastScaleId:ScaleID? = nil
-        var result:[[BadgeContainer.ScaleBadges]] = []
-        var resultRow:[BadgeContainer.ScaleBadges] = []
-        for row in self.sortedScaleBadges {
-            if let lastScaleId = lastScaleId {
-                if row.scaleId != lastScaleId {
-                    result.append(resultRow)
-                    resultRow = []
-                }
-            }
-            resultRow.append(row)
-            lastScaleId = row.scaleId
-        }
-        return result
-    }
-    
-    func name(scale:Scale) -> String {
-        return scale.getScaleDescriptionParts(name:true)
+        return title
     }
     var body: some View {
+        let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
         NavigationStack {
             VStack {
+                HStack {
+                    FigmaButton(label: {
+                        Text("Best Exercises")
+                    }, action: {
+                        scaleBadges.sort { $0.badges > $1.badges }
+                        //animaton...
+                    })
+                    Spacer()
+                }
+                
                 ScrollView(.vertical, showsIndicators: true) {
-                    ForEach(Array(self.groupByScaleBadges.enumerated()), id: \.offset) { index, group in
-                        VStack {
-                            ForEach(Array(group.enumerated()), id: \.offset) { index, scaleBadges in
-                                HStack {
-                                    //Text("\(scaleBadges.scaleId.scaleRoot.name)").foregroundColor(scaleBadges.onSyllabus ? .black : .gray)
-                                    if scaleBadges.onSyllabus {
-                                        HStack {
-                                            Text("\(scaleBadges.scaleId.scaleRoot.name)").foregroundColor(scaleBadges.onSyllabus ? .black : .gray)
-                                            Text("\(scaleBadges.scaleId.scaleType.description)").foregroundColor(scaleBadges.onSyllabus ? .black : .gray)
-                                            Text("Both Hands")
-                                        }
-                                        .padding()
-                                        .frame(width: badgeSize * 8.0)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(Color.white)
-                                        )
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color.gray, lineWidth: 2)
-                                        )
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(scaleBadges.indices, id: \.self) { index in
+                            let scale = scaleBadges[index]
+                            let chalices = scale.badges / 4
+                            let remainder = scale.badges % 4
+                            
+                            VStack(alignment: .leading, spacing: 6) {
+                                let title = "\(scale.title) \(scale.badges)"
+                                Text(title)
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                HStack(alignment: .center, spacing: 6) {
+                                    // Show chalices first (every 4 badges -> 1 chalice)
+                                    ForEach(0..<chalices, id: \.self) { _ in
+                                        PulsatingChalice(badgeSize: badgeSize)
+//                                        Image("badge_chalice")
+//                                            .resizable()
+//                                            .scaledToFit()
+//                                            .frame(width: badgeSize, height: badgeSize)
+//                                            //.foregroundColor(.yellow)
                                     }
-                                    else {
-                                        if scaleBadges.hands == [1] {
-                                            HStack {
-                                                Image("hand_left")
-                                                    .resizable()
-                                                    .renderingMode(.template)
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(width: badgeSize, height: badgeSize)
-                                                    .foregroundColor(.gray)
-                                                    .padding(6)
-                                                    .background(Color.white)
-                                                    .clipShape(Circle())
-                                                    .overlay(
-                                                        Circle()
-                                                            .stroke(Color.gray, lineWidth: 2)
-                                                    )
-                                            }
-                                            .frame(width: badgeSize * 8.0)
-                                       }
-                                        else {
-                                            HStack {
-                                                Image("hand_right")
-                                                    .resizable()
-                                                    .renderingMode(.template)
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(width: badgeSize, height: badgeSize)
-                                                    .foregroundColor(.gray)
-                                                    .padding(6) // space between image and border
-                                                    .background(Color.white) // background inside circle
-                                                    .clipShape(Circle()) // make the whole thing circular
-                                                    .overlay(
-                                                        Circle()
-                                                            .stroke(Color.gray, lineWidth: 2) // border
-                                                    )
-                                            }
-                                            .frame(width: badgeSize * 8.0)
-                                        }
-                                    }
-                                    
-                                    ScrollView(.horizontal, showsIndicators: true) {
-                                        HStack {
-                                            ForEach(Array(scaleBadges.badges.enumerated()), id: \.offset) { index, badge in
-                                                Image(systemName: "star.fill")
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: badgeSize, height: badgeSize)
-                                                    .foregroundColor(.yellow) // solid color
-//                                                Image(badge.imageName)
-//                                                    .resizable()
-//                                                    .scaledToFit()
-//                                                    .frame(width: badgeSize, height: badgeSize)
-                                            }
-                                        }
+                                    // Show remaining badges as stars
+                                    ForEach(0..<remainder, id: \.self) { _ in
+                                        Image(systemName: "star.fill")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: badgeSize, height: badgeSize)
+                                            .foregroundColor(.yellow)
                                     }
                                 }
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .padding(.vertical, 4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                //.fill(Color(hue: 0.58, saturation: 0.18, brightness: 0.98)) // pastel light
-                                .fill(Color(hue: 0.58, saturation: 0.08, brightness: 0.98)) 
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(Color.gray.opacity(2.0), lineWidth: 2)
-                        )
-                        .padding(.horizontal)
-//                        .border(Color.green)
-//                        .padding()
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            .padding(.leading, leftEdge)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .commonToolbar(
-                title: "Badges", onBack: {}
+                title: getScreenTitle()
             )
-            .onAppear {
-                self.user = Settings.shared.getCurrentUser()
-                badgeContainer = user!.getBadgeContainer()
-                for _ in 0..<2 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "A"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2), hands: [0,1],badge: Badge(id: r))
-                }
-                for _ in 0..<3 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "A"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2),
-                                             hands: [0], badge: Badge(id: r))
-                }
-                for _ in 0..<6 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "A"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2),
-                                             hands: [1], badge: Badge(id: r))
-                }
-                
-                for _ in 0..<1 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2),hands: [0,1], badge: Badge(id: r))
-                }
-                for _ in 0..<4 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "E♭"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2),hands: [1], badge: Badge(id: r))
-                }
-                
-                for _ in 0..<2 {
-                    let r = Int.random(in: 0...Badge.imageNames.count-1)
-                    badgeContainer!.addBadge(scaleId: ScaleID(scaleRoot: ScaleRoot(name: "C"), scaleType: .harmonicMinor, scaleMotion: .similarMotion, octaves: 2),hands: [1], badge: Badge(id: r))
-                }
-
-                badgeContainer?.debug()
-                self.sortedScaleBadges = sortBadges()
-                self.groupByScaleBadges = self.groupByScale()
+        }
+        .onAppear() {
+            let user = Settings.shared.getCurrentUser()
+            self.user = user
+            let board = MusicBoard.getSupportedBoards()[0]
+            let grade = MusicBoardAndGrade(board: board, grade:1)
+            let scales = grade.enumerateAllScales()
+            for scale in scales {
+                scaleBadges.append(ScaleBadges(title: scale.getScaleName(handFull: false), badges: Int.random(in: 1...13)))
             }
         }
-        
     }
-    
 }
+
