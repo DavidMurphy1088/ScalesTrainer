@@ -107,8 +107,8 @@ public class ScalesModel : ObservableObject {
     func updateUserPublished(user:User) {
         DispatchQueue.main.async {
             self.userPublished.name = user.name
-            self.userPublished.board = user.board
-            self.userPublished.grade = user.grade
+            self.userPublished.board = user.boardAndGrade.board.name
+            self.userPublished.grade = user.boardAndGrade.grade
             self.userPublished.color = user.color
         }
     }

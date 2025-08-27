@@ -14,23 +14,21 @@ class UserPublished : ObservableObject {
 
 class User : Encodable, Decodable, Hashable, Identifiable {
     var id:UUID
-    var board:String
+    //var board:String
     var name:String
     var email:String
     var settings:UserSettings
-    var grade:Int
     var color:String
+    var boardAndGrade:MusicBoardAndGrade
     
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
     }
     
-    init(board:String) {
+    init() {
         self.id = UUID()
         self.name = ""
         self.email = ""
-        self.board = board
-        self.grade = 0
         self.settings = UserSettings()
         let colorNames = [
             "red", "orange", "yellow", "green",
@@ -38,13 +36,30 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             "indigo", "purple", "pink"
         ]
         self.color = colorNames.randomElement()!
+        self.boardAndGrade = MusicBoardAndGrade(board: MusicBoard.getSupportedBoards()[0], grade: 1)
+    }
+    
+    init(boardAndGrade:MusicBoardAndGrade) {
+        self.id = UUID()
+        self.name = ""
+        self.email = ""
+        //self.board = board
+        //self.grade = 0
+        self.settings = UserSettings()
+        let colorNames = [
+            "red", "orange", "yellow", "green",
+            "mint", "teal", "cyan", "blue",
+            "indigo", "purple", "pink"
+        ]
+        self.color = colorNames.randomElement()!
+        self.boardAndGrade = boardAndGrade
     }
     
     func updateFromUser(user:User) {
         self.name = user.name
         self.email = user.email
-        self.board = user.board
-        self.grade = user.grade
+        self.boardAndGrade = user.boardAndGrade
+        //self.grade = user.grade
         self.settings = user.settings
         self.color = user.color
     }
@@ -70,8 +85,8 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         hasher.combine(id) // Combine the `id` property into the hasher
     }
     
-    func debug() {
-        print("===== User", self.name, self.board, "Grade:", self.grade)
+    func debug(_ ctx:String) {
+        print("===== User", ctx, self.name, self.boardAndGrade.board, "Grade:", self.boardAndGrade.grade)
     }
     
     ///User settings irrespective of the grade the student is in.
@@ -144,21 +159,21 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         var title = ""
         if !self.name.isEmpty {
             title = self.name
-            if self.grade > 0 {
-                title += ", " + self.board
+            //if self.grade > 0 {
+                title += ", " + self.boardAndGrade.board.name
                 title += " Grade "
-                title += String(grade)
-            }
+                title += String(self.boardAndGrade.board.name)
+            //}
         }
         return title
     }
     
     func getStudentScales() -> StudentScales {
-        if let loadedChart = StudentScales.loadFromFile(user: self, board: self.board, grade: grade) {
+        if let loadedChart = StudentScales.loadFromFile(user: self) {
             return loadedChart
         }
         else {
-            return StudentScales(user: self, board: self.board, grade: grade)
+            return StudentScales(user: self)
         }
     }
     

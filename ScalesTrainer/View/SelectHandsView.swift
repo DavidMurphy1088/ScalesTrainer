@@ -47,7 +47,7 @@ struct SelectHandForPractice: View {
                     .figmaRoundedBackground(fillColor: titleColor)
                 Text("")
                 Text("In the exam \(nameFull) must be played with both hands.")
-                Text("But here you can practise \(name) hands separately.")
+                Text("But here you can also practise \(name) hands separately.")
                 Text("")
                 Text("")
                 Text("")

@@ -10,6 +10,7 @@ struct ScalesGridCellView: View {
     let color:Color
     let opacityValue = 0.6
     @State var navigateToScale = false
+    @State var navigateToSelectHands = false
     
     func getHandImage(scale:Scale) -> Image? {
         if scale.hands.count < 1 {
@@ -28,9 +29,14 @@ struct ScalesGridCellView: View {
         
     var body: some View {
         Button(action: {
-            //let chartHands = practiceCell.scale.hands
-            //setScale(requiredHands: chartHands)
-            self.navigateToScale = true
+            if let scale = self.scaleToChart.scale {
+                if scale.hands.count == 1 {
+                    self.navigateToScale = true
+                }
+                else {
+                    self.navigateToSelectHands = true
+                }
+            }
         }) {
             HStack(alignment: .top) {
                 Text("")
@@ -63,15 +69,15 @@ struct ScalesGridCellView: View {
                     .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
             )
             .navigationTitle("Practice Chart")
-
             .navigationDestination(isPresented: $navigateToScale) {
-                if let user = user {
-                    let scale:Scale = MusicBoardAndGrade.getScale(boardName: user.board,
-                                                                  grade : user.grade,
-                                                                  scaleKey: scaleToChart.scaleId)!
+                if let user = user, let scale = scaleToChart.scale {
                     ScalesView(user:user, scale: scale)
                 }
-
+            }
+            .navigationDestination(isPresented: $navigateToSelectHands) {
+                if let user = user, let scale = scaleToChart.scale {
+                    SelectHandForPractice(user:user, scale: scale, titleColor: self.color)
+                }
             }
         }
     }
@@ -145,6 +151,7 @@ struct ScalesGridView : View {
         }
         //.border(.green)
         .onAppear() {
+            studentScales.debug("OnAppead")
             let user = Settings.shared.getCurrentUser()
             self.user = user
             self.layout()

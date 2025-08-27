@@ -35,7 +35,7 @@ class Settings : Encodable, Decodable {
         }
         self.setCurrentUser(id: user.id)
         ScalesModel.shared.updateUserPublished(user: user)
-        save()
+        //save()
     }
 
     func deleteUser(user: User) {
@@ -51,9 +51,9 @@ class Settings : Encodable, Decodable {
         if user.name.isEmpty {
             return false
         }
-        if user.grade == 0 {
-            return false
-        }
+//        if user.grade == 0 {
+//            return false
+//        }
         return true
     }
     
@@ -131,7 +131,7 @@ class Settings : Encodable, Decodable {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
                 let currentUser = self.getCurrentUser()
-                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
+//                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
                 AppLogger.shared.reportError(self, "save cannot form JSON")
@@ -165,13 +165,13 @@ class Settings : Encodable, Decodable {
         }
     }
     
-    func debug11(_ ctx:String) {
-        print("Settings debug ============= \(ctx)")
-        for user in users {
-            print("  User", user.name, "Grade:", user.grade)
-        }
-        print()
-    }
+//    func debug11(_ ctx:String) {
+//        print("Settings debug ============= \(ctx)")
+//        for user in users {
+//            print("  User", user.name, "Grade:", user.grade)
+//        }
+//        print()
+//    }
         
     public func isDeveloperModeOn() -> Bool {
         return false

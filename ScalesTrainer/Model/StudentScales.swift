@@ -60,26 +60,24 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
 
 class StudentScales: Codable {
     let user:User
-    var board:String
-    var grade:Int
     var scalesPerDay: Int
     var studentScales:[StudentScale]
     var minorScaleType: Int
     var createdDayOfWeek:Int
     
-    init(user:User, board:String, grade:Int, minorScaleType:Int = 0) {
+    init(user:User, minorScaleType:Int = 0) {
         self.user = user
-        self.board = board
-        self.grade = grade
         self.scalesPerDay = 3
         self.minorScaleType = minorScaleType
 
-        let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: board, grade: grade)
+        let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
+                                                          grade: user.boardAndGrade.grade)
         self.studentScales = []
         var dayCount = 0
         self.createdDayOfWeek = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
         for scale in scales {
-            let dayOffset = (dayCount / scalesPerDay) % scalesPerDay
+            //let dayOffset = (dayCount / scalesPerDay) % scalesPerDay
+            let dayOffset = dayCount % scalesPerDay
             self.studentScales.append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
                                                    visible: true, day: dayOffset))
             dayCount += 1
@@ -109,34 +107,10 @@ class StudentScales: Codable {
         print("======== StudentScales", ctx)
         for r in 0..<self.studentScales.count {
             let x = self.studentScales[r]
-            let name = x.scaleId + String(repeating: " ", count: 40 - x.scaleId.count)
+            let name = x.scaleId + String(repeating: " ", count: 60 - x.scaleId.count)
             print("  \(name)", "\tvis:\(x.visible) \tday:\(x.practiceDay)")
         }
     }
-    
-    //    func getCellForScale(scale:Scale) -> PracticeChartCell? {
-    //        for r in 0..<self.rows.count {
-    //            let row = self.self.rows[r]
-    //            for c in 0..<row.count {
-    //                let cell = self.rows[r][c]
-    //                if cell.scale.isSameScale(scale: scale) {
-    //                    return cell
-    //                }
-    //            }
-    //        }
-    //        return nil
-    //    }
-    
-    //    func getCellIDByScale(scale:Scale) -> PracticeChartCell? {
-    //        for cells in rows {
-    //            for row in cells {
-    //                if row.scale.getScaleIdentificationKey() == scale.getScaleIdentificationKey() {
-    //                    return row
-    //                }
-    //            }
-    //        }
-    //        return nil
-    //    }
     
     func shuffle() {
         var indexes = Array(studentScales.indices)
@@ -151,15 +125,8 @@ class StudentScales: Codable {
                 dayNumber += 1
             }
         }
+        saveToFile()
     }
-    
-//    func getScale() -> [Scale] {
-//        var result:[Scale] = []
-//        for cs in self.chartScales {
-//            result.append(cs.scale)
-//        }
-//        return result
-//    }
     
     func getScaleIds() -> [String] {
         var result:[String] = []
@@ -171,16 +138,15 @@ class StudentScales: Codable {
 
     func saveToFile() {
         do {
-            //practiceChart.firstColumnDayOfWeekNumber -= 2///TEST ONLY
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 AppLogger.shared.reportError(self, "Failed to save PracticeChart")
                 return
             }
-            let fileName = StudentScales.getFileName(user: self.user, board: self.board, grade: self.grade)
+            let fileName = StudentScales.getFileName(user: self.user)
             let url = dir.appendingPathComponent(fileName)
             if let data = self.convertToJSON() {
                 try data.write(to: url)  // Write the data to the file
-                //AppLogger.shared.log(self, "✅ Saved PracticeChart. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
+                //AppLogger.shared.log(self, "✅ Saved StudenScales. Board:\(self.board) Grade:\(self.grade) toFile: \(fileName) size:\(data.count)")
             }
             else {
                 AppLogger.shared.reportError(self, "Cannot convert PracticeChart")
@@ -190,43 +156,40 @@ class StudentScales: Codable {
         }
     }
     
-    static func getFileName(user:User, board:String, grade:Int) -> String {
-        return "_" + user.name + "_" + board + "_" + String(grade)
+    //static func getFileName(user:User, board:String, grade:Int) -> String {
+    static func getFileName(user:User) -> String {
+        return "SA_" + user.name + "_" + user.boardAndGrade.board.name + "_" + String(user.boardAndGrade.grade)
     }
     
-    static func loadFromFile(user:User, board:String, grade:Int) -> StudentScales? {
+    static func loadFromFile(user:User) -> StudentScales? {
         let decoder = JSONDecoder()
         do {
             guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
                 if let notRegression = ProcessInfo.processInfo.environment["NOT_RUNNING_REGRESSION"] {
-                    AppLogger.shared.log(self, "Failed to load PracticeChart - file not found")
+                    AppLogger.shared.reportError(self, "Failed to load PracticeChart - file not found")
                 }
                 return nil
             }
-            let url = dir.appendingPathComponent(getFileName(user: user, board: board, grade: grade))
+            let url = dir.appendingPathComponent(getFileName(user: user))
             let fileManager = FileManager.default
             if !fileManager.fileExists(atPath: url.path) {
                 return nil
             }
             let urlData = try Data(contentsOf: url)  // Read the data from the file
             let chart = try decoder.decode(StudentScales.self, from: urlData)
-//            for r in 0..<chart.rows.count {
-//                let row:[PracticeChartCell] = chart.rows[r]
-//                for chartCell in row {
-//                    chartCell.chart = chart
-//                    chartCell.isLicensed = false
-//                    if LicenceManager.shared.isLicensed() {
-//                        chartCell.isLicensed = true
-//                    }
-//                    else {
-//                        if r == 0 {
-//                            chartCell.isLicensed = true
-//                        }
-//                    }
-//                }
-//            }
-//            AppLogger.shared.log(self, "Loaded PracticeChart from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")
-            //chart.adjustForStartDay()
+
+//            AppLogger.shared.log(self, "Loaded PracticeChart from local file. Board:\(board) Grade:\(grade) FirstColumnDayOfWeek:\(chart.firstColumnDayOfWeekNumber)")s
+            
+            ///Only the scale Id is serialized on save so get the scale itself
+            for studentScale in chart.studentScales {
+                let user = Settings.shared.getCurrentUser()
+                let boardGrade = user.boardAndGrade // MusicBoardAndGrade(board: board, grade: user.grade)
+                for scale in boardGrade.enumerateAllScales() {
+                    if scale.getScaleIdentificationKey() == studentScale.scaleId {
+                        studentScale.scale = scale
+                    }
+                }
+            }
             return chart
         } catch {
             AppLogger.shared.reportError(self, "Failed to load PracticeChart: \(error)")

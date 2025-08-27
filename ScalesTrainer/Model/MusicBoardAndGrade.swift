@@ -2,21 +2,11 @@ import Foundation
 
 class MusicBoardAndGrade: Codable, Identifiable {
     let board:MusicBoard
-    let grade:Int
-    //var practiceChart:StudentScales? = nil
+    var grade:Int
     
     init(board:MusicBoard, grade:Int) {
         self.board = board
         self.grade = grade
-//        if let chart = loadPracticeChartFromFile(board: board.name, grade: grade) {
-//            self.practiceChart = chart
-//            ///Testing only - to test adjust chart's hilighted 'today' column
-////            self.practiceChart?.firstColumnDayOfWeekNumber -= 1
-////            savePracticeChartToFile()
-//        }
-//        else {
-//            self.practiceChart = PracticeChart(board: board.name, grade:grade, columnWidth: 3, minorScaleType: 0)
-//        }
     }
     
     enum CodingKeys: String, CodingKey {
@@ -592,12 +582,21 @@ class MusicBoard : Identifiable, Codable, Hashable {
     static func getSupportedBoards() -> [MusicBoard] {
         var result:[MusicBoard] = []
         result.append(MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"))
-        result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the\nRoyal Schools of Music", imageName: "abrsm"))
-        result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music\nExaminations Board", imageName: "nzmeb"))
-        result.append(MusicBoard(name: "AMEB", fullName: "Australian Music\nExaminations Board", imageName: "AMEB"))
+        result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"))
+        result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"))
+        result.append(MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"))
         return result
     }
-
+    
+    static func getBoard(name:String) -> MusicBoard? {
+        for b in MusicBoard.getSupportedBoards() {
+            if b.name == name {
+                return b
+            }
+        }
+        return nil
+    }
+    
     init(name:String, fullName:String, imageName:String) {
         self.id = UUID()
         self.name = name

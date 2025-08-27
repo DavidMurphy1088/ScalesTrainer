@@ -46,25 +46,6 @@ public class AppLogger : ObservableObject {
             self.hiliteLogValue = val
         }
     }
-    
-//    func calcValueLimits() {
-//        var min = 100000000.0
-//        var max = 0.0
-//        for m in loggedMsgs {
-//            if m.value < min {
-//                min = m.value
-//            }
-//            if m.value > max {
-//                max = m.value
-//            }
-//        }
-//        DispatchQueue.main.async {
-//            self.maxLogValue = max
-//            self.minLogValue = min
-//            self.hiliteLogValue = min
-//        }
-//    }
-    
     private func getTime() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "HH:mm:ss"

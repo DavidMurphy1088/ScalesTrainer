@@ -187,7 +187,7 @@
     "Bluetooth MIDI Devices" : {
 
     },
-    "But here you can practise %@ hands separately." : {
+    "But here you can also practise %@ hands separately." : {
 
     },
     "Cancel" : {
@@ -486,7 +486,7 @@
     "Play The Scale" : {
 
     },
-    "Please add your name" : {
+    "Please enter your name" : {
 
     },
     "Please select yout grade" : {
@@ -562,6 +562,9 @@
           }
         }
       }
+    },
+    "Save" : {
+
     },
     "Save Configuration" : {
 

@@ -85,7 +85,7 @@ struct PracticeChartView: View {
     func doShuffle() {
         if let studentScales = studentScales {
             studentScales.shuffle()
-            setVisibleCells("shuffle", studentScales: studentScales, dayOffset: 0)
+            setVisibleCells("shuffle", studentScales: studentScales, dayOffset: selectedDayOffset)
         }
     }
     
@@ -139,11 +139,7 @@ struct PracticeChartView: View {
             //VStack {
                 let screenWidth = UIScreen.main.bounds.size.width
                 let screenHeight = UIScreen.main.bounds.size.height
-//                let cellWidth = screenWidth * 0.16
-//                let cellHeight = screenHeight * 0.2
-//                let cellPadding = screenWidth * 0.002
-//                let leftEdge = screenWidth * 0.04
-                
+
                 VStack {
                     //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
                     HStack {
@@ -190,7 +186,7 @@ struct PracticeChartView: View {
             self.user = user
             let studentScales = user.getStudentScales()
             self.studentScales = studentScales
-            self.minorScaleTypes = self.studentScales!.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
+            self.minorScaleTypes = [] //self.studentScales!.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
             minorTypeIndex = studentScales.minorScaleType
             if Settings.shared.isDeveloperModeOn() {
 //                Firebase.shared.readAllScales(board: studentScales.board, grade:studentScales.grade) { scalesAndScores in

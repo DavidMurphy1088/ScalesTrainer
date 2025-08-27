@@ -13,7 +13,7 @@ struct SelectGradeView: View {
     @Binding var selectedGrade: Int
     @Environment(\.dismiss) private var dismiss
 
-    var body: some View {
+    public var body: some View {
         VStack {
             HStack {
                 Spacer()
@@ -44,73 +44,90 @@ struct SelectGradeView: View {
             }
         }
         .onAppear() {
-            if !board.gradesOffered.contains(selectedGrade)  {
-                selectedGrade = 1
-            }
+            print("   ==== POPUP VIEW onAppear", self.selectedGrade)
         }
     }
 }
 
-struct UserEditView: View {
-    let addingFirstUser: Bool
-    @Environment(\.dismiss) private var dismiss
-    @FocusState private var nameFieldFocused: Bool
-    @State private var name: String = ""
-    @State private var selectedGrade: Int = 1
-    @State private var showGradesBoard: MusicBoard? = nil
+public struct UserEditView: View {
+    public let addingFirstUser: Bool
     @State var user: User
+    @Environment(\.dismiss) private var dismiss
+    
+    @FocusState var nameFieldFocused: Bool
+    @State private var userName: String = ""
+    @State private var selectedGrade = 0
+    @State private var selectedBoard:MusicBoard? = nil
+    @State private var showGradesSelection = false
     @State private var errorMessage: String = ""
     @State private var showErrorAlert = false
     let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
-
-    var body: some View {
+    @State private var saveEnabled = false
+    @State private var sheetNonce = UUID()
+    
+    func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
+        print("========= getGrade", ctx, user.boardAndGrade.board, user.boardAndGrade.grade)
+        if board == user.boardAndGrade.board {
+            return user.boardAndGrade.grade
+        }
+        else {
+            return 0
+        }
+    }
+    
+    func isSaveEnabled(user:User) -> Bool {
+        if user.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return false
+        }
+        return user.boardAndGrade.grade > 0
+    }
+    
+    public var body: some View {
         HStack {
             Text("  ")
             VStack(alignment: .leading) {
                 ///Header area
-                HStack {
+                VStack {
                     if UIDevice.current.userInterfaceIdiom != .phone {
                         if addingFirstUser {
                             HStack {
-                                Spacer()
                                 Text("Let’s set up your account").font(.title2)
                                 Spacer()
                             }
                         }
-                        Spacer()
                     }
                     HStack {
-                        if !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            FigmaButton(
-                                label: {
-                                    HStack {
-                                        Image("figma_tickmark")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
-                                        Text("Confirm")
+                        if saveEnabled {
+                            if user.boardAndGrade.grade > 0 {
+                                FigmaButton(
+                                    label: {
+                                        HStack {
+                                            Image("figma_tickmark")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
+                                            Text("Save")
+                                        }
+                                    },
+                                    action: {
+                                        if user.boardAndGrade.grade > 0 {
+                                            settings.setUser(user: user)
+                                            dismiss()
+                                            ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                        } else {
+                                            errorMessage = "▶️ Please select a grade before saving"
+                                            showErrorAlert = true
+                                        }
                                     }
-                                },
-                                action: {
-                                    if user.grade > 0 {
-                                        errorMessage = ""
-                                        user.name = name
-                                        settings.setUser(user: user)
-                                        dismiss()
-                                        ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
-                                    } else {
-                                        errorMessage = "Please select a grade before saving"
-                                        showErrorAlert = true
-                                    }
-                                }
-                            )
-                            .padding()
+                                )
+                                .padding()
+                            }
                         }
                         
-                        if user.grade > 0 {
+                        if !addingFirstUser {
                             Button(action: {
-                                user.name = name
+                                user.name = userName
                                 settings.deleteUser(user: user)
                                 dismiss()
                                 ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
@@ -119,14 +136,14 @@ struct UserEditView: View {
                             }
                             .padding()
                         }
+                        Spacer()
                     }
-                    Spacer()
                 }
+                .padding()
 
                 Text("")
-                //Text("Please add your name:")
                 VStack(alignment: .leading) {
-                    TextField("Please add your name", text: $name)
+                    TextField("Please enter your name", text: $userName)
                         .focused($nameFieldFocused)
                         .padding()
                         .background(Color(UIColor.systemGray6))
@@ -141,6 +158,10 @@ struct UserEditView: View {
                     }
                 }
                 .padding()
+                .onChange(of: userName) {_, name in
+                    user.name = name
+                    self.saveEnabled = isSaveEnabled(user: user)
+                }
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -154,44 +175,72 @@ struct UserEditView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
                                 Text("")
                                 Text(board.name).font(.title2)
-                                if UIDevice.current.userInterfaceIdiom != .phone {
-                                    Text(board.fullName)//.font(.caption)
-                                }
                                 Text("")
                                 FigmaButton(label: {
                                     Text("Select Grade")
                                 }, action: {
-                                    user.board = board.name
-                                    DispatchQueue.main.async {
-                                        self.showGradesBoard = board
-                                    }
+                                    print("")
+                                    self.selectedBoard = board
+                                    self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
+                                    sheetNonce = UUID()
+                                    self.showGradesSelection = true
                                 })
-                                Text("")
+                                .padding()
+                                //Text("")
+                                ///Make the full name last else the buttons dont line up horizontally
+                                if UIDevice.current.userInterfaceIdiom != .phone {
+                                    Text(board.fullName)//.font(.caption)
+                                        .lineLimit(nil)                 // allow unlimited lines
+                                            .multilineTextAlignment(.leading) // optional, left-align
+                                            .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                }
+                                Spacer()
                             }
                             .frame(width: UIScreen.main.bounds.width * 0.2)
-                                   //,height: UIScreen.main.bounds.height * 0.3)
                         }
                     }
                 }
             }
             Text("  ")
         }
-        .sheet(item: $showGradesBoard, onDismiss: {
-            user.grade = selectedGrade
-            user.debug()
+        .onAppear {
+            if !self.addingFirstUser {
+                self.selectedGrade = user.boardAndGrade.grade
+            }
+            userName = user.name
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                nameFieldFocused = true
+            }
+        }
+//        .sheet(isPresented: $showGradesSelection, onDismiss: {
+//            if let board = self.selectedBoard {
+//                user.boardAndGrade = MusicBoardAndGrade(board: board, grade: self.selectedGrade)
+//                self.saveEnabled = self.isSaveEnabled(user: user)
+//                user.debug("UserEditView saved grade change ")
+//            }
+//        }) {
+//            if let board = self.selectedBoard {
+//                SelectGradeView(board: board, selectedGrade: $selectedGrade)
+//                    .id(sheetNonce)
+////
+//            }
+//        }
+        .sheet(item: $selectedBoard, onDismiss: {
+            Complet FUCKED SHIT - cannot set the grade
+            if let board = self.selectedBoard {
+                user.boardAndGrade = MusicBoardAndGrade(board: board, grade: self.selectedGrade)
+                self.saveEnabled = self.isSaveEnabled(user: user)
+                user.debug("UserEditView saved grade change ")
+            }
         }) { board in
+            // No internal if-let needed; `board` is guaranteed here
             SelectGradeView(board: board, selectedGrade: $selectedGrade)
+                .id(board.id) // optional; usually not required with `.sheet(item:)`
         }
         .commonToolbar(
             title: "User Edit",
             onBack: { dismiss() }
         )
-        .onAppear {
-            name = user.name
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                nameFieldFocused = true
-            }
-        }
         .alert(isPresented: $showErrorAlert) {
             Alert(
                 title: Text(errorMessage),

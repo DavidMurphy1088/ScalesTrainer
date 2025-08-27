@@ -136,7 +136,10 @@ struct SpinTheWheelView: View {
         .onAppear() {
             let user = Settings.shared.getCurrentUser()
             self.user = user
-            self.scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
+            //self.scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
+            self.scales = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
+                                                       grade: user.boardAndGrade.grade)
+
             wasSpun = false
             totalSpinSeconds = 3.0 + Double.random(in: 0...1.0)
             ///Make sure it centers on a slice

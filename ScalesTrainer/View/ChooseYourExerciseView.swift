@@ -79,10 +79,10 @@ struct ChooseYourExerciseView: View {
     func setVisibleCells(_ ctx:String, studentScales:StudentScales, typeFilter:ScaleType) {
         studentScales.processAllScales(procFunction: {studentScale in
             if let user = user {
-                let board = user.board
-                    if let scale = MusicBoardAndGrade.getScale(boardName:board, grade: user.grade, scaleId: studentScale.scaleId) {
-                        studentScale.setVisible(way: typeFilter == .any ? true : scale.scaleType == typeFilter)
-                    }
+                //let board = user.board
+                if let scale = studentScale.scale {
+                    studentScale.setVisible(way: typeFilter == .any ? true : scale.scaleType == typeFilter)
+                }
             }
         })
         studentScales.debug(ctx)
@@ -150,14 +150,14 @@ struct ChooseYourExerciseView: View {
             
             ///Make sure the list is in the order in which the type is first seen in the syllabus
             var allTypesSet: Set<ScaleType> = []
-            for scale in studentScales.studentScales {
-                if let scale = MusicBoardAndGrade.getScale(boardName: user.board, grade: user.grade, scaleId: scale.scaleId) {
+            for studentScale in studentScales.studentScales {
+                if let scale = studentScale.scale {
                     allTypesSet.insert(scale.scaleType)
                 }
             }
             self.scaleTypes = [.any]
-            for scale in studentScales.studentScales {
-                if let scale = MusicBoardAndGrade.getScale(boardName: user.board, grade: user.grade, scaleId: scale.scaleId) {
+            for studentScale in studentScales.studentScales {
+                if let scale = studentScale.scale {
                     if allTypesSet.contains(scale.scaleType) {
                         self.scaleTypes.append(scale.scaleType)
                         allTypesSet.remove(scale.scaleType)

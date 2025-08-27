@@ -6,9 +6,7 @@ import SwiftUI
 struct WelcomeView: View {
     @State private var isEditingUser = false
     @State var screenWidth = UIScreen.main.bounds.width
-    //let systemPadding: CGFloat = 16
-    //let heightRatio = UIDevice.current.userInterfaceIdiom == .pad ? 375.0/821.0 : 250.0/821
-    //let heightRatio = UIDevice.current.userInterfaceIdiom == .pad ? 320.0/821.0 : 250.0/821
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -22,10 +20,6 @@ struct WelcomeView: View {
                     VStack(alignment: .leading) {
                         Text("")
                         Text("")
-//                        Image("figma_logo_horizontal")
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fit)
-//                            //.frame(width: 280.0)
                         Text("").padding()
                         Text("").padding()
                         Text("Welcome to ")
@@ -34,7 +28,12 @@ struct WelcomeView: View {
                         Text("We hope you enjoy your experience using Scales Academy.")
                         Text("To get started please enter your name, Music Board and Grade.")
                         Text("").padding()
-                        FigmaNavLink(destination: UserEditView(addingFirstUser: true, user: User(board: "")), font: .title2) {
+                        
+                        let defaultBoard = MusicBoard.getSupportedBoards()[0]
+                        FigmaNavLink(destination: UserEditView(
+                            addingFirstUser: true,
+                            user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0))),
+                                    font: .title2) {
                             Text("Get Started")
                         }
                     }
@@ -51,11 +50,7 @@ struct WelcomeView: View {
                         Text("").padding()
                     }
                 }
-                //.border(.blue)
             }
-            //.border(.green)
-            //.frame(height: screenWidth * heightRatio) ///Based of J's FIGMA rectangle dimensions
-            //.border(.red)
         }
         .navigationTitle("Welcome")
         .navigationViewStyle(StackNavigationViewStyle())

@@ -13,7 +13,7 @@ struct UserListView: View {
     func getUsers() -> [User] {
         var users:[User] = []
         users.append(contentsOf: settings.users.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending })
-        users.append(User(board: ""))
+        users.append(User())
         return users
     }
     
@@ -32,7 +32,7 @@ struct UserListView: View {
                         VStack(alignment: .leading) {
                             ZStack {
                                 let boxSize = 0.1
-                                if user.grade == 0 {
+                                if user.boardAndGrade.grade == 0 {
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(Color.gray.opacity(0.3))
                                         .frame(width: UIScreen.main.bounds.width * boxSize,
@@ -50,10 +50,11 @@ struct UserListView: View {
                                 }
                             }
                             Text("")
-                            Text(user.board).font(.headline).opacity(user.grade == 0 ? 0.0 : 0.5)
-                            Text("Grade \(user.grade)").font(.subheadline).opacity(user.grade == 0 ? 0.0 : 0.5)
+                            let grade = user.boardAndGrade.grade
+                            Text(user.boardAndGrade.board.name).font(.headline).opacity(grade == 0 ? 0.0 : 0.5)
+                            Text("Grade \(grade)").font(.subheadline).opacity(grade == 0 ? 0.0 : 0.5)
                             Text("")
-                            let butLabel = user.board == "" ? "Add User" : "Edit User"
+                            let butLabel = user.boardAndGrade.grade == 0 ? "Add User" : "Edit User"
                             FigmaNavLink(destination: UserEditView(addingFirstUser:false, user: user), font: .title2) {Text(butLabel)}
                         }
                         .padding()
