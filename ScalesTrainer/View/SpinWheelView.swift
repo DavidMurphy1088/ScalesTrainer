@@ -16,6 +16,8 @@ struct SpinTheWheelView: View {
     @State var navigateToScale = false
     @State var scales:[Scale] = []
     @State var scaleChoosen:Scale?
+    @State private var showResultOpacity = false
+    @State private var spinCount = 0
     
     private func getMaxScreenDimensionSize() -> CGFloat {
         if UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height {
@@ -27,7 +29,6 @@ struct SpinTheWheelView: View {
     }
     
     private func spinWheel() {
-        // Animate using easeOut to slow down gradually
         withAnimation(.easeOut(duration: totalSpinSeconds)) {
             rotation += totalRotation
         }
@@ -41,7 +42,6 @@ struct SpinTheWheelView: View {
     }
     
     var body: some View {
-        //ZStack to ensure that rectangle corners of rotating circle image dont cover the text and button
         ZStack()  {
             HStack {
                 Spacer()
@@ -76,27 +76,38 @@ struct SpinTheWheelView: View {
                         Text("")
                         if wasSpun {
                             if let scale = self.scaleChoosen {
-                                Text("You’ve landed on...")
-                                Text("")
-                                Text("")
-                                Text("")
-                                let title = scale.getScaleDescriptionParts(name: true)
-                                Text(title).font(.title).bold()
-                                HStack {
-                                    Image(scale.getHandsImageName())
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: getMaxScreenDimensionSize() * 0.1)
-                                    Text(scale.getScaleDescriptionParts(hands: true))
+                                VStack {
+                                    Text("You’ve landed on...")
+                                    Text("")
+                                    Text("")
+                                    Text("")
+                                    let title = scale.getScaleDescriptionParts(name: true)
+                                    Text(title).font(.title).bold()
+                                    HStack {
+                                        if let handImage = Figma.getHandImage(scale: scale) {
+                                            handImage
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(height: getMaxScreenDimensionSize() * 0.05)
+                                                .foregroundColor(.black)
+                                            //.border(.red)
+                                        }
+                                        let hands = scale.getScaleDescriptionParts(hands: true)
+                                        Text(hands).font(.body).foregroundColor(.black)
+                                        //Spacer()
+                                    }
+                                    Text("")
+                                    Text("")
+                                    Text("")
+                                    FigmaButton(label: {
+                                        Text("Practice Now").bold()
+                                    }, action: {
+                                        navigateToScale = true
+                                    })
                                 }
-                                Text("")
-                                Text("")
-                                Text("")
-                                FigmaButton(label: {
-                                    Text("Practice Now").bold()
-                                }, action: {
-                                    navigateToScale = true
-                                })
+                                .opacity(showResultOpacity ? 1 : 0)
+
                             }
                         }
                         else {
@@ -112,7 +123,9 @@ struct SpinTheWheelView: View {
                             }, action: {
                                 spinWheel()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + totalSpinSeconds + 0.5) {
+                                    self.showResultOpacity = false
                                     self.wasSpun = true
+                                    self.spinCount += 1
                                     self.setScaleChoosen()
                                 }
                             })
@@ -126,6 +139,11 @@ struct SpinTheWheelView: View {
                 .figmaRoundedBackground()
                 .padding()
                 Spacer()
+            }
+        }
+        .onChange(of: self.spinCount) { 
+            withAnimation(.easeIn(duration: 1.0)) {
+                showResultOpacity = true
             }
         }
         .commonToolbar(

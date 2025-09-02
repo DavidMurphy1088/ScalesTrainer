@@ -88,9 +88,6 @@
     "← " : {
 
     },
-    "+" : {
-
-    },
     "⊙" : {
 
     },
@@ -137,6 +134,9 @@
 
     },
     "Amplitude: %.4f" : {
+
+    },
+    "Are you sure you want to delete %@?" : {
 
     },
     "Available Subscriptions" : {
@@ -187,7 +187,7 @@
     "Bluetooth MIDI Devices" : {
 
     },
-    "But here you can also practise %@ hands separately." : {
+    "But you can also practise %@ hands separately." : {
 
     },
     "Cancel" : {
@@ -206,6 +206,9 @@
 
     },
     "Current Amplitude Filter:%@" : {
+
+    },
+    "Delete" : {
 
     },
     "Details Content" : {
@@ -287,9 +290,6 @@
     "Freq: %@ Hz" : {
 
     },
-    "Gamification" : {
-
-    },
     "Get Started" : {
 
     },
@@ -315,9 +315,6 @@
 
     },
     "Hands ready?" : {
-
-    },
-    "Harmonic Minor" : {
 
     },
     "Hide Fingers" : {
@@ -405,9 +402,6 @@
     },
     "Key 4" : {
       "extractionState" : "manual"
-    },
-    "Keys" : {
-
     },
     "Lead the Scale" : {
       "comment" : "Menu",
@@ -785,9 +779,6 @@
 
     },
     "Under Construction" : {
-
-    },
-    "Use MIDI Connections" : {
 
     },
     "Users" : {

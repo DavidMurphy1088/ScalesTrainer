@@ -8,6 +8,7 @@ public class StaffKey : ObservableObject, Equatable, Hashable, Identifiable {
     public let id = UUID()
     public var keySig: KeySignature
     public var type: StaffKeyType
+    
     public enum StaffKeyType {
         case major
         case minor

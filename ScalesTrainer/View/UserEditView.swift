@@ -11,6 +11,7 @@ import AudioKit
 struct SelectGradeView: View {
     let board: MusicBoard
     @Binding var selectedGrade: Int
+    let onConfirm: (Int) -> Void
     @Environment(\.dismiss) private var dismiss
 
     public var body: some View {
@@ -20,6 +21,7 @@ struct SelectGradeView: View {
                 Text("\(board.name) Grade Selection").font(.title2)
                 Spacer()
                 Button("Confirm") {
+                    onConfirm(selectedGrade)
                     dismiss()
                 }
                 .padding()
@@ -43,9 +45,6 @@ struct SelectGradeView: View {
                 }
             }
         }
-        .onAppear() {
-            print("   ==== POPUP VIEW onAppear", self.selectedGrade)
-        }
     }
 }
 
@@ -58,22 +57,20 @@ public struct UserEditView: View {
     @State private var userName: String = ""
     @State private var selectedGrade = 0
     @State private var selectedBoard:MusicBoard? = nil
-    @State private var showGradesSelection = false
     @State private var errorMessage: String = ""
     @State private var showErrorAlert = false
     let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
     @State private var saveEnabled = false
     @State private var sheetNonce = UUID()
+    @State private var showDeleteAlert = false
     
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
-        print("========= getGrade", ctx, user.boardAndGrade.board, user.boardAndGrade.grade)
-        if board == user.boardAndGrade.board {
-            return user.boardAndGrade.grade
+        var grade = 0
+        if board.name == user.boardAndGrade.board.name {
+            grade = user.boardAndGrade.grade
         }
-        else {
-            return 0
-        }
+        return grade
     }
     
     func isSaveEnabled(user:User) -> Bool {
@@ -81,6 +78,13 @@ public struct UserEditView: View {
             return false
         }
         return user.boardAndGrade.grade > 0
+    }
+    
+    func saveUser(grade:Int) {
+        if let board = self.selectedBoard {
+            user.boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
+            self.saveEnabled = self.isSaveEnabled(user: user)
+        }
     }
     
     public var body: some View {
@@ -113,8 +117,11 @@ public struct UserEditView: View {
                                     action: {
                                         if user.boardAndGrade.grade > 0 {
                                             settings.setUser(user: user)
+                                            user.setColor()
                                             dismiss()
-                                            ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                            if addingFirstUser {
+                                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                            }
                                         } else {
                                             errorMessage = "▶️ Please select a grade before saving"
                                             showErrorAlert = true
@@ -125,16 +132,29 @@ public struct UserEditView: View {
                             }
                         }
                         
-                        if !addingFirstUser {
-                            Button(action: {
-                                user.name = userName
-                                settings.deleteUser(user: user)
-                                dismiss()
-                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
-                            }) {
-                                Text("Remove User").foregroundColor(.red)
+                        if settings.hasUser(name: user.name) {
+                            let enabled = user.id != settings.getCurrentUser().id
+                            if enabled  {
+                                FigmaButton(
+                                    label: {
+                                        Text("Remove User").foregroundColor(.red)
+                                    },
+                                    action: {
+                                        showDeleteAlert = true
+                                    }
+                                )
+                                .padding()
+                                .alert("Are you sure you want to delete \(user.name)?",
+                                       isPresented: $showDeleteAlert) {
+                                    Button("Delete", role: .destructive) {
+                                        user.name = userName
+                                        settings.deleteUser(user: user)
+                                        dismiss()
+                                    }
+                                    Button("Cancel", role: .cancel) { }
+                                } message: {
+                                }
                             }
-                            .padding()
                         }
                         Spacer()
                     }
@@ -183,16 +203,14 @@ public struct UserEditView: View {
                                     self.selectedBoard = board
                                     self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
                                     sheetNonce = UUID()
-                                    self.showGradesSelection = true
                                 })
                                 .padding()
-                                //Text("")
                                 ///Make the full name last else the buttons dont line up horizontally
                                 if UIDevice.current.userInterfaceIdiom != .phone {
                                     Text(board.fullName)//.font(.caption)
                                         .lineLimit(nil)                 // allow unlimited lines
-                                            .multilineTextAlignment(.leading) // optional, left-align
-                                            .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                        .multilineTextAlignment(.leading) // left-align
+                                        .fixedSize(horizontal: false, vertical: true) // allows wrapping
                                 }
                                 Spacer()
                             }
@@ -211,32 +229,16 @@ public struct UserEditView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 nameFieldFocused = true
             }
+            self.saveEnabled = self.isSaveEnabled(user: user)
         }
-//        .sheet(isPresented: $showGradesSelection, onDismiss: {
-//            if let board = self.selectedBoard {
-//                user.boardAndGrade = MusicBoardAndGrade(board: board, grade: self.selectedGrade)
-//                self.saveEnabled = self.isSaveEnabled(user: user)
-//                user.debug("UserEditView saved grade change ")
-//            }
-//        }) {
-//            if let board = self.selectedBoard {
-//                SelectGradeView(board: board, selectedGrade: $selectedGrade)
-//                    .id(sheetNonce)
-////
-//            }
-//        }
         .sheet(item: $selectedBoard, onDismiss: {
-            Complet FUCKED SHIT - cannot set the grade
-            if let board = self.selectedBoard {
-                user.boardAndGrade = MusicBoardAndGrade(board: board, grade: self.selectedGrade)
-                self.saveEnabled = self.isSaveEnabled(user: user)
-                user.debug("UserEditView saved grade change ")
+            }) { board in
+                SelectGradeView(board: board, selectedGrade: $selectedGrade, onConfirm: {grade in
+                    let mg = MusicBoardAndGrade(board: board, grade: grade)
+                    user.selectedMinorType = mg.getDefaultMinorType()
+                    self.saveUser(grade: grade)
+                })
             }
-        }) { board in
-            // No internal if-let needed; `board` is guaranteed here
-            SelectGradeView(board: board, selectedGrade: $selectedGrade)
-                .id(board.id) // optional; usually not required with `.sheet(item:)`
-        }
         .commonToolbar(
             title: "User Edit",
             onBack: { dismiss() }
@@ -248,4 +250,5 @@ public struct UserEditView: View {
             )
         }
     }
+
 }

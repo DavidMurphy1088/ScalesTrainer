@@ -62,13 +62,13 @@ class StudentScales: Codable {
     let user:User
     var scalesPerDay: Int
     var studentScales:[StudentScale]
-    var minorScaleType: Int
+    //var minorScaleType: Int
     var createdDayOfWeek:Int
     
-    init(user:User, minorScaleType:Int = 0) {
+    init(user:User) {
         self.user = user
         self.scalesPerDay = 3
-        self.minorScaleType = minorScaleType
+        //self.minorScaleType = minorScaleType
 
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
                                                           grade: user.boardAndGrade.grade)
@@ -82,7 +82,7 @@ class StudentScales: Codable {
                                                    visible: true, day: dayOffset))
             dayCount += 1
         }
-        debug("Init")
+        //debug("Init")
     }
     
     func convertToJSON() -> Data? {
@@ -103,7 +103,7 @@ class StudentScales: Codable {
         }
     }
     
-    func debug(_ ctx:String) {
+    func debug1(_ ctx:String) {
         print("======== StudentScales", ctx)
         for r in 0..<self.studentScales.count {
             let x = self.studentScales[r]
@@ -161,6 +161,64 @@ class StudentScales: Codable {
         return "SA_" + user.name + "_" + user.boardAndGrade.board.name + "_" + String(user.boardAndGrade.grade)
     }
     
+    func getScaleTypes() -> [ScaleType] {
+        ///Make sure the list is in the order in which the type is first seen in the syllabus
+        var allTypesSet: Set<ScaleType> = []
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                allTypesSet.insert(scale.scaleType)
+            }
+        }
+        
+        var scaleTypes = [ScaleType.any]
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                if allTypesSet.contains(scale.scaleType) {
+                    scaleTypes.append(scale.scaleType)
+                    allTypesSet.remove(scale.scaleType)
+                }
+            }
+        }
+        return scaleTypes
+    }
+    
+    func getScaleKeys() -> [String] {
+        ///Make sure the list is in the order in which the type is first seen in the syllabus
+        var allKeysSet: Set<String> = []
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                allKeysSet.insert(scale.getScaleKeyName())
+            }
+        }
+        
+        var uniqueKeys = ["Any Key"]
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                let name = scale.getScaleKeyName()
+                if allKeysSet.contains(name) {
+                    uniqueKeys.append(name)
+                    allKeysSet.remove(name)
+                }
+            }
+        }
+        
+        var scored:[(Int, String)] = []
+        ///Order the keys by thier Keysignature complexity
+        for key in uniqueKeys {
+            let words = key.components(separatedBy: " ")
+            let keySig = KeySignature(keyName: words[0], keyType: words[1] == "Major" ? .major : .minor)
+            var score = keySig.accidentalType == .flat ? keySig.accidentalCount * 10 : keySig.accidentalCount * 10
+            //print("====KEYS", words, keySig.accidentalCount, score)
+            scored.append((score, key))
+        }
+        let sorted = scored.sorted { $0.0 < $1.0 }
+        var scaleKeys:[String] = []
+        for score in sorted {
+            scaleKeys.append(score.1)
+        }
+        return scaleKeys
+    }
+
     static func loadFromFile(user:User) -> StudentScales? {
         let decoder = JSONDecoder()
         do {

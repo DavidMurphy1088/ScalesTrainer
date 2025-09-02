@@ -46,6 +46,9 @@ public class KeySignature {
             case "G♭":
                 self.accidentalType = .flat
                 count = 6
+            case "F#":
+                count = 6
+
             default:
                 count = 0
             }
@@ -63,7 +66,6 @@ public class KeySignature {
                 count = 2
             case "G#":
                 count = 5
-                self.accidentalType = .sharp
             case "G":
                 count = 2
                 self.accidentalType = .flat

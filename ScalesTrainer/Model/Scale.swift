@@ -82,7 +82,7 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
     var description: String {
         switch self {
         case .any:
-            return "Any Type"
+            return "Any Exercise Type"
         case .major:
             return "Major"
         case .naturalMinor:
@@ -104,7 +104,7 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
         case .arpeggioMinorSeventh:
             return "Minor 7th Arpeggio"
         case .arpeggioDiminishedSeventh:
-            return "Dim 7th Arpeggio"
+            return "Diminished 7th Arpeggio"
         case .arpeggioHalfDiminished:
             return "Half Dim Arpeggio"
         case .chromatic:
@@ -1486,6 +1486,37 @@ public class Scale : Codable {
     func getRequiredValuePerBar() -> Int {
         //return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 24 : 4
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
+    }
+    
+    func getScaleKeyName() -> String {
+        var description = ""
+        let words = scaleType.description.components(separatedBy: " ")
+        var diminished = false
+        
+        ///Remove some scale types that aren't part of the scale key
+        for word in words {
+            if ["Diminished"].contains(word) {
+                description += "Minor"
+                diminished = true
+            }
+            if ["Natural", "Harmonic", "Melodic"].contains(word) {
+                continue
+            }
+            if ["Broken", "Chord", "Arpeggio", "Diminished", "7th"].contains(word) {
+                continue
+            }
+            description += word
+        }
+        description = description.trimmingCharacters(in: .whitespaces)
+        var keyName = scaleRoot.name
+        keyName += " " + description
+        keyName = keyName.trimmingCharacters(in: .whitespaces)
+        //print("=======", self.scaleRoot.name, self.scaleType.description, "->", keyName)
+        return keyName
+    }
+    
+    func getKeyAndDescription() -> String {
+        return scaleRoot.name + " " + scaleType.description
     }
     
     func getScaleName(showHands:Bool=true, handFull:Bool, octaves:Bool? = nil) -> String {

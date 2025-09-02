@@ -14,12 +14,12 @@ class UserPublished : ObservableObject {
 
 class User : Encodable, Decodable, Hashable, Identifiable {
     var id:UUID
-    //var board:String
     var name:String
     var email:String
     var settings:UserSettings
     var color:String
     var boardAndGrade:MusicBoardAndGrade
+    var selectedMinorType:ScaleType?
     
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
@@ -43,25 +43,29 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.id = UUID()
         self.name = ""
         self.email = ""
-        //self.board = board
-        //self.grade = 0
         self.settings = UserSettings()
+        self.boardAndGrade = boardAndGrade
+        self.color = ""
+        setColor()
+    }
+    
+    func setColor() {
         let colorNames = [
-            "red", "orange", "yellow", "green",
-            "mint", "teal", "cyan", "blue",
-            "indigo", "purple", "pink"
+            "red", "yellow", "green",
+            "mint", "teal",
+            "indigo"
         ]
         self.color = colorNames.randomElement()!
-        self.boardAndGrade = boardAndGrade
+
     }
     
     func updateFromUser(user:User) {
         self.name = user.name
         self.email = user.email
         self.boardAndGrade = user.boardAndGrade
-        //self.grade = user.grade
         self.settings = user.settings
         self.color = user.color
+        self.selectedMinorType = user.selectedMinorType
     }
     
     static func color(from name: String) -> Color {
@@ -86,13 +90,11 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     }
     
     func debug(_ ctx:String) {
-        print("===== User", ctx, self.name, self.boardAndGrade.board, "Grade:", self.boardAndGrade.grade)
+        print("===== User", ctx, self.name, self.boardAndGrade.board, "Grade:", self.boardAndGrade.grade, "MinorType", self.selectedMinorType)
     }
     
     ///User settings irrespective of the grade the student is in.
     class UserSettings : Encodable, Decodable {
-        //var keyboardColor:[Double] = [0.9999999403953552, 0.949024498462677, 0.5918447375297546, 1.0]
-        //var keyboardColor:[Double] = [1.0, 0.949, 0.835, 1.0]
         var keyboardColor:[Double] = [1.0, 0.9647, 1.0, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
         var backingSamplerPreset:Int = 0
@@ -159,11 +161,9 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         var title = ""
         if !self.name.isEmpty {
             title = self.name
-            //if self.grade > 0 {
-                title += ", " + self.boardAndGrade.board.name
-                title += " Grade "
-                title += String(self.boardAndGrade.board.name)
-            //}
+            title += ", " + self.boardAndGrade.board.name
+            title += " Grade "
+            title += String(self.boardAndGrade.board.name)
         }
         return title
     }
@@ -176,14 +176,5 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             return StudentScales(user: self)
         }
     }
-    
-//    func getBadgeContainer() -> BadgeContainer {
-//        if let loaded = BadgeContainer.loadFromFile(user: self, board: self.board, grade: grade) {
-//            return loaded
-//        }
-//        else {
-//            return BadgeContainer(user: self, board: self.board, grade: grade)
-//        }
-//    }
     
 }

@@ -51,9 +51,6 @@ class Settings : Encodable, Decodable {
         if user.name.isEmpty {
             return false
         }
-//        if user.grade == 0 {
-//            return false
-//        }
         return true
     }
     
@@ -65,15 +62,6 @@ class Settings : Encodable, Decodable {
         }
         return nil
     }
-    
-//    func getUser(name:String) -> User? {
-//        for user in users {
-//            if user.name == name {
-//                return user
-//            }
-//        }
-//        return nil
-//    }
 
     func getDefaultBackgroundColor() -> Color {
         let red = CGFloat(0.8219926357269287)
@@ -106,6 +94,15 @@ class Settings : Encodable, Decodable {
         return self.users.count > 0
     }
     
+    func hasUser(name:String) -> Bool {
+        for user in users {
+            if user.name == name {
+                return true
+            }
+        }
+        return false
+    }
+
     func getCurrentUser() -> User {
         if self.currentUserId != nil {
             for user in self.users {
@@ -130,7 +127,7 @@ class Settings : Encodable, Decodable {
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-                let currentUser = self.getCurrentUser()
+                //let currentUser = self.getCurrentUser()
 //                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
@@ -174,7 +171,7 @@ class Settings : Encodable, Decodable {
 //    }
         
     public func isDeveloperModeOn() -> Bool {
-        return false
+        return true
 //        if users.count == 0 {
 //            return false
 //        }

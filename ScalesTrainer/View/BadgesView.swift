@@ -75,21 +75,17 @@ struct BadgesView: View {
                             let chalices = scale.badges / 4
                             let remainder = scale.badges % 4
                             
-                            VStack(alignment: .leading, spacing: 6) {
-                                let title = "\(scale.title) \(scale.badges)"
+                            //VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 6) {
+                                let title = "\(scale.title)" // \(scale.badges)"
                                 Text(title)
                                     .font(.headline)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
+                                    //.frame(maxWidth: .infinity, alignment: .leading)
+                                Spacer()
                                 HStack(alignment: .center, spacing: 6) {
                                     // Show chalices first (every 4 badges -> 1 chalice)
                                     ForEach(0..<chalices, id: \.self) { _ in
                                         PulsatingChalice(badgeSize: badgeSize)
-//                                        Image("badge_chalice")
-//                                            .resizable()
-//                                            .scaledToFit()
-//                                            .frame(width: badgeSize, height: badgeSize)
-//                                            //.foregroundColor(.yellow)
                                     }
                                     // Show remaining badges as stars
                                     ForEach(0..<remainder, id: \.self) { _ in
@@ -123,7 +119,7 @@ struct BadgesView: View {
             let grade = MusicBoardAndGrade(board: board, grade:1)
             let scales = grade.enumerateAllScales()
             for scale in scales {
-                scaleBadges.append(ScaleBadges(title: scale.getScaleName(handFull: false), badges: Int.random(in: 1...13)))
+                scaleBadges.append(ScaleBadges(title: scale.getScaleName(handFull: true), badges: Int.random(in: 1...13)))
             }
         }
     }

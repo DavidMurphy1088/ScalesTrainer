@@ -11,22 +11,8 @@ struct ScalesGridCellView: View {
     let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
+    @State private var fadeIn = false
     
-    func getHandImage(scale:Scale) -> Image? {
-        if scale.hands.count < 1 {
-            return nil
-        }
-        if scale.hands.count > 1 {
-            return Image("figma_hand_together")
-        }
-        if scale.hands[0] == 0 {
-            return Image("figma_hand_right")
-        }
-        else {
-            return Image("figma_hand_left")
-        }
-    }
-        
     var body: some View {
         Button(action: {
             if let scale = self.scaleToChart.scale {
@@ -46,7 +32,7 @@ struct ScalesGridCellView: View {
                         let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
                         Text(scaleTitle).foregroundColor(.black)//.font(.title2)
                         HStack {
-                            if let handImage = getHandImage(scale: scale) {
+                            if let handImage = Figma.getHandImage(scale: scale) {
                                 handImage
                                     .resizable()
                                     .scaledToFit()
@@ -68,6 +54,18 @@ struct ScalesGridCellView: View {
                     .fill(self.color) //.opacity(opacityValue))
                     .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
             )
+            .opacity(fadeIn ? 1 : 0)  // start invisible
+                .onAppear {
+                    withAnimation(.easeIn(duration: 1.0)) {
+                        fadeIn = true
+                    }
+            }
+            .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
+                fadeIn = false
+                withAnimation(.easeIn(duration: 1.0)) {
+                    fadeIn = true
+                }
+            }
             .navigationTitle("Practice Chart")
             .navigationDestination(isPresented: $navigateToScale) {
                 if let user = user, let scale = scaleToChart.scale {
@@ -116,7 +114,6 @@ struct ScalesGridView : View {
             scaleGridRowCols.append(row)
         }
         layoutCount += 1
-        //print("========= GV", self.layoutCount, self.scaleGridRowCols.count)
     }
     
     func getColor(n:Int) -> Color {
@@ -151,7 +148,7 @@ struct ScalesGridView : View {
         }
         //.border(.green)
         .onAppear() {
-            studentScales.debug("OnAppead")
+            //studentScales.debug("OnAppead")
             let user = Settings.shared.getCurrentUser()
             self.user = user
             self.layout()

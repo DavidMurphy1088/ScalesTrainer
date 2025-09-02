@@ -87,7 +87,20 @@ class Figma {
             blue: Double(blue) / 255.0
         )
     }
-
+    static func getHandImage(scale:Scale) -> Image? {
+        if scale.hands.count < 1 {
+            return nil
+        }
+        if scale.hands.count > 1 {
+            return Image("figma_hand_together")
+        }
+        if scale.hands[0] == 0 {
+            return Image("figma_hand_right")
+        }
+        else {
+            return Image("figma_hand_left")
+        }
+    }
 }
 
 extension Color {
@@ -366,40 +379,28 @@ struct OutlinedStyleView: ViewModifier {
     }
 }
 
-struct FancyTextStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.custom("Noteworthy-Bold", size: 24))
-            .foregroundColor(.white)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(LinearGradient(colors: [.blue.opacity(0.8), .purple.opacity(0.8)],
-                                         startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .shadow(radius: 5)
-            )
-    }
-}
+//struct FancyTextStyle: ViewModifier {
+//    func body(content: Content) -> some View {
+//        content
+//            .font(.custom("Noteworthy-Bold", size: 24))
+//            .foregroundColor(.white)
+//            .padding()
+//            .background(
+//                RoundedRectangle(cornerRadius: 15)
+//                    .fill(LinearGradient(colors: [.blue.opacity(0.8), .purple.opacity(0.8)],
+//                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+//                    .shadow(radius: 5)
+//            )
+//    }
+//}
 
 extension View {
-//    func screenBackgroundStyle (backgroundColor: Color? = nil) -> some View {
-//        modifier(screenBackgroundStyleView(cornerRadius: 10, borderColor: .blue,borderWidth: 1
-//        ))
-//    }
-
     func hilighted(backgroundColor: Color = .green) -> some View {
         modifier(Hilighted(backgroundColor: backgroundColor))
     }
-    
-//    ///A gray border around the view
-//    func outlinedStyleView(shadowOpacity:Double = 0.3, color:Color = Color.white) -> some View {
-//        modifier(OutlinedStyleView(shadowOpacity: shadowOpacity, color: color))
+//    func fancyTextStyle() -> some View {
+//        modifier(FancyTextStyle())
 //    }
-    
-    func fancyTextStyle() -> some View {
-        modifier(FancyTextStyle())
-    }
-
 }
 
 struct ConfettiView: UIViewRepresentable {
@@ -544,3 +545,70 @@ struct ConfettiView: UIViewRepresentable {
     }
 }
 
+struct SinglePickList<Item: Hashable>: View {
+    let title:String
+    let items: [Item]
+    let initiallySelectedIndex: Int?
+    let label: (Item) -> String
+    let onPick: (Item, Int) -> Void
+    @State private var selectedIndex: Int?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        Text(title).font(.title).padding()
+        VStack {
+            List {
+                ForEach(items.indices, id: \.self) { i in
+                    let isSelected = (selectedIndex == i)
+                    Button {
+                        selectedIndex = i
+                        onPick(items[i], i)
+                        dismiss()
+                    } label: {
+                        HStack {
+                            Text(label(items[i]))
+                            Spacer()
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            
+            Spacer()
+        }
+        .onAppear {
+            if let idx = initiallySelectedIndex, items.indices.contains(idx) {
+                selectedIndex = idx
+            }
+        }
+        .navigationTitle("Select One")
+    }
+}
+
+extension SinglePickList where Item == ScaleType {
+    init(title:String,
+        items: [ScaleType],
+        initiallySelectedIndex: Int? = nil,
+        onPick: @escaping (ScaleType, Int) -> Void) {
+        self.title = title
+        self.items = items
+        self.initiallySelectedIndex = initiallySelectedIndex
+        self.label = { $0.description }
+        self.onPick = onPick
+    }
+}
+extension SinglePickList where Item == String {
+    init(title:String,
+         items: [String],
+         initiallySelectedIndex: Int? = nil,
+         onPick: @escaping (String, Int) -> Void) {
+         self.title = title
+         self.items = items
+         self.initiallySelectedIndex = initiallySelectedIndex
+         self.label = { $0.description }
+         self.onPick = onPick
+    }
+}

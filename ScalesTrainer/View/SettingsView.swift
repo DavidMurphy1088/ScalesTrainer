@@ -72,106 +72,72 @@ struct SettingsView: View {
     }
 
     func DetailedCustomSettingsView(user:User) -> some View {
-        //NavigationView {
-            VStack {
-//                VStack {
-//                    HStack {
-//                        //Spacer()
-//                        VStack {
-//                            SetKeyboardColourView(scalesModel: self.scalesModel, parentColor: $keyboardColor)
-//                        }
-//                        .onChange(of: keyboardColor, {
-//                            user.settings.setKeyboardColor(keyboardColor)
-//                        })
-//                        .hilighted(backgroundColor: .gray)
-//                        .frame(width: UIScreen.main.bounds.size.width * 0.6,
-//                               //height: orientationInfo.isPortrait ? UIScreen.main.bounds.size.height * 0.25 : UIScreen.main.bounds.size.height * 0.4)
-//                               height: UIScreen.main.bounds.size.height * 0.4)
-//                    }
+        VStack(alignment: .leading) {
+            ///Backing sampler
+            Spacer()
+            HStack {
+                Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
+                Picker("Select Value", selection: $backingPresetNumber) {
+                    ForEach(0..<8) { number in
+                        Text("\(backingSoundName(number))")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: backingPresetNumber, {
+                    user.settings.backingSamplerPreset = backingPresetNumber
+                    //AudioManager.shared.resetAudioKit()
+                })
+            }
+            .padding()
+            
+            ///Badges
+            //Spacer()
+            HStack {
+                Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
+                Picker("Select Value", selection: $badgeStyleNumber) {
+                    ForEach(0..<5) { number in
+                        Text("\(badgeStyle(number))")
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: badgeStyleNumber, {
+                    user.settings.badgeStyle = badgeStyleNumber
+                })
+            }
+            .padding()
+            
+            //Spacer()
+//            HStack {
+//                Spacer()
+//                Toggle(isOn: $practiceChartGamificationOn) {
+//                    Text("Gamification").font(.title2).padding(0)
 //                }
-//                .padding()
-
-                ///Lead in count
+//                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+//                .onChange(of: practiceChartGamificationOn, {
+//                    user.settings.practiceChartGamificationOn = practiceChartGamificationOn
+//                })
+//                Spacer()
+//            }
+//            .padding()
+            
+            ///Only show the enable MIDI if some MIDI endpoints are connected. Even if they are, below lets the user not use them.
+//            if MIDIManager.shared.connectionSourcesPublished.count > 0  {
 //                Spacer()
 //                HStack {
-//                    Text(LocalizedStringResource("Lead In Count")).font(.title2).padding(0)
-//                    Picker("Select Value", selection: $leadInBarCount) {
-//                        ForEach(scalesModel.scaleLeadInCounts.indices, id: \.self) { index in
-//                            Text("\(scalesModel.scaleLeadInCounts[index])")
-//                        }
+//                    Spacer()
+//                    Toggle(isOn: $useMidiSources) {
+//                        Text("Use MIDI Connections").font(.title2).padding(0)
 //                    }
-//                    //.disabled(!self.metronomeOn)
-//                    .pickerStyle(.menu)
-//                    .onChange(of: leadInBarCount, {
-//                        user.settings.scaleLeadInBeatCountIndex = leadInBarCount
+//                    .onChange(of: useMidiSources, {
+//                        user.settings.useMidiSources = useMidiSources
 //                    })
+//                    Spacer()
 //                }
-                
-                ///Backing sampler
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
-                    Picker("Select Value", selection: $backingPresetNumber) {
-                        ForEach(0..<8) { number in
-                            Text("\(backingSoundName(number))")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: backingPresetNumber, {
-                        user.settings.backingSamplerPreset = backingPresetNumber
-                        //AudioManager.shared.resetAudioKit()
-                    })
-                }
-                
-                ///Badges
-                Spacer()
-                HStack {
-                    Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
-                    Picker("Select Value", selection: $badgeStyleNumber) {
-                        ForEach(0..<5) { number in
-                            Text("\(badgeStyle(number))")
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: badgeStyleNumber, {
-                        user.settings.badgeStyle = badgeStyleNumber
-                    })
-                }
-                
-                Spacer()
-                HStack {
-                    Spacer()
-                    Toggle(isOn: $practiceChartGamificationOn) {
-                        Text("Gamification").font(.title2).padding(0)
-                    }
-                    .onChange(of: practiceChartGamificationOn, {
-                        user.settings.practiceChartGamificationOn = practiceChartGamificationOn
-                    })
-                    Spacer()
-                }
-                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-                
-                ///Only show the enable MIDI if some MIDI endpoints are connected. Even if they are, below lets the user not use them.
-                if MIDIManager.shared.connectionSourcesPublished.count > 0  {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Toggle(isOn: $useMidiSources) {
-                            Text("Use MIDI Connections").font(.title2).padding(0)
-                        }
-                        .onChange(of: useMidiSources, {
-                            user.settings.useMidiSources = useMidiSources
-                        })
-                        Spacer()
-                    }
-                    .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
-                }
-                
-                Spacer()
-            }
-            //.screenBackgroundStyle()
-        //}
-        //.navigationViewStyle(StackNavigationViewStyle())
+//                //.frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+//                .padding()
+//            }
+            Spacer()
+        }
     }
     
     func backingSoundName(_ n:Int) -> String {
@@ -204,28 +170,29 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ToolbarTitleView(screenName: "Settings")
-                .frame(maxWidth: .infinity)
-            DetailedCustomSettingsView(user:user)
-                .frame(maxWidth: .infinity)
-                //.screenBackgroundStyle()
+        NavigationStack {
+            HStack() {
+                DetailedCustomSettingsView(user:user)
+                //Spacer()
+            }
+            .padding()
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .commonToolbar(
+                title: "Settings", onBack: {}
+            )
         }
-        
         .onAppear() {
             let user = settings.getCurrentUser()
             ///The keyboard model must be configured to something (if not already) to display the keyboard
             if scalesModel.getScore() == nil {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)
             }
-            
-            //leadInBarCount = user.settings.scaleLeadInBeatCountIndex
             self.defaultOctaves = settings.defaultOctaves
             self.backingPresetNumber = user.settings.backingSamplerPreset
             self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
             self.useMidiSources = user.settings.useMidiSources
-
         }
         .onDisappear() {
             settings.save()

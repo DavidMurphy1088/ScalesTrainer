@@ -53,11 +53,11 @@ struct PracticeChartView: View {
     @Environment(\.dismiss) var dismiss
     @State private var user:User?
     @State private var studentScales:StudentScales?
-    @State var minorTypeIndex:Int = 0
     @State private var helpShowing = false
-    @State var minorScaleTypes:[String] = []
+    @State var minorScaleTypes:[ScaleType] = []
+    @State var selectedMinorType:ScaleType = ScaleType.any
     @State private var cellOpacity:Double = 1.0
-    @State private var showPopup = false
+    @State private var showMinorTypeSelection:Bool = false
     @State private var minorTypeSelection: String? = nil
     @State private var forceRefreshChart = 0
     let screenWidth = UIScreen.main.bounds.size.width
@@ -76,16 +76,24 @@ struct PracticeChartView: View {
         }
         visibleDayOffset = (visibleDayOffset + dayOffset) % daysInChart
         studentScales.processAllScales(procFunction: {studentScale in
-            studentScale.setVisible(way: studentScale.practiceDay == visibleDayOffset)
+            var visible = studentScale.practiceDay == visibleDayOffset
+            if let scale = studentScale.scale {
+                if [ScaleType.naturalMinor, ScaleType.harmonicMinor, ScaleType.melodicMinor].contains(scale.scaleType)  {
+                    if scale.scaleType != user?.selectedMinorType {
+                        visible = false
+                    }
+                }
+            }
+            studentScale.setVisible(way: visible)
         })
-        studentScales.debug(ctx)
+        studentScales.debug1(ctx)
         self.forceRefreshChart += 1
     }
     
     func doShuffle() {
         if let studentScales = studentScales {
             studentScales.shuffle()
-            setVisibleCells("shuffle", studentScales: studentScales, dayOffset: selectedDayOffset)
+            setVisibleCells("shuffle", studentScales: studentScales, dayOffset: 0)
         }
     }
     
@@ -132,6 +140,15 @@ struct PracticeChartView: View {
             .padding(.horizontal)
         }
     }
+    
+    func getSelectedTypeIndex(userType: ScaleType) -> Int {
+        for i in 0..<self.minorScaleTypes.count {
+            if self.minorScaleTypes[i] == userType {
+                return i
+            }
+        }
+        return 0
+    }
 
     var body: some View {
         let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
@@ -144,10 +161,10 @@ struct PracticeChartView: View {
                     //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
                     HStack {
                         FigmaButton(label: {
-                            Text("Harmonic Minor")
+                            let label = self.selectedMinorType.description
+                            Text(label)
                         }, action: {
-                            showPopup = true
-                            //selectedItem: String? = nil
+                            showMinorTypeSelection = true
                         })
                         FigmaButton(label: {
                             Text("Shuffle")
@@ -186,27 +203,44 @@ struct PracticeChartView: View {
             self.user = user
             let studentScales = user.getStudentScales()
             self.studentScales = studentScales
-            self.minorScaleTypes = [] //self.studentScales!.grade == 1 ? ["Harmonic", "Melodic", "Natural"] : ["Harmonic", "Melodic"]
-            minorTypeIndex = studentScales.minorScaleType
+            let minorTypes = studentScales.getScaleTypes()
+            
+            self.minorScaleTypes = []
+            for type in minorTypes {
+                if [ScaleType.naturalMinor, .harmonicMinor, .melodicMinor].contains(type) {
+                    self.minorScaleTypes.append(type)
+                }
+            }
+            if let selectedMinorType = user.selectedMinorType {
+                self.selectedMinorType = selectedMinorType
+            }
             if Settings.shared.isDeveloperModeOn() {
 //                Firebase.shared.readAllScales(board: studentScales.board, grade:studentScales.grade) { scalesAndScores in
 //                    self.scalesInChart = scalesAndScores.map { $0.0 }
 //                }
             }
-            setVisibleCells("set DAY", studentScales: studentScales, dayOffset: 0)
+            setVisibleCells("on appear", studentScales: studentScales, dayOffset: 0)
         }
         .onChange(of: selectedDayOffset) {oldValue, day in
             if let studentScales = studentScales {
-                setVisibleCells("set DAY", studentScales: studentScales, dayOffset: day)
+                setVisibleCells("set DAY", studentScales: studentScales, dayOffset: selectedDayOffset)
             }
         }
-        .sheet(isPresented: $showPopup) {
-            MinorTypePopup (
-                selectedItem: $minorTypeSelection,
-                isPresented: $showPopup,
-                onDone: {
+        .sheet(isPresented: $showMinorTypeSelection) {
+            if let user = self.user {
+                if let selectedMinorType = user.selectedMinorType {
+                    let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
+                    SinglePickList(title: "Exercise Types", items: self.self.minorScaleTypes,
+                                   initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
+                        self.selectedMinorType = selectedMinorType
+                        user.selectedMinorType = selectedMinorType
+                        Settings.shared.save()
+                        if let studentScales = studentScales {
+                            setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
+                        }
+                    }
                 }
-            )
+            }
         }
         .onChange(of: ViewManager.shared.isPracticeChartActive) {oldValue, newValue in
             if newValue == false {
