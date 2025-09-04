@@ -67,29 +67,10 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
-		<key>ScalesStarTests 1.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>2</integer>
-		</dict>
-		<key>ScalesStarTests.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>4</integer>
-		</dict>
-		<key>ScalesStarUITests.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
 		<key>ScalesTrainer.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
@@ -118,6 +99,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>795CDF472D023F02002D8F9D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>79891CCE2D38D21F009405C3</key>
 		<dict>
 			<key>primary</key>
 			<true/>

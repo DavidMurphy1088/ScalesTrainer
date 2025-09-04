@@ -29,7 +29,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:../ScalesTrainer.xctestplan"
+            reference = "container:ScalesTrainerTestPlan.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -39,7 +39,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "794F22112D38C5E100FFC454"
+               BlueprintIdentifier = "79A42AB22E6988CE00B5438D"
                BuildableName = "ScalesStarTests.xctest"
                BlueprintName = "ScalesStarTests"
                ReferencedContainer = "container:ScalesTrainer.xcodeproj">

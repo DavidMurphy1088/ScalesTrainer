@@ -7,10 +7,4 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../ScalesTrainer.xctestplan">
-   </FileRef>
-   <FileRef
-      location = "group:../ScalesTrainer.xctestplan">
-   </FileRef>
 </Workspace>

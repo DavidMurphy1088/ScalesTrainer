@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "D6BA4AEC-CC15-419E-9890-D2969472DE5A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ScalesTrainer.xcodeproj",
+        "identifier" : "79A42AB22E6988CE00B5438D",
+        "name" : "ScalesStarTests"
+      }
+    }
+  ],
+  "version" : 1
+}
