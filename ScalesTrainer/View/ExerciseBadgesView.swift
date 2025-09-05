@@ -150,7 +150,7 @@ struct ExerciseBadgesView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
-                                    let user = Settings.shared.getCurrentUser()
+                                    let user = Settings.shared.getCurrentUser("Badges View")
                                     //if user.settings.badgeStyle == 0 {
                                         HexagramShape(size1: badgeIconSize, offset: offset, color: c)
                                             .rotationEffect(Angle.degrees(rotationAngle))

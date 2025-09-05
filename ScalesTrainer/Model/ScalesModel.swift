@@ -102,17 +102,7 @@ public class ScalesModel : ObservableObject {
     
     ///Just used for receiving MIDI messages locally generated for testing
     var midiTestHander:MIDISoundEventHandler?
-    
-    @Published var userPublished:UserPublished = UserPublished()
-    func updateUserPublished(user:User) {
-        DispatchQueue.main.async {
-            self.userPublished.name = user.name
-            self.userPublished.board = user.boardAndGrade.board.name
-            self.userPublished.grade = user.boardAndGrade.grade
-            self.userPublished.color = user.color
-        }
-    }
-    
+        
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
     func setProcessedEventSet(_ value:TapStatusRecordSet?, publish:Bool) {
@@ -303,7 +293,7 @@ public class ScalesModel : ObservableObject {
 //    }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
-        let user = Settings.shared.getCurrentUser()
+        let user = Settings.shared.getCurrentUser("Scales model, set Run process")
 
         if setProcess == self.runningProcess {
             return

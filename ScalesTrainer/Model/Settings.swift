@@ -20,7 +20,7 @@ class Settings : Encodable, Decodable {
         self.amplitudeFilter = 0.04
     }
     
-    ///User could be new or existing
+    ///Add new or update existing user
     func setUser(user: User) {
         var found = false
         for usr in users {
@@ -34,8 +34,7 @@ class Settings : Encodable, Decodable {
             self.users.append(user)
         }
         self.setCurrentUser(id: user.id)
-        ScalesModel.shared.updateUserPublished(user: user)
-        //save()
+        ViewManager.shared.updatePublishedUser(user: user)
     }
 
     func deleteUser(user: User) {
@@ -47,7 +46,7 @@ class Settings : Encodable, Decodable {
         if Settings.shared.users.count == 0 {
             return false
         }
-        let user = Settings.shared.getCurrentUser()
+        let user = Settings.shared.getCurrentUser("aValidUserIsDefined")
         if user.name.isEmpty {
             return false
         }
@@ -103,10 +102,11 @@ class Settings : Encodable, Decodable {
         return false
     }
 
-    func getCurrentUser() -> User {
+    func getCurrentUser(_ ctx:String) -> User {
         if self.currentUserId != nil {
             for user in self.users {
                 if user.id == self.currentUserId {
+                    AppLogger.shared.log(self, "=================== GetCur user \(ctx) \(user.name), board \(user.boardAndGrade.board.name) grade \(user.boardAndGrade.grade)")
                     return user
                 }
             }
@@ -153,8 +153,8 @@ class Settings : Encodable, Decodable {
                 self.defaultOctaves = decoded.defaultOctaves
                 self.amplitudeFilter = decoded.amplitudeFilter
                 self.currentUserId = decoded.currentUserId
-                let currentUser = self.getCurrentUser()
-                ScalesModel.shared.updateUserPublished(user: currentUser)
+                let currentUser = self.getCurrentUser("settings load from file")
+                ViewManager.shared.updatePublishedUser(user: currentUser)
                 AppLogger.shared.log(self, "⬅️ settings load userCount:\(self.users.count) currentuser:\(currentUser.name)")
             } catch {
                 AppLogger.shared.reportError(self, "load:" + error.localizedDescription)
@@ -171,7 +171,7 @@ class Settings : Encodable, Decodable {
 //    }
         
     public func isDeveloperModeOn() -> Bool {
-        return true
+        return false
 //        if users.count == 0 {
 //            return false
 //        }

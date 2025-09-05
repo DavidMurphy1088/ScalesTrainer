@@ -90,7 +90,7 @@
 		79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F32D37C2D200CD6F2B /* FirebaseDatabase */; };
 		79B072F62D37C2D200CD6F2B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F52D37C2D200CD6F2B /* FirebaseFirestore */; };
 		79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F72D37C2D200CD6F2B /* FirebaseStorage */; };
-		79B072FA2D37C42000CD6F2B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */; };
+		79B072FA2D37C42000CD6F2B /* GoogleService-Info_original.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B072F92D37C42000CD6F2B /* GoogleService-Info_original.plist */; };
 		79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B072FD2D37C76D00CD6F2B /* Firebase.swift */; };
 		79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B073012D37C98E00CD6F2B /* Firebase.plist */; };
 		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
@@ -121,6 +121,7 @@
 		79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A92BD1171200AE0B24 /* TouchesView.swift */; };
 		79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */; };
 		79D931112CA222760035EA6B /* ScaleTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D931102CA222760035EA6B /* ScaleTitleView.swift */; };
+		79D935D52E69A39E00F5997F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79D935D42E69A39E00F5997F /* GoogleService-Info.plist */; };
 		79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */; };
 		79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
 		79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */; };
@@ -235,7 +236,7 @@
 		79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseYourExerciseView.swift; sourceTree = "<group>"; };
 		79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scale_4_oct.wav; sourceTree = "<group>"; };
 		79AFF13B2DD490CA0049479F /* LeaderBoard.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LeaderBoard.txt; sourceTree = "<group>"; };
-		79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		79B072F92D37C42000CD6F2B /* GoogleService-Info_original.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info_original.plist"; sourceTree = "<group>"; };
 		79B072FD2D37C76D00CD6F2B /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
 		79B073012D37C98E00CD6F2B /* Firebase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Firebase.plist; sourceTree = "<group>"; };
 		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
@@ -267,6 +268,7 @@
 		79D7C2A92BD1171200AE0B24 /* TouchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchesView.swift; sourceTree = "<group>"; };
 		79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassicStyle.swift; sourceTree = "<group>"; };
 		79D931102CA222760035EA6B /* ScaleTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTitleView.swift; sourceTree = "<group>"; };
+		79D935D42E69A39E00F5997F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		79DA82122BCCE95F008AC492 /* ScalesStar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesStar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesTrainerApp.swift; sourceTree = "<group>"; };
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -453,12 +455,13 @@
 		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
 			isa = PBXGroup;
 			children = (
+				79D935D42E69A39E00F5997F /* GoogleService-Info.plist */,
 				79DA82192BCCE960008AC492 /* Assets.xcassets */,
 				794D495D2BCD34080005A173 /* AudioFiles */,
 				79C0D2532BE30E7B0036CC91 /* Data */,
 				7943AE602BD6539500E94AC7 /* Games */,
 				79BFC69E2BCF790600006CA4 /* Info.plist */,
-				79B072F92D37C42000CD6F2B /* GoogleService-Info.plist */,
+				79B072F92D37C42000CD6F2B /* GoogleService-Info_original.plist */,
 				79B073012D37C98E00CD6F2B /* Firebase.plist */,
 				79DA822C2BCCED24008AC492 /* Model */,
 				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
@@ -734,12 +737,13 @@
 				79AF165C2D4E1D18003033E4 /* scale_4_oct.wav in Resources */,
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
-				79B072FA2D37C42000CD6F2B /* GoogleService-Info.plist in Resources */,
+				79B072FA2D37C42000CD6F2B /* GoogleService-Info_original.plist in Resources */,
 				790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */,
 				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				79EAB8772C8737B400255FC6 /* Notes_General in Resources */,
 				79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */,
+				79D935D52E69A39E00F5997F /* GoogleService-Info.plist in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
 				793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */,
 			);

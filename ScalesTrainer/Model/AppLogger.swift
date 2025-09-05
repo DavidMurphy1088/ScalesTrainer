@@ -37,7 +37,8 @@ public class AppLogger : ObservableObject {
     @Published var maxLogValue = 0.0
     @Published var minLogValue = 10.0
     @Published var hiliteLogValue = 0.0
-
+    var logNum = 0
+    
     public init() {
     }
     
@@ -75,10 +76,8 @@ public class AppLogger : ObservableObject {
 
     public func log(_ reporter:AnyObject, _ msg:String, _ value:Double? = nil) {
         let msg = String(describing: type(of: reporter)) + ":" + msg
-        //if Settings.shared.isDeveloperMode1() {
-            print("\(getTime()) \(msg)")//  val:\(strVal)")
-        //}
-        //os_logger.info("\(msg)")
+        print("\(self.logNum) \(getTime()) \(msg)")//  val:\(strVal)")
+        self.logNum += 1
         DispatchQueue.main.async {
             let val:Double = value == nil ? 0 : value!
             self.loggedMsgs.append(LogMessage(num: self.loggedMsgs.count, isError: false, msg, valueIn: val * 100))

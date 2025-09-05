@@ -113,7 +113,7 @@ struct BadgesView: View {
             )
         }
         .onAppear() {
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("BadgesView .onAppaer")
             self.user = user
             let board = MusicBoard.getSupportedBoards()[0]
             let grade = MusicBoardAndGrade(board: board, grade:1)

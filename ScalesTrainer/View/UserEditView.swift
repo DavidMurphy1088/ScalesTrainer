@@ -79,14 +79,7 @@ public struct UserEditView: View {
         }
         return user.boardAndGrade.grade > 0
     }
-    
-    func saveUser(grade:Int) {
-        if let board = self.selectedBoard {
-            user.boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
-            self.saveEnabled = self.isSaveEnabled(user: user)
-        }
-    }
-    
+
     public var body: some View {
         HStack {
             Text("  ")
@@ -133,7 +126,7 @@ public struct UserEditView: View {
                         }
                         
                         if settings.hasUser(name: user.name) {
-                            let enabled = user.id != settings.getCurrentUser().id
+                            let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
                             if enabled  {
                                 FigmaButton(
                                     label: {
@@ -234,9 +227,10 @@ public struct UserEditView: View {
         .sheet(item: $selectedBoard, onDismiss: {
             }) { board in
                 SelectGradeView(board: board, selectedGrade: $selectedGrade, onConfirm: {grade in
-                    let mg = MusicBoardAndGrade(board: board, grade: grade)
-                    user.selectedMinorType = mg.getDefaultMinorType()
-                    self.saveUser(grade: grade)
+                    let boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
+                    user.selectedMinorType = boardAndGrade.getDefaultMinorType()
+                    user.boardAndGrade = boardAndGrade
+                    self.saveEnabled = self.isSaveEnabled(user: user)
                 })
             }
         .commonToolbar(

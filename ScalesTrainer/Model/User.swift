@@ -5,13 +5,6 @@ import SwiftUI
 import AVFoundation
 import AudioKit
 
-class UserPublished : ObservableObject {
-    @Published var name = ""
-    @Published var board = ""
-    @Published var grade = 0
-    @Published var color = ""
-}
-
 class User : Encodable, Decodable, Hashable, Identifiable {
     var id:UUID
     var name:String
@@ -27,7 +20,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     
     init() {
         self.id = UUID()
-        self.name = ""
+        self.name = "NilUser"
         self.email = ""
         self.settings = UserSettings()
         let colorNames = [
@@ -169,12 +162,18 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     }
     
     func getStudentScales() -> StudentScales {
+        let scales:StudentScales
+        let created: Bool
         if let loadedChart = StudentScales.loadFromFile(user: self) {
-            return loadedChart
+            scales = loadedChart
+            created = false
         }
         else {
-            return StudentScales(user: self)
+            scales = StudentScales(user: self)
+            created = true
         }
+        AppLogger.shared.log(self, "=============== getStudentScales \(scales.user.name), StudentScales was created \(created)")
+        return scales
     }
     
 }

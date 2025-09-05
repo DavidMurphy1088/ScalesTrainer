@@ -7,6 +7,7 @@ import AudioKit
 
 struct SpinTheWheelView: View {
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewManager = ViewManager.shared
     @State private var user:User?
     let screenWidth = UIScreen.main.bounds.size.width
     @State private var rotation: Double = 0
@@ -152,7 +153,7 @@ struct SpinTheWheelView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("SpinWheelView .onAppear")
             self.user = user
             //self.scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
             self.scales = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
@@ -171,6 +172,12 @@ struct SpinTheWheelView: View {
                                //practiceModeHand: .right)
                 }
             }
+        }
+        .onChange(of: viewManager.boardPublished) {oldValue, newValue in
+            dismiss()
+        }
+        .onChange(of: viewManager.gradePublished) {oldValue, newValue in
+            dismiss()
         }
         .navigationTitle("Spin the Wheel")
     }

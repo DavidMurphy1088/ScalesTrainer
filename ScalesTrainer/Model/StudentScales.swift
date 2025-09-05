@@ -59,6 +59,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
 }
 
 class StudentScales: Codable {
+    
     let user:User
     var scalesPerDay: Int
     var studentScales:[StudentScale]
@@ -103,7 +104,7 @@ class StudentScales: Codable {
         }
     }
     
-    func debug1(_ ctx:String) {
+    func debug11(_ ctx:String) {
         print("======== StudentScales", ctx)
         for r in 0..<self.studentScales.count {
             let x = self.studentScales[r]
@@ -240,7 +241,7 @@ class StudentScales: Codable {
             
             ///Only the scale Id is serialized on save so get the scale itself
             for studentScale in chart.studentScales {
-                let user = Settings.shared.getCurrentUser()
+                let user = Settings.shared.getCurrentUser("Student Scales load from File")
                 let boardGrade = user.boardAndGrade // MusicBoardAndGrade(board: board, grade: user.grade)
                 for scale in boardGrade.enumerateAllScales() {
                     if scale.getScaleIdentificationKey() == studentScale.scaleId {

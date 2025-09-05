@@ -7,38 +7,44 @@ public class Firebase  {
     public static var shared = Firebase()
     let logger = AppLogger.shared
     
-    init() {
-        var username:String? = nil
-        var pwd:String? = nil
-        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-           let plist = NSDictionary(contentsOfFile: path) {
-            if let apiKey = plist["PWD"] as? String {
-                pwd = apiKey
-            }
-            if let apiKey = plist["USERNAME"] as? String {
-                username = apiKey
-            }
-        }
-        if username == nil || pwd == nil {
-            AppLogger.shared.reportError(self, "No user for Firebase RealTime DB")
-        }
-        signIn(username: username!, pwd: pwd!)
-    }
-
-    func signIn(username:String, pwd:String) {
-//        guard let defaultApp = FirebaseApp.app() else {
-//            return
+//    init() {
+//        var username:String? = nil
+//        var pwd:String? = nil
+//        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+//           let plist = NSDictionary(contentsOfFile: path) {
+//            if let apiKey = plist["PWD"] as? String {
+//                pwd = apiKey
+//            }
+//            if let apiKey = plist["USERNAME"] as? String {
+//                username = apiKey
+//            }
 //        }
-        Auth.auth().signIn(withEmail: username, password: pwd) { authResult, error in
-           if let error = error {
-               AppLogger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
-                return
-            }
-         }
-    }
+//        if username == nil || pwd == nil {
+//            AppLogger.shared.reportError(self, "No user for Firebase RealTime DB")
+//        }
+//        print("========== FB INIT", username, pwd)
+//        //scalesacademy-746a3
+//        //https://scalesacademy-746a3-default-rtdb.asia-southeast1.firebasedatabase.app/
+//        //signIn(username: username!, pwd: pwd!)
+//    }
+//
+//    func signIn(username:String, pwd:String) {
+////        guard let defaultApp = FirebaseApp.app() else {
+////            return
+////        }
+//        print("========= FB Signin", username, pwd)
+////        Auth.auth().signIn(withEmail: username, password: pwd) { authResult, error in
+////           if let error = error {
+////               print("========= FB", username, pwd, error.localizedDescription)
+////               AppLogger.shared.reportError(self, "Firebase sign in: \(error.localizedDescription)")
+////                return
+////            }
+////         }
+//    }
      
     func writeToRealtimeDatabase(board:String, grade:Int, key:String, data: [String: Any], callback: ((String) -> Void)?) {
         let database = Database.database().reference() // Reference to the root of the database
+        //print("======= FB write, board: \(board), grade: \(grade), key: \(key)")
         database.child("SCALES").child("\(board)_\(grade)").child(key).setValue(data) { error, ref in
             if let error = error {
                 self.logger.reportError(self, "Error writing to database: \(error.localizedDescription)")
@@ -47,7 +53,7 @@ public class Firebase  {
                 }
             } else {
                 if let callback = callback {
-                    callback("OK")
+                    callback("Callback for write OK")
                 }
             }
         }
@@ -55,6 +61,7 @@ public class Firebase  {
     
     func deleteFromRealtimeDatabase(board:String, grade:Int, key:String, callback: ((String) -> Void)?) {
         let database = Database.database().reference()
+        print("=======CEll view Delete", board, grade, key)
         database.child("SCALES").child("\(board)_\(grade)").child(key).removeValue { error, _ in
             if let error = error {
                 self.logger.reportError(self, "Error deleting from database: \(error.localizedDescription)")

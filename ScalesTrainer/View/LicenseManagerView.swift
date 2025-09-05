@@ -189,7 +189,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     
     public func isLicensed() -> Bool {
         return true
-        let user = Settings.shared.getCurrentUser()
+        let user = Settings.shared.getCurrentUser("License mgr")
         if emailIsLicensed(email: user.email) {
             return true
         }
@@ -556,7 +556,7 @@ public struct LicenseManagerView: View {
         VStack {
             if LicenceManager.shared.isLicensed() {
                 VStack {
-                    let user = Settings.shared.getCurrentUser()
+                    let user = Settings.shared.getCurrentUser("License manager")
                     Text("Your current subscription is ").font(.title2).padding()
                     if LicenceManager.shared.emailIsLicensed(email:user.email) {
                         Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()

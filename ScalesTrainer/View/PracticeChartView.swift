@@ -51,6 +51,8 @@ struct MinorTypePopup: View {
 
 struct PracticeChartView: View {
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewManager = ViewManager.shared
+
     @State private var user:User?
     @State private var studentScales:StudentScales?
     @State private var helpShowing = false
@@ -86,7 +88,7 @@ struct PracticeChartView: View {
             }
             studentScale.setVisible(way: visible)
         })
-        studentScales.debug1(ctx)
+        //studentScales.debug1(ctx)
         self.forceRefreshChart += 1
     }
     
@@ -199,7 +201,7 @@ struct PracticeChartView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("Prac Chart .OnAppear")
             self.user = user
             let studentScales = user.getStudentScales()
             self.studentScales = studentScales
@@ -242,10 +244,11 @@ struct PracticeChartView: View {
                 }
             }
         }
-        .onChange(of: ViewManager.shared.isPracticeChartActive) {oldValue, newValue in
-            if newValue == false {
-                dismiss()
-            }
+        .onChange(of: viewManager.boardPublished) {oldValue, newValue in
+            dismiss()
+        }
+        .onChange(of: viewManager.gradePublished) {oldValue, newValue in
+            dismiss()
         }
     }
 }

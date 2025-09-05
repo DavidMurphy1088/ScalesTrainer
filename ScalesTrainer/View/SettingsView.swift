@@ -183,7 +183,7 @@ struct SettingsView: View {
             )
         }
         .onAppear() {
-            let user = settings.getCurrentUser()
+            //let user = settings.getCurrentUser("Settings view")
             ///The keyboard model must be configured to something (if not already) to display the keyboard
             if scalesModel.getScore() == nil {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)

@@ -211,10 +211,16 @@
     "Delete" : {
 
     },
+    "Delete Testdata" : {
+
+    },
     "Details Content" : {
 
     },
     "Detected Pitch: %.0f Hz" : {
+
+    },
+    "Dev" : {
 
     },
     "Disconnect All MIDI Sources" : {
@@ -256,9 +262,6 @@
           }
         }
       }
-    },
-    "Firebase Signin" : {
-
     },
     "Firebase Write" : {
 
@@ -625,6 +628,9 @@
 
     },
     "Sensitivity: %.3f" : {
+
+    },
+    "Set Testdata" : {
 
     },
     "Settings" : {

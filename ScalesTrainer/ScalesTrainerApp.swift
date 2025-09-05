@@ -77,8 +77,8 @@ struct LaunchScreenView: View {
 struct DeveloperView: View {
     let scalesModel = ScalesModel.shared
     @State var showingTapData = false
-    let email = "Fred1@gmail.com"
-    @State private var password = "Password1"
+    let email = "davidmurphy@musicmastereducation.co.nz"
+    @State private var password = "zenzenzen"
     @State private var isLoggedIn = false
     @State var status = ""
     let logger = AppLogger.shared
@@ -89,13 +89,16 @@ struct DeveloperView: View {
         VStack {
             Spacer()
 
-            Button("Firebase Signin") {
-//                firebase.signIn(email: email, pwd: password)
-            }
-            Spacer()
+//            Button("Firebase Signin") {
+//                firebase.signIn(username: email, pwd: password)
+//            }
+//            Spacer()
             
             Button(action: {
-                //firebase.writeDataToRealtimeDatabase(key: "TESTVIEW", jsonString: "FRED", callback: nil)
+                let x:[String : Any] = ["SomeTest":99]
+                firebase.writeToRealtimeDatabase(board: "Trinity", grade: 1, key: "key0", data: x, callback: {msg in
+                    print(msg, "======== Firebase test ok")
+                })
             }) {
                 Text("Firebase Write")
                     .padding()
@@ -194,6 +197,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 }
 
 ///------------------------------------------------------------
+//class UserDisplayed : ObservableObject, Equatable {
+//    static func == (lhs: UserDisplayed, rhs: UserDisplayed) -> Bool {
+//        return lhs.name == rhs.name
+//    }
+//    @Published var name:String
+//    @Published var board:String
+//    @Published var grade:Int
+//    @Published var color = ""
+//    init(name:String, board:String, grade:Int) {
+//        self.name = name
+//        self.board = board
+//        self.grade = grade
+//    }
+//}
 
 class ViewManager: ObservableObject {
     static let TAB_WELCOME = 100
@@ -203,31 +220,24 @@ class ViewManager: ObservableObject {
 
     static var shared = ViewManager()
     @Published var selectedTab: Int = 0
-    @Published var publishedUser: User?
-    ///A board or grade change needs to force navigation away from Practice Chart and Spin Wheel if they are open since they still show the previous grade.
-    @Published var isSpinWheelActive: Bool = false
-    @Published var isPracticeChartActive: Bool = false
-
+    @Published var currentUserPublished: User?
+    @Published var gradePublished:Int = 0
+    @Published var boardPublished:String = ""
+    @Published var userNamePublished = ""
+    @Published var userColorPublished = ""
+    
     init() {
-        let settings  = Settings.shared
-        settings.load()
-        Settings.shared.load()
         self.selectedTab = 0
-//        DispatchQueue.main.async {
-//            if Settings.shared.aValidUserIsDefined() {
-//                self.publishedUser = settings.getCurrentUser()
-//                self.selectedTab = TabContainerView.TAB_ACTIVITES
-//            }
-//            else {
-//                self.selectedTab = TabContainerView.TAB_USERS
-//            }
-//        }
     }
     
     func updatePublishedUser(user:User) {
-        DispatchQueue.main.async {
-            //let user = Settings.shared.getCurrentUser()
-            self.publishedUser = user
+        DispatchQueue.main.async { [self] in
+            self.currentUserPublished = user
+            self.boardPublished = user.boardAndGrade.board.name
+            self.gradePublished = user.boardAndGrade.grade
+            self.userNamePublished = user.name
+            self.userColorPublished = user.color
+            AppLogger.shared.log(self, "========= updatePublishedUser \(user.boardAndGrade.board.name), \(user.boardAndGrade.grade)")
         }
     }
     
@@ -256,7 +266,7 @@ struct TabContainerView: View {
         
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
-            if ViewManager.shared.selectedTab != ViewManager.TAB_WELCOME {
+            if viewManager.selectedTab != ViewManager.TAB_WELCOME {
                 ActivitiesView()
                     .tag(ViewManager.TAB_ACTIVITES)
                     .environmentObject(viewManager)
@@ -293,7 +303,7 @@ struct TabContainerView: View {
                         }
                     }
                 
-                SettingsView(user: Settings.shared.getCurrentUser())
+                SettingsView(user: Settings.shared.getCurrentUser("app pass to SettingsView"))
                     .tabItem {
                         Label(
                             NSLocalizedString("Settings", comment: "Menu"),
@@ -320,8 +330,6 @@ struct TabContainerView: View {
 //                .tag(50)
 //                .environmentObject(viewManager)
             
-            WelcomeView()
-                .tag(ViewManager.TAB_WELCOME)
 
             if Settings.shared.isDeveloperModeOn() {
                 MIDIView()
@@ -362,13 +370,16 @@ struct TabContainerView: View {
 //                    .environmentObject(viewManager)
 //
                 
-//                DeveloperView()
-//                    .tabItem {
-//                        Label("Dev", systemImage: "book.pages")
-//                    }
-//                    .tag(100)
-//                    .environmentObject(viewManager)
+                DeveloperView()
+                    .tabItem {
+                        Label("Dev", systemImage: "book.pages")
+                    }
+                    .tag(100)
+                    .environmentObject(viewManager)
             }
+            
+            WelcomeView()
+                .tag(ViewManager.TAB_WELCOME) ///Keep it last in list
         }
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
@@ -380,7 +391,7 @@ struct TabContainerView: View {
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
-    @ObservedObject private var viewManager = ViewManager.shared
+    //@ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
     let launchTimeSecs = 3.0 
 
@@ -393,6 +404,7 @@ struct ScalesTrainerApp: App {
             AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
+        Settings.shared.load()
     }
     
     func setupDev() {
@@ -422,7 +434,7 @@ struct ScalesTrainerApp: App {
                         LaunchScreenView()
                     }
                     else {
-                        if Settings.shared.hasUsers()  {
+                        if Settings.shared.hasUsers() || Settings.shared.isDeveloperModeOn() {
                             TabContainerView()
                         }
                         else {

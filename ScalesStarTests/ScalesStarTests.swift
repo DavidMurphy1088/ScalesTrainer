@@ -229,7 +229,7 @@ final class ScoreTest: XCTestCase {
         
         var writtenStaffData = ""
         let musicBoard = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity") //MusicBoard(name: "Trinity")
-        processBoard(musicBoard: musicBoard, gradeFilter: [], typeFilter: [])
+        processBoard(musicBoard: musicBoard, gradeFilter: [1], typeFilter: [])
     }
     
     func testPerformanceExample() throws {

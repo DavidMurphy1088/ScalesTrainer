@@ -8,11 +8,41 @@ struct ScalesGridCellView: View {
     @ObservedObject var scaleToChart:StudentScale
     let cellWidth:Double
     let color:Color
+    @Binding var scoreTestScaleIds:[String]
+    
     let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
     @State private var fadeIn = false
     
+    func testDataButtons(user:User) -> some View {
+        VStack {
+            if let scale = scaleToChart.scale {
+                Button(action: {
+                    if scoreTestScaleIds.contains(scaleToChart.scaleId) {
+                        Firebase.shared.deleteFromRealtimeDatabase(board: user.boardAndGrade.board.name, grade: user.boardAndGrade.grade,
+                                                                   key: scaleToChart.scaleId, callback: {_ in
+                            scoreTestScaleIds.removeAll { $0 == scaleToChart.scaleId }
+                        })
+                    }
+                    else {
+                        ScalesModel.shared.setKeyboardAndScore(scale: scale, callback: {_, score in
+                            Firebase.shared.writeKnownCorrect(scale: scale, score: score, board: user.boardAndGrade.board.name,
+                                                              grade: user.boardAndGrade.grade)
+                            scoreTestScaleIds.append(scaleToChart.scaleId)
+                        })
+                    }
+                }) {
+                    let x = scoreTestScaleIds.contains(scaleToChart.scaleId)
+                    Text(x ? "Delete Testdata" : "Set Testdata").foregroundColor(x ? .black : .red)
+                        .background(.white)
+                }
+                .buttonStyle(.bordered)
+                .background(.white)
+            }
+        }
+    }
+        
     var body: some View {
         Button(action: {
             if let scale = self.scaleToChart.scale {
@@ -41,7 +71,12 @@ struct ScalesGridCellView: View {
                             }
                             let hands = scale.getScaleDescriptionParts(hands: true)
                             Text(hands).font(.body).foregroundColor(.black)
-                            Spacer()
+                        }
+                        if Settings.shared.isDeveloperModeOn() {
+                            if let user = user {
+                                self.testDataButtons(user: user)
+                                Spacer()
+                            }
                         }
                     }
                     Spacer()
@@ -59,6 +94,10 @@ struct ScalesGridCellView: View {
                     withAnimation(.easeIn(duration: 1.0)) {
                         fadeIn = true
                     }
+            }
+            .onAppear {
+//                print("=========+Appear", scoreTestScaleIdExists)
+//                self.testExists = scoreTestScaleIdExists
             }
             .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
                 fadeIn = false
@@ -91,6 +130,8 @@ struct ScalesGridView : View {
     @State private var user:User?
     @State private var scaleGridRowCols:[[StudentScale]] = []
     @State private var layoutCount = 0
+    @State private var scoreTestScaleIds:[String] = []
+    
     let colors:[Color] = [
         Color(red: 98/255.0, green: 202/255.0, blue: 215/255.0),
         Color(red: 250/255.0, green: 162/255.0, blue: 72/255.0),
@@ -131,11 +172,13 @@ struct ScalesGridView : View {
                 ForEach(Array(scaleGridRowCols.enumerated()), id: \.offset) { (rowIndex, row) in
                     HStack {
                         ForEach(Array(row.enumerated()), id: \.offset) { (colIndex, scaleToChart) in
+                            let scoreTestDataExists = self.scoreTestScaleIds.contains(scaleToChart.scaleId)
                             ScalesGridCellView(
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex)
+                                color:getColor(n: rowIndex * 3 + colIndex),
+                                scoreTestScaleIds: $scoreTestScaleIds
                             )
                             .frame(width: cellWidth, height: cellHeight)
                         }
@@ -149,8 +192,15 @@ struct ScalesGridView : View {
         //.border(.green)
         .onAppear() {
             //studentScales.debug("OnAppead")
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("SalesGrivView .onAppear")
             self.user = user
+            if Settings.shared.isDeveloperModeOn() {
+                Firebase.shared.readAllScales(board: user.boardAndGrade.board.name, grade: user.boardAndGrade.grade, completion: {data in
+                    for (scaleKey, staffJSON, _) in data {
+                        self.scoreTestScaleIds.append(scaleKey)
+                    }
+                })
+            }
             self.layout()
         }
         .onChange(of: refreshCount) { old, new in

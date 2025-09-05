@@ -51,7 +51,7 @@ class ExerciseHandler  {
         //self.practiceChart = practiceChart
         //self.practiceChartCell = practiceChartCell
         self.scaleMinxMaxMidis = scale.getMinMaxMidis()
-        self.user = Settings.shared.getCurrentUser()
+        self.user = Settings.shared.getCurrentUser("Exercise Handler init")
     }
     
     func start(soundHandler:SoundEventHandlerProtocol) {
@@ -80,7 +80,7 @@ class ExerciseHandler  {
             hilightKey(scaleIndex: 0)
         }
         if Settings.shared.isDeveloperModeOn() {
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("ExerciseHandler - start")
             if user.settings.useMidiSources {
                 if MIDIManager.shared.testMidiNotes != nil {
                     MIDIManager.shared.playTestMidiNotes(soundHandler: soundHandler)
@@ -369,7 +369,7 @@ class ExerciseHandler  {
 //    }
     
     func awardChartBadge() {
-        let user = Settings.shared.getCurrentUser()
+        let user = Settings.shared.getCurrentUser("Exercise Handler - award badges")
         if user.settings.practiceChartGamificationOn {
             let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
             exerciseState.bumpTotalCorrect()

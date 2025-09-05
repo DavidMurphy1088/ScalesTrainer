@@ -140,17 +140,15 @@ struct ActivitiesView: View {
     //@State var user:User
     ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
     ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
-    //@State var userName:String = ""
-    //@State var userGrade:Int?
-    @State private var currentUser: User = Settings.shared.getCurrentUser()
+
     @State var imgSize = UIScreen.main.bounds.width * 0.2
+    @ObservedObject var viewManager = ViewManager.shared
     
     var body: some View {
         NavigationStack {
             VStack {
                 VStack {
                     Text("How do you want to practise?").font(.title).padding()
-                    let chart = currentUser.getStudentScales()
                     HStack {
                         NavigationLink(destination: ChooseYourExerciseView()) {
                             Image("activity_pick_exercise")
@@ -186,10 +184,6 @@ struct ActivitiesView: View {
             )
         }
         .onAppear() {
-            ///Force the view to redraw by updating these @State variables
-            //let user = Settings.shared.getCurrentUser()
-            //self.userName = user.name
-            //self.userGrade = user.grade
         }
     }
 }

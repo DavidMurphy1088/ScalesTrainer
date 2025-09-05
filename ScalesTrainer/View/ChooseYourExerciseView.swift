@@ -8,6 +8,7 @@ import SwiftUI
 
 struct ChooseYourExerciseView: View {
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewManager = ViewManager.shared
     @State private var user:User?
     @State private var studentScales:StudentScales?
     @State private var forceRefreshChart = 0
@@ -19,7 +20,6 @@ struct ChooseYourExerciseView: View {
     @State private var selectKey = false
     @State private var selectedKey:String = "All Keys"
     @State private var scaleKeys:[String] = []
-
     let leftEdge = UIScreen.main.bounds.size.width * 0.04
     
     func setVisibleCells(_ ctx:String, studentScales:StudentScales, typeFilter:ScaleType?, keyFilter:String?) {
@@ -96,12 +96,11 @@ struct ChooseYourExerciseView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
-            let user = Settings.shared.getCurrentUser()
+            let user = Settings.shared.getCurrentUser("ChooseExercise view, .onAppear")
             self.user = user
             let studentScales = user.getStudentScales()
             self.studentScales = studentScales
             setVisibleCells("OnAppear", studentScales: studentScales, typeFilter: .any, keyFilter: nil)
-            
             self.scaleTypes = studentScales.getScaleTypes()
             self.scaleKeys = studentScales.getScaleKeys()
         }
@@ -129,11 +128,13 @@ struct ChooseYourExerciseView: View {
             }
         }
 
-        .onChange(of: ViewManager.shared.isPracticeChartActive) {oldValue, newValue in
-            if newValue == false {
-                dismiss()
-            }
+        .onChange(of: viewManager.boardPublished) {oldValue, newValue in
+            dismiss()
         }
+        .onChange(of: viewManager.gradePublished) {oldValue, newValue in
+            dismiss()
+        }
+
     }
 }
 

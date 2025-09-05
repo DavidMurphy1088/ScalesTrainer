@@ -5,12 +5,11 @@ import SwiftUI
 import AVFoundation
 
 struct UserListView: View {
-    @ObservedObject var titledUser:UserPublished = ScalesModel.shared.userPublished
+    //@ObservedObject var titledUser:UserDisplayed = ViewManager.shared.userDisplayed
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State private var users: [User] = []
-    @State private var currentUser: User = Settings.shared.getCurrentUser()
-    //@State private var isChecked = false
+    @State private var currentUser: User = Settings.shared.getCurrentUser("userListview @State")
     let screenWidth = UIScreen.main.bounds.width
     
     func getUsers() -> [User] {
@@ -43,22 +42,16 @@ struct UserListView: View {
                                        height: UIScreen.main.bounds.width * boxSize)
                                 .overlay(alignment: .topTrailing) {
                                     if user.boardAndGrade.grade > 0 {
-                                        //let titledUser = ScalesModel.shared.userPublished
+                                        ///Change of current user 
                                         Button {
-                                            let checked = settings.getCurrentUser().id == user.id
-                                            if checked {
-                                                if settings.users.count > 0 {
-                                                    settings.setCurrentUser(id: settings.users[0].id)
-                                                    ScalesModel.shared.updateUserPublished(user: settings.users[0])
-                                                }
-                                            }
-                                            else {
+                                            let sameUserChecked = settings.getCurrentUser("UserListView - is same user checked").id == user.id
+                                            if !sameUserChecked {
                                                 settings.setCurrentUser(id: user.id)
-                                                ScalesModel.shared.updateUserPublished(user: user)
+                                                
                                             }
                                             
                                         } label: {
-                                            let checked = titledUser.name == user.name
+                                            let checked = ViewManager.shared.userNamePublished == user.name
                                             Image(systemName: checked ? "checkmark.circle" : "circle")
                                                 .font(.title2)
                                                 .foregroundColor(.white)

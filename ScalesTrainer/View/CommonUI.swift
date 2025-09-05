@@ -276,10 +276,12 @@ extension Button {
 /// Title view at the top of every nav stack
 struct ToolbarTitleView: View {
     let screenName: String
-    @ObservedObject var user:UserPublished = ScalesModel.shared.userPublished
+    //@ObservedObject var user:UserDisplayed = ViewManager.shared.userDisplayed
+    @ObservedObject var viewManager = ViewManager.shared
+
     let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 35.0
-    func firstLetter(user:UserPublished) -> String {
-        guard let first = user.name.first else {
+    func firstLetter(user:String) -> String {
+        guard let first = user.first else {
             return ""
         }
         return first.uppercased() 
@@ -288,7 +290,7 @@ struct ToolbarTitleView: View {
     var body: some View {
         HStack {
             HStack {
-                if user.grade > 0 {
+                if viewManager.gradePublished > 0 {
                     Text("?")
                         .padding(8)
                         .background(
@@ -301,13 +303,13 @@ struct ToolbarTitleView: View {
                         .frame(width: 1, height: 50)
                     ZStack {
                         Circle()
-                            .fill(User.color(from: user.color).opacity(0.5))
+                            .fill(User.color(from: viewManager.userColorPublished).opacity(0.5))
                             .frame(width: circleWidth, height: circleWidth)
-                        Text(firstLetter(user: user))
+                        Text(firstLetter(user: viewManager.userNamePublished))
                     }
                     VStack {
-                        Text(user.name)
-                        Text(user.board + ", Grade \(user.grade)").font(.caption)
+                        Text(viewManager.userNamePublished)
+                        Text(viewManager.boardPublished + ", Grade \(viewManager.gradePublished)").font(.caption)
                     }
                 }
             }
