@@ -305,7 +305,7 @@ struct ScalesView: View {
                 Spacer()
                 HStack {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
-                    FigmaButton(label: {
+                    FigmaButtonWithLabel(label: {
                         //Text("Harmonic Minor")
                         Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
                     }, action: {
@@ -733,7 +733,8 @@ struct ScalesView: View {
         }
         .commonToolbar(
             //title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
-            title: self.scale.getScaleDescriptionParts(name: true),
+            //title: self.scale.getScaleDescriptionParts(name: true),
+            title: "Db Major Together, 2 Octaves, ♩=110, f or p",
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView

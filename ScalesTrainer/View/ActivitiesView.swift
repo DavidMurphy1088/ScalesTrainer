@@ -137,7 +137,6 @@ struct UnderConstructionView: View {
 //}
 
 struct ActivitiesView: View {
-    //@State var user:User
     ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
     ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
 

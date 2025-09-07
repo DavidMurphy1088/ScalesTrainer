@@ -101,7 +101,7 @@ struct SpinTheWheelView: View {
                                     Text("")
                                     Text("")
                                     Text("")
-                                    FigmaButton(label: {
+                                    FigmaButtonWithLabel(label: {
                                         Text("Practice Now").bold()
                                     }, action: {
                                         navigateToScale = true
@@ -119,7 +119,7 @@ struct SpinTheWheelView: View {
                             Text("")
                             Text("")
                             Text("")
-                            FigmaButton(label: {
+                            FigmaButtonWithLabel(label: {
                                 Text("Spin Now").bold()
                             }, action: {
                                 spinWheel()

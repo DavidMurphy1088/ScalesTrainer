@@ -59,9 +59,7 @@ struct BadgesView: View {
         NavigationStack {
             VStack {
                 HStack {
-                    FigmaButton(label: {
-                        Text("Best Exercises")
-                    }, action: {
+                    FigmaButton("Best Exercises", action: {
                         scaleBadges.sort { $0.badges > $1.badges }
                         //animaton...
                     })

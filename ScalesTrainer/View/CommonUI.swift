@@ -36,11 +36,11 @@ struct CommonToolbarModifier: ViewModifier {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack {
-                    Image("figma_icon")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 40)
-                        .padding()
+//                    Image("figma_icon")
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(height: 40)
+//                        .padding()
                     Text(title)
                         .font(.title)
                 }
@@ -144,7 +144,7 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 12)
                         .fill(Color.white)
-                        .shadow(color: .black.opacity(0.7), radius: 3, x: 4, y: 4)
+                        .shadow(color: .black.opacity(0.9), radius: 2, x: 0, y: 2)
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.black, lineWidth: 1)
                 }
@@ -153,15 +153,59 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
     }
 }
 
-struct FigmaButton<Label: View>: View {
+struct FigmaButton: View {
+    var action: () -> Void
+    let text:String
+    let imageName:String?
+    @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 16
+    
+    init(_ text:String, imageName:String? = nil, action: @escaping () -> Void) {
+        self.action = action
+        self.text = text
+        self.imageName = imageName
+    }
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                HStack {
+                    Text(text)
+                        .font(.body)
+                        .foregroundColor(.black)
+                    if let image = imageName {
+                        Image(image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: iconSize)   // matches text size
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
+                )
+                .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
+            }
+        }
+    }
+}
+
+struct FigmaButtonWithLabel<Label: View>: View {
     var label: () -> Label
     var action: () -> Void
-    
+    //                                    label: {
+    //                                        HStack {
+    //                                            Image("figma_tickmark")
+    //                                                .resizable()
+    //                                                .scaledToFit()
+    //                                                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
+    //                                            Text("Save")
+    //                                        }
+    //                                    },
     init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
         self.action = action
         self.label = label
     }
-    
+
     var body: some View {
         Button(action: action) {
             label()
@@ -171,20 +215,10 @@ struct FigmaButton<Label: View>: View {
                     RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
                 )
                 .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
-//                .background(
-//                    ZStack {
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .fill(Color.white)
-//                            //radius: A measure of how much to blur the shadow. Larger values result in more blur.
-//                            //.shadow(color: .black.opacity(0.8), radius: 0, x: 2, y: 2)
-//                            .shadow(color: .black.opacity(1.0), radius: 0, x: 0, y: 2)
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .stroke(Color.black, lineWidth: 1)
-//                    }
-//                )
         }
     }
 }
+
 
 struct RoundedBackgroundModifier: ViewModifier {
     var fillColor: Color = .gray
@@ -578,7 +612,9 @@ struct SinglePickList<Item: Hashable>: View {
                     .buttonStyle(.plain)
                 }
             }
-            
+//            .background(
+//                RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
+//            )
             Spacer()
         }
         .onAppear {

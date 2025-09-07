@@ -91,28 +91,7 @@
 ////            }
 ////        })
 //        
-//        .sheet(isPresented: $showWelcomeToFirstUser) {
-//            VStack(spacing: 20) {
-//                let imageSize = UIScreen.main.bounds.width * 0.6
-//                Image("GrandPiano")
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: imageSize )
-//                        .cornerRadius(imageSize * 0.1)
-//                
-//                Text("😊 Welcome 😊").font(.title).fontWeight(.bold)
-//                Text("We hope you enjoy your experience using Scales Academy.").multilineTextAlignment(.center)
-//                Text("To get started please enter your name, Music Board and Grade.").multilineTextAlignment(.center)
-//                Button("Get Started") {
-//                    showWelcomeToFirstUser = false
-//                }
-//                .padding()
-//                .background(Color.blue)
-//                .foregroundColor(.white)
-//                .cornerRadius(10)
-//            }
-//            .padding()
-//        }
+
 //
 //        .onChange(of: showWelcomeToFirstUser) { newValue in
 //            // Focus only when the sheet is dismissed

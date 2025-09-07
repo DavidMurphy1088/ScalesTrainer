@@ -51,7 +51,7 @@ struct SelectHandForPractice: View {
                 Text("")
                 Text("")
                 Text("")
-                FigmaButton(label: {
+                FigmaButtonWithLabel(label: {
                     VStack {
                         HStack {
                             Image("hand_left")
@@ -71,7 +71,7 @@ struct SelectHandForPractice: View {
                 })
                 Text("")
                 HStack {
-                    FigmaButton(label: {
+                    FigmaButtonWithLabel(label: {
                         VStack {
                             HStack {
                                 Image("hand_left")
@@ -85,7 +85,7 @@ struct SelectHandForPractice: View {
                         setScaleForPractice(practiceHands: [1])
                         navigateToScale = true
                     })
-                    FigmaButton(label: {
+                    FigmaButtonWithLabel(label: {
                         VStack {
                             HStack {
                                 Image("hand_right")

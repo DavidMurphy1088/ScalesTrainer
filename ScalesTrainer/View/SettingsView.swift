@@ -22,7 +22,7 @@ func backingSoundName(_ n:Int) -> String {
 }
 
 struct SettingsView: View {
-    var user:User
+    var user:User?
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var leadInBarCount = 0
@@ -172,8 +172,9 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             HStack() {
-                DetailedCustomSettingsView(user:user)
-                //Spacer()
+                if let user = user {
+                    DetailedCustomSettingsView(user:user)
+                }
             }
             .padding()
             .navigationTitle("Settings")
@@ -183,7 +184,7 @@ struct SettingsView: View {
             )
         }
         .onAppear() {
-            //let user = settings.getCurrentUser("Settings view")
+            let user = settings.getCurrentUser("Settings view")
             ///The keyboard model must be configured to something (if not already) to display the keyboard
             if scalesModel.getScore() == nil {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)

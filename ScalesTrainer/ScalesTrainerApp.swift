@@ -77,8 +77,7 @@ struct LaunchScreenView: View {
 struct DeveloperView: View {
     let scalesModel = ScalesModel.shared
     @State var showingTapData = false
-    let email = "davidmurphy@musicmastereducation.co.nz"
-    @State private var password = "zenzenzen"
+
     @State private var isLoggedIn = false
     @State var status = ""
     let logger = AppLogger.shared
@@ -279,17 +278,17 @@ struct TabContainerView: View {
                         }
                     }
                 
-                BadgesView()
-                    .tag(ViewManager.TAB_BADGES)
-                    .environmentObject(viewManager)
-                    .tabItem {
-                        Label {
-                            Text("Badges")
-                        } icon: {
-                            Image("figma_tab_badges")
-                                .renderingMode(.template)
-                        }
-                    }
+//                BadgesView()
+//                    .tag(ViewManager.TAB_BADGES)
+//                    .environmentObject(viewManager)
+//                    .tabItem {
+//                        Label {
+//                            Text("Badges")
+//                        } icon: {
+//                            Image("figma_tab_badges")
+//                                .renderingMode(.template)
+//                        }
+//                    }
 
                 UserListView()
                     .tag(ViewManager.TAB_USERS)
@@ -303,7 +302,7 @@ struct TabContainerView: View {
                         }
                     }
                 
-                SettingsView(user: Settings.shared.getCurrentUser("app pass to SettingsView"))
+                SettingsView()
                     .tabItem {
                         Label(
                             NSLocalizedString("Settings", comment: "Menu"),
@@ -378,8 +377,8 @@ struct TabContainerView: View {
                     .environmentObject(viewManager)
             }
             
-            WelcomeView()
-                .tag(ViewManager.TAB_WELCOME) ///Keep it last in list
+//            WelcomeView()
+//                .tag(ViewManager.TAB_WELCOME) ///Keep it last in list
         }
         .background(Color.white)
         .tabViewStyle(DefaultTabViewStyle())
@@ -391,10 +390,12 @@ struct TabContainerView: View {
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
-    //@ObservedObject private var viewManager = ViewManager.shared
     @StateObject var launchScreenState = LaunchScreenStateManager()
-    let launchTimeSecs = 3.0 
+    @ObservedObject private var viewManager = ViewManager.shared
 
+    let settings = Settings.shared
+    let launchTimeSecs = 3.0
+    
     init() {
 #if os(iOS)
         do {
@@ -424,17 +425,17 @@ struct ScalesTrainerApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            if Settings.shared.isDeveloperModeOn() {
-//                //UserListView().onAppear() {self.setupDev()}
-//                BadgesView().onAppear() {self.setupDev()}
-//            }
-//            else {
+            if Settings.shared.isDeveloperModeOn() {
+                //UserListView().onAppear() {self.setupDev()}
+                ActivitiesView()
+            }
+            else {
                 VStack {
                     if launchScreenState.state != .finished {
                         LaunchScreenView()
                     }
                     else {
-                        if Settings.shared.hasUsers() || Settings.shared.isDeveloperModeOn() {
+                        if viewManager.currentUserPublished != nil { //Settings.shared.isCurrentUserDefined() {
                             TabContainerView()
                         }
                         else {
@@ -450,7 +451,7 @@ struct ScalesTrainerApp: App {
                         ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
                     }
                     ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
-                    MIDIManager.shared.setupMIDI()
+                    //MIDIManager.shared.setupMIDI()
                 }
                 
                 .task {
@@ -458,7 +459,7 @@ struct ScalesTrainerApp: App {
                         self.launchScreenState.dismiss()
                     }
                 }
-//            }
+            }
         }
     }
     

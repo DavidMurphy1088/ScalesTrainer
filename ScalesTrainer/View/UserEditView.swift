@@ -61,7 +61,7 @@ public struct UserEditView: View {
     @State private var showErrorAlert = false
     let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
-    @State private var saveEnabled = false
+    //@State private var saveEnabled = false
     @State private var sheetNonce = UUID()
     @State private var showDeleteAlert = false
     
@@ -87,17 +87,17 @@ public struct UserEditView: View {
                 ///Header area
                 VStack {
                     if UIDevice.current.userInterfaceIdiom != .phone {
-                        if addingFirstUser {
-                            HStack {
-                                Text("Let’s set up your account").font(.title2)
-                                Spacer()
-                            }
-                        }
+//                        if addingFirstUser {
+//                            HStack {
+//                                Text("Let’s set up your account").font(.title2)
+//                                Spacer()
+//                            }
+//                        }
                     }
                     HStack {
-                        if saveEnabled {
+                        if isSaveEnabled(user:user) {
                             if user.boardAndGrade.grade > 0 {
-                                FigmaButton(
+                                FigmaButtonWithLabel(
                                     label: {
                                         HStack {
                                             Image("figma_tickmark")
@@ -113,6 +113,7 @@ public struct UserEditView: View {
                                             user.setColor()
                                             dismiss()
                                             if addingFirstUser {
+                                                settings.setCurrentUser(id: user.id)
                                                 ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
                                             }
                                         } else {
@@ -128,7 +129,7 @@ public struct UserEditView: View {
                         if settings.hasUser(name: user.name) {
                             let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
                             if enabled  {
-                                FigmaButton(
+                                FigmaButtonWithLabel(
                                     label: {
                                         Text("Remove User").foregroundColor(.red)
                                     },
@@ -173,7 +174,7 @@ public struct UserEditView: View {
                 .padding()
                 .onChange(of: userName) {_, name in
                     user.name = name
-                    self.saveEnabled = isSaveEnabled(user: user)
+                    //self.saveEnabled = isSaveEnabled(user: user)
                 }
 
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -189,7 +190,7 @@ public struct UserEditView: View {
                                 Text("")
                                 Text(board.name).font(.title2)
                                 Text("")
-                                FigmaButton(label: {
+                                FigmaButtonWithLabel(label: {
                                     Text("Select Grade")
                                 }, action: {
                                     print("")
@@ -222,7 +223,7 @@ public struct UserEditView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 nameFieldFocused = true
             }
-            self.saveEnabled = self.isSaveEnabled(user: user)
+            //self.saveEnabled = self.isSaveEnabled(user: user)
         }
         .sheet(item: $selectedBoard, onDismiss: {
             }) { board in
@@ -230,11 +231,11 @@ public struct UserEditView: View {
                     let boardAndGrade = MusicBoardAndGrade(board: board, grade: grade)
                     user.selectedMinorType = boardAndGrade.getDefaultMinorType()
                     user.boardAndGrade = boardAndGrade
-                    self.saveEnabled = self.isSaveEnabled(user: user)
+                    //self.saveEnabled = self.isSaveEnabled(user: user)
                 })
             }
         .commonToolbar(
-            title: "User Edit",
+            title: settings.isCurrentUserDefined() ? "Edit User" : "Let's set up your account",
             onBack: { dismiss() }
         )
         .alert(isPresented: $showErrorAlert) {

@@ -555,16 +555,19 @@ public struct LicenseManagerView: View {
     func DetailedLicensesView() -> some View {
         VStack {
             if LicenceManager.shared.isLicensed() {
+                let settings = Settings.shared
                 VStack {
-                    let user = Settings.shared.getCurrentUser("License manager")
-                    Text("Your current subscription is ").font(.title2).padding()
-                    if LicenceManager.shared.emailIsLicensed(email:user.email) {
-                        Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
+                    if settings.isCurrentUserDefined() {
+                        let user = settings.getCurrentUser("License manager")
+                        Text("Your current subscription is ").font(.title2).padding()
+                        if LicenceManager.shared.emailIsLicensed(email:user.email) {
+                            Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
+                        }
+                        else {
+                            Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
+                        }
+                        Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
                     }
-                    else {
-                        Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
-                    }
-                    Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
                 }
             }
             else {

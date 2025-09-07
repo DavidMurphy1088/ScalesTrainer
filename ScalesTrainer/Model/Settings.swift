@@ -16,8 +16,8 @@ class Settings : Encodable, Decodable {
     
     init() {
         self.users = []
-//#if targetEnvironment(simulator)
         self.amplitudeFilter = 0.04
+        load()
     }
     
     ///Add new or update existing user
@@ -42,16 +42,16 @@ class Settings : Encodable, Decodable {
         save()
     }
 
-    func aValidUserIsDefined() -> Bool {
-        if Settings.shared.users.count == 0 {
-            return false
-        }
-        let user = Settings.shared.getCurrentUser("aValidUserIsDefined")
-        if user.name.isEmpty {
-            return false
-        }
-        return true
-    }
+//    func aValidUserIsDefined() -> Bool {
+//        if Settings.shared.users.count == 0 {
+//            return false
+//        }
+//        let user = Settings.shared.getCurrentUser("aValidUserIsDefined")
+//        if user.name.isEmpty {
+//            return false
+//        }
+//        return true
+//    }
     
     func getUser(id:UUID) -> User? {
         for user in users {
@@ -101,12 +101,23 @@ class Settings : Encodable, Decodable {
         }
         return false
     }
-
+    
+    func isCurrentUserDefined() -> Bool {
+        if self.currentUserId != nil {
+            for user in self.users {
+                if user.id == self.currentUserId {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
     func getCurrentUser(_ ctx:String) -> User {
         if self.currentUserId != nil {
             for user in self.users {
                 if user.id == self.currentUserId {
-                    AppLogger.shared.log(self, "=================== GetCur user \(ctx) \(user.name), board \(user.boardAndGrade.board.name) grade \(user.boardAndGrade.grade)")
+//                    AppLogger.shared.log(self, "=================== GetCur user \(ctx) \(user.name), board \(user.boardAndGrade.board.name) grade \(user.boardAndGrade.grade)")
                     return user
                 }
             }

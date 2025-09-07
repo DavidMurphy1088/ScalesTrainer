@@ -20,7 +20,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     
     init() {
         self.id = UUID()
-        self.name = "NilUser"
+        self.name = ""
         self.email = ""
         self.settings = UserSettings()
         let colorNames = [

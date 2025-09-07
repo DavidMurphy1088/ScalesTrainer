@@ -40,16 +40,10 @@ struct ChooseYourExerciseView: View {
 
     func headerView() -> some View {
         HStack {
-            FigmaButton(label: {
-                let label = self.selectedType.description
-                Text(label)
-            }, action: {
+            FigmaButton(self.selectedType.description, action: {
                 selectType = true
             })
-            FigmaButton(label: {
-                let label = self.selectedKey
-                Text(label)
-            }, action: {
+            FigmaButton(self.selectedKey, action: {
                 selectKey = true
             })
             Spacer()

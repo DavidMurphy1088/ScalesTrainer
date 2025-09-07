@@ -162,15 +162,11 @@ struct PracticeChartView: View {
                 VStack {
                     //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
                     HStack {
-                        FigmaButton(label: {
-                            let label = self.selectedMinorType.description
-                            Text(label)
-                        }, action: {
+                        let minorLabel = self.selectedMinorType.description + " ▼"
+                        FigmaButton(minorLabel, action: { //imageName:"figma_down_arrowhead"
                             showMinorTypeSelection = true
                         })
-                        FigmaButton(label: {
-                            Text("Shuffle")
-                        }, action: {
+                        FigmaButton("Shuffle", imageName:"figma_shuffle", action: {
                             cellOpacity = 0.0
                             doShuffle()
                             withAnimation(.easeIn(duration: 3.0)) {
@@ -232,7 +228,7 @@ struct PracticeChartView: View {
             if let user = self.user {
                 if let selectedMinorType = user.selectedMinorType {
                     let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
-                    SinglePickList(title: "Exercise Types", items: self.self.minorScaleTypes,
+                    SinglePickList(title: "Minor Types", items: self.self.minorScaleTypes,
                                    initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
                         self.selectedMinorType = selectedMinorType
                         user.selectedMinorType = selectedMinorType

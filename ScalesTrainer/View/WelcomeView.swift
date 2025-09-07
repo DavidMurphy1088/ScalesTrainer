@@ -6,6 +6,7 @@ import SwiftUI
 struct WelcomeView: View {
     @State private var isEditingUser = false
     @State var screenWidth = UIScreen.main.bounds.width
+    @State var screenHeight = UIScreen.main.bounds.height
 
     var body: some View {
         NavigationStack {
@@ -19,11 +20,20 @@ struct WelcomeView: View {
                     
                     VStack(alignment: .leading) {
                         Text("")
-                        Text("")
+                        HStack {
+                            Image("figma_icon")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: UIFont.preferredFont(
+                                    forTextStyle: .title1).pointSize)
+                            Text("scales academy").font(.title)
+                            Spacer()
+                        }
                         Text("").padding()
                         Text("").padding()
                         Text("Welcome to ")
-                        Text("Scales Academy").font(.largeTitle)
+                        Text("Scales Academy")
+                            .font(.custom("AvenirNext-DemiBold", size: 33.0))
                         Text("")
                         Text("We hope you enjoy your experience using Scales Academy.")
                         Text("To get started please enter your name, Music Board and Grade.")
@@ -34,7 +44,7 @@ struct WelcomeView: View {
                             addingFirstUser: true,
                             user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0))),
                                     font: .title2) {
-                            Text("Get Started")
+                            Text("Get Started")//.bold()
                         }
                     }
                     Spacer()

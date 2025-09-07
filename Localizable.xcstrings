@@ -10,6 +10,9 @@
     "  " : {
 
     },
+    "        " : {
+
+    },
     "                  " : {
 
     },
@@ -175,13 +178,7 @@
     "Badge Styles" : {
 
     },
-    "Badges" : {
-      "comment" : "Menu"
-    },
     "Base %lld" : {
-
-    },
-    "Best Exercises" : {
 
     },
     "Bluetooth MIDI Devices" : {
@@ -432,9 +429,6 @@
         }
       }
     },
-    "Let’s set up your account" : {
-
-    },
     "Log" : {
 
     },
@@ -597,6 +591,9 @@
         }
       }
     },
+    "scales academy" : {
+
+    },
     "Scales Academy" : {
 
     },
@@ -648,9 +645,6 @@
 
     },
     "Show Tap Data" : {
-
-    },
-    "Shuffle" : {
 
     },
     "SIMULATOR CANNOT DO LICENSING" : {
@@ -820,6 +814,9 @@
 
     },
     "What will you play today?" : {
+
+    },
+    "Who wants to play?" : {
 
     },
     "You’ve landed on..." : {
