@@ -315,22 +315,22 @@ public struct ClassicStyle {
                     if !handIndicatorShown {
                         var handImageName:String? = nil
                         if viewModel.keyboardNumber == 1  {
-                            handImageName = "hand_right_green"
+                            handImageName = "figma_hand_right"
                         }
                         if viewModel.keyboardNumber == 2 {
-                            handImageName = "hand_left_green"
+                            handImageName = "figma_hand_left"
                         }
                         if let handImageName = handImageName {
                             let image = Image(handImageName)//.renderingMode(.template)
                             let resolved = context.resolve(image)
-                            let targetWidth: CGFloat = sfKeyWidth * 0.70
+                            let targetWidth: CGFloat = sfKeyWidth * 0.55
                             let originalSize = resolved.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
                             let drawRect = CGRect(
                                 x: (sfKeyWidth - targetWidth) * 0.50,
-                                y: 20,
+                                y: sfKeyHeight * 0.5,
                                 width: targetWidth,
                                 height: targetHeight
                             )

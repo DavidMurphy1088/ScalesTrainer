@@ -66,19 +66,6 @@
     "%@" : {
 
     },
-    "%@ - Win %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ - Win %2$@"
-          }
-        }
-      }
-    },
-    "%@ Badges" : {
-
-    },
     "%@ Grade Selection" : {
 
     },
@@ -109,7 +96,7 @@
     "𝄢" : {
 
     },
-    "😊 You  Won %@" : {
+    "😊 Nice Job" : {
 
     },
     "1. Check Email Account Configuration" : {
@@ -314,9 +301,6 @@
     "Grade %lld" : {
 
     },
-    "Hands ready?" : {
-
-    },
     "Hide Fingers" : {
       "comment" : "LegendView",
       "localizations" : {
@@ -483,19 +467,7 @@
     "Please select yout grade" : {
 
     },
-    "Practice Chart" : {
-
-    },
     "Practice Now" : {
-
-    },
-    "Practise Hands Together" : {
-
-    },
-    "Practise Left Hand" : {
-
-    },
-    "Practise Right Hand" : {
 
     },
     "Purchase" : {
@@ -538,9 +510,6 @@
 
     },
     "Results" : {
-
-    },
-    "Retry" : {
 
     },
     "Right Hand" : {
@@ -609,6 +578,9 @@
     "Select Grade" : {
 
     },
+    "Select Hands" : {
+
+    },
     "Select One" : {
 
     },
@@ -653,7 +625,7 @@
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
 
     },
-    "Sorry 😢 - %@" : {
+    "Sorry - %@" : {
 
     },
     "Sorry, no subscription is available yet" : {
@@ -668,22 +640,13 @@
     "Spin the wheel and get a surprise" : {
 
     },
-    "Start" : {
-
-    },
     "Start Analysis" : {
-
-    },
-    "Starting %@" : {
 
     },
     "Stats: %@" : {
 
     },
     "Stop Analysis" : {
-
-    },
-    "Stop Hearing" : {
 
     },
     "Stop Playing" : {
@@ -712,6 +675,9 @@
           }
         }
       }
+    },
+    "TBD ...New metronome needs design..." : {
+
     },
     "Tempo" : {
       "extractionState" : "manual",

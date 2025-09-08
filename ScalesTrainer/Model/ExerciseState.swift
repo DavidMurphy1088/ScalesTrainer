@@ -36,9 +36,12 @@ class ExerciseState : ObservableObject {
     private(set) var state:State = .exerciseNotStarted
     func setExerciseState(_ activityName:String, _ value:ExerciseState.State, _ msg:String? = nil) {
         if value != self.state {
+            //print("============ setExerciseState 🔴", "\tWas:", self.state, "New:",value)
             self.state = value
             self.activityName = activityName
+
             DispatchQueue.main.async {
+                
                 if self.state == .exerciseLost {
                     self.exerciseMessage = msg
                 }
@@ -47,6 +50,9 @@ class ExerciseState : ObservableObject {
                         self.exerciseMessage = nil
                     }
                 }
+//                if [.exerciseLost, .exerciseWon].contains(value) {
+//                    print("============ Ex State END 💜", "\tWas:", self.state, "New:",value)
+//                }
                 self.statePublished = value
             }
         }
@@ -58,6 +64,7 @@ class ExerciseState : ObservableObject {
     @Published private(set) var totalCorrectPublished: Int = 0
     var totalCorrect: Int = 0
     func bumpTotalCorrect() {
+        print("=============== bumpTotalCorrect 🤢", self.totalCorrect, self.numberToWin)
         if self.totalCorrect < self.numberToWin {
             self.totalCorrect += 1
             if self.totalCorrect == self.numberToWin {
@@ -96,23 +103,6 @@ class ExerciseState : ObservableObject {
         DispatchQueue.main.async {
             self.matches.append(value)
         }
-    }
-    
-    func getExerciseStatusMessage(badge:ExerciseBadge) -> String {
-        var msg = ""
-        let name = badge.name
-        switch self.statePublished {
-        case .exerciseStarted:
-            msg = "Win \(name) ✋"
-        case .exerciseLost:
-            msg = "🙄 Whoops, Wrong Note 🙄"
-
-        case .exerciseWon:
-            msg = "😊 Nice Job, You Won \(name) 😊"
-        default:
-            msg = ""
-        }
-        return (msg)
     }
     
     func removeMatch() {

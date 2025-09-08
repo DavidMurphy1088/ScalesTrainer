@@ -228,7 +228,7 @@ public class Score : ObservableObject, Encodable {
                     staffNote.setShowIsPlaying(true)
                     staffNoteFound = staffNote
                     DispatchQueue.global(qos: .background).async {
-                        usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+                        usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds)) 
                         DispatchQueue.main.async {
                             staffNote.setShowIsPlaying(false)
                         }

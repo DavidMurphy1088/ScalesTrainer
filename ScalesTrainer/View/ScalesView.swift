@@ -164,28 +164,41 @@ struct ScalesView: View {
     func StopProcessView(user:User) -> some View {
         VStack(spacing:0) {
             if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
-                //if exerciseState.statePublished == .exerciseStarted {
-                    HStack {
-                        let text = getStopButtonText(process: scalesModel.runningProcessPublished)
-                        Button(action: {
-                            scalesModel.setRunningProcess(.none)
-                            if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
-                                if user.settings.practiceChartGamificationOn {
-                                    ///Stopped by user before exercise process stopped it
-                                    if exerciseState.statePublished == .exerciseWon  {
-                                        //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
-                                    }
-                                    else {
-                                        exerciseState.setExerciseState("ScalesView, user stopped", .exerciseAborted)
-                                    }
+                HStack {
+                    let title = getStopButtonText(process: scalesModel.runningProcessPublished)
+//                        Button(action: {
+//                            scalesModel.setRunningProcess(.none)
+//                            if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+//                                if user.settings.practiceChartGamificationOn {
+//                                    ///Stopped by user before exercise process stopped it
+//                                    if exerciseState.statePublished == .exerciseWon  {
+//                                        //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
+//                                    }
+//                                    else {
+//                                        exerciseState.setExerciseState("ScalesView, user stopped", .exerciseAborted)
+//                                    }
+//                                }
+//                            }
+//                        }) {
+//                            Text("\(title)")
+//                        }
+//                        .buttonStyle(.borderedProminent)
+                    FigmaButton(title,
+                    action: {
+                        scalesModel.setRunningProcess(.none)
+                        if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+                            if user.settings.practiceChartGamificationOn {
+                                ///Stopped by user before exercise process stopped it
+                                if exerciseState.statePublished == .exerciseWon  {
+                                    //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
+                                }
+                                else {
+                                    exerciseState.setExerciseState("ScalesView, user stopped", .exerciseAborted)
                                 }
                             }
-                        }) {
-                            Text("\(text)")
                         }
-                        .buttonStyle(.borderedProminent)
-                    }
-                //}
+                    })
+                }
             }
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
@@ -193,33 +206,33 @@ struct ScalesView: View {
                     //MetronomeView()
                     //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
                     ///1.0.11 recording now has no lead in
-                    let text = "Stop Recording The Scale"
-                    Button(action: {
-                        scalesModel.setRunningProcess(.none)
-                    }) {
-                        Text("\(text)")
-                    }
-                    .buttonStyle(.borderedProminent)
+//                    let text = "Stop Recording The Scale"
+//                    Button(action: {
+//                        scalesModel.setRunningProcess(.none)
+//                    }) {
+//                        Text("\(text)")
+//                    }
+//                    .buttonStyle(.borderedProminent)
+                    FigmaButton("Stop Recording The Scale",
+                        action: {
+                            scalesModel.setRunningProcess(.none)
+                        })
                 }
             }
             
             if scalesModel.recordingIsPlaying {
-                Button(action: {
-                    AudioManager.shared.stopPlayingRecordedFile()
-                }) {
-                    Text("Stop Hearing")//.padding().font(.title2).hilighted(backgroundColor: .blue)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            
-//            if scalesModel.synchedIsPlaying {
 //                Button(action: {
-//                    scalesModel.setRunningProcess(.none)
+//                    AudioManager.shared.stopPlayingRecordedFile()
 //                }) {
 //                    Text("Stop Hearing")//.padding().font(.title2).hilighted(backgroundColor: .blue)
 //                }
 //                .buttonStyle(.borderedProminent)
-//            }
+                FigmaButton("Stop Hearing",
+                    action: {
+                        AudioManager.shared.stopPlayingRecordedFile()
+                    })
+            }
+
         }
     }
     
@@ -229,40 +242,24 @@ struct ScalesView: View {
         }
         return scale.hands.count == 1
     }
-    
+
     func SelectActionView() -> some View {
         VStack(spacing:0) {
             HStack(alignment: .top) {
                 if self.scaleIsAcousticCapable(scale: self.scale) {
                     Spacer()
                     HStack()  {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Fol\u{200B}low" : "Follow"
-                        Button(action: {
+                        FigmaButton("Follow",
+                        action: {
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
                             self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
                                                                 ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
 
                             self.directionIndex = 0
-                        }) {
-                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                        }
-                        //.buttonStyle(.bordered)
-                        .appButtonStyle(trim: true, color: AppOrange)
-                        if false {
-                            Button(action: {
-                                showHelp("Follow")
-                            }) {
-                                VStack {
-                                    Image(systemName: "questionmark.circle")
-                                        .imageScale(.large)
-                                        .font(.title2)
-                                        .foregroundColor(.green)
-                                }
-                            }
-                        }
+                        })
                     }
-                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                     //.padding(.horizontal, 0)
                 }
                 
@@ -270,7 +267,8 @@ struct ScalesView: View {
                     Spacer()
                     HStack() {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
-                        Button(action: {
+                        FigmaButton("Lead",
+                        action: {
                             if scalesModel.runningProcessPublished == .leadingTheScale {
                                 scalesModel.setRunningProcess(.none)
                             }
@@ -281,52 +279,29 @@ struct ScalesView: View {
                                                                     ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
                             }
                             self.directionIndex = 0
-                        }) {
-                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                        }
-                        .appButtonStyle(trim: true, color: AppOrange)
-                        .accessibilityIdentifier("button_lead")
-                        if false {
-                            Button(action: {
-                                showHelp("Lead")
-                            }) {
-                                VStack(spacing:0) {
-                                    Image(systemName: "questionmark.circle")
-                                        .imageScale(.large)
-                                        .font(.title2)//.bold()
-                                        .foregroundColor(.green)
-                                }
-                            }
-                        }
+                        })
+
                     }
-                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 }
                 
                 Spacer()
                 HStack {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
-                    FigmaButtonWithLabel(label: {
-                        //Text("Harmonic Minor")
-                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                    }, action: {
+                    FigmaButton(title,
+                    action: {
                         scalesModel.setRunningProcess(.playingAlongWithScale)
                         exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
                     })
-//                    Button(action: {
-//
-//                    }) {
-//
-//                    }
-                    //.appButtonStyle(trim: true)
-                    .figmaRoundedBackground()
                 }
-                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 
                 if self.scale.getBackingChords() != nil {
                     Spacer()
                     HStack {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
-                        Button(action: {
+                        FigmaButton(title,
+                        action: {
                             if scalesModel.runningProcessPublished == .backingOn {
                                 scalesModel.setRunningProcess(.none)
                             }
@@ -334,25 +309,10 @@ struct ScalesView: View {
                                 exerciseState.setExerciseState("Backing", .exerciseWithoutBadgesAboutToStart)
                                 scalesModel.setRunningProcess(.backingOn)
                             }
-                        }) {
-                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                        }
-                        .appButtonStyle(trim: true)
+                        })
                         
-                        if false {
-                            Button(action: {
-                                showHelp("Backing Track Harmony")
-                            }) {
-                                VStack {
-                                    Image(systemName: "questionmark.circle")
-                                        .imageScale(.large)
-                                        .font(.title2)//.bold()
-                                        .foregroundColor(.green)
-                                }
-                            }
-                        }
                     }
-                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                     //.padding(.horizontal, 0)
                 }
                 
@@ -360,7 +320,8 @@ struct ScalesView: View {
                 
                 HStack {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
-                    Button(action: {
+                    FigmaButton(title,
+                    action: {
                         if scalesModel.runningProcessPublished == .recordingScale {
                             scalesModel.setRunningProcess(.none)
                         }
@@ -368,55 +329,21 @@ struct ScalesView: View {
                             exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
                             scalesModel.setRunningProcess(.recordingScale)
                         }
-                        
-                    }) {
-                        Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                    }
-                    .appButtonStyle(trim: true)
-                    
-                    if false {
-                        Button(action: {
-                            showHelp("Record")
-                        }) {
-                            VStack {
-                                Image(systemName: "questionmark.circle")
-                                    .imageScale(.large)
-                                    .font(.title2)
-                                    .foregroundColor(.green)
-                            }
-                        }
-                    }
+                    })
                 }
-                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
-                //.padding(.horizontal, 0)
-                
+
                 if scalesModel.recordedAudioFile != nil {
                     Spacer()
                     HStack {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Hear" : "Hear Recording"
-                        Button(action: {
+                        FigmaButton(title,
+                        action: {
                             AudioManager.shared.playRecordedFile()
-                        }) {
-                            Text(title).font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
-                        }
-                        .appButtonStyle(trim: true)
-                        if false {
-                            Button(action: {
-                                showHelp("Hear Recording")
-                            }) {
-                                VStack {
-                                    Image(systemName: "questionmark.circle")
-                                        .imageScale(.large)
-                                        .font(.title2)
-                                        .foregroundColor(.green)
-                                }
-                            }
-                        }
+                        })
                     }
-                    .padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
+                    //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                     //.padding(.horizontal, 0)
                 }
-                
                 Spacer()
             }
         }
@@ -523,26 +450,27 @@ struct ScalesView: View {
             VStack() {
                 let headerScale = UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.10
                 VStack() {
-                    if !self.badgesShowing {
-                        HStack {
-                            ScaleTitleView(scale: self.scale)
-                                .frame(height: UIScreen.main.bounds.height * headerScale)
-//                                .background(
-//                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
-//                                                   startPoint: .topLeading, endPoint: .bottomTrailing)                                                )
-//                                .outlinedStyleView()
-                                .figmaRoundedBackground()
-                            Spacer()
-                            HeaderView()
-                                .frame(height: UIScreen.main.bounds.height * headerScale)
-//                                .background(
-//                                    LinearGradient(colors: [Color.purple.opacity(headerOpacity ), Color.blue.opacity(headerOpacity )],
-//                                                   startPoint: .topLeading, endPoint: .bottomTrailing)
-//                                )
-                                .figmaRoundedBackground()
+                    if false {
+                        if !self.badgesShowing {
+                            HStack {
+                                ScaleTitleView(scale: self.scale)
+                                    .frame(height: UIScreen.main.bounds.height * headerScale)
+                                    .figmaRoundedBackground()
+                                Spacer()
+                                HeaderView()
+                                    .frame(height: UIScreen.main.bounds.height * headerScale)
+                                    .figmaRoundedBackground()
+                            }
+                            .padding(.bottom, spacingVertical)
+                            .padding(.horizontal, spacingHorizontal)
                         }
-                        .padding(.bottom, spacingVertical)
-                        .padding(.horizontal, spacingHorizontal)
+                    }
+                    
+                    if true {
+                        //Text("")
+                        MetronomeView()
+                            .padding(.bottom, spacingVertical)
+                            .padding(.horizontal, spacingHorizontal)
                     }
                     
                     if scalesModel.showKeyboard {
@@ -569,31 +497,17 @@ struct ScalesView: View {
                                 }
                             }
                         }
-                        //.outlinedStyleView(color: Color.clear)
                         .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
-                        
-                        //if UIDevice.current.userInterfaceIdiom != .phone {
-                        //                            if ![.brokenChordMajor, .brokenChordMinor].contains(self.scale.scaleType) {
-                        //                                if scalesModel.showLegend {
-                        //                                    LegendView(hands: self.scale.hands, scale: self.scale)
-                        //                                        .padding(.bottom, spacingVertical)
-                        //                                        .padding(.horizontal)
-                        //                                    //.border(Color.red, width: 1)
-                        //                                }
-                        //                            }
-                        //}
                     }
                     
                     if staffCanFit() {
                         if let score = scalesModel.getScore() {
                             VStack(spacing: 0) {
                                 if scalesModel.showStaff {
-                                    //ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false)
                                     ScoreView(scale: self.scale, score: score, showResults: false)
                                 }
                             }
-                            .figmaRoundedBackground()
                             .padding(.bottom, spacingVertical)
                             .padding(.horizontal, spacingHorizontal)
                         }
@@ -615,6 +529,7 @@ struct ScalesView: View {
                     if user.settings.practiceChartGamificationOn {
                         if let exerciseBadge = scalesModel.exerciseBadge {
                             ///Show the horizontal row of badges
+                            Spacer()
                             VStack(spacing:0) {
                                 if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
                                     ExerciseBadgesView(user: user, scale: self.scale,
@@ -622,7 +537,7 @@ struct ScalesView: View {
                                                        onClose: {
                                         exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
                                     })
-                                    .figmaRoundedBackground()
+                                    .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
                                     .padding(.bottom, self.spacingVertical)
                                     .onAppear() {
                                         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -643,34 +558,33 @@ struct ScalesView: View {
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
-                //.screenBackgroundStyle()
             }
 
             ///-------- Exercise state displays ----------
-            if scalesModel.runningProcess != .none {
-                if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
-                    StartCountdownView(scale: self.scale, activityName: exerciseState.activityName, callback: {status in
-                        if status == ExerciseState.State.exerciseStarted {
-                            exerciseState.setExerciseState("", .exerciseWithoutBadgesStarted)
-                        }
-                        else {
-                            exerciseState.setExerciseState("", .exerciseNotStarted)
-                        }
-                    })
-                    .frame(width: UIScreen.main.bounds.width * 0.60,
-                           height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.50))
-                }
-            }
+//            if scalesModel.runningProcess != .none {
+//                if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
+//                    StartCountdownView(scale: self.scale, activityName: exerciseState.activityName, callback: {status in
+//                        if status == ExerciseState.State.exerciseStarted {
+//                            exerciseState.setExerciseState("", .exerciseWithoutBadgesStarted)
+//                        }
+//                        else {
+//                            exerciseState.setExerciseState("", .exerciseNotStarted)
+//                        }
+//                    })
+//                    .frame(width: UIScreen.main.bounds.width * 0.60,
+//                           height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.50))
+//                }
+//            }
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if let badge = scalesModel.exerciseBadge {
                     VStack(spacing:0) {
                         StartFollowLeadView(badge: badge, scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
                             if cancelled {
-                                exerciseState.setExerciseState("Popup", .exerciseNotStarted)
+                                exerciseState.setExerciseState("Follow", .exerciseNotStarted)
                             }
                             else {
-                                exerciseState.setExerciseState("Popup", .exerciseStarted)
+                                exerciseState.setExerciseState("Follow", .exerciseStarted)
                             }
                         })
                         .frame(width: UIScreen.main.bounds.width * 0.60,
@@ -734,7 +648,8 @@ struct ScalesView: View {
         .commonToolbar(
             //title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
             //title: self.scale.getScaleDescriptionParts(name: true),
-            title: "Db Major Together, 2 Octaves, ♩=110, f or p",
+            //title: "Db Major Together, 2 Octaves, ♩=110, f or p",
+            title: self.scale.getScaleDescriptionParts(name:true),
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView

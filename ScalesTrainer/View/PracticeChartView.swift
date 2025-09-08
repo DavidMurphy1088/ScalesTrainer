@@ -183,7 +183,8 @@ struct PracticeChartView: View {
                     
                     VStack(spacing: 0) {
                         if let studentScales = studentScales {
-                            ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart)
+                            ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart,
+                                           navigationTitle: "Practise Chart")
                         }
                     }
                     Spacer()

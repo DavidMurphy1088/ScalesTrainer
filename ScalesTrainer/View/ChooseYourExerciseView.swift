@@ -77,7 +77,8 @@ struct ChooseYourExerciseView: View {
                 VStack {
                     headerView()
                     if let studentScales = studentScales {
-                        ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart)
+                        ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart,
+                                       navigationTitle: "Choose Your Exercise")
                     }
                     Spacer()
                 }

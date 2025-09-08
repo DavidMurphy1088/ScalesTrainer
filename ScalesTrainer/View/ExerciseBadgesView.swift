@@ -135,9 +135,9 @@ struct ExerciseBadgesView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
             VStack(spacing:0) {
-                HStack {
-                    Text("\(exerciseName) Badges").font(.title3)
-                }
+//                HStack {
+//                    Text("\(exerciseName) Badges").font(.title3)
+//                }
                 HStack(spacing: getDotSpace()) {
                     let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                     let imWidth = CGFloat(40)
@@ -151,32 +151,15 @@ struct ExerciseBadgesView: View {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
                                     let user = Settings.shared.getCurrentUser("Badges View")
-                                    //if user.settings.badgeStyle == 0 {
-                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c)
-                                            .rotationEffect(Angle.degrees(rotationAngle))
-                                            .offset(y: verticalOffset)
-                                            .onAppear {
-                                                withAnimation(Animation.easeOut(duration: animationDuration)) {
-                                                    rotationAngle = 360
-                                                    verticalOffset = 0
-                                                }
+                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c)
+                                        .rotationEffect(Angle.degrees(rotationAngle))
+                                        .offset(y: verticalOffset)
+                                        .onAppear {
+                                            withAnimation(Animation.easeOut(duration: animationDuration)) {
+                                                rotationAngle = 360
+                                                verticalOffset = 0
                                             }
-                                    //}
-//                                    else {
-//                                        if let user = Settings.shared.getCurrentUser() {
-//                                            Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-//                                                .resizable()
-//                                                .frame(width: imWidth)
-//                                                .rotationEffect(Angle.degrees(rotationAngle))
-//                                                .offset(y: verticalOffset)
-//                                                .onAppear {
-//                                                    withAnimation(Animation.easeOut(duration: animationDuration)) {
-//                                                        rotationAngle = 360
-//                                                        verticalOffset = 0
-//                                                    }
-//                                                }
-//                                        }
-//                                    }
+                                        }
                                 }
                             }
                             .frame(width: badgeIconSize, height: badgeIconSize)
@@ -203,11 +186,6 @@ struct ExerciseBadgesView: View {
                     }
                 }
                 .padding()
-//                Text("")
-//                    .onChange(of: exerciseBadgesList.totalBadges, {
-//                    verticalOffset = -50
-//                    rotationAngle = 0
-//                })
             }
             
             // ✅ Button in Top-Right Corner

@@ -107,7 +107,7 @@ public class PianoKeyModel: Identifiable, Hashable {
     public func setKeyPlaying() {
         self.keyIsSounding = true
         DispatchQueue.global(qos: .background).async {
-            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds)) 
             DispatchQueue.main.async {
                 self.keyIsSounding = false
                 self.keyboardModel.redraw()

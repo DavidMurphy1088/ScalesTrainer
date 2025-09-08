@@ -42,15 +42,34 @@ public struct ScoreView: View {
 
             ///End of staff lines. They must overlap staff lines
             .overlay(
+                ///End of staff
                 HStack(spacing: 0) {
                     Spacer()
-                    let height = score.getStaffs().count > 1 ? score.getBraceHeight() : score.getBraceHeight() * 0.24
+                    let height = score.getStaffs().count > 1 ? score.getBraceHeight() : score.getBraceHeight() * 0.23
                     let width = score.lineSpacing * 0.5
                     Rectangle()
                         .fill(Color.clear)
                         .border(Color.black, width: 1)
                         .frame(width:width, height: height)
                 }
+            )
+            .overlay(
+                //Begin of staff
+                HStack(spacing: 0) {
+                    let height = score.getStaffs().count > 1 ? score.getBraceHeight() : score.getBraceHeight() * 0.23
+                    let width = score.lineSpacing * 0.1
+                    Rectangle()
+                        .fill(Color.clear)
+                        .border(Color.black, width: 1)
+                        .frame(width:width, height: height)
+                    Spacer()
+                }
+            )
+
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white) //.opacity(opacityValue))
+                    //.shadow(color: .black.opacity(1.0), radius: 1, x: 4, y: 0)
             )
             ///Padding for right edge
             Text(" ")

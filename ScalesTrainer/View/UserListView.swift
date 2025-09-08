@@ -5,6 +5,7 @@ import SwiftUI
 import AVFoundation
 
 struct UserListView: View {
+    @ObservedObject var viewManager = ViewManager.shared
     @State private var users: [User] = []
     @State private var currentUser: User?
     let screenWidth = UIScreen.main.bounds.width
@@ -54,11 +55,10 @@ struct UserListView: View {
                                                 let sameUserChecked = settings.getCurrentUser("UserListView - is same user checked").id == user.id
                                                 if !sameUserChecked {
                                                     settings.setCurrentUser(id: user.id)
-                                                    
                                                 }
                                                 
                                             } label: {
-                                                let checked = ViewManager.shared.userNamePublished == user.name
+                                                let checked = viewManager.userNamePublished == user.name
                                                 Image(systemName: checked ? "checkmark.circle" : "circle")
                                                     .font(.title2)
                                                     .foregroundColor(.white)

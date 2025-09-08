@@ -192,15 +192,7 @@ struct FigmaButton: View {
 struct FigmaButtonWithLabel<Label: View>: View {
     var label: () -> Label
     var action: () -> Void
-    //                                    label: {
-    //                                        HStack {
-    //                                            Image("figma_tickmark")
-    //                                                .resizable()
-    //                                                .scaledToFit()
-    //                                                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
-    //                                            Text("Save")
-    //                                        }
-    //                                    },
+    
     init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
         self.action = action
         self.label = label
@@ -219,12 +211,12 @@ struct FigmaButtonWithLabel<Label: View>: View {
     }
 }
 
-
 struct RoundedBackgroundModifier: ViewModifier {
     var fillColor: Color = .gray
     var opacityValue: Double = 1.0
     let radius = 12.0
     let shadowOffset = 2.0
+    let border:Bool
     
     func body(content: Content) -> some View {
         content
@@ -237,14 +229,21 @@ struct RoundedBackgroundModifier: ViewModifier {
                     RoundedRectangle(cornerRadius: radius).fill(Color.white)
                     RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue))
                 }
+                .background(
+                    RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: border ? 1 : 0)
+                )
             )
     }
 }
-//236, 234, 238
+
 extension View {
     func figmaRoundedBackground(fillColor: Color = Figma.colorFromRGB(236, 234, 238),
                                 opacity opacityValue: Double = 1.0) -> some View {
-        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue))
+        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, border: false))
+    }
+    func figmaRoundedBackgroundWithBorder(fillColor: Color = Figma.colorFromRGB(236, 234, 238),
+                                opacity opacityValue: Double = 1.0) -> some View {
+        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, border: true))
     }
 }
 

@@ -9,6 +9,7 @@ struct ScalesGridCellView: View {
     let cellWidth:Double
     let color:Color
     @Binding var scoreTestScaleIds:[String]
+    let navigationTitle:String
     
     let opacityValue = 0.6
     @State var navigateToScale = false
@@ -59,24 +60,39 @@ struct ScalesGridCellView: View {
                 VStack(alignment: .leading) {
                     Text("")
                     if let scale = self.scaleToChart.scale {
-                        let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
-                        Text(scaleTitle).foregroundColor(.black)//.font(.title2)
                         HStack {
-                            if let handImage = Figma.getHandImage(scale: scale) {
-                                handImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: cellWidth * 0.1)
-                                    //.border(.red)
+                            Text(" ")
+                            VStack(alignment: .leading) {
+                                let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
+                                Text(scaleTitle)
+                                    .foregroundColor(.black)
+                                    .font(.title3)
+                                    .multilineTextAlignment(.leading)   // ensures left alignment on wraps
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                HStack {
+                                    if let handImage = Figma.getHandImage(scale: scale) {
+                                        handImage
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: cellWidth * 0.1)
+                                    }
+                                    let hands = scale.getScaleDescriptionParts(hands: true)
+                                    Text(hands).font(.body).foregroundColor(.black).font(.footnote)
+                                }
                             }
-                            let hands = scale.getScaleDescriptionParts(hands: true)
-                            Text(hands).font(.body).foregroundColor(.black)
                         }
                         if Settings.shared.isDeveloperModeOn() {
                             if let user = user {
                                 self.testDataButtons(user: user)
                                 Spacer()
                             }
+                        }
+                        HStack {
+                            Spacer()
+                            Image("figma_forward_button")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: cellWidth * 0.15)
                         }
                     }
                     Spacer()
@@ -105,7 +121,7 @@ struct ScalesGridCellView: View {
                     fadeIn = true
                 }
             }
-            .navigationTitle("Practice Chart")
+            .navigationTitle(navigationTitle)
             .navigationDestination(isPresented: $navigateToScale) {
                 if let user = user, let scale = scaleToChart.scale {
                     ScalesView(user:user, scale: scale)
@@ -123,6 +139,7 @@ struct ScalesGridCellView: View {
 struct ScalesGridView : View {
     let studentScales:StudentScales
     @Binding var refreshCount: Int
+    let navigationTitle:String
 
     let screenWidth = UIScreen.main.bounds.size.width
     let screenHeight = UIScreen.main.bounds.size.height
@@ -165,7 +182,7 @@ struct ScalesGridView : View {
         let cellPadding = screenWidth * 0.002
         let cellWidth = (screenWidth / Double(self.scalesPerRow)) * 0.8
         let cellHeight = (screenHeight) * 0.15
-        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.01 : 0.0)
+        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.01 : screenHeight * 0.006)
         
         ScrollView(.vertical) {
             VStack(alignment: .leading) {
@@ -178,7 +195,8 @@ struct ScalesGridView : View {
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
                                 color:getColor(n: rowIndex * 3 + colIndex),
-                                scoreTestScaleIds: $scoreTestScaleIds
+                                scoreTestScaleIds: $scoreTestScaleIds,
+                                navigationTitle: self.navigationTitle
                             )
                             .frame(width: cellWidth, height: cellHeight)
                         }

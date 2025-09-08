@@ -46,60 +46,27 @@ struct SelectHandForPractice: View {
                     .padding()
                     .figmaRoundedBackground(fillColor: titleColor)
                 Text("")
+                Text("")
+                Text("")
                 Text("In the exam \(nameFull) must be played with both hands.")
                 Text("But you can also practise \(name) hands separately.")
                 Text("")
                 Text("")
                 Text("")
-                FigmaButtonWithLabel(label: {
-                    VStack {
-                        HStack {
-                            Image("hand_left")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                            Image("hand_right")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height:imageSize)
-                        }
-                        Text("Practise Hands Together")
-                    }
-                }, action: {
+                FigmaButton("Practise Hands Together", action: {
                     setScaleForPractice(practiceHands: [0,1])
                     navigateToScale = true
                 })
                 Text("")
                 HStack {
-                    FigmaButtonWithLabel(label: {
-                        VStack {
-                            HStack {
-                                Image("hand_left")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height:imageSize)
-                            }
-                            Text("Practise Left Hand")
-                        }
-                    }, action: {
+                    FigmaButton("Practise Left Hand", action: {
                         setScaleForPractice(practiceHands: [1])
                         navigateToScale = true
                     })
-                    FigmaButtonWithLabel(label: {
-                        VStack {
-                            HStack {
-                                Image("hand_right")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height:imageSize)
-                            }
-                            Text("Practise Right Hand")
-                        }
-                    }, action: {
+                    FigmaButton("Practise Right Hand", action: {
                         setScaleForPractice(practiceHands: [0])
                         navigateToScale = true
                     })
-
                 }
                 Text("")
                 Text("")
@@ -109,10 +76,8 @@ struct SelectHandForPractice: View {
             Text("").padding()
         }
         .figmaRoundedBackground()
-        //.border(.red)
-        .onAppear {
-            //self.scale = ScalesModel.shared.scale
-        }
+
+        .navigationTitle("Select Hands")
         .navigationDestination(isPresented: $navigateToScale) {
             if let scale = self.scaleToPractice {
                 ScalesView(user: user, scale: scale)
