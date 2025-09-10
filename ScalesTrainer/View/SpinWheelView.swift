@@ -149,6 +149,7 @@ struct SpinTheWheelView: View {
         }
         .commonToolbar(
             title: "Spin the Wheel",
+            helpMsg: "",
             onBack: { dismiss() }
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -9,12 +9,14 @@ struct UserListView: View {
     @State private var users: [User] = []
     @State private var currentUser: User?
     let screenWidth = UIScreen.main.bounds.width
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func getUsers() -> [User] {
         let settings = Settings.shared
         var users:[User] = []
         users.append(contentsOf: settings.users.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending })
-        let addUser = User()
+        //FigmaColors().color(named: <#T##String#>)
+        let addUser = User(color: "green")
         addUser.boardAndGrade.grade = 0
         addUser.color = "gray"
         users.append(addUser)
@@ -32,16 +34,17 @@ struct UserListView: View {
         let settings = Settings.shared
         
         NavigationStack {
-            HStack {
-                Text("Who wants to play?").font(.title).padding()
+            if !compact {
+                HStack {
+                    Text("Who wants to play?").font(.title).padding()
+                }
+                .padding()
             }
-            .padding()
             HStack {
                 Text("        ").padding()
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
                         ForEach(users) { user in
-                            //VStack(alignment: .leading) {
                             VStack() {
                                 let boxSize = 0.1
                                 RoundedRectangle(cornerRadius: 12)
@@ -74,11 +77,13 @@ struct UserListView: View {
                                 
                                 Text("")
                                 let grade = user.boardAndGrade.grade
-                                Text(user.boardAndGrade.board.name).font(.headline).opacity(grade == 0 ? 0.0 : 0.5)
-                                Text("Grade \(grade)").font(.subheadline).opacity(grade == 0 ? 0.0 : 0.5)
+                                Text(user.boardAndGrade.board.name).font(.headline).opacity(grade == 0 ? 0.0 : 1.0).font(.title2)
+                                Text("Grade \(grade)").font(.subheadline).opacity(grade == 0 ? 0.0 : 0.7)
                                 Text("")
                                 let butLabel = user.boardAndGrade.grade == 0 ? "Add User" : "Edit User"
-                                FigmaNavLink(destination: UserEditView(addingFirstUser:false, user: user), font: .title2) {Text(butLabel)}
+                                FigmaNavLink(destination: UserEditView(addingFirstUser:false, user: user)) {
+                                    Text(butLabel)
+                                }
                             }
                             .padding()
                             .frame(width: UIScreen.main.bounds.width * 0.2)
@@ -94,8 +99,10 @@ struct UserListView: View {
             }
             .navigationTitle("Users")
             .navigationBarTitleDisplayMode(.inline)
+            //.toolbar(.hidden, for: .tabBar) // Hide the TabView
             .commonToolbar(
                 title: "Users",
+                helpMsg: "",
                 onBack: {}
             )
         }

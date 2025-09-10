@@ -145,7 +145,9 @@ struct ActivitiesView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            ZStack {
+                Color(FigmaColors.shared.colorShades[0].1)
+                    .ignoresSafeArea()
                 VStack {
                     Text("How do you want to practise?").font(.title).padding()
                     HStack {
@@ -179,7 +181,7 @@ struct ActivitiesView: View {
             .navigationTitle("Activities") //Required to use to set as "back" name in child views
             .navigationBarTitleDisplayMode(.inline) //Required to use a custom toolbar .commonToolbar at the top of the nav stack
             .commonToolbar(
-                title: "Activities", onBack: {}
+                title: "Activities", helpMsg: "", onBack: {}
             )
         }
         .onAppear() {

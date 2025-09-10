@@ -653,7 +653,7 @@ public struct LicenseManagerView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                ToolbarTitleView(screenName: "Licence Subscriptions").padding(.vertical, 0)
+                ToolbarTitleView(screenName: "Licence Subscriptions", helpMsg: "").padding(.vertical, 0)
                 DetailedLicensesView()
                     //.screenBackgroundStyle()
                     .padding()

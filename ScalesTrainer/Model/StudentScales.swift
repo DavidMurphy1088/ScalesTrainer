@@ -192,7 +192,7 @@ class StudentScales: Codable {
             }
         }
         
-        var uniqueKeys = ["Any Key"]
+        var uniqueKeys:[String] = []
         for studentScale in studentScales {
             if let scale = studentScale.scale {
                 let name = scale.getScaleKeyName()

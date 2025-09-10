@@ -26,6 +26,7 @@ struct CodableColor: Codable {
 
 struct CommonToolbarModifier: ViewModifier {
     let title: String
+    let helpMsg: String
     let onBack: (() -> Void)?
     
     func body(content: Content) -> some View {
@@ -47,7 +48,7 @@ struct CommonToolbarModifier: ViewModifier {
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
-                ToolbarTitleView(screenName: title)
+                ToolbarTitleView(screenName: title, helpMsg: helpMsg)
                     .padding(.vertical, 0)
             }
         }
@@ -57,16 +58,54 @@ struct CommonToolbarModifier: ViewModifier {
 extension View {
     func commonToolbar(
         title: String,
+        helpMsg: String,
         onBack: (() -> Void)? = nil
     ) -> some View {
         self.modifier(CommonToolbarModifier(
             title: title,
+            helpMsg: helpMsg,
             onBack: onBack
         ))
     }
 }
 
 //========== Figma
+
+class FigmaColors {
+    static let shared = FigmaColors()
+    var primaryColors:[(String, Color)] = []
+    var colorShades:[(String, Color)] = []
+    func makeColor(red: Int, green: Int, blue: Int) -> Color {
+        return Color(
+            .sRGB,
+            red: Double(red) / 255.0,
+            green: Double(green) / 255.0,
+            blue: Double(blue) / 255.0,
+            opacity: 1.0
+        )
+    }
+    init() {
+        primaryColors.append(("purple", makeColor(red: 62, green: 42, blue: 80)))
+        primaryColors.append(("pink  ", makeColor(red: 255, green: 83, blue: 108)))
+        primaryColors.append(("orange", makeColor(red: 250, green: 162, blue: 72)))
+        primaryColors.append(("green", makeColor(red: 156, green: 215, blue: 98)))
+        primaryColors.append(("blue", makeColor(red: 98, green: 202, blue: 215)))
+        colorShades.append(("green", makeColor(red: 196, green: 231, blue: 161)))
+        colorShades.append(("blue", makeColor(red: 161, green: 223, blue: 100)))
+    }
+    
+    func color(named name: String) -> Color {
+        if let match = primaryColors.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespaces) == name.lowercased().trimmingCharacters(in: .whitespaces) }) {
+            return match.1
+        }
+        return .clear
+    }
+    
+    func allColorNames() -> [String] {
+        return primaryColors.map { $0.0.trimmingCharacters(in: .whitespaces) }
+    }
+}
+
 class Figma {
     static let background = Color(rgbHex: "#FEFEFE")
     static let red = Color(red: 255, green: 83, blue: 108, opacity: 1.0)
@@ -123,10 +162,11 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
     var destination: Destination
     var font: Font
     var label: () -> Label
-
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    
     init(
         destination: Destination,
-        font: Font, // = .title2, // default value
+        font: Font  = .title2,
         @ViewBuilder label: @escaping () -> Label
     ) {
         self.destination = destination
@@ -135,21 +175,41 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
     }
 
     var body: some View {
-        NavigationLink(destination: destination) {
-            label()
-            .font(font)
-            .foregroundColor(.black)
-            .padding()
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.9), radius: 2, x: 0, y: 2)
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.black, lineWidth: 1)
-                }
-            )
+        if compact {
+            NavigationLink(destination: destination) {
+                label()
+                .font(font)
+                .foregroundColor(.black)
+                .padding(6)
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.9), radius: 2, x: 0, y: 2)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.black, lineWidth: 1)
+                    }
+                )
+            }
         }
+        else {
+            NavigationLink(destination: destination) {
+                label()
+                .font(font)
+                .foregroundColor(.black)
+                .padding()
+                .background(
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.9), radius: 2, x: 0, y: 2)
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.black, lineWidth: 1)
+                    }
+                )
+            }
+        }
+        
     }
 }
 
@@ -158,6 +218,8 @@ struct FigmaButton: View {
     let text:String
     let imageName:String?
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 16
+    let roundRadius = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 12.0
+    let vertPadding = UIDevice.current.userInterfaceIdiom == .phone ? 2.0 : 12.0
     
     init(_ text:String, imageName:String? = nil, action: @escaping () -> Void) {
         self.action = action
@@ -179,9 +241,10 @@ struct FigmaButton: View {
                             .frame(height: iconSize)   // matches text size
                     }
                 }
-                .padding()
+                .padding(.vertical, vertPadding)
+                .padding(.horizontal)
                 .background(
-                    RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: roundRadius).stroke(Color.black, lineWidth: 1)
                 )
                 .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
             }
@@ -192,6 +255,7 @@ struct FigmaButton: View {
 struct FigmaButtonWithLabel<Label: View>: View {
     var label: () -> Label
     var action: () -> Void
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
         self.action = action
@@ -214,12 +278,17 @@ struct FigmaButtonWithLabel<Label: View>: View {
 struct RoundedBackgroundModifier: ViewModifier {
     var fillColor: Color = .gray
     var opacityValue: Double = 1.0
-    let radius = 12.0
+    let radius = UIDevice.current.userInterfaceIdiom == .phone ? 12.0 : 12.0
     let shadowOffset = 2.0
     let border:Bool
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func body(content: Content) -> some View {
         content
+//            .background(
+//                RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue)))
+//            .background(
+//                RoundedRectangle(cornerRadius: radius).stroke(Color.red, lineWidth: border ? 2 : 0))//.offset(y: -4)
             .background(
                 ZStack {
                     //shadow box
@@ -230,7 +299,7 @@ struct RoundedBackgroundModifier: ViewModifier {
                     RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue))
                 }
                 .background(
-                    RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: border ? 1 : 0)
+                    RoundedRectangle(cornerRadius: radius).stroke(Color.black, lineWidth: border ? 1 : 0)
                 )
             )
     }
@@ -306,12 +375,31 @@ extension Button {
     }
 }
 
-/// Title view at the top of every nav stack
+/// ================ Title view at the top of every nav stack =================
+
+struct ToolbarTitleHelpView: View {
+    let helpMessage:String
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            Text(helpMessage.count == 0 ? "Some help message...." : helpMessage)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.headline)
+        }
+        .padding()
+        .padding()
+        .background(FigmaColors().color(named: "green"))
+    }
+}
+
 struct ToolbarTitleView: View {
     let screenName: String
-    //@ObservedObject var user:UserDisplayed = ViewManager.shared.userDisplayed
+    let helpMsg: String
     @ObservedObject var viewManager = ViewManager.shared
-
+    @State var showHelp = false
+    
     let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 35.0
     func firstLetter(user:String) -> String {
         guard let first = user.first else {
@@ -324,13 +412,19 @@ struct ToolbarTitleView: View {
         HStack {
             HStack {
                 if viewManager.gradePublished > 0 {
-                    Text("?")
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
-                
+                    Button(action: {
+                        self.showHelp = true
+                    }) {
+                        Text("?")
+                            .padding(8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.gray, lineWidth: 1)
+                            )
+                    }
+                    .popover(isPresented: $showHelp) {
+                        ToolbarTitleHelpView(helpMessage: helpMsg)
+                    }
                     Rectangle()
                         .fill(Color.gray)
                         .frame(width: 1, height: 50)
@@ -466,16 +560,22 @@ struct ConfettiView: UIViewRepresentable {
             emitter.emitterSize = CGSize(width: uiView.bounds.width, height: 1)
             
             // Define several colors for variety
-            let colors: [UIColor] = [
-                .systemRed,
-                .systemBlue,
-                .systemGreen,
-                .systemYellow,
-                .systemPurple,
-                .systemOrange,
-                .systemPink,
-                .systemTeal
-            ]
+            var colors: [UIColor] = []
+            //= [
+//                .systemRed,
+//                .systemBlue,
+//                .systemGreen,
+//                .systemYellow,
+//                .systemPurple,
+//                .systemOrange,
+//                .systemPink,
+//                .systemTeal
+//            ]
+            let figmaColors = FigmaColors()
+            for color in figmaColors.primaryColors {
+                let c = color.1
+                colors.append(UIColor(c))
+            }
             
             // Create different emitter cells for each color
             var cells: [CAEmitterCell] = []
@@ -506,7 +606,10 @@ struct ConfettiView: UIViewRepresentable {
     
     // Calculate appropriate confetti size based on screen width
     private func calculateConfettiSize(forScreenWidth width: CGFloat) -> CGFloat {
-        let percentage: CGFloat = width < 400 ? 0.05 : (width < 800 ? 0.04 : 0.025)
+        //let percentage: CGFloat = 0.05
+        //let percentage: CGFloat = width < 400 ? 0.05 : (width < 800 ? 0.04 : 0.04)
+        let percentage: CGFloat = width < 400 ? 0.05 : (width < 800 ? 0.04 : 0.04)
+        
         let size = width * percentage * 2.0
         let minSize: CGFloat = 30
         //let maxSize: CGFloat = 100
@@ -588,10 +691,38 @@ struct SinglePickList<Item: Hashable>: View {
     let onPick: (Item, Int) -> Void
     @State private var selectedIndex: Int?
     @Environment(\.dismiss) private var dismiss
-
+    
     var body: some View {
-        Text(title).font(.title).padding()
         VStack {
+            ScrollView {
+                LazyVStack {
+                    ForEach(items.indices, id: \.self) { i in
+                        let isSelected = (selectedIndex == i)
+                        Button {
+                            selectedIndex = i
+                            onPick(items[i], i)
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Text(label(items[i]))
+                                //Spacer()
+//                                if isSelected {
+//                                    Image(systemName: "checkmark")
+//                                }
+                            }
+                            .padding()
+                            //.background(FigmaColors().color(named: "green"))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+            
+    var body1: some View {
+        VStack {
+            //Text(title).font(.title).padding()
             List {
                 ForEach(items.indices, id: \.self) { i in
                     let isSelected = (selectedIndex == i)
@@ -602,26 +733,29 @@ struct SinglePickList<Item: Hashable>: View {
                     } label: {
                         HStack {
                             Text(label(items[i]))
-                            Spacer()
+                            //Spacer()
                             if isSelected {
                                 Image(systemName: "checkmark")
                             }
                         }
+                        //.background(FigmaColors().color(named: "green"))
                     }
                     .buttonStyle(.plain)
                 }
             }
+            //.padding()
+            //.background(FigmaColors().color(named: "green"))
 //            .background(
 //                RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
 //            )
             Spacer()
         }
+        //.frame(width: UIScreen.main.bounds.width * 0.2, height: UIScreen.main.bounds.height * 0.3)
         .onAppear {
             if let idx = initiallySelectedIndex, items.indices.contains(idx) {
                 selectedIndex = idx
             }
         }
-        .navigationTitle("Select One")
     }
 }
 

@@ -187,10 +187,10 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                     scaleMotion: .similarMotion, octaves: octaves, hands: hand,
                                     minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor,
-                                    scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                    scaleMotion: .similarMotion, octaves: octaves, hands: hand,
                                     minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMinor,
-                                    scaleMotion: .similarMotion, octaves: octaves, hands: [0],
+                                    scaleMotion: .similarMotion, octaves: octaves, hands: hand,
                                     minTempo: arpeggioTempo, dynamicTypes: dynamicTypesArpgeggio, articulationTypes: articulationTypes))
             }
         }
@@ -547,7 +547,6 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                         minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                     scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: minorType, scaleMotion: .similarMotion, octaves: 2, hands: [hand],
                                         minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-                    
                 }
             }
             

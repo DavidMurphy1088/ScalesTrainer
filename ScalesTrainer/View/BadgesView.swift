@@ -107,7 +107,7 @@ struct BadgesView: View {
             .padding(.leading, leftEdge)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .commonToolbar(
-                title: getScreenTitle()
+                title: getScreenTitle(), helpMsg: ""
             )
         }
         .onAppear() {

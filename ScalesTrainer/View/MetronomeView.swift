@@ -55,19 +55,26 @@ struct SliderWithMarkers: View {
 }
 
 struct MetronomeView: View {
+    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.defaultMinListRowHeight) var systemSpacing
     let scalesModel = ScalesModel.shared
     @ObservedObject var metronome = Metronome.shared
     @State var beat = 0
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     var body: some View {
         HStack {
             Spacer()
             Text("")
-            Text("TBD ...New metronome needs design...").font(.headline).padding()
-            SliderWithMarkers()
+            Text("...metronome...").font(.headline).padding()
+            if !compact {
+                SliderWithMarkers()
+            }
             Text("")
             Spacer()
+            
         }
+        .padding(sizeClass == .regular ? systemSpacing : 0)
         .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
     }
 }

@@ -43,13 +43,38 @@ struct ChooseYourExerciseView: View {
             FigmaButton(self.selectedType.description, action: {
                 selectType = true
             })
+            .popover(isPresented: $selectType) {
+                let alreadySelected = self.getSelectedTypeIndex()
+                SinglePickList(title: "Exercise Types", items: self.scaleTypes,
+                               initiallySelectedIndex: alreadySelected) { selectedType, _ in
+                    if let studentScales = studentScales {
+                        setVisibleCells("SelectType", studentScales: studentScales,
+                                        typeFilter: selectedType, keyFilter: nil)
+                    }
+                    self.selectedType = selectedType
+                }
+            }
+            
             FigmaButton(self.selectedKey, action: {
                 selectKey = true
             })
+            .popover(isPresented: $selectKey) {
+                //ToolbarTitleHelpView(helpMessage: "some message test test test test test test test test test ")
+                let alreadySelected = self.getSelectedKeyIndex()
+                SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
+                    initiallySelectedIndex: alreadySelected) { selectedKey, _ in
+                    if let studentScales = studentScales {
+                        setVisibleCells("SelectType", studentScales: studentScales,
+                                        typeFilter: nil, keyFilter: selectedKey)
+                    }
+                    self.selectedKey = selectedKey
+                }
+                .frame(width: UIScreen.main.bounds.width * 0.1)
+            }
+            
             Spacer()
         }
     }
-    
     func getSelectedTypeIndex() -> Int {
         for i in 0..<self.scaleTypes.count {
             if self.scaleTypes[i] == self.selectedType {
@@ -86,9 +111,10 @@ struct ChooseYourExerciseView: View {
             }
         }
         .commonToolbar(
-            title: "Choose Your Exercise",
+            title: "Choose Your Exercise", helpMsg: "",
             onBack: { dismiss() }
         )
+        .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
             let user = Settings.shared.getCurrentUser("ChooseExercise view, .onAppear")
@@ -97,30 +123,7 @@ struct ChooseYourExerciseView: View {
             self.studentScales = studentScales
             setVisibleCells("OnAppear", studentScales: studentScales, typeFilter: .any, keyFilter: nil)
             self.scaleTypes = studentScales.getScaleTypes()
-            self.scaleKeys = studentScales.getScaleKeys()
-        }
-
-        .sheet(isPresented: $selectType) {
-            let alreadySelected = self.getSelectedTypeIndex()
-            SinglePickList(title: "Exercise Types", items: self.scaleTypes,
-                initiallySelectedIndex: alreadySelected) { selectedType, _ in
-                if let studentScales = studentScales {
-                    setVisibleCells("SelectType", studentScales: studentScales,
-                                    typeFilter: selectedType, keyFilter: nil)
-                }
-                self.selectedType = selectedType
-            }
-        }
-        .sheet(isPresented: $selectKey) {
-            let alreadySelected = self.getSelectedKeyIndex()
-            SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
-                initiallySelectedIndex: alreadySelected) { selectedKey, _ in
-                if let studentScales = studentScales {
-                    setVisibleCells("SelectType", studentScales: studentScales,
-                                    typeFilter: nil, keyFilter: selectedKey)
-                }
-                self.selectedKey = selectedKey
-            }
+            self.scaleKeys = ["Any Key"] + studentScales.getScaleKeys().sorted()
         }
 
         .onChange(of: viewManager.boardPublished) {oldValue, newValue in

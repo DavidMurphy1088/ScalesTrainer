@@ -180,7 +180,9 @@ struct SettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .commonToolbar(
-                title: "Settings", onBack: {}
+                title: "Settings",
+                helpMsg: "",
+                onBack: {}
             )
         }
         .onAppear() {

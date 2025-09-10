@@ -88,74 +88,74 @@ struct HandsView: View {
 
 /// ------------------ With badges exercises -----------------
 
-struct EndOfExerciseView: View {
-    let badge: ExerciseBadge
-    let scalesModel:ScalesModel
-    let exerciseMessage:String?
-    let callback: (_ retry:Bool, _ showResult:Bool) -> Void
-    let failed:Bool
-    
-    @State private var countdown = 0
-    @State private var isCountingDown = false
-    
-    var body: some View {
-        VStack {
-            if failed {
-                VStack {
-                    if let msg = exerciseMessage {
-                        VStack(spacing : 0) {
-                            Text("Sorry - \(msg)").font(.title2)
-                            Text("Try again?").font(.title2)
-                        }
-                        .padding()
-                    }
-                    HStack {
-                        FigmaButton("Back", action : {
-                            callback(false, false)
-                        })
-                        FigmaButton("Retry", action : {
-                            callback(true, false)
-                        })
-                    }
-                }
-            }
-            else {
-                //Text("😊 You  Won \(badge.name)").font(.largeTitle)
-                Text("😊 Nice Job").font(.largeTitle)
-                    .padding()
-                //            Text(badge.name).font(.largeTitle)
-                //                .padding()
-//                Image(badge.imageName)
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 120, height: 120)
+//struct EndOfExerciseView: View {
+//    let badge: ExerciseBadge
+//    let scalesModel:ScalesModel
+//    let exerciseMessage:String?
+//    let callback: (_ retry:Bool, _ showResult:Bool) -> Void
+//    let failed:Bool
+//    
+//    @State private var countdown = 0
+//    @State private var isCountingDown = false
+//    
+//    var body: some View {
+//        VStack {
+//            if failed {
+//                VStack {
+//                    if let msg = exerciseMessage {
+//                        VStack(spacing : 0) {
+//                            Text("Sorry - \(msg)").font(.title2)
+//                            Text("Try again?").font(.title2)
+//                        }
+//                        .padding()
+//                    }
+//                    HStack {
+//                        FigmaButton("Back", action : {
+//                            callback(false, false)
+//                        })
+//                        FigmaButton("Retry", action : {
+//                            callback(true, false)
+//                        })
+//                    }
+//                }
+//            }
+//            else {
+//                //Text("😊 You  Won \(badge.name)").font(.largeTitle)
+//                Text("😊 Nice Job").font(.largeTitle)
 //                    .padding()
-                
-                HStack {
-                    FigmaButton("Ok", action : {
-                        callback(false, false)
-                    })
-                    
-                    if Settings.shared.isDeveloperModeOn() {
-                        Button("Results") {
-                            callback(false, true)
-                        }
-                        .font(.title)
-                        .disabled(isCountingDown)
-                        .padding()
-                    
-                        FigmaButton("Results", action : {
-                            callback(false, true)
-                        })
-                    }
-                }
-            }
-        }
-        .foregroundColor(.black)
-        .padding()
-        .figmaRoundedBackgroundWithBorder()
-    }
-}
+//                //            Text(badge.name).font(.largeTitle)
+//                //                .padding()
+////                Image(badge.imageName)
+////                    .resizable()
+////                    .scaledToFit()
+////                    .frame(width: 120, height: 120)
+////                    .padding()
+//                
+//                HStack {
+//                    FigmaButton("Ok", action : {
+//                        callback(false, false)
+//                    })
+//                    
+//                    if Settings.shared.isDeveloperModeOn() {
+//                        Button("Results") {
+//                            callback(false, true)
+//                        }
+//                        .font(.title)
+//                        .disabled(isCountingDown)
+//                        .padding()
+//                    
+//                        FigmaButton("Results", action : {
+//                            callback(false, true)
+//                        })
+//                    }
+//                }
+//            }
+//        }
+//        .foregroundColor(.black)
+//        .padding()
+//        .figmaRoundedBackgroundWithBorder()
+//    }
+//}
 
 struct PianoStartNoteIllustrationView: View {
     let scalesModel:ScalesModel
@@ -193,64 +193,41 @@ struct StartFollowLeadView: View {
     
     var body: some View {
         let compact = UIDevice.current.userInterfaceIdiom == .phone
-        GeometryReader {geo in
-            VStack(spacing:0) {
-                //let imageSize = compact ? 0.2 : 0.2
-                if !compact {
-                    Spacer()
-                }
-                ZStack {
-                    Text("\(activityName)").font(.title) // - Win \(badge.name)").font(compact ? .title : .title)
-                        .padding()
+        VStack() { //spacing:0
 
-                    HStack {
-                        if scalesModel.scale.hands.count > 1 || scalesModel.scale.hands[0] == 0 {
-                            Spacer()
-                        }
-                        HandsView(scale: scalesModel.scale).padding().padding(.horizontal, geo.size.width * 0.25)
-                        if scalesModel.scale.hands.count > 1 || scalesModel.scale.hands[0] == 1 {
-                            Spacer()
-                        }
-                    }
-                    
-                }
-                if !compact {
-                    Spacer()
-                }
+            Text("\(activityName) Slowly").font(.title).padding()
+            let height = UIScreen.main.bounds.height
+            
+            //Relativly larger keys for phone
+            PianoStartNoteIllustrationView(scalesModel: scalesModel, keyHeight: height * (compact ? 0.17 : 0.12))
+                .padding()
 
-                PianoStartNoteIllustrationView(scalesModel: scalesModel, keyHeight: geo.size.height * 0.20)
-                    .frame(width: geo.size.width * 0.99, height: geo.size.height * 0.4)
-                    //.border(.red)
-                
-                if !compact {
-                    Spacer()
-                }
-                if isCountingDown {
-                    let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
-                    Text(message)
-                        .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-                        .foregroundColor(countdown == 0 ? AppOrange : Color(.black))
-                        .padding()
-                }
-                else {
-                    HStack {
-                        FigmaButton("Back", action : {
-                            callback(true)
-                        })
+            if isCountingDown {
+                let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
+                Text(message)
+                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
+                    .foregroundColor(countdown == 0 ? AppOrange : Color(.black))
+                    .padding()
+            }
+            else {
+                HStack {
+                    FigmaButton("Back", action : {
+                        callback(true)
+                    })
 
-                        FigmaButton("Start", action : {
-                            scalesModel.setRunningProcess(RunningProcess.none)
-                            startCountdown()
-                        })
-                    }
+                    FigmaButton("Start", action : {
+                        scalesModel.setRunningProcess(RunningProcess.none)
+                        startCountdown()
+                    })
                 }
+            }
+            if compact {
                 Spacer()
             }
+            else {
+                Text("").padding()
+            }
         }
-        //.background(Color.white.opacity(1.0))
-        //.cornerRadius(30)
-        //.overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.blue, lineWidth: 3))
-        //.shadow(radius: 10)
         .figmaRoundedBackgroundWithBorder()
     }
 

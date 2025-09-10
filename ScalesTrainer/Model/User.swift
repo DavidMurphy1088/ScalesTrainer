@@ -18,17 +18,12 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         return lhs.id == rhs.id
     }
     
-    init() {
+    init(color:String) {
         self.id = UUID()
         self.name = ""
         self.email = ""
         self.settings = UserSettings()
-        let colorNames = [
-            "red", "orange", "yellow", "green",
-            "mint", "teal", "cyan", "blue",
-            "indigo", "purple", "pink"
-        ]
-        self.color = colorNames.randomElement()!
+        self.color = color
         self.boardAndGrade = MusicBoardAndGrade(board: MusicBoard.getSupportedBoards()[0], grade: 1)
     }
     
@@ -43,13 +38,29 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     }
     
     func setColor() {
-        let colorNames = [
-            "red", "yellow", "green",
-            "mint", "teal",
-            "indigo"
-        ]
-        self.color = colorNames.randomElement()!
-
+        ///Select a color not already in use
+        if Settings.shared.users.count == 0 {
+            self.color = "green"
+            return
+        }
+        var colors = FigmaColors().allColorNames()
+        for i in 0..<Settings.shared.users.count {
+            let user = Settings.shared.users[i]
+            if user.id == self.id {
+                continue
+            }
+            if colors.contains(user.color) {
+                colors.removeAll { $0 == user.color }
+            }
+        }
+        if colors.count > 0 {
+            let r = Int.random(in : 0..<colors.count)
+            let color = colors[r]
+            self.color = color
+        }
+        else {
+            self.color = "green"
+        }
     }
     
     func updateFromUser(user:User) {

@@ -63,10 +63,16 @@
     "......" : {
 
     },
+    "...metronome..." : {
+
+    },
     "%@" : {
 
     },
     "%@ Grade Selection" : {
+
+    },
+    "%@ Slowly" : {
 
     },
     "%lld" : {
@@ -94,9 +100,6 @@
 
     },
     "𝄢" : {
-
-    },
-    "😊 Nice Job" : {
 
     },
     "1. Check Email Account Configuration" : {
@@ -581,9 +584,6 @@
     "Select Hands" : {
 
     },
-    "Select One" : {
-
-    },
     "Select the Minor Type" : {
 
     },
@@ -623,9 +623,6 @@
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
-
-    },
-    "Sorry - %@" : {
 
     },
     "Sorry, no subscription is available yet" : {
@@ -675,9 +672,6 @@
           }
         }
       }
-    },
-    "TBD ...New metronome needs design..." : {
-
     },
     "Tempo" : {
       "extractionState" : "manual",
@@ -738,9 +732,6 @@
     "To get started please enter your name, Music Board and Grade." : {
 
     },
-    "Try again?" : {
-
-    },
     "Unable to Send Email" : {
 
     },
@@ -769,6 +760,9 @@
           }
         }
       }
+    },
+    "Viewing Direction" : {
+
     },
     "We hope you enjoy your experience using Scales Academy." : {
 

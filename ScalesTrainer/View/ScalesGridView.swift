@@ -56,9 +56,12 @@ struct ScalesGridCellView: View {
             }
         }) {
             HStack(alignment: .top) {
+                let compact = UIDevice.current.userInterfaceIdiom == .phone 
                 Text("")
                 VStack(alignment: .leading) {
-                    Text("")
+                    if !compact {
+                        Text("")
+                    }
                     if let scale = self.scaleToChart.scale {
                         HStack {
                             Text(" ")
@@ -74,7 +77,10 @@ struct ScalesGridCellView: View {
                                         handImage
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(height: cellWidth * 0.1)
+                                            .frame(height: cellWidth * 0.16)
+                                            .contrast(1.2)
+                                            .brightness(-0.15)
+                                            //.saturation(0.8) // Slightly desaturate for heavier look
                                     }
                                     let hands = scale.getScaleDescriptionParts(hands: true)
                                     Text(hands).font(.body).foregroundColor(.black).font(.footnote)
@@ -87,12 +93,14 @@ struct ScalesGridCellView: View {
                                 Spacer()
                             }
                         }
-                        HStack {
-                            Spacer()
-                            Image("figma_forward_button")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: cellWidth * 0.15)
+                        if !compact {
+                            HStack {
+                                Spacer()
+                                Image("figma_forward_button")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: cellWidth * 0.15)
+                            }
                         }
                     }
                     Spacer()
@@ -179,17 +187,17 @@ struct ScalesGridView : View {
     }
     
     var body: some View {
-        let cellPadding = screenWidth * 0.002
+        //let cellPadding = screenWidth * 0.002
         let cellWidth = (screenWidth / Double(self.scalesPerRow)) * 0.8
         let cellHeight = (screenHeight) * 0.15
-        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.01 : screenHeight * 0.006)
+        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.02 : screenHeight * 0.004)
         
         ScrollView(.vertical) {
             VStack(alignment: .leading) {
                 ForEach(Array(scaleGridRowCols.enumerated()), id: \.offset) { (rowIndex, row) in
                     HStack {
                         ForEach(Array(row.enumerated()), id: \.offset) { (colIndex, scaleToChart) in
-                            let scoreTestDataExists = self.scoreTestScaleIds.contains(scaleToChart.scaleId)
+                            //let scoreTestDataExists = self.scoreTestScaleIds.contains(scaleToChart.scaleId)
                             ScalesGridCellView(
                                 user:user,
                                 scaleToChart: scaleToChart,

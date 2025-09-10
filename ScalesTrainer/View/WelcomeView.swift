@@ -11,7 +11,6 @@ struct WelcomeView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                //Text("").padding(6 * systemPadding)
                 HStack {
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         Text("").padding()
@@ -29,7 +28,9 @@ struct WelcomeView: View {
                             Text("scales academy").font(.title)
                             Spacer()
                         }
-                        Text("").padding()
+                        if UIDevice.current.userInterfaceIdiom == .pad {
+                            Text("").padding()
+                        }
                         Text("").padding()
                         Text("Welcome to ")
                         Text("Scales Academy")
@@ -37,14 +38,15 @@ struct WelcomeView: View {
                         Text("")
                         Text("We hope you enjoy your experience using Scales Academy.")
                         Text("To get started please enter your name, Music Board and Grade.")
-                        Text("").padding()
+                        if UIDevice.current.userInterfaceIdiom == .pad {
+                            Text("").padding()
+                        }
                         
                         let defaultBoard = MusicBoard.getSupportedBoards()[0]
                         FigmaNavLink(destination: UserEditView(
                             addingFirstUser: true,
-                            user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0))),
-                                    font: .title2) {
-                            Text("Get Started")//.bold()
+                            user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0)))) {
+                            Text("Get Started")
                         }
                     }
                     Spacer()

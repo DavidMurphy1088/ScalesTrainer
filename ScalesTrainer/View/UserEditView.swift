@@ -64,6 +64,8 @@ public struct UserEditView: View {
     //@State private var saveEnabled = false
     @State private var sheetNonce = UUID()
     @State private var showDeleteAlert = false
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    let colors = FigmaColors()
     
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
         var grade = 0
@@ -79,7 +81,16 @@ public struct UserEditView: View {
         }
         return user.boardAndGrade.grade > 0
     }
-
+    
+    func getColor(name:String) -> Color {
+        if name == "Trinity" {
+            return colors.color(named: "green")
+        }
+        else {
+            return colors.color(named: "blue")
+        }
+    }
+    
     public var body: some View {
         HStack {
             Text("  ")
@@ -154,8 +165,9 @@ public struct UserEditView: View {
                     }
                 }
                 .padding()
-
-                Text("")
+                if !compact {
+                    Text("")
+                }
                 VStack(alignment: .leading) {
                     TextField("Please enter your name", text: $userName)
                         .focused($nameFieldFocused)
@@ -164,8 +176,8 @@ public struct UserEditView: View {
                         .cornerRadius(8)
                         .foregroundColor(.black)
                         .font(.body)
-                        .frame(width: UIScreen.main.bounds.width * 0.2)
-                    if UIDevice.current.userInterfaceIdiom != .phone {
+                        .frame(width: UIScreen.main.bounds.width * 0.3)
+                    if UIDevice.current.userInterfaceIdiom == .pad {
                         Text("")
                         Text("Your Grade").font(.title2)
                         Text("Note: Only one grade can be active at one time.")
@@ -179,17 +191,21 @@ public struct UserEditView: View {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
+                        
                         ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
                             VStack {
-                                let boxWidth = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.08)
-                                Image(board.imageName)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: boxWidth, height: boxWidth)
-                                    .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
-                                Text("")
-                                Text(board.name).font(.title2)
-                                Text("")
+//                                let boxWidth = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.08)
+//                                Image(board.imageName)
+//                                    .resizable()
+//                                    .scaledToFill()
+//                                    .frame(width: boxWidth, height: boxWidth)
+//                                    .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
+                                Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
+                                Text(board.name).font(.title2).padding()
+                                    .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
+                                if !compact {
+                                    Text("")
+                                }
                                 FigmaButtonWithLabel(label: {
                                     Text("Select Grade")
                                 }, action: {
@@ -200,7 +216,7 @@ public struct UserEditView: View {
                                 })
                                 .padding()
                                 ///Make the full name last else the buttons dont line up horizontally
-                                if UIDevice.current.userInterfaceIdiom != .phone {
+                                if !compact {
                                     Text(board.fullName)//.font(.caption)
                                         .lineLimit(nil)                 // allow unlimited lines
                                         .multilineTextAlignment(.leading) // left-align
@@ -236,8 +252,10 @@ public struct UserEditView: View {
             }
         .commonToolbar(
             title: settings.isCurrentUserDefined() ? "Edit User" : "Let's set up your account",
+            helpMsg: "",
             onBack: { dismiss() }
         )
+        .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .alert(isPresented: $showErrorAlert) {
             Alert(
                 title: Text(errorMessage),

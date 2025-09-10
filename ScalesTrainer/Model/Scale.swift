@@ -434,7 +434,6 @@ public class Scale : Codable {
         for handIndex in [0,1] {
             var sequence = 0
             var nextMidi = getStartMidi(hand: handIndex, midi: firstMidi)
-            //scaleOffsetsForHand =
             
             self.scaleNoteState.append([])
             if self.scaleType == .trinityBrokenTriad {
@@ -583,6 +582,7 @@ public class Scale : Codable {
             }
         }
         
+        var debug = false
         ///Fingering
         for hand in [0,1] {
             setFingers(hand: hand)
@@ -602,11 +602,19 @@ public class Scale : Codable {
                     }
                 }
                 else {
-                    setFingerBreaks(hand: hand)
+                    if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished, .arpeggioDiminishedSeventh].contains(self.scaleType) {
+                        
+                        setFingerBreaksArpeggio(hand: hand)
+                    }
+                    else {
+                        setFingerBreaks(hand: hand)
+                    }
                 }
             }
         }
-        
+        if debug {
+            debug1("End Init")
+        }
         Scale.createCount += 1
     }
     
@@ -1044,6 +1052,47 @@ public class Scale : Codable {
         }
     }
     
+    private func setFingerBreaksArpeggio(hand:Int) {
+        for note in self.scaleNoteState[hand] {
+            note.keyboardColourType = .none
+        }
+        
+        if self.scaleRoot.name == "B♭" {
+            if hand == 1 {
+                debug1("Start breaks")
+                print("======= here")
+            }
+        }
+        let halfway = self.scaleNoteState[hand].count/2 //-1
+        if hand == 0 {
+            var lastFinger = self.scaleNoteState[hand][0].finger
+            for i in 1...halfway {
+                let finger = self.scaleNoteState[hand][i].finger
+                let diff = finger - lastFinger
+                if diff < 0 {
+                    self.scaleNoteState[hand][i].keyboardColourType = .fingeringSequenceBreak
+                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardColourType = .fingeringSequenceBreak
+                }
+                lastFinger = self.scaleNoteState[hand][i].finger
+            }
+        }
+        else {
+            var lastFinger = self.scaleNoteState[hand][halfway].finger
+            for i in stride(from: halfway-1, to: 0, by: -1) {
+                let finger = self.scaleNoteState[hand][i].finger
+                let diff = finger - lastFinger
+                if diff < 0 {
+                    self.scaleNoteState[hand][i+1].keyboardColourType = .fingeringSequenceBreak ///break for the downward direction
+                    let mirror = halfway + (halfway - i) 
+                    if mirror < self.scaleNoteState[hand].count - 1 {
+                        self.scaleNoteState[hand][mirror].keyboardColourType = .fingeringSequenceBreak ///break for the upward direction
+                    }
+                }
+                lastFinger = self.scaleNoteState[hand][i].finger
+            }
+        }
+    }
+
     func getMinMax(handIndex:Int) -> (Int, Int) {
         let mid = self.scaleNoteState[handIndex].count / 2
         return (self.scaleNoteState[handIndex][0].midi, self.scaleNoteState[handIndex][mid].midi)
@@ -1567,6 +1616,19 @@ public class Scale : Codable {
         key = key.replacingOccurrences(of: ",", with: "")
         return key
     }
+    func getDescriptionTabbed() -> String {
+        var desc = ""
+        desc += getScaleDescriptionParts(name: true)
+        desc += "\n"
+        desc += getScaleDescriptionParts(hands: true)
+        desc += "\n"
+        desc += getScaleDescriptionParts(octaves: true)
+        desc += "\n"
+        desc += getScaleDescriptionParts(tempo: true)
+        desc += "\n"
+        desc += getScaleDescriptionParts(dynamics: true)
+        return desc
+    }
     
     func getScaleDescriptionParts(name:Bool? = nil, hands:Bool?=nil, octaves:Bool? = nil,
                                   tempo:Bool? = nil, dynamics:Bool? = nil) -> String {
@@ -1578,29 +1640,27 @@ public class Scale : Codable {
             }
         }
         if hands != nil {
-            //if self.scaleMotion != .contraryMotion {
-                if self.hands.count == 1 {
-                    var handName = ""
-                    if true {
-                        switch self.hands[0] {
-                        case 0: handName = "Right Hand"
-                        case 1: handName = "Left Hand"
-                        default: handName = "Together"
-                        }
+            if self.hands.count == 1 {
+                var handName = ""
+                if true {
+                    switch self.hands[0] {
+                    case 0: handName = "Right Hand"
+                    case 1: handName = "Left Hand"
+                    default: handName = "Together"
                     }
-                    else {
-                        switch self.hands[0] {
-                        case 0: handName = "RH"
-                        case 1: handName = "LH"
-                        default: handName = "Together"
-                        }
-                    }
-                    description = handName
                 }
                 else {
-                    description = "Together"
+                    switch self.hands[0] {
+                    case 0: handName = "RH"
+                    case 1: handName = "LH"
+                    default: handName = "Together"
+                    }
                 }
-            //}
+                description = handName
+            }
+            else {
+                description = "Together"
+            }
         }
         if let octaves = octaves {
             if octaves {
@@ -1611,9 +1671,9 @@ public class Scale : Codable {
             description = "\u{2669}"
             if self.timeSignature.top % 3 == 0 {
                 description += String("\u{00B7}")
-                description += " "
             }
-            description += "=\(self.minTempo)"
+            description += " "
+            description += "= \(self.minTempo)"
         }
         if dynamics != nil {
             var d = 0

@@ -44,6 +44,7 @@ struct ScalesView: View {
     
     @State private var isLandscape: Bool = false
     @State private var spacingHorizontal:CGFloat = 12
+    
     let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
 
     init(user:User, scale:Scale) {//}, handType:HandType) {
@@ -51,44 +52,39 @@ struct ScalesView: View {
         //self.handType = handType
         self.scale = scale
     }
-
-    func showHelp(_ topic:String) {
-        scalesModel.helpTopic = topic
-        self.helpShowing = true
-    }
     
     func SelectScaleParametersView() -> some View {
         HStack {
-            Spacer()
-            MetronomeView()
+            if false {
+                Spacer()
+                MetronomeView()
                 //.padding()
-            Spacer()
-            HStack(spacing: 0) {
-                let compoundTime = self.scale.timeSignature.top % 3 == 0
-                Image(compoundTime ? "crotchetDotted" : "crotchet")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+                Spacer()
+                HStack(spacing: 0) {
+                    let compoundTime = self.scale.timeSignature.top % 3 == 0
+                    Image(compoundTime ? "crotchetDotted" : "crotchet")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
                     ///Center it
                     //.padding(.bottom, 8)
                     //.padding(.horizontal, 0)
-                Text(" =").padding(.horizontal, 0)
-                    .padding(.horizontal, 0)
-            }
-            Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
-                ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
-                    Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
+                    Text(" =").padding(.horizontal, 0)
+                        .padding(.horizontal, 0)
                 }
+                Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
+                    ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
+                        Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
+                    }
+                }
+                .pickerStyle(.menu)
+                
+                .onChange(of: tempoIndex, {
+                    scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
+                })
             }
-            .pickerStyle(.menu)
-//            .onChange(of: tempoIndex, {
-//
-//            })
-            .onChange(of: tempoIndex, {
-                scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
-            })
 
-            if false {
+            if true {
                 Spacer()
                 Text(LocalizedStringResource("Viewing Direction"))
                 Picker("Select Value", selection: $directionIndex) {
@@ -467,10 +463,12 @@ struct ScalesView: View {
                     }
                     
                     if true {
-                        //Text("")
-                        MetronomeView()
-                            .padding(.bottom, spacingVertical)
-                            .padding(.horizontal, spacingHorizontal)
+                        HStack {
+                            MetronomeView()
+                                .padding(.bottom, spacingVertical)
+                                .padding(.horizontal, spacingHorizontal)
+                            SelectScaleParametersView()
+                        }
                     }
                     
                     if scalesModel.showKeyboard {
@@ -587,23 +585,21 @@ struct ScalesView: View {
                                 exerciseState.setExerciseState("Follow", .exerciseStarted)
                             }
                         })
-                        .frame(width: UIScreen.main.bounds.width * 0.60,
-                               height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.60))
                     }
                     .padding()
                 }
             }
-            if [.exerciseWon].contains(exerciseState.statePublished) {
-                if let badge = scalesModel.exerciseBadge {
-                    VStack(spacing:0) {
-                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
-                            exerciseState.setExerciseState("Popup", showResults ? .exerciseShowResults : .exerciseNotStarted)
-                        }, failed: false)
-                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)
-                    }
-                    .padding()
-                }
-            }
+//            if [.exerciseWon].contains(exerciseState.statePublished) {
+//                if let badge = scalesModel.exerciseBadge {
+//                    VStack(spacing:0) {
+//                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
+//                            exerciseState.setExerciseState("Popup", showResults ? .exerciseShowResults : .exerciseNotStarted)
+//                        }, failed: false)
+//                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)
+//                    }
+//                    .padding()
+//                }
+//            }
             
             if [.exerciseShowResults].contains(exerciseState.statePublished) {
                 if let score = scalesModel.getScore() {
@@ -615,21 +611,22 @@ struct ScalesView: View {
                 }
             }
 
-            if [.exerciseLost].contains(exerciseState.statePublished) {
-                if let badge = scalesModel.exerciseBadge {
-                    VStack(spacing:0) {
-                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
-                            if retry {
-                                exerciseState.setExerciseState("Popup", .exerciseAboutToStart)
-                            }
-                            else {
-                                exerciseState.setExerciseState("Popup", .exerciseNotStarted)
-                            }
-                        }, failed: true)
-                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)                    }
-                    .padding()
-                }
-            }
+//            if [.exerciseLost].contains(exerciseState.statePublished) {
+//                if let badge = scalesModel.exerciseBadge {
+//                    VStack(spacing:0) {
+//                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
+//                            if retry {
+//                                exerciseState.setExerciseState("Popup", .exerciseAboutToStart)
+//                            }
+//                            else {
+//                                exerciseState.setExerciseState("Popup", .exerciseNotStarted)
+//                            }
+//                        }, failed: true)
+//                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)                    }
+//                    .padding()
+//                }
+//            }
+
             if [.exerciseWon].contains(exerciseState.statePublished) {
                 ConfettiView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -643,16 +640,13 @@ struct ScalesView: View {
                     }
                 }
             }
-
         }
         .commonToolbar(
-            //title: ScalesModel.shared.scale.getScaleDescriptionParts(name: true),
-            //title: self.scale.getScaleDescriptionParts(name: true),
-            //title: "Db Major Together, 2 Octaves, ♩=110, f or p",
             title: self.scale.getScaleDescriptionParts(name:true),
+            helpMsg: self.scale.getDescriptionTabbed(),
             onBack: { dismiss() }
         )
-        //.toolbar(.hidden, for: .tabBar) // Hide the TabView
+        .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .edgesIgnoringSafeArea(.bottom)
         
         .sheet(isPresented: $helpShowing) {
@@ -791,5 +785,6 @@ struct ScalesView: View {
                 }
             }
         }
+
     }
 }

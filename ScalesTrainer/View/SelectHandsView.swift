@@ -14,6 +14,7 @@ struct SelectHandForPractice: View {
     @State var navigateToScale = false
     let imageSize = UIScreen.main.bounds.size.width * 0.05
     @State var scaleToPractice:Scale?
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     init(user:User, scale:Scale, titleColor:Color) {
         self.user = user
@@ -40,20 +41,26 @@ struct SelectHandForPractice: View {
             Text("").padding()
             VStack (alignment: .leading) {
                 Text("")
-                Text("")
-                Text("")
-                Text(nameFull).font(.title)
+                if !compact {
+                    Text("")
+                    Text("")
+                }
+                Text(nameFull).font(compact ? .title3 : .title2)
                     .padding()
                     .figmaRoundedBackground(fillColor: titleColor)
                 Text("")
-                Text("")
+                if !compact {
+                    Text("")
+                }
                 Text("")
                 Text("In the exam \(nameFull) must be played with both hands.")
                 Text("But you can also practise \(name) hands separately.")
                 Text("")
+                if !compact {
+                    Text("")
+                }
                 Text("")
-                Text("")
-                FigmaButton("Practise Hands Together", action: {
+                FigmaButton("Hands Together", action: {
                     setScaleForPractice(practiceHands: [0,1])
                     navigateToScale = true
                 })
@@ -85,6 +92,7 @@ struct SelectHandForPractice: View {
         }
         .commonToolbar(
             title: "Select Hands",
+            helpMsg: "",
             onBack: { dismiss() }
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)

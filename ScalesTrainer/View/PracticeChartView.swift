@@ -105,7 +105,8 @@ struct PracticeChartView: View {
         let currentDayOfWeekNum:Int
         @Binding var selectedDayColumn:Int
         @Binding var opacity:Double
-
+        let compact = UIDevice.current.userInterfaceIdiom == .phone
+        
         var body: some View {
             HStack(spacing: 12) {
                 HStack {
@@ -113,14 +114,10 @@ struct PracticeChartView: View {
                         let dayNameIndex = (currentDayOfWeekNum + dayIndex) % dayNames.count
                         Button(action: {
                             selectedDayColumn = dayIndex
-//                            opacity = 0.0
-//                            withAnimation(.easeIn(duration: 1.5)) {
-//                                opacity = 0.6
-//                            }
                         }) {
                             Text("\(dayNames[dayNameIndex])")
                                 .foregroundColor(dayIndex == selectedDayColumn ? .white : .primary)
-                                .padding(.vertical, 8)
+                                .padding(.vertical, compact ? 4 : 8)
                                 .padding(.horizontal, 16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -154,48 +151,68 @@ struct PracticeChartView: View {
 
     var body: some View {
         let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
+        let compact = UIDevice.current.userInterfaceIdiom == .phone
+        
         VStack(spacing: 0)  {
-            //VStack {
-                let screenWidth = UIScreen.main.bounds.size.width
-                let screenHeight = UIScreen.main.bounds.size.height
+            //let screenWidth = UIScreen.main.bounds.size.width
+            //let screenHeight = UIScreen.main.bounds.size.height
 
-                VStack {
-                    //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
-                    HStack {
-                        let minorLabel = self.selectedMinorType.description + " ▼"
-                        FigmaButton(minorLabel, action: { //imageName:"figma_down_arrowhead"
-                            showMinorTypeSelection = true
-                        })
-                        FigmaButton("Shuffle", imageName:"figma_shuffle", action: {
-                            cellOpacity = 0.0
-                            doShuffle()
-                            withAnimation(.easeIn(duration: 3.0)) {
-                                cellOpacity = 1.0
+            VStack {
+                //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
+                HStack {
+                    let minorLabel = self.selectedMinorType.description + " ▼"
+                    FigmaButton(minorLabel, action: { //imageName:"figma_down_arrowhead"
+                        showMinorTypeSelection = true
+                    })
+                    .popover(isPresented: $showMinorTypeSelection) {
+                        if let user = self.user {
+                            if let selectedMinorType = user.selectedMinorType {
+                                let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
+                                SinglePickList(title: "Minor Types", items: self.self.minorScaleTypes,
+                                               initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
+                                    self.selectedMinorType = selectedMinorType
+                                    user.selectedMinorType = selectedMinorType
+                                    Settings.shared.save()
+                                    if let studentScales = studentScales {
+                                        setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
+                                    }
+                                }
                             }
-                        })
-                        Spacer()
-                        SelectDayOfWeek(dayNames: self.dayNames, daysToShow: daysInChart, currentDayOfWeekNum: self.currentDayOfWeekNum,
-                                        selectedDayColumn: $selectedDayOffset, opacity: $cellOpacity)
-                            .frame(width: UIScreen.main.bounds.width * 0.3)
-                    }
-                    
-                    Text("")
-                    
-                    VStack(spacing: 0) {
-                        if let studentScales = studentScales {
-                            ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart,
-                                           navigationTitle: "Practise Chart")
                         }
                     }
-                    Spacer()
+                    FigmaButton("Shuffle", imageName:"figma_shuffle", action: {
+                        cellOpacity = 0.0
+                        doShuffle()
+                        withAnimation(.easeIn(duration: 3.0)) {
+                            cellOpacity = 1.0
+                        }
+                    })
+                    //if !compact {
+                        Spacer()
+                    //}
+                    SelectDayOfWeek(dayNames: self.dayNames, daysToShow: daysInChart,
+                                    currentDayOfWeekNum: self.currentDayOfWeekNum,
+                                    selectedDayColumn: $selectedDayOffset, opacity: $cellOpacity)
+                    .frame(width: UIScreen.main.bounds.width * (compact ? 0.4 : 0.3))
                 }
-            //}
+                
+                Text("")
+                
+                VStack(spacing: 0) {
+                    if let studentScales = studentScales {
+                        ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart,
+                                       navigationTitle: "Practise Chart")
+                    }
+                }
+                Spacer()
+            }
         }
         .padding(.leading, leftEdge)
         .commonToolbar(
-            title: "Practice Chart",
+            title: "Practice Chart", helpMsg: "",
             onBack: { dismiss() }
         )
+        .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
             let user = Settings.shared.getCurrentUser("Prac Chart .OnAppear")
@@ -218,7 +235,7 @@ struct PracticeChartView: View {
 //                    self.scalesInChart = scalesAndScores.map { $0.0 }
 //                }
             }
-            setVisibleCells("on appear", studentScales: studentScales, dayOffset: 0)
+            setVisibleCells("on appear", studentScales: studentScales, dayOffset: selectedDayOffset)
         }
         .onChange(of: selectedDayOffset) {oldValue, day in
             if let studentScales = studentScales {
@@ -226,20 +243,7 @@ struct PracticeChartView: View {
             }
         }
         .sheet(isPresented: $showMinorTypeSelection) {
-            if let user = self.user {
-                if let selectedMinorType = user.selectedMinorType {
-                    let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
-                    SinglePickList(title: "Minor Types", items: self.self.minorScaleTypes,
-                                   initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
-                        self.selectedMinorType = selectedMinorType
-                        user.selectedMinorType = selectedMinorType
-                        Settings.shared.save()
-                        if let studentScales = studentScales {
-                            setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
-                        }
-                    }
-                }
-            }
+
         }
         .onChange(of: viewManager.boardPublished) {oldValue, newValue in
             dismiss()
