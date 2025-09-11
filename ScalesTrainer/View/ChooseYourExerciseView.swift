@@ -17,9 +17,12 @@ struct ChooseYourExerciseView: View {
     @State private var selectedType:ScaleType = ScaleType.any
     @State private var scaleTypes:[ScaleType] = []
     
+    static let allKeys = "All Keys"
     @State private var selectKey = false
-    @State private var selectedKey:String = "All Keys"
+    @State private var selectedKey:String = allKeys
     @State private var scaleKeys:[String] = []
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    
     let leftEdge = UIScreen.main.bounds.size.width * 0.04
     
     func setVisibleCells(_ ctx:String, studentScales:StudentScales, typeFilter:ScaleType?, keyFilter:String?) {
@@ -30,7 +33,7 @@ struct ChooseYourExerciseView: View {
                     studentScale.setVisible(way: typeFilter == .any ? true : scale.scaleType == typeFilter)
                 }
                 if let keyFilter = keyFilter {
-                    studentScale.setVisible(way: keyFilter == "Any Key" ? true : scale.getScaleKeyName() == keyFilter)
+                    studentScale.setVisible(way: keyFilter == ChooseYourExerciseView.allKeys ? true : scale.getScaleKeyName() == keyFilter)
                 }
             }
         })
@@ -47,12 +50,14 @@ struct ChooseYourExerciseView: View {
                 let alreadySelected = self.getSelectedTypeIndex()
                 SinglePickList(title: "Exercise Types", items: self.scaleTypes,
                                initiallySelectedIndex: alreadySelected) { selectedType, _ in
+                    self.selectedKey = ChooseYourExerciseView.allKeys
                     if let studentScales = studentScales {
                         setVisibleCells("SelectType", studentScales: studentScales,
                                         typeFilter: selectedType, keyFilter: nil)
                     }
                     self.selectedType = selectedType
                 }
+                .presentationCompactAdaptation(.popover)
             }
             
             FigmaButton(self.selectedKey, action: {
@@ -61,15 +66,17 @@ struct ChooseYourExerciseView: View {
             .popover(isPresented: $selectKey) {
                 //ToolbarTitleHelpView(helpMessage: "some message test test test test test test test test test ")
                 let alreadySelected = self.getSelectedKeyIndex()
+                
                 SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
                     initiallySelectedIndex: alreadySelected) { selectedKey, _ in
+                    self.selectedType = ScaleType.any
                     if let studentScales = studentScales {
-                        setVisibleCells("SelectType", studentScales: studentScales,
+                        setVisibleCells("SelectKeys", studentScales: studentScales,
                                         typeFilter: nil, keyFilter: selectedKey)
                     }
                     self.selectedKey = selectedKey
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.1)
+                .presentationCompactAdaptation(.popover)
             }
             
             Spacer()
@@ -123,7 +130,15 @@ struct ChooseYourExerciseView: View {
             self.studentScales = studentScales
             setVisibleCells("OnAppear", studentScales: studentScales, typeFilter: .any, keyFilter: nil)
             self.scaleTypes = studentScales.getScaleTypes()
-            self.scaleKeys = ["Any Key"] + studentScales.getScaleKeys().sorted()
+            self.scaleKeys = [ChooseYourExerciseView.allKeys] + studentScales.getScaleKeys().sorted()
+            if selectedKey == ChooseYourExerciseView.allKeys {
+                setVisibleCells("SelectType", studentScales: studentScales,
+                                typeFilter: selectedType, keyFilter: nil)
+            }
+            else {
+                setVisibleCells("SelectKeys", studentScales: studentScales,
+                                typeFilter: nil, keyFilter: selectedKey)
+            }
         }
 
         .onChange(of: viewManager.boardPublished) {oldValue, newValue in

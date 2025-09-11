@@ -15,6 +15,7 @@ struct ScalesGridCellView: View {
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
     @State private var fadeIn = false
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func testDataButtons(user:User) -> some View {
         VStack {
@@ -69,7 +70,7 @@ struct ScalesGridCellView: View {
                                 let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
                                 Text(scaleTitle)
                                     .foregroundColor(.black)
-                                    .font(.title3)
+                                    .font(compact ? .callout : .title3)
                                     .multilineTextAlignment(.leading)   // ensures left alignment on wraps
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 HStack {
@@ -83,7 +84,7 @@ struct ScalesGridCellView: View {
                                             //.saturation(0.8) // Slightly desaturate for heavier look
                                     }
                                     let hands = scale.getScaleDescriptionParts(hands: true)
-                                    Text(hands).font(.body).foregroundColor(.black).font(.footnote)
+                                    Text(hands).font(compact ? .callout : .title3).foregroundColor(.black).font(.footnote)
                                 }
                             }
                         }
@@ -190,7 +191,7 @@ struct ScalesGridView : View {
         //let cellPadding = screenWidth * 0.002
         let cellWidth = (screenWidth / Double(self.scalesPerRow)) * 0.8
         let cellHeight = (screenHeight) * 0.15
-        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.02 : screenHeight * 0.004)
+        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.01 : screenHeight * 0.004)
         
         ScrollView(.vertical) {
             VStack(alignment: .leading) {

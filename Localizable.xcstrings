@@ -34,9 +34,6 @@
     " →" : {
 
     },
-    " =" : {
-
-    },
     " ●" : {
 
     },
@@ -61,9 +58,6 @@
 
     },
     "......" : {
-
-    },
-    "...metronome..." : {
 
     },
     "%@" : {
@@ -94,6 +88,9 @@
 
     },
     "♩  Late  " : {
+
+    },
+    "♩=%lld" : {
 
     },
     "𝄞" : {
@@ -467,7 +464,7 @@
     "Please enter your name" : {
 
     },
-    "Please select yout grade" : {
+    "Please select your grade" : {
 
     },
     "Practice Now" : {
@@ -578,9 +575,6 @@
     "Select" : {
 
     },
-    "Select Grade" : {
-
-    },
     "Select Hands" : {
 
     },
@@ -617,9 +611,6 @@
 
     },
     "Show Tap Data" : {
-
-    },
-    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sometimes, restarting your device can resolve issues related to email configurations." : {
@@ -760,9 +751,6 @@
           }
         }
       }
-    },
-    "Viewing Direction" : {
-
     },
     "We hope you enjoy your experience using Scales Academy." : {
 

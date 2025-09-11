@@ -14,8 +14,9 @@ struct ScalesView: View {
     @Environment(\.dismiss) var dismiss
     let user:User
     let scale:Scale
-    //let handType:HandType
-    
+    @Environment(\.horizontalSizeClass) var sizeClass
+    @Environment(\.defaultMinListRowHeight) var systemSpacing
+
     @ObservedObject private var scalesModel = ScalesModel.shared
     @ObservedObject private var exerciseState = ExerciseState.shared
 
@@ -53,86 +54,86 @@ struct ScalesView: View {
         self.scale = scale
     }
     
-    func SelectScaleParametersView() -> some View {
-        HStack {
-            if false {
-                Spacer()
-                MetronomeView()
-                //.padding()
-                Spacer()
-                HStack(spacing: 0) {
-                    let compoundTime = self.scale.timeSignature.top % 3 == 0
-                    Image(compoundTime ? "crotchetDotted" : "crotchet")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
-                    ///Center it
-                    //.padding(.bottom, 8)
-                    //.padding(.horizontal, 0)
-                    Text(" =").padding(.horizontal, 0)
-                        .padding(.horizontal, 0)
-                }
-                Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
-                    ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
-                        Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
-                    }
-                }
-                .pickerStyle(.menu)
-                
-                .onChange(of: tempoIndex, {
-                    scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
-                })
-            }
-
-            if true {
-                Spacer()
-                Text(LocalizedStringResource("Viewing Direction"))
-                Picker("Select Value", selection: $directionIndex) {
-                    ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
-                        if scalesModel.selectedScaleSegment >= 0 {
-                            Text("\(scalesModel.directionTypes[index])")
-                        }
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: directionIndex, {
-                    scalesModel.setSelectedScaleSegment(self.directionIndex)
-                })
-            }
-            
-            Spacer()
-            GeometryReader { geo in
-                HStack {
-                    Button(action: {
-                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
-                        scalesModel.setSelectedScaleSegment(self.directionIndex)
-                    }) {
-                        Image("arrow_up")
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: geo.size.height * 1.0)
-                            //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
-                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? AppOrange : Color.black)
-                    }
-                    Button(action: {
-                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
-                        scalesModel.setSelectedScaleSegment(self.directionIndex)
-                    }) {
-                        Image("arrow_down")
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: geo.size.height * 1.0)
-                            //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
-                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? AppOrange : Color.black)
-
-                    }
-                }
-            }
-            Spacer()
-        }
-    }
+//    func SelectScaleParametersView() -> some View {
+//        HStack {
+//            if false {
+//                Spacer()
+//                MetronomeView()
+//                //.padding()
+//                Spacer()
+//                HStack(spacing: 0) {
+//                    let compoundTime = self.scale.timeSignature.top % 3 == 0
+//                    Image(compoundTime ? "crotchetDotted" : "crotchet")
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(width: UIScreen.main.bounds.size.width * (compoundTime ? 0.02 : 0.015))
+//                    ///Center it
+//                    //.padding(.bottom, 8)
+//                    //.padding(.horizontal, 0)
+//                    Text(" =").padding(.horizontal, 0)
+//                        .padding(.horizontal, 0)
+//                }
+//                Picker(String(scalesModel.tempoChangePublished), selection: $tempoIndex) {
+//                    ForEach(scalesModel.tempoSettings.indices, id: \.self) { index in
+//                        Text("\(scalesModel.tempoSettings[index])").padding(.horizontal, 0)
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//                
+//                .onChange(of: tempoIndex, {
+//                    scalesModel.setTempo("ScalesView changeTempoIndex", self.tempoIndex)
+//                })
+//            }
+//
+//            if true {
+//                Spacer()
+//                Text(LocalizedStringResource("Viewing Direction"))
+//                Picker("Select Value", selection: $directionIndex) {
+//                    ForEach(scalesModel.directionTypes.indices, id: \.self) { index in
+//                        if scalesModel.selectedScaleSegment >= 0 {
+//                            Text("\(scalesModel.directionTypes[index])")
+//                        }
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//                .onChange(of: directionIndex, {
+//                    scalesModel.setSelectedScaleSegment(self.directionIndex)
+//                })
+//            }
+//            
+//            Spacer()
+//            GeometryReader { geo in
+//                HStack {
+//                    Button(action: {
+//                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
+//                        scalesModel.setSelectedScaleSegment(self.directionIndex)
+//                    }) {
+//                        Image("arrow_up")
+//                            .renderingMode(.template)
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(height: geo.size.height * 1.0)
+//                            //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
+//                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? AppOrange : Color.black)
+//                    }
+//                    Button(action: {
+//                        self.directionIndex = self.directionIndex == 0 ? 1 : 0
+//                        scalesModel.setSelectedScaleSegment(self.directionIndex)
+//                    }) {
+//                        Image("arrow_down")
+//                            .renderingMode(.template)
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fit)
+//                            .frame(height: geo.size.height * 1.0)
+//                            //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
+//                            .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? AppOrange : Color.black)
+//
+//                    }
+//                }
+//            }
+//            Spacer()
+//        }
+//    }
     
     func getStopButtonText(process: RunningProcess) -> String {
         let text:String
@@ -423,53 +424,56 @@ struct ScalesView: View {
     
     func HeaderView() -> some View {
         HStack {
-            Spacer()
-            SelectScaleParametersView()
-//            if UIDevice.current.userInterfaceIdiom == .phone {
-//                if isLandscape {
-//                    //HideAndShowView(compact: true)
-//                }
-//            }
-//            else {
-//                HideAndShowView(compact: false)
-//            }
-            Spacer()
+            let screenWidth = UIScreen.main.bounds.width
+            let screenHeight = UIScreen.main.bounds.height
+            let scale = 0.04
+            MetronomeView(width: screenWidth * scale, height: screenHeight * scale)
+                .frame(width: .infinity, height: screenHeight * scale)
+                .padding(sizeClass == .regular ? systemSpacing : 2)
+                .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
+            
+            HStack {
+                Button(action: {
+                    self.directionIndex = self.directionIndex == 0 ? 1 : 0
+                    scalesModel.setSelectedScaleSegment(self.directionIndex)
+                }) {
+                    Image("arrow_up")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: screenHeight * scale)
+                    //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? AppOrange : Color.black)
+                }
+                Button(action: {
+                    self.directionIndex = self.directionIndex == 0 ? 1 : 0
+                    scalesModel.setSelectedScaleSegment(self.directionIndex)
+                }) {
+                    Image("arrow_down")
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: screenHeight * scale)
+                    //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? AppOrange : Color.black)
+                    
+                }
+            }
+            .frame(width: .infinity, height: screenHeight * scale)
+            .padding(sizeClass == .regular ? systemSpacing : 2)
+            .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
         }
-        .padding()
-
+        //.border(Color.red)
     }
 
     var body: some View {
         ZStack {
-            let headerOpacity = 0.1
-
             VStack() {
-                let headerScale = UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.10
+                //let headerScale = UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.10
                 VStack() {
-                    if false {
-                        if !self.badgesShowing {
-                            HStack {
-                                ScaleTitleView(scale: self.scale)
-                                    .frame(height: UIScreen.main.bounds.height * headerScale)
-                                    .figmaRoundedBackground()
-                                Spacer()
-                                HeaderView()
-                                    .frame(height: UIScreen.main.bounds.height * headerScale)
-                                    .figmaRoundedBackground()
-                            }
-                            .padding(.bottom, spacingVertical)
-                            .padding(.horizontal, spacingHorizontal)
-                        }
-                    }
                     
-                    if true {
-                        HStack {
-                            MetronomeView()
-                                .padding(.bottom, spacingVertical)
-                                .padding(.horizontal, spacingHorizontal)
-                            SelectScaleParametersView()
-                        }
-                    }
+                    HeaderView()
+                        .padding(.horizontal, spacingHorizontal)
                     
                     if scalesModel.showKeyboard {
                         VStack(spacing:0) {

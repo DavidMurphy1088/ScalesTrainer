@@ -27,7 +27,7 @@ struct SelectGradeView: View {
                 .padding()
             }
             HStack {
-                Text("Please select yout grade").padding()
+                Text("Please select your grade").padding()
                 Spacer()
             }
             List(board.gradesOffered, id: \.self) { grade in
@@ -172,11 +172,13 @@ public struct UserEditView: View {
                     TextField("Please enter your name", text: $userName)
                         .focused($nameFieldFocused)
                         .padding()
-                        .background(Color(UIColor.systemGray6))
+                        //.background(Color(UIColor.systemGray6))
                         .cornerRadius(8)
                         .foregroundColor(.black)
                         .font(.body)
                         .frame(width: UIScreen.main.bounds.width * 0.3)
+                        .figmaRoundedBackgroundWithBorder()
+                    
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         Text("")
                         Text("Your Grade").font(.title2)
@@ -184,6 +186,7 @@ public struct UserEditView: View {
                     }
                 }
                 .padding()
+                
                 .onChange(of: userName) {_, name in
                     user.name = name
                     //self.saveEnabled = isSaveEnabled(user: user)
@@ -206,10 +209,7 @@ public struct UserEditView: View {
                                 if !compact {
                                     Text("")
                                 }
-                                FigmaButtonWithLabel(label: {
-                                    Text("Select Grade")
-                                }, action: {
-                                    print("")
+                                FigmaButton("Select Grade", action: {
                                     self.selectedBoard = board
                                     self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
                                     sheetNonce = UUID()
@@ -250,6 +250,7 @@ public struct UserEditView: View {
                     //self.saveEnabled = self.isSaveEnabled(user: user)
                 })
             }
+            
         .commonToolbar(
             title: settings.isCurrentUserDefined() ? "Edit User" : "Let's set up your account",
             helpMsg: "",

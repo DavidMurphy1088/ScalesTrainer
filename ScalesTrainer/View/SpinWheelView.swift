@@ -19,6 +19,7 @@ struct SpinTheWheelView: View {
     @State var scaleChoosen:Scale?
     @State private var showResultOpacity = false
     @State private var spinCount = 0
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     private func getMaxScreenDimensionSize() -> CGFloat {
         if UIScreen.main.bounds.size.width > UIScreen.main.bounds.size.height {
@@ -47,7 +48,7 @@ struct SpinTheWheelView: View {
             HStack {
                 Spacer()
                 ZStack {
-                    let wheelDiameter = getMaxScreenDimensionSize() * 0.60
+                    let wheelDiameter = getMaxScreenDimensionSize() * 0.70
                     Image("figma_spinwheel")
                         .resizable()
                         .scaledToFit()
@@ -61,13 +62,15 @@ struct SpinTheWheelView: View {
                             .offset(x: 0 - wheelDiameter * 0.5)
                     }
                 }
-                Text("").padding()
-                Text("").padding()
+                if !compact {
+                    Text("").padding()
+                    Text("").padding()
+                }
                 Text("").padding()
             }
 
             HStack {
-                if UIDevice.current.userInterfaceIdiom != .phone {
+                if !compact {
                     Text("").padding()
                     Text("").padding()
                 }

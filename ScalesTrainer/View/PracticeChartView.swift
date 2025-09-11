@@ -177,10 +177,11 @@ struct PracticeChartView: View {
                                         setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
                                     }
                                 }
+                                .presentationCompactAdaptation(.popover)
                             }
                         }
                     }
-                    FigmaButton("Shuffle", imageName:"figma_shuffle", action: {
+                    FigmaButton("Shuffle", imageName1:"figma_shuffle", action: {
                         cellOpacity = 0.0
                         doShuffle()
                         withAnimation(.easeIn(duration: 3.0)) {

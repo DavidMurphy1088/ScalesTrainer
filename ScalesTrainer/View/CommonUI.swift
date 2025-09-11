@@ -160,21 +160,19 @@ extension Color {
 
 struct FigmaNavLink<Label: View, Destination: View>: View {
     var destination: Destination
-    var font: Font
     var label: () -> Label
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     init(
         destination: Destination,
-        font: Font  = .title2,
         @ViewBuilder label: @escaping () -> Label
     ) {
         self.destination = destination
-        self.font = font
         self.label = label
     }
 
     var body: some View {
+        let font:Font = compact ? .body : .title2
         if compact {
             NavigationLink(destination: destination) {
                 label()
@@ -187,7 +185,7 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
                             .fill(Color.white)
                             .shadow(color: .black.opacity(0.9), radius: 2, x: 0, y: 2)
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.black, lineWidth: 1)
+                            .stroke(Color.black.opacity(0.9), lineWidth: 1)
                     }
                 )
             }
@@ -216,15 +214,16 @@ struct FigmaNavLink<Label: View, Destination: View>: View {
 struct FigmaButton: View {
     var action: () -> Void
     let text:String
-    let imageName:String?
+    let imageName1:String?
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 16
     let roundRadius = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 12.0
     let vertPadding = UIDevice.current.userInterfaceIdiom == .phone ? 2.0 : 12.0
+    //let compact = UIDevice.current.userInterfaceIdiom == .phone
     
-    init(_ text:String, imageName:String? = nil, action: @escaping () -> Void) {
+    init(_ text:String, imageName1:String? = nil, action: @escaping () -> Void) {
         self.action = action
         self.text = text
-        self.imageName = imageName
+        self.imageName1 = imageName1
     }
 
     var body: some View {
@@ -234,7 +233,7 @@ struct FigmaButton: View {
                     Text(text)
                         .font(.body)
                         .foregroundColor(.black)
-                    if let image = imageName {
+                    if let image = imageName1 {
                         Image(image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -704,13 +703,13 @@ struct SinglePickList<Item: Hashable>: View {
                             dismiss()
                         } label: {
                             HStack {
-                                Text(label(items[i]))
+                                Text(label(items[i])).padding(.horizontal)
                                 //Spacer()
 //                                if isSelected {
 //                                    Image(systemName: "checkmark")
 //                                }
                             }
-                            .padding()
+                            .padding(4)
                             //.background(FigmaColors().color(named: "green"))
                         }
                         .buttonStyle(.plain)
@@ -720,43 +719,39 @@ struct SinglePickList<Item: Hashable>: View {
         }
     }
             
-    var body1: some View {
-        VStack {
-            //Text(title).font(.title).padding()
-            List {
-                ForEach(items.indices, id: \.self) { i in
-                    let isSelected = (selectedIndex == i)
-                    Button {
-                        selectedIndex = i
-                        onPick(items[i], i)
-                        dismiss()
-                    } label: {
-                        HStack {
-                            Text(label(items[i]))
-                            //Spacer()
-                            if isSelected {
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                        //.background(FigmaColors().color(named: "green"))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            //.padding()
-            //.background(FigmaColors().color(named: "green"))
-//            .background(
-//                RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
-//            )
-            Spacer()
-        }
-        //.frame(width: UIScreen.main.bounds.width * 0.2, height: UIScreen.main.bounds.height * 0.3)
-        .onAppear {
-            if let idx = initiallySelectedIndex, items.indices.contains(idx) {
-                selectedIndex = idx
-            }
-        }
-    }
+//    var body1: some View {
+//        VStack {
+//            //Text(title).font(.title).padding()
+//            List {
+//                ForEach(items.indices, id: \.self) { i in
+//                    let isSelected = (selectedIndex == i)
+//                    Button {
+//                        selectedIndex = i
+//                        onPick(items[i], i)
+//                        dismiss()
+//                    } label: {
+//                        HStack {
+//                            Text(label(items[i])).padding(.horizontal)
+//                            //Spacer()
+//                            if isSelected {
+//                                Image(systemName: "checkmark")
+//                            }
+//                        }
+//                        //.background(FigmaColors().color(named: "green"))
+//                    }
+//                    .buttonStyle(.plain)
+//                }
+//            }
+//
+//            Spacer()
+//        }
+//        //.frame(width: UIScreen.main.bounds.width * 0.2, height: UIScreen.main.bounds.height * 0.3)
+//        .onAppear {
+//            if let idx = initiallySelectedIndex, items.indices.contains(idx) {
+//                selectedIndex = idx
+//            }
+//        }
+//    }
 }
 
 extension SinglePickList where Item == ScaleType {
