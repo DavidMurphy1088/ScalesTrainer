@@ -12,19 +12,21 @@ struct ScoreEntriesView: View {
     
     static var viewNum:Int = 0
     let viewNum:Int
+    let lineSpacing:Double
     
-    init(score:Score, staff:Staff, scoreView:ScoreView) {
+    init(score:Score, staff:Staff, scoreView:ScoreView, lineSpacing:Double) {
         self.score = score
         self.staff = staff
         ScoreEntriesView.viewNum += 1
         self.viewNum = ScoreEntriesView.viewNum
         self.scoreView = scoreView
+        self.lineSpacing = lineSpacing
     }
     
     ///Return the start and end points for the quaver beam based on the note postions that were reported
     func getBeamLine(noteLayoutPositions:NoteLayoutPositions, endNote:StaffNote, noteWidth:Double, startNote:StaffNote) -> (CGPoint, CGPoint)? {
         let stemDirection:Double = startNote.stemDirection == .up ? -1.0 : 1.0
-        let stemLength = max(startNote.stemLength, endNote.stemLength) * score.lineSpacing
+        let stemLength = max(startNote.stemLength, endNote.stemLength) * self.lineSpacing
         //let endNotePos = noteLayoutPositions.positions[endNote]
         let endNotePos = noteLayoutPositions.getPositionForSequence(sequence: endNote.timeSlice.sequence)
 
@@ -33,7 +35,7 @@ struct ScoreEntriesView: View {
             let yEndMid = endNotePos.origin.y + endNotePos.size.height / 2.0
             
             let endPitchOffset = endNote.noteStaffPlacement.offsetFromStaffMidline
-            let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * score.lineSpacing * -0.5)
+            let yEndNoteMiddle:Double = yEndMid + (Double(endPitchOffset) * self.lineSpacing * -0.5)
             let yEndNoteStemTip = yEndNoteMiddle + stemLength * stemDirection
             
             let startNotePos = noteLayoutPositions.positions[startNote]
@@ -41,7 +43,7 @@ struct ScoreEntriesView: View {
                 let xStartMid = startNotePos.origin.x + startNotePos.size.width / 2.0 + (noteWidth / 2.0 * stemDirection * -1.0)
                 let yStartMid = startNotePos.origin.y + startNotePos.size.height / 2.0
                 let startPitchOffset = startNote.noteStaffPlacement.offsetFromStaffMidline
-                let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * score.lineSpacing * -0.5)
+                let yStartNoteMiddle:Double = yStartMid + (Double(startPitchOffset) * self.lineSpacing * -0.5)
                 let yStartNoteStemTip = yStartNoteMiddle + stemLength * stemDirection
                 let p1 = CGPoint(x:xEndMid, y: yEndNoteStemTip)
                 let p2 = CGPoint(x:xStartMid, y:yStartNoteStemTip)
@@ -105,7 +107,7 @@ struct ScoreEntriesView: View {
     }
 
     func getNoteWidth() -> Double {
-        var noteWidth = score.lineSpacing * 1.1
+        var noteWidth = self.lineSpacing * 1.1
         if score.getScale().getScaleNoteCount() > 32 { //Chromatic has many notes
             if self.orientation.isPortrait {
                 noteWidth = noteWidth * 0.85
@@ -132,7 +134,7 @@ struct ScoreEntriesView: View {
                                     TimeSliceView(staff: staff,
                                                   timeSlice: timeSlice,
                                                   noteWidth: noteWidth,
-                                                  lineSpacing: score.lineSpacing,
+                                                  lineSpacing: self.lineSpacing,
                                                   isPortrait: self.orientation.isPortrait)
                                     
                                     .anchorPreference(
@@ -152,7 +154,7 @@ struct ScoreEntriesView: View {
                             let barLine = entry as! BarLine
                             if barLine.visibleOnStaff || barLine.forStaffSpacing {
                                 GeometryReader { geometry in
-                                    BarLineView(score: score, entry: entry, staff: staff) //, staffLayoutSize: staffLayoutSize)
+                                    BarLineView(score: score, entry: entry, staff: staff, lineSpacing: self.lineSpacing) //, staffLayoutSize: staffLayoutSize)
                                         .anchorPreference(
                                             key: TimeSlicePositionPreferenceKey.self,
                                             value: .bounds,
@@ -165,7 +167,7 @@ struct ScoreEntriesView: View {
                         }
                         if log("clefView") {
                             if entry is StaffClef {
-                                StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff)
+                                StaffClefView(score: score, staffClef: entry as! StaffClef, staff: staff, lineSpacing: self.lineSpacing)
                             }
                         }
                     }
@@ -190,7 +192,7 @@ struct ScoreEntriesView: View {
                                                           endNote: note,
                                                           noteWidth: noteWidth,
                                                           startNote: startNote) {
-                                    quaverBeamView(line: line, startNote: startNote, endNote: note, lineSpacing: score.lineSpacing)
+                                    quaverBeamView(line: line, startNote: startNote, endNote: note, lineSpacing: self.lineSpacing)
                                 }
                             }
 
@@ -238,7 +240,7 @@ struct ScoreEntriesView: View {
     func getStemLength(notes:[StaffNote]) -> Double {
         var len = 0.0
         if notes.count > 0 {
-            len = notes[0].stemLength * score.lineSpacing
+            len = notes[0].stemLength * self.lineSpacing
         }
         return len
     }
@@ -264,7 +266,7 @@ struct ScoreEntriesView: View {
                         let stemDirection = startBeamNote.stemDirection == .up ? -1.0 : 1.0
                         let midX = notePosition.midX + (midPointXOffset(notes: notes, staff: staff, stemDirection: stemDirection)) / 2.0
                         let midY = geoHeight / 2.0
-                        let offsetY = CGFloat(notes[0].noteStaffPlacement.offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust
+                        let offsetY = CGFloat(notes[0].noteStaffPlacement.offsetFromStaffMidline) * 0.5 * self.lineSpacing + inErrorAjdust
                         //Test- Circle().frame(width: 7, height: 7).foregroundColor(.purple).position(x: notePosition.midX, y: notePosition.midY)
                         Path { path in
                             path.move(to: CGPoint(x: midX, y: midY - offsetY))
@@ -284,7 +286,7 @@ struct ScoreEntriesView: View {
 
                             if note.getValue() != StaffNote.VALUE_WHOLE {
                                 //if let placement = notes[0].noteStaffPlacement {
-                                let offsetY = CGFloat(note.noteStaffPlacement.offsetFromStaffMidline) * 0.5 * score.lineSpacing + inErrorAjdust
+                                let offsetY = CGFloat(note.noteStaffPlacement.offsetFromStaffMidline) * 0.5 * self.lineSpacing + inErrorAjdust
                                 Path { path in
                                     path.move(to: CGPoint(x: midX, y: midY - offsetY))
                                     path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength(notes: notes) - inErrorAjdust))))

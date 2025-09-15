@@ -78,7 +78,7 @@ struct ScalesGridCellView: View {
                                         handImage
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(height: cellWidth * 0.16)
+                                            .frame(height: cellWidth * 0.12)
                                             .contrast(1.2)
                                             .brightness(-0.15)
                                             //.saturation(0.8) // Slightly desaturate for heavier look
@@ -109,11 +109,12 @@ struct ScalesGridCellView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(self.color) //.opacity(opacityValue))
-                    .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
-            )
+//            .background(
+//                RoundedRectangle(cornerRadius: 12)
+//                    .fill(self.color) //.opacity(opacityValue))
+//                    .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
+//            )
+            .figmaRoundedBackground(fillColor: self.color)
             .opacity(fadeIn ? 1 : 0)  // start invisible
                 .onAppear {
                     withAnimation(.easeIn(duration: 1.0)) {
@@ -188,10 +189,10 @@ struct ScalesGridView : View {
     }
     
     var body: some View {
-        //let cellPadding = screenWidth * 0.002
         let cellWidth = (screenWidth / Double(self.scalesPerRow)) * 0.8
         let cellHeight = (screenHeight) * 0.15
-        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.01 : screenHeight * 0.004)
+        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.000 : screenHeight * 0.004)
+        let compact = UIDevice.current.userInterfaceIdiom == .phone
         
         ScrollView(.vertical) {
             VStack(alignment: .leading) {
@@ -203,7 +204,7 @@ struct ScalesGridView : View {
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex),
+                                color:getColor(n: rowIndex * 3 + colIndex).opacity(compact ? 0.65 : 1.0),
                                 scoreTestScaleIds: $scoreTestScaleIds,
                                 navigationTitle: self.navigationTitle
                             )

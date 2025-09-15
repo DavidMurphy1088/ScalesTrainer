@@ -62,14 +62,14 @@ class Settings : Encodable, Decodable {
         return nil
     }
 
-    func getDefaultBackgroundColor() -> Color {
-        let red = CGFloat(0.8219926357269287)
-        let green = CGFloat(0.8913233876228333)
-        let blue = CGFloat(1.0000004768371582)
-        let alpha = CGFloat(1)
-        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
-        return Color(uiColor)
-    }
+//    func getDefaultBackgroundColor() -> Color {
+//        let red = CGFloat(0.8219926357269287)
+//        let green = CGFloat(0.8913233876228333)
+//        let blue = CGFloat(1.0000004768371582)
+//        let alpha = CGFloat(1)
+//        let uiColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
+//        return Color(uiColor)
+//    }
     
     func setCurrentUser(id:UUID) {
         self.currentUserId = id
@@ -132,13 +132,14 @@ class Settings : Encodable, Decodable {
         guard self.users[0].name.count > 0 else {
             return
         }
-        //return
         do {
             let jsonEncoder = JSONEncoder()
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-                //let currentUser = self.getCurrentUser()
+                for u in self.users {
+                    print("=============Setting save user", u.name, u.getColor().description)
+                }
 //                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
@@ -159,6 +160,10 @@ class Settings : Encodable, Decodable {
                 let jsonDecoder = JSONDecoder()
                 let decoded = try jsonDecoder.decode(Settings.self, from: jsonData)
                 self.users = decoded.users
+                for u in self.users {
+                    print("=============Setting load user", u.name, u.getColor().description)
+                }
+
                 self.isDeveloperMode = decoded.isDeveloperMode
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount
                 self.defaultOctaves = decoded.defaultOctaves

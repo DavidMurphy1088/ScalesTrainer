@@ -162,8 +162,8 @@ public class Score : ObservableObject, Encodable {
     public var studentFeedback:StudentFeedback? = nil
     public var tempo:Int?
     
-    ///NB 🟢 Changing this needs changes to getBraceHeight() for alignment
-    private(set) var lineSpacing:Double
+//    ///NB 🟢 Changing this needs changes to getBraceHeight() for alignment
+//    private(set) var lineSpacing:Double
     
     var debugOn:Bool
     private var totalStaffLineCount:Int = 0
@@ -177,7 +177,7 @@ public class Score : ObservableObject, Encodable {
         //29Jan2025 - Other calculations elsewhere have to be micro adjusted if lineSpacing changes. Best to leave it constant.
         //if UIDevice.current.userInterfaceIdiom == .phone {
             //let orientationObserver = OrientationInfo()
-            self.lineSpacing = 8.0 //OrientationInfo().isPortrait ? 8.0 : 6.0
+        //self.lineSpacing = 8.0 //8.0 //OrientationInfo().isPortrait ? 8.0 : 6.0
         //}
         //else {
             //self.lineSpacing = 8.0 //scale.hands.count > 1 ? 8.0 : 10
@@ -185,7 +185,6 @@ public class Score : ObservableObject, Encodable {
         self.timeSignature = timeSignature
         totalStaffLineCount = linesPerStaff + (2*ledgerLineCount)
         self.key = key
-        //barLayoutPositions = BarLayoutPositions()
         self.heightPaddingEnabled = heightPaddingEnabled
         self.debugOn = debugOn
     }
@@ -201,20 +200,22 @@ public class Score : ObservableObject, Encodable {
         //try container.encode(ledgerLineCount, forKey: .ledgerLines)
         //try container.encode(tempo, forKey: .tempo)
     }
+    
     func getScale() -> Scale {
         return self.scale
     }
-    func getBraceHeight() -> Double {
-        let heightMult:Double
-        ///NB This needs to be changed if staff height is changed
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
-        }
-        else {
-            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
-        }
-        return getStaffHeight() * heightMult
-    }
+    
+//    func getBraceHeight() -> Double {
+//        let heightMult:Double
+//        ///NB This needs to be changed if staff height is changed
+//        if UIDevice.current.userInterfaceIdiom == .phone {
+//            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
+//        }
+//        else {
+//            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
+//        }
+//        return getStaffHeight() * heightMult
+//    }
         
     public func hilightStaffNote(segment: Int, midi: Int, handType:HandType?) {
         let timeSlices = getAllTimeSlices()
@@ -246,20 +247,20 @@ public class Score : ObservableObject, Encodable {
         let ts = TimeSlice(score: self)
         ts.sequence = self.scoreEntries.count
         self.scoreEntries.append(ts)
-        if self.scoreEntries.count > 16 {
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                ///With too many notes on the stave
-                lineSpacing = lineSpacing * 0.95
-            }
-        }
+//        if self.scoreEntries.count > 16 {
+//            if UIDevice.current.userInterfaceIdiom == .phone {
+//                ///With too many notes on the stave
+//                lineSpacing = lineSpacing * 0.95
+//            }
+//        }
         return ts
     }
 
-    public func getStaffHeight() -> Double {
-        //let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
-        let height = Double(getTotalStaffLineCount() + 5) * self.lineSpacing ///Jan2025 Bad case Trinity Gr5, G Harmonic minor
-        return height
-    }
+//    public func getStaffHeight() -> Double {
+//        //let height = Double(getTotalStaffLineCount() + 3) * self.lineSpacing ///Jan2024 Leave room for notes on more ledger lines
+//        let height = Double(getTotalStaffLineCount() + 5) * self.lineSpacing ///Jan2025 Bad case Trinity Gr5, G Harmonic minor
+//        return height
+//    }
     
     public func getBarCount() -> Int {
         var count = 0

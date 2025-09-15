@@ -26,7 +26,7 @@ enum RunningProcess {
     case followingScale
     case leadingTheScale
     case recordingScale
-    case playingAlongWithScale
+    case playingAlong
     case backingOn
 
     var description: String {
@@ -39,13 +39,7 @@ enum RunningProcess {
             return "Leading Scale"
         case .recordingScale:
             return "Recording Scale"
-//       case .recordingScaleForAssessment:
-//            return "Recording Scale"
-//        case .recordScaleWithFileData:
-//            return "Recording Scale With File Data"
-//        case .syncRecording:
-//            return "Synchronize Recording"
-        case .playingAlongWithScale:
+        case .playingAlong:
             return "Playing Along With Scale"
         case .backingOn:
             return "Backing On"
@@ -294,7 +288,9 @@ public class ScalesModel : ObservableObject {
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
         let user = Settings.shared.getCurrentUser("Scales model, set Run process")
-
+        if setProcess == .leadingTheScale {
+            
+        }
         if setProcess == self.runningProcess {
             return
         }
@@ -326,10 +322,7 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
         }
 
-        //Metronome.shared.setLeadingIn(way: false)
-        //Metronome.shared.setLeadInCount("\n\nScalesModel,setRunningProcess", count: nil)
         Metronome.shared.stop()
-        //Metronome.shared.setTicking(way: false)
 
         self.runningProcess = setProcess
         DispatchQueue.main.async {
@@ -372,24 +365,24 @@ public class ScalesModel : ObservableObject {
             }
         }
         
-        if [.playingAlongWithScale].contains(setProcess) {
+        if [.playingAlong].contains(setProcess) {
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.stop()
-            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlongWithScale))
-            metronome.start(doStandby: true, doLeadIn: true, scale: self.scale)
+            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlong))
+            metronome.start(doLeadIn: true, scale: self.scale)
         }
         
         if [.backingOn].contains(setProcess) {
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
             metronome.stop()
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
-            metronome.start(doStandby: true, doLeadIn: true, scale: self.scale)
+            metronome.start(doLeadIn: true, scale: self.scale)
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
             metronome.stop()
-            metronome.start(doStandby: true, doLeadIn: true, scale: self.scale)
+            metronome.start(doLeadIn: true, scale: self.scale)
         }
         
 //        if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {
@@ -547,12 +540,12 @@ public class ScalesModel : ObservableObject {
     }
     
     ///Get tempo for 1/4 note
-    func getTempo(_ ctx: String) -> Int {
-        var selected = self.tempoSettings[self.selectedTempoIndex]
-        //selected = String(selected)
-        //return Int(selected) ?? 60
-        return selected
-    }
+//    func getTempo(_ ctx: String) -> Int {
+//        var selected = self.tempoSettings[self.selectedTempoIndex]
+//        //selected = String(selected)
+//        //return Int(selected) ?? 60
+//        return selected
+//    }
     
     ///Add the required scales notes to the score as timeslices.
     func createScore(scale:Scale) -> Score {

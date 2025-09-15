@@ -121,7 +121,7 @@ struct ChooseYourExerciseView: View {
             title: "Choose Your Exercise", helpMsg: "",
             onBack: { dismiss() }
         )
-        .toolbar(.hidden, for: .tabBar) // Hide the TabView
+        //.toolbar(.hidden, for: .tabBar) // Hide the TabView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
             let user = Settings.shared.getCurrentUser("ChooseExercise view, .onAppear")

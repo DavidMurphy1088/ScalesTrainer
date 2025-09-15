@@ -16,25 +16,13 @@
     "                  " : {
 
     },
-    "   ←" : {
-
-    },
-    "   →" : {
-
-    },
     "  %@   " : {
-
-    },
-    " %@ " : {
 
     },
     " %lld" : {
 
     },
     " →" : {
-
-    },
-    " ●" : {
 
     },
     " C" : {
@@ -81,14 +69,15 @@
     "⊙" : {
 
     },
-    "●" : {
-
-    },
-    "♩  Ahead  " : {
-
-    },
-    "♩  Late  " : {
-
+    "♩%@ = %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "♩%1$@ = %2$lld"
+          }
+        }
+      }
     },
     "♩=%lld" : {
 
@@ -99,31 +88,16 @@
     "𝄢" : {
 
     },
-    "1. Check Email Account Configuration" : {
-
-    },
-    "2. Enable Email Sending" : {
-
-    },
-    "3. Internet Connection" : {
-
-    },
-    "4. Restart the Device" : {
-
-    },
     "Activities" : {
       "comment" : "Menu"
-    },
-    "Add Me To The Leader Board" : {
-
     },
     "Adjust:" : {
 
     },
-    "Amp: %@" : {
+    "Amplitude: %.4f" : {
 
     },
-    "Amplitude: %.4f" : {
+    "Are you happy with your metronome setting?" : {
 
     },
     "Are you sure you want to delete %@?" : {
@@ -198,9 +172,6 @@
     "Delete Testdata" : {
 
     },
-    "Details Content" : {
-
-    },
     "Detected Pitch: %.0f Hz" : {
 
     },
@@ -214,9 +185,6 @@
 
     },
     "Email %@" : {
-
-    },
-    "Ensure your email account supports sending emails and is not restricted (e.g., by parental controls or device management settings)." : {
 
     },
     "exercise to practise" : {
@@ -274,13 +242,7 @@
         }
       }
     },
-    "Freq: %@ Hz" : {
-
-    },
     "Get Started" : {
-
-    },
-    "Go to the Settings app, open 'Mail', and ensure you have an email account set up under 'Accounts'." : {
 
     },
     "Good job 😊" : {
@@ -346,16 +308,7 @@
         }
       }
     },
-    "How do you want to practise?" : {
-
-    },
-    "If the issue persists, try opening the Mail app and attempting to send an email manually. This can provide additional error messages to help troubleshoot the problem." : {
-
-    },
     "In the exam %@ must be played with both hands." : {
-
-    },
-    "It seems your device is not configured to send emails. Here are some steps you can follow to fix this issue:" : {
 
     },
     "Key" : {
@@ -399,9 +352,6 @@
         }
       }
     },
-    "Leader Board" : {
-
-    },
     "Left Hand" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -416,9 +366,6 @@
     "Log" : {
 
     },
-    "Make sure your device has an active internet connection. Without internet, emails cannot be sent." : {
-
-    },
     "MessageUs" : {
       "comment" : "Menu"
     },
@@ -428,13 +375,7 @@
     "MIDI" : {
 
     },
-    "MIDI: %@" : {
-
-    },
     "New Amplitude Filter:%@" : {
-
-    },
-    "Next: %lld" : {
 
     },
     "Note: Only one grade can be active at one time." : {
@@ -509,9 +450,6 @@
     "Restore Subscriptions" : {
 
     },
-    "Results" : {
-
-    },
     "Right Hand" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -569,9 +507,6 @@
     "Scan and connect MIDI Sources" : {
 
     },
-    "Score B+" : {
-
-    },
     "Select" : {
 
     },
@@ -582,15 +517,6 @@
 
     },
     "Select Value" : {
-
-    },
-    "Send us a message about an issue or a new feature" : {
-
-    },
-    "Send us the app's log file" : {
-
-    },
-    "Sensitivity: %.3f" : {
 
     },
     "Set Testdata" : {
@@ -607,13 +533,10 @@
         }
       }
     },
-    "Settings Content" : {
-
-    },
     "Show Tap Data" : {
 
     },
-    "Sometimes, restarting your device can resolve issues related to email configurations." : {
+    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sorry, no subscription is available yet" : {
@@ -629,6 +552,9 @@
 
     },
     "Start Analysis" : {
+
+    },
+    "StartExercise" : {
 
     },
     "Stats: %@" : {
@@ -675,19 +601,6 @@
         }
       }
     },
-    "Tempo ♩=80" : {
-
-    },
-    "Tempo: %.2f notes/sec, Smoothing: %.2f" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Tempo: %1$.2f notes/sec, Smoothing: %2$.2f"
-          }
-        }
-      }
-    },
     "test" : {
       "comment" : "comment",
       "extractionState" : "stale",
@@ -721,9 +634,6 @@
       }
     },
     "To get started please enter your name, Music Board and Grade." : {
-
-    },
-    "Unable to Send Email" : {
 
     },
     "Under Construction" : {

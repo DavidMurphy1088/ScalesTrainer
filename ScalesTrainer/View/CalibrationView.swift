@@ -98,7 +98,7 @@ public struct CalibrationView: View {
             Text(getScaleName()).padding()
 
             if let score = scalesModel.getScore() {
-                ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false).padding()
+                ScoreView(scale: ScalesModel.shared.scale, score: score, showResults: false, height: 200).padding()
             }
             
             if !playingScale {

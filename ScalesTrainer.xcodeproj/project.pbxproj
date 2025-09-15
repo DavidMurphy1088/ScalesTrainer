@@ -73,7 +73,6 @@
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
 		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
-		799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */; };
 		799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */; };
 		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
 		799DC8422D5190BB007008A5 /* FFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DC8412D5190BB007008A5 /* FFTView.swift */; };
@@ -127,7 +126,7 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
-		79E220EE2C856150004F64D8 /* ExerciseBadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */; };
+		79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
 		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
@@ -221,7 +220,6 @@
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
 		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
-		799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationInfo.swift; sourceTree = "<group>"; };
 		799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
 		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
 		799DC8412D5190BB007008A5 /* FFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTView.swift; sourceTree = "<group>"; };
@@ -269,7 +267,7 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
-		79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseBadgesView.swift; sourceTree = "<group>"; };
+		79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDropDownStarsView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
 		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
@@ -478,7 +476,7 @@
 				794A9FC62C2BD24C0001297E /* CoinBankView.swift */,
 				7967099E2BD791F90029E7ED /* CommonUI.swift */,
 				790624092C374F5D005A6A3E /* EmailView.swift */,
-				79E220ED2C856150004F64D8 /* ExerciseBadgesView.swift */,
+				79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */,
 				79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */,
 				799DC8412D5190BB007008A5 /* FFTView.swift */,
 				79312DB62C118B41005FDE8B /* HelpView.swift */,
@@ -487,7 +485,6 @@
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
 				790614442D94093A009E7A8D /* MetronomeView.swift */,
 				79F80E0B2CD4CD6800D636FB /* MIDIView.swift */,
-				799BE2AD2C002EF5004B19F6 /* OrientationInfo.swift */,
 				790537042C47319600AC794D /* PracticeChartView.swift */,
 				79C8AD012C128F0200770C10 /* PracticeJournalView.swift */,
 				79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */,
@@ -800,7 +797,6 @@
 				79312DB12C0B2B7E005FDE8B /* TapDataView.swift in Sources */,
 				790614452D940943009E7A8D /* MetronomeView.swift in Sources */,
 				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
-				799BE2AE2C002EF5004B19F6 /* OrientationInfo.swift in Sources */,
 				79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */,
 				791EF05E2E59CF2300347D57 /* BadgesView.swift in Sources */,
 				79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */,
@@ -858,7 +854,7 @@
 				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
 				799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */,
 				79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */,
-				79E220EE2C856150004F64D8 /* ExerciseBadgesView.swift in Sources */,
+				79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */,
 				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
 				79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */,
 				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,

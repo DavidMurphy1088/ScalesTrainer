@@ -183,10 +183,10 @@ struct PianoStartNoteIllustrationView: View {
 ///Prepare a Follow, Lead and start the exercise when the user hits start. No metronome
 ///
 struct StartFollowLeadView: View {
-    let badge: ExerciseBadge
     let scalesModel:ScalesModel
     let activityName:String
     let callback: (_ cancelled: Bool) -> Void
+    let figmaColors = FigmaColors()
     
     @State private var countdown = 0
     @State private var isCountingDown = false
@@ -204,10 +204,14 @@ struct StartFollowLeadView: View {
 
             if isCountingDown {
                 let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
+                let bold:Color = FigmaColors.shared.color("Orange")
+                let closeToStart = countdown < 2
                 Text(message)
                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
-                    .foregroundColor(countdown == 0 ? AppOrange : Color(.black))
+                    .foregroundColor(closeToStart ? bold : Color(.black))
                     .padding()
+                    .fontWeight(closeToStart ? .bold : .regular)
+                    .figmaRoundedBackgroundWithBorder(fillColor: .white)
             }
             else {
                 HStack {
@@ -235,7 +239,9 @@ struct StartFollowLeadView: View {
         countdown = 3
         isCountingDown = true
 
-        Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { timer in
+        //Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { timer in
+        Timer.scheduledTimer(withTimeInterval: 0.75, repeats: true) { timer in
+
             if countdown > 0 {
                 countdown -= 1
             } else {
@@ -246,3 +252,42 @@ struct StartFollowLeadView: View {
         }
     }
 }
+
+
+struct StartExerciseView: View {
+    let scalesModel:ScalesModel
+    let activityName:String
+    let callback: (_ cancelled: Bool) -> Void
+    let figmaColors = FigmaColors()
+    
+    @State private var countdown = 0
+    @State private var isCountingDown = false
+    @State private var metronomeChecked = false
+    
+    var body: some View {
+        //let compact = UIDevice.current.userInterfaceIdiom == .phone
+        VStack() {
+            if metronomeChecked {
+                Text("StartExercise")
+                FigmaButton("Start", action : {
+                    callback(false)
+                })
+            }
+            else {
+                HStack {
+                    Text("Are you happy with your metronome setting?").padding()
+                    FigmaButton("Yes", action : {
+                        self.metronomeChecked = true
+                    })
+                    FigmaButton("No", action : {
+                        callback(true)
+                    })
+
+                }
+            }
+        }
+        .padding()
+        .figmaRoundedBackgroundWithBorder()
+    }
+}
+

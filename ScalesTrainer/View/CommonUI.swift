@@ -1,71 +1,75 @@
 import SwiftUI
 
-struct CodableColor: Codable {
-    var red: Double
-    var green: Double
-    var blue: Double
-    var alpha: Double
-    
-    init(_ color: Color) {
-        let uiColor = UIColor(color)
-        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-        self.red = Double(r) / 255.0
-        self.green = Double(g) / 255.0
-        self.blue = Double(b) / 255.0
-        self.alpha = 1.0 //Double(a)
-    }
-    
-    func getColor() -> Color {
-        return Color(red: red, green: green, blue: blue) //, opacity: alpha)
-        //return .blue
-    }
-}
+//struct CodableColor: Codable {
+//    var red: Double
+//    var green: Double
+//    var blue: Double
+//    var alpha: Double
+//    
+//    init(_ color: Color) {
+//        let uiColor = UIColor(color)
+//        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+//        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+//        self.red = Double(r) / 255.0
+//        self.green = Double(g) / 255.0
+//        self.blue = Double(b) / 255.0
+//        self.alpha = 1.0 //Double(a)
+//    }
+//    
+//    func getColor() -> Color {
+//        return Color(red: red, green: green, blue: blue) //, opacity: alpha)
+//        //return .blue
+//    }
+//}
 
 // =========== Toolbar =======
 
 struct CommonToolbarModifier: ViewModifier {
     let title: String
+    let titleMustShow: Bool?
     let helpMsg: String
     let onBack: (() -> Void)?
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func body(content: Content) -> some View {
-        ZStack {
-            content
-        }
+        content
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        if let titleMustShow = titleMustShow {
+                            if titleMustShow {
+                                Text(title)
+                                    .font(compact ? .title3 : .title)
+                            }
+                        }
+                    }
+                }
 
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack {
-//                    Image("figma_icon")
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(height: 40)
-//                        .padding()
-                    Text(title)
-                        .font(.title)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarNameTitleView(screenName: title, helpMsg: helpMsg)
+                        .padding(.vertical, 0)
                 }
             }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                ToolbarTitleView(screenName: title, helpMsg: helpMsg)
-                    .padding(.vertical, 0)
-            }
-        }
+            .toolbarBackground(Figma.backgroundGreen, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar) //leftmost navigation back label
     }
 }
 
 extension View {
     func commonToolbar(
         title: String,
+        titleMustShow: Bool? = nil,
         helpMsg: String,
         onBack: (() -> Void)? = nil
     ) -> some View {
         self.modifier(CommonToolbarModifier(
             title: title,
+            titleMustShow: titleMustShow,
             helpMsg: helpMsg,
             onBack: onBack
         ))
+        //.background(Figma.backgroundGreen)
     }
 }
 
@@ -94,7 +98,7 @@ class FigmaColors {
         colorShades.append(("blue", makeColor(red: 161, green: 223, blue: 100)))
     }
     
-    func color(named name: String) -> Color {
+    func color(_ name: String) -> Color {
         if let match = primaryColors.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespaces) == name.lowercased().trimmingCharacters(in: .whitespaces) }) {
             return match.1
         }
@@ -112,7 +116,8 @@ class Figma {
     static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
     static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
     static let blue = Color(red: 98, green: 202, blue: 215, opacity: 1.0)
-    
+    static let backgroundGreen = FigmaColors.shared.colorShades[0].1.opacity(0.2)
+                                       
     struct AppButtonStyle: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
@@ -218,7 +223,7 @@ struct FigmaButton: View {
     @ScaledMetric(relativeTo: .body) private var iconSize: CGFloat = 16
     let roundRadius = UIDevice.current.userInterfaceIdiom == .phone ? 8.0 : 12.0
     let vertPadding = UIDevice.current.userInterfaceIdiom == .phone ? 2.0 : 12.0
-    //let compact = UIDevice.current.userInterfaceIdiom == .phone
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     init(_ text:String, imageName1:String? = nil, action: @escaping () -> Void) {
         self.action = action
@@ -243,7 +248,7 @@ struct FigmaButton: View {
                 .padding(.vertical, vertPadding)
                 .padding(.horizontal)
                 .background(
-                    RoundedRectangle(cornerRadius: roundRadius).stroke(Color.black, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: roundRadius).stroke(Color.black.opacity(compact ? 0.5 : 1.0), lineWidth: 1)
                 )
                 .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
             }
@@ -280,7 +285,7 @@ struct RoundedBackgroundModifier: ViewModifier {
     let radius = UIDevice.current.userInterfaceIdiom == .phone ? 12.0 : 12.0
     let shadowOffset = 2.0
     let border:Bool
-    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    //let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func body(content: Content) -> some View {
         content
@@ -291,8 +296,10 @@ struct RoundedBackgroundModifier: ViewModifier {
             .background(
                 ZStack {
                     //shadow box
-                    RoundedRectangle(cornerRadius: radius).fill(Figma.colorFromRGB(62, 42, 80)).offset(y: 4)
-                        .blur(radius: 0) // set >0 if you want soft shadow
+                    if border {
+                        RoundedRectangle(cornerRadius: radius).fill(Figma.colorFromRGB(62, 42, 80)).offset(y: 4)
+                            .blur(radius: 0) // set >0 if you want soft shadow
+                    }
                     //opaque over shadow in case the top color has opacity < 1.0
                     RoundedRectangle(cornerRadius: radius).fill(Color.white)
                     RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue))
@@ -320,7 +327,7 @@ extension View {
 ///Equivalent of Swiftui Color.green for canvas drawing
 //let AppGreen = Color(red: 0.20392156, green: 0.7803921, blue: 0.349019607)
 //Red: 0.20392156862745098, Green: 0.7803921568627451, Blue: 0.34901960784313724, Alpha: 1.0
-let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
+//let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
 
 class UIGlobals {
     static let shared = UIGlobals()
@@ -389,11 +396,11 @@ struct ToolbarTitleHelpView: View {
         }
         .padding()
         .padding()
-        .background(FigmaColors().color(named: "green"))
+        .background(FigmaColors().color("green"))
     }
 }
 
-struct ToolbarTitleView: View {
+struct ToolbarNameTitleView: View {
     let screenName: String
     let helpMsg: String
     @ObservedObject var viewManager = ViewManager.shared
@@ -423,6 +430,7 @@ struct ToolbarTitleView: View {
                     }
                     .popover(isPresented: $showHelp) {
                         ToolbarTitleHelpView(helpMessage: helpMsg)
+                            .presentationCompactAdaptation(.none) ///Else popover takes whoe screen on iPhone
                     }
                     Rectangle()
                         .fill(Color.gray)
@@ -532,6 +540,7 @@ extension View {
 }
 
 struct ConfettiView: UIViewRepresentable {
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     func makeUIView(context: Context) -> UIView {
         let container = UIView(frame: .zero)
         container.backgroundColor = .clear
@@ -539,6 +548,7 @@ struct ConfettiView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
+        let compact = UIDevice.current.userInterfaceIdiom == .phone
         // Remove any existing emitter layers
         uiView.layer.sublayers?.removeAll(where: { $0 is CAEmitterLayer })
         
@@ -613,7 +623,11 @@ struct ConfettiView: UIViewRepresentable {
         let minSize: CGFloat = 30
         //let maxSize: CGFloat = 100
         let maxSize: CGFloat = 200
-        return min(max(size, minSize), maxSize)
+        var width = min(max(size, minSize), maxSize)
+        if compact {
+            width = width * 0.5
+        }
+        return width
     }
     
     // Create a standard emitter cell with the given content image

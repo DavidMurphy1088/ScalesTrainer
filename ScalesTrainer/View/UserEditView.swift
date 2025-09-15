@@ -84,10 +84,10 @@ public struct UserEditView: View {
     
     func getColor(name:String) -> Color {
         if name == "Trinity" {
-            return colors.color(named: "green")
+            return colors.color("green")
         }
         else {
-            return colors.color(named: "blue")
+            return colors.color("blue")
         }
     }
     
@@ -120,8 +120,8 @@ public struct UserEditView: View {
                                     },
                                     action: {
                                         if user.boardAndGrade.grade > 0 {
-                                            settings.setUser(user: user)
                                             user.setColor()
+                                            settings.setUser(user: user)
                                             dismiss()
                                             if addingFirstUser {
                                                 settings.setCurrentUser(id: user.id)

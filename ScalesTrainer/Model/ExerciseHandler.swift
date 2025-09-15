@@ -411,7 +411,6 @@ class ExerciseHandler  {
         //////16Mar2025 - sometimes get wrong octave of octave played
         for requiredNote in requiredNotes {
             let allowed = [requiredNote.midi-24, requiredNote.midi-12, requiredNote.midi, requiredNote.midi+12, requiredNote.midi+24]
-            //let midiDiff = abs(midi - requiredNote.midi)
             if !allowed.contains(midi) {
                 if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
                     let key = keyboard.pianoKeyModel[keyIndex]
@@ -442,9 +441,6 @@ class ExerciseHandler  {
             if exerciseState.getState() == .exerciseStarted {
                 exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
             }
-//            if let practiceChart {
-//                practiceChart.savePracticeChartToFile()
-//            }
         }
     }
 

@@ -87,7 +87,8 @@ public struct ClassicStyle {
             }
             return color
         }
-        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? AppOrange : Color.blue
+        let hilightColor = FigmaColors.shared.color("Orange")
+        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? hilightColor : Color.blue
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
@@ -129,10 +130,10 @@ public struct ClassicStyle {
     }
     
     public func layout(repaint:Int, viewModel: PianoKeyboardModel, miniKeyboardStyle:Bool, geometry: GeometryProxy) -> some View {
-        Canvas { context, size in
+        Canvas { context, size1 in
             let scalesModel = ScalesModel.shared
-            let width = size.width
-            let height = size.height
+            let width = size1.width
+            let height = size1.height 
             let geometryLeftEdge = geometry.frame(in: .global).origin.x
             let geometryTopEdge = geometry.frame(in: .global).origin.y
 
@@ -213,15 +214,26 @@ public struct ClassicStyle {
                         if let handImageName = handImageName {
                             let image = Image(handImageName)//.renderingMode(.template)
                             let resolved = context.resolve(image)
-                            let targetWidth: CGFloat = naturalWidth * 0.40
+                            let targetWidth: CGFloat = naturalWidth * 0.30
                             let originalSize = resolved.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
+                            let centerOffset:Double
+                            if self.hand == 0 {
+                                if index >= viewModel.pianoKeyModel.count - 1 {
+                                    centerOffset = 0.2
+                                }
+                                else {
+                                    centerOffset = 0.8
+                                }
+                            }
+                            else {
+                                centerOffset = 0.8
+                            }
                             let drawRect = CGRect(
-                                //x: (naturalWidth - targetWidth) * 0.50,
-                                x: keyRect.midX - (targetWidth * 0.5),
-                                y: keyRect.height * 0.60,
+                                x: keyRect.midX - (targetWidth * centerOffset),
+                                y: keyRect.height * 0.20,
                                 width: targetWidth,
                                 height: targetHeight
                             )

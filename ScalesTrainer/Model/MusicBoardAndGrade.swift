@@ -66,11 +66,12 @@ class MusicBoardAndGrade: Codable, Identifiable {
         for scale in self.enumerateAllScales() {
             minorTypeSet.insert(scale.scaleType)
         }
-        if minorTypeSet.contains(.naturalMinor) {
-            return .naturalMinor
-        }
+        ///Ensure harmonic is first, natural 2nd etc
         if minorTypeSet.contains(.harmonicMinor) {
             return .harmonicMinor
+        }
+        if minorTypeSet.contains(.naturalMinor) {
+            return .naturalMinor
         }
         if minorTypeSet.contains(.melodicMinor) {
             return .melodicMinor

@@ -85,6 +85,7 @@ struct SelectHandForPractice: View {
         .figmaRoundedBackground()
 
         .navigationTitle("Select Hands")
+        .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .navigationDestination(isPresented: $navigateToScale) {
             if let scale = self.scaleToPractice {
                 ScalesView(user: user, scale: scale)

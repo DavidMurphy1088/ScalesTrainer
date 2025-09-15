@@ -163,7 +163,6 @@ class StudentScales: Codable {
     }
     
     func getScaleTypes() -> [ScaleType] {
-        ///Make sure the list is in the order in which the type is first seen in the syllabus
         var allTypesSet: Set<ScaleType> = []
         for studentScale in studentScales {
             if let scale = studentScale.scale {
@@ -171,15 +170,20 @@ class StudentScales: Codable {
             }
         }
         
+        ///Make sure the list is in the order specified here
         var scaleTypes = [ScaleType.any]
-        for studentScale in studentScales {
-            if let scale = studentScale.scale {
-                if allTypesSet.contains(scale.scaleType) {
-                    scaleTypes.append(scale.scaleType)
-                    allTypesSet.remove(scale.scaleType)
+        //for scaleTypeOrder in [ScaleType.harmonicMinor, ScaleType.naturalMinor, .melodicMinor] {
+            for studentScale in studentScales {
+                if let scale = studentScale.scale {
+                    //if scale.scaleType == scaleTypeOrder {
+                        if allTypesSet.contains(scale.scaleType) {
+                            scaleTypes.append(scale.scaleType)
+                            allTypesSet.remove(scale.scaleType)
+                        }
+                    //}
                 }
             }
-        }
+        //}
         return scaleTypes
     }
     

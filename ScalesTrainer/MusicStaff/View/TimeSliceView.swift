@@ -7,12 +7,14 @@ public struct BarLineView: View {
     var score:Score
     var entry:ScoreEntry
     var staff:Staff
+    var lineSpacing:Double
     let visible:Bool
     
-    public init(score:Score, entry:ScoreEntry, staff: Staff) {
+    public init(score:Score, entry:ScoreEntry, staff: Staff, lineSpacing:Double) {
         self.score = score
         self.entry = entry
         self.staff = staff
+        self.lineSpacing = lineSpacing
         if let barLine = entry as? BarLine {
             self.visible = barLine.visibleOnStaff
         }
@@ -26,10 +28,10 @@ public struct BarLineView: View {
         GeometryReader { geometry in
             Rectangle()
                 .fill(visible ? Color.black : Color.clear)
-                .frame(width: 1.0, height: 4.0 * Double(score.lineSpacing))
+                .frame(width: 1.0, height: 4.0 * Double(self.lineSpacing))
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
-        .frame(minWidth: Double(score.lineSpacing)  * 1.1)
+        .frame(minWidth: Double(self.lineSpacing) * 1.1)
         //.border(Color.red)
     }
 }
@@ -38,24 +40,25 @@ public struct StaffClefView: View {
     var score:Score
     var staffClef:StaffClef
     var staff:Staff
+    let lineSpacing:Double
     let isTransparent:Bool
     
-    public init(score:Score, staffClef:StaffClef, staff: Staff) {
+    public init(score:Score, staffClef:StaffClef, staff: Staff, lineSpacing:Double) {
         self.score = score
         self.staffClef = staffClef
         self.staff = staff
         self.isTransparent = staff.handType == .left
-        
+        self.lineSpacing = lineSpacing
     }
         
     func getClefSize(clefType:ClefType) -> Double {
         var size = 0.0
         if staffClef.clefType == .treble {
-            size = score.lineSpacing * 8
+            size = self.lineSpacing * 8
         }
         else {
-            size = score.lineSpacing * 5 ///31Jan2025 Too big, loose the ':'
-            size = score.lineSpacing * 4
+            size = self.lineSpacing * 5 ///31Jan2025 Too big, loose the ':'
+            size = self.lineSpacing * 4
         }
         if score.getScale().getScaleNoteCount() > 32 {
             size = size * 0.75 ///2 octave chromatic
@@ -75,7 +78,7 @@ public struct StaffClefView: View {
                     .foregroundColor(isTransparent ? .black : .clear)
                     .font(.system(size: CGFloat(getClefSize(clefType: staffClef.clefType))))
                     .padding(.top, 0.0)
-                    .padding(.bottom, score.lineSpacing * 1.0)
+                    .padding(.bottom, self.lineSpacing * 1.0)
             }
             else {
                 Text("\u{1d122}")
@@ -84,7 +87,7 @@ public struct StaffClefView: View {
                     //.padding()
             }
         }
-        .frame(minWidth: Double(score.lineSpacing)  * 1.1)
+        .frame(minWidth: Double(self.lineSpacing)  * 1.1)
         //.border(Color.red)
     }
 }

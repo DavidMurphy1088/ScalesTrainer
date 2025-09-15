@@ -15,10 +15,9 @@ struct UserListView: View {
         let settings = Settings.shared
         var users:[User] = []
         users.append(contentsOf: settings.users.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending })
-        //FigmaColors().color(named: <#T##String#>)
-        let addUser = User(color: "green")
+        let addUser = User()
         addUser.boardAndGrade.grade = 0
-        addUser.color = "gray"
+        //addUser.color = "gray"
         users.append(addUser)
         return users
     }
@@ -48,7 +47,7 @@ struct UserListView: View {
                             VStack() {
                                 let boxSize = 0.1
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(User.color(from: user.color).opacity(0.5))
+                                    .fill(User.color(from: user.getColor()).opacity(0.5))
                                     .frame(width: UIScreen.main.bounds.width * boxSize,
                                            height: UIScreen.main.bounds.width * boxSize)
                                     .overlay(alignment: .topTrailing) {
@@ -74,6 +73,7 @@ struct UserListView: View {
                                     .overlay {
                                         Text(user.name).font(.headline)
                                     }
+                                    .figmaRoundedBackgroundWithBorder()
                                 
                                 Text("")
                                 let grade = user.boardAndGrade.grade

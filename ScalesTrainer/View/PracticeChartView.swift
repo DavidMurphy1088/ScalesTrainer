@@ -213,7 +213,7 @@ struct PracticeChartView: View {
             title: "Practice Chart", helpMsg: "",
             onBack: { dismiss() }
         )
-        .toolbar(.hidden, for: .tabBar) // Hide the TabView
+        //.toolbar(.hidden, for: .tabBar) // Hide the TabView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
             let user = Settings.shared.getCurrentUser("Prac Chart .OnAppear")
@@ -223,9 +223,12 @@ struct PracticeChartView: View {
             let minorTypes = studentScales.getScaleTypes()
             
             self.minorScaleTypes = []
-            for type in minorTypes {
-                if [ScaleType.naturalMinor, .harmonicMinor, .melodicMinor].contains(type) {
-                    self.minorScaleTypes.append(type)
+            ///Ensure this order and default is harmonic
+            for scaleType in [ScaleType.harmonicMinor, ScaleType.naturalMinor, .melodicMinor] {
+                for type in minorTypes {
+                    if type == scaleType {
+                        self.minorScaleTypes.append(type)
+                    }
                 }
             }
             if let selectedMinorType = user.selectedMinorType {

@@ -235,7 +235,7 @@ class ViewManager: ObservableObject {
             self.boardPublished = user.boardAndGrade.board.name
             self.gradePublished = user.boardAndGrade.grade
             self.userNamePublished = user.name
-            self.userColorPublished = user.color
+            self.userColorPublished = user.getColor()
             AppLogger.shared.log(self, "========= updatePublishedUser \(user.boardAndGrade.board.name), \(user.boardAndGrade.grade)")
         }
     }
@@ -250,17 +250,25 @@ class ViewManager: ObservableObject {
 
 struct TabContainerView: View {
     @ObservedObject private var viewManager = ViewManager.shared
+    let tabBarAppearance = UITabBarAppearance()
     
     init() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.white // background color
 
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor(Figma.backgroundGreen)
+        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
+        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.lightGray
+        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.lightGray]
+        
+        // APPLY the appearance to the tab bar
         let tabBar = UITabBar.appearance()
-        tabBar.standardAppearance = appearance
-        tabBar.scrollEdgeAppearance = appearance
-        tabBar.tintColor = UIColor.black                  // selected icon/text
-        tabBar.unselectedItemTintColor = UIColor.gray
+        tabBar.standardAppearance = tabBarAppearance
+        tabBar.scrollEdgeAppearance = tabBarAppearance
     }
         
     var body: some View {
@@ -302,17 +310,17 @@ struct TabContainerView: View {
                         }
                     }
                 
-                SettingsView()
-                    .tabItem {
-                        Label(
-                            NSLocalizedString("Settings", comment: "Menu"),
-                            systemImage: "gear"
-                        )
-                        //.foregroundColor(.black) // set color
-                        .labelStyle(.titleAndIcon)
-                    }
-                    .tag(30)
-                    .environmentObject(viewManager)
+//                SettingsView()
+//                    .tabItem {
+//                        Label(
+//                            NSLocalizedString("Settings", comment: "Menu"),
+//                            systemImage: "gear"
+//                        )
+//                        //.foregroundColor(.black) // set color
+//                        .labelStyle(.titleAndIcon)
+//                    }
+//                    .tag(30)
+//                    .environmentObject(viewManager)
                         
                 LicenseManagerView(contentSection: ContentSection(), email: "email.com")
                     .tabItem {
@@ -380,7 +388,8 @@ struct TabContainerView: View {
 //            WelcomeView()
 //                .tag(ViewManager.TAB_WELCOME) ///Keep it last in list
         }
-        .background(Color.white)
+        //.background(Color.white)
+        //.background(Color(FigmaColors.shared.colorShades[0].1))
         .tabViewStyle(DefaultTabViewStyle())
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)

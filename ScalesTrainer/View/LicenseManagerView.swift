@@ -652,15 +652,14 @@ public struct LicenseManagerView: View {
     
     public var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                ToolbarTitleView(screenName: "Licence Subscriptions", helpMsg: "").padding(.vertical, 0)
-                DetailedLicensesView()
-                    //.screenBackgroundStyle()
-                    .padding()
-            }
-            .frame(width: UIScreen.main.bounds.width * UIGlobals.shared.screenWidth) //, height: UIScreen.main.bounds.height * 0.9)
+            DetailedLicensesView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle("Subscriptions")
+                .navigationBarTitleDisplayMode(.inline) 
+                .commonToolbar(
+                    title: "Subscriptions", helpMsg: "", onBack: {}
+                )
         }
     }
-
 }
 

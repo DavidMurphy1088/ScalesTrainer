@@ -142,49 +142,46 @@ struct ActivitiesView: View {
 
     @State var imgSize = UIScreen.main.bounds.width * 0.2
     @ObservedObject var viewManager = ViewManager.shared
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(FigmaColors.shared.colorShades[0].1)
-                    .ignoresSafeArea()
-                VStack {
-                    Text("How do you want to practise?").font(.title).padding()
-                    HStack {
-                        NavigationLink(destination: ChooseYourExerciseView()) {
-                            Image("activity_pick_exercise")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: imgSize, height: imgSize)
-                                .padding()
-                        }
-
-                        NavigationLink(destination: PracticeChartView()) {
-                            Image("activity_practice_chart")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: imgSize, height: imgSize)
-                                .padding()
-                        }
-                        
-                        NavigationLink(destination: SpinTheWheelView()) {
-                            Image("activity_spin_wheel")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: imgSize, height: imgSize)
-                                .padding()
-                        }
-                        .buttonStyle(PlainButtonStyle())
+    NavigationStack {
+            VStack {
+//                Text("How do you want to practise?").font(compact ? .title3 : .title).padding(.horizontal)
+//                    //.figmaRoundedBackground()
+                HStack {
+                    NavigationLink(destination: ChooseYourExerciseView()) {
+                        Image("activity_pick_exercise")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: imgSize, height: imgSize)
+                            .padding()
                     }
+
+                    NavigationLink(destination: PracticeChartView()) {
+                        Image("activity_practice_chart")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: imgSize, height: imgSize)
+                            .padding()
+                    }
+                    
+                    NavigationLink(destination: SpinTheWheelView()) {
+                        Image("activity_spin_wheel")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: imgSize, height: imgSize)
+                            .padding()
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("Activities") //Required to use to set as "back" name in child views
             .navigationBarTitleDisplayMode(.inline) //Required to use a custom toolbar .commonToolbar at the top of the nav stack
             .commonToolbar(
                 title: "Activities", helpMsg: "", onBack: {}
             )
-        }
-        .onAppear() {
         }
     }
 }

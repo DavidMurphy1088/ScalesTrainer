@@ -41,16 +41,14 @@ struct ScalesView: View {
     @State var emailResult: MFMailComposeResult? = nil
     @State var emailPopupSheet: ActiveSheet?
     @State var exerciseProcess:RunningProcess? = nil
-    @State var badgesShowing = false
-    
-    @State private var isLandscape: Bool = false
     @State private var spacingHorizontal:CGFloat = 12
     
-    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 0 : UIScreen.main.bounds.size.height * 0.02
-
+    let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? UIScreen.main.bounds.size.height * 0.02 : UIScreen.main.bounds.size.height * 0.02
+    //let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 4 : 4
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    
     init(user:User, scale:Scale) {//}, handType:HandType) {
         self.user = user
-        //self.handType = handType
         self.scale = scale
     }
     
@@ -149,7 +147,7 @@ struct ScalesView: View {
                 text = "Stop Backing Harmony"
             case.followingScale :
                 text = "Stop Following"
-            case.playingAlongWithScale :
+            case.playingAlong :
                 text = "Stop Play Along"
             default:
                 text = ""
@@ -160,7 +158,7 @@ struct ScalesView: View {
     
     func StopProcessView(user:User) -> some View {
         VStack(spacing:0) {
-            if [.playingAlongWithScale, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
+            if [.playingAlong, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
                 HStack {
                     let title = getStopButtonText(process: scalesModel.runningProcessPublished)
 //                        Button(action: {
@@ -248,11 +246,11 @@ struct ScalesView: View {
                     HStack()  {
                         FigmaButton("Follow",
                         action: {
+                            metronome.stop()
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
                             self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
                                                                 ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
-
                             self.directionIndex = 0
                         })
                     }
@@ -263,14 +261,14 @@ struct ScalesView: View {
                 if self.scaleIsAcousticCapable(scale: self.scale) {
                     Spacer()
                     HStack() {
-                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Lead" : "Lead"
                         FigmaButton("Lead",
                         action: {
+                            metronome.stop()
                             if scalesModel.runningProcessPublished == .leadingTheScale {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
+                                //scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
                                 self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperModeOn() ?
                                                                     ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
@@ -287,8 +285,9 @@ struct ScalesView: View {
                     let title = UIDevice.current.userInterfaceIdiom == .phone ? "Play\u{200B}Along" : "Play Along"
                     FigmaButton(title,
                     action: {
-                        scalesModel.setRunningProcess(.playingAlongWithScale)
-                        exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
+                        self.exerciseState.setExerciseState("PlayAlong", ExerciseState.State.exerciseAboutToStart)
+                        self.exerciseProcess = RunningProcess.playingAlong
+                        //exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
                     })
                 }
                 //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
@@ -345,30 +344,64 @@ struct ScalesView: View {
             }
         }
     }
+//    struct ComponentSizes {
+//        var headerHeight = 0.0
+//        var keyboardHeight = 0.0
+//        var scoreHeight = 0.0
+//    }
     
-    func getKeyboardHeight(keyboardCount:Int, showingStaff:Bool) -> CGFloat {
-        var height:Double
+    public enum ComponentSizeType {
+        case header
+        case keyboard
+        case score
+    }
+    
+    func getComponentSizes(_ callType:ComponentSizeType, keyboardCount:Int? = nil, showingStaff:Bool? = nil) -> CGFloat {
+        let screenHeight = UIScreen.main.bounds.size.height
         
-        if self.scale.needsTwoKeyboards() {
-            //height = UIScreen.main.bounds.size.height / (orientationObserver.orientation.isAnyLandscape ? 5 : 5)
-            //height = UIScreen.main.bounds.size.height / (orientationInfo.isPortrait ? 5 : 5)
-            ///16 Feb 2025 Can be a bit longer due to just minimizing some other UI heights in landscape
-            if showingStaff {
-                height = UIScreen.main.bounds.size.height * (isLandscape ? 0.25 : 0.20)
-            }
-            else {
-                height = UIScreen.main.bounds.size.height * (isLandscape ? 0.33 : 0.33)
-            }
+        /// ----------- Header -------------
+        let scale = compact ? 0.08 : 0.04
+        let headerHeight = screenHeight * scale
+
+        /// ----------- Keyboard -------------
+        if callType == ComponentSizeType.keyboard {
         }
-        else {
-            //height = UIScreen.main.bounds.size.height / (isLandscape  ? 3 : 4)
-            height = UIScreen.main.bounds.size.height * (isLandscape  ? 0.33 : 0.33)
-        }
+        var keyboardHeight = 0.0
+        //0.5 //0.33 🔴 DONT TOUCH ANY OF THIS LIGHTLY
+        //Score height is calculated with whats left after the header and keyboard heights are specified
+        var keyboardHeightScale:Double = 0.40
+            if let showingStaff = showingStaff {
+                if !showingStaff {
+                    keyboardHeightScale = 0.60
+                }
+            }
+            if self.scale.scaleMotion == ScaleMotion.contraryMotion {
+                if self.scale.hands.count > 1 {
+                    ///Too many keys get too thin
+                    keyboardHeightScale = 0.40
+                }
+            }
+
         if self.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
-            height = height * 0.7
+            //keyboardHeightScale = keyboardHeightScale * 0.5
         }
-        return height
+        keyboardHeight = UIScreen.main.bounds.size.height * keyboardHeightScale
+        
+        /// ----------- Score -------------
+        let scoreHeight = (screenHeight * 0.6) - headerHeight - keyboardHeight
+        
+        if callType == ComponentSizeType.header {
+            return headerHeight
+        }
+        if callType == ComponentSizeType.keyboard {
+            return keyboardHeight
+        }
+        if callType == ComponentSizeType.score {
+//            print("============== Sizes: callType:\(callType) screen=\(screenHeight) Header:\(headerHeight) [KB:\(keyboardHeight) scale:\(keyboardHeightScale)] score:\(scoreHeight) ==============")
+            return scoreHeight
+        }
+        return 0.0
     }
     
     func getMailInfo() -> String {
@@ -380,7 +413,7 @@ struct ScalesView: View {
         return mailInfo
     }
     
-    func staffCanFit() -> Bool {
+    func scoreCanFit() -> Bool {
         var canFit = true
         ///01Feb2025 - decided chromatic cant display well on any device or orientation
         //if UIDevice.current.userInterfaceIdiom == .phone {
@@ -395,40 +428,12 @@ struct ScalesView: View {
         }
         return canFit
     }
-        
-//    func getBadgeOffset(state:ExerciseState.State) -> (CGFloat, CGFloat) {
-//        ///All offsets are relative to the last postion
-//        if state == .exerciseNotStarted {
-//            //return (0, UIScreen.main.bounds.height)
-//            return (0, 300)
-//        }
-//
-//        if state == .exerciseLost {
-//            //return (0, UIScreen.main.bounds.height)
-//            ///The image is rotated down so negative offset sends it down
-//            return (0, UIScreen.main.bounds.height * -0.5)
-//        }
-////        if [.wonAndFinished].contains(state) {
-////            //return (UIScreen.main.bounds.width * -0.5, UIScreen.main.bounds.height * -0.75)
-////            return (UIScreen.main.bounds.width * -0.3, UIScreen.main.bounds.height * -0.75)
-////        }
-//        return (0,0) //Exercise started
-//    }
-    
-    func hasVerticalSpace() -> Bool {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return false
-        }
-        return !isLandscape
-    }
-    
-    func HeaderView() -> some View {
+            
+    func HeaderView(height: Double) -> some View {
         HStack {
-            let screenWidth = UIScreen.main.bounds.width
-            let screenHeight = UIScreen.main.bounds.height
-            let scale = 0.04
-            MetronomeView(width: screenWidth * scale, height: screenHeight * scale)
-                .frame(width: .infinity, height: screenHeight * scale)
+            let screenWidth = UIScreen.main.bounds.size.width
+            MetronomeView(width: screenWidth * 0.66, height: height)
+                //.frame(width: .infinity, height:
                 .padding(sizeClass == .regular ? systemSpacing : 2)
                 .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
             
@@ -441,9 +446,9 @@ struct ScalesView: View {
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: screenHeight * scale)
+                        .frame(height: height)
                     //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? AppOrange : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? Color.blue : Color.black)
                 }
                 Button(action: {
                     self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -453,109 +458,143 @@ struct ScalesView: View {
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: screenHeight * scale)
+                        .frame(height: height)
                     //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? AppOrange : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? Color.blue : Color.black)
                     
                 }
             }
-            .frame(width: .infinity, height: screenHeight * scale)
             .padding(sizeClass == .regular ? systemSpacing : 2)
             .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
         }
-        //.border(Color.red)
     }
 
     var body: some View {
         ZStack {
             VStack() {
-                //let headerScale = UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.10
                 VStack() {
-                    
-                    HeaderView()
+                    let headerHeight = getComponentSizes(.header)
+                    HeaderView(height: headerHeight)
+                        .frame(width: .infinity, height: headerHeight)
                         .padding(.horizontal, spacingHorizontal)
+                        .padding(.top, spacingVertical)
+                        .padding(.bottom, spacingVertical)
+                        //.border(.red)
                     
                     if scalesModel.showKeyboard {
                         VStack(spacing:0) {
                             if let joinedKeyboard = PianoKeyboardModel.sharedCombined {
                                 ///Scale is contrary with LH and RH joined on one keyboard
                                 PianoKeyboardView(scalesModel: scalesModel, viewModel: joinedKeyboard, keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                             }
                             else {
                                 if self.scale.needsTwoKeyboards() {
-                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH, keyColor: user.settings.getKeyboardColor())
-                                        .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
-                                        .padding(.bottom, spacingVertical)
+                                    PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedRH,
+                                                      keyColor: user.settings.getKeyboardColor())
+                                    .padding(.bottom, spacingVertical)
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: PianoKeyboardModel.sharedLH,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                                 else {
                                     let keyboard = self.scale.hands[0] == 1 ? PianoKeyboardModel.sharedLH : PianoKeyboardModel.sharedRH
                                     PianoKeyboardView(scalesModel: scalesModel, viewModel: keyboard,
                                                       keyColor: user.settings.getKeyboardColor())
-                                    .frame(height: getKeyboardHeight(keyboardCount: self.scale.hands.count, showingStaff: staffCanFit()))
                                 }
                             }
                         }
+                        .frame(height: getComponentSizes(.keyboard, keyboardCount: self.scale.hands.count, showingStaff: scoreCanFit()))
+                        //.border(.green)
                         .padding(.bottom, spacingVertical)
                         .padding(.horizontal, spacingHorizontal)
                     }
                     
-                    if staffCanFit() {
+                    if scoreCanFit() {
                         if let score = scalesModel.getScore() {
-                            VStack(spacing: 0) {
-                                if scalesModel.showStaff {
-                                    ScoreView(scale: self.scale, score: score, showResults: false)
-                                }
+                            if scalesModel.showStaff {
+                                let height = getComponentSizes(.score)
+                                ScoreView(scale: self.scale, score: score, showResults: false, height: height)
+                                    .frame(height: height)
+//                                    VStack {
+//                                        Text("TestScore")
+//                                    }
+                                    //.border(.red)
+                                .padding(.bottom, spacingVertical)
+                                .padding(.horizontal, spacingHorizontal)
                             }
-                            .padding(.bottom, spacingVertical)
-                            .padding(.horizontal, spacingHorizontal)
                         }
                     }
                     
-                    //if [.leadingTheScale, .followingScale, .backingOn, .playingAlongWithScale, .recordingScale]
                     ///on iPhone dont show this to save vertical space. Let the user exit via the badges close button
-                    if [.backingOn, .playingAlongWithScale, .recordingScale]
+                    if [.backingOn, .recordingScale]
                         .contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
                         StopProcessView(user:user)
                     }
                     else {
-                        if !self.badgesShowing {
+                        if [.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
+                            //Text("\(exerciseState.statePublished)")
+                            ZStack {
+                                VStack(spacing:0) {
+                                    //Spacer()
+                                    if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
+                                        ExerciseDropDownStarsView(user: user, scale: self.scale,
+                                                           exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
+                                                           onClose: {
+                                            exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
+                                        })
+                                        .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
+                                        //.padding(.bottom, self.spacingVertical)
+                                    }
+                                    Text("")
+                                }
+                                if [.exerciseLost].contains(exerciseState.statePublished) {
+                                    //Text("\(exerciseState.statePublished)").padding()
+                                    HStack {
+                                        if let message = self.exerciseState.exerciseMessage {
+                                            Text(message).padding().foregroundColor(.red)
+                                        }
+                                        FigmaButton("Back", action: {
+                                            self.exerciseState.setExerciseState("Lost Exercise", .exerciseNotStarted)
+                                        })
+                                        .padding()
+                                    }
+                                    .figmaRoundedBackgroundWithBorder()
+                                }
+                            }
+                        }
+                        else {
                             SelectActionView()
                         }
                     }
                     
-                    ///-------- Exercise badges displays ----------
-                    if user.settings.practiceChartGamificationOn {
-                        if let exerciseBadge = scalesModel.exerciseBadge {
-                            ///Show the horizontal row of badges
-                            Spacer()
-                            VStack(spacing:0) {
-                                if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
-                                    ExerciseBadgesView(user: user, scale: self.scale,
-                                                       exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
-                                                       onClose: {
-                                        exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
-                                    })
-                                    .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
-                                    .padding(.bottom, self.spacingVertical)
-                                    .onAppear() {
-                                        if UIDevice.current.userInterfaceIdiom == .phone {
-                                            self.badgesShowing = true
-                                        }
-                                    }
-                                    .onDisappear() {
-                                        if UIDevice.current.userInterfaceIdiom == .phone {
-                                            self.badgesShowing = false
-                                        }
-                                    }
-                                    
-                                }
-                            }
-                        }
-                    }
+                    ///-------- Show the horizontal row of badges ----------
+//                    if user.settings.practiceChartGamificationOn {
+//                        if let exerciseBadge = scalesModel.exerciseBadge {
+//                            Spacer()
+//                            //Text("\(exerciseState.statePublished)")
+//                            VStack(spacing:0) {
+//                                if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
+//                                    ExerciseBadgesView(user: user, scale: self.scale,
+//                                                       exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
+//                                                       onClose: {
+//                                        exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
+//                                    })
+//                                    .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
+//                                    .padding(.bottom, self.spacingVertical)
+//                                    .onAppear() {
+////                                        if UIDevice.current.userInterfaceIdiom == .phone {
+////                                            self.dropDownStarsShowing = true
+////                                        }
+//                                    }
+//                                    .onDisappear() {
+////                                        if UIDevice.current.userInterfaceIdiom == .phone {
+////                                            self.dropDownStarsShowing = false
+////                                        }
+//                                    }
+//                                }
+//                                
+//                            }
+//                        }
+//                    }
                     
                     Spacer()
                 }
@@ -579,18 +618,30 @@ struct ScalesView: View {
 //            }
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                if let badge = scalesModel.exerciseBadge {
+                if [RunningProcess.playingAlong].contains(self.exerciseProcess) {
+                    StartExerciseView(scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
+                        if cancelled {
+                            exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
+                        }
+                        else {
+                            exerciseState.setExerciseState("Start view closed", .exerciseStarted)
+                            //scalesModel.setRunningProcess(.playingAlong)
+                        }
+                    })
+                    .padding()
+                }
+                else {
                     VStack(spacing:0) {
-                        StartFollowLeadView(badge: badge, scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
+                        StartFollowLeadView(scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
                             if cancelled {
-                                exerciseState.setExerciseState("Follow", .exerciseNotStarted)
+                                exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
                             }
                             else {
-                                exerciseState.setExerciseState("Follow", .exerciseStarted)
+                                exerciseState.setExerciseState("Start view closed", .exerciseStarted)
                             }
                         })
+                        .padding()
                     }
-                    .padding()
                 }
             }
 //            if [.exerciseWon].contains(exerciseState.statePublished) {
@@ -605,15 +656,15 @@ struct ScalesView: View {
 //                }
 //            }
             
-            if [.exerciseShowResults].contains(exerciseState.statePublished) {
-                if let score = scalesModel.getScore() {
-                    ResultView(parentScore: score, callback: {ok in
-                        exerciseState.setExerciseState("EndResults", .exerciseNotStarted)
-                    })
-                    .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.75)
-                    .padding()
-                }
-            }
+//            if [.exerciseShowResults].contains(exerciseState.statePublished) {
+//                if let score = scalesModel.getScore() {
+//                    ResultView(parentScore: score, callback: {ok in
+//                        exerciseState.setExerciseState("EndResults", .exerciseNotStarted)
+//                    })
+//                    .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.75)
+//                    .padding()
+//                }
+//            }
 
 //            if [.exerciseLost].contains(exerciseState.statePublished) {
 //                if let badge = scalesModel.exerciseBadge {
@@ -647,6 +698,7 @@ struct ScalesView: View {
         }
         .commonToolbar(
             title: self.scale.getScaleDescriptionParts(name:true),
+            titleMustShow: true,
             helpMsg: self.scale.getDescriptionTabbed(),
             onBack: { dismiss() }
         )
@@ -736,6 +788,7 @@ struct ScalesView: View {
             exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
+            //metronome.start(doStandby: false, doLeadIn: false, scale: self.scale)
         }
         
         .onDisappear {

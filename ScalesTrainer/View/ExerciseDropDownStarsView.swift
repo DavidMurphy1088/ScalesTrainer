@@ -64,8 +64,8 @@ struct HexagramShape: View {
     }
 }
 
-///The badge view for the exercise
-struct ExerciseBadgesView: View {
+///The stars view for the exercise
+struct ExerciseDropDownStarsView: View {
     @ObservedObject var exerciseBadgesList:ExerciseBadgesList
     let user:User
     let scale:Scale

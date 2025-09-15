@@ -10,7 +10,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     var name:String
     var email:String
     var settings:UserSettings
-    var color:String
+    private var color:String
     var boardAndGrade:MusicBoardAndGrade
     var selectedMinorType:ScaleType?
     
@@ -18,12 +18,12 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         return lhs.id == rhs.id
     }
     
-    init(color:String) {
+    init() {
         self.id = UUID()
         self.name = ""
         self.email = ""
         self.settings = UserSettings()
-        self.color = color
+        self.color = ""
         self.boardAndGrade = MusicBoardAndGrade(board: MusicBoard.getSupportedBoards()[0], grade: 1)
     }
     
@@ -35,6 +35,10 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.boardAndGrade = boardAndGrade
         self.color = ""
         setColor()
+    }
+    
+    func getColor() -> String {
+        return color
     }
     
     func setColor() {
@@ -61,6 +65,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         else {
             self.color = "green"
         }
+        print("=========== User set color", self.name, self.color.description)
     }
     
     func updateFromUser(user:User) {
