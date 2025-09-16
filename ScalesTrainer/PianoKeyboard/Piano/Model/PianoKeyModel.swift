@@ -74,8 +74,6 @@ public class PianoKeyModel: Identifiable, Hashable {
     
     var hilightType:PianoKeyHilightType = .none
     
-    var hilightCallbackNotUSed: () -> Void = {}
-
     public var touchDown = false
     public var latched = false
     ///A keyboard may have keys played by both LH and RH - e.g. a contray motion keyboard

@@ -287,6 +287,7 @@ public class ScalesModel : ObservableObject {
 //    }
     
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
+        let metronome = Metronome.shared
         let user = Settings.shared.getCurrentUser("Scales model, set Run process")
         if setProcess == .leadingTheScale {
             
@@ -321,8 +322,9 @@ public class ScalesModel : ObservableObject {
             setUserMessage(heading: nil, msg: nil)
             self.setSelectedScaleSegment(0)
         }
-
-        Metronome.shared.stop()
+        
+        
+        //metronome.stop("ScalesModel 1 Process:\(setProcess)")
 
         self.runningProcess = setProcess
         DispatchQueue.main.async {
@@ -345,8 +347,6 @@ public class ScalesModel : ObservableObject {
         PianoKeyboardModel.sharedLH.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.sharedLH.redraw()
         
-        let metronome = Metronome.shared
-        
         if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
             if user.settings.useMidiSources {
@@ -366,23 +366,23 @@ public class ScalesModel : ObservableObject {
         }
         
         if [.playingAlong].contains(setProcess) {
-            self.audioManager.configureAudio(withMic: false, recordAudio: false)
-            metronome.stop()
-            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlong))
-            metronome.start(doLeadIn: true, scale: self.scale)
+            //self.audioManager.configureAudio(withMic: false, recordAudio: false)
+            //metronome.stop("ScalesModel PlayAlong")
+            //metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .playingAlong))
+            //metronome.start("ScalesModel PlayAlong", doLeadIn: true, scale: self.scale)
         }
         
         if [.backingOn].contains(setProcess) {
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
-            metronome.stop()
+            metronome.stop("ScalesModel Backing")
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
-            metronome.start(doLeadIn: true, scale: self.scale)
+            metronome.start("ScalesModel Backing", doLeadIn: true, scale: self.scale)
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
             self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
-            metronome.stop()
-            metronome.start(doLeadIn: true, scale: self.scale)
+            metronome.stop("ScalesModel Record")
+            metronome.start("ScalesModel Record", doLeadIn: true, scale: self.scale)
         }
         
 //        if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {

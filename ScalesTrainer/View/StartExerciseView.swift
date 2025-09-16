@@ -260,9 +260,19 @@ struct StartExerciseView: View {
     let callback: (_ cancelled: Bool) -> Void
     let figmaColors = FigmaColors()
     
+    @ObservedObject private var metronome = Metronome.shared
     @State private var countdown = 0
     @State private var isCountingDown = false
     @State private var metronomeChecked = false
+    let audioManager = AudioManager.shared
+    
+    private func startMetronome() {
+        metronome.stop("StartExerciseView")
+        self.audioManager.configureAudio(withMic: false, recordAudio: false)
+        metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: .playingAlong))
+        metronome.start("StartExerciseView", doLeadIn: true, scale: scalesModel.scale)
+        callback(false)
+    }
     
     var body: some View {
         //let compact = UIDevice.current.userInterfaceIdiom == .phone
@@ -270,7 +280,7 @@ struct StartExerciseView: View {
             if metronomeChecked {
                 Text("StartExercise")
                 FigmaButton("Start", action : {
-                    callback(false)
+                    
                 })
             }
             else {
@@ -278,11 +288,11 @@ struct StartExerciseView: View {
                     Text("Are you happy with your metronome setting?").padding()
                     FigmaButton("Yes", action : {
                         self.metronomeChecked = true
+                        self.startMetronome()
                     })
                     FigmaButton("No", action : {
                         callback(true)
                     })
-
                 }
             }
         }

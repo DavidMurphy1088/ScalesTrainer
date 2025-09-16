@@ -27,10 +27,10 @@ struct MetronomeView: View {
             Text("")
             Button(action: {
                 if metronome.statusPublished == .running {
-                    metronome.stop()
+                    metronome.stop("MetronomeView stop[ button")
                 }
                 else {
-                    metronome.start(doLeadIn: false, scale: scalesModel.scale)
+                    metronome.start("MetronomeView start button", doLeadIn: false, scale: scalesModel.scale)
                 }
             }) {
                 Image("metronome-left")

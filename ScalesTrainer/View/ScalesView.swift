@@ -246,7 +246,7 @@ struct ScalesView: View {
                     HStack()  {
                         FigmaButton("Follow",
                         action: {
-                            metronome.stop()
+                            metronome.stop("ScalesView follow")
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
                             self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
@@ -263,7 +263,7 @@ struct ScalesView: View {
                     HStack() {
                         FigmaButton("Lead",
                         action: {
-                            metronome.stop()
+                            metronome.stop("ScalesView Lead")
                             if scalesModel.runningProcessPublished == .leadingTheScale {
                                 scalesModel.setRunningProcess(.none)
                             }
@@ -525,39 +525,41 @@ struct ScalesView: View {
                     }
                     
                     ///on iPhone dont show this to save vertical space. Let the user exit via the badges close button
-                    if [.backingOn, .recordingScale]
-                        .contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
-                        StopProcessView(user:user)
+                    if [.playingAlong, .backingOn, .recordingScale].contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
+                        if [.recordingScale].contains(scalesModel.runningProcessPublished) {
+                            StopProcessView(user:user)
+                        }
                     }
                     else {
                         if [.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
-                            //Text("\(exerciseState.statePublished)")
-                            ZStack {
-                                VStack(spacing:0) {
-                                    //Spacer()
-                                    if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
-                                        ExerciseDropDownStarsView(user: user, scale: self.scale,
-                                                           exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
-                                                           onClose: {
-                                            exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
-                                        })
-                                        .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
-                                        //.padding(.bottom, self.spacingVertical)
-                                    }
-                                    Text("")
-                                }
-                                if [.exerciseLost].contains(exerciseState.statePublished) {
-                                    //Text("\(exerciseState.statePublished)").padding()
-                                    HStack {
-                                        if let message = self.exerciseState.exerciseMessage {
-                                            Text(message).padding().foregroundColor(.red)
+                            if scalesModel.runningProcessPublished != .none {
+                                ZStack {
+                                    VStack(spacing:0) {
+                                        //Spacer()
+                                        if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
+                                            ExerciseDropDownStarsView(user: user, scale: self.scale,
+                                                                      exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
+                                                                      onClose: {
+                                                exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
+                                            })
+                                            .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
+                                            //.padding(.bottom, self.spacingVertical)
                                         }
-                                        FigmaButton("Back", action: {
-                                            self.exerciseState.setExerciseState("Lost Exercise", .exerciseNotStarted)
-                                        })
-                                        .padding()
+                                        Text("")
                                     }
-                                    .figmaRoundedBackgroundWithBorder()
+                                    if [.exerciseLost].contains(exerciseState.statePublished) {
+                                        //Text("\(exerciseState.statePublished)").padding()
+                                        HStack {
+                                            if let message = self.exerciseState.exerciseMessage {
+                                                Text(message).padding().foregroundColor(.red)
+                                            }
+                                            FigmaButton("Back", action: {
+                                                self.exerciseState.setExerciseState("Lost Exercise", .exerciseNotStarted)
+                                            })
+                                            .padding()
+                                        }
+                                        .figmaRoundedBackgroundWithBorder()
+                                    }
                                 }
                             }
                         }
@@ -625,7 +627,6 @@ struct ScalesView: View {
                         }
                         else {
                             exerciseState.setExerciseState("Start view closed", .exerciseStarted)
-                            //scalesModel.setRunningProcess(.playingAlong)
                         }
                     })
                     .padding()
@@ -792,8 +793,8 @@ struct ScalesView: View {
         }
         
         .onDisappear {
-            metronome.stop()
-            metronome.removeAllProcesses()
+            metronome.stop("ScalesView .Disappear")
+            metronome.removeAllProcesses("ScalesView .Disappear")
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
             //OrientationManager.unlockOrientation()
