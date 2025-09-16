@@ -30,7 +30,7 @@ class Metronome:ObservableObject {
         set {
             accessQueue.sync {
                 _status = newValue
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [self] in
                     self.statusPublished = self._status
                 }
             }
@@ -104,7 +104,7 @@ class Metronome:ObservableObject {
         }
            // }
         //}
-        print("====== Metronome ⏰ start() \(ctx) leadIn:\(doLeadIn)")
+        //print("====== Metronome ⏰ start() \(ctx) leadIn:\(doLeadIn)")
         self.startTimerTask("Metronome start")
     }
 
@@ -144,7 +144,7 @@ class Metronome:ObservableObject {
                     self.setStatus(status: .running)
                 }
                 
-                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ",NotesPerClick", notesPerClick, ",Countd", self.leadInCountdownPublished, ",remain", remaining)
+//                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ",NotesPerClick", notesPerClick, ",Countd", self.leadInCountdownPublished, ",remain", remaining)
 
                 self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickCount) //, leadingIn: leadingIn)
                 

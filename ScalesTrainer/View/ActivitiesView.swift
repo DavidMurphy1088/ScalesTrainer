@@ -180,7 +180,7 @@ struct ActivitiesView: View {
             .navigationTitle("Activities") //Required to use to set as "back" name in child views
             .navigationBarTitleDisplayMode(.inline) //Required to use a custom toolbar .commonToolbar at the top of the nav stack
             .commonToolbar(
-                title: "Activities", helpMsg: "", onBack: {}
+                title: "Activities", helpMsg: "Choose how you’d like to practise. We recommend starting with the Practice Chart and leaving Spin the Wheel to last.", onBack: {}
             )
         }
     }

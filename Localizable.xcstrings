@@ -145,9 +145,6 @@
     "Bluetooth MIDI Devices" : {
 
     },
-    "But you can also practise %@ hands separately." : {
-
-    },
     "Cancel" : {
 
     },
@@ -161,6 +158,9 @@
 
     },
     "Connected MIDI Sources" : {
+
+    },
+    "Counting In..." : {
 
     },
     "Current Amplitude Filter:%@" : {
@@ -307,6 +307,9 @@
           }
         }
       }
+    },
+    "However you can also practise %@ hands separately." : {
+
     },
     "In the exam %@ must be played with both hands." : {
 
@@ -552,9 +555,6 @@
 
     },
     "Start Analysis" : {
-
-    },
-    "StartExercise" : {
 
     },
     "Stats: %@" : {

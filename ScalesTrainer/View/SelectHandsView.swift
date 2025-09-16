@@ -54,7 +54,7 @@ struct SelectHandForPractice: View {
                 }
                 Text("")
                 Text("In the exam \(nameFull) must be played with both hands.")
-                Text("But you can also practise \(name) hands separately.")
+                Text("However you can also practise \(name) hands separately.")
                 Text("")
                 if !compact {
                     Text("")
@@ -93,7 +93,7 @@ struct SelectHandForPractice: View {
         }
         .commonToolbar(
             title: "Select Hands",
-            helpMsg: "",
+            helpMsg: "Choose to play hands together or practise with your left or right hand first.",
             onBack: { dismiss() }
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)

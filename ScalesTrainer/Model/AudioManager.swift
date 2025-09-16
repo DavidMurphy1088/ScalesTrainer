@@ -16,6 +16,7 @@ class AudioManager {
     private var samplerForBacking:MIDISampler?
     private var mixer:Mixer?
     private var mic:AudioEngine.InputNode? = nil
+    var backingPresetNumber = 0 //Sampler sound for backing
     
     ///AudioKit Cookbook example
     private var pitchTaps: [PitchTap] = []
@@ -58,23 +59,24 @@ class AudioManager {
                 }
                 
                 self.samplerForKeyboard = MIDISampler()
-                var preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+                let preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
                 self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
-                if Settings.shared.isCurrentUserDefined() {
-                    let user = Settings.shared.getCurrentUser("configureAudio")
-                    switch user.settings.backingSamplerPreset {
-                        case 1: preset = 28
-                        case 2: preset = 37
-                        case 3: preset = 49
-                        case 4: preset = 33
-                        case 5: preset = 39
-                        case 6: preset = 43
-                        case 7: preset = 2
-                        case 8: preset = 4
-                        default: preset = 0
-                    }
+                //if Settings.shared.isCurrentUserDefined() {
+                    //let user = Settings.shared.getCurrentUser("configureAudio")
+                var backingPreset = 2
+                switch self.backingPresetNumber {
+                    case 1: backingPreset = 28
+                    case 2: backingPreset = 37
+                    case 3: backingPreset = 49
+                    case 4: backingPreset = 33
+                    case 5: backingPreset = 39
+                    case 6: backingPreset = 43
+                    case 7: backingPreset = 2
+                    case 8: backingPreset = 4
+                    default: backingPreset = 0
                 }
-                self.samplerForBacking = loadSampler(num: 1, preset: preset)
+                //}
+                self.samplerForBacking = loadSampler(num: 1, preset: backingPreset)
                 
                 self.mixer = Mixer()
                 self.mixer!.addInput(self.samplerForKeyboard!)

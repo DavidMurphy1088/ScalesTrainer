@@ -9,17 +9,6 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     let audioManager = AudioManager.shared
     var metronomeAudioPlayerLow:AVAudioPlayer?
     
-//    var _tickNum = 0
-//    private let accessQueue = DispatchQueue(label: "com.musicmastereducation.scalesacademy.metronometicker.tickNum")
-//    var tickNum: Int {
-//        get {
-//            return accessQueue.sync { _tickNum }
-//        }
-//        set {
-//            accessQueue.sync {_tickNum = newValue}
-//        }
-//    }
-
     init() {
     }
     
@@ -37,10 +26,9 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
         if true || timerTickerNumber % notesPerClick == 0 {
             if let player = metronomeAudioPlayerLow {
                 player.volume = timerTickerNumber % notesPerClick == 0 ? 0.1 : 0.0
-                print("        ============= metronomeTickNotification 🔔 Tick\(timerTickerNumber)")
+                //print("        ============= metronomeTickNotification 🔔 Tick\(timerTickerNumber)")
                 player.play()
             }
-            //self.tickNum += 1
         }
     }
     

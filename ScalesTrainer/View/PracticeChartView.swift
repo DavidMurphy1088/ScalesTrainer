@@ -210,7 +210,8 @@ struct PracticeChartView: View {
         }
         .padding(.leading, leftEdge)
         .commonToolbar(
-            title: "Practice Chart", helpMsg: "",
+            title: "Practice Chart",
+            helpMsg: "All technical work is covered in a three-day rotation. Choose your minor scale preference and shuffle the chart from time to time to keep the order fresh.",
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView

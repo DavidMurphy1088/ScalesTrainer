@@ -26,7 +26,7 @@ struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var leadInBarCount = 0
-    @State var backingPresetNumber = 0
+    //@State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
     @State var developerMode = false
     @State var useMidiSources = false
@@ -75,20 +75,20 @@ struct SettingsView: View {
         VStack(alignment: .leading) {
             ///Backing sampler
             Spacer()
-            HStack {
-                Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
-                Picker("Select Value", selection: $backingPresetNumber) {
-                    ForEach(0..<8) { number in
-                        Text("\(backingSoundName(number))")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: backingPresetNumber, {
-                    user.settings.backingSamplerPreset = backingPresetNumber
-                    //AudioManager.shared.resetAudioKit()
-                })
-            }
-            .padding()
+//            HStack {
+//                Text(LocalizedStringResource("Backing Track Sound")).font(.title2).padding(0)
+//                Picker("Select Value", selection: $backingPresetNumber) {
+//                    ForEach(0..<8) { number in
+//                        Text("\(backingSoundName(number))")
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//                .onChange(of: backingPresetNumber, {
+//                    user.settings.backingSamplerPreset = backingPresetNumber
+//                    //AudioManager.shared.resetAudioKit()
+//                })
+//            }
+//            .padding()
             
             ///Badges
             //Spacer()
@@ -192,7 +192,7 @@ struct SettingsView: View {
                 scalesModel.setKeyboardAndScore(scale: Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: 1, hands: [0], minTempo: 60, dynamicTypes: [], articulationTypes: []), callback: nil)
             }
             self.defaultOctaves = settings.defaultOctaves
-            self.backingPresetNumber = user.settings.backingSamplerPreset
+            //self.backingPresetNumber = user.settings.backingSamplerPreset
             self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
             self.useMidiSources = user.settings.useMidiSources

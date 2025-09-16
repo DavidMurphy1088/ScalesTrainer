@@ -33,7 +33,7 @@ struct MetronomeView: View {
                     metronome.start("MetronomeView start button", doLeadIn: false, scale: scalesModel.scale)
                 }
             }) {
-                Image("metronome-left")
+                Image(metronome.statusPublished == .running ? "metronome-hilit" : "metronome-left")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: height)

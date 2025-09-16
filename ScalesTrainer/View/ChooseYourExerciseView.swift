@@ -118,7 +118,8 @@ struct ChooseYourExerciseView: View {
             }
         }
         .commonToolbar(
-            title: "Choose Your Exercise", helpMsg: "",
+            title: "Choose Your Exercise",
+            helpMsg: "Here you’ll find all technical work for your grade. Set filters to find what you’re looking for quickly. You only need to practise one minor type.",
             onBack: { dismiss() }
         )
         //.toolbar(.hidden, for: .tabBar) // Hide the TabView

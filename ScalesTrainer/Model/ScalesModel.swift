@@ -373,10 +373,10 @@ public class ScalesModel : ObservableObject {
         }
         
         if [.backingOn].contains(setProcess) {
-            self.audioManager.configureAudio(withMic: false, recordAudio: false)
-            metronome.stop("ScalesModel Backing")
-            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn))
-            metronome.start("ScalesModel Backing", doLeadIn: true, scale: self.scale)
+//            self.audioManager.configureAudio(withMic: false, recordAudio: false)
+//            metronome.stop("ScalesModel Backing")
+//            //metronome.addProcessesToNotify(process: HearScalePlayer(hands: scale.hands, process: .backingOn, endCallback: <#() -> Void#>))
+//            metronome.start("ScalesModel Backing", doLeadIn: true, scale: self.scale)
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {

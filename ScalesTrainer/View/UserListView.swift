@@ -102,7 +102,7 @@ struct UserListView: View {
             //.toolbar(.hidden, for: .tabBar) // Hide the TabView
             .commonToolbar(
                 title: "Users",
-                helpMsg: "",
+                helpMsg: "Add your name then select your board and grade. Multiple users are supported. Set the current user using the top right circle button",
                 onBack: {}
             )
         }

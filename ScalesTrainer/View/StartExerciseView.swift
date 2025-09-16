@@ -27,135 +27,40 @@ struct HandsView: View {
     }
 }
 
-//struct StartCountdownView: View {
-//    @ObservedObject private var metronome = Metronome.shared
-//    let scale:Scale
-//    let activityName:String
-//    let callback: (_ : ExerciseState.State) -> Void
-//    
-//    func stayAlive(countdown:Int) -> Bool {
-//        if metronome.statusPublished == MetronomeStatus.running {
-//            callback(ExerciseState.State.exerciseStarted)
-//            return false
-//        }
-//        return true
-//    }
-//
-//    var body: some View {
-//        VStack {
-//            let scaleName = scale.getScaleName(handFull: true)
-//            GeometryReader { geo in
-//                VStack(spacing:0) {
-//                    Text("Starting \(activityName)").font(.title).foregroundColor(.black)
-//                    Text("\(scaleName)").font(.title2).foregroundColor(.black)
-//                    if metronome.statusPublished == .standby {
-//                        Text("Hands ready?").font(.title2).bold()
-//                    }
-//                    else {
-//                        if let countdown = metronome.leadInCountdownPublished {
-//                            if stayAlive(countdown: countdown)  {
-//                                VStack {
-//                                    if countdown > 0 {
-//                                        let message = "Starting in \(countdown)"
-//                                        Text(message)
-//                                            .font(.title2).bold()
-//                                            .foregroundColor(countdown == 1 ? AppOrange : Color(.black))
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    PianoStartNoteIllustrationView(scalesModel: ScalesModel.shared, keyHeight: geo.size.height * 0.20)
-//                            .frame(width: geo.size.width * 0.99, height: geo.size.height * 0.4)
-//                    HandsView(scale: scale)
-//
-//                    Button("Back") {
-//                        callback(.exerciseAborted)
-//                    }
-//                    Spacer()
-//                }
-//            }
-//        }
-//        .onAppear() {
-//        }
-//        .frame(width: UIScreen.main.bounds.width * 0.60, height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.70 : 0.60))
-//        .background(Color.white.opacity(1.0))
-//        .cornerRadius(30)
-//        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.blue, lineWidth: 3))
-//        .shadow(radius: 10)
-//    }
-//}
-
-/// ------------------ With badges exercises -----------------
-
-//struct EndOfExerciseView: View {
-//    let badge: ExerciseBadge
-//    let scalesModel:ScalesModel
-//    let exerciseMessage:String?
-//    let callback: (_ retry:Bool, _ showResult:Bool) -> Void
-//    let failed:Bool
-//    
-//    @State private var countdown = 0
-//    @State private var isCountingDown = false
-//    
-//    var body: some View {
-//        VStack {
-//            if failed {
-//                VStack {
-//                    if let msg = exerciseMessage {
-//                        VStack(spacing : 0) {
-//                            Text("Sorry - \(msg)").font(.title2)
-//                            Text("Try again?").font(.title2)
-//                        }
-//                        .padding()
-//                    }
-//                    HStack {
-//                        FigmaButton("Back", action : {
-//                            callback(false, false)
-//                        })
-//                        FigmaButton("Retry", action : {
-//                            callback(true, false)
-//                        })
-//                    }
-//                }
-//            }
-//            else {
-//                //Text("😊 You  Won \(badge.name)").font(.largeTitle)
-//                Text("😊 Nice Job").font(.largeTitle)
-//                    .padding()
-//                //            Text(badge.name).font(.largeTitle)
-//                //                .padding()
-////                Image(badge.imageName)
-////                    .resizable()
-////                    .scaledToFit()
-////                    .frame(width: 120, height: 120)
-////                    .padding()
-//                
-//                HStack {
-//                    FigmaButton("Ok", action : {
-//                        callback(false, false)
-//                    })
-//                    
-//                    if Settings.shared.isDeveloperModeOn() {
-//                        Button("Results") {
-//                            callback(false, true)
-//                        }
-//                        .font(.title)
-//                        .disabled(isCountingDown)
-//                        .padding()
-//                    
-//                        FigmaButton("Results", action : {
-//                            callback(false, true)
-//                        })
-//                    }
-//                }
-//            }
-//        }
-//        .foregroundColor(.black)
-//        .padding()
-//        .figmaRoundedBackgroundWithBorder()
-//    }
-//}
+struct PickBackingStyle: View {
+    @Binding var backingPresetNumber: Int
+    func backingSoundName(_ n:Int) -> String {
+        var str:String
+        switch n {
+        case 1: str = "Cello"
+        case 2: str = "Synthesiser"
+        case 3: str = "Guitar"
+        case 4: str = "Saxophone"
+        case 5: str = "Moog Synthesiser"
+        case 6: str = "Steel Guitar"
+        case 7: str = "Melody Bell"
+        default:
+            str = "Piano"
+        }
+        return str
+    }
+    
+    var body: some View {
+        VStack {
+            Text(LocalizedStringResource("Backing Track Sound"))//.font(.title2).padding(0)
+            Picker("Select Value", selection: $backingPresetNumber) {
+                ForEach(0..<8) { number in
+                    Text("\(backingSoundName(number))")
+                }
+            }
+            .pickerStyle(.menu)
+            .onChange(of: backingPresetNumber, {
+                //user.settings.backingSamplerPreset = backingPresetNumber
+                //AudioManager.shared.resetAudioKit()
+            })
+        }
+    }
+}
 
 struct PianoStartNoteIllustrationView: View {
     let scalesModel:ScalesModel
@@ -253,51 +158,77 @@ struct StartFollowLeadView: View {
     }
 }
 
-
 struct StartExerciseView: View {
     let scalesModel:ScalesModel
+    let process:RunningProcess
     let activityName:String
-    let callback: (_ cancelled: Bool) -> Void
+    let parentCallback: (_ cancelled: Bool) -> Void
+    let endExerciseCallback: () -> Void
     let figmaColors = FigmaColors()
     
     @ObservedObject private var metronome = Metronome.shared
     @State private var countdown = 0
     @State private var isCountingDown = false
-    @State private var metronomeChecked = false
+    @State private var metronomeStarted = false
     let audioManager = AudioManager.shared
+    @State private var confirmed = false
+    @State private var backingPresetNumber = 0
     
     private func startMetronome() {
         metronome.stop("StartExerciseView")
         self.audioManager.configureAudio(withMic: false, recordAudio: false)
-        metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: .playingAlong))
+        metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: process, endCallback: endExerciseCallback))
         metronome.start("StartExerciseView", doLeadIn: true, scale: scalesModel.scale)
-        callback(false)
+        parentCallback(false)
     }
     
     var body: some View {
         //let compact = UIDevice.current.userInterfaceIdiom == .phone
         VStack() {
-            if metronomeChecked {
-                Text("StartExercise")
-                FigmaButton("Start", action : {
-                    
-                })
-            }
-            else {
+//            if metronomeStarted {
+//                Text("StartExercise")
+//                FigmaButton("Start", action : {
+//                    
+//                })
+//            }
+//            else {
                 HStack {
-                    Text("Are you happy with your metronome setting?").padding()
-                    FigmaButton("Yes", action : {
-                        self.metronomeChecked = true
-                        self.startMetronome()
-                    })
-                    FigmaButton("No", action : {
-                        callback(true)
-                    })
+                    if self.confirmed {
+                        Text("Counting In...").padding()
+                    }
+                    else {
+                        VStack {
+                            if process == .backingOn {
+                                PickBackingStyle(backingPresetNumber: $backingPresetNumber)
+                                    .padding()
+                                    .onChange(of: backingPresetNumber, {
+                                        AudioManager.shared.backingPresetNumber = self.backingPresetNumber
+                                    })
+                            }
+                            HStack {
+                                Text("Are you happy with your metronome setting?").padding()
+                                FigmaButton("Yes", action : {
+                                    self.confirmed = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                                        //print("Called after 1 second!")
+                                        self.startMetronome()
+                                    }
+                                })
+                                FigmaButton("No", action : {
+                                    parentCallback(true)
+                                })
+                            }
+                        }
+                    }
                 }
-            }
+//            }
         }
         .padding()
+        
         .figmaRoundedBackgroundWithBorder()
+        .onAppear() {
+            self.backingPresetNumber = AudioManager.shared.backingPresetNumber
+        }
     }
 }
 

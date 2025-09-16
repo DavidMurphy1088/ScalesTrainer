@@ -152,7 +152,7 @@ struct SpinTheWheelView: View {
         }
         .commonToolbar(
             title: "Spin the Wheel",
-            helpMsg: "",
+            helpMsg: "As in an exam, when you spin the wheel you won’t know what is going to be asked for next.",
             onBack: { dismiss() }
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)

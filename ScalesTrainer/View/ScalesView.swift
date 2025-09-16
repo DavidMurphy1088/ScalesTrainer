@@ -287,7 +287,6 @@ struct ScalesView: View {
                     action: {
                         self.exerciseState.setExerciseState("PlayAlong", ExerciseState.State.exerciseAboutToStart)
                         self.exerciseProcess = RunningProcess.playingAlong
-                        //exerciseState.setExerciseState("Play Along", .exerciseWithoutBadgesAboutToStart)
                     })
                 }
                 //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
@@ -298,18 +297,10 @@ struct ScalesView: View {
                         let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
                         FigmaButton(title,
                         action: {
-                            if scalesModel.runningProcessPublished == .backingOn {
-                                scalesModel.setRunningProcess(.none)
-                            }
-                            else {
-                                exerciseState.setExerciseState("Backing", .exerciseWithoutBadgesAboutToStart)
-                                scalesModel.setRunningProcess(.backingOn)
-                            }
+                            self.exerciseState.setExerciseState("Backing", ExerciseState.State.exerciseAboutToStart)
+                            self.exerciseProcess = RunningProcess.backingOn
                         })
-                        
                     }
-                    //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
-                    //.padding(.horizontal, 0)
                 }
                 
                 Spacer()
@@ -524,7 +515,6 @@ struct ScalesView: View {
                         }
                     }
                     
-                    ///on iPhone dont show this to save vertical space. Let the user exit via the badges close button
                     if [.playingAlong, .backingOn, .recordingScale].contains(scalesModel.runningProcessPublished) || scalesModel.recordingIsPlaying {
                         if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                             StopProcessView(user:user)
@@ -535,7 +525,6 @@ struct ScalesView: View {
                             if scalesModel.runningProcessPublished != .none {
                                 ZStack {
                                     VStack(spacing:0) {
-                                        //Spacer()
                                         if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
                                             ExerciseDropDownStarsView(user: user, scale: self.scale,
                                                                       exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
@@ -548,7 +537,6 @@ struct ScalesView: View {
                                         Text("")
                                     }
                                     if [.exerciseLost].contains(exerciseState.statePublished) {
-                                        //Text("\(exerciseState.statePublished)").padding()
                                         HStack {
                                             if let message = self.exerciseState.exerciseMessage {
                                                 Text(message).padding().foregroundColor(.red)
@@ -567,81 +555,44 @@ struct ScalesView: View {
                             SelectActionView()
                         }
                     }
-                    
-                    ///-------- Show the horizontal row of badges ----------
-//                    if user.settings.practiceChartGamificationOn {
-//                        if let exerciseBadge = scalesModel.exerciseBadge {
-//                            Spacer()
-//                            //Text("\(exerciseState.statePublished)")
-//                            VStack(spacing:0) {
-//                                if [ExerciseState.State.exerciseStarted].contains(exerciseState.statePublished) {
-//                                    ExerciseBadgesView(user: user, scale: self.scale,
-//                                                       exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
-//                                                       onClose: {
-//                                        exerciseState.setExerciseState("ScalesView, stars closed", .exerciseNotStarted)
-//                                    })
-//                                    .figmaRoundedBackgroundWithBorder(fillColor: Color.white)
-//                                    .padding(.bottom, self.spacingVertical)
-//                                    .onAppear() {
-////                                        if UIDevice.current.userInterfaceIdiom == .phone {
-////                                            self.dropDownStarsShowing = true
-////                                        }
-//                                    }
-//                                    .onDisappear() {
-////                                        if UIDevice.current.userInterfaceIdiom == .phone {
-////                                            self.dropDownStarsShowing = false
-////                                        }
-//                                    }
-//                                }
-//                                
-//                            }
-//                        }
-//                    }
-                    
+                                        
                     Spacer()
                 }
                 .frame(maxHeight: .infinity)
             }
 
             ///-------- Exercise state displays ----------
-//            if scalesModel.runningProcess != .none {
-//                if [.exerciseWithoutBadgesAboutToStart].contains(exerciseState.statePublished) {
-//                    StartCountdownView(scale: self.scale, activityName: exerciseState.activityName, callback: {status in
-//                        if status == ExerciseState.State.exerciseStarted {
-//                            exerciseState.setExerciseState("", .exerciseWithoutBadgesStarted)
-//                        }
-//                        else {
-//                            exerciseState.setExerciseState("", .exerciseNotStarted)
-//                        }
-//                    })
-//                    .frame(width: UIScreen.main.bounds.width * 0.60,
-//                           height: UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.95 : 0.50))
-//                }
-//            }
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                if [RunningProcess.playingAlong].contains(self.exerciseProcess) {
-                    StartExerciseView(scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
-                        if cancelled {
-                            exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
-                        }
-                        else {
-                            exerciseState.setExerciseState("Start view closed", .exerciseStarted)
-                        }
-                    })
-                    .padding()
-                }
-                else {
-                    VStack(spacing:0) {
-                        StartFollowLeadView(scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
+                if let process = self.exerciseProcess {
+                    if [RunningProcess.playingAlong, .backingOn].contains(self.exerciseProcess) {
+                        StartExerciseView(scalesModel: self.scalesModel, process: process, activityName: exerciseState.activityName, parentCallback: {cancelled in
                             if cancelled {
                                 exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
                             }
                             else {
                                 exerciseState.setExerciseState("Start view closed", .exerciseStarted)
                             }
+                        },
+                                          endExerciseCallback: {
+                            metronome.stop("Hear scale end of exercise")
+                            scalesModel.setRunningProcess(.none)
+                            exerciseState.setExerciseState("End exercise", .exerciseNotStarted)
                         })
                         .padding()
+                    }
+                    else {
+                        VStack(spacing:0) {
+                            StartFollowLeadView(scalesModel: self.scalesModel, activityName: exerciseState.activityName, callback: {cancelled in
+                                if cancelled {
+                                    exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
+                                }
+                                else {
+                                    exerciseState.setExerciseState("Start view closed", .exerciseStarted)
+                                }
+                            })
+                            .padding()
+                        }
                     }
                 }
             }

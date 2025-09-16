@@ -64,28 +64,29 @@ public class PianoKeyModel: Identifiable, Hashable {
             accessQueue2.sync { _keyIsSounding = newValue }
         }
     }
+    
+    var _hilightType:PianoKeyHilightType = .none
+    private let accessQueue3 = DispatchQueue(label: "com.musicmastereducation.scalesacademy.PianoKeyModel.hilite")
+    var hilightType:PianoKeyHilightType {
+        get {
+            return accessQueue3.sync { _hilightType }
+        }
+        set {
+            accessQueue3.sync { _hilightType = newValue }
+        }
+    }
 
     /// How long the key stays hilighed when played
     //swcdstatic let keySoundingSeconds:Double = 0.5 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
     static let keySoundingSeconds:Double = 0.8 //MetronomeModel.shared.notesPerClick == 1 ? 1.0 :
-
     var keyOffsetFromLowestKey: Int = 0
     var midi: Int
-    
-    var hilightType:PianoKeyHilightType = .none
     
     public var touchDown = false
     public var latched = false
     ///A keyboard may have keys played by both LH and RH - e.g. a contray motion keyboard
     let handType:HandType
-    
-    ///Sometimes the single key needs to call more than one callback. e.g. the key for the first note in a contrary motion scale starting on the same note.
-    ///The key will need to generate a press for the LH and RH separately.
-//    private var playedCallbacks:[(()->Void)?] = []
-//    func addCallbackFunction(fn:(()->Void)?) {
-//        self.playedCallbacks.append(fn)
-//    }
-    
+        
     init(scale:Scale, score:Score, keyboardModel:PianoKeyboardModel, keyIndex:Int, midi:Int, handType:HandType) {
         self.scale = scale
         self.score = score
