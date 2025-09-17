@@ -100,12 +100,7 @@
 //        }
 //    }
 //    
-//    func debug() {
-//        print("======== Badge Container")
-//        for row in scaleBadges {
-//            print (row.scaleId.scaleRoot.name, row.scaleId.scaleType.description, "\t", "Hands: \(row.hands)", "Badges:", row.badges.count)
-//        }
-//    }
+
 //    
 //    func addBadge(scaleId:ScaleID, hands:[Int], badge:Badge) {
 //        for scaleBadges in self.scaleBadges {

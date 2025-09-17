@@ -13,6 +13,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     private var color:String
     var boardAndGrade:MusicBoardAndGrade
     var selectedMinorType:ScaleType?
+    var testSerialise: String
     
     static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
@@ -25,6 +26,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.settings = UserSettings()
         self.color = ""
         self.boardAndGrade = MusicBoardAndGrade(board: MusicBoard.getSupportedBoards()[0], grade: 1)
+        self.testSerialise = ""
     }
     
     init(boardAndGrade:MusicBoardAndGrade) {
@@ -34,6 +36,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.settings = UserSettings()
         self.boardAndGrade = boardAndGrade
         self.color = ""
+        self.testSerialise = ""
         setColor()
     }
     
@@ -65,7 +68,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         else {
             self.color = "green"
         }
-        print("=========== User set color", self.name, self.color.description)
     }
     
     func updateFromUser(user:User) {
@@ -188,7 +190,6 @@ class User : Encodable, Decodable, Hashable, Identifiable {
             scales = StudentScales(user: self)
             created = true
         }
-        AppLogger.shared.log(self, "=============== getStudentScales \(scales.user.name), StudentScales was created \(created)")
         return scales
     }
     

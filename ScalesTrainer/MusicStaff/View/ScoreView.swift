@@ -5,10 +5,7 @@ import MessageUI
 public struct ScoreView: View {
     let scale:Scale
     @ObservedObject var score:Score
-    ///NB 🟢 Changing this needs changes to getBraceHeight() for alignment
     //private(set) var lineSpacing:Double
-    private(set) var lineSpacing:Double
-
     private let height:Double
     
     @State private var dragOffset = CGSize.zero
@@ -19,27 +16,8 @@ public struct ScoreView: View {
         self.scale = scale
         self.score = score
         self.showResults = showResults
-        
-        //10 for single keyboard, one octave
-        var scaleDown = 11.0
-        if scale.getScaleNoteCount() >= 16 {
-            scaleDown = scaleDown * 1.2
-        }
-        self.lineSpacing = height / scaleDown //8.0 //8.0
         self.height = height
     }
-
-//    func getBraceHeight() -> Double {
-//        let heightMult:Double
-//        ///NB This needs to be changed if staff height is changed
-//        if UIDevice.current.userInterfaceIdiom == .phone {
-//            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
-//        }
-//        else {
-//            heightMult = scale.hands.count > 1 ? 1.30 : 1.30
-//        }
-//        return getStaffHeight() * heightMult
-//    }
     
     public var body: some View {
         HStack(spacing: 0) {
@@ -61,7 +39,7 @@ public struct ScoreView: View {
 
             VStack(spacing: 0) {
                 ForEach(score.getStaffs(), id: \.self.id) { staff in
-                    StaffView(scale: scale, score: score, staff: staff, scoreView: self, showResults: showResults, lineSpacing: self.lineSpacing,
+                    StaffView(scale: scale, score: score, staff: staff, scoreView: self, showResults: showResults,
                               height: height, ledgerLines: 1)
                         //.border(.blue)
                 }

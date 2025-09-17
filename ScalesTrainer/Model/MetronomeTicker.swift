@@ -15,7 +15,6 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
     func metronomeStart() {
         metronomeAudioPlayerLow = audioManager.loadAudioPlayer(name: "metronome_mechanical_low")
         metronomeAudioPlayerLow?.volume = 0.1
-        //_tickNum = 0
     }
     
     func metronomeTickNotification(timerTickerNumber: Int)  {

@@ -154,7 +154,6 @@ class MatchedNotes {
     
     func debug1(_ msg:String) {
         print("======== Matched Notes \(msg) =======")
-        //let date = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "mm:ss.SSS"
         for note in self.notes {

@@ -135,9 +135,7 @@ struct ExerciseDropDownStarsView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
             VStack(spacing:0) {
-//                HStack {
-//                    Text("\(exerciseName) Badges").font(.title3)
-//                }
+
                 HStack(spacing: getDotSpace()) {
                     let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
                     let imWidth = CGFloat(40)
@@ -169,7 +167,6 @@ struct ExerciseDropDownStarsView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
-                                    //let user = Settings.shared.getCurrentUser()
                                     if user.settings.badgeStyle == 0 {
                                         HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
                                     }
@@ -184,6 +181,7 @@ struct ExerciseDropDownStarsView: View {
                             //.border(AppOrange)
                         }
                     }
+                    Text("XXXX").foregroundColor(.clear) ///Make sure button below does not cover last star(s)
                 }
                 .padding()
             }

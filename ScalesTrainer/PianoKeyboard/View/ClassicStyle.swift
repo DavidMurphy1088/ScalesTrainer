@@ -272,7 +272,7 @@ public struct ClassicStyle {
                             let finger:String = scaleNote.finger > 5 ? "" : String(scaleNote.finger)
                             context.draw(
                                 Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
-                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),
+                                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title).bold(),
                                 at: point
                             )
                         }
@@ -407,7 +407,7 @@ public struct ClassicStyle {
                         }
                         context.draw(
                             Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
-                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title).bold(),
+                                .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title).bold(),
                             at: point
                         )
                     }

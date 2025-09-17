@@ -213,7 +213,6 @@ class StudentScales: Codable {
             let words = key.components(separatedBy: " ")
             let keySig = KeySignature(keyName: words[0], keyType: words[1] == "Major" ? .major : .minor)
             var score = keySig.accidentalType == .flat ? keySig.accidentalCount * 10 : keySig.accidentalCount * 10
-            //print("====KEYS", words, keySig.accidentalCount, score)
             scored.append((score, key))
         }
         let sorted = scored.sorted { $0.0 < $1.0 }

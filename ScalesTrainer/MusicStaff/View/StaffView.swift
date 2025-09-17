@@ -4,7 +4,6 @@ import MessageUI
 
 public struct StaffLinesView: View {
     var score:Score
-    //@ObservedObject
     var staff:Staff
     let lineSpacing:Double
     
@@ -150,19 +149,24 @@ public struct StaffView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var position: CGPoint = .zero
     @State var isTempoHelpPopupPresented = false
-    
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
     var entryPositions:[Double] = []
     var totalDuration = 0.0
     
-    init (scale:Scale, score:Score, staff:Staff, scoreView:ScoreView, showResults:Bool, lineSpacing:Double, height:Double, ledgerLines:Int) {
+    init (scale:Scale, score:Score, staff:Staff, scoreView:ScoreView, showResults:Bool, height:Double, ledgerLines:Int) {
         self.scale = scale
         self.score = score
         self.staff = staff
         self.scoreView = scoreView
-        self.lineSpacing = lineSpacing
         self.height = height
         self.linesInStaff = 5 + 2*ledgerLines
         self.lineSpacing = height / Double(linesInStaff + 1)
+        ///Needed so accidentals dont run over notes
+        if scale.getScaleNoteCount() >= 16 {
+            if !compact {
+                self.lineSpacing = self.lineSpacing * 0.6
+            }
+        }
     }
     
     func clefWidth() -> Double {

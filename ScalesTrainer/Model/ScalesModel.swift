@@ -380,9 +380,9 @@ public class ScalesModel : ObservableObject {
         }
 
         if [RunningProcess.recordingScale].contains(setProcess) {
-            self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
-            metronome.stop("ScalesModel Record")
-            metronome.start("ScalesModel Record", doLeadIn: true, scale: self.scale)
+//            self.audioManager.configureAudio(withMic: true, recordAudio: true, soundEventHandlers: self.soundEventHandlers)
+//            metronome.stop("ScalesModel Record")
+//            metronome.start("ScalesModel Record", doLeadIn: true, scale: self.scale)
         }
         
 //        if [RunningProcess.recordingScaleForAssessment, RunningProcess.recordScaleWithFileData].contains(setProcess)  {

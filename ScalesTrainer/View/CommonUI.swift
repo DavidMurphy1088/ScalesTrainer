@@ -718,7 +718,7 @@ struct SinglePickList<Item: Hashable>: View {
                         } label: {
                             HStack {
                                 Text(label(items[i])).padding(.horizontal)
-                                //Spacer()
+                                Spacer()
 //                                if isSelected {
 //                                    Image(systemName: "checkmark")
 //                                }

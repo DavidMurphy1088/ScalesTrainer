@@ -13,7 +13,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     public static var sharedForSettings = PianoKeyboardModel(name: "forShared", keyboardNumber: 2)
 
     let id = UUID()
-    @Published public var forceRepaint = 0 ///Without this the key view does not update when pressed
+    @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
     let scalesModel = ScalesModel.shared
     private(set) var pianoKeyModel: [PianoKeyModel] = []
 
@@ -146,16 +146,11 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func redraw() {
+    func redraw() { //_ ctx:String) {
         DispatchQueue.main.async {
-            self.forceRepaint += 1
+            self.forceRepaint1 += 1
         }
     }
-//    func redraw1() {
-//        //DispatchQueue.main.async {
-//            self.forceRepaint += 1
-//        //}
-//    }
 
     public var numberOfKeys = 18
     
@@ -319,7 +314,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             }
         }
         ///👉 😡 Do not remove this repaint. Removing it causes keydowns on the keyboard not to draw the down or up state changes
-        self.forceRepaint += 1
+        self.forceRepaint1 += 1
         for index in 0..<numberOfKeys {
             let noteNumber = pianoKeyModel[index].noteMidiNumber
 
@@ -412,17 +407,9 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     ///Get the offset in the keyboard for the given midi
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
-    //public func getKeyIndexForMidi(midi:Int, segment1:Int?) -> Int? {
     public func getKeyIndexForMidi(midi:Int) -> Int? {
         var keyNumber:PianoKeyModel?
-        if false {
-            //keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
-        }
-        else {
-            keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi })
-        }
-        //let x = self.pianoKeyModel.first(where: { $0.midi == midi })
-        //let x = self.pianoKeyModel.first(where: { $0.midi == midi && $0.scaleNoteState?.segment == segment })
+        keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi })
         return keyNumber == nil ? nil : keyNumber?.keyOffsetFromLowestKey
     }
 

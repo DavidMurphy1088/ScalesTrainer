@@ -56,24 +56,21 @@ struct MetronomeView: View {
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity)
                     .onChange(of: sliderValue) { oldValue, newValue in
-                        print("========== MEt Slider changed from \(oldValue) to \(newValue)")
                         metronome.currentTempo = Int(sliderValue)
                     }
-                
-                HStack {
-                    //                    ForEach(0..<steps, id: \.self) { step in
-                    //                        let examTempo = lowestTempo + (step * tempoDelta) == examTempo
-                    //                        RoundedRectangle(cornerRadius: 4)
-                    //                            .strokeBorder(Color.primary, lineWidth: 1)
-                    //                            .background(
-                    //                                RoundedRectangle(cornerRadius: 4)
-                    //                                    .fill(examTempo ? Color.blue : Color.clear)
-                    //                            )
-                    //                            .frame(width: examTempo ? 12 : 4, height: height * 0.50)
-                    //                            .frame(maxWidth: .infinity)
-                    //
-                    //                    }
+
+                GeometryReader { geometry in
+                    let sliderWidth = geometry.size.width - 32 // Account for horizontal padding
+                    let sliderRange = Double(highestTempo) - Double(lowestTempo)
+                    let valuePosition = (Double(self.examTempo) - Double(lowestTempo)) / sliderRange
+                    let rectanglePosition = valuePosition * sliderWidth - 1
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.green)
+                        .frame(width: 8, height: 20)
+                        .position(x: rectanglePosition + 16, y: geometry.size.height / 2) // +16 for padding offset
                 }
+                .allowsHitTesting(false) // Prevents the rectangle from interfering with slider interaction
             }
             .padding(.horizontal)
         }
@@ -100,7 +97,6 @@ struct MetronomeView: View {
             
             //steps = (highestTempo - lowestTempo) / tempoDelta
             self.sliderValue = Double(self.examTempo)
-            print("======= MVIEW onAppear", self.examTempo, self.sliderValue)
         }
     }
     

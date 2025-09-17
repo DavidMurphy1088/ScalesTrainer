@@ -236,7 +236,6 @@ class ViewManager: ObservableObject {
             self.gradePublished = user.boardAndGrade.grade
             self.userNamePublished = user.name
             self.userColorPublished = user.getColor()
-            AppLogger.shared.log(self, "========= updatePublishedUser \(user.boardAndGrade.board.name), \(user.boardAndGrade.grade)")
         }
     }
     
@@ -434,41 +433,41 @@ struct ScalesTrainerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            if Settings.shared.isDeveloperModeOn() {
-                //UserListView().onAppear() {self.setupDev()}
-                ActivitiesView()
-            }
-            else {
-                VStack {
-                    if launchScreenState.state != .finished {
-                        LaunchScreenView()
+            VStack {
+                if launchScreenState.state != .finished {
+                    LaunchScreenView()
+                }
+                else {
+                    if viewManager.currentUserPublished != nil { //Settings.shared.isCurrentUserDefined() {
+                        TabContainerView()
                     }
                     else {
-                        if viewManager.currentUserPublished != nil { //Settings.shared.isCurrentUserDefined() {
-                            TabContainerView()
-                        }
-                        else {
-                            WelcomeView()
-                        }
+                        WelcomeView()
                     }
                 }
-                .onAppear {
-                    if Settings.shared.hasUsers() {
+            }
+            .onAppear {
+                if Settings.shared.hasUsers() {
+                    if Settings.shared.isDeveloperModeOn() {
                         ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
                     }
                     else {
-                        ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
+                        ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
                     }
-                    ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
-                    //MIDIManager.shared.setupMIDI()
                 }
-                
-                .task {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
-                        self.launchScreenState.dismiss()
-                    }
+                else {
+                    ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
+                }
+                ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
+                //MIDIManager.shared.setupMIDI()
+            }
+            
+            .task {
+                DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
+                    self.launchScreenState.dismiss()
                 }
             }
+            
         }
     }
     

@@ -10,6 +10,9 @@
     "  " : {
 
     },
+    "     " : {
+
+    },
     "        " : {
 
     },
@@ -17,6 +20,9 @@
 
     },
     "  %@   " : {
+
+    },
+    " %@ Grade Selection" : {
 
     },
     " %lld" : {
@@ -39,6 +45,9 @@
         }
       }
     },
+    " Please select your grade" : {
+
+    },
     "?" : {
 
     },
@@ -49,9 +58,6 @@
 
     },
     "%@" : {
-
-    },
-    "%@ Grade Selection" : {
 
     },
     "%@ Slowly" : {
@@ -160,7 +166,7 @@
     "Connected MIDI Sources" : {
 
     },
-    "Counting In..." : {
+    "Counting In ..." : {
 
     },
     "Current Amplitude Filter:%@" : {
@@ -408,9 +414,6 @@
     "Please enter your name" : {
 
     },
-    "Please select your grade" : {
-
-    },
     "Practice Now" : {
 
     },
@@ -537,9 +540,6 @@
       }
     },
     "Show Tap Data" : {
-
-    },
-    "SIMULATOR CANNOT DO LICENSING" : {
 
     },
     "Sorry, no subscription is available yet" : {
@@ -675,6 +675,9 @@
 
     },
     "Who wants to play?" : {
+
+    },
+    "XXXX" : {
 
     },
     "You’ve landed on..." : {

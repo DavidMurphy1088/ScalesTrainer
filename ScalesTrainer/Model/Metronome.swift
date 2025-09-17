@@ -30,8 +30,9 @@ class Metronome:ObservableObject {
         set {
             accessQueue.sync {
                 _status = newValue
-                DispatchQueue.main.async { [self] in
-                    self.statusPublished = self._status
+                let currentStatus = _status  // Capture the value so main does not try to read _status
+                DispatchQueue.main.async { [weak self] in
+                    self?.statusPublished = currentStatus  // Use captured value
                 }
             }
         }
@@ -43,7 +44,7 @@ class Metronome:ObservableObject {
     //private var standbyCount:Int?
 
     private var leadInCount:Int?
-    @Published private(set) var leadInCountdownPublished:Int? = nil
+    //@Published private(set) var leadInCountdownPublished:Int? = nil
 
     //@Published var tickedCountPublished = 0
 
@@ -67,7 +68,7 @@ class Metronome:ObservableObject {
     }
     
     func stop(_ ctx:String) {
-        print("====== Metronome ⏰ stop() \(ctx)")
+        //print("====== Metronome ⏰ stop() \(ctx)")
         self.setStatus(status: .notStarted)
         removeAllProcesses("from stop")
     }
@@ -77,103 +78,72 @@ class Metronome:ObservableObject {
             return
         }
         self.timerTickCount = 0
-        setLeadInCountdownPublished(count: 0)
-//        if doStandby {
-//            if let scale = scale {
-//                self.standbyCount = scale.timeSignature.top % 3 == 0 ? 3 : 4
-//            }
-//        }
-
+        //setLeadInCountdownPublished(count: 0)
         if doLeadIn {
             if let scale = scale {
                 self.leadInCount = scale.timeSignature.top % 3 == 0 ? 3 : 4
             }
         }
 
-        //self.ticker.tickNum = 0
-        //DispatchQueue.main.async {
-//            if doStandby {
-//                self.setStatus(status: .standby)
-//            }
-//            else {
         if doLeadIn {
             self.setStatus(status: .leadingIn)
         }
         else {
             self.setStatus(status: .running)
         }
-           // }
-        //}
-        //print("====== Metronome ⏰ start() \(ctx) leadIn:\(doLeadIn)")
-        self.startTimerTask("Metronome start")
+        self.startTimerTask("Metronome start", doLeadIn: doLeadIn)
     }
 
-    private func startTimerTask(_ ctx:String) {
+    private func startTimerTask(_ ctx:String, doLeadIn:Bool) {
         self.timerTickCount = 0
         ///The metronome must notify for everfy note but may not tick for every note. e.g. in 3/8 it notifies every triplet but ticks on the first note only.
         let notesPerClick = self.getNotesPerClick()
-        //let tempo = Double(scalesModel.getTempo("Metronom::startTimerThread"))
         let threadWaitInSeconds = (60.0 / Double(self.currentTempo)) / Double(notesPerClick)
         AppLogger.shared.log(self, "Metronome thread starting, tempo:\(self.currentTempo) status:\(self.status) waitThread:\(threadWaitInSeconds) notesPerClick\(notesPerClick)")
-
+        
         Task.detached(priority: .high) { [weak self] in
-        //audioQueue.async { [weak self] in
-
             guard let self = self else { return }
             while (self.status != .notStarted) {
                 var remaining = 0
                 if let leadInCount = self.leadInCount { //}, let standbyCount = self.standbyCount {
-//                    if self.threadRunCount < standbyCount * notesPerClick {
-//                        self.setStatus(status: .standby)
-//                    }
-//                    else {
-                        if self.timerTickCount < (leadInCount) * notesPerClick {
-                            self.setStatus(status: .leadingIn)
-                            remaining = ((leadInCount) * notesPerClick) - self.timerTickCount
-                            remaining = (remaining + 1) / notesPerClick
-                            self.setLeadInCountdownPublished(count: remaining)
+                    if self.timerTickCount < (leadInCount) * notesPerClick {
+                        self.setStatus(status: .leadingIn)
+                        remaining = (remaining + 1) / notesPerClick
+                        //self.setLeadInCountdownPublished(count: remaining)
+                    }
+                    else {
+                        if self.status != .running {
+                            self.setStatus(status: .running)
                         }
-                        else {
-                            if self.status != .running {
-                                self.setStatus(status: .running)
-                            }
-                        }
-                    //}
+                    }
                 }
                 else {
                     self.setStatus(status: .running)
                 }
                 
 //                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ",NotesPerClick", notesPerClick, ",Countd", self.leadInCountdownPublished, ",remain", remaining)
-
-                self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickCount) //, leadingIn: leadingIn)
+                
+                if doLeadIn {
+                    if self.status != .running {
+                        //Sound tick for count in only but notifications must still go out after lead in
+                        self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickCount) //, leadingIn: leadingIn)
+                    }
+                }
+                else {
+                    self.ticker.metronomeTickNotification(timerTickerNumber: self.timerTickCount) //, leadingIn: leadingIn)
+                }
                 
                 if self.status == .running {
                     for toNotify in self.processesToNotify {
                         _ = toNotify.metronomeTickNotification(timerTickerNumber: self.timerTickCount)
                     }
                 }
-//                let tickCount = self.threadRunCount % notesPerClick
-//                if tickCount == 0 {
-//                    DispatchQueue.main.async {
-//                        //print("     =========== Count \(self.threadRunCount) \(self.threadRunCount) TickCountPublished:\(self.tickedCountPublished)")
-//                        self.tickedCountPublished =  self.tickedCountPublished + 1
-//                    }
-//                }
                 self.timerTickCount += 1
                 
-                //let tempo = Double(self.scalesModel.getTempo("Metronom::startTimerThread"))
                 let threadWaitInSeconds = (60.0 / Double(self.currentTempo)) / Double(notesPerClick)
-
                 let n = UInt64(threadWaitInSeconds * 1_000_000_000)
                 try? await Task.sleep(nanoseconds: n)
             }
-        }
-    }
-    
-    func setLeadInCountdownPublished(count:Int) {
-        DispatchQueue.main.async {
-            self.leadInCountdownPublished = count
         }
     }
     

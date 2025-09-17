@@ -158,7 +158,8 @@ struct ScalesView: View {
     
     func StopProcessView(user:User) -> some View {
         VStack(spacing:0) {
-            if [.playingAlong, .followingScale, .leadingTheScale, .backingOn].contains(scalesModel.runningProcessPublished) {
+            if [.playingAlong, .followingScale, .leadingTheScale, .backingOn]
+                .contains(scalesModel.runningProcessPublished) {
                 HStack {
                     let title = getStopButtonText(process: scalesModel.runningProcessPublished)
 //                        Button(action: {
@@ -198,18 +199,10 @@ struct ScalesView: View {
 
             if [.recordingScale].contains(scalesModel.runningProcessPublished) {
                 HStack {
-                    //MetronomeView()
-                    //let text = metronome.isLeadingIn ? "  Leading In  " : "Stop Recording The Scale"
-                    ///1.0.11 recording now has no lead in
-//                    let text = "Stop Recording The Scale"
-//                    Button(action: {
-//                        scalesModel.setRunningProcess(.none)
-//                    }) {
-//                        Text("\(text)")
-//                    }
-//                    .buttonStyle(.borderedProminent)
-                    FigmaButton("Stop Recording The Scale",
+                    FigmaButton("Stop Recording",
                         action: {
+                            metronome.stop("end record")
+                            exerciseState.setExerciseState("end record", .exerciseNotStarted)
                             scalesModel.setRunningProcess(.none)
                         })
                 }
@@ -289,7 +282,6 @@ struct ScalesView: View {
                         self.exerciseProcess = RunningProcess.playingAlong
                     })
                 }
-                //.padding(.vertical, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 6)
                 
                 if self.scale.getBackingChords() != nil {
                     Spacer()
@@ -304,19 +296,26 @@ struct ScalesView: View {
                 }
                 
                 Spacer()
-                
                 HStack {
-                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
-                    FigmaButton(title,
-                    action: {
-                        if scalesModel.runningProcessPublished == .recordingScale {
-                            scalesModel.setRunningProcess(.none)
-                        }
-                        else {
-                            exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
-                            scalesModel.setRunningProcess(.recordingScale)
-                        }
-                    })
+//                    let title = UIDevice.current.userInterfaceIdiom == .phone ? "Record" : "Record"
+//                    FigmaButton(title,
+//                    action: {
+//                        if scalesModel.runningProcessPublished == .recordingScale {
+//                            scalesModel.setRunningProcess(.none)
+//                        }
+//                        else {
+//                            exerciseState.setExerciseState("Record", .exerciseWithoutBadgesAboutToStart)
+//                            scalesModel.setRunningProcess(.recordingScale)
+//                        }
+//                    })
+                    HStack {
+                        let title = UIDevice.current.userInterfaceIdiom == .phone ? "Backing" : "Backing Track"
+                        FigmaButton("Record",
+                        action: {
+                            self.exerciseState.setExerciseState("Record", ExerciseState.State.exerciseAboutToStart)
+                            self.exerciseProcess = RunningProcess.recordingScale
+                        })
+                    }
                 }
 
                 if scalesModel.recordedAudioFile != nil {
@@ -389,7 +388,6 @@ struct ScalesView: View {
             return keyboardHeight
         }
         if callType == ComponentSizeType.score {
-//            print("============== Sizes: callType:\(callType) screen=\(screenHeight) Header:\(headerHeight) [KB:\(keyboardHeight) scale:\(keyboardHeightScale)] score:\(scoreHeight) ==============")
             return scoreHeight
         }
         return 0.0
@@ -438,8 +436,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                    //.foregroundColor(self.directionIndex == 0 ? AppOrange : Color.black)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? Color.blue : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? Color.green : Color.black)
                 }
                 Button(action: {
                     self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -450,9 +447,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                    //.foregroundColor(self.directionIndex == 1 ? AppOrange : Color.black)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? Color.blue : Color.black)
-                    
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? Color.green : Color.black)
                 }
             }
             .padding(sizeClass == .regular ? systemSpacing : 2)
@@ -565,7 +560,7 @@ struct ScalesView: View {
 
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if let process = self.exerciseProcess {
-                    if [RunningProcess.playingAlong, .backingOn].contains(self.exerciseProcess) {
+                    if [RunningProcess.playingAlong, .backingOn, .recordingScale].contains(self.exerciseProcess) {
                         StartExerciseView(scalesModel: self.scalesModel, process: process, activityName: exerciseState.activityName, parentCallback: {cancelled in
                             if cancelled {
                                 exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
@@ -574,7 +569,7 @@ struct ScalesView: View {
                                 exerciseState.setExerciseState("Start view closed", .exerciseStarted)
                             }
                         },
-                                          endExerciseCallback: {
+                        endExerciseCallback: {
                             metronome.stop("Hear scale end of exercise")
                             scalesModel.setRunningProcess(.none)
                             exerciseState.setExerciseState("End exercise", .exerciseNotStarted)
@@ -596,43 +591,6 @@ struct ScalesView: View {
                     }
                 }
             }
-//            if [.exerciseWon].contains(exerciseState.statePublished) {
-//                if let badge = scalesModel.exerciseBadge {
-//                    VStack(spacing:0) {
-//                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
-//                            exerciseState.setExerciseState("Popup", showResults ? .exerciseShowResults : .exerciseNotStarted)
-//                        }, failed: false)
-//                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)
-//                    }
-//                    .padding()
-//                }
-//            }
-            
-//            if [.exerciseShowResults].contains(exerciseState.statePublished) {
-//                if let score = scalesModel.getScore() {
-//                    ResultView(parentScore: score, callback: {ok in
-//                        exerciseState.setExerciseState("EndResults", .exerciseNotStarted)
-//                    })
-//                    .frame(width: UIScreen.main.bounds.width * 0.95, height: UIScreen.main.bounds.height * 0.75)
-//                    .padding()
-//                }
-//            }
-
-//            if [.exerciseLost].contains(exerciseState.statePublished) {
-//                if let badge = scalesModel.exerciseBadge {
-//                    VStack(spacing:0) {
-//                        EndOfExerciseView(badge: badge, scalesModel: self.scalesModel, exerciseMessage: self.exerciseState.exerciseMessage, callback: {retry, showResults in
-//                            if retry {
-//                                exerciseState.setExerciseState("Popup", .exerciseAboutToStart)
-//                            }
-//                            else {
-//                                exerciseState.setExerciseState("Popup", .exerciseNotStarted)
-//                            }
-//                        }, failed: true)
-//                        .frame(width: UIScreen.main.bounds.width * 0.40, height: UIScreen.main.bounds.height * 0.25)                    }
-//                    .padding()
-//                }
-//            }
 
             if [.exerciseWon].contains(exerciseState.statePublished) {
                 ConfettiView()

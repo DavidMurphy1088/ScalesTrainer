@@ -13,36 +13,46 @@ struct SelectGradeView: View {
     @Binding var selectedGrade: Int
     let onConfirm: (Int) -> Void
     @Environment(\.dismiss) private var dismiss
-
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    
     public var body: some View {
         VStack {
             HStack {
-                Spacer()
-                Text("\(board.name) Grade Selection").font(.title2)
-                Spacer()
+                //Spacer()
+                Text(" \(board.name) Grade Selection").font(.title2)
+                Text("     ")
                 Button("Confirm") {
                     onConfirm(selectedGrade)
                     dismiss()
                 }
                 .padding()
-            }
-            HStack {
-                Text("Please select your grade").padding()
                 Spacer()
             }
-            List(board.gradesOffered, id: \.self) { grade in
-                HStack {
-                    Text("Grade \(grade)")
-                    Spacer()
-                    if selectedGrade == grade {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.blue)
+            HStack {
+                Text(" Please select your grade")//.padding(compact ? 0 : .vertical)
+                Spacer()
+            }
+            .padding(compact ? 0 : 4)
+            HStack {
+                Text(" ")
+                List(board.gradesOffered, id: \.self) { grade in
+                    HStack {
+                        Text("Grade \(grade)")
+                        Spacer()
+                        if selectedGrade == grade {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                        }
+                    }
+                    
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedGrade = grade
                     }
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    selectedGrade = grade
-                }
+                .listStyle(.plain)
+                .frame(maxWidth: UIScreen.main.bounds.size.width * 0.25) // Set maximum width
+                Spacer()
             }
         }
     }

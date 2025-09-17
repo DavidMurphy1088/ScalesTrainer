@@ -121,10 +121,7 @@ struct ScalesGridCellView: View {
                         fadeIn = true
                     }
             }
-            .onAppear {
-//                print("=========+Appear", scoreTestScaleIdExists)
-//                self.testExists = scoreTestScaleIdExists
-            }
+
             .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
                 fadeIn = false
                 withAnimation(.easeIn(duration: 1.0)) {

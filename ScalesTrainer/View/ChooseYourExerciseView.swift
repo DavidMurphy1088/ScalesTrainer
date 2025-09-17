@@ -37,12 +37,12 @@ struct ChooseYourExerciseView: View {
                 }
             }
         })
-        //studentScales.debug(ctx)
         self.forceRefreshChart += 1
     }
 
     func headerView() -> some View {
         HStack {
+            let screenWidth = UIScreen.main.bounds.size.width
             FigmaButton(self.selectedType.description, action: {
                 selectType = true
             })
@@ -57,6 +57,7 @@ struct ChooseYourExerciseView: View {
                     }
                     self.selectedType = selectedType
                 }
+                .frame(width: screenWidth * 0.20)
                 .presentationCompactAdaptation(.popover)
             }
             
@@ -64,7 +65,6 @@ struct ChooseYourExerciseView: View {
                 selectKey = true
             })
             .popover(isPresented: $selectKey) {
-                //ToolbarTitleHelpView(helpMessage: "some message test test test test test test test test test ")
                 let alreadySelected = self.getSelectedKeyIndex()
                 
                 SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
@@ -76,6 +76,7 @@ struct ChooseYourExerciseView: View {
                     }
                     self.selectedKey = selectedKey
                 }
+                .frame(width: screenWidth * 0.20)
                 .presentationCompactAdaptation(.popover)
             }
             

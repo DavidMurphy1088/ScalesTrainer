@@ -137,9 +137,9 @@ class Settings : Encodable, Decodable {
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-                for u in self.users {
-                    print("=============Setting save user", u.name, u.getColor().description)
-                }
+//                for u in self.users {
+//                    print("=============Setting save user", u.name, u.getColor().description)
+//                }
 //                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
@@ -160,9 +160,6 @@ class Settings : Encodable, Decodable {
                 let jsonDecoder = JSONDecoder()
                 let decoded = try jsonDecoder.decode(Settings.self, from: jsonData)
                 self.users = decoded.users
-                for u in self.users {
-                    print("=============Setting load user", u.name, u.getColor().description)
-                }
 
                 self.isDeveloperMode = decoded.isDeveloperMode
                 self.requiredConsecutiveCount = decoded.requiredConsecutiveCount

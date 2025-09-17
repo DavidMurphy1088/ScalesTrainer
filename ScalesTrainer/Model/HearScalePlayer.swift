@@ -102,17 +102,17 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             }
 
             let keyboard = getKeyboard(hand: hand)
-            let keyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
+            let keyboardKeyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
             
-            if let keyIndex = keyIndex {
+            if let keyboardKeyIndex = keyboardKeyIndex {
             
                 ///Hilight the keyboard key, sound the note and highlight the score note.
                 if self.waitBeatsForScale == 0 {
-                    let key=keyboard.pianoKeyModel[keyIndex]
+                    let key=keyboard.pianoKeyModel[keyboardKeyIndex]
                     key.setKeyPlaying()
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
-                    if [.playingAlong].contains(process) {
+                    if [.playingAlong, .recordingScale].contains(process) {
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
                         ///Stop the note soon to avoid the reverb, extended sounding effect of leaving it running
                         if let noteValue = key.scaleNoteState?.value {
@@ -140,24 +140,10 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                         score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
                     }
                 }
-
-//                if false {
-//                    ///stop note sounding to drop the sampler's reverb
-//                    let secsPerCrotchet = 60.0 / Double(ScalesModel.shared.getTempo())
-//                    let secsBetweenTicks = secsPerCrotchet / Double(scale.timeSignature.top == 3 ? 3 : 2)
-//                    var secsToWait = secsBetweenTicks * 2.5
-//                    secsToWait *= note.value
-//                    let key=keyboard.pianoKeyModel[keyIndex]
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + secsToWait) {
-//                        ///stop() should stop all notes but doies not appear to stop the sound
-//                        //sampler?.stop()
-//                        samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
-//                    }
-//                }
             }
         }
 
-        print("        ============ HearScalePlayer 🧛 metronomeTickNotification, tick:\(timerTickerNumber) ,index:\(nextNoteIndex) ,process:\(self.process)")
+//        print("        ============ HearScalePlayer 🧛 metronomeTickNotification, tick:\(timerTickerNumber) ,index:\(nextNoteIndex) ,process:\(self.process)")
 
         ///Select the next scale segment and advance the scale's note to play index. Stop the exercise if required.
         if waitBeatsForScale == 0 {

@@ -46,8 +46,8 @@ struct PickBackingStyle: View {
     }
     
     var body: some View {
-        VStack {
-            Text(LocalizedStringResource("Backing Track Sound"))//.font(.title2).padding(0)
+        HStack {
+            Text(LocalizedStringResource("Backing Track Sound")).padding() //.font(.title2).padding(0)
             Picker("Select Value", selection: $backingPresetNumber) {
                 ForEach(0..<8) { number in
                     Text("\(backingSoundName(number))")
@@ -174,54 +174,53 @@ struct StartExerciseView: View {
     @State private var confirmed = false
     @State private var backingPresetNumber = 0
     
-    private func startMetronome() {
+    private func startMetronome(process:RunningProcess) {
         metronome.stop("StartExerciseView")
-        self.audioManager.configureAudio(withMic: false, recordAudio: false)
-        metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: process, endCallback: endExerciseCallback))
-        metronome.start("StartExerciseView", doLeadIn: true, scale: scalesModel.scale)
+        
+        if [.playingAlong, .backingOn].contains(process) {
+            metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: process, endCallback: endExerciseCallback))
+            self.audioManager.configureAudio(withMic: false, recordAudio: false)
+        }
+        if [.recordingScale].contains(process) {
+            self.audioManager.configureAudio(withMic: true, recordAudio: true)
+        }
+        metronome.start("StartExerciseView", doLeadIn: false, scale: scalesModel.scale)
         parentCallback(false)
     }
     
     var body: some View {
         //let compact = UIDevice.current.userInterfaceIdiom == .phone
         VStack() {
-//            if metronomeStarted {
-//                Text("StartExercise")
-//                FigmaButton("Start", action : {
-//                    
-//                })
-//            }
-//            else {
-                HStack {
-                    if self.confirmed {
-                        Text("Counting In...").padding()
-                    }
-                    else {
-                        VStack {
-                            if process == .backingOn {
-                                PickBackingStyle(backingPresetNumber: $backingPresetNumber)
-                                    .padding()
-                                    .onChange(of: backingPresetNumber, {
-                                        AudioManager.shared.backingPresetNumber = self.backingPresetNumber
-                                    })
-                            }
-                            HStack {
-                                Text("Are you happy with your metronome setting?").padding()
-                                FigmaButton("Yes", action : {
-                                    self.confirmed = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                                        //print("Called after 1 second!")
-                                        self.startMetronome()
-                                    }
+            HStack {
+                if self.confirmed {
+                    Text("Counting In ...").padding().foregroundColor(.green).bold()
+                        .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                }
+                else {
+                    VStack {
+                        if process == .backingOn {
+                            PickBackingStyle(backingPresetNumber: $backingPresetNumber)
+                                .padding()
+                                .onChange(of: backingPresetNumber, {
+                                    AudioManager.shared.backingPresetNumber = self.backingPresetNumber
                                 })
-                                FigmaButton("No", action : {
-                                    parentCallback(true)
-                                })
-                            }
+                        }
+                        HStack {
+                            Text("Are you happy with your metronome setting?").padding()
+                            FigmaButton("Yes", action : {
+                                self.confirmed = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.00) {
+                                    //print("Called after 1 second!")
+                                    self.startMetronome(process: process)
+                                }
+                            })
+                            FigmaButton("No", action : {
+                                parentCallback(true)
+                            })
                         }
                     }
                 }
-//            }
+            }
         }
         .padding()
         
