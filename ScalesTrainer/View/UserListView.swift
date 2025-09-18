@@ -47,7 +47,7 @@ struct UserListView: View {
                             VStack() {
                                 let boxSize = 0.1
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(User.color(from: user.getColor()).opacity(0.5))
+                                    .fill(FigmaColors.shared.getColor(user.getColor()).opacity(FigmaColors.shared.userDisplayOpacity))
                                     .frame(width: UIScreen.main.bounds.width * boxSize,
                                            height: UIScreen.main.bounds.width * boxSize)
                                     .overlay(alignment: .topTrailing) {

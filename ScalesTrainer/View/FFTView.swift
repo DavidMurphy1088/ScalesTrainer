@@ -241,7 +241,7 @@
 //                            }()
 //                            
 //                            // Color: if the note is a repeat, use gray; otherwise, use dark green.
-//                            let textColor: Color = event.isRepeat ? .gray : .green
+//                            let textColor: Color = event.isRepeat ? .gray : .gray
 //                            
 //                            Text(displayText)
 //                                .foregroundColor(textColor)

@@ -15,68 +15,39 @@ class ExerciseBadgesList : ObservableObject {
     
 }
 
-struct HexagramShape: View {
-    var size1: CGFloat
+struct StarShape: View {
+    var shapeSize: CGFloat
     var offset: CGFloat
     var color:Color
     
     var body: some View {
-        ZStack {
-            // Bottom (inverted) triangle filled with red
-            Path { path in
-                let halfSize = size1 / 2
-                let height = sqrt(3) * halfSize
-                let center = CGPoint(x: size1, y: size1)
-                
-                let bottomTrianglePoints = [
-                    CGPoint(x: center.x, y: center.y + height / 2 + offset),
-                    CGPoint(x: center.x - halfSize, y: center.y - height / 2 + offset),
-                    CGPoint(x: center.x + halfSize, y: center.y - height / 2 + offset)
-                ]
-                
-                path.move(to: bottomTrianglePoints[0])
-                path.addLine(to: bottomTrianglePoints[1])
-                path.addLine(to: bottomTrianglePoints[2])
-                path.addLine(to: bottomTrianglePoints[0])
-            }
-            .fill(color)
-            
-            // Top (upright) triangle filled with blue
-            Path { path in
-                let halfSize = size1 / 2
-                let height = sqrt(3) * halfSize
-                let center = CGPoint(x: size1, y: size1)
-                
-                let topTrianglePoints = [
-                    CGPoint(x: center.x, y: center.y - height / 2 - offset),
-                    CGPoint(x: center.x - halfSize, y: center.y + height / 2 - offset),
-                    CGPoint(x: center.x + halfSize, y: center.y + height / 2 - offset)
-                ]
-                
-                path.move(to: topTrianglePoints[0])
-                path.addLine(to: topTrianglePoints[1])
-                path.addLine(to: topTrianglePoints[2])
-                path.addLine(to: topTrianglePoints[0])
-            }
-            .fill(color)
-        }
-        .frame(width: size1 * 2, height: size1 * 2)
+        let scale = 1.4
+        Image("star")
+            .renderingMode(.template)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .foregroundColor(color)        // tint
+            .frame(width: shapeSize * scale,
+                height: shapeSize * scale)
+            .background(Color.white)
     }
 }
 
 ///The stars view for the exercise
 struct ExerciseDropDownStarsView: View {
     @ObservedObject var exerciseBadgesList:ExerciseBadgesList
+    @ObservedObject var viewManager = ViewManager.shared
     let user:User
     let scale:Scale
     let exerciseName:String
     let onClose: () -> Void
-    @State private var badgeIconSize: CGFloat = 0
+    @State private var starIconSize: CGFloat = 0
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
-    @State private var verticalOffset: CGFloat = -50
-    @State var imageIds:[Int] = []
+    @State private var verticalOffset: CGFloat = -60
+    //@State var imageIds:[Int] = []
     @State var handType = KeyboardType.right
+    @State var starColor = Color.red
     
     init(user:User, scale:Scale, exerciseName:String, onClose: @escaping () -> Void) {
         self.user = user
@@ -84,43 +55,6 @@ struct ExerciseDropDownStarsView: View {
         self.scale = scale
         self.exerciseName = exerciseName
         self.onClose = onClose
-    }
-    
-    func imageName(imageSet:Int, n:Int) -> String {
-        var name = ""
-        if n >= imageIds.count {
-            return ""
-        }
-        if imageSet == 1 {
-            switch imageIds[n]  {
-            case 1: name = "pet_catface"
-            case 2: name = "pet_penguinface"
-            default: name = "pet_dogface"
-            }
-        }
-        if imageSet == 2 {
-            switch imageIds[n] {
-            case 1: name = "bug_butterfly"
-            case 2: name = "bug_bee"
-            default: name = "bug_beetle"
-            }
-        }
-        if imageSet == 3 {
-            switch imageIds[n] {
-            case 1: name = "dinosaur_1"
-            case 2: name = "dinosaur_2"
-            default: name = "dinosaur_3"
-            }
-        }
-        if imageSet == 4 {
-            switch imageIds[n] {
-            case 1: name = "sea_creature_1"
-            case 2: name = "sea_creature_2"
-            default: name = "sea_creature_3"
-            }
-        }
-        
-        return name
     }
     
     func getDotSpace() -> CGFloat {
@@ -137,9 +71,9 @@ struct ExerciseDropDownStarsView: View {
             VStack(spacing:0) {
 
                 HStack(spacing: getDotSpace()) {
-                    let c = Color(red: 1.0, green: 0.8431, blue: 0.0)
-                    let imWidth = CGFloat(40)
-                    let animationDuration = 0.1
+                    
+                    //let imWidth = CGFloat(40)
+                    let animationDuration = 0.5 //0.1
                     
                     ///Draw a place for every note in the scale. Put badges in places where the note was played
                     ForEach(0..<scale.getScaleNoteStates(handType: handType).count, id: \.self) { scaleNoteNumber in
@@ -148,42 +82,40 @@ struct ExerciseDropDownStarsView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
-                                    let user = Settings.shared.getCurrentUser("Badges View")
-                                    HexagramShape(size1: badgeIconSize, offset: offset, color: c)
+                                    //let user = Settings.shared.getCurrentUser("Badges View")
+                                    StarShape(shapeSize: starIconSize, offset: offset, color: self.starColor)
                                         .rotationEffect(Angle.degrees(rotationAngle))
-                                        .offset(y: verticalOffset)
+                                        .offset(y: scaleNoteNumber == exerciseBadgesList.totalBadges - 1 ? verticalOffset : 0)
                                         .onAppear {
-                                            withAnimation(Animation.easeOut(duration: animationDuration)) {
-                                                rotationAngle = 360
-                                                verticalOffset = 0
+                                            if scaleNoteNumber == exerciseBadgesList.totalBadges - 1 {
+                                                withAnimation(Animation.easeOut(duration: animationDuration)) {
+                                                    rotationAngle = 360
+                                                    verticalOffset = 0
+                                                }
                                             }
                                         }
                                 }
                             }
-                            .frame(width: badgeIconSize, height: badgeIconSize)
-                            //.border(Color.green)
+                            .frame(width: starIconSize, height: starIconSize)
                         }
                         else {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
-                                    if user.settings.badgeStyle == 0 {
-                                        HexagramShape(size1: badgeIconSize, offset: offset, color: c).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
-                                    }
-                                    else {
-                                        Image(self.imageName(imageSet: user.settings.badgeStyle, n: scaleNoteNumber))
-                                            .resizable()
-                                            .frame(width: imWidth)
-                                    }
+                                    StarShape(shapeSize: starIconSize, offset: offset, color: self.starColor).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
                                 }
                             }
-                            .frame(width: badgeIconSize, height: badgeIconSize)
+                            .frame(width: starIconSize, height: starIconSize)
                             //.border(AppOrange)
                         }
                     }
                     Text("XXXX").foregroundColor(.clear) ///Make sure button below does not cover last star(s)
                 }
                 .padding()
+                .onChange(of: exerciseBadgesList.totalBadges) { old, _ in
+                    rotationAngle = 0
+                    verticalOffset = -60
+                }
             }
             
             // ✅ Button in Top-Right Corner
@@ -203,61 +135,28 @@ struct ExerciseDropDownStarsView: View {
 
         .onAppear() {
             self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
-            let divider = max(scale.getScaleNoteCount(), 16)
-            self.badgeIconSize = UIScreen.main.bounds.size.width / (Double(divider) * 1.7)
-            ///Ensure not more than 2 concurrent same values
-            for _ in 0..<scale.getScaleNoteStates(handType: handType).count {
-                var newValue: Int
-                repeat {
-                    newValue = Int.random(in: 0..<3)
-                } while imageIds.count >= 2 && newValue == imageIds[imageIds.count - 1] && newValue == imageIds[imageIds.count - 2]
-                self.imageIds.append(newValue)
-            }
+            let scale = scale.getScaleNoteCount() >= 16 ? 0.02 : 0.03
+            self.starIconSize = UIScreen.main.bounds.size.width * scale
+//            let colorNames = FigmaColors.shared.allColorNames()
+//            var colorIndex = 0
+//            switch scale.scaleType {
+//            case .major:
+//                colorIndex = 0
+//            case .harmonicMinor:
+//                colorIndex = 1
+//            case .melodicMinor:
+//                colorIndex = 2
+//            case .naturalMinor:
+//                colorIndex = 3
+//            case .brokenChordMinor:
+//                colorIndex = 4
+//           default:
+//                colorIndex = 5
+//            }
+//            let colorName = colorNames[colorIndex % colorNames.count]
+//            self.starColor = FigmaColors.shared.getColor(colorName)
+            self.starColor = FigmaColors.shared.getColor(viewManager.userColorPublished).opacity(FigmaColors.shared.userDisplayOpacity)
         }
     }
 }
 
-//struct BadgeInformationPanel : View {
-//    let user:User
-//    let msg:String
-//    let imageName:String
-//    @Binding var badgeImageRotationAngle:Double
-//
-//    var body: some View {
-//        VStack {
-//            HStack {
-//                Text(msg)
-//                    .padding()
-//                    .foregroundColor(.blue)
-//                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title2)
-//                //.opacity(exerciseState.statePublished == .wonAndFinished ? 1 : 0)
-//                    .zIndex(1) // Keeps it above other views
-//
-//                ///Practice chart badge position is based on exercise state
-//                ///State goes to won (when enough points) and then .wonAndFinished at end of exercise or user does "stop"
-//                Image(imageName)
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(height: UIScreen.main.bounds.height * 0.04)
-//                //                    .offset(x: getBadgeOffset(state: exerciseState.statePublished).0,
-//                //                            y: getBadgeOffset(state: exerciseState.statePublished).1)
-//                    .rotationEffect(Angle(degrees: self.badgeImageRotationAngle))
-//                    .animation(.easeInOut(duration: 1), value: self.badgeImageRotationAngle)
-//                    .padding()
-////                    .onChange(of: exerciseState.statePublished) { _ in
-////                        withAnimation(.easeInOut(duration: 1)) {
-////                            if exerciseState.statePublished == .exerciseWon {
-////                                badgeImageRotationAngle += 360
-////                            }
-////                        }
-////                    }
-//            }
-//            .frame(maxWidth: UIScreen.main.bounds.size.width * 0.8)
-//            .frame(height: UIScreen.main.bounds.size.height * 0.07)
-//            .background(user.settings.getKeyboardColor()) //opacity(0.9)
-//            .cornerRadius(20)
-//            .shadow(radius: 10)
-//            Text("")
-//        }
-//    }
-//}

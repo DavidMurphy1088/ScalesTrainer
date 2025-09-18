@@ -258,7 +258,7 @@ struct TabContainerView: View {
 
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
-        tabBarAppearance.backgroundColor = UIColor(Figma.backgroundGreen)
+        tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.backgroundGreen)
         tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
         tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
         tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.lightGray

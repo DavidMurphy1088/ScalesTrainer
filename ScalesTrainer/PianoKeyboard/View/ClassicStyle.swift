@@ -87,7 +87,7 @@ public struct ClassicStyle {
             }
             return color
         }
-        let hilightColor = FigmaColors.shared.color("Orange")
+        let hilightColor = FigmaColors.shared.getColor("Orange")
         return scaleNote.keyboardColourType == .fingeringSequenceBreak ? hilightColor : Color.blue
     }
     
@@ -206,20 +206,22 @@ public struct ClassicStyle {
                     if showHandIcon {
                         var handImageName:String? = nil
                         if self.hand == 0  {
-                            handImageName = "figma_hand_right"
+                            handImageName = "hand_right_solid"
                         }
                         if self.hand == 1 {
-                            handImageName = "figma_hand_left"
+                            handImageName = "hand_left_solid"
                         }
                         if let handImageName = handImageName {
-                            let image = Image(handImageName)//.renderingMode(.template)
-                            let resolved = context.resolve(image)
-                            let targetWidth: CGFloat = naturalWidth * 0.30
-                            let originalSize = resolved.size
+                            let image = Image(handImageName)
+                            var resolvedImage = context.resolve(image)
+                            resolvedImage.shading = .color(FigmaColors.shared.green)
+                            let targetWidth: CGFloat = naturalWidth * (scale.getScaleNoteCount() <= 24 ? 0.30 : 0.40)
+                            let originalSize = resolvedImage.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
                             let centerOffset:Double
+                                
                             if self.hand == 0 {
                                 if index >= viewModel.pianoKeyModel.count - 1 {
                                     centerOffset = 0.2
@@ -237,7 +239,7 @@ public struct ClassicStyle {
                                 width: targetWidth,
                                 height: targetHeight
                             )
-                            context.draw(resolved, in: drawRect)
+                            context.draw(resolvedImage, in: drawRect)
                             handIconWasShown = true
                         }
                     }

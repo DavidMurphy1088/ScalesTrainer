@@ -263,7 +263,7 @@ struct ScalesView: View {
                             else {
                                 //scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("Lead the Scale", settings.isDeveloperModeOn() ?
+                                self.exerciseState.setExerciseState("Lead", settings.isDeveloperModeOn() ?
                                                                     ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
                             }
                             self.directionIndex = 0
@@ -436,7 +436,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? Color.green : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? FigmaColors.shared.green : Color.black)
                 }
                 Button(action: {
                     self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -447,7 +447,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? Color.green : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? FigmaColors.shared.green : Color.black)
                 }
             }
             .padding(sizeClass == .regular ? systemSpacing : 2)
@@ -652,15 +652,7 @@ struct ScalesView: View {
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
-//            var hands:[Int]
-//            switch handType {
-//            case .both:
-//                 hands = [0,1]
-//            case .left:
-//                hands = [1]
-//            case .right:
-//                hands = [0]
-//            }
+
             let _ = ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
                                                              scaleMotion: scale.scaleMotion,
                                                              minTempo: scale.minTempo, octaves: scale.octaves,

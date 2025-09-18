@@ -440,45 +440,7 @@ public struct TimeSliceView: View {
                         }
                     }
                 }
-                
-                ///Error status or tempo indication if no error
-                
-//                if let result = scalesModel.resultInternal {
-//                    VStack {
-//                        Spacer()
-//                        if result.noErrors() {
-//                            let duration = timeSlice.tapDurationNormalised
-//                            let showTempo = duration != nil && (duration! >= 1.5 || duration! < 0.66)
-//                            if showTempo {
-//                                Rectangle()
-//                                    .fill(getTempoGradient(valueNormalized: duration!))
-//                                    //.opacity(1)
-//                                    .frame(width: noteFrameWidth, height: 12)
-//                            }
-//                            else {
-//                                if timeSlice.statusTag == .correct {
-//                                    Circle()
-//                                        .fill(Color.green.opacity(0.4))
-//                                        .frame(width: statusWidth())
-//                                }
-//                            }
-//                        }
-//                        else {
-//                            if timeSlice.statusTag == .missingError {
-//                                Circle()
-//                                    .fill(Color.yellow.opacity(0.4))
-//                                    .frame(width: statusWidth())
-//                            }
-//                            if timeSlice.statusTag == .correct {
-//                                Circle()
-//                                    .fill(Color.green.opacity(0.4))
-//                                    .frame(width: statusWidth())
-//                            }
-//                        }
-//                    }
-//                }
             }
-
         }
     }
 }

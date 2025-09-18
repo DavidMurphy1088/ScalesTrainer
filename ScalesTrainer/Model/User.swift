@@ -78,24 +78,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.color = user.color
         self.selectedMinorType = user.selectedMinorType
     }
-    
-    static func color(from name: String) -> Color {
-        switch name.lowercased() {
-        case "red": return .red
-        case "orange": return .orange
-        case "yellow": return .yellow
-        case "green": return .green
-        case "mint": return .mint
-        case "teal": return .teal
-        case "cyan": return .cyan
-        case "blue": return .blue
-        case "indigo": return .indigo
-        case "purple": return .purple
-        case "pink": return .pink
-        default: return .gray // fallback
-        }
-    }
-    
+        
     func hash(into hasher: inout Hasher) {
         hasher.combine(id) // Combine the `id` property into the hasher
     }

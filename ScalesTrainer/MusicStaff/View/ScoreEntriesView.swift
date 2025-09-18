@@ -144,7 +144,6 @@ struct ScoreEntriesView: View {
                                             [(scoreEntry: timeSlice, position: anchor, orientation.isPortrait)]
                                         }
                                     )
-                                    //.border(Color.green)
                                 }
 
                             }

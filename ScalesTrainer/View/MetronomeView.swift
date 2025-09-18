@@ -66,7 +66,8 @@ struct MetronomeView: View {
                     let rectanglePosition = valuePosition * sliderWidth - 1
                     
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.green)
+                        //.fill(Color.green)
+                        .fill(FigmaColors.shared.green)
                         .frame(width: 8, height: 20)
                         .position(x: rectanglePosition + 16, y: geometry.size.height / 2) // +16 for padding offset
                 }

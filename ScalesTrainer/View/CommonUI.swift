@@ -1,27 +1,5 @@
 import SwiftUI
 
-//struct CodableColor: Codable {
-//    var red: Double
-//    var green: Double
-//    var blue: Double
-//    var alpha: Double
-//    
-//    init(_ color: Color) {
-//        let uiColor = UIColor(color)
-//        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-//        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-//        self.red = Double(r) / 255.0
-//        self.green = Double(g) / 255.0
-//        self.blue = Double(b) / 255.0
-//        self.alpha = 1.0 //Double(a)
-//    }
-//    
-//    func getColor() -> Color {
-//        return Color(red: red, green: green, blue: blue) //, opacity: alpha)
-//        //return .blue
-//    }
-//}
-
 // =========== Toolbar =======
 
 struct CommonToolbarModifier: ViewModifier {
@@ -50,7 +28,7 @@ struct CommonToolbarModifier: ViewModifier {
                         .padding(.vertical, 0)
                 }
             }
-            .toolbarBackground(Figma.backgroundGreen, for: .navigationBar)
+            .toolbarBackground(FigmaColors.shared.backgroundGreen, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar) //leftmost navigation back label
     }
@@ -78,8 +56,31 @@ extension View {
 class FigmaColors {
     static let shared = FigmaColors()
     var primaryColors:[(String, Color)] = []
-    var colorShades:[(String, Color)] = []
-    func makeColor(red: Int, green: Int, blue: Int) -> Color {
+    var backgroundGreen = Color.white
+    var green = Color.white
+    let userDisplayOpacity = 0.8
+    
+    init() {
+        ///See Jennifer's brand guidelines colors and shades. Using shade index = 2 in 0,1,2
+        primaryColors.append(("green", FigmaColors.makeColor(red: 156, green: 215, blue: 98)))
+        primaryColors.append(("blue", FigmaColors.makeColor(red: 98, green: 202, blue: 215)))
+        primaryColors.append(("orange", FigmaColors.makeColor(red: 250, green: 162, blue: 72)))
+        primaryColors.append(("pink", FigmaColors.makeColor(red: 255, green: 83, blue: 108)))
+        //primaryColors.append(("purple", makeColor(red: 62, green:42, blue: 80))) ?/Comes as black 👹
+        
+        self.backgroundGreen = primaryColors[0].1.opacity(0.2)
+        //Using Jennifer green shade 0
+        self.green = FigmaColors.makeColor(red: 114, green: 161, blue: 68)
+    }
+    
+    func getColor(_ name: String) -> Color {
+        if let match = primaryColors.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespaces) == name.lowercased().trimmingCharacters(in: .whitespaces) }) {
+            return match.1
+        }
+        return .clear
+    }
+    
+    static func makeColor(red: Int, green: Int, blue: Int) -> Color {
         return Color(
             .sRGB,
             red: Double(red) / 255.0,
@@ -87,22 +88,6 @@ class FigmaColors {
             blue: Double(blue) / 255.0,
             opacity: 1.0
         )
-    }
-    init() {
-        primaryColors.append(("purple", makeColor(red: 62, green: 42, blue: 80)))
-        primaryColors.append(("pink  ", makeColor(red: 255, green: 83, blue: 108)))
-        primaryColors.append(("orange", makeColor(red: 250, green: 162, blue: 72)))
-        primaryColors.append(("green", makeColor(red: 156, green: 215, blue: 98)))
-        primaryColors.append(("blue", makeColor(red: 98, green: 202, blue: 215)))
-        colorShades.append(("green", makeColor(red: 196, green: 231, blue: 161)))
-        colorShades.append(("blue", makeColor(red: 161, green: 223, blue: 100)))
-    }
-    
-    func color(_ name: String) -> Color {
-        if let match = primaryColors.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespaces) == name.lowercased().trimmingCharacters(in: .whitespaces) }) {
-            return match.1
-        }
-        return .clear
     }
     
     func allColorNames() -> [String] {
@@ -116,7 +101,7 @@ class Figma {
     static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
     static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
     static let blue = Color(red: 98, green: 202, blue: 215, opacity: 1.0)
-    static let backgroundGreen = FigmaColors.shared.colorShades[0].1.opacity(0.2)
+    //static let backgroundGreen = FigmaColors.shared.colorShades[0].1.opacity(0.2)
                                        
     struct AppButtonStyle: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
@@ -324,11 +309,6 @@ extension View {
 
 //=============== End of Figma ==============
 
-///Equivalent of Swiftui Color.green for canvas drawing
-//let AppGreen = Color(red: 0.20392156, green: 0.7803921, blue: 0.349019607)
-//Red: 0.20392156862745098, Green: 0.7803921568627451, Blue: 0.34901960784313724, Alpha: 1.0
-//let AppOrange = Color(red: 1.0, green: 0.6, blue: 0.0)
-
 class UIGlobals {
     static let shared = UIGlobals()
 //    func getBackground1() -> String {
@@ -396,7 +376,7 @@ struct ToolbarTitleHelpView: View {
         }
         .padding()
         .padding()
-        .background(FigmaColors().color("green"))
+        .background(FigmaColors().getColor("green"))
     }
 }
 
@@ -437,7 +417,9 @@ struct ToolbarNameTitleView: View {
                         .frame(width: 1, height: 50)
                     ZStack {
                         Circle()
-                            .fill(User.color(from: viewManager.userColorPublished).opacity(0.5))
+                            //.fill(User.color(from: viewManager.userColorPublished).opacity(0.5))
+                            .fill(FigmaColors.shared.getColor(viewManager.userColorPublished)
+                            .opacity(FigmaColors.shared.userDisplayOpacity))
                             .frame(width: circleWidth, height: circleWidth)
                         Text(firstLetter(user: viewManager.userNamePublished))
                     }

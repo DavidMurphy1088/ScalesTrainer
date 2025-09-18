@@ -169,7 +169,6 @@ import SwiftUI
 //                }
 //            }
 //            .frame(width: frameWidth, height: frameHeight)
-//            //        .border(.green, width: 1)
 //            .onAppear() {
 //                self.frameHeight = getPileFrameHeight()
 //                self.frameWidth = getPileFrameWidth()

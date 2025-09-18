@@ -624,10 +624,10 @@ public class Scale : Codable {
             return [HandType.left, HandType.right]
         }
         if self.hands[0] == 0 {
-            return [HandType.left]
+            return [HandType.right]
         }
         else {
-            return [HandType.right]
+            return [HandType.left]
         }
     }
     
@@ -1542,16 +1542,32 @@ public class Scale : Codable {
         return [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) ? 1 : 4
     }
     
+    func getScaleTypeName() -> String {
+        var description = "Scale"
+        let words = scaleType.description.components(separatedBy: " ")
+        for word in words {
+            if ["Arpeggio", "Diminished", "7th"].contains(word) {
+                description = "Arpeggio"
+                break
+            }
+            if ["Broken", "Chord"].contains(word) {
+                description = "Broken Chord"
+                break
+            }
+        }
+        return description
+    }
+    
     func getScaleKeyName() -> String {
         var description = ""
         let words = scaleType.description.components(separatedBy: " ")
-        var diminished = false
+        //var diminished = false
         
         ///Remove some scale types that aren't part of the scale key
         for word in words {
             if ["Diminished"].contains(word) {
                 description += "Minor"
-                diminished = true
+                //diminished = true
             }
             if ["Natural", "Harmonic", "Melodic"].contains(word) {
                 continue
@@ -1565,7 +1581,6 @@ public class Scale : Codable {
         var keyName = scaleRoot.name
         keyName += " " + description
         keyName = keyName.trimmingCharacters(in: .whitespaces)
-        //print("=======", self.scaleRoot.name, self.scaleType.description, "->", keyName)
         return keyName
     }
     

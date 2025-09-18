@@ -103,7 +103,6 @@
 //                    //.padding() //.padding(.horizontal).hilighted().padding(.top, 2)
 //                    .font(UIDevice.current.userInterfaceIdiom == .phone ? .footnote : .body)
 //                    .padding(.horizontal)
-//                    .background(Color.green)
 //                    .cornerRadius(6)
 //            }
 //            //if scalesModel.resultPublished == nil {
@@ -126,7 +125,6 @@
 ////            if false && scalesModel.runningProcess == .leadingTheScale {
 ////                Spacer()
 ////                Circle()
-////                    .stroke(Color.green.opacity(1.0), lineWidth: 3)
 ////                    .frame(width: width())
 ////                Text("Correctly Played")
 ////                Spacer()

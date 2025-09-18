@@ -159,7 +159,6 @@
 //                                .strokeBorder(Color.gray.opacity(2.0), lineWidth: 2)
 //                        )
 //                        .padding(.horizontal)
-////                        .border(Color.green)
 ////                        .padding()
 //                    }
 //                }

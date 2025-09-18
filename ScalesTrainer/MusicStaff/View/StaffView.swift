@@ -99,7 +99,6 @@ struct ClefView: View {
                 }
             }
         }
-        //.border(Color.green)
     }
 }
 
@@ -264,7 +263,6 @@ public struct StaffView: View {
                 ScoreEntriesView(score: score, staff: staff, scoreView: scoreView, lineSpacing: self.lineSpacing)
                     .frame(height: getStaffHeight())
                     .coordinateSpace(name: "StaffNotesView")
-                    //.border(Color.green)
                 .overlay(
                     ///End of staff
                     HStack(spacing: 0) {

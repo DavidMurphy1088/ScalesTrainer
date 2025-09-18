@@ -92,7 +92,6 @@ public struct CalibrationView: View {
                     Image(systemName: "questionmark.circle")
                         .imageScale(.large)
                         .font(.title2)//.bold()
-                        .foregroundColor(.green)
                 }
             }
             Text(getScaleName()).padding()

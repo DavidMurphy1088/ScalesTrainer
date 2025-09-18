@@ -96,11 +96,20 @@ struct StartFollowLeadView: View {
     @State private var countdown = 0
     @State private var isCountingDown = false
     
+    func handName() -> String {
+        let types = scalesModel.scale.getHandTypes()
+        if types.count > 1 {
+            return ""
+        }
+        return types[0] == .left ? "LH" : "RH"
+    }
+    
     var body: some View {
         let compact = UIDevice.current.userInterfaceIdiom == .phone
-        VStack() { //spacing:0
-
-            Text("\(activityName) Slowly").font(.title).padding()
+        VStack() {
+            
+            let title = "\(activityName) The \(handName()) \(scalesModel.scale.getScaleTypeName()) Slowly"
+            Text(title).font(.title).padding()
             let height = UIScreen.main.bounds.height
             
             //Relativly larger keys for phone
@@ -109,7 +118,7 @@ struct StartFollowLeadView: View {
 
             if isCountingDown {
                 let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
-                let bold:Color = FigmaColors.shared.color("Orange")
+                let bold:Color = FigmaColors.shared.getColor("Orange")
                 let closeToStart = countdown < 2
                 Text(message)
                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)

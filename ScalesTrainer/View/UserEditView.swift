@@ -71,11 +71,10 @@ public struct UserEditView: View {
     @State private var showErrorAlert = false
     let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
-    //@State private var saveEnabled = false
     @State private var sheetNonce = UUID()
     @State private var showDeleteAlert = false
     let compact = UIDevice.current.userInterfaceIdiom == .phone
-    let colors = FigmaColors()
+    let colors = FigmaColors.shared
     
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
         var grade = 0
@@ -94,10 +93,10 @@ public struct UserEditView: View {
     
     func getColor(name:String) -> Color {
         if name == "Trinity" {
-            return colors.color("green")
+            return colors.getColor("green")
         }
         else {
-            return colors.color("blue")
+            return colors.getColor("blue")
         }
     }
     
