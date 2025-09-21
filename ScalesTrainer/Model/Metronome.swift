@@ -37,17 +37,18 @@ class Metronome:ObservableObject {
             }
         }
     }
+    @Published private(set) var leadInCountdownPublished:Int// = nil
+    func setLeadInCountdownPublished(_ n:Int) {
+        DispatchQueue.main.async {
+            self.leadInCountdownPublished = n
+        }
+    }
+
     func setStatus(status:MetronomeStatus) {
         self.status = status
     }
-    
-    //private var standbyCount:Int?
 
     private var leadInCount:Int?
-    //@Published private(set) var leadInCountdownPublished:Int? = nil
-
-    //@Published var tickedCountPublished = 0
-
     private var timerTickCount = 0
     private let scalesModel = ScalesModel.shared
     private let audioManager = AudioManager.shared
@@ -60,6 +61,7 @@ class Metronome:ObservableObject {
         self.statusPublished = .notStarted
         self.ticker = MetronomeTicker()
         self.ticker.metronomeStart()
+        self.leadInCountdownPublished = 0
     }
     
     func getNotesPerClick() -> Int{
@@ -78,7 +80,7 @@ class Metronome:ObservableObject {
             return
         }
         self.timerTickCount = 0
-        //setLeadInCountdownPublished(count: 0)
+        setLeadInCountdownPublished(0)
         if doLeadIn {
             if let scale = scale {
                 self.leadInCount = scale.timeSignature.top % 3 == 0 ? 3 : 4
@@ -104,12 +106,18 @@ class Metronome:ObservableObject {
         Task.detached(priority: .high) { [weak self] in
             guard let self = self else { return }
             while (self.status != .notStarted) {
-                var remaining = 0
-                if let leadInCount = self.leadInCount { //}, let standbyCount = self.standbyCount {
-                    if self.timerTickCount < (leadInCount) * notesPerClick {
+                var waitTicks = 0
+                var remainingBeats = 0
+                if let leadInCount = self.leadInCount {
+                    waitTicks = (leadInCount * notesPerClick) - self.timerTickCount
+                    if waitTicks > 0 {
                         self.setStatus(status: .leadingIn)
-                        remaining = (remaining + 1) / notesPerClick
-                        //self.setLeadInCountdownPublished(count: remaining)
+                        remainingBeats = waitTicks / notesPerClick
+                        if remainingBeats > 0 {
+                            if waitTicks % notesPerClick == 0 {
+                                self.setLeadInCountdownPublished(remainingBeats)
+                            }
+                        }
                     }
                     else {
                         if self.status != .running {
@@ -121,7 +129,8 @@ class Metronome:ObservableObject {
                     self.setStatus(status: .running)
                 }
                 
-//                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ",NotesPerClick", notesPerClick, ",Countd", self.leadInCountdownPublished, ",remain", remaining)
+//                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ", NotesPerClick:\(notesPerClick)",
+//                      "lead in:\(self.leadInCount)", "  [waitTicks:\(waitTicks), pub:\(waitTicks % notesPerClick), beats:\(remainingBeats)]")
                 
                 if doLeadIn {
                     if self.status != .running {

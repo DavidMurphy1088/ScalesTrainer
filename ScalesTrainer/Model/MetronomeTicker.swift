@@ -25,7 +25,6 @@ class MetronomeTicker : MetronomeTimerNotificationProtocol {
         if true || timerTickerNumber % notesPerClick == 0 {
             if let player = metronomeAudioPlayerLow {
                 player.volume = timerTickerNumber % notesPerClick == 0 ? 0.1 : 0.0
-                //print("        ============= metronomeTickNotification 🔔 Tick\(timerTickerNumber)")
                 player.play()
             }
         }

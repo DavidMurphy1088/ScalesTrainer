@@ -57,7 +57,7 @@ struct PracticeChartView: View {
     @State private var studentScales:StudentScales?
     @State private var helpShowing = false
     @State var minorScaleTypes:[ScaleType] = []
-    @State var selectedMinorType:ScaleType = ScaleType.any
+    @State var selectedMinorType:ScaleType = ScaleType.major
     @State private var cellOpacity:Double = 1.0
     @State private var showMinorTypeSelection:Bool = false
     @State private var minorTypeSelection: String? = nil
@@ -219,7 +219,7 @@ struct PracticeChartView: View {
         .onAppear() {
             let user = Settings.shared.getCurrentUser("Prac Chart .OnAppear")
             self.user = user
-            let studentScales = user.getStudentScales()
+            let studentScales = user.getStudentScales(withPracticeDays: true)
             self.studentScales = studentScales
             let minorTypes = studentScales.getScaleTypes()
             

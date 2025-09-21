@@ -346,6 +346,12 @@ struct ScalesView: View {
         case score
     }
     
+    func getHelp(scale:Scale) -> String {
+        var str = ""
+        let x = scale.getDescriptionTabbed()
+        return x
+    }
+    
     func getComponentSizes(_ callType:ComponentSizeType, keyboardCount:Int? = nil, showingStaff:Bool? = nil) -> CGFloat {
         let screenHeight = UIScreen.main.bounds.size.height
         
@@ -561,7 +567,9 @@ struct ScalesView: View {
             if [.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if let process = self.exerciseProcess {
                     if [RunningProcess.playingAlong, .backingOn, .recordingScale].contains(self.exerciseProcess) {
-                        StartExerciseView(scalesModel: self.scalesModel, process: process, activityName: exerciseState.activityName, parentCallback: {cancelled in
+                        StartExerciseView(scalesModel: self.scalesModel, process: process,
+                                          activityName: exerciseState.activityName, countInRequired: self.exerciseProcess != .recordingScale,
+                                          parentCallback: {cancelled in
                             if cancelled {
                                 exerciseState.setExerciseState("Excerice cancel", .exerciseNotStarted)
                             }
@@ -609,7 +617,7 @@ struct ScalesView: View {
         .commonToolbar(
             title: self.scale.getScaleDescriptionParts(name:true),
             titleMustShow: true,
-            helpMsg: self.scale.getDescriptionTabbed(),
+            helpMsg: self.getHelp(scale: self.scale),
             onBack: { dismiss() }
         )
         .toolbar(.hidden, for: .tabBar) // Hide the TabView

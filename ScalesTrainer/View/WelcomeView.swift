@@ -37,7 +37,7 @@ struct WelcomeView: View {
                             .font(.custom("AvenirNext-DemiBold", size: 33.0))
                         Text("")
                         Text("We hope you enjoy your experience using Scales Academy.")
-                        Text("To get started please enter your name, Music Board and Grade.")
+                        Text("To get started please enter your name, music board and grade.")
                         if UIDevice.current.userInterfaceIdiom == .pad {
                             Text("").padding()
                         }

@@ -7,7 +7,7 @@ public struct ClassicStyle {
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
     let cornerRadiusMultiplier: CGFloat
-    let labelColor: Color
+    //let labelColor: Color
     let keyColor: Color
     let hand:Int
     let scale:Scale
@@ -26,7 +26,7 @@ public struct ClassicStyle {
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
-        labelColor: Color = .blue, //.gray
+        //labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
         self.hand = hand
@@ -45,7 +45,7 @@ public struct ClassicStyle {
             //self.naturalKeySpace = scale.octaves > 1 ? 2 : 3
             self.naturalKeySpace = 1
         }
-        self.labelColor = labelColor
+        //self.labelColor = labelColor
         self.keyColor = keyColor
         self.scale = scale
         self.miniKeyboardStyle = miniKeyboardStyle
@@ -57,19 +57,9 @@ public struct ClassicStyle {
         return down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.7, green: 0.7, blue: 0.7)
     }
     
-    public func hiliteKeyColor(_ down: Bool) -> Color {
-       // return down ? Color(red: 0.4, green: 0.6, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
-        //return down ? Color(red: 0.4, green: 0.8, blue: 0.4) : Color(red: 0.6, green: 0.9, blue: 0.6)
-        return down ? Color(.red) : Color(.blue)
-    }
-    
     public func sharpFlatColor(_ down: Bool) -> Color {
         //down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.5, green: 0.5, blue: 0.5)
         down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.6, green: 0.6, blue: 0.6)
-    }
-
-    public func labelColor(_ noteNumber: Int) -> Color {
-        Color(hue: Double(noteNumber) / 127.0, saturation: 1, brightness: 0.6)
     }
 
     public func naturalKeyWidth(_ width: CGFloat, naturalKeyCount: Int, space: CGFloat) -> CGFloat {
@@ -94,29 +84,20 @@ public struct ClassicStyle {
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
         var keyNameToShow:String? = nil
         if miniKeyboardStyle {
+            let opacity = 0.50
             if [60].contains(key.midi) {
-                let flashColor = Color.blue.opacity((0.25))
+                let flashColor = Color.blue.opacity((opacity))
                 context.fill(keyPath, with: .color(flashColor))
                 keyNameToShow = "C"
             }
             if let notesToHilight = self.notesToHilight {
                 if notesToHilight.contains(key.midi) {
-                    let flashColor = Color.green
+                    let flashColor = FigmaColors.shared.green.opacity((0.75))
                     context.fill(keyPath, with: .color(flashColor))
                 }
             }
         }
-        else {
-            if false {
-                if showKeyName {
-                    if scalesModel.showFingers {
-                        if key.finger.count > 0 {
-                            keyNameToShow = key.getName()
-                        }
-                    }
-                }
-            }
-        }
+
         if let keyNameToShow = keyNameToShow {
             let yPos = miniKeyboardStyle ? keyRect.height * 0.80 : 20
             context.draw(
@@ -136,6 +117,7 @@ public struct ClassicStyle {
             let height = size1.height 
             let geometryLeftEdge = geometry.frame(in: .global).origin.x
             let geometryTopEdge = geometry.frame(in: .global).origin.y
+            let figma = FigmaColors.shared
 
             // Natural keys
             let cornerRadius = miniKeyboardStyle ? 2 : width * cornerRadiusMultiplier
@@ -166,9 +148,9 @@ public struct ClassicStyle {
                 var hilightColor1:Color? = nil
                 switch keyModel.hilightType {
                 case .followThisNote:
-                    hilightColor1 = Color(.green)
+                    hilightColor1 = figma.green
                 case .middleOfKeyboard:
-                    hilightColor1 = Color(.green)
+                    hilightColor1 = figma.green
                 case .wasWrongNote:
                     hilightColor1 = Color(.red)
                 default:
@@ -249,9 +231,11 @@ public struct ClassicStyle {
                 if keyModel.keyIsSounding {
                     let innerContext = context
                     let w = playingMidiRadius * 1.0
-                    let color:Color
+                    var color:Color = .clear
                     if keyModel.scaleNoteState != nil {
-                        color = .green
+                        if let state = keyModel.scaleNoteState {
+                            color = getFingerColor(scaleNote: state)//Color.blue //figma.green
+                        }
                     }
                     else {
                         color = viewModel.hilightNotesOutsideScale ? .red : .clear
@@ -263,7 +247,7 @@ public struct ClassicStyle {
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
+                        lineWidth: keyModel.scaleNoteState != nil ? 2 : 2)
                 }
                             
                 ///----------- Finger number
@@ -327,9 +311,9 @@ public struct ClassicStyle {
                 switch keyModel.hilightType {
                 case .followThisNote:
                     //hilightColor = hiliteKeyColor(key.touchDown)
-                    hilightColor1 = Color(.green)
+                    hilightColor1 = figma.green
                 case .middleOfKeyboard:
-                    hilightColor1 = Color(.green)
+                    hilightColor1 = figma.green
                 case .wasWrongNote:
                     hilightColor1 = Color(.red)
                 default:
@@ -376,9 +360,12 @@ public struct ClassicStyle {
                     let frame = CGRect(x: keyRect.origin.x + keyRect.width / 2.0 - diameter/2 ,
                                        y: keyRect.origin.y + keyRect.height * 0.50 - diameter/2,
                                        width: diameter, height: diameter)
-                    let color:Color
+                    var color:Color = .clear
                     if keyModel.scaleNoteState != nil {
-                        color = .green
+                        if let state = keyModel.scaleNoteState {
+                            color = getFingerColor(scaleNote: state)//Color.blue //figma.green
+                        }
+                        //color = figma.green
                     }
                     else {
                         color = viewModel.hilightNotesOutsideScale ? .red : .clear
@@ -386,14 +373,13 @@ public struct ClassicStyle {
                     innerContext.stroke(
                         Path(ellipseIn: frame),
                         with: .color(color),
-                        lineWidth: keyModel.scaleNoteState != nil ? 3 : 3)
+                        lineWidth: keyModel.scaleNoteState != nil ? 2 : 2)
                 }
                 
                 ///----------- Finger number
                 if scalesModel.showFingers {
                     if let scaleNote = key.scaleNoteState {
                         
-                        //let point = CGPoint(x: rect.origin.x + rect.width / 2.0, y: rect.origin.y + rect.height * 0.80)
                         let point = CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: keyRect.origin.y + keyRect.height * self.blackNoteFingerNumberHeight)
                         let finger:String = scaleNote.finger > 5 ? "" : String(scaleNote.finger)
                         if false {

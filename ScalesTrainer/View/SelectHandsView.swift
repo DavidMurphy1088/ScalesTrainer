@@ -47,7 +47,7 @@ struct SelectHandForPractice: View {
                 }
                 Text(nameFull).font(compact ? .title3 : .title2)
                     .padding()
-                    .figmaRoundedBackground(fillColor: titleColor)
+                    .figmaRoundedBackgroundWithBorder(fillColor: titleColor)
                 Text("")
                 if !compact {
                     Text("")
@@ -82,7 +82,7 @@ struct SelectHandForPractice: View {
             //.border(.blue)
             Text("").padding()
         }
-        .figmaRoundedBackground()
+        .figmaRoundedBackgroundWithBorder()
 
         .navigationTitle("Select Hands")
         .toolbar(.hidden, for: .tabBar) // Hide the TabView

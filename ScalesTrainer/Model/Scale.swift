@@ -53,7 +53,6 @@ public enum ArticulationType: CaseIterable, Comparable, Codable {
 }
 
 public enum ScaleType: CaseIterable, Comparable, Codable {
-    case any
     case major
     case naturalMinor
     case harmonicMinor
@@ -81,8 +80,7 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
     
     var description: String {
         switch self {
-        case .any:
-            return "Any Exercise Type"
+
         case .major:
             return "Major"
         case .naturalMinor:
@@ -583,7 +581,7 @@ public class Scale : Codable {
         }
         
         var debug = false
-        // ====================== Fingering =====================
+        // -----------------  Fingering ------------------
         
         for hand in [0,1] {
             setFingers(hand: hand)
@@ -786,8 +784,7 @@ public class Scale : Codable {
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
         var scaleOffsets:[Int] = []
         switch scaleType {
-        case .any:
-            scaleOffsets = []
+
         case .major:
             scaleOffsets = [2,2,1,2,2,2,1]
         case .naturalMinor:
@@ -883,9 +880,6 @@ public class Scale : Codable {
     }
     
     func debug1(_ msg:String, short:Bool=false)  {
-        if !self.debugOn {
-            //return
-        }
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves,
               "motion:", self.scaleMotion)
         

@@ -70,11 +70,12 @@ struct PianoStartNoteIllustrationView: View {
     
     var body: some View {
         VStack(spacing:0) {
-            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel, keyColor: Color.white, miniKeyboardStyle: true)
+            PianoKeyboardView(scalesModel: ScalesModel.shared, viewModel: keyboardModel,
+                              keyColor: Color.white, miniKeyboardStyle: true)
                 .frame(width:7 * keyHeight, height: keyHeight)
-                .cornerRadius(16)
+                .cornerRadius(8)
                 .padding(.bottom, 0)
-                .figmaRoundedBackground()
+                .figmaRoundedBackgroundWithBorder()
             Text("Middle C").font(.callout).padding()
         }
         .onAppear() {
@@ -171,6 +172,7 @@ struct StartExerciseView: View {
     let scalesModel:ScalesModel
     let process:RunningProcess
     let activityName:String
+    let countInRequired:Bool
     let parentCallback: (_ cancelled: Bool) -> Void
     let endExerciseCallback: () -> Void
     let figmaColors = FigmaColors()
@@ -180,30 +182,45 @@ struct StartExerciseView: View {
     @State private var isCountingDown = false
     @State private var metronomeStarted = false
     let audioManager = AudioManager.shared
-    @State private var confirmed = false
+    @State private var startCountdown = false
     @State private var backingPresetNumber = 0
     
     private func startMetronome(process:RunningProcess) {
         metronome.stop("StartExerciseView")
-        
+        var doLeadIn = false
         if [.playingAlong, .backingOn].contains(process) {
             metronome.addProcessesToNotify(process: HearScalePlayer(hands: scalesModel.scale.hands, process: process, endCallback: endExerciseCallback))
             self.audioManager.configureAudio(withMic: false, recordAudio: false)
+            doLeadIn = true
         }
         if [.recordingScale].contains(process) {
             self.audioManager.configureAudio(withMic: true, recordAudio: true)
         }
-        metronome.start("StartExerciseView", doLeadIn: false, scale: scalesModel.scale)
-        parentCallback(false)
+        metronome.start("StartExerciseView", doLeadIn: doLeadIn, scale: scalesModel.scale)
+        //parentCallback(false)
     }
     
     var body: some View {
         //let compact = UIDevice.current.userInterfaceIdiom == .phone
         VStack() {
             HStack {
-                if self.confirmed {
-                    Text("Counting In ...").padding().foregroundColor(.green).bold()
-                        .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                if self.startCountdown {
+                    HStack {
+                        if self.metronome.leadInCountdownPublished == 0 {
+                            Text("Counting In ...").padding().bold()
+                        }
+                        else {
+                            Text("Counting In \(self.metronome.leadInCountdownPublished)").padding().bold()
+                        }
+                    }
+                    .onChange(of: self.metronome.leadInCountdownPublished, {
+                        if self.metronome.leadInCountdownPublished <= 1 {
+                            ///Take down this start view
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                parentCallback(false)
+                            }
+                        }
+                    })
                 }
                 else {
                     VStack {
@@ -217,10 +234,14 @@ struct StartExerciseView: View {
                         HStack {
                             Text("Are you happy with your metronome setting?").padding()
                             FigmaButton("Yes", action : {
-                                self.confirmed = true
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.00) {
-                                    //print("Called after 1 second!")
                                     self.startMetronome(process: process)
+                                }
+                                if self.countInRequired {
+                                    self.startCountdown = true
+                                }
+                                else {
+                                    parentCallback(false)
                                 }
                             })
                             FigmaButton("No", action : {

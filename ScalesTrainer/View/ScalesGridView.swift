@@ -14,7 +14,7 @@ struct ScalesGridCellView: View {
     let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
-    @State private var fadeIn = false
+    //@State private var fadeIn = false
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func testDataButtons(user:User) -> some View {
@@ -109,25 +109,20 @@ struct ScalesGridCellView: View {
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-//            .background(
-//                RoundedRectangle(cornerRadius: 12)
-//                    .fill(self.color) //.opacity(opacityValue))
-//                    .shadow(color: .black.opacity(opacityValue), radius: 1, x: 4, y: 4)
-//            )
-            .figmaRoundedBackground(fillColor: self.color)
-            .opacity(fadeIn ? 1 : 0)  // start invisible
-                .onAppear {
-                    withAnimation(.easeIn(duration: 1.0)) {
-                        fadeIn = true
-                    }
-            }
+            .figmaRoundedBackgroundWithBorder(fillColor: self.color, outlineBox: false)
 
-            .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
-                fadeIn = false
-                withAnimation(.easeIn(duration: 1.0)) {
-                    fadeIn = true
-                }
-            }
+//            .opacity(fadeIn ? 1 : 0)  // start invisible
+//                .onAppear {
+//                    withAnimation(.easeIn(duration: 1.0)) {
+//                        fadeIn = true
+//                    }
+//            }
+//            .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
+//                fadeIn = false
+//                withAnimation(.easeIn(duration: 1.0)) {
+//                    fadeIn = true
+//                }
+//            }
             .navigationTitle(navigationTitle)
             .navigationDestination(isPresented: $navigateToScale) {
                 if let user = user, let scale = scaleToChart.scale {
@@ -201,7 +196,8 @@ struct ScalesGridView : View {
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex),//.opacity(compact ? 0.65 : 1.0),
+                                color:getColor(n: rowIndex * 3 + colIndex)
+                                    .opacity(compact ? 0.65 : 0.65),
                                 scoreTestScaleIds: $scoreTestScaleIds,
                                 navigationTitle: self.navigationTitle
                             )

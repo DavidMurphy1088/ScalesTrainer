@@ -166,6 +166,9 @@
     "Counting In ..." : {
 
     },
+    "Counting In %lld" : {
+
+    },
     "Current Amplitude Filter:%@" : {
 
     },
@@ -539,9 +542,6 @@
     "Show Tap Data" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
     "Sorry, no subscription is available yet" : {
 
     },
@@ -633,7 +633,7 @@
         }
       }
     },
-    "To get started please enter your name, Music Board and Grade." : {
+    "To get started please enter your name, music board and grade." : {
 
     },
     "Under Construction" : {

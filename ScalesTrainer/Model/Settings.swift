@@ -117,7 +117,6 @@ class Settings : Encodable, Decodable {
         if self.currentUserId != nil {
             for user in self.users {
                 if user.id == self.currentUserId {
-//                    AppLogger.shared.log(self, "=================== GetCur user \(ctx) \(user.name), board \(user.boardAndGrade.board.name) grade \(user.boardAndGrade.grade)")
                     return user
                 }
             }
@@ -137,9 +136,6 @@ class Settings : Encodable, Decodable {
             let jsonData = try jsonEncoder.encode(self)
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 UserDefaults.standard.set(jsonString, forKey: "settings")
-//                for u in self.users {
-//                    print("=============Setting save user", u.name, u.getColor().description)
-//                }
 //                AppLogger.shared.log(self, "➡️ settings saved userCount:\(self.users.count) currentuser:\(currentUser.name) Grade:\(currentUser.board) \(currentUser.grade)")
             }
             else {
@@ -174,15 +170,7 @@ class Settings : Encodable, Decodable {
             }
         }
     }
-    
-//    func debug11(_ ctx:String) {
-//        print("Settings debug ============= \(ctx)")
-//        for user in users {
-//            print("  User", user.name, "Grade:", user.grade)
-//        }
-//        print()
-//    }
-        
+
     public func isDeveloperModeOn() -> Bool {
         return false
 //        if users.count == 0 {

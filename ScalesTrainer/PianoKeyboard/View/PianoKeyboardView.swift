@@ -27,7 +27,8 @@ public struct PianoKeyboardView : View {
                     //Text("REPAIONT \(viewModel.forceRepaint)")
                     ZStack(alignment: .top) {
                         //Warning - Anything added here screws up touch handling 😡
-                        style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel, miniKeyboardStyle: miniKeyboardStyle, geometry: geometry)
+                        style.layout(repaint: scalesModel.forcePublish, viewModel: viewModel,
+                                     miniKeyboardStyle: miniKeyboardStyle, geometry: geometry)
                         if miniKeyboardStyle == false {
                             TouchesView(viewModel: viewModel)
                         }

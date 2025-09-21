@@ -36,7 +36,6 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
     enum CodingKeys: String, CodingKey {
         case id
         case scaleId
-        //case visible
         case practiceDay
         case badgeCount
     }
@@ -59,31 +58,63 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
 }
 
 class StudentScales: Codable {
-    
     let user:User
     var scalesPerDay: Int
     var studentScales:[StudentScale]
-    //var minorScaleType: Int
     var createdDayOfWeek:Int
     
     init(user:User) {
         self.user = user
         self.scalesPerDay = 3
-        //self.minorScaleType = minorScaleType
 
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
                                                           grade: user.boardAndGrade.grade)
         self.studentScales = []
-        var dayCount = 0
+        
         self.createdDayOfWeek = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
+        
         for scale in scales {
-            //let dayOffset = (dayCount / scalesPerDay) % scalesPerDay
-            let dayOffset = dayCount % scalesPerDay
             self.studentScales.append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
-                                                   visible: true, day: dayOffset))
+                                                   visible: true, day: 0))
+        }
+        //setPracticeDaysForScales()
+        //debug("Init")
+    }
+    
+    func arePracticeDaysSet() -> Bool {
+        for studentScale in self.studentScales {
+            if studentScale.practiceDay > 0 {
+                return true
+            }
+        }
+        return false
+    }
+    
+    func setPracticeDaysForScales(studentScales:[StudentScale], minorType:ScaleType) {
+        var dayCount = 0
+        for studentScale in studentScales {
+            guard let scale = studentScale.scale else {
+                continue
+            }
+            if [.harmonicMinor, .melodicMinor, .naturalMinor].contains(scale.scaleType) {
+                if scale.scaleType != minorType {
+                    continue
+                }
+            }
+            let dayOffset = dayCount % scalesPerDay
+            studentScale.practiceDay = dayOffset
+//            append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
+//                                                   visible: true, day: dayOffset))
             dayCount += 1
         }
-        //debug("Init")
+        saveToFile()
+    }
+    
+    func shuffle() {
+        guard let minorType = user.selectedMinorType else {
+            return
+        }
+        setPracticeDaysForScales(studentScales: studentScales.shuffled(), minorType: minorType)
     }
     
     func convertToJSON() -> Data? {
@@ -111,22 +142,6 @@ class StudentScales: Codable {
             let name = x.scaleId + String(repeating: " ", count: 60 - x.scaleId.count)
             print("  \(name)", "\tvis:\(x.visible) \tday:\(x.practiceDay)")
         }
-    }
-    
-    func shuffle() {
-        var indexes = Array(studentScales.indices)
-        indexes.shuffle()
-        var dayNumber = 0
-        for i in indexes  {
-            studentScales[i].practiceDay = dayNumber
-            if dayNumber >= scalesPerDay - 1 {
-                dayNumber = 0
-            }
-            else {
-                dayNumber += 1
-            }
-        }
-        saveToFile()
     }
     
     func getScaleIds() -> [String] {
@@ -171,7 +186,7 @@ class StudentScales: Codable {
         }
         
         ///Make sure the list is in the order specified here
-        var scaleTypes = [ScaleType.any]
+        var scaleTypes:[ScaleType] = []
         //for scaleTypeOrder in [ScaleType.harmonicMinor, ScaleType.naturalMinor, .melodicMinor] {
             for studentScale in studentScales {
                 if let scale = studentScale.scale {
@@ -192,14 +207,14 @@ class StudentScales: Codable {
         var allKeysSet: Set<String> = []
         for studentScale in studentScales {
             if let scale = studentScale.scale {
-                allKeysSet.insert(scale.getScaleKeyName())
+                allKeysSet.insert(scale.scaleRoot.name)
             }
         }
         
         var uniqueKeys:[String] = []
         for studentScale in studentScales {
             if let scale = studentScale.scale {
-                let name = scale.getScaleKeyName()
+                let name = scale.scaleRoot.name
                 if allKeysSet.contains(name) {
                     uniqueKeys.append(name)
                     allKeysSet.remove(name)
@@ -207,18 +222,19 @@ class StudentScales: Codable {
             }
         }
         
-        var scored:[(Int, String)] = []
-        ///Order the keys by thier Keysignature complexity
-        for key in uniqueKeys {
-            let words = key.components(separatedBy: " ")
-            let keySig = KeySignature(keyName: words[0], keyType: words[1] == "Major" ? .major : .minor)
-            var score = keySig.accidentalType == .flat ? keySig.accidentalCount * 10 : keySig.accidentalCount * 10
-            scored.append((score, key))
-        }
-        let sorted = scored.sorted { $0.0 < $1.0 }
+//        var scored:[(Int, String)] = []
+//        ///Order the keys by thier Keysignature complexity
+//        for key in uniqueKeys {
+//            let words = key.components(separatedBy: " ")
+//            let keySig = KeySignature(keyName: words[0], keyType: words[1] == "Major" ? .major : .minor)
+//            var score = keySig.accidentalType == .flat ? keySig.accidentalCount * 10 : keySig.accidentalCount * 10
+//            scored.append((score, key))
+//        }
+//        let sorted = scored.sorted { $0.0 < $1.0 }
+        let sorted = uniqueKeys.sorted{$0 < $1}
         var scaleKeys:[String] = []
         for score in sorted {
-            scaleKeys.append(score.1)
+            scaleKeys.append(score)
         }
         return scaleKeys
     }

@@ -140,7 +140,7 @@ struct SpinTheWheelView: View {
                     }
                     Text("").padding()
                 }
-                .figmaRoundedBackground()
+                .figmaRoundedBackgroundWithBorder()
                 .padding()
                 Spacer()
             }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-// =========== Toolbar =======
+// --------------- Toolbar ---------------
 
 struct CommonToolbarModifier: ViewModifier {
     let title: String
@@ -51,13 +51,14 @@ extension View {
     }
 }
 
-//========== Figma
+//--------------- Figma ---------------
 
 class FigmaColors {
     static let shared = FigmaColors()
     var primaryColors:[(String, Color)] = []
     var backgroundGreen = Color.white
-    var green = Color.white
+    var green = Color.clear
+    var blue = Color.clear
     let userDisplayOpacity = 0.8
     
     init() {
@@ -71,6 +72,9 @@ class FigmaColors {
         self.backgroundGreen = primaryColors[0].1.opacity(0.2)
         //Using Jennifer green shade 0
         self.green = FigmaColors.makeColor(red: 114, green: 161, blue: 68)
+        ///J Figma for blue shades is WRONG RGB 👹 for blue shade 5
+        self.blue = FigmaColors.colorFromHex("#EFFAFB") //J Figma blue shade
+        //self.blue = FigmaColors.makeColor(red: 75, green: 160, blue: 170)
     }
     
     func getColor(_ name: String) -> Color {
@@ -90,13 +94,38 @@ class FigmaColors {
         )
     }
     
+    static func colorFromHex(_ hex: String) -> Color {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            return Color(UIColor.clear)
+        }
+        
+        return Color(UIColor(
+            red: CGFloat(r) / 255,
+            green: CGFloat(g) / 255,
+            blue: CGFloat(b) / 255,
+            alpha: CGFloat(a) / 255
+            )
+        )
+    }
     func allColorNames() -> [String] {
         return primaryColors.map { $0.0.trimmingCharacters(in: .whitespaces) }
     }
 }
 
 class Figma {
-    static let background = Color(rgbHex: "#FEFEFE")
+    static let buttonBackground = Color(rgbHex: "#FEFEFE")
     static let red = Color(red: 255, green: 83, blue: 108, opacity: 1.0)
     static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
     static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
@@ -106,7 +135,7 @@ class Figma {
     struct AppButtonStyle: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .background(background)
+                .background(buttonBackground)
         }
     }
     static func colorFromRGB(_ red: Int, _ green: Int, _ blue: Int) -> Color {
@@ -235,7 +264,7 @@ struct FigmaButton: View {
                 .background(
                     RoundedRectangle(cornerRadius: roundRadius).stroke(Color.black.opacity(compact ? 0.5 : 1.0), lineWidth: 1)
                 )
-                .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
+                .FigmaButtonBackground()
             }
         }
     }
@@ -259,7 +288,7 @@ struct FigmaButtonWithLabel<Label: View>: View {
                 .background(
                     RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
                 )
-                .figmaRoundedBackground(fillColor: .white, opacity: 1.0)
+                .FigmaButtonBackground()
         }
     }
 }
@@ -267,9 +296,10 @@ struct FigmaButtonWithLabel<Label: View>: View {
 struct RoundedBackgroundModifier: ViewModifier {
     var fillColor: Color = .gray
     var opacityValue: Double = 1.0
+    var outlineBox:Bool = true
     let radius = UIDevice.current.userInterfaceIdiom == .phone ? 12.0 : 12.0
     let shadowOffset = 2.0
-    let border:Bool
+    let dropShadow:Bool
     //let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     func body(content: Content) -> some View {
@@ -280,8 +310,8 @@ struct RoundedBackgroundModifier: ViewModifier {
 //                RoundedRectangle(cornerRadius: radius).stroke(Color.red, lineWidth: border ? 2 : 0))//.offset(y: -4)
             .background(
                 ZStack {
-                    //shadow box
-                    if border {
+                    //shadow box below colour box
+                    if dropShadow {
                         RoundedRectangle(cornerRadius: radius).fill(Figma.colorFromRGB(62, 42, 80)).offset(y: 4)
                             .blur(radius: 0) // set >0 if you want soft shadow
                     }
@@ -290,32 +320,34 @@ struct RoundedBackgroundModifier: ViewModifier {
                     RoundedRectangle(cornerRadius: radius).fill(fillColor.opacity(opacityValue))
                 }
                 .background(
-                    RoundedRectangle(cornerRadius: radius).stroke(Color.black, lineWidth: border ? 1 : 0)
+                    RoundedRectangle(cornerRadius: radius).stroke(self.outlineBox ? Color.black : Color.clear, lineWidth: dropShadow ? 1 : 0)
                 )
             )
     }
 }
 
 extension View {
-    func figmaRoundedBackground(fillColor: Color = Figma.colorFromRGB(236, 234, 238),
-                                opacity opacityValue: Double = 1.0) -> some View {
-        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, border: false))
+    func FigmaButtonBackground(//fillColor: Color = Figma.colorFromRGB(236, 234, 238),
+                                //opacity opacityValue: Double = 1.0
+                                ) -> some View {
+        self.modifier(RoundedBackgroundModifier(
+            fillColor: .white,
+            opacityValue: 1.0,
+            outlineBox: true,
+            dropShadow: false))
     }
-    func figmaRoundedBackgroundWithBorder(fillColor: Color = Figma.colorFromRGB(236, 234, 238),
-                                opacity opacityValue: Double = 1.0) -> some View {
-        self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, border: true))
+    func figmaRoundedBackgroundWithBorder(
+                fillColor: Color = FigmaColors.shared.blue,
+                opacity opacityValue: Double = 1.0,
+                outlineBox:Bool = true) -> some View {
+                    self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, outlineBox: outlineBox, dropShadow: true))
     }
 }
 
-//=============== End of Figma ==============
+//--------------- End of Figma ---------------
 
 class UIGlobals {
     static let shared = UIGlobals()
-//    func getBackground1() -> String {
-//        let r = Int.random(in: 0...10)
-//        return "app_background_\(r)"
-//    }
-    
     let screenImageBackgroundOpacity = 0.5
     let screenWidth = 0.9
     let purpleSubHeading:Color
@@ -361,7 +393,7 @@ extension Button {
     }
 }
 
-/// ================ Title view at the top of every nav stack =================
+/// --------------- Title view at the top of every nav stack ---------------
 
 struct ToolbarTitleHelpView: View {
     let helpMessage:String
@@ -503,7 +535,7 @@ struct OutlinedStyleView: ViewModifier {
 //            .font(.custom("Noteworthy-Bold", size: 24))
 //            .foregroundColor(.white)
 //            .padding()
-//            .background(
+//            .buttonBackground(
 //                RoundedRectangle(cornerRadius: 15)
 //                    .fill(LinearGradient(colors: [.blue.opacity(0.8), .purple.opacity(0.8)],
 //                                         startPoint: .topLeading, endPoint: .bottomTrailing))

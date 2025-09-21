@@ -69,7 +69,7 @@ struct LaunchScreenView: View {
                     Spacer()
                 }
             }
-            .background(Figma.background)
+            .background(Figma.buttonBackground)
         }
     }
 }
@@ -96,7 +96,7 @@ struct DeveloperView: View {
             Button(action: {
                 let x:[String : Any] = ["SomeTest":99]
                 firebase.writeToRealtimeDatabase(board: "Trinity", grade: 1, key: "key0", data: x, callback: {msg in
-                    print(msg, "======== Firebase test ok")
+                    //print(msg, "======== Firebase test ok")
                 })
             }) {
                 Text("Firebase Write")
@@ -249,27 +249,50 @@ class ViewManager: ObservableObject {
 
 struct TabContainerView: View {
     @ObservedObject private var viewManager = ViewManager.shared
-    let tabBarAppearance = UITabBarAppearance()
     
     init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white // background color
-
+//        let appearance = UITabBarAppearance()
+//        appearance.configureWithOpaqueBackground()
+//        appearance.backgroundColor = UIColor.white // background color
+//
+//        let tabBarAppearance = UITabBarAppearance()
+//        tabBarAppearance.configureWithOpaqueBackground()
+//        tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.backgroundGreen)
+//        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
+//        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.lightGray
+//        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.lightGray]
+//        
+//        // APPLY the appearance to the tab bar
+//        let tabBar = UITabBar.appearance()
+//        tabBar.standardAppearance = tabBarAppearance
+//        tabBar.scrollEdgeAppearance = tabBarAppearance
+    }
+    
+    private func setupTabBarAppearance() {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
+        tabBarAppearance.backgroundColor = UIColor.white // Tab bar background
+        
+        // Normal (unselected) state
+        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.black
+        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black]
         tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.backgroundGreen)
-        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
-        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
-        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.lightGray
-        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.lightGray]
+    
+        // Selected state
+        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
+        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.black]
         
-        // APPLY the appearance to the tab bar
-        let tabBar = UITabBar.appearance()
-        tabBar.standardAppearance = tabBarAppearance
-        tabBar.scrollEdgeAppearance = tabBarAppearance
+        // Apply the appearance
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        
+        // For iOS 15+ compatibility
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        }
     }
-        
+    
     var body: some View {
         TabView(selection: $viewManager.selectedTab) {
             if viewManager.selectedTab != ViewManager.TAB_WELCOME {
@@ -392,6 +415,11 @@ struct TabContainerView: View {
         .tabViewStyle(DefaultTabViewStyle())
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)
+        .onAppear {
+            setupTabBarAppearance()
+        }
+        .accentColor(.black) ///black tab icons
+        
     }
 }
 
