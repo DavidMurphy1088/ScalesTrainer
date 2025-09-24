@@ -124,7 +124,7 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
-		79DAF3B92E80D55900EF6629 /* NEW_Steinway_D.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */; };
+		79DAF3B92E80D55900EF6629 /* Steinway_D.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */; };
 		79DAF3BB2E80DCAF00EF6629 /* SoundfontParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */; };
 		79DAF3BD2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */; };
 		79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */; };
@@ -266,7 +266,7 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
-		79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = NEW_Steinway_D.sf2; sourceTree = "<group>"; };
+		79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Steinway_D.sf2; sourceTree = "<group>"; };
 		79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundfontParser.swift; sourceTree = "<group>"; };
 		79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = FluidGM_Bank_0.sf2; sourceTree = "<group>"; };
 		79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDropDownStarsView.swift; sourceTree = "<group>"; };
@@ -343,7 +343,7 @@
 				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
 				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
 				795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */,
-				79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */,
+				79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */,
 				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
 			);
 			path = AudioFiles;
@@ -713,7 +713,7 @@
 				79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */,
 				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
 				79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */,
-				79DAF3B92E80D55900EF6629 /* NEW_Steinway_D.sf2 in Resources */,
+				79DAF3B92E80D55900EF6629 /* Steinway_D.sf2 in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				79F6CD752D14020200FF2681 /* MidiNotes in Resources */,

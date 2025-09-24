@@ -14,7 +14,7 @@ class AudioManager {
     //let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
     //static let samplerFileName = "NEW_Timbres of Heaven" ///‼️ B and B♭ sound wrong - an octave too low. Bad for piano preset 0
     //static let samplerFileName = "NEW_FluidR3_GM" ///🟢 22Sep25 Claude recommended best for mix of instruments
-    static let keyboardSamplerFileName = "NEW_Steinway_D" ///🟢 22Sep25 Claude recommended best for piano
+    static let keyboardSamplerFileName = "Steinway_D" ///🟢 22Sep25 Claude recommended best for piano
     //static let backingSamplerFileName = "FluidR3_GM" ///🟢 22Sep25 Claude recommended best for multiple instruments
     static let backingSamplerFileName = "FluidGM_Bank_0"
     
