@@ -37,7 +37,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         self.boardAndGrade = boardAndGrade
         self.color = ""
         self.testSerialise = ""
-        setColor()
+        self.color = ""
     }
     
     func getColor() -> String {
@@ -45,29 +45,34 @@ class User : Encodable, Decodable, Hashable, Identifiable {
     }
     
     func setColor() {
-        ///Select a color not already in use
-        if Settings.shared.users.count == 0 {
-            self.color = "green"
+        if self.color.count > 0 {
             return
         }
-        var colors = FigmaColors().allColorNames()
+        ///Select a color not already in use
+        let shade = 3
+        
+        if Settings.shared.users.count == 0 {
+            self.color = FigmaColors.shared.getColorHex("green", shade)
+            return
+        }
+        var remainingColors:[String] = FigmaColors.shared.getColorHexes(shade:3)
+        
+        ///remove colors already used
         for i in 0..<Settings.shared.users.count {
             let user = Settings.shared.users[i]
             if user.id == self.id {
                 continue
             }
-            if colors.contains(user.color) {
-                colors.removeAll { $0 == user.color }
+            if remainingColors.contains(user.color) {
+                remainingColors.removeAll { $0 == user.color }
             }
         }
-        if colors.count > 0 {
-            let r = Int.random(in : 0..<colors.count)
-            let color = colors[r]
-            self.color = color
+        if remainingColors.count == 0 {
+            ///All used now, pick one at random
+            remainingColors = FigmaColors.shared.getColorHexes(shade:3)
         }
-        else {
-            self.color = "green"
-        }
+        let r = Int.random(in : 0..<remainingColors.count)
+        self.color = remainingColors[r]
     }
     
     func updateFromUser(user:User) {

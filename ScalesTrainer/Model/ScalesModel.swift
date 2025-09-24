@@ -135,7 +135,13 @@ public class ScalesModel : ObservableObject {
         case upwards
         case downwards
     }
-    @Published private(set) var directionOfPlay:DirectionOfPlay = DirectionOfPlay.upwards
+    @Published private(set) var directionOfPlayPublished:DirectionOfPlay? = nil // = DirectionOfPlay.upwards
+    func setInitialDirectionOfPlay(scale:Scale) {
+        DispatchQueue.main.async {
+            let reverse = self.scale.hands.count == 1 && self.scale.hands[0] == 1 && self.scale.scaleMotion == .contraryMotion
+            self.directionOfPlayPublished = reverse ? .downwards : .upwards
+        }
+    }
     
     @Published private(set) var showStaff = true
     func setShowStaff(_ newValue: Bool) {
@@ -159,19 +165,23 @@ public class ScalesModel : ObservableObject {
     @Published var selectedScaleSegmentPublished = 0
     func setSelectedScaleSegment(_ segment:Int) {
         if segment == self.selectedScaleSegment {
-            return
+//            if self.directionOfPlayPublished != nil {
+//                return
+//            }
         }
         
         self.selectedScaleSegment = segment
         DispatchQueue.main.async { 
             self.selectedScaleSegmentPublished = segment
             let scaleSegments = self.scale.getMinMaxSegments()
+            let reverse = self.scale.hands.count == 1 && self.scale.hands[0] == 1 && self.scale.scaleMotion == .contraryMotion
             if scaleSegments.0 == segment {
-                self.directionOfPlay = DirectionOfPlay.upwards
+                self.directionOfPlayPublished = reverse ? DirectionOfPlay.downwards : DirectionOfPlay.upwards
             }
             else {
-                self.directionOfPlay = DirectionOfPlay.downwards
+                self.directionOfPlayPublished = reverse ? DirectionOfPlay.upwards : DirectionOfPlay.downwards
             }
+            print("=============== ▶️ directionOfPlay", self.directionOfPlayPublished, scaleSegments.0, "Reverse", reverse )
         }
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
@@ -323,7 +333,6 @@ public class ScalesModel : ObservableObject {
             self.setSelectedScaleSegment(0)
         }
         
-        
         //metronome.stop("ScalesModel 1 Process:\(setProcess)")
 
         self.runningProcess = setProcess
@@ -338,9 +347,6 @@ public class ScalesModel : ObservableObject {
         self.setShowKeyboard(true)
         self.setShowLegend(true)
         self.setSelectedScaleSegment(0)
-//        if resultInternal != nil {
-//            self.setShowStaff(true)
-//        }
         
         PianoKeyboardModel.sharedRH.clearAllFollowingKeyHilights(except: nil)
         PianoKeyboardModel.sharedRH.redraw()

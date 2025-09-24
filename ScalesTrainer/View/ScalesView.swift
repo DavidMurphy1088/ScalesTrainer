@@ -348,7 +348,7 @@ struct ScalesView: View {
     
     func getHelp(scale:Scale) -> String {
         var str = ""
-        let x = scale.getDescriptionTabbed()
+        let x = scale.getScaleDescriptionHelpMessage()
         return x
     }
     
@@ -442,7 +442,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.upwards ? FigmaColors.shared.green : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlayPublished == ScalesModel.DirectionOfPlay.upwards ? FigmaColors.shared.green : Color.black)
                 }
                 Button(action: {
                     self.directionIndex = self.directionIndex == 0 ? 1 : 0
@@ -453,7 +453,7 @@ struct ScalesView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: height)
-                        .foregroundColor(scalesModel.directionOfPlay == ScalesModel.DirectionOfPlay.downwards ? FigmaColors.shared.green : Color.black)
+                        .foregroundColor(scalesModel.directionOfPlayPublished == ScalesModel.DirectionOfPlay.downwards ? FigmaColors.shared.green : Color.black)
                 }
             }
             .padding(sizeClass == .regular ? systemSpacing : 2)
@@ -525,7 +525,8 @@ struct ScalesView: View {
                         if [.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
                             if scalesModel.runningProcessPublished != .none {
                                 ZStack {
-                                    VStack(spacing:0) {
+                                    //VStack(spacing:0) {
+                                    ZStack() {
                                         if [ExerciseState.State.exerciseStarted, .exerciseLost].contains(exerciseState.statePublished) {
                                             ExerciseDropDownStarsView(user: user, scale: self.scale,
                                                                       exerciseName: scalesModel.runningProcessPublished == .followingScale ? "Follow" : "Lead",
@@ -699,6 +700,7 @@ struct ScalesView: View {
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             //metronome.start(doStandby: false, doLeadIn: false, scale: self.scale)
+            scalesModel.setInitialDirectionOfPlay(scale: self.scale)
         }
         
         .onDisappear {

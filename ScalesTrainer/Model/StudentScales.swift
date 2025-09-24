@@ -202,6 +202,28 @@ class StudentScales: Codable {
         return scaleTypes
     }
     
+    func getScaleMotions() -> [ScaleMotion] {
+        var allMotionsSet: Set<ScaleMotion> = []
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                allMotionsSet.insert(scale.scaleMotion)
+            }
+        }
+        
+        ///Make sure the list is in the order specified here
+        var scaleMotions:[ScaleMotion] = []
+        for studentScale in studentScales {
+            if let scale = studentScale.scale {
+                //if scale.scaleType == scaleTypeOrder {
+                if allMotionsSet.contains(scale.scaleMotion) {
+                    scaleMotions.append(scale.scaleMotion)
+                    allMotionsSet.remove(scale.scaleMotion)
+                }
+            }
+        }
+        return scaleMotions
+    }
+    
     func getScaleKeys() -> [String] {
         ///Make sure the list is in the order in which the type is first seen in the syllabus
         var allKeysSet: Set<String> = []

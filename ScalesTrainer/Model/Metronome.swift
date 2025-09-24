@@ -13,6 +13,7 @@ protocol MetronomeTimerNotificationProtocol: AnyObject {
 
 enum MetronomeStatus {
     case notStarted
+    case warmingUp ///warmup the hardware to avoid a non tempo/jumpy start
     case leadingIn
     case running
 }
@@ -37,8 +38,8 @@ class Metronome:ObservableObject {
             }
         }
     }
-    @Published private(set) var leadInCountdownPublished:Int// = nil
-    func setLeadInCountdownPublished(_ n:Int) {
+    @Published private(set) var leadInCountdownPublished:Int? // = nil
+    func setLeadInCountdownPublished(_ n:Int?) {
         DispatchQueue.main.async {
             self.leadInCountdownPublished = n
         }
@@ -55,6 +56,7 @@ class Metronome:ObservableObject {
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     private let ticker:MetronomeTicker
     var currentTempo = 0
+    var warmupCount = 0
     
     init() {
         self._status = .notStarted
@@ -80,7 +82,9 @@ class Metronome:ObservableObject {
             return
         }
         self.timerTickCount = 0
-        setLeadInCountdownPublished(0)
+        self.warmupCount = 0
+        setLeadInCountdownPublished(nil)
+        
         if doLeadIn {
             if let scale = scale {
                 self.leadInCount = scale.timeSignature.top % 3 == 0 ? 3 : 4
@@ -88,11 +92,13 @@ class Metronome:ObservableObject {
         }
 
         if doLeadIn {
-            self.setStatus(status: .leadingIn)
+            //self.setStatus(status: .leadingIn)
+            self.setStatus(status: .warmingUp)
         }
         else {
             self.setStatus(status: .running)
         }
+        
         self.startTimerTask("Metronome start", doLeadIn: doLeadIn)
     }
 
@@ -103,18 +109,33 @@ class Metronome:ObservableObject {
         let threadWaitInSeconds = (60.0 / Double(self.currentTempo)) / Double(notesPerClick)
         AppLogger.shared.log(self, "Metronome thread starting, tempo:\(self.currentTempo) status:\(self.status) waitThread:\(threadWaitInSeconds) notesPerClick\(notesPerClick)")
         
+        func wait() async {
+            let threadWaitInSeconds = (60.0 / Double(self.currentTempo)) / Double(notesPerClick)
+            let n = UInt64(threadWaitInSeconds * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: n)
+        }
+        
         Task.detached(priority: .high) { [weak self] in
             guard let self = self else { return }
             while (self.status != .notStarted) {
-                var waitTicks = 0
+                if self.status == .warmingUp {
+                    if self.warmupCount < 6 {
+                        //print("====== Metronome ⏰ wamup \(self.warmupCount)")
+                        self.warmupCount += 1
+                        await wait()
+                        continue
+                    }
+                }
+                var waitForLeadInTicks = 0
                 var remainingBeats = 0
+
                 if let leadInCount = self.leadInCount {
-                    waitTicks = (leadInCount * notesPerClick) - self.timerTickCount
-                    if waitTicks > 0 {
+                    waitForLeadInTicks = (leadInCount * notesPerClick) - self.timerTickCount
+                    if waitForLeadInTicks > 0 {
                         self.setStatus(status: .leadingIn)
-                        remainingBeats = waitTicks / notesPerClick
+                        remainingBeats = waitForLeadInTicks / notesPerClick
                         if remainingBeats > 0 {
-                            if waitTicks % notesPerClick == 0 {
+                            if waitForLeadInTicks % notesPerClick == 0 {
                                 self.setLeadInCountdownPublished(remainingBeats)
                             }
                         }
@@ -130,7 +151,7 @@ class Metronome:ObservableObject {
                 }
                 
 //                print("====== Metronome ⏰ tick", self.timerTickCount, ",Status", self.status, ", NotesPerClick:\(notesPerClick)",
-//                      "lead in:\(self.leadInCount)", "  [waitTicks:\(waitTicks), pub:\(waitTicks % notesPerClick), beats:\(remainingBeats)]")
+//                      "lead in:\(self.leadInCount)", "  [waitTicks:\(waitForLeadInTicks), pub:\(waitForLeadInTicks % notesPerClick), beats:\(remainingBeats)]")
                 
                 if doLeadIn {
                     if self.status != .running {
@@ -149,9 +170,7 @@ class Metronome:ObservableObject {
                 }
                 self.timerTickCount += 1
                 
-                let threadWaitInSeconds = (60.0 / Double(self.currentTempo)) / Double(notesPerClick)
-                let n = UInt64(threadWaitInSeconds * 1_000_000_000)
-                try? await Task.sleep(nanoseconds: n)
+                await wait()
             }
         }
     }

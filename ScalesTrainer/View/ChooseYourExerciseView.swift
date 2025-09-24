@@ -24,19 +24,32 @@ struct ChooseYourExerciseView: View {
     @State private var scaleKeys:[String] = []
     //@State private var initialKeyDescription:String = ""
     
+    @State private var selectMotion = false
+    @State private var selectedMotion:ScaleMotion? = nil
+    @State private var scaleMotions:[ScaleMotion] = []
+
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     let leftEdge = UIScreen.main.bounds.size.width * 0.04
     
-    func setVisibleCells(_ ctx:String, studentScales:StudentScales, typeFilter:ScaleType?, keyFilter:String?) {
+    func setVisibleCells(_ ctx:String, studentScales:StudentScales, typeFilter:ScaleType?, keyFilter:String?, motionFilter:ScaleMotion?) {
         studentScales.processAllScales(procFunction: {studentScale in
             if let scale = studentScale.scale {
                 studentScale.setVisible(way: true)
                 if let typeFilter = typeFilter {
-                    studentScale.setVisible(way: scale.scaleType == typeFilter)
+                    if typeFilter != .any {
+                        studentScale.setVisible(way: scale.scaleType == typeFilter)
+                    }
                 }
                 if let keyFilter = keyFilter {
-                    studentScale.setVisible(way: keyFilter == scale.scaleRoot.name)
+                    if keyFilter != "Any" {
+                        studentScale.setVisible(way: keyFilter == scale.scaleRoot.name)
+                    }
+                }
+                if let motionFilter = motionFilter {
+                    if motionFilter != .any {
+                        studentScale.setVisible(way: scale.scaleMotion == motionFilter)
+                    }
                 }
             }
         })
@@ -73,6 +86,10 @@ struct ChooseYourExerciseView: View {
         return self.selectedKey == nil ? "Key" : self.selectedKey!
     }
     
+    func getMotionDescription(motion: ScaleMotion?) -> String {
+        return self.selectedMotion == nil ? "Motion" : self.selectedMotion!.descriptionShort
+    }
+    
     func headerView() -> some View {
         HStack {
             let screenWidth = UIScreen.main.bounds.size.width
@@ -81,15 +98,16 @@ struct ChooseYourExerciseView: View {
             })
             .popover(isPresented: $selectType) {
                 let alreadySelected = self.getSelectedTypeIndex()
-                SinglePickList(title: "Exercise Types", items: self.scaleTypes,
+                SinglePickList<ScaleType>(title: "Exercise Types", items: self.scaleTypes,
                                initiallySelectedIndex: alreadySelected) { selectedType, _ in
-                    self.selectedKey = nil
+                    //self.selectedKey = nil
                     if let studentScales = studentScales {
                         setVisibleCells("SelectType", studentScales: studentScales,
-                                        typeFilter: selectedType, keyFilter: nil)
+                                        typeFilter: selectedType, keyFilter: nil, motionFilter: nil)
                     }
                     self.selectedType = selectedType
                     self.selectedKey = nil
+                    self.selectedMotion = nil
                 }
                 .frame(width: screenWidth * 0.20)
                 .presentationCompactAdaptation(.popover)
@@ -103,15 +121,37 @@ struct ChooseYourExerciseView: View {
                 
                 SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
                     initiallySelectedIndex: alreadySelected) { selectedKey, _ in
-                    self.selectedType = nil
+                    //self.selectedType = nil
                     if let studentScales = studentScales {
                         setVisibleCells("SelectKeys", studentScales: studentScales,
-                                        typeFilter: nil, keyFilter: selectedKey)
+                                        typeFilter: nil, keyFilter: selectedKey, motionFilter: nil)
                     }
                     self.selectedKey = selectedKey
                     self.selectedType = nil
+                    self.selectedMotion = nil
                 }
-                    .frame(width: screenWidth * (self.compact ? 0.10 : 0.06))
+                .frame(width: screenWidth * (self.compact ? 0.10 : 0.06))
+                .presentationCompactAdaptation(.popover)
+            }
+            
+            FigmaButton(self.getMotionDescription(motion : self.selectedMotion), action: {
+                selectMotion = true
+            })
+            .popover(isPresented: $selectMotion) {
+                let alreadySelected = self.getSelectedMotionIndex()
+                
+                SinglePickList<ScaleMotion>(title: "Exercise Motions", items: self.scaleMotions,
+                    initiallySelectedIndex: alreadySelected) { selectedMotion, _ in
+                    //self.selectedMotion = nil
+                    if let studentScales = studentScales {
+                        setVisibleCells("SelectMotion", studentScales: studentScales,
+                                        typeFilter: nil, keyFilter: nil, motionFilter: selectedMotion)
+                    }
+                    self.selectedMotion = selectedMotion
+                    self.selectedType = nil
+                    self.selectedKey = nil
+                }
+                .frame(width: screenWidth * 0.12)
                 .presentationCompactAdaptation(.popover)
             }
             
@@ -136,6 +176,16 @@ struct ChooseYourExerciseView: View {
         }
         return 0
     }
+    
+    func getSelectedMotionIndex() -> Int {
+        for i in 0..<self.scaleMotions.count {
+            if self.scaleMotions[i] == self.selectedMotion {
+                return i
+            }
+        }
+        return 0
+    }
+
 
     var body: some View {
         VStack(spacing: 0)  {
@@ -144,6 +194,7 @@ struct ChooseYourExerciseView: View {
                 let leftEdge = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.005 : 0.04)
                 
                 VStack {
+                    Text("")
                     headerView()
                     if let studentScales = studentScales {
                         ScalesGridView(studentScales: studentScales, refreshCount: $forceRefreshChart,
@@ -159,19 +210,27 @@ struct ChooseYourExerciseView: View {
             helpMsg: "Here you’ll find all technical work for your grade. Set filters to find what you’re looking for quickly. You only need to practise one minor type.",
             onBack: { dismiss() }
         )
-        //.toolbar(.hidden, for: .tabBar) // Hide the TabView
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear() {
             let user = Settings.shared.getCurrentUser("ChooseExercise view, .onAppear")
             self.user = user
             let studentScales = user.getStudentScales(withPracticeDays: false)
             self.studentScales = studentScales
-            setVisibleCells("OnAppear", studentScales: studentScales, typeFilter: nil, keyFilter: nil)
+            
             self.scaleTypes = studentScales.getScaleTypes()
+            self.scaleTypes.insert(ScaleType.any, at: 0)
+            
+            
             self.scaleKeys = studentScales.getScaleKeys()//.sorted()
+            self.scaleKeys.insert("Any", at: 0)
+            
+            self.scaleMotions = studentScales.getScaleMotions()
+            self.scaleMotions.insert(ScaleMotion.any, at: 0)
+            
             self.selectedType = nil
             self.selectedKey = nil
-            setVisibleCells("SelectType", studentScales: studentScales, typeFilter: nil, keyFilter: nil)
+            self.selectedMotion = nil
+            setVisibleCells("SelectType", studentScales: studentScales, typeFilter: nil, keyFilter: nil, motionFilter: nil)
             //self.initialTypeDescription = "Exercise Type"
             //self.initialKeyDescription = "Key"
         }

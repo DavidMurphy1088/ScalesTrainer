@@ -150,7 +150,7 @@ public struct CalibrationView: View {
                         playingScale = false
                         scalesModel.setRunningProcess(.none)
                     }) {
-                        Text("Stop Playing").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        Text("Stop Playing").padding().font(.title2)//.hilighted(backgroundColor: .blue)
                     }
                 }
                 else {
@@ -158,7 +158,7 @@ public struct CalibrationView: View {
                         playingScale = true
                         scalesModel.setRunningProcess(.leadingTheScale)
                     }) {
-                        Text("Play The Scale").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        Text("Play The Scale").padding().font(.title2)//.hilighted(backgroundColor: .blue)
                     }
 
                     Spacer()
@@ -168,7 +168,7 @@ public struct CalibrationView: View {
                         //tabSelectionManager.selectedTab = 1
                     }) {
                         HStack {
-                            Text("Save Configuration").padding().font(.title2).hilighted(backgroundColor: .blue)
+                            Text("Save Configuration").padding().font(.title2)//.hilighted(backgroundColor: .blue)
                         }
                     }
                 }
@@ -180,7 +180,7 @@ public struct CalibrationView: View {
                     showingTapData = true
                 }) {
                     HStack {
-                        Text("Show Tap Data").padding().font(.title2).hilighted(backgroundColor: .blue)
+                        Text("Show Tap Data").padding().font(.title2)//.hilighted(backgroundColor: .blue)
                     }
                 }
             }

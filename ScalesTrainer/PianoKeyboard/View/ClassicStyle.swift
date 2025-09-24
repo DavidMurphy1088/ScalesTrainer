@@ -7,7 +7,6 @@ public struct ClassicStyle {
     let sfKeyHeightMultiplier: CGFloat
     let sfKeyInsetMultiplier: CGFloat
     let cornerRadiusMultiplier: CGFloat
-    //let labelColor: Color
     let keyColor: Color
     let hand:Int
     let scale:Scale
@@ -26,7 +25,6 @@ public struct ClassicStyle {
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
-        //labelColor: Color = .blue, //.gray
         keyColor:Color
     ) {
         self.hand = hand
@@ -53,12 +51,10 @@ public struct ClassicStyle {
     }
 
     public func naturalColor(_ down: Bool) -> Color {
-        //return down ? Color(red: 0.6, green: 0.6, blue: 0.6) : Color(red: 0.9, green: 0.9, blue: 0.9)
         return down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.7, green: 0.7, blue: 0.7)
     }
     
     public func sharpFlatColor(_ down: Bool) -> Color {
-        //down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.5, green: 0.5, blue: 0.5)
         down ? Color(red: 0.4, green: 0.4, blue: 0.4) : Color(red: 0.6, green: 0.6, blue: 0.6)
     }
 
@@ -67,18 +63,13 @@ public struct ClassicStyle {
     }
     
     private func getFingerColor(scaleNote:ScaleNoteState) -> Color {
-        if scaleNote.keyboardColourType == .bySegment {
-            let seg = scaleNote.segments[0]  % 4
-            let color:Color
-            switch seg {
-
-            default:
-                color = Color.blue
-            }
-            return color
-        }
-        let hilightColor = FigmaColors.shared.getColor("Orange")
-        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? hilightColor : Color.blue
+//        if scaleNote.keyboardColourType == .bySegment {
+//            let color:Color
+//            color = FigmaColors.shared.getColor1("KB getFingerColor", "blue", 1) //Color.blue
+//            return color
+//        }
+        let hilightColor = FigmaColors.shared.getColor1("getFingerColor", "orange", 3)
+        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? hilightColor : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
@@ -86,13 +77,13 @@ public struct ClassicStyle {
         if miniKeyboardStyle {
             let opacity = 0.50
             if [60].contains(key.midi) {
-                let flashColor = Color.blue.opacity((opacity))
+                let flashColor = FigmaColors.shared.purple //getColor1("MiddleC", "purple", 4)//Color.blue.opacity((opacity))
                 context.fill(keyPath, with: .color(flashColor))
-                keyNameToShow = "C"
+                keyNameToShow = ""
             }
             if let notesToHilight = self.notesToHilight {
                 if notesToHilight.contains(key.midi) {
-                    let flashColor = FigmaColors.shared.green.opacity((0.75))
+                    let flashColor = FigmaColors.shared.getColor1("StartNote", "green", 3)
                     context.fill(keyPath, with: .color(flashColor))
                 }
             }
@@ -152,7 +143,7 @@ public struct ClassicStyle {
                 case .middleOfKeyboard:
                     hilightColor1 = figma.green
                 case .wasWrongNote:
-                    hilightColor1 = Color(.red)
+                    hilightColor1 = FigmaColors.shared.getColor1("KB hilight for wrong note", "pink")
                 default:
                     hilightColor1 = nil
                 }
@@ -197,27 +188,29 @@ public struct ClassicStyle {
                             let image = Image(handImageName)
                             var resolvedImage = context.resolve(image)
                             resolvedImage.shading = .color(FigmaColors.shared.green)
-                            let targetWidth: CGFloat = naturalWidth * (scale.getScaleNoteCount() <= 24 ? 0.30 : 0.40)
+                            let targetWidth: CGFloat = naturalWidth * (scale.getScaleNoteCount() <= 24 ? 0.30 : 0.50)
                             let originalSize = resolvedImage.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
-                            let centerOffset:Double
-                                
-                            if self.hand == 0 {
-                                if index >= viewModel.pianoKeyModel.count - 1 {
-                                    centerOffset = 0.2
-                                }
-                                else {
-                                    centerOffset = 0.8
-                                }
-                            }
-                            else {
-                                centerOffset = 0.8
-                            }
+//                            let centerOffset:Double
+//                                
+//                            if self.hand == 0 {
+//                                if index >= viewModel.pianoKeyModel.count - 1 {
+//                                    centerOffset = 0.2
+//                                }
+//                                else {
+//                                    centerOffset = 0.8
+//                                }
+//                            }
+//                            else {
+//                                centerOffset = 0.8
+//                            }
                             let drawRect = CGRect(
-                                x: keyRect.midX - (targetWidth * centerOffset),
-                                y: keyRect.height * 0.20,
+                                //x: keyRect.midX - (targetWidth * centerOffset),
+                                x: keyRect.midX - (targetWidth * 0.5),
+                                //y: keyRect.height * 0.20,
+                                y: keyRect.height - targetHeight * 1.25,
                                 width: targetWidth,
                                 height: targetHeight
                             )
@@ -234,7 +227,7 @@ public struct ClassicStyle {
                     var color:Color = .clear
                     if keyModel.scaleNoteState != nil {
                         if let state = keyModel.scaleNoteState {
-                            color = getFingerColor(scaleNote: state)//Color.blue //figma.green
+                            color = getFingerColor(scaleNote: state)
                         }
                     }
                     else {
@@ -315,7 +308,7 @@ public struct ClassicStyle {
                 case .middleOfKeyboard:
                     hilightColor1 = figma.green
                 case .wasWrongNote:
-                    hilightColor1 = Color(.red)
+                    hilightColor1 = FigmaColors.shared.getColor1("KB hilight for wrong note", "pink") //Color(.red)
                 default:
                     hilightColor1 = naturalColor(key.touchDown)
                 }

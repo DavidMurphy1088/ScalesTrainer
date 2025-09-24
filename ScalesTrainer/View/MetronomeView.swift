@@ -14,7 +14,6 @@ struct MetronomeView: View {
     let tempoTickCount = 20
     @State var lowestTempo = 0
     @State var highestTempo = 0
-    //var steps = 0
     
     init(width: CGFloat, height: CGFloat) {
         self.width = width
@@ -66,7 +65,6 @@ struct MetronomeView: View {
                     let rectanglePosition = valuePosition * sliderWidth - 1
                     
                     RoundedRectangle(cornerRadius: 4)
-                        //.fill(Color.green)
                         .fill(FigmaColors.shared.green)
                         .frame(width: 8, height: 20)
                         .position(x: rectanglePosition + 16, y: geometry.size.height / 2) // +16 for padding offset

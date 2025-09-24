@@ -126,7 +126,6 @@ struct UnderConstructionView: View {
 //                    //.frame(width: UIScreen.main.bounds.size.width * 0.35)
 //                    .overlay(overlay)
 //                    .shadow(color: Color.blue.opacity(0.4), radius: 8, x: -5, y: -5)
-//                    .shadow(color: Color.purple.opacity(0.4), radius: 8, x: 5, y: 5)
 //                    .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 10)
 //                    .scaleEffect(isActive.wrappedValue ? 1.1 : 1.0) // Slight zoom effect
 //                    .padding()
@@ -137,7 +136,7 @@ struct UnderConstructionView: View {
 //}
 
 struct ActivitiesView: View {
-    ///NB 🟢 Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
+    ///NB  Reference types (e.g. User) state **don't refresh** the view with onAppear, use userName
     ///Therefore use name and grade changes to force the view to refresh (and therefore load the correct chart)
 
     @State var imgSize = UIScreen.main.bounds.width * 0.2

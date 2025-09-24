@@ -17,7 +17,6 @@
 		79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */; };
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
-		790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */; };
 		790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790FF4242E3F687700D53BF6 /* UserListView.swift */; };
 		7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C00B2D605B5D0030928B /* UserDetailsView.swift */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
@@ -35,7 +34,6 @@
 		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
 		793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */ = {isa = PBXBuildFile; fileRef = 793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */; };
 		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
-		794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC42C2B73770001297E /* ScaleIntervals.swift */; };
 		794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC62C2BD24C0001297E /* CoinBankView.swift */; };
 		794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* AppLogger.swift */; };
 		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
@@ -69,6 +67,7 @@
 		797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797F49FF2E33887F00E04DD9 /* WelcomeView.swift */; };
 		799381772C755F2300734FDE /* SpinWheelViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelViewOLD.swift */; };
 		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
+		7995E9022E8008D600D61535 /* SoundFontPresetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7995E9012E8008D200D61535 /* SoundFontPresetView.swift */; };
 		79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79980DD62E34CDFE00CF242B /* UserEditView.swift */; };
 		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
 		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
@@ -93,7 +92,6 @@
 		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
 		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
 		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
-		79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */; };
 		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
 		79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */; };
 		79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */; };
@@ -126,6 +124,9 @@
 		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
 		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
 		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
+		79DAF3B92E80D55900EF6629 /* NEW_Steinway_D.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */; };
+		79DAF3BB2E80DCAF00EF6629 /* SoundfontParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */; };
+		79DAF3BD2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */; };
 		79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */; };
 		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
 		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
@@ -164,7 +165,6 @@
 		79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHandler.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = david_ChateauGrand_polyphone.sf2; sourceTree = "<group>"; };
 		790FF4242E3F687700D53BF6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		7910C00B2D605B5D0030928B /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
@@ -183,7 +183,6 @@
 		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
 		794180902D40E2E900FE149B /* ScalesStar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScalesStar.entitlements; sourceTree = "<group>"; };
 		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
-		794A9FC42C2B73770001297E /* ScaleIntervals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleIntervals.swift; sourceTree = "<group>"; };
 		794A9FC62C2BD24C0001297E /* CoinBankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBankView.swift; sourceTree = "<group>"; };
 		794D49472BCD15AE0005A173 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
@@ -216,6 +215,7 @@
 		797F49FF2E33887F00E04DD9 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		799381762C755F2300734FDE /* SpinWheelViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelViewOLD.swift; sourceTree = "<group>"; };
 		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7995E9012E8008D200D61535 /* SoundFontPresetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontPresetView.swift; sourceTree = "<group>"; };
 		79980DD62E34CDFE00CF242B /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
 		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
@@ -235,7 +235,6 @@
 		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
 		79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAPI.swift; sourceTree = "<group>"; };
 		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
-		79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = UprightPianoKW.sf2; sourceTree = "<group>"; };
 		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
 		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelViewCoins.swift; sourceTree = "<group>"; };
@@ -267,6 +266,9 @@
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
+		79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = NEW_Steinway_D.sf2; sourceTree = "<group>"; };
+		79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundfontParser.swift; sourceTree = "<group>"; };
+		79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = FluidGM_Bank_0.sf2; sourceTree = "<group>"; };
 		79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDropDownStarsView.swift; sourceTree = "<group>"; };
 		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
 		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
@@ -333,16 +335,16 @@
 		794D495D2BCD34080005A173 /* AudioFiles */ = {
 			isa = PBXGroup;
 			children = (
-				79BE842A2C98341E00513CEA /* UprightPianoKW.sf2 */,
-				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
 				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
 				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
 				79552FC02BDBB41100A27531 /* Home_2_60.m4a */,
-				790F75D12C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 */,
 				79552FC12BDBB41100A27531 /* Home_3_60.m4a */,
+				79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */,
 				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
 				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
 				795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */,
+				79DAF3B82E80D55900EF6629 /* NEW_Steinway_D.sf2 */,
+				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
 			);
 			path = AudioFiles;
 			sourceTree = "<group>";
@@ -467,6 +469,7 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7995E9012E8008D200D61535 /* SoundFontPresetView.swift */,
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
 				791EF05D2E59CF1D00347D57 /* BadgesView.swift */,
 				793292902E46BEA800890198 /* BadgesViewOLD.swift */,
@@ -489,7 +492,6 @@
 				79C8AD012C128F0200770C10 /* PracticeJournalView.swift */,
 				79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */,
 				79FF0D602DD0253200126573 /* ResultView.swift */,
-				794A9FC42C2B73770001297E /* ScaleIntervals.swift */,
 				79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */,
 				79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */,
 				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
@@ -515,6 +517,7 @@
 		79DA822C2BCCED24008AC492 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */,
 				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
@@ -704,11 +707,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
+				79DAF3BD2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 in Resources */,
 				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
 				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
 				79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */,
 				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
 				79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */,
+				79DAF3B92E80D55900EF6629 /* NEW_Steinway_D.sf2 in Resources */,
 				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
 				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
 				79F6CD752D14020200FF2681 /* MidiNotes in Resources */,
@@ -717,11 +722,9 @@
 				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
 				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
 				79B072FA2D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist in Resources */,
-				790F75D22C5BA15C0001F80B /* david_ChateauGrand_polyphone.sf2 in Resources */,
 				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
 				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
 				79EAB8772C8737B400255FC6 /* Notes_General in Resources */,
-				79BE842B2C98341E00513CEA /* UprightPianoKW.sf2 in Resources */,
 				79D935D52E69A39E00F5997F /* GoogleService-Info.plist in Resources */,
 				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
 				793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */,
@@ -864,6 +867,7 @@
 				79AFF13C2DD490D10049479F /* LeaderBoard.txt in Sources */,
 				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
 				797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */,
+				7995E9022E8008D600D61535 /* SoundFontPresetView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
 				791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
@@ -878,7 +882,7 @@
 				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
 				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
 				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
-				794A9FC52C2B73770001297E /* ScaleIntervals.swift in Sources */,
+				79DAF3BB2E80DCAF00EF6629 /* SoundfontParser.swift in Sources */,
 				7932928F2E46185A00890198 /* Todo in Sources */,
 				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,
 				79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */,
@@ -1065,7 +1069,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -1103,7 +1107,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;

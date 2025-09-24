@@ -45,9 +45,9 @@ struct ExerciseDropDownStarsView: View {
     @State private var offset: CGFloat = 5.0
     @State private var rotationAngle: Double = 0
     @State private var verticalOffset: CGFloat = -60
-    //@State var imageIds:[Int] = []
     @State var handType = KeyboardType.right
-    @State var starColor = Color.red
+    static var nextColorCount = 0
+    let starColors = FigmaColors.shared.getColors1("DropStarColors", name: nil, shade: 3)
     
     init(user:User, scale:Scale, exerciseName:String, onClose: @escaping () -> Void) {
         self.user = user
@@ -55,6 +55,13 @@ struct ExerciseDropDownStarsView: View {
         self.scale = scale
         self.exerciseName = exerciseName
         self.onClose = onClose
+    }
+    
+    func getNextColor() -> Color {
+        let cindex = ExerciseDropDownStarsView.nextColorCount % starColors.count
+        let color = starColors[cindex]
+        ExerciseDropDownStarsView.nextColorCount += 1
+        return color
     }
     
     func getDotSpace() -> CGFloat {
@@ -82,8 +89,7 @@ struct ExerciseDropDownStarsView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
-                                    //let user = Settings.shared.getCurrentUser("Badges View")
-                                    StarShape(shapeSize: starIconSize, offset: offset, color: self.starColor)
+                                    StarShape(shapeSize: starIconSize, offset: offset, color: self.getNextColor())
                                         .rotationEffect(Angle.degrees(rotationAngle))
                                         .offset(y: scaleNoteNumber == exerciseBadgesList.totalBadges - 1 ? verticalOffset : 0)
                                         .onAppear {
@@ -102,7 +108,9 @@ struct ExerciseDropDownStarsView: View {
                             ZStack {
                                 Text("⊙").foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
-                                    StarShape(shapeSize: starIconSize, offset: offset, color: self.starColor).opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
+                                    StarShape(shapeSize: starIconSize, offset: offset,
+                                              color: self.getNextColor())
+                                    .opacity(scaleNoteNumber < exerciseBadgesList.totalBadges  ? 1 : 0)
                                 }
                             }
                             .frame(width: starIconSize, height: starIconSize)
@@ -155,7 +163,7 @@ struct ExerciseDropDownStarsView: View {
 //            }
 //            let colorName = colorNames[colorIndex % colorNames.count]
 //            self.starColor = FigmaColors.shared.getColor(colorName)
-            self.starColor = FigmaColors.shared.getColor(viewManager.userColorPublished).opacity(FigmaColors.shared.userDisplayOpacity)
+            
         }
     }
 }

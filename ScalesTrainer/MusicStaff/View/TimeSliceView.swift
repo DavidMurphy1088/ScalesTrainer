@@ -98,15 +98,11 @@ public struct NoteHiliteView: View {
     var y:CGFloat
     var width:CGFloat
     
-//    func log(entry:TimeSliceEntry) -> Bool {
-//        return true
-//    }
-//
     public var body: some View {
         VStack {
             //if log(entry: entry) {
                 Ellipse()
-                    .stroke(Color.green, lineWidth: 3)
+                    .stroke(FigmaColors.shared.green, lineWidth: 3)
                     .frame(width: width, height: width)
                     .position(x: x, y:y)
             //}
@@ -380,42 +376,44 @@ public struct TimeSliceView: View {
 //    }
 //    
         
-    func getTempoGradient(valueNormalized:Double) -> LinearGradient {
-        if valueNormalized < 0.66 {
-            return LinearGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color.white, location: 0.0),
-                    .init(color: Color.white, location: 0.2),
-                    .init(color: Color(red: 1, green: 0, blue: 0, opacity: 0.6), location: 0.55),
-                    .init(color: Color.white, location: 0.55)
-                ]),
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        }
-        
-        if valueNormalized >= 1.5 {
-            return LinearGradient(
-                gradient: Gradient(stops: [
-                    .init(color: Color.white, location: 0.0),
-                    .init(color: Color.white, location: 0.4),
-                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
-                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
-                    .init(color: Color.white, location: 0.75)
-                ]),
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        }
-        return LinearGradient(
-            gradient: Gradient(stops: [
-                .init(color: Color.white, location: 0.0),
-                .init(color: Color.white, location: 0.99)
-            ]),
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-    }
+//    func getTempoGradient(valueNormalized:Double) -> LinearGradient {
+//        if valueNormalized < 0.66 {
+//            return LinearGradient(
+//                gradient: Gradient(stops: [
+//                    .init(color: Color.white, location: 0.0),
+//                    .init(color: Color.white, location: 0.2),
+//                    .init(color: Color(red: 1, green: 0, blue: 0, opacity: 0.6), location: 0.55),
+//                    .init(color: FigmaColors.shared.green).opacity: 0.6), location: 0.55),
+//                    
+//                    .init(color: Color.white, location: 0.55)
+//                ]),
+//                startPoint: .leading,
+//                endPoint: .trailing
+//            )
+//        }
+//        
+//        if valueNormalized >= 1.5 {
+//            return LinearGradient(
+//                gradient: Gradient(stops: [
+//                    .init(color: Color.white, location: 0.0),
+//                    .init(color: Color.white, location: 0.4),
+//                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
+//                    .init(color: Color(red: 0, green: 0, blue: 1, opacity: 0.6), location: 0.50),
+//                    .init(color: Color.white, location: 0.75)
+//                ]),
+//                startPoint: .leading,
+//                endPoint: .trailing
+//            )
+//        }
+//        return LinearGradient(
+//            gradient: Gradient(stops: [
+//                .init(color: Color.white, location: 0.0),
+//                .init(color: Color.white, location: 0.99)
+//            ]),
+//            startPoint: .leading,
+//            endPoint: .trailing
+//        )
+//    }
     
     func statusWidth() -> CGFloat {
         return CGFloat(UIScreen.main.bounds.size.width / 50)

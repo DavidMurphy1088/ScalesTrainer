@@ -146,17 +146,13 @@ struct ScalesGridView : View {
     let screenWidth = UIScreen.main.bounds.size.width
     let screenHeight = UIScreen.main.bounds.size.height
     let scalesPerRow = 4
+    let figmaColors = FigmaColors.shared
     @State private var user:User?
     @State private var scaleGridRowCols:[[StudentScale]] = []
     @State private var layoutCount = 0
     @State private var scoreTestScaleIds:[String] = []
     
-    let colors:[Color] = [
-        Color(red: 98/255.0, green: 202/255.0, blue: 215/255.0),
-        Color(red: 250/255.0, green: 162/255.0, blue: 72/255.0),
-        Color(red: 156/255.0, green: 215/255.0, blue: 98/255.0),
-        Color(red: 255/255.0, green: 83/255.0, blue: 108/255.0)
-    ]
+    let cellColors:[Color] = FigmaColors.shared.getColors1("ScalesGridView", name: nil, shade: 3)
 
     func layout() {
         scaleGridRowCols = []
@@ -177,7 +173,7 @@ struct ScalesGridView : View {
     }
     
     func getColor(n:Int) -> Color {
-        return colors[n % colors.count]
+        return cellColors[n % cellColors.count]
     }
     
     var body: some View {
@@ -196,8 +192,7 @@ struct ScalesGridView : View {
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex)
-                                    .opacity(compact ? 0.65 : 0.65),
+                                color:getColor(n: rowIndex * 3 + colIndex), // .opacity(compact ? 0.65 : 0.65),
                                 scoreTestScaleIds: $scoreTestScaleIds,
                                 navigationTitle: self.navigationTitle
                             )

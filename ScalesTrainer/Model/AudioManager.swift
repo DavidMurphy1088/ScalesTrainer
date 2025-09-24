@@ -9,6 +9,15 @@ import AudioKit
 import AVFoundation
 
 class AudioManager {
+    ///See https://musical-artifacts.com/artifacts?utf8=%E2%9C%93&q=Logic+Pro+Steinway+D
+    //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
+    //let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
+    //static let samplerFileName = "NEW_Timbres of Heaven" ///‼️ B and B♭ sound wrong - an octave too low. Bad for piano preset 0
+    //static let samplerFileName = "NEW_FluidR3_GM" ///🟢 22Sep25 Claude recommended best for mix of instruments
+    static let keyboardSamplerFileName = "NEW_Steinway_D" ///🟢 22Sep25 Claude recommended best for piano
+    //static let backingSamplerFileName = "FluidR3_GM" ///🟢 22Sep25 Claude recommended best for multiple instruments
+    static let backingSamplerFileName = "FluidGM_Bank_0"
+    
     static let shared = AudioManager()
     private var audioEngine: AudioEngine?
     
@@ -16,7 +25,7 @@ class AudioManager {
     private var samplerForBacking:MIDISampler?
     private var mixer:Mixer?
     private var mic:AudioEngine.InputNode? = nil
-    var backingPresetNumber = 0 //Sampler sound for backing
+    var backingInstrumentNumber = 0 //Sampler sound preset number for backing
     
     ///AudioKit Cookbook example
     private var pitchTaps: [PitchTap] = []
@@ -59,24 +68,22 @@ class AudioManager {
                 }
                 
                 self.samplerForKeyboard = MIDISampler()
-                let preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
-                self.samplerForKeyboard = loadSampler(num: 0, preset: preset)
-                //if Settings.shared.isCurrentUserDefined() {
-                    //let user = Settings.shared.getCurrentUser("configureAudio")
-                var backingPreset = 2
-                switch self.backingPresetNumber {
-                    case 1: backingPreset = 28
-                    case 2: backingPreset = 37
-                    case 3: backingPreset = 49
-                    case 4: backingPreset = 33
-                    case 5: backingPreset = 39
-                    case 6: backingPreset = 43
-                    case 7: backingPreset = 2
-                    case 8: backingPreset = 4
-                    default: backingPreset = 0
-                }
-                //}
-                self.samplerForBacking = loadSampler(num: 1, preset: backingPreset)
+                //let preset = 2 ///Yamaha-Grand-Lite-SF-v1.1 has three presets and Polyphone list bright =1 , dark = 2, grandpiano = 0
+                let preset = 0  ///NEW_Timbres of Heaven
+                self.samplerForKeyboard = loadSampler(forKeyboard: true, preset: preset)
+                //var backingInstrument = 2
+//                switch self.backingInstrumentNumber {
+//                    case 1: backingInstrument = 28
+//                    case 2: backingInstrument = 37
+//                    case 3: backingInstrument = 49
+//                    case 4: backingInstrument = 33
+//                    case 5: backingInstrument = 39
+//                    case 6: backingInstrument = 43
+//                    case 7: backingInstrument = 2
+//                    case 8: backingInstrument = 4
+//                    default: backingInstrument = 0
+//                }
+                self.samplerForBacking = loadSampler(forKeyboard: false, preset: self.backingInstrumentNumber)
                 
                 self.mixer = Mixer()
                 self.mixer!.addInput(self.samplerForKeyboard!)
@@ -218,13 +225,12 @@ class AudioManager {
         }
     }
     
-    private func loadSampler(num:Int, preset:Int) -> MIDISampler? {
+    private func loadSampler(forKeyboard:Bool, preset:Int) -> MIDISampler? {
         do {
-            let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
-            //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
             let sampler = MIDISampler()
-            try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-            AppLogger.shared.log(self, "midiSampler loaded sound font \(samplerFileName)")
+            let fileName = forKeyboard ? AudioManager.keyboardSamplerFileName : AudioManager.backingSamplerFileName
+            try sampler.loadSoundFont(fileName, preset: preset, bank: 0)
+            AppLogger.shared.log(self, "midiSampler loaded sound font:\(fileName) forKeyboard:\(forKeyboard)")
             return sampler
         }
         catch {
@@ -381,6 +387,7 @@ extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
         if let sampler = samplerForKeyboard {
             sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
+            print("============== Sampler 🟢 key:\(keyNumber) midi:\(MIDINoteNumber(keyNumber))")
         }
     }
 

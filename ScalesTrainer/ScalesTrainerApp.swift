@@ -69,7 +69,7 @@ struct LaunchScreenView: View {
                     Spacer()
                 }
             }
-            .background(Figma.buttonBackground)
+            .background(FigmaColors.appBackground)
         }
     }
 }
@@ -223,7 +223,7 @@ class ViewManager: ObservableObject {
     @Published var gradePublished:Int = 0
     @Published var boardPublished:String = ""
     @Published var userNamePublished = ""
-    @Published var userColorPublished = ""
+    @Published var userColorPublished = "" //hex color
     
     init() {
         self.selectedTab = 0
@@ -251,22 +251,6 @@ struct TabContainerView: View {
     @ObservedObject private var viewManager = ViewManager.shared
     
     init() {
-//        let appearance = UITabBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        appearance.backgroundColor = UIColor.white // background color
-//
-//        let tabBarAppearance = UITabBarAppearance()
-//        tabBarAppearance.configureWithOpaqueBackground()
-//        tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.backgroundGreen)
-//        tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.white
-//        tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
-//        tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.lightGray
-//        tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.lightGray]
-//        
-//        // APPLY the appearance to the tab bar
-//        let tabBar = UITabBar.appearance()
-//        tabBar.standardAppearance = tabBarAppearance
-//        tabBar.scrollEdgeAppearance = tabBarAppearance
     }
     
     private func setupTabBarAppearance() {
@@ -277,7 +261,7 @@ struct TabContainerView: View {
         // Normal (unselected) state
         tabBarAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.black
         tabBarAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.black]
-        tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.backgroundGreen)
+        tabBarAppearance.backgroundColor = UIColor(FigmaColors.shared.getColor1("BtmNavBar", "blue", 5))
     
         // Selected state
         tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor.black
@@ -361,13 +345,13 @@ struct TabContainerView: View {
             
 
             if Settings.shared.isDeveloperModeOn() {
-                MIDIView()
-                    .tabItem {
-                        Label("MIDI", systemImage: "house")
-                    }
-                    .tag(89)
-                    .accessibilityIdentifier("app_log")
-                    .environmentObject(viewManager)
+//                MIDIView()
+//                    .tabItem {
+//                        Label("MIDI", systemImage: "house")
+//                    }
+//                    .tag(89)
+//                    .accessibilityIdentifier("app_log")
+//                    .environmentObject(viewManager)
 
                 LogView()
                     .tabItem {
@@ -398,13 +382,19 @@ struct TabContainerView: View {
 //                    .tag(80)
 //                    .environmentObject(viewManager)
 //
-                
-                DeveloperView()
+                SoundFontPresetView()
                     .tabItem {
-                        Label("Dev", systemImage: "book.pages")
+                        Label("Sampler", systemImage: "book.pages")
                     }
-                    .tag(100)
+                    .tag(91)
                     .environmentObject(viewManager)
+                
+//                DeveloperView()
+//                    .tabItem {
+//                        Label("Dev", systemImage: "music.note.tv")
+//                    }
+//                    .tag(100)
+//                    .environmentObject(viewManager)
             }
             
 //            WelcomeView()
@@ -489,7 +479,16 @@ struct ScalesTrainerApp: App {
                 ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
                 //MIDIManager.shared.setupMIDI()
             }
-            
+            .onAppear {
+                NotificationCenter.default.addObserver(
+                        forName: UIApplication.willTerminateNotification,
+                        object: nil,
+                        queue: nil
+                    ) { _ in
+                        try? AVAudioSession.sharedInstance().setActive(false)
+                        print("✅ Microphone disconnected")
+                    }
+            }
             .task {
                 DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
                     self.launchScreenState.dismiss()

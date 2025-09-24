@@ -27,7 +27,7 @@ struct RecordingIsUnderwayView: View {
 
             }
             .padding()
-            .hilighted(backgroundColor: .white)
+            //.hilighted(backgroundColor: .white)
             .onAppear {
                 self.animate.toggle()
             }

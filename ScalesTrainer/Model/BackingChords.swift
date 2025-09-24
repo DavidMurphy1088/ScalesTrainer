@@ -48,47 +48,65 @@ class BackingChords {
                 chords.append(BackingChord(pitches: [0,isMinor ? 3 : 4], value: 1, offset: octaveOffset))
             }
             if octaves == 2 {
-                //Tonic I
+                // 1 - Tonic I
                 chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [isMinor ? 3 : 4], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 
-                //Dom V
+                // 2 - Dom V
                 chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [2], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 
-                //SubDom IV
+                // 3 - SubDom IV
                 chords.append(BackingChord(pitches: [isMinor ? -4 : -3], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
 
-                //Dom V
+                // 4 - Dom V
                 chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 
-                //------------------
+                // 5 - Tonic
                 chords.append(BackingChord(pitches: [isMinor ? 3 : 4], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [isMinor ? -4 : -3], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                
+                // 6 - Dom V
+                if scaleType == .melodicMinor {
+                    chords.append(BackingChord(pitches: [-1], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [2], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                }
+                else {
+                    chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                }
 
-                chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                // 7
+                if scaleType == .melodicMinor {
+                    chords.append(BackingChord(pitches: [8], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                }
+                else {
+                    chords.append(BackingChord(pitches: [2], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
+                }
 
-                chords.append(BackingChord(pitches: [2], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [scaleType == .naturalMinor ? -2 : -1], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
-
-                //Tonic I
+                // 8 - Tonic I
                 chords.append(BackingChord(pitches: [0,isMinor ? 3 : 4], value: 2.0, offset: octaveOffset))
             }
         }

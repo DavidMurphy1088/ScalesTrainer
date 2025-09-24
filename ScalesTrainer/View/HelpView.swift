@@ -10,7 +10,7 @@ struct HelpView: View {
     var body: some View {
         VStack {
             Text("").padding()
-            Text("  \(topic)   ").font(.title2).hilighted()
+            Text("  \(topic)   ").font(.title2)//.hilighted()
             if let help = getHelp(topic:topic) {
                 Text(help)
                     .padding()

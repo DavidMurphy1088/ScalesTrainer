@@ -162,7 +162,7 @@ public class Score : ObservableObject, Encodable {
     public var studentFeedback:StudentFeedback? = nil
     public var tempo:Int?
     
-//    ///NB 🟢 Changing this needs changes to getBraceHeight() for alignment
+//    ///NB Changing this needs changes to getBraceHeight() for alignment
 //    private(set) var lineSpacing:Double
     
     var debugOn:Bool

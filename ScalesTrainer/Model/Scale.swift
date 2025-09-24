@@ -53,6 +53,7 @@ public enum ArticulationType: CaseIterable, Comparable, Codable {
 }
 
 public enum ScaleType: CaseIterable, Comparable, Codable {
+    case any
     case major
     case naturalMinor
     case harmonicMinor
@@ -80,7 +81,8 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
     
     var description: String {
         switch self {
-
+        case .any:
+            return "Any"
         case .major:
             return "Major"
         case .naturalMinor:
@@ -120,14 +122,28 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
 public enum ScaleMotion: CaseIterable, Comparable, Codable {
     case similarMotion
     case contraryMotion
+    case any
     var description: String {
         switch self {
+        case .any:
+            return "Any"
         case .similarMotion:
             return "Similar Motion"
         case .contraryMotion:
             return "Contrary Motion"
         }
     }
+    var descriptionShort: String {
+        switch self {
+        case .any:
+            return "Any"
+        case .similarMotion:
+            return "Similar"
+        case .contraryMotion:
+            return "Contrary"
+        }
+    }
+
 }
 
 public enum KeyboardColourType: CaseIterable, Comparable, Codable {
@@ -784,7 +800,8 @@ public class Scale : Codable {
     func getScaleOffsets(scaleType : ScaleType) -> [Int] {
         var scaleOffsets:[Int] = []
         switch scaleType {
-
+        case .any:
+            scaleOffsets = []
         case .major:
             scaleOffsets = [2,2,1,2,2,2,1]
         case .naturalMinor:
@@ -1703,6 +1720,78 @@ public class Scale : Codable {
                     description += String(dynamic.descriptionShort)
                 }
                 d += 1
+            }
+        }
+        return description
+    }
+
+    func getScaleDescriptionHelpMessage() -> String {
+        //Info in our ? pop out - needs to say legato at end of list. (may be an across grades thing - articulation to always be stated at end). Info in our ? pop out  -
+        //For any hands together contrary motion (2 of them in this grade), not to state ’together’ in the description. But contrary motion LH or RH to state the word ‘practise’ after Left Hand / Right Hand in description. Keeps the clarity.
+        var description = ""
+        description = scaleRoot.name + " " + scaleType.description
+        if scaleMotion == .contraryMotion {
+            description += " " + scaleMotion.description
+        }
+        var handsDescription = ""
+        if self.hands.count == 1 {
+            switch self.hands[0] {
+            case 0: handsDescription  = "Right Hand"
+            case 1: handsDescription  = "Left Hand"
+            default: handsDescription  = "Together"
+            }
+            if scaleMotion == .contraryMotion {
+                handsDescription += " practise"
+            }
+        }
+        else {
+            if scaleMotion != .contraryMotion {
+                handsDescription = "Together"
+            }
+        }
+        if handsDescription.count > 0 {
+            description = description + ",  \(handsDescription)"
+        }
+        
+        let octaveDescription = "\(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+        description = description + ",  \(octaveDescription)"
+        
+        if true {
+            var tempoDescription = "\u{2669}"
+            if self.timeSignature.top % 3 == 0 {
+                tempoDescription += String("\u{00B7}")
+            }
+            tempoDescription += "= \(self.minTempo)"
+            description = description + ",  \(tempoDescription)"
+        }
+        if true {
+            var d = 0
+            var dynamicDescription = ""
+            for dynamic in self.dynamicTypes {
+                if d > 0 {
+                    dynamicDescription += " or "
+                }
+                dynamicDescription += String(dynamic.descriptionShort)
+                d += 1
+            }
+            if dynamicDescription.count > 0 {
+                description += ",  \(dynamicDescription)"
+            }
+        }
+        if true {
+            var d = 0
+            var articulationDescription = ""
+            for articulation in self.articulationTypes {
+                if d > 0 {
+                    articulationDescription += " or "
+                }
+                let s = String(articulation.description)
+                //let cs = s.prefix(1).uppercased() + s.dropFirst()
+                articulationDescription += s
+                d += 1
+            }
+            if articulationDescription.count > 0 {
+                description += ",  \(articulationDescription)"
             }
         }
         return description

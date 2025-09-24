@@ -112,7 +112,6 @@
 //                //TitleView(screenName: "Pick Any Scale").commonFrameStyle()
 //                Text("Scales Library")
 //                    .font(.title2)
-//                    //.commonFrameStyle(backgroundColor: UIGlobals.shared.purpleHeading)
 //                VStack {
 //                    VStack {
 //                        Text("Major Scales").font(.title).padding()

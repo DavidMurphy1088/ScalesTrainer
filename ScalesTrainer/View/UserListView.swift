@@ -21,14 +21,7 @@ struct UserListView: View {
         users.append(addUser)
         return users
     }
-    
-    func randomPrimaryColor() -> Color {
-        let primaryColors: [Color] = [
-            .red,.green,.blue,.orange,.purple,.pink,.yellow,.teal
-        ]
-        return primaryColors.randomElement()!
-    }
-    
+        
     var body: some View {
         let settings = Settings.shared
         
@@ -46,8 +39,10 @@ struct UserListView: View {
                         ForEach(users) { user in
                             VStack() {
                                 let boxSize = 0.1
+                                let color = FigmaColors.colorFromHex(user.getColor())
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(FigmaColors.shared.getColor(user.getColor()).opacity(FigmaColors.shared.userDisplayOpacity))
+                                    //.fill(FigmaColors.shared.getColor(user.getColor()).opacity(FigmaColors.shared.userDisplayOpacity))
+                                    .fill(color) //.opacity(FigmaColors.shared.userDisplayOpacity))
                                     .frame(width: UIScreen.main.bounds.width * boxSize,
                                            height: UIScreen.main.bounds.width * boxSize)
                                     .overlay(alignment: .topTrailing) {

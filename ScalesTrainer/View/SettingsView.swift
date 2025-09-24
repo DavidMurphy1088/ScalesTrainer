@@ -64,7 +64,6 @@ struct SettingsView: View {
                     .frame(height: UIScreen.main.bounds.size.height * 0.15)
                     .padding()
             }
-            //.background(UIGlobals.shared.purpleHeading)
             .onAppear() {
                 self.selectedColor = parentColor
             }

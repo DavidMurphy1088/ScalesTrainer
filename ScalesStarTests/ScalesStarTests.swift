@@ -91,11 +91,9 @@ final class ScoreTest: XCTestCase {
         } else {
             // Compare primitive values (String, Number, Bool, etc.)
             if "\(obj1)" == "\(obj2)" {
-                //print("=====PRIMITVE \(level) \(key) 🟢", obj1, obj2)
                 return true
             }
             else {
-                //print("=====PRIMITVE \(level) \(key)❗️", obj1, obj2)
                 return false
             }
         }

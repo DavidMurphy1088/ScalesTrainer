@@ -57,6 +57,9 @@
     "......" : {
 
     },
+    "(%lld)" : {
+
+    },
     "%@" : {
 
     },
@@ -91,10 +94,16 @@
     "𝄢" : {
 
     },
+    "0-127 for different instruments" : {
+
+    },
     "Activities" : {
       "comment" : "Menu"
     },
     "Adjust:" : {
+
+    },
+    "All Notes Off" : {
 
     },
     "Amplitude: %.4f" : {
@@ -104,6 +113,9 @@
 
     },
     "Are you sure you want to delete %@?" : {
+
+    },
+    "AudioKit SoundFont Player %@" : {
 
     },
     "Available Subscriptions" : {
@@ -139,8 +151,27 @@
     "Backing Track Sound" : {
 
     },
+    "Backing: %@" : {
+
+    },
     "Badge Styles" : {
 
+    },
+    "Bank Number" : {
+
+    },
+    "Bank: %lld" : {
+
+    },
+    "Bank: %lld, Preset: %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bank: %1$lld, Preset: %2$lld"
+          }
+        }
+      }
     },
     "Base %lld" : {
 
@@ -163,9 +194,6 @@
     "Connected MIDI Sources" : {
 
     },
-    "Counting In ..." : {
-
-    },
     "Counting In %lld" : {
 
     },
@@ -181,9 +209,6 @@
     "Detected Pitch: %.0f Hz" : {
 
     },
-    "Dev" : {
-
-    },
     "Disconnect All MIDI Sources" : {
 
     },
@@ -191,6 +216,9 @@
 
     },
     "Email %@" : {
+
+    },
+    "Example: GeneralMIDI, Piano, Drums" : {
 
     },
     "exercise to practise" : {
@@ -372,6 +400,9 @@
         }
       }
     },
+    "Load & Test" : {
+
+    },
     "Log" : {
 
     },
@@ -381,13 +412,13 @@
     "Middle C" : {
 
     },
-    "MIDI" : {
-
-    },
     "New Amplitude Filter:%@" : {
 
     },
     "Note: Only one grade can be active at one time." : {
+
+    },
+    "Octave:" : {
 
     },
     "OK" : {
@@ -417,10 +448,19 @@
     "Practice Now" : {
 
     },
+    "Preset Number" : {
+
+    },
+    "Preset: %lld" : {
+
+    },
     "Purchase" : {
 
     },
     "Purchase in progress. Please standby..." : {
+
+    },
+    "Quick Presets" : {
 
     },
     "Record the Scale" : {
@@ -453,6 +493,9 @@
     "Required Consecutive Count" : {
 
     },
+    "Reset" : {
+
+    },
     "Restore Subscriptions" : {
 
     },
@@ -466,6 +509,9 @@
           }
         }
       }
+    },
+    "Sampler" : {
+
     },
     "Save" : {
 
@@ -545,6 +591,15 @@
     "Sorry, no subscription is available yet" : {
 
     },
+    "SoundFont File Name" : {
+
+    },
+    "SoundFont Settings" : {
+
+    },
+    "SoundFont: %@.sf2" : {
+
+    },
     "Spin Now" : {
 
     },
@@ -555,6 +610,9 @@
 
     },
     "Start Analysis" : {
+
+    },
+    "Starting Count In ..." : {
 
     },
     "Stats: %@" : {
@@ -579,6 +637,9 @@
     },
     "Subscriptions" : {
       "comment" : "Menu"
+    },
+    "Tap to Play Notes" : {
+
     },
     "Taps AmpFilter:%lf RequiredConcurrent:%lld" : {
       "localizations" : {
@@ -619,6 +680,12 @@
         }
       }
     },
+    "Test C4" : {
+
+    },
+    "Test Scale" : {
+
+    },
     "This subscription provides you with access to all Scales Academy content." : {
 
     },
@@ -641,6 +708,9 @@
     },
     "Users" : {
       "comment" : "Menu"
+    },
+    "Usually 0 for melodic instruments, 128 for drums" : {
+
     },
     "Version %@" : {
 

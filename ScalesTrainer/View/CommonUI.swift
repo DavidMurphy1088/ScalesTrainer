@@ -28,7 +28,7 @@ struct CommonToolbarModifier: ViewModifier {
                         .padding(.vertical, 0)
                 }
             }
-            .toolbarBackground(FigmaColors.shared.backgroundGreen, for: .navigationBar)
+            .toolbarBackground(FigmaColors.shared.getColor1("CommonToolbarModifier", "blue",5), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar) //leftmost navigation back label
     }
@@ -47,7 +47,6 @@ extension View {
             helpMsg: helpMsg,
             onBack: onBack
         ))
-        //.background(Figma.backgroundGreen)
     }
 }
 
@@ -55,43 +54,166 @@ extension View {
 
 class FigmaColors {
     static let shared = FigmaColors()
-    var primaryColors:[(String, Color)] = []
-    var backgroundGreen = Color.white
+    static let appBackground = Color("#FEFEFE")
+    class FColor {
+        let name:String
+        let color:Color
+        let colorHex:String
+        let shade:Int
+        init(_ name:String, _ colorHex:String, _ shade:Int) {
+            self.name = name
+            self.colorHex = colorHex
+            self.shade = shade
+            self.color = FigmaColors.colorFromHex(colorHex)
+        }
+        
+    }
+    
+    var colors:[FColor] = []
     var green = Color.clear
     var blue = Color.clear
     let userDisplayOpacity = 0.8
+    var purple = Color.clear
     
-    init() {
+    private init() {
         ///See Jennifer's brand guidelines colors and shades. Using shade index = 2 in 0,1,2
-        primaryColors.append(("green", FigmaColors.makeColor(red: 156, green: 215, blue: 98)))
-        primaryColors.append(("blue", FigmaColors.makeColor(red: 98, green: 202, blue: 215)))
-        primaryColors.append(("orange", FigmaColors.makeColor(red: 250, green: 162, blue: 72)))
-        primaryColors.append(("pink", FigmaColors.makeColor(red: 255, green: 83, blue: 108)))
+        ///shade 0 is direct from colour palette, shade > 0 are J's shades
+        ///shade 1 -> 6 makes the colours lighter
+        ///
+        colors.append(FColor("pink", "#FF536C", 0))
+        colors.append(FColor("orange", "#FAA248", 0))
+        colors.append(FColor("green", "#9CD762", 0))
+        colors.append(FColor("blue", "#62CAD7", 0))
+        
+        colors.append(FColor("green", "#72A144", 1))
+        colors.append(FColor("green", "#8CC258", 2))
+        colors.append(FColor("green", "#9CD762", 3))
+        colors.append(FColor("green", "#B0DF81", 4))
+        colors.append(FColor("green", "#C4E7A1", 5))
+        colors.append(FColor("green", "#D7EFC0", 6))
+        colors.append(FColor("green", "#F5FBEF", 7))
+
+        colors.append(FColor("blue", "#4BA0AA", 1))
+        colors.append(FColor("blue", "#58B6C2", 2))
+        colors.append(FColor("blue", "#62CAD7", 3))
+        colors.append(FColor("blue", "#81D5DF", 4))
+        colors.append(FColor("blue", "#A1DFE7", 5))
+        colors.append(FColor("blue", "#C0EAEF", 6))
+        colors.append(FColor("blue", "#EFFAFB", 7))
+
+        ///Purples come too dark and look like black
+//        colors.append(FColor("purple", "#251930", 1))
+//        colors.append(FColor("purple", "#322240", 2))
+//        colors.append(FColor("purple", "#3E2A50", 3))
+//        colors.append(FColor("purple", "#513F62", 4))
+//        colors.append(FColor("purple", "#786A85", 5))
+//        colors.append(FColor("purple", "#C5BFCB", 6))
+//        colors.append(FColor("purple", "#ECEAEE", 7))
+        
+        colors.append(FColor("pink", "#993241", 1))
+        colors.append(FColor("pink", "#CC4256", 2))
+        colors.append(FColor("pink", "#FF536C", 3))
+        colors.append(FColor("pink", "#FF7589", 4))
+        colors.append(FColor("pink", "#FF98A7", 5))
+        colors.append(FColor("pink", "#FFCBD3", 6))
+        colors.append(FColor("pink", "#FFEEF0", 7))
+        
+        colors.append(FColor("orange", "#C8823A", 1))
+        colors.append(FColor("orange", "#E19241", 2))
+        colors.append(FColor("orange", "#FAA248", 3))
+        colors.append(FColor("orange", "#FBB56D", 4))
+        colors.append(FColor("orange", "#FCC791", 5))
+        colors.append(FColor("orange", "#FDDAB6", 6))
+        colors.append(FColor("orange", "#FFF6ED", 7))
+        
         //primaryColors.append(("purple", makeColor(red: 62, green:42, blue: 80))) ?/Comes as black 👹
         
-        self.backgroundGreen = primaryColors[0].1.opacity(0.2)
-        //Using Jennifer green shade 0
-        self.green = FigmaColors.makeColor(red: 114, green: 161, blue: 68)
+        self.green = getColor1("getglobalgreen", "green")
         ///J Figma for blue shades is WRONG RGB 👹 for blue shade 5
-        self.blue = FigmaColors.colorFromHex("#EFFAFB") //J Figma blue shade
-        //self.blue = FigmaColors.makeColor(red: 75, green: 160, blue: 170)
+        self.blue = getColor1("getglobalblue", "blue", 6)
+        self.purple = FColor("purple", "#786A85", 5).color
     }
     
-    func getColor(_ name: String) -> Color {
-        if let match = primaryColors.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespaces) == name.lowercased().trimmingCharacters(in: .whitespaces) }) {
-            return match.1
+    func getColor1(_ ctx:String, _ name: String, _ shade: Int? = nil) -> Color {
+        let shadeToSearch = shade == nil ? 3 : shade
+        let first = colors.first {
+                    $0.name.caseInsensitiveCompare(name) == .orderedSame &&
+                    $0.shade == shadeToSearch
         }
-        return .clear
+        if let first = first {
+            //print("============ ▶️ GetColor [\(ctx)]", first.name, "shade\(shadeToSearch)" ,first.colorHex)
+            return first.color
+        }
+        else {
+            print("============ 🔴 FColor not found: \(name), \(shadeToSearch)")
+            return Color.white
+        }
     }
     
-    static func makeColor(red: Int, green: Int, blue: Int) -> Color {
-        return Color(
-            .sRGB,
-            red: Double(red) / 255.0,
-            green: Double(green) / 255.0,
-            blue: Double(blue) / 255.0,
-            opacity: 1.0
-        )
+    func getColorHexes(shade:Int) -> [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+
+        for item in self.colors {
+            if item.shade != shade {
+                continue
+            }
+            let lower = item.colorHex// name.lowercased()
+            if seen.insert(lower).inserted {
+                result.append(lower)
+            }
+        }
+        return result
+    }
+    
+    func getColors1(_ ctx: String, name:String?, shade:Int?) -> [Color] {
+        var colors:[Color] = []
+        for colorName in ["pink", "orange", "green", "blue"] {
+            for colorShade in 0...6 {
+                var candidateColor:Color?
+                if let name = name {
+                    if colorName == name {
+                        candidateColor = getColor1(ctx, colorName, colorShade)
+                    }
+                }
+                if let shade = shade {
+                    if colorShade == shade {
+                        candidateColor = getColor1(ctx, colorName, colorShade)
+                    }
+                }
+                if candidateColor != nil {
+                    if let name = name {
+                        if colorName != name {
+                            candidateColor = nil
+                        }
+                    }
+                    if let shade = shade {
+                        if colorShade != shade {
+                            candidateColor = nil
+                        }
+                    }
+                }
+                if let candidateColor = candidateColor {
+                    colors.append(candidateColor)
+                }
+            }
+        }
+        //print("========== GETCOLORS", ctx, name, shade, "Count=", colors.count)
+        return colors
+    }
+    
+    func getColorHex(_ name: String, _ shade: Int) -> String {
+        let first = colors.first {
+                    $0.name.caseInsensitiveCompare(name) == .orderedSame &&
+                    $0.shade == shade
+        }
+        if let first = first {
+            return first.colorHex
+        }
+        else {
+            print("============ 🔴 FColor hex not found: \(name), \(shade)")
+            return ""
+        }
     }
     
     static func colorFromHex(_ hex: String) -> Color {
@@ -119,32 +241,29 @@ class FigmaColors {
             )
         )
     }
-    func allColorNames() -> [String] {
-        return primaryColors.map { $0.0.trimmingCharacters(in: .whitespaces) }
-    }
 }
 
 class Figma {
-    static let buttonBackground = Color(rgbHex: "#FEFEFE")
-    static let red = Color(red: 255, green: 83, blue: 108, opacity: 1.0)
-    static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
-    static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
-    static let blue = Color(red: 98, green: 202, blue: 215, opacity: 1.0)
+    //
+//    static let red = Color(red: 255, green: 83, blue: 108, opacity: 1.0)
+//    static let orange = Color(red: 250, green: 162, blue: 72, opacity: 1.0)
+//    static let green = Color(red: 156, green: 215, blue: 98, opacity: 1.0)
+//    static let blue = Color(red: 98, green: 202, blue: 215, opacity: 1.0)
     //static let backgroundGreen = FigmaColors.shared.colorShades[0].1.opacity(0.2)
                                        
-    struct AppButtonStyle: ButtonStyle {
-        func makeBody(configuration: Configuration) -> some View {
-            configuration.label
-                .background(buttonBackground)
-        }
-    }
-    static func colorFromRGB(_ red: Int, _ green: Int, _ blue: Int) -> Color {
-        Color(
-            red: Double(red) / 255.0,
-            green: Double(green) / 255.0,
-            blue: Double(blue) / 255.0
-        )
-    }
+//    struct AppButtonStyle: ButtonStyle {
+//        func makeBody(configuration: Configuration) -> some View {
+//            configuration.label
+//                .background(buttonBackground)
+//        }
+//    }
+//    static func colorFromRGB(_ red: Int, _ green: Int, _ blue: Int) -> Color {
+//        Color(
+//            red: Double(red) / 255.0,
+//            green: Double(green) / 255.0,
+//            blue: Double(blue) / 255.0
+//        )
+//    }
     static func getHandImage(scale:Scale) -> Image? {
         if scale.hands.count < 1 {
             return nil
@@ -161,21 +280,21 @@ class Figma {
     }
 }
 
-extension Color {
-    init(rgbHex: String) {
-        var hex = rgbHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        if hex.count == 3 {
-            // Convert shorthand hex (e.g., F90 → FF9900)
-            hex = hex.map { "\($0)\($0)" }.joined()
-        }
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let r = Double((int >> 16) & 0xFF) / 255
-        let g = Double((int >> 8) & 0xFF) / 255
-        let b = Double(int & 0xFF) / 255
-        self.init(red: r, green: g, blue: b)
-    }
-}
+//extension Color {
+//    init(rgbHex: String) {
+//        var hex = rgbHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+//        if hex.count == 3 {
+//            // Convert shorthand hex (e.g., F90 → FF9900)
+//            hex = hex.map { "\($0)\($0)" }.joined()
+//        }
+//        var int: UInt64 = 0
+//        Scanner(string: hex).scanHexInt64(&int)
+//        let r = Double((int >> 16) & 0xFF) / 255
+//        let g = Double((int >> 8) & 0xFF) / 255
+//        let b = Double(int & 0xFF) / 255
+//        self.init(red: r, green: g, blue: b)
+//    }
+//}
 
 struct FigmaNavLink<Label: View, Destination: View>: View {
     var destination: Destination
@@ -312,7 +431,8 @@ struct RoundedBackgroundModifier: ViewModifier {
                 ZStack {
                     //shadow box below colour box
                     if dropShadow {
-                        RoundedRectangle(cornerRadius: radius).fill(Figma.colorFromRGB(62, 42, 80)).offset(y: 4)
+                        let color = FigmaColors.colorFromHex("#3E2A50")
+                        RoundedRectangle(cornerRadius: radius).fill(color).offset(y: 4)
                             .blur(radius: 0) // set >0 if you want soft shadow
                     }
                     //opaque over shadow in case the top color has opacity < 1.0
@@ -336,11 +456,12 @@ extension View {
             outlineBox: true,
             dropShadow: false))
     }
+    
     func figmaRoundedBackgroundWithBorder(
-                fillColor: Color = FigmaColors.shared.blue,
-                opacity opacityValue: Double = 1.0,
-                outlineBox:Bool = true) -> some View {
-                    self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, outlineBox: outlineBox, dropShadow: true))
+        fillColor: Color = FigmaColors.shared.blue,
+        opacity opacityValue: Double = 1.0,
+        outlineBox:Bool = true) -> some View {
+            self.modifier(RoundedBackgroundModifier(fillColor: fillColor, opacityValue: opacityValue, outlineBox: outlineBox, dropShadow: true))
     }
 }
 
@@ -350,16 +471,16 @@ class UIGlobals {
     static let shared = UIGlobals()
     let screenImageBackgroundOpacity = 0.5
     let screenWidth = 0.9
-    let purpleSubHeading:Color
-    let purpleHeading:Color
+    //let purpleSubHeading:Color
+    //let purpleHeading:Color
     
     init() {
         var shade = 9.0
         //purple = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
-        purpleSubHeading = Color(red: 232.0 / 255.0, green: 216.0 / 255.0, blue:230.0 / 255.0)
+        //purpleSubHeading = Color(red: 232.0 / 255.0, green: 216.0 / 255.0, blue:230.0 / 255.0)
         shade = shade * 0.60
         //purpleHeading = Color(red: 0.325 * shade, green: 0.090 * shade, blue: 0.286 * shade, opacity: 1.0)
-        purpleHeading = Color(red: 195.0 / 255.0, green: 152.0 / 255.0, blue: 188.0 / 255.0)
+        //purpleHeading = Color(red: 195.0 / 255.0, green: 152.0 / 255.0, blue: 188.0 / 255.0)
     }
 }
 
@@ -400,7 +521,8 @@ struct ToolbarTitleHelpView: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Text(helpMessage.count == 0 ? "Some help message...." : helpMessage)
+            Text(helpMessage.count == 0 ? "" : helpMessage)
+                .foregroundColor(Color.white)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -408,7 +530,7 @@ struct ToolbarTitleHelpView: View {
         }
         .padding()
         .padding()
-        .background(FigmaColors().getColor("green"))
+        .background(FigmaColors.shared.purple) //getColor1("ToolbarTitleHelp", "purple", 5))
     }
 }
 
@@ -437,20 +559,22 @@ struct ToolbarNameTitleView: View {
                             .padding(8)
                             .background(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.gray, lineWidth: 1)
+                                    .stroke(Color.black, lineWidth: 1)
                             )
+                            
                     }
                     .popover(isPresented: $showHelp) {
                         ToolbarTitleHelpView(helpMessage: helpMsg)
-                            .presentationCompactAdaptation(.none) ///Else popover takes whoe screen on iPhone
+                            //.offset(x: -50) // Negative x moves left
+                            .presentationCompactAdaptation(.none) ///Else popover takes whole screen on iPhone
                     }
+
                     Rectangle()
                         .fill(Color.gray)
-                        .frame(width: 1, height: 50)
+                        .frame(width: 2, height: 50)
                     ZStack {
                         Circle()
-                            //.fill(User.color(from: viewManager.userColorPublished).opacity(0.5))
-                            .fill(FigmaColors.shared.getColor(viewManager.userColorPublished)
+                            .fill(FigmaColors.colorFromHex(viewManager.userColorPublished)
                             .opacity(FigmaColors.shared.userDisplayOpacity))
                             .frame(width: circleWidth, height: circleWidth)
                         Text(firstLetter(user: viewManager.userNamePublished))
@@ -479,22 +603,22 @@ struct Hilighted: ViewModifier {
 }
 
 /// Background style for sections of all screens under the screen title
-struct screenBackgroundStyleView: ViewModifier {
-    var cornerRadius: CGFloat
-    var borderColor: Color
-    var borderWidth: CGFloat
-
-    func body(content: Content) -> some View {
-        content
-            //.frame(minWidth: 100, maxWidth: .infinity, minHeight: 10)
-            //.padding() // DO NOT DELETE THIS. If deleted soem views underlap the TabView of menu items
-            .background(
-                LinearGradient(colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
-                    //.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-            )
-    }
-}
+//struct screenBackgroundStyleView: ViewModifier {
+//    var cornerRadius: CGFloat
+//    var borderColor: Color
+//    var borderWidth: CGFloat
+//
+//    func body(content: Content) -> some View {
+//        content
+//            //.frame(minWidth: 100, maxWidth: .infinity, minHeight: 10)
+//            //.padding() // DO NOT DELETE THIS. If deleted soem views underlap the TabView of menu items
+//            .background(
+//                LinearGradient(colors: [Color.blue.opacity(0.3), Color.purple.opacity(0.3)],
+//                               startPoint: .topLeading, endPoint: .bottomTrailing)
+//                    //.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+//            )
+//    }
+//}
 
 struct OutlinedStyleView: ViewModifier {
     let shadowOpacity: Double
@@ -544,14 +668,14 @@ struct OutlinedStyleView: ViewModifier {
 //    }
 //}
 
-extension View {
-    func hilighted(backgroundColor: Color = .green) -> some View {
-        modifier(Hilighted(backgroundColor: backgroundColor))
-    }
-//    func fancyTextStyle() -> some View {
-//        modifier(FancyTextStyle())
+//extension View {
+//    func hilighted(backgroundColor: Color = .green) -> some View {
+//        modifier(Hilighted(backgroundColor: backgroundColor))
 //    }
-}
+////    func fancyTextStyle() -> some View {
+////        modifier(FancyTextStyle())
+////    }
+//}
 
 struct ConfettiView: UIViewRepresentable {
     let compact = UIDevice.current.userInterfaceIdiom == .phone
@@ -583,29 +707,14 @@ struct ConfettiView: UIViewRepresentable {
             emitter.emitterSize = CGSize(width: uiView.bounds.width, height: 1)
             
             // Define several colors for variety
-            var colors: [UIColor] = []
-            //= [
-//                .systemRed,
-//                .systemBlue,
-//                .systemGreen,
-//                .systemYellow,
-//                .systemPurple,
-//                .systemOrange,
-//                .systemPink,
-//                .systemTeal
-//            ]
-            let figmaColors = FigmaColors()
-            for color in figmaColors.primaryColors {
-                let c = color.1
-                colors.append(UIColor(c))
-            }
+            //var colors: [UIColor] = []
+            let figmaColors = FigmaColors.shared.getColors1("Confetti", name: nil, shade: 3)
             
             // Create different emitter cells for each color
             var cells: [CAEmitterCell] = []
             
-            for color in colors {
-                // Create star shapes with responsive size
-                if let starImage = createStarImage(size: CGSize(width: confettiSize, height: confettiSize), color: color) {
+            for color in figmaColors {
+                if let starImage = createStarImage(size: CGSize(width: confettiSize, height: confettiSize), color: UIColor(color)) {
                     let cell = createEmitterCell(with: starImage, forScreenWidth: screenWidth)
                     cells.append(cell)
                 }
@@ -710,7 +819,9 @@ struct ConfettiView: UIViewRepresentable {
     }
 }
 
-struct SinglePickList<Item: Hashable>: View {
+//struct SinglePickList<Item: Hashable>: View {
+struct SinglePickList<Item>: View {
+
     let title:String
     let items: [Item]
     let initiallySelectedIndex: Int?
@@ -738,7 +849,7 @@ struct SinglePickList<Item: Hashable>: View {
 //                                }
                             }
                             .padding(4)
-                            //.background(FigmaColors().color(named: "green"))
+                            //.background(FigmaColors.shared.color(named: "green"))
                         }
                         .buttonStyle(.plain)
                     }
@@ -746,43 +857,22 @@ struct SinglePickList<Item: Hashable>: View {
             }
         }
     }
-            
-//    var body1: some View {
-//        VStack {
-//            //Text(title).font(.title).padding()
-//            List {
-//                ForEach(items.indices, id: \.self) { i in
-//                    let isSelected = (selectedIndex == i)
-//                    Button {
-//                        selectedIndex = i
-//                        onPick(items[i], i)
-//                        dismiss()
-//                    } label: {
-//                        HStack {
-//                            Text(label(items[i])).padding(.horizontal)
-//                            //Spacer()
-//                            if isSelected {
-//                                Image(systemName: "checkmark")
-//                            }
-//                        }
-//                        //.background(FigmaColors().color(named: "green"))
-//                    }
-//                    .buttonStyle(.plain)
-//                }
-//            }
-//
-//            Spacer()
-//        }
-//        //.frame(width: UIScreen.main.bounds.width * 0.2, height: UIScreen.main.bounds.height * 0.3)
-//        .onAppear {
-//            if let idx = initiallySelectedIndex, items.indices.contains(idx) {
-//                selectedIndex = idx
-//            }
-//        }
-//    }
+
+}
+extension SinglePickList<ScaleMotion> where Item == ScaleMotion {
+    init(title:String,
+         items: [ScaleMotion],
+         initiallySelectedIndex: Int? = nil,
+         onPick: @escaping (ScaleMotion, Int) -> Void) {
+         self.title = title
+         self.items = items
+         self.initiallySelectedIndex = initiallySelectedIndex
+         self.label = { $0.descriptionShort }
+         self.onPick = onPick
+    }
 }
 
-extension SinglePickList where Item == ScaleType {
+extension SinglePickList<ScaleType> where Item == ScaleType {
     init(title:String,
         items: [ScaleType],
         initiallySelectedIndex: Int? = nil,
@@ -794,7 +884,8 @@ extension SinglePickList where Item == ScaleType {
         self.onPick = onPick
     }
 }
-extension SinglePickList where Item == String {
+
+extension SinglePickList<String> where Item == String {
     init(title:String,
          items: [String],
          initiallySelectedIndex: Int? = nil,

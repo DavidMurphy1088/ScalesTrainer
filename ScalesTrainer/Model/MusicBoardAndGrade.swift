@@ -280,7 +280,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .chromatic,
                                 scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-            
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A♭"), scaleType: .chromatic,
+                                scaleMotion: .similarMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [.legato]))
+
             //=========== Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor,
                                 scaleMotion: .similarMotion, octaves: octaves, hands: [0],

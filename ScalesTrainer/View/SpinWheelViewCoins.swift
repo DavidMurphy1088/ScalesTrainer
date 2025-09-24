@@ -107,7 +107,6 @@
 ////                                /// Fixed arrow
 ////                                Arrow()
 ////                                    .frame(width: 30, height: 30)
-////                                    .foregroundColor(.purple)
 ////                                    .position(x: arrowPos, y: geometry.size.height / 2)
 ////                                
 ////                                ///Scale Roots
@@ -117,7 +116,6 @@
 ////                                    .position(x: geometry.size.width * 0.74, y: geometry.size.height * 0.25)
 ////                                Arrow()
 ////                                    .frame(width: 30, height: 30)
-////                                    .foregroundColor(.purple)
 ////                                    .position(x: arrowPos, y: geometry.size.height * 0.25)
 ////
 ////                                ///Randomise which hand
@@ -126,7 +124,6 @@
 ////                                    .position(x: geometry.size.width * 0.80, y: geometry.size.height * 0.75)
 ////                                Arrow()
 ////                                    .frame(width: 30, height: 30)
-////                                    .foregroundColor(.purple)
 ////                                    .position(x: arrowPos, y: geometry.size.height * 0.75)
 ////
 ////                            }

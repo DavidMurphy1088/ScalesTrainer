@@ -73,6 +73,7 @@ public struct UserEditView: View {
     let settings = Settings.shared
     @State private var sheetNonce = UUID()
     @State private var showDeleteAlert = false
+    @FocusState private var isTextFieldFocused: Bool
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     let colors = FigmaColors.shared
     
@@ -93,10 +94,10 @@ public struct UserEditView: View {
     
     func getColor(name:String) -> Color {
         if name == "Trinity" {
-            return colors.getColor("green")
+            return colors.getColor1("UserEditViewforBoard", "green")
         }
         else {
-            return colors.getColor("blue")
+            return colors.getColor1("UserEditViewforBoard", "blue")
         }
     }
     
@@ -181,12 +182,22 @@ public struct UserEditView: View {
                     TextField("Please enter your name", text: $userName)
                         .focused($nameFieldFocused)
                         .padding()
-                        //.background(Color(UIColor.systemGray6))
                         .cornerRadius(8)
                         .foregroundColor(.black)
                         .font(.body)
                         .frame(width: UIScreen.main.bounds.width * 0.3)
-                        .figmaRoundedBackgroundWithBorder()
+                        //.figmaRoundedBackgroundWithBorder(fillColor: .white)
+                        .toolbar {
+                                    ToolbarItemGroup(placement: .keyboard) {
+                                        Spacer()
+                                        Button("Done") {
+                                            isTextFieldFocused = false
+                                            nameFieldFocused = false
+                                        }
+                                        .foregroundColor(.blue)
+                                        .fontWeight(.semibold)
+                                    }
+                                }
                     
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         Text("")

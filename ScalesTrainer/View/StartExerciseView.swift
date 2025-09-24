@@ -27,38 +27,128 @@ struct HandsView: View {
     }
 }
 
+//struct PickBackingStyle: View {
+//    
+//    struct PickBackingStyle {
+//        @Binding var backingPresetNumber: Int
+//        
+//        struct Preset: Identifiable {
+//            let id = UUID()
+//            let name: String
+//            let preset: Int
+//        }
+//        
+//        /// All available instruments
+//        let instruments: [Preset]
+//        
+//        init(backingPresetNumber: Binding<Int>) {
+//            _backingPresetNumber = backingPresetNumber
+//            
+//            // initialise the array here
+//            instruments = [
+//                Preset(name: "Piano",       preset: 0),
+//                Preset(name: "Vibraphone",  preset: 11),
+//                Preset(name: "Marimba",     preset: 12),
+//                Preset(name: "Cello",       preset: 1),
+//                Preset(name: "Synthesiser", preset: 2),
+//                Preset(name: "Guitar",      preset: 3)
+//            ]
+//        }
+//        
+//        /// Helper to get the display name for the current selection
+//        private func backingSoundName(for number: Int) -> String {
+//            instruments.first(where: { $0.preset == number })?.name ?? "Unknown"
+//        }
+//    }
+//        
+//    var body: some View {
+//        HStack {
+//            Text(LocalizedStringResource("Backing Track Sound")).padding() //.font(.title2).padding(0)
+//            Picker("Select Value", selection: $backingPresetNumber) {
+//                ForEach(0..<8) { number in
+//                    Text("\(backingSoundName(number))")
+//                }
+//            }
+//            .pickerStyle(.menu)
+//            .onChange(of: backingPresetNumber, {
+//                //user.settings.backingSamplerPreset = backingPresetNumber
+//                //AudioManager.shared.resetAudioKit()
+//            })
+//        }
+//    }
+//}
+
+
+
 struct PickBackingStyle: View {
     @Binding var backingPresetNumber: Int
-    func backingSoundName(_ n:Int) -> String {
-        var str:String
-        switch n {
-        case 1: str = "Cello"
-        case 2: str = "Synthesiser"
-        case 3: str = "Guitar"
-        case 4: str = "Saxophone"
-        case 5: str = "Moog Synthesiser"
-        case 6: str = "Steel Guitar"
-        case 7: str = "Melody Bell"
-        default:
-            str = "Piano"
-        }
-        return str
+
+    struct Preset: Identifiable, Hashable {
+        let id = UUID()
+        let preset: Int
+        let name: String
     }
-    
+
+    /// All available instruments
+    let instruments: [Preset]
+
+    init(backingPresetNumber: Binding<Int>) {
+        _backingPresetNumber = backingPresetNumber
+        ///Sep25 Use Polyphone app to list names and presets of a given sf2 file
+        instruments = [
+            Preset(preset: 0, name: "Piano"),
+            Preset(preset: 2, name: "Electric Piano"),
+            Preset(preset: 6, name: "Harpsichord"),
+            Preset(preset: 7, name: "Clavinet"),
+            Preset(preset: 9, name: "Glockspiel"),
+            Preset(preset: 10, name: "Music Box"),
+            Preset(preset: 11, name: "Vibraphone"),
+            Preset(preset: 12, name: "Marimba"),
+            Preset(preset: 15, name: "Dulcimer"),
+            Preset(preset: 19, name: "Church Organ"),
+            Preset(preset: 20, name: "Reed Organ"),
+            Preset(preset: 21, name: "Accordian"),
+            Preset(preset: 24, name: "Nylon String Guitar"),
+            Preset(preset: 25, name: "Steel String Guitar"),
+            Preset(preset: 32, name: "Acoustic Bass"),
+            Preset(preset: 40, name: "Violin"),
+            Preset(preset: 41, name: "Viola"),
+            Preset(preset: 42, name: "Cello"),
+            Preset(preset: 46, name: "Harp"),
+            Preset(preset: 48, name: "Strings"),
+            Preset(preset: 49, name: "Synth Strings"),
+            Preset(preset: 60, name: "French Horns"),
+            Preset(preset: 71, name: "Clarinet"),
+            //Preset(preset: 0, name: ""),
+        ]
+    }
+
+    /// Display name for the currently selected preset number
+    private func backingSoundName(_ number: Int) -> String {
+        instruments.first(where: { $0.preset == number })?.name ?? "Unknown"
+    }
+
     var body: some View {
         HStack {
-            Text(LocalizedStringResource("Backing Track Sound")).padding() //.font(.title2).padding(0)
+            Text("Backing Track Sound")
+                .padding(.trailing, 8)
+
             Picker("Select Value", selection: $backingPresetNumber) {
-                ForEach(0..<8) { number in
-                    Text("\(backingSoundName(number))")
+                ForEach(instruments) { item in
+                    Text(item.name).tag(item.preset)
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: backingPresetNumber, {
-                //user.settings.backingSamplerPreset = backingPresetNumber
-                //AudioManager.shared.resetAudioKit()
-            })
+            .figmaRoundedBackgroundWithBorder(fillColor: .white) //, opacity: <#T##Double#>, outlineBox: <#T##Bool#>)
         }
+        .onChange(of: backingPresetNumber) { oldValue, newValue in
+            backingPresetNumber = newValue
+            // e.g. persist & re-init audio:
+            // user.settings.backingSamplerPreset = newValue
+            // AudioManager.shared.resetAudioKit()
+        }
+        .accessibilityLabel(Text("Backing: \(backingSoundName(backingPresetNumber))"))
+        .padding()
     }
 }
 
@@ -92,7 +182,7 @@ struct StartFollowLeadView: View {
     let scalesModel:ScalesModel
     let activityName:String
     let callback: (_ cancelled: Bool) -> Void
-    let figmaColors = FigmaColors()
+    let figmaColors = FigmaColors.shared
     
     @State private var countdown = 0
     @State private var isCountingDown = false
@@ -119,7 +209,7 @@ struct StartFollowLeadView: View {
 
             if isCountingDown {
                 let message = countdown == 0 ? "Starting Now" : "Starting in \(countdown)"
-                let bold:Color = FigmaColors.shared.getColor("Orange")
+                let bold:Color = FigmaColors.shared.getColor1("StartFollowLeadView", "Orange")
                 let closeToStart = countdown < 2
                 Text(message)
                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .body : .title)
@@ -136,7 +226,8 @@ struct StartFollowLeadView: View {
 
                     FigmaButton("Start", action : {
                         scalesModel.setRunningProcess(RunningProcess.none)
-                        startCountdown()
+                        ///startCountdown() Thee should be no countdown
+                        callback(false)
                     })
                 }
             }
@@ -175,7 +266,7 @@ struct StartExerciseView: View {
     let countInRequired:Bool
     let parentCallback: (_ cancelled: Bool) -> Void
     let endExerciseCallback: () -> Void
-    let figmaColors = FigmaColors()
+    let figmaColors = FigmaColors.shared
     
     @ObservedObject private var metronome = Metronome.shared
     @State private var countdown = 0
@@ -206,18 +297,20 @@ struct StartExerciseView: View {
             HStack {
                 if self.startCountdown {
                     HStack {
-                        if self.metronome.leadInCountdownPublished == 0 {
-                            Text("Counting In ...").padding().bold()
+                        if let count = self.metronome.leadInCountdownPublished {
+                            Text("Counting In \(count)").padding().bold()
                         }
                         else {
-                            Text("Counting In \(self.metronome.leadInCountdownPublished)").padding().bold()
+                            Text("Starting Count In ...").padding().bold()
                         }
                     }
                     .onChange(of: self.metronome.leadInCountdownPublished, {
-                        if self.metronome.leadInCountdownPublished <= 1 {
-                            ///Take down this start view
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                                parentCallback(false)
+                        if let count = self.metronome.leadInCountdownPublished {
+                            if count <= 1 {
+                                ///Take down this start view
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                    parentCallback(false)
+                                }
                             }
                         }
                     })
@@ -228,15 +321,15 @@ struct StartExerciseView: View {
                             PickBackingStyle(backingPresetNumber: $backingPresetNumber)
                                 .padding()
                                 .onChange(of: backingPresetNumber, {
-                                    AudioManager.shared.backingPresetNumber = self.backingPresetNumber
+                                    AudioManager.shared.backingInstrumentNumber = self.backingPresetNumber
                                 })
                         }
                         HStack {
                             Text("Are you happy with your metronome setting?").padding()
                             FigmaButton("Yes", action : {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.00) {
+                                //DispatchQueue.main.asyncAfter(deadline: .now() + 1.50) {
                                     self.startMetronome(process: process)
-                                }
+                                //}
                                 if self.countInRequired {
                                     self.startCountdown = true
                                 }
@@ -253,10 +346,9 @@ struct StartExerciseView: View {
             }
         }
         .padding()
-        
         .figmaRoundedBackgroundWithBorder()
         .onAppear() {
-            self.backingPresetNumber = AudioManager.shared.backingPresetNumber
+            self.backingPresetNumber = AudioManager.shared.backingInstrumentNumber
         }
     }
 }

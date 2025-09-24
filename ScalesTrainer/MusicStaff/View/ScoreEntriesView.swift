@@ -202,7 +202,6 @@ struct ScoreEntriesView: View {
                                 geoWidth: geo.size.width,
                                 geoHeight: geo.size.height
                             )
-                            //Circle().frame(width: 7, height: 7).foregroundColor(.purple).position(x: notePosition.midX, y: notePosition.midY)
                         }
                         ///Bar lines must cover both staves
                         if score.getStaffs().count > 1 {
@@ -266,7 +265,6 @@ struct ScoreEntriesView: View {
                         let midX = notePosition.midX + (midPointXOffset(notes: notes, staff: staff, stemDirection: stemDirection)) / 2.0
                         let midY = geoHeight / 2.0
                         let offsetY = CGFloat(notes[0].noteStaffPlacement.offsetFromStaffMidline) * 0.5 * self.lineSpacing + inErrorAjdust
-                        //Test- Circle().frame(width: 7, height: 7).foregroundColor(.purple).position(x: notePosition.midX, y: notePosition.midY)
                         Path { path in
                             path.move(to: CGPoint(x: midX, y: midY - offsetY))
                             path.addLine(to: CGPoint(x: midX, y: midY - offsetY + (stemDirection * (getStemLength(notes: notes) - inErrorAjdust))))
