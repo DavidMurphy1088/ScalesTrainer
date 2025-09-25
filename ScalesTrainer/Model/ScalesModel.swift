@@ -181,7 +181,6 @@ public class ScalesModel : ObservableObject {
             else {
                 self.directionOfPlayPublished = reverse ? DirectionOfPlay.upwards : DirectionOfPlay.downwards
             }
-            print("=============== ▶️ directionOfPlay", self.directionOfPlayPublished, scaleSegments.0, "Reverse", reverse )
         }
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)

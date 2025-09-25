@@ -195,7 +195,7 @@ public class ScaleNoteState : Codable {
     var midi:Int
     var value:Double
     var finger:Int = 0
-    var keyboardColourType:KeyboardColourType = .none
+    var keyboardFingerColourType:KeyboardColourType = .none
 //    {
 //        didSet {
 //            if midi > 60 {
@@ -612,13 +612,12 @@ public class Scale : Codable {
                     ///Set segments for Broken Chords. Broken chords color the chord arpeggios by segment
                     for hand in self.scaleNoteState {
                         for state in hand {
-                            state.keyboardColourType = KeyboardColourType.bySegment
+                            state.keyboardFingerColourType = KeyboardColourType.bySegment
                         }
                     }
                 }
                 else {
                     if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished, .arpeggioDiminishedSeventh].contains(self.scaleType) {
-                        
                         setFingerBreaksArpeggio(hand: hand)
                     }
                     else {
@@ -628,7 +627,7 @@ public class Scale : Codable {
             }
         }
         if debug {
-            debug1("End Init")
+            //debug1("End Init")
         }
         Scale.createCount += 1
     }
@@ -727,19 +726,19 @@ public class Scale : Codable {
             if hand == 0 {
                 if scaleNote.isWhiteKey() {
                     //scaleNote.fingerSequenceBreak = [0, 5].contains(scaleNote.midi % 12) ? false : true
-                    scaleNote.keyboardColourType = [0, 5].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
+                    scaleNote.keyboardFingerColourType = [0, 5].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
                 }
             }
             if hand == 1 {
                 if scaleMotion == .contraryMotion {
                     if scaleNote.isWhiteKey() {
                         //scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
-                        scaleNote.keyboardColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
+                        scaleNote.keyboardFingerColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
                     }
                 }
                 else {
                     //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
-                    scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
+                    scaleNote.keyboardFingerColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
                 }
             }
         }
@@ -747,17 +746,17 @@ public class Scale : Codable {
             let scaleNote = self.scaleNoteState[hand][i]
             if hand == 0 {
                 //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
-                scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
+                scaleNote.keyboardFingerColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
             }
             if hand == 1 {
                 if scaleMotion == .contraryMotion {
                     //scaleNote.fingerSequenceBreak = !scaleNote.isWhiteKey()
-                    scaleNote.keyboardColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
+                    scaleNote.keyboardFingerColourType = scaleNote.isWhiteKey() ? .none : .fingeringSequenceBreak
                 }
                 else {
                     if scaleNote.isWhiteKey() {
                         //scaleNote.fingerSequenceBreak = [4, 11].contains(scaleNote.midi % 12) ? false : true
-                        scaleNote.keyboardColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
+                        scaleNote.keyboardFingerColourType = [4, 11].contains(scaleNote.midi % 12) ? .none : .fingeringSequenceBreak
                     }
                 }
             }
@@ -896,7 +895,10 @@ public class Scale : Codable {
         return out
     }
     
-    func debug1(_ msg:String, short:Bool=false)  {
+    func debug1(_ msg:String, rootName:String, hand:Int? = nil)  {
+        if scaleRoot.name != rootName {
+            return
+        }
         print("==========Scale  Debug \(msg)", scaleRoot.name, scaleType, "Hands:", self.hands, "octaves:", self.octaves,
               "motion:", self.scaleMotion)
         
@@ -909,22 +911,27 @@ public class Scale : Codable {
             }
         }
         for handIndex in [0,1] {
+            if let hand = hand {
+                if handIndex != hand {
+                    continue
+                }
+            }
             var idx = 0
             for state in self.scaleNoteState[handIndex] {
                 print("Hand", handIndex, "idx:", String(format: "%2d", idx), "seg:", state.segments,
                       "\tMidi:", state.midi,  "value:",
                       String(format: "%.2f", state.value),
                       "finger:", state.finger,
-                      "break:", state.keyboardColourType,
+                      "break:", state.keyboardFingerColourType,
                       "matched:", state.matchedTime != nil
                 )
                 idx += 1
                 if idx % 4 == 0 {
                     print()
                 }
-                if short {
-                    break
-                }
+//                if short {
+//                    break
+//                }
             }
         }
     }
@@ -1030,45 +1037,75 @@ public class Scale : Codable {
     ///Calculate finger sequence breaks
     ///Set descending as the key one below ascending break key
     private func setFingerBreaks(hand:Int) {
+
         for note in self.scaleNoteState[hand] {
-            note.keyboardColourType = .none
+            note.keyboardFingerColourType = .none
         }
         
-        let halfway = self.scaleNoteState[hand].count/2-1
+        //let halfway = self.scaleNoteState[hand].count/2//-1
+        var maxMidi = 0
+        var highPointIndex = 0
+        for i in 0..<self.scaleNoteState[hand].count {
+            let noteState = self.scaleNoteState[0][i]
+            if noteState.midi > maxMidi {
+                maxMidi = noteState.midi
+                highPointIndex = i
+            }
+        }
         if hand == 0 {
             var lastFinger = self.scaleNoteState[hand][0].finger
-            for i in 1...halfway {
+            for i in 1...highPointIndex {
                 let finger = self.scaleNoteState[hand][i].finger
                 let diff = abs(finger - lastFinger)
                 if diff > 1 {
-                    self.scaleNoteState[hand][i].keyboardColourType = .fingeringSequenceBreak
-                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardColourType = .fingeringSequenceBreak
+                    self.scaleNoteState[hand][i].keyboardFingerColourType = .fingeringSequenceBreak
+                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardFingerColourType = .fingeringSequenceBreak
                 }
                 lastFinger = self.scaleNoteState[hand][i].finger
             }
         }
         else {
-            var lastFinger = self.scaleNoteState[hand][halfway].finger
-            for i in stride(from: halfway-1, to: 0, by: -1) {
-                let finger = self.scaleNoteState[hand][i].finger
-                let diff = abs(finger - lastFinger)
-                if diff > 1 {
-                    self.scaleNoteState[hand][i+1].keyboardColourType = .fingeringSequenceBreak
-                    let mirror = halfway + (halfway - i) + 2
-                    if mirror < self.scaleNoteState[hand].count - 1 {
-                        self.scaleNoteState[hand][mirror].keyboardColourType = .fingeringSequenceBreak
+            //var lastFinger = self.scaleNoteState[hand][highPointIndex].finger
+            //for i in stride(from: halfway-1, to: 0, by: -1) {
+            if false {
+                for i in stride(from: highPointIndex-1, to: 0, by: -1) {
+                    let finger = self.scaleNoteState[hand][i].finger
+                    //let diff = abs(finger - lastFinger)
+                    //if diff > 1 {
+                    if finger == 1 {
+                        self.scaleNoteState[hand][i+1].keyboardFingerColourType = .fingeringSequenceBreak
+                        //let mirror = highPointIndex + (highPointIndex - i) + 2
+                        let mirror = highPointIndex + (highPointIndex - i) //+ 1
+                        
+                        if mirror < self.scaleNoteState[hand].count - 1 {
+                            self.scaleNoteState[hand][mirror].keyboardFingerColourType = .fingeringSequenceBreak
+                        }
+                    }
+                    //lastFinger = self.scaleNoteState[hand][i].finger
+                }
+            }
+            if self.scaleRoot.name == "A♭" {
+                
+            }
+            for i in 0..<self.scaleNoteState[0].count {
+                let noteState = self.scaleNoteState[hand][i]
+                if noteState.finger == 1 {
+                    if i < highPointIndex {
+                        //self.scaleNoteState[hand][i+1].keyboardFingerColourType = .fingeringSequenceBreak
+                    }
+                    else {
+                        //self.scaleNoteState[hand][i].keyboardFingerColourType = .fingeringSequenceBreak
                     }
                 }
-                lastFinger = self.scaleNoteState[hand][i].finger
             }
         }
+        self.debug1("Finger break", rootName: "A♭", hand: 1)
     }
     
     private func setFingerBreaksArpeggio(hand:Int) {
         for note in self.scaleNoteState[hand] {
-            note.keyboardColourType = .none
+            note.keyboardFingerColourType = .none
         }
-        
         let halfway = self.scaleNoteState[hand].count/2 //-1
         if hand == 0 {
             var lastFinger = self.scaleNoteState[hand][0].finger
@@ -1076,8 +1113,8 @@ public class Scale : Codable {
                 let finger = self.scaleNoteState[hand][i].finger
                 let diff = finger - lastFinger
                 if diff < 0 {
-                    self.scaleNoteState[hand][i].keyboardColourType = .fingeringSequenceBreak
-                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardColourType = .fingeringSequenceBreak
+                    self.scaleNoteState[hand][i].keyboardFingerColourType = .fingeringSequenceBreak
+                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardFingerColourType = .fingeringSequenceBreak
                 }
                 lastFinger = self.scaleNoteState[hand][i].finger
             }
@@ -1088,10 +1125,10 @@ public class Scale : Codable {
                 let finger = self.scaleNoteState[hand][i].finger
                 let diff = finger - lastFinger
                 if diff < 0 {
-                    self.scaleNoteState[hand][i+1].keyboardColourType = .fingeringSequenceBreak ///break for the downward direction
+                    self.scaleNoteState[hand][i+1].keyboardFingerColourType = .fingeringSequenceBreak ///break for the downward direction
                     let mirror = halfway + (halfway - i) 
                     if mirror < self.scaleNoteState[hand].count - 1 {
-                        self.scaleNoteState[hand][mirror].keyboardColourType = .fingeringSequenceBreak ///break for the upward direction
+                        self.scaleNoteState[hand][mirror].keyboardFingerColourType = .fingeringSequenceBreak ///break for the upward direction
                     }
                 }
                 lastFinger = self.scaleNoteState[hand][i].finger
@@ -1405,16 +1442,6 @@ public class Scale : Codable {
         }
         
         if !handled {
-            //if self.debugOn {
-                if hand == 0 {
-                    if scaleRoot.name == "G" {
-                        if scaleType == .arpeggioMajor {
-                            self.debug1("Fingerin")
-                        }
-                    }
-                }
-            //}
-
             ///Apply the regular (as defined above) finger patterns for ascending and descending. The finger pattern used is the pattern for the right hand ascending.
             ///For LH ascending the pattern is applied to the middle of the LH scale. For LH contrary motion its applied to the start of the LH scale (the highest note)
             let halfway = scaleNoteState[hand].count / 2

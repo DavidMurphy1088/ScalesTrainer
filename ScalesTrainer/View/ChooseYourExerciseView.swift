@@ -134,25 +134,27 @@ struct ChooseYourExerciseView: View {
                 .presentationCompactAdaptation(.popover)
             }
             
-            FigmaButton(self.getMotionDescription(motion : self.selectedMotion), action: {
-                selectMotion = true
-            })
-            .popover(isPresented: $selectMotion) {
-                let alreadySelected = self.getSelectedMotionIndex()
-                
-                SinglePickList<ScaleMotion>(title: "Exercise Motions", items: self.scaleMotions,
-                    initiallySelectedIndex: alreadySelected) { selectedMotion, _ in
-                    //self.selectedMotion = nil
-                    if let studentScales = studentScales {
-                        setVisibleCells("SelectMotion", studentScales: studentScales,
-                                        typeFilter: nil, keyFilter: nil, motionFilter: selectedMotion)
+            if false {
+                FigmaButton(self.getMotionDescription(motion : self.selectedMotion), action: {
+                    selectMotion = true
+                })
+                .popover(isPresented: $selectMotion) {
+                    let alreadySelected = self.getSelectedMotionIndex()
+                    
+                    SinglePickList<ScaleMotion>(title: "Exercise Motions", items: self.scaleMotions,
+                                                initiallySelectedIndex: alreadySelected) { selectedMotion, _ in
+                        //self.selectedMotion = nil
+                        if let studentScales = studentScales {
+                            setVisibleCells("SelectMotion", studentScales: studentScales,
+                                            typeFilter: nil, keyFilter: nil, motionFilter: selectedMotion)
+                        }
+                        self.selectedMotion = selectedMotion
+                        self.selectedType = nil
+                        self.selectedKey = nil
                     }
-                    self.selectedMotion = selectedMotion
-                    self.selectedType = nil
-                    self.selectedKey = nil
+                    .frame(width: screenWidth * 0.12)
+                    .presentationCompactAdaptation(.popover)
                 }
-                .frame(width: screenWidth * 0.12)
-                .presentationCompactAdaptation(.popover)
             }
             
             Spacer()

@@ -91,7 +91,7 @@ struct MetronomeView: View {
 //                   }
 //                }
 //            }
-            lowestTempo = examTempo - lowDelta
+            lowestTempo = examTempo - lowDelta 
             highestTempo = examTempo + highDelta
             
             //steps = (highestTempo - lowestTempo) / tempoDelta

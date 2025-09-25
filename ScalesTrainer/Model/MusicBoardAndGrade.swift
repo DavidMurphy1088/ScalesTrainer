@@ -377,9 +377,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             for hand in [[0], [1]] {
-                scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: hand,
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2, hands: hand,
                                     minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-                scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: hand,
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "F"), scaleType: .major, scaleMotion: .similarMotion, octaves: 2, hands: hand,
                                     minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             }
                 

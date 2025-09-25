@@ -16,7 +16,6 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     
     let scalesModel = ScalesModel.shared
     var nextNoteIndex = 0
-    var beatCount = 0
     var leadInShown = false
     let scale = ScalesModel.shared.scale
     var backingChords:BackingChords? = nil
@@ -41,7 +40,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
-        beatCount = 0
+        //beatCount = 0
         nextNoteIndex = 0
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.hilightNotesOutsideScale = false
@@ -80,6 +79,9 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
         for pitch in backingChord.pitches {
             sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
+            if self.nextNoteIndex < 112 {
+                print("=============== ▶️ Backing", self.nextNoteIndex, pitch)
+            }
         }
         
         //lastChord = backingChord
@@ -93,14 +95,14 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     
     func metronomeTickNotification(timerTickerNumber: Int) {
         let samplerForKeyboard = audioManager.getSamplerForKeyboard()
+        var backingPlayed = false
         
         for hand in scale.hands {
             let noteState:ScaleNoteState? = scale.getScaleNoteState(handType: hand==0 ? .right : .left, index: nextNoteIndex)
-            var backingPlayed = false
             guard let note = noteState else {
                 return
             }
-
+            
             let keyboard = getKeyboard(hand: hand)
             let keyboardKeyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
             
@@ -126,13 +128,11 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                             }
                         }
                     }
-                    if [.backingOn].contains(process) {
-                        if !backingPlayed {
-                            if self.waitBeatsForBacking == 0 {
-                                if process == .backingOn {
-                                    self.playBacking()
-                                    backingPlayed = true
-                                }
+                    if self.waitBeatsForBacking == 0 {
+                        if [.backingOn].contains(process) {
+                            if !backingPlayed {
+                                self.playBacking()
+                                backingPlayed = true
                             }
                         }
                     }

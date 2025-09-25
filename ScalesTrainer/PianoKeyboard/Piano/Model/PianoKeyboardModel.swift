@@ -293,7 +293,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
 //                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
-                    print("  Segment", state.segments, "finger:", state.finger, "fingerBreak:", state.keyboardColourType, terminator: "")
+                    print("  Segment", state.segments, "finger:", state.finger, "fingerBreak:", state.keyboardFingerColourType, terminator: "")
                 }
                 else {
                     print("  No scale state", terminator: "")

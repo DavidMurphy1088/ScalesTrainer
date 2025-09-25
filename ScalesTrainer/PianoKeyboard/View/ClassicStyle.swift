@@ -68,8 +68,10 @@ public struct ClassicStyle {
 //            color = FigmaColors.shared.getColor1("KB getFingerColor", "blue", 1) //Color.blue
 //            return color
 //        }
-        let hilightColor = FigmaColors.shared.getColor1("getFingerColor", "orange", 3)
-        return scaleNote.keyboardColourType == .fingeringSequenceBreak ? hilightColor : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+        print("========== Classic")
+        let finger = scaleNote.finger
+        return finger == 1 ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+//        return scaleNote.keyboardFingerColourType == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
@@ -169,7 +171,7 @@ public struct ClassicStyle {
                 ///Left or right hand indicator in outermost most key
                 if !miniKeyboardStyle && !handIconWasShown {
                     var showHandIcon = false
-                    if self.hand == 1 && index == 0 {
+                    if self.hand == 1 && (index == 0 || index == 1) {
                         showHandIcon = true
                     }
                     if self.hand == 0 && index >= viewModel.pianoKeyModel.count - 2 {
@@ -188,24 +190,14 @@ public struct ClassicStyle {
                             let image = Image(handImageName)
                             var resolvedImage = context.resolve(image)
                             resolvedImage.shading = .color(FigmaColors.shared.green)
-                            let targetWidth: CGFloat = naturalWidth * (scale.getScaleNoteCount() <= 24 ? 0.30 : 0.50)
+                            let widthFactor = scale.getScaleNoteCount() <= 24 ? 0.50 : 0.50 //0.50
+                            let targetWidth: CGFloat = naturalWidth * widthFactor
+//                            print("========== Classic ▶️ ", widthFactor, "Keys:", viewModel.pianoKeyModel.count, "notes:", scale.getScaleNoteCount())
                             let originalSize = resolvedImage.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
-//                            let centerOffset:Double
-//                                
-//                            if self.hand == 0 {
-//                                if index >= viewModel.pianoKeyModel.count - 1 {
-//                                    centerOffset = 0.2
-//                                }
-//                                else {
-//                                    centerOffset = 0.8
-//                                }
-//                            }
-//                            else {
-//                                centerOffset = 0.8
-//                            }
+
                             let drawRect = CGRect(
                                 //x: keyRect.midX - (targetWidth * centerOffset),
                                 x: keyRect.midX - (targetWidth * 0.5),
