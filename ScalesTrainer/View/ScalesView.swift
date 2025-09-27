@@ -616,7 +616,7 @@ struct ScalesView: View {
             }
         }
         .commonToolbar(
-            title: self.scale.getScaleDescriptionParts(name:true),
+            title: self.scale.getScaleName() + ", " + self.scale.getScaleDescriptionParts(hands:true),
             titleMustShow: true,
             helpMsg: self.getHelp(scale: self.scale),
             onBack: { dismiss() }
@@ -661,7 +661,6 @@ struct ScalesView: View {
         ///Every time the view appears, not just the first.
         ///Whoever calls up this view has set the scale already
         .onAppear {
-
             let _ = ScalesModel.shared.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
                                                              scaleMotion: scale.scaleMotion,
                                                              minTempo: scale.minTempo, octaves: scale.octaves,
@@ -699,8 +698,8 @@ struct ScalesView: View {
             exerciseState.setExerciseState("ScalesView onAppear", .exerciseNotStarted)
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
-            //metronome.start(doStandby: false, doLeadIn: false, scale: self.scale)
             scalesModel.setInitialDirectionOfPlay(scale: self.scale)
+            //self.scale.debug1("View Appear")
         }
         
         .onDisappear {

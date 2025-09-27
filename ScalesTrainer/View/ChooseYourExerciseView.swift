@@ -27,7 +27,8 @@ struct ChooseYourExerciseView: View {
     @State private var selectMotion = false
     @State private var selectedMotion:ScaleMotion? = nil
     @State private var scaleMotions:[ScaleMotion] = []
-
+    @State private var didDisappear = false
+    
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     
     let leftEdge = UIScreen.main.bounds.size.width * 0.04
@@ -37,17 +38,17 @@ struct ChooseYourExerciseView: View {
             if let scale = studentScale.scale {
                 studentScale.setVisible(way: true)
                 if let typeFilter = typeFilter {
-                    if typeFilter != .any {
+                    if typeFilter != .all {
                         studentScale.setVisible(way: scale.scaleType == typeFilter)
                     }
                 }
                 if let keyFilter = keyFilter {
-                    if keyFilter != "Any" {
+                    if keyFilter != "All" {
                         studentScale.setVisible(way: keyFilter == scale.scaleRoot.name)
                     }
                 }
                 if let motionFilter = motionFilter {
-                    if motionFilter != .any {
+                    if motionFilter != .all {
                         studentScale.setVisible(way: scale.scaleMotion == motionFilter)
                     }
                 }
@@ -220,19 +221,24 @@ struct ChooseYourExerciseView: View {
             self.studentScales = studentScales
             
             self.scaleTypes = studentScales.getScaleTypes()
-            self.scaleTypes.insert(ScaleType.any, at: 0)
-            
+            self.scaleTypes.insert(ScaleType.all, at: 0)
             
             self.scaleKeys = studentScales.getScaleKeys()//.sorted()
-            self.scaleKeys.insert("Any", at: 0)
+            self.scaleKeys.insert("All", at: 0)
             
             self.scaleMotions = studentScales.getScaleMotions()
-            self.scaleMotions.insert(ScaleMotion.any, at: 0)
+            self.scaleMotions.insert(ScaleMotion.all, at: 0)
+            if didDisappear {
+                print("Returning from lower level")
+            } else {
+                print("Coming from higher level or initial")
+                self.selectedType = nil
+                self.selectedKey = nil
+                self.selectedMotion = nil
+                setVisibleCells("SelectType", studentScales: studentScales, typeFilter: nil, keyFilter: nil, motionFilter: nil)
+            }
+            didDisappear = false
             
-            self.selectedType = nil
-            self.selectedKey = nil
-            self.selectedMotion = nil
-            setVisibleCells("SelectType", studentScales: studentScales, typeFilter: nil, keyFilter: nil, motionFilter: nil)
             //self.initialTypeDescription = "Exercise Type"
             //self.initialKeyDescription = "Key"
         }
@@ -242,6 +248,9 @@ struct ChooseYourExerciseView: View {
         }
         .onChange(of: viewManager.gradePublished) {oldValue, newValue in
             dismiss()
+        }
+        .onDisappear() {
+            didDisappear = true
         }
 
     }

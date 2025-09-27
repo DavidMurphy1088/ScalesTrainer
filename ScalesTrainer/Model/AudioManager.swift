@@ -384,9 +384,11 @@ class AudioManager {
 
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
-        if let sampler = samplerForKeyboard {
-            sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
-            print("============== Sampler 🟢 key:\(keyNumber) midi:\(MIDINoteNumber(keyNumber))")
+        ///Sep 2025 Keep device key presses silent for now
+        if Settings.shared.isDeveloperModeOn() {
+            if let sampler = samplerForKeyboard {
+                sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
+            }
         }
     }
 

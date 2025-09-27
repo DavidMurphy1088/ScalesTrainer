@@ -91,8 +91,8 @@ struct MetronomeView: View {
 //                   }
 //                }
 //            }
-            lowestTempo = examTempo - lowDelta 
-            highestTempo = examTempo + highDelta
+            lowestTempo = Settings.shared.isDeveloperModeOn() ? 20 : examTempo - lowDelta
+            highestTempo = Settings.shared.isDeveloperModeOn() ? 120 : examTempo + highDelta
             
             //steps = (highestTempo - lowestTempo) / tempoDelta
             self.sliderValue = Double(self.examTempo)

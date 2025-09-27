@@ -67,7 +67,8 @@ struct ScalesGridCellView: View {
                         HStack {
                             Text(" ")
                             VStack(alignment: .leading) {
-                                let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
+                                //let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
+                                let scaleTitle = scale.getScaleName()
                                 Text(scaleTitle)
                                     .foregroundColor(.black)
                                     .font(compact ? .callout : .title3)

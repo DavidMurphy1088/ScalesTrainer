@@ -15,7 +15,7 @@ public struct PianoKeyboardView : View {
         self.keyColor = keyColor
         self.miniKeyboardStyle = miniKeyboardStyle
         style = ClassicStyle(name: viewModel.name, scale: scalesModel.scale, hand: viewModel.keyboardNumber - 1,
-                             miniKeyboardStyle: miniKeyboardStyle, keyColor: keyColor)
+                             miniKeyboardStyle: miniKeyboardStyle, keyColor: keyColor, scaleDirection: viewModel.scaleDirection)
     }
 
     public var body: some View {

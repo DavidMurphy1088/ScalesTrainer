@@ -16,12 +16,35 @@ class BackingChords {
     
     let scaleType:ScaleType
     var chords:[BackingChord] = []
-                              
+    
+    init(scaleType:ScaleType) {
+        self.scaleType = scaleType
+    }
+    
     init(scaleType:ScaleType, hands : [Int], octaves:Int) {
         self.scaleType = scaleType
         let octaveOffset = -12
-        
-        if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
+        if [.harmonicMinor].contains(scaleType) {
+            let offsets = "C G Eb G   B G D G  Ab F C F   B G C G  Eb G Ab F  C F B  G   D G B G  C"
+            chords = self.fromNoteNames(offsets, value: 0.5, octaveOffset: octaveOffset)
+        }
+        if [.melodicMinor].contains(scaleType) {
+            let offsets = "C G Eb G   B G D G  Ab F C F   B G C G  Eb G B G   D G Ab F   C F B G  C"
+            chords = self.fromNoteNames(offsets, value: 0.5, octaveOffset: octaveOffset)
+        }
+        if [.naturalMinor].contains(scaleType) {
+            if octaves == 2 {
+                let offsets = "C G Eb G   Bb G D G   Ab F C F   Bb G C G   Eb G Ab F   C F Bb G   D G Bb G   C"
+                chords = self.fromNoteNames(offsets, value: 0.5, octaveOffset: octaveOffset)
+            }
+            if octaves == 1 {
+                let offsets = "C G Eb G    Bb G D G   Ab F C F   Bb G C"
+                chords = self.fromNoteNames(offsets, value: 0.5, octaveOffset: octaveOffset)
+            }
+        }
+
+        //if [.major, .melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType) {
+        if [.major].contains(scaleType) {
             let isMinor = [.melodicMinor, .harmonicMinor, .naturalMinor].contains(scaleType)
             if octaves == 1 {
                 //Tonic I
@@ -75,8 +98,14 @@ class BackingChords {
                 // 5 - Tonic
                 chords.append(BackingChord(pitches: [isMinor ? 3 : 4], value: 0.5, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [7], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [isMinor ? -4 : -3], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                if scaleType == .melodicMinor {
+                    chords.append(BackingChord(pitches: [10], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                }
+                else {
+                    chords.append(BackingChord(pitches: [isMinor ? -4 : -3], value: 0.5, offset: octaveOffset))
+                    chords.append(BackingChord(pitches: [5], value: 0.5, offset: octaveOffset))
+                }
                 
                 // 6 - Dom V
                 if scaleType == .melodicMinor {
@@ -132,16 +161,18 @@ class BackingChords {
             chords.append(BackingChord(pitches: [0], value: 4.0, offset: octaveOffset))
         }
 
-        ///Broekn chords - Trinity, Grade 1 only
+        ///Broken chords - Trinity, Grade 1 only
         if [.brokenChordMajor].contains(scaleType) {
-            let value = 1.0 / 3.0
+            var value = 1.0 / 3.0
             let octaveOffset = 0
             for _ in 0..<7 {
                 chords.append(BackingChord(pitches: [0], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [4, 7], value: value, offset: octaveOffset))
                 chords.append(BackingChord(pitches: [4, 7], value: value, offset: octaveOffset))
             }
-            chords.append(BackingChord(pitches: [7], value: 1, offset: octaveOffset))
+            value = 1.0
+            //chords.append(BackingChord(pitches: [-12], value: value, offset: octaveOffset))
+            chords.append(BackingChord(pitches: [0, 4, 7], value: value, offset: octaveOffset))
         }
         if [.brokenChordMinor].contains(scaleType) {
             let value = 1.0 / 3.0
@@ -155,8 +186,37 @@ class BackingChords {
         }
     }
     
-    init(scaleType:ScaleType) {
-        self.scaleType = scaleType
+    func fromNoteNames(_ keyString: String, value:Double, octaveOffset:Int) -> [BackingChord] {
+        // Map of note names to semitone offsets from C
+        let noteMap: [String: Int] = [
+                "C": 0,
+                "C#": 1, "Db": 1, "D♭": 1,
+                "D": 2,
+                "D#": 3, "Eb": 3, "E♭": 3,
+                "E": 4,
+                "F": 5,
+                "F#": 6, "Gb": 6, "G♭": 6,
+                "G": 7,
+                "G#": 8, "Ab": 8, "A♭": 8,
+                "A": 9,
+                "A#": 10, "Bb": 10, "B♭": 10,
+                "B": 11
+            ]
+            
+        
+        // Split the string by spaces and convert each key
+        let map = keyString.components(separatedBy: " ")
+            .compactMap { key in
+                let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+                return trimmed.isEmpty ? nil : noteMap[trimmed]
+            }
+            .compactMap { $0 } // Remove any nils from unknown keys
+        var chords:[BackingChord] = []
+        for pitchOffset in map {
+            let chord = BackingChord(pitches: [pitchOffset], value: value, offset: octaveOffset)
+            chords.append(chord)
+            
+        }
+        return chords
     }
-
 }

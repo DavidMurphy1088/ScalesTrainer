@@ -9,7 +9,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     let endCallback:()->Void
     var noteToPlayIndex:[Int] = [0, 0]
     var lastNoteValue:Double? = nil
-    var waitBeatsForScale = 0
+    var waitBeatsToAdvanceScale = 0
     var waitBeatsForBacking = 0
     let audioManager = AudioManager.shared
     let metronome = Metronome.shared
@@ -63,14 +63,13 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         }
     }
     
-    private func playBacking() {
+    private func playBacking(index:Int) {
         guard let sampler = audioManager.getSamplerForBacking() else {
             return
         }
         guard let backingChords = backingChords else {
             return
         }
-        //return 
         self.stopLastSampledSounds()
         self.backingChord = backingChords.chords[nextChordIndex]
         guard let backingChord = self.backingChord else {
@@ -79,12 +78,8 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         sampler.volume = 1.0 //0.9 if its running with another operation like play the scale
         for pitch in backingChord.pitches {
             sampler.play(noteNumber: MIDINoteNumber(pitch), velocity: 60, channel: 0)
-            if self.nextNoteIndex < 112 {
-                print("=============== ▶️ Backing", self.nextNoteIndex, pitch)
-            }
         }
         
-        //lastChord = backingChord
         if nextChordIndex >= backingChords.chords.count - 1 {
             nextChordIndex = 0
         }
@@ -107,9 +102,10 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             let keyboardKeyIndex = keyboard.getKeyIndexForMidi(midi: note.midi)
             
             if let keyboardKeyIndex = keyboardKeyIndex {
-            
+//                print("        ============ HearScalePlayer 🧛 metronomeTickNotification, tick:\(timerTickerNumber) ,index:\(nextNoteIndex) ,process:\(self.process) waitBeatsForScale:\(waitBeatsToAdvanceScale) waitBeatsForBacking:\(waitBeatsForBacking)")
+                
                 ///Hilight the keyboard key, sound the note and highlight the score note.
-                if self.waitBeatsForScale == 0 {
+                if self.waitBeatsToAdvanceScale == 0 {
                     let key=keyboard.pianoKeyModel[keyboardKeyIndex]
                     key.setKeyPlaying()
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
@@ -128,29 +124,28 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                             }
                         }
                     }
-                    if self.waitBeatsForBacking == 0 {
-                        if [.backingOn].contains(process) {
-                            if !backingPlayed {
-                                self.playBacking()
-                                backingPlayed = true
-                            }
-                        }
-                    }
+
                     if let score = scalesModel.getScore() {
                         score.hilightStaffNote(segment: note.segments[0], midi: note.midi, handType: hand == 0 ? .right : .left)
+                    }
+                }
+                if self.waitBeatsForBacking == 0 {
+                    if [.backingOn].contains(process) {
+                        if !backingPlayed {
+                            self.playBacking(index: nextNoteIndex)
+                            backingPlayed = true
+                        }
                     }
                 }
             }
         }
 
-//        print("        ============ HearScalePlayer 🧛 metronomeTickNotification, tick:\(timerTickerNumber) ,index:\(nextNoteIndex) ,process:\(self.process)")
-
         ///Select the next scale segment and advance the scale's note to play index. Stop the exercise if required.
-        if waitBeatsForScale == 0 {
+        if waitBeatsToAdvanceScale == 0 {
             let scaleNoteState = scale.getScaleNoteState(handType: .right, index: nextNoteIndex)
             if let scaleNoteState = scaleNoteState {
                 let notesPerBeat = scalesModel.scale.timeSignature.top % 3 == 0 ? 3.0 : 2.0
-                waitBeatsForScale = Int(scaleNoteState.value * notesPerBeat) - 1
+                waitBeatsToAdvanceScale = Int(scaleNoteState.value * notesPerBeat) - 1
                 if nextNoteIndex < self.scalesModel.scale.getScaleNoteCount() - 1 {
                     self.nextNoteIndex += 1
                     if let nextNote = scale.getScaleNoteState(handType: .right, index: nextNoteIndex) {
@@ -159,7 +154,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 }
                 else {
                     if let score = scalesModel.getScore() {
-                        waitBeatsForScale += scale.getRemainingBeatsInLastBar(timeSignature: score.timeSignature) * Int(notesPerBeat)
+                        waitBeatsToAdvanceScale += scale.getRemainingBeatsInLastBar(timeSignature: score.timeSignature) * Int(notesPerBeat)
                     }
                     scalesModel.setSelectedScaleSegment(0)
                     self.nextNoteIndex = 0
@@ -170,7 +165,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             }
         }
         else {
-            waitBeatsForScale -= 1
+            waitBeatsToAdvanceScale -= 1
         }
         
         if waitBeatsForBacking == 0 {

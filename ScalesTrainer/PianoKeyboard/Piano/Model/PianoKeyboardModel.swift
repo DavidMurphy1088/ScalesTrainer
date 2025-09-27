@@ -5,6 +5,7 @@ public protocol PianoKeyboardDelegate: AnyObject {
     func pianoKeyDown(_ keyNumber: Int)
 }
 
+//@MainActor
 public class PianoKeyboardModel: ObservableObject, Equatable {
     let name:String
     public static var sharedRH = PianoKeyboardModel(name: "commonRH", keyboardNumber: 1)
@@ -18,10 +19,38 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     private(set) var pianoKeyModel: [PianoKeyModel] = []
 
     public var firstKeyMidi = 60
-    private var nextKeyToPlayIndex:Int?
-    private var ascending = true
     public var hilightNotesOutsideScale = true
     
+    //public var scaleDirection = 0
+    ///accessQueue1 approach sometimes stillgets data race
+    private var _scaleDirection: Int = 0
+    private let accessQueue1 = DispatchQueue(label: "com.musicmastereducation.scalesacademy.PianoKBModel.state1")
+    var scaleDirection: Int {
+        get {
+            return accessQueue1.sync { _scaleDirection }
+        }
+        set {
+            accessQueue1.sync { _scaleDirection = newValue }
+        }
+    }
+    
+//    private var _scaleDirection = 0
+//        private var lock = os_unfair_lock_s()
+//
+//        var scaleDirection: Int {
+//            get {
+//                os_unfair_lock_lock(&lock)
+//                defer { os_unfair_lock_unlock(&lock) }
+//                return _scaleDirection
+//            }
+//            set {
+//                os_unfair_lock_lock(&lock)
+//                _scaleDirection = newValue
+//                os_unfair_lock_unlock(&lock)
+//            }
+//        }
+    
+
     var keyboardNumber:Int ////😡 the lowest value is 1. If changed to 0 remove all the ' -1' in the code that uses it
     func getKeyboardHandType() -> HandType? {
         switch self.keyboardNumber {
@@ -239,7 +268,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
         }
-        self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType)
+        self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType, scaleDirection: 0)
     }
     
     func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, handType:HandType) {
@@ -269,9 +298,11 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
             }
         }
     }
+    
     ///Create the link for each piano key to a scale note, if there is one.
     ///Mapping may be different for descending - e.g. melodic minor needs different mapping of scale notes for descending
-    public func linkScaleFingersToKeyboardKeys(scale:Scale, scaleSegment:Int, handType:HandType) {
+    public func linkScaleFingersToKeyboardKeys(scale:Scale, scaleSegment:Int, handType:HandType, scaleDirection:Int) {
+        self.scaleDirection = scaleDirection //thread race, G Maj borken chord play
         for i in 0..<numberOfKeys {
             if i < self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
@@ -293,7 +324,10 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
 //                print("   ascMatch:", key.keyWasPlayedState.tappedTimeAscending != nil, "descMatch:", key.keyWasPlayedState.tappedTimeDescending != nil, terminator: "")
                 if let state = key.scaleNoteState {
-                    print("  Segment", state.segments, "finger:", state.finger, "fingerBreak:", state.keyboardFingerColourType, terminator: "")
+                    print("  Segment", state.segments, "finger:",
+                          state.finger, "breakUp:", state.keyboardFingerColourTypeUp,
+                          state.finger, "breakDn:", state.keyboardFingerColourTypeDown,
+                          terminator: "")
                 }
                 else {
                     print("  No scale state", terminator: "")

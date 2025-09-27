@@ -35,7 +35,7 @@ struct SelectHandForPractice: View {
     }
     
     var body: some View {
-        let nameFull = scale.getScaleName(handFull: false)
+        let scaleName = scale.getScaleName() //scale.getScaleName(handFull: false)
         let name = scale.getScaleName(showHands: false, handFull: false)
         HStack {
             Text("").padding()
@@ -45,7 +45,7 @@ struct SelectHandForPractice: View {
                     Text("")
                     Text("")
                 }
-                Text(nameFull).font(compact ? .title3 : .title2)
+                Text(scaleName).font(compact ? .title3 : .title2)
                     .padding()
                     .figmaRoundedBackgroundWithBorder(fillColor: titleColor)
                 Text("")
@@ -53,7 +53,7 @@ struct SelectHandForPractice: View {
                     Text("")
                 }
                 Text("")
-                Text("In the exam \(nameFull) must be played with both hands.")
+                Text("In the exam \(scaleName) must be played with both hands.")
                 Text("However you can also practise \(name) hands separately.")
                 Text("")
                 if !compact {

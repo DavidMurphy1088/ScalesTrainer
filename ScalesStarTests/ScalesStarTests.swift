@@ -57,13 +57,10 @@ final class ScoreTest: XCTestCase {
                 for key in dict1.keys {
                     if !areJSONStructuresEqual(level:level+1,dict1[key], dict2[key]) {
                         if [4,3].contains(level) {
-                            print("======= \(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
+                            print("======= level:\(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
                         }
                         else {
-                            if level == 0 {
-                                
-                            }
-                            print("======= \(level) ♦️ DICT key:\(key) ") //" dict2[key])
+                            print("======= level:\(level) ♦️ DICT key:\(key) ") //" dict2[key])
                         }
                         match = false
                         break
@@ -81,7 +78,8 @@ final class ScoreTest: XCTestCase {
                 var ctr = 0
                 for i in 0..<array1.count {
                     if !areJSONStructuresEqual(level:level+1, array1[i], array2[i]) {
-                        print("======= \(level) ♦️ ARRAY ctr:\(i)") //, array1[i], array2[i])
+                        print("======= Level:\(level) ♦️ ARRAY ctr:\(i)") //, array1[i], array2[i])
+                        //print("  ======= \nGood:\(array1[i])\nBad:\(array2[i])")
                         match = false
                         break
                     }
@@ -99,7 +97,7 @@ final class ScoreTest: XCTestCase {
         }
     }
     
-    func processBoard(musicBoard:MusicBoard, gradeFilter:[Int], typeFilter:[ScaleType]) {
+    func processBoard(musicBoard:MusicBoard, gradeFilter:[Int], keyFilter:[String], typeFilter:[ScaleType]) {
         let grades = musicBoard.gradesOffered
         var totalMissingCnt = 0
         var totalProcessedCnt = 0
@@ -107,6 +105,7 @@ final class ScoreTest: XCTestCase {
         var totalMismatchedCnt = 0
         
         for grade in grades {
+
             if gradeFilter.count > 0 {
                 if !gradeFilter.contains(grade) {
                     continue
@@ -187,8 +186,20 @@ final class ScoreTest: XCTestCase {
             let scalesModel = ScalesModel.shared
 
             ///Compare all the scales in this grade
-            logger.log(self, "➡️➡️➡️ Testing \(musicBoard.name) grade \(grade)")
-            for scale in musicBoardAndGrade.enumerateAllScales() {
+            
+            let gradeScales:[Scale] = MusicBoardAndGrade.getScales(boardName: "Trinity",
+                                                              grade: grade)
+            logger.log(self, "➡️➡️➡️ Testing:\(musicBoard.name) grade:\(grade) scaleCount:\(gradeScales.count)")
+            //for scale in musicBoardAndGrade.enumerateAllScales() {
+            for scale in gradeScales {
+                print("=======Scales", scale.getScaleDescriptionHelpMessage())
+                if keyFilter.count > 0 {
+                    //let scaleKeyName = scale.getScaleKeyName().prefix(1).uppercased()
+                    let scaleKeyName = scale.getScaleKeyName().components(separatedBy: " ").first?.uppercased() ?? ""
+                    if !keyFilter.contains(scaleKeyName) {
+                        continue
+                    }
+                }
                 if typeFilter.count > 0 {
                     if !typeFilter.contains(scale.scaleType) {
                         continue
@@ -196,7 +207,7 @@ final class ScoreTest: XCTestCase {
                 }
                 let scaleKey = scale.getScaleIdentificationKey()
                 if storedKnownCorrect.keys.contains(scaleKey) {
-                    scalesModel.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
+                    let _ = scalesModel.setScaleByRootAndType(scaleRoot: scale.scaleRoot, scaleType: scale.scaleType,
                                                       scaleMotion: scale.scaleMotion, minTempo: scale.minTempo, octaves: scale.octaves, hands: scale.hands,
                                                       dynamicTypes: scale.dynamicTypes, articulationTypes: scale.articulationTypes,
                                                       scaleCustomisation: scale.scaleCustomisation,
@@ -211,7 +222,7 @@ final class ScoreTest: XCTestCase {
             }
         }
         if totalMissingCnt > 0 || totalMismatchedCnt > 0 {
-            XCTFail("🥵🥵🥵🥵🥵🥵 Mismatched:\(totalMismatchedCnt) Missing:\(totalMissingCnt) Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
+            XCTFail("🥵🥵🥵 Mismatched:\(totalMismatchedCnt) Missing:\(totalMissingCnt) Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
         }
         else {
             logger.log(self, "✅✅✅✅✅✅ Processed:\(totalProcessedCnt) Matched:\(totalMatchedCnt)")
@@ -227,7 +238,12 @@ final class ScoreTest: XCTestCase {
         
         var writtenStaffData = ""
         let musicBoard = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity") //MusicBoard(name: "Trinity")
-        processBoard(musicBoard: musicBoard, gradeFilter: [], typeFilter: [])
+        processBoard(musicBoard: musicBoard,
+                     gradeFilter: [3],
+                     //keyFilter: ["B", "B♭", "C"],
+                     keyFilter: ["C"],
+                     typeFilter: [] //.arpeggioMinor, .harmonicMinor]
+        )
     }
     
     func testPerformanceExample() throws {

@@ -183,8 +183,8 @@ public class ScalesModel : ObservableObject {
             }
         }
         if let combined = PianoKeyboardModel.sharedCombined {
-            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
-            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left)
+            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right, scaleDirection: segment)
+            combined.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left, scaleDirection: segment)
             combined.redraw()
         }
         else {
@@ -193,9 +193,10 @@ public class ScalesModel : ObservableObject {
             PianoKeyboardModel.sharedRH.clearAllKeyWasPlayedState()
             PianoKeyboardModel.sharedLH.clearAllKeyWasPlayedState()
             
-            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right)
+            PianoKeyboardModel.sharedRH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .right, scaleDirection: segment)
             PianoKeyboardModel.sharedRH.redraw()
-            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left)
+            PianoKeyboardModel.sharedLH.linkScaleFingersToKeyboardKeys(scale: self.scale, scaleSegment: segment, handType: .left,
+                                                                       scaleDirection: segment)
             PianoKeyboardModel.sharedLH.redraw()
         }
     }

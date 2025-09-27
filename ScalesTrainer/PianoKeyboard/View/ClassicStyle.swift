@@ -12,6 +12,7 @@ public struct ClassicStyle {
     let scale:Scale
     let miniKeyboardStyle:Bool
     let blackNoteFingerNumberHeight:Double
+    let scaleDirection:Int
     var notesToHilight:[Int]?
     
     public let naturalKeySpace: CGFloat
@@ -25,7 +26,8 @@ public struct ClassicStyle {
         sfKeyHeightMultiplier: CGFloat = 0.60,
         sfKeyInsetMultiplier: CGFloat = 0.15,
         cornerRadiusMultiplier: CGFloat = 0.008,
-        keyColor:Color
+        keyColor:Color,
+        scaleDirection:Int
     ) {
         self.hand = hand
         self.name = name
@@ -48,6 +50,7 @@ public struct ClassicStyle {
         self.scale = scale
         self.miniKeyboardStyle = miniKeyboardStyle
         self.blackNoteFingerNumberHeight = 0.50 //: 0.50
+        self.scaleDirection = scaleDirection
     }
 
     public func naturalColor(_ down: Bool) -> Color {
@@ -68,16 +71,20 @@ public struct ClassicStyle {
 //            color = FigmaColors.shared.getColor1("KB getFingerColor", "blue", 1) //Color.blue
 //            return color
 //        }
-        print("========== Classic")
-        let finger = scaleNote.finger
-        return finger == 1 ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
-//        return scaleNote.keyboardFingerColourType == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+        //let finger = scaleNote.finger
+        //return finger == 1 ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+        if self.scaleDirection == 0 {
+            return scaleNote.keyboardFingerColourTypeUp == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+        }
+        else {
+            return scaleNote.keyboardFingerColourTypeDown == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+        }
     }
     
     func showKeyNameAndHilights(scalesModel:ScalesModel, context:GraphicsContext, keyRect:CGRect, key:PianoKeyModel, keyPath:Path, showKeyName:Bool) {
         var keyNameToShow:String? = nil
         if miniKeyboardStyle {
-            let opacity = 0.50
+            //let opacity = 0.50
             if [60].contains(key.midi) {
                 let flashColor = FigmaColors.shared.purple //getColor1("MiddleC", "purple", 4)//Color.blue.opacity((opacity))
                 context.fill(keyPath, with: .color(flashColor))
@@ -190,18 +197,16 @@ public struct ClassicStyle {
                             let image = Image(handImageName)
                             var resolvedImage = context.resolve(image)
                             resolvedImage.shading = .color(FigmaColors.shared.green)
-                            let widthFactor = scale.getScaleNoteCount() <= 24 ? 0.50 : 0.50 //0.50
+                            let widthFactor = scale.getScaleNoteCount() <= 24 ? 0.50 : 0.50 
                             let targetWidth: CGFloat = naturalWidth * widthFactor
-//                            print("========== Classic ▶️ ", widthFactor, "Keys:", viewModel.pianoKeyModel.count, "notes:", scale.getScaleNoteCount())
+
                             let originalSize = resolvedImage.size
                             // Calculate height to maintain aspect ratio
                             let aspectRatio = originalSize.height / originalSize.width
                             let targetHeight = targetWidth * aspectRatio
 
                             let drawRect = CGRect(
-                                //x: keyRect.midX - (targetWidth * centerOffset),
                                 x: keyRect.midX - (targetWidth * 0.5),
-                                //y: keyRect.height * 0.20,
                                 y: keyRect.height - targetHeight * 1.25,
                                 width: targetWidth,
                                 height: targetHeight

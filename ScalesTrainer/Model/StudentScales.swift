@@ -70,7 +70,6 @@ class StudentScales: Codable {
         let scales:[Scale] = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
                                                           grade: user.boardAndGrade.grade)
         self.studentScales = []
-        
         self.createdDayOfWeek = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
         
         for scale in scales {
