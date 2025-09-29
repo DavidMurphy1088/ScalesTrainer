@@ -252,7 +252,7 @@ struct StartFollowLeadView: View {
                 countdown -= 1
             } else {
                 timer.invalidate()
-                isCountingDown = false
+                //isCountingDown = false
                 callback(false)
             }
         }

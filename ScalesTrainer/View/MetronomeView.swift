@@ -55,7 +55,7 @@ struct MetronomeView: View {
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity)
                     .onChange(of: sliderValue) { oldValue, newValue in
-                        metronome.currentTempo = Int(sliderValue)
+                        metronome.setTempoParameters(tempo: Int(sliderValue)) 
                     }
 
                 GeometryReader { geometry in
@@ -91,10 +91,10 @@ struct MetronomeView: View {
 //                   }
 //                }
 //            }
-            lowestTempo = Settings.shared.isDeveloperModeOn() ? 20 : examTempo - lowDelta
-            highestTempo = Settings.shared.isDeveloperModeOn() ? 120 : examTempo + highDelta
-            
-            //steps = (highestTempo - lowestTempo) / tempoDelta
+            //lowestTempo = Settings.shared.isDeveloperModeOn() ? 20 : examTempo - lowDelta
+            //highestTempo = Settings.shared.isDeveloperModeOn() ? 120 : examTempo + highDelta
+            lowestTempo = examTempo - lowDelta
+            highestTempo = examTempo + highDelta
             self.sliderValue = Double(self.examTempo)
         }
     }

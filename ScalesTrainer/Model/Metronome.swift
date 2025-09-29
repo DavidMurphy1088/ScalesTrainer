@@ -22,6 +22,8 @@ class Metronome:ObservableObject {
     public static let shared = Metronome()
     
     @Published private(set) var statusPublished:MetronomeStatus
+    private var startTickingTime:DispatchTime = DispatchTime.now()
+    
     var _status = MetronomeStatus.notStarted
     private let accessQueue = DispatchQueue(label: "com.musicmastereducation.scalesacademy.metronome.status")
     var status: MetronomeStatus {
@@ -55,7 +57,8 @@ class Metronome:ObservableObject {
     private let audioManager = AudioManager.shared
     private var processesToNotify:[MetronomeTimerNotificationProtocol] = []
     private let ticker:MetronomeTicker
-    var currentTempo = 0
+    private(set) var currentTempo = 0
+    private var tickCount = 0
     var warmupCount = 0
     
     init() {
@@ -66,13 +69,18 @@ class Metronome:ObservableObject {
         self.leadInCountdownPublished = 0
     }
     
+    func setTempoParameters(tempo:Int) {
+        self.startTickingTime = DispatchTime.now()
+        self.currentTempo = tempo
+        self.tickCount = 0
+    }
+    
     func getNotesPerClick() -> Int{
         let notesPerClick = scalesModel.scale.timeSignature.top % 3 == 0 ? 3 : 2
         return notesPerClick
     }
     
     func stop(_ ctx:String) {
-        //print("====== Metronome ⏰ stop() \(ctx)")
         self.setStatus(status: .notStarted)
         removeAllProcesses("from stop")
     }
@@ -105,7 +113,6 @@ class Metronome:ObservableObject {
     private func processTick(notesPerClick:Int, doLeadIn:Bool) {
         if self.status == .warmingUp {
             if self.warmupCount < 6 {
-                //print("====== Metronome ⏰ wamup \(self.warmupCount)")
                 self.warmupCount += 1
                 return
             }
@@ -155,20 +162,15 @@ class Metronome:ObservableObject {
     }
 
     private func startTimerTask(_ ctx:String, doLeadIn:Bool) {
-        AppLogger.shared.log(self, "Metronome thread starting, tempo:\(self.currentTempo) status:\(self.status)")
+        //AppLogger.shared.log(self, "Metronome thread starting, tempo:\(self.currentTempo) status:\(self.status)")
         Task.detached(priority: .high) { [weak self] in
             guard let self = self else { return }
-            var tickCount = 0
-            let bpm = Double(self.currentTempo)
             let notesPerClick = self.getNotesPerClick()
-            let intervalMs = (60.0 / bpm * 1000.0) / Double(notesPerClick) // milliseconds per beat (857.14ms for 70 BPM)
-            
-            let startTime = DispatchTime.now()
+            setTempoParameters(tempo: self.currentTempo)
             
             while self.status != .notStarted {
                 let currentTime = DispatchTime.now()
-                let elapsedMs = Double(currentTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
-                let expectedTimeMs = Double(tickCount) * intervalMs
+                let intervalMs = (60.0 / Double(self.currentTempo) * 1000.0) / Double(notesPerClick) // milliseconds per beat (857.14ms for 70 BPM)
                 
                 //print("===> ⏰ Metronome", tickCount, String(format: "\tActual: %.2f ms, \tExpected: %.2f ms", elapsedMs, expectedTimeMs), "\tDiff:\(elapsedMs - expectedTimeMs)")
                 processTick(notesPerClick: notesPerClick, doLeadIn: doLeadIn)
@@ -177,7 +179,7 @@ class Metronome:ObservableObject {
                 // Calculate when the next tick should occur. adjut the wait time based on what time we should be at for this tick count
                 let nextExpectedTimeMs = Double(tickCount) * intervalMs
                 let timeAfterWork = DispatchTime.now()
-                let elapsedAfterWorkMs = Double(timeAfterWork.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
+                let elapsedAfterWorkMs = Double(timeAfterWork.uptimeNanoseconds - self.startTickingTime.uptimeNanoseconds) / 1_000_000.0
                 // Calculate how long we need to wait
                 let waitTimeMs = nextExpectedTimeMs - elapsedAfterWorkMs
                 
@@ -202,7 +204,6 @@ class Metronome:ObservableObject {
     }
     
     func removeAllProcesses(_ ctx:String) {
-        //print("====== Metronome ⏰ removeAllProcesses() \(ctx)")
         for process in self.processesToNotify {
             process.metronomeStop()
             self.removeProcessesToNotify(process: process)

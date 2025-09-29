@@ -246,6 +246,7 @@ public struct ClassicStyle {
                         if scaleNote.finger > 0 {
                             let point = CGPoint(x: keyRect.origin.x + keyRect.width / 2.0, y: keyRect.origin.y + keyRect.height * 0.70)
                             let finger:String = scaleNote.finger > 5 ? "" : String(scaleNote.finger)
+                            //print("                            ==== Classic White Finger", scaleNote.midi, scaleNote.finger)
                             context.draw(
                                 Text(finger).foregroundColor(self.getFingerColor(scaleNote: scaleNote))
                                     .font(UIDevice.current.userInterfaceIdiom == .phone ? .title3 : .title).bold(),
@@ -274,6 +275,7 @@ public struct ClassicStyle {
                     xpos += naturalWidth + naturalKeySpace
                     continue
                 }
+            
                 if index >= viewModel.pianoKeyModel.count {
                     continue
                 }

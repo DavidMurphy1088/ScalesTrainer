@@ -18,11 +18,12 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     var nextNoteIndex = 0
     var leadInShown = false
     let scale = ScalesModel.shared.scale
-    var backingChords:BackingChords? = nil
+    private var backingChords:BackingChords? = nil
     let tickDuration:Double
     ///Backing
     var nextChordIndex = 0
-    var backingChord:BackingChords.BackingChord? = nil
+    private var backingChord:BackingChords.BackingChord? = nil
+    private var lastStatePlayed:ScaleNoteState?
     
     init(hands:[Int], process:RunningProcess, endCallback:@escaping ()->Void) {
         self.process = process
@@ -40,7 +41,6 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStart() {
-        //beatCount = 0
         nextNoteIndex = 0
         if let combined = PianoKeyboardModel.sharedCombined {
             combined.hilightNotesOutsideScale = false
@@ -50,9 +50,11 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
             PianoKeyboardModel.sharedLH.hilightNotesOutsideScale = false
         }
         self.backingChords = scale.getBackingChords()
+        self.lastStatePlayed = nil
+        self.backingChord = nil
     }
     
-    private func stopLastSampledSounds() {
+    private func stopLastBacking() {
         guard let sampler = audioManager.getSamplerForBacking() else {
             return
         }
@@ -70,7 +72,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
         guard let backingChords = backingChords else {
             return
         }
-        self.stopLastSampledSounds()
+        self.stopLastBacking()
         self.backingChord = backingChords.chords[nextChordIndex]
         guard let backingChord = self.backingChord else {
             return
@@ -112,6 +114,7 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                     let velocity:UInt8 = 64
                     if [.playingAlong, .recordingScale].contains(process) {
                         samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                        self.lastStatePlayed = key.scaleNoteState
                         ///Stop the note soon to avoid the reverb, extended sounding effect of leaving it running
                         if let noteValue = key.scaleNoteState?.value {
                             let tempo = Double(metronome.currentTempo)
@@ -179,10 +182,25 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
     }
     
     func metronomeStop() {
-        ScalesModel.shared.setSelectedScaleSegment(0)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-            ///Dont stop too early for a nice sound
-            self.stopLastSampledSounds()
+        guard let sampler = audioManager.getSamplerForKeyboard() else {
+            return
         }
+        ScalesModel.shared.setSelectedScaleSegment(0)
+        let tempo = Double(metronome.currentTempo)
+
+        if let lastStatePlayed = self.lastStatePlayed {
+            let wait = lastStatePlayed.value * (60.0 / tempo) * 1.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                sampler.stop(noteNumber: UInt8(lastStatePlayed.midi), channel: 0)
+            }
+        }
+        if let lastBackingPlayed = self.backingChord {
+            let chordValue = 1.0
+            let wait = chordValue * (60.0 / tempo) * 1.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                self.stopLastBacking()
+            }
+        }
+
     }
 }

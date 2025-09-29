@@ -2,6 +2,7 @@ import SwiftUI
 import CoreData
 import MessageUI
 import WebKit
+import AVFoundation
 
 enum ActiveSheet: Identifiable {
     case emailRecording
@@ -263,8 +264,10 @@ struct ScalesView: View {
                             else {
                                 //scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
-                                self.exerciseState.setExerciseState("Lead", settings.isDeveloperModeOn() ?
-                                                                    ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
+                                self.exerciseState.setExerciseState("Lead",
+                                                                    //settings.isDeveloperModeOn() ? ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart
+                                                                    ExerciseState.State.exerciseAboutToStart
+                                )
                             }
                             self.directionIndex = 0
                         })
@@ -673,7 +676,7 @@ struct ScalesView: View {
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             if self.scale.scaleMotion == .contraryMotion && self.scale.hands.count == 2 {
                 if let score = scalesModel.getScore() {
-                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale, handType: .right)
+                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale)
                 }
                 if let combined = PianoKeyboardModel.sharedCombined {
                     if let firstNote = self.scale.getScaleNoteState(handType: .right, index: 0) {
@@ -699,7 +702,7 @@ struct ScalesView: View {
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             scalesModel.setInitialDirectionOfPlay(scale: self.scale)
-            //self.scale.debug1("View Appear")
+            self.scale.debug1("View Appear")
         }
         
         .onDisappear {
@@ -707,7 +710,6 @@ struct ScalesView: View {
             metronome.removeAllProcesses("ScalesView .Disappear")
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
-            //OrientationManager.unlockOrientation()
             
             ///Clean up any recorded files
             if false {

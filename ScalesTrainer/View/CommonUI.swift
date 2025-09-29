@@ -141,11 +141,9 @@ class FigmaColors {
                     $0.shade == shadeToSearch
         }
         if let first = first {
-            //print("============ ▶️ GetColor [\(ctx)]", first.name, "shade\(shadeToSearch)" ,first.colorHex)
             return first.color
         }
         else {
-            print("============ 🔴 FColor not found: \(name), \(shadeToSearch)")
             return Color.white
         }
     }
@@ -198,7 +196,6 @@ class FigmaColors {
                 }
             }
         }
-        //print("========== GETCOLORS", ctx, name, shade, "Count=", colors.count)
         return colors
     }
     
@@ -211,7 +208,6 @@ class FigmaColors {
             return first.colorHex
         }
         else {
-            print("============ 🔴 FColor hex not found: \(name), \(shade)")
             return ""
         }
     }

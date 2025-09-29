@@ -96,7 +96,6 @@ struct DeveloperView: View {
             Button(action: {
                 let x:[String : Any] = ["SomeTest":99]
                 firebase.writeToRealtimeDatabase(board: "Trinity", grade: 1, key: "key0", data: x, callback: {msg in
-                    //print(msg, "======== Firebase test ok")
                 })
             }) {
                 Text("Firebase Write")

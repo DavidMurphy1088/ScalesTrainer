@@ -254,11 +254,7 @@ public class ScaleNoteState : Codable {
         let offset = self.midi % 12
         return [0,2,4,5,7,9,11].contains(offset)
     }
-    
-//    func toString() -> String {
-//        let res = "Seq:\(sequence) midi:\(midi)"
-//        return res
-//    }
+
 }
 
 public class Scale : Codable {
@@ -400,41 +396,6 @@ public class Scale : Codable {
             else {
                 return Int(seg)
             }
-        }
-        
-        ///Get the start MIDI for the scale and hand
-        ///The scale start might have been set by scale customisation
-        func getStartMidi(hand:Int, midi:Int) -> Int {
-            var startMidi = midi
-            if let scaleCustomisation = self.scaleCustomisation {
-                if hand == 0 {
-                    if let startMidiRH = scaleCustomisation.startMidiRH {
-                        return startMidiRH
-                    }
-                }
-                
-                if hand == 1 {
-                    if let startMidiLH = scaleCustomisation.startMidiLH {
-                        return startMidiLH
-                    }
-                }
-            }
-            if hand == 1 {
-                startMidi = midi - 12
-                if self.scaleMotion == .similarMotion {
-                    if startMidi >= 53 {
-                        startMidi -= 12
-                    }
-                }
-            }
-            if octaves > 1 {
-                if hand == 0 {
-                    if startMidi >= 65 {
-                        startMidi -= 12
-                    }
-                }
-            }
-            return startMidi
         }
         
         for handIndex in [0,1] {
@@ -606,36 +567,71 @@ public class Scale : Codable {
                 setFingerBreaks(hand: hand)
             }
             
-//            if self.scaleType == .chromatic {
-//                ///Chromatic fingering is usually 1,3 whereas finger breaks for other scales are determined by a break in the finger number in the finger sequence.
-//                //setChromaticFingerBreaks(hand: hand)
-//                setFingerBreaks(hand: hand)
-//            }
-//            else {
-//                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-//                    ///Set segments for Broken Chords. Broken chords color the chord arpeggios by segment
-//                    for hand in self.scaleNoteState {
-//                        for state in hand {
-//                            state.keyboardFingerColourTypeUp = KeyboardColourType.bySegment
-//                            state.keyboardFingerColourTypeDown = KeyboardColourType.bySegment
-//                        }
-//                    }
-//                }
-//                else {
-////                    if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished, .arpeggioDiminishedSeventh].contains(self.scaleType) {
-////                        //setFingerBreaksArpeggio(hand: hand)
-////                        setFingerBreaks(hand: hand)
-////                    }
-////                    else {
-//                        setFingerBreaks(hand: hand)
-////                    }
-//                }
+            //            if self.scaleType == .chromatic {
+            //                ///Chromatic fingering is usually 1,3 whereas finger breaks for other scales are determined by a break in the finger number in the finger sequence.
+            //                //setChromaticFingerBreaks(hand: hand)
+            //                setFingerBreaks(hand: hand)
+            //            }
+            //            else {
+            //                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
+            //                    ///Set segments for Broken Chords. Broken chords color the chord arpeggios by segment
+            //                    for hand in self.scaleNoteState {
+            //                        for state in hand {
+            //                            state.keyboardFingerColourTypeUp = KeyboardColourType.bySegment
+            //                            state.keyboardFingerColourTypeDown = KeyboardColourType.bySegment
+            //                        }
+            //                    }
+            //                }
+            //                else {
+            ////                    if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished, .arpeggioDiminishedSeventh].contains(self.scaleType) {
+            ////                        //setFingerBreaksArpeggio(hand: hand)
+            ////                        setFingerBreaks(hand: hand)
+            ////                    }
+            ////                    else {
+            //                        setFingerBreaks(hand: hand)
+            ////                    }
+            //                }
         }
         //}
         //if debug {
         //debug1("End Init", rootName: "G", hand: 1)
         //}
         Scale.createCount += 1
+    }
+    
+    ///Get the start MIDI for the scale and hand
+    ///The scale start might have been set by scale customisation
+    func getStartMidi(hand:Int, midi:Int) -> Int {
+        var startMidi = midi
+        if let scaleCustomisation = self.scaleCustomisation {
+            if hand == 0 {
+                if let startMidiRH = scaleCustomisation.startMidiRH {
+                    return startMidiRH
+                }
+            }
+            
+            if hand == 1 {
+                if let startMidiLH = scaleCustomisation.startMidiLH {
+                    return startMidiLH
+                }
+            }
+        }
+        if hand == 1 {
+            startMidi = midi - 12
+            if self.scaleMotion == .similarMotion {
+                if startMidi >= 53 {
+                    startMidi -= 12
+                }
+            }
+        }
+        if octaves > 1 {
+            if hand == 0 {
+                if startMidi >= 65 {
+                    startMidi -= 12
+                }
+            }
+        }
+        return startMidi
     }
     
     func getHandTypes() -> [HandType] {
@@ -893,6 +889,17 @@ public class Scale : Codable {
         return self.scaleNoteState[0].count
     }
     
+    func getStartMidi(handType:HandType) -> Int {
+        var midi = 0
+        if handType == .right {
+            midi = self.scaleNoteState[0][0].midi
+        }
+        if handType == .left {
+            midi = self.scaleNoteState[1][0].midi
+        }
+        return midi
+    }
+    
     func abbreviateFileName(name:String) -> String {
         var out = name
         out = out.replacingOccurrences(of: "Harmonic", with: "Harm")
@@ -1067,10 +1074,6 @@ public class Scale : Codable {
         
         //let halfway = self.scaleNoteState[hand].count/2//-1
         let highPointIndex = self.getHighPointIndex(hand: hand)
-//        if self.scaleType == .chromatic {
-//            print("========++++C")
-//            self.debug11("Chriomo", rootName: "C", hand: 1)
-//        }
         if hand == 0 {
             for i in 0..<self.scaleNoteState[hand].count {
                 let noteState = self.scaleNoteState[hand][i]

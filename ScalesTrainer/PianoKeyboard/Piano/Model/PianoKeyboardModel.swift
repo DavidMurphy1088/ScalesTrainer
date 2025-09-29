@@ -5,7 +5,6 @@ public protocol PianoKeyboardDelegate: AnyObject {
     func pianoKeyDown(_ keyNumber: Int)
 }
 
-//@MainActor
 public class PianoKeyboardModel: ObservableObject, Equatable {
     let name:String
     public static var sharedRH = PianoKeyboardModel(name: "commonRH", keyboardNumber: 1)
@@ -34,23 +33,6 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-//    private var _scaleDirection = 0
-//        private var lock = os_unfair_lock_s()
-//
-//        var scaleDirection: Int {
-//            get {
-//                os_unfair_lock_lock(&lock)
-//                defer { os_unfair_lock_unlock(&lock) }
-//                return _scaleDirection
-//            }
-//            set {
-//                os_unfair_lock_lock(&lock)
-//                _scaleDirection = newValue
-//                os_unfair_lock_unlock(&lock)
-//            }
-//        }
-    
-
     var keyboardNumber:Int ////😡 the lowest value is 1. If changed to 0 remove all the ' -1' in the code that uses it
     func getKeyboardHandType() -> HandType? {
         switch self.keyboardNumber {
@@ -84,7 +66,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         return lhs.keyboardNumber == rhs.keyboardNumber
     }
 
-    public func joinKeyboard(score:Score, fromKeyboard:PianoKeyboardModel, scale:Scale, handType:HandType) -> PianoKeyboardModel {
+    public func joinKeyboard(score:Score, fromKeyboard:PianoKeyboardModel, scale:Scale) -> PianoKeyboardModel {
         let merged = PianoKeyboardModel(name: "merged", keyboardNumber: (self.keyboardNumber + fromKeyboard.keyboardNumber) * 10)
         var offset = 0
         var keyCount = 0
@@ -124,13 +106,16 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         
         ///Need to fill the gap between the LH and RH if the RH scales doesnt exactly follow on from the LH scale. e.g. Gr 5 chromatic LH start C, Rh start E
         if highestLHInScaleKey.midi != lowestRHInScaleKey.midi {
+            
             if let lastKey = lastKey {
-                //let fillerKeyModel = PianoKeyModel(scale: scale, score: score, keyboardModel: merged, keyIndex: offset, midi: lastKey.midi + 1, handType: .right)
-                let fillerKeyModel = PianoKeyModel(scale: scale, score: score, keyboardModel: merged, keyIndex: offset, midi:0, handType: .right)
-                offset += 1
-                //fillerKeyModel.keyOffsetFromLowestKey = 1 //Force it to allocate horizontal space to a black note (to align all the RH keys) and to paint that black note.
-                //fillerKeyModel.setState(state: lastKey.scaleNoteState)
-                merged.pianoKeyModel.append(fillerKeyModel)
+                let missingKeys = lowestRHInScaleKey.midi - lastKey.midi - 1
+                for i in 0..<missingKeys {
+                    let fillerKeyModel = PianoKeyModel(scale: scale, score: score, keyboardModel: merged, keyIndex: offset, midi:0, handType: .right)
+                    offset += 1
+                    merged.pianoKeyModel.append(fillerKeyModel)
+                }
+                //offset += 1
+                //merged.pianoKeyModel.append(fillerKeyModel)
             }
         }
        
@@ -159,6 +144,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
         merged.firstKeyMidi = self.firstKeyMidi
         merged.keyboardAudioManager = AudioManager.shared
+        merged.debug1("Merged ")
         return merged
     }
     
@@ -208,49 +194,76 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         var lowestKeyMidi = scale.getScaleNoteState(handType: handType, index: lowestIndex)!.midi // [hand][lowestIndex].midi
         
         ///Decide first key to show on the keyboard - either the F key or the C key
+        ///Cant go off scaleRoot name - e.g. name F# for the custom chromatic F#A#
         //switch self.scalesModel.scale.scaleRoot.name {
-        switch scale.scaleRoot.name {
-        case "C#":
-            lowestKeyMidi -= 1
-        case "D♭":
-            lowestKeyMidi -= 1
-        case "D":
-            lowestKeyMidi -= 2
-        case "E♭":
-            lowestKeyMidi -= 3
-        case "E":
-            lowestKeyMidi -= 4
-            
-        case "G♭":
-            lowestKeyMidi -= 1
-        case "F#":
-            lowestKeyMidi -= 1
-        case "G":
-            lowestKeyMidi -= 2
-        case "G#":
-            lowestKeyMidi -= 2
-        case "A♭":
-            lowestKeyMidi -= 3
-        case "A":
-            lowestKeyMidi -= 4
-        case "B♭":
-            lowestKeyMidi -= 5
-        case "B":
-            lowestKeyMidi -= 6
-
-        default:
-            lowestKeyMidi -= 0
+//        switch scale.scaleRoot.name {
+//        case "C#":
+//            lowestKeyMidi -= 1
+//        case "D♭":
+//            lowestKeyMidi -= 1
+//        case "D":
+//            lowestKeyMidi -= 2
+//        case "E♭":
+//            lowestKeyMidi -= 3
+//        case "E":
+//            lowestKeyMidi -= 4
+//            
+//        case "G♭":
+//            lowestKeyMidi -= 1
+//        case "F#":
+//            lowestKeyMidi -= 1
+//        case "G":
+//            lowestKeyMidi -= 2
+//        case "G#":
+//            lowestKeyMidi -= 2
+//        case "A♭":
+//            lowestKeyMidi -= 3
+//        case "A":
+//            lowestKeyMidi -= 4
+//        case "A#":
+//            lowestKeyMidi -= 5
+//        case "B♭":
+//            lowestKeyMidi -= 5
+//        case "B":
+//            lowestKeyMidi -= 6
+//
+//        default:
+//            lowestKeyMidi -= 0
+//        }
+        
+        var keyDelta = 0
+        let startMidi = scale.getStartMidi(handType: handType) % 12
+        switch startMidi {
+            case 0 : keyDelta = 0
+            case 1 : keyDelta = 1
+            case 2 : keyDelta = 2
+            case 3 : keyDelta = 3
+            case 4 : keyDelta = 4
+            case 5 : keyDelta = 0
+            case 6 : keyDelta = 1
+            case 7 : keyDelta = 2
+            case 8 : keyDelta = 3
+            case 9 : keyDelta = 4
+            case 10 : keyDelta = 5
+            case 11 : keyDelta = 6
+            default: keyDelta = 0
         }
-               
+        lowestKeyMidi -= keyDelta
+        let notes = ["C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B"]
+        
+        let scaleName = notes[startMidi]
         var numKeys = (scale.octaves * 12) + 1
         numKeys += 2
-        if ["E", "G", "A", "A♭", "E♭"].contains(scale.scaleRoot.name) {
+        
+        //if ["E", "G", "A", "A♭", "E♭"].contains(scale.scaleRoot.name) {
+        if ["E", "G", "A", "A♭", "E♭"].contains(scaleName) {
             numKeys += 4
         }
-        if ["G#"].contains(scale.scaleRoot.name) {
-            numKeys += 1
-        }
-        if ["B", "B♭"].contains(scale.scaleRoot.name) {
+//        if ["G#"].contains(scale.scaleRoot.name) {
+//            numKeys += 1
+//        }
+        //if ["B", "B♭"].contains(scale.scaleRoot.name) {
+        if ["B", "B♭"].contains(scaleName) {
             numKeys += 6
         }
         if [.brokenChordMajor, .brokenChordMinor].contains(scale.scaleType) {
@@ -263,12 +276,14 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     func configureKeyboardForScale(scale:Scale, score:Score, handType:HandType) {
         (self.firstKeyMidi, self.numberOfKeys) = getKeyBoardStartAndSize(scale: scale, handType: handType)
         self.pianoKeyModel = []
-        self.keyRects1 = Array(repeating: .zero, count: numberOfKeys)
-        for i in 0..<numberOfKeys {
-            let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
+        self.keyRects1 = Array(repeating: .zero, count: self.numberOfKeys)
+        for i in 0..<self.numberOfKeys {
+            let midi = self.firstKeyMidi + i
+            let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: midi, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
         }
         self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType, scaleDirection: 0)
+        //self.debug11("configureKeyboardForScale hand:\(handType) keys:\(self.numberOfKeys)")
     }
     
     func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, handType:HandType) {
@@ -312,13 +327,14 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
                 }
             }
         }
+        //self.debug11("linkScaleFingersToKeyboardKeys")
     }
     
-    func debug11(_ ctx:String) {
+    func debug1(_ ctx:String) {
         let idString = String(self.id.uuidString.suffix(4))
-        print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString))")
+        print("=== Keyboard status ===\(ctx), Number:\(self.keyboardNumber) ID:\(idString)) scale:\(scalesModel.scale.getScaleDescriptionHelpMessage())")
         if self.pianoKeyModel.count > 0 {
-            for i in 0..<numberOfKeys {
+            for i in 0..<self.pianoKeyModel.count {
                 let key = self.pianoKeyModel[i]
                 print(String(format: "%02d",i), "keyOffset:", String(format: "%02d",key.keyOffsetFromLowestKey), "hand:", key.handType, "midi:", key.midi, terminator: "")
 

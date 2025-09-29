@@ -262,14 +262,7 @@ class ExerciseHandler  {
     
     func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Int) {
         var expectedNotes:[RequiredNote] = []
-        
-//        func log1(_ m:String) {
-//            print("=======\(self.noteNotificationNumber)", m)
-//            for n in expectedNotes {
-//                print("  ", n.midi, "hand", n.handType, "matched", n.matched)
-//            }
-//        }
-        
+                
         ///Gather the expected next midi(s) in each hand. We look ahead usualy 2 notes for a match.
         ///Thats because at faster tempos there may be failure to get notified of correct notes the student plays.
         if expectedNotes.count == 0 {

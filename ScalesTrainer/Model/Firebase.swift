@@ -2,6 +2,7 @@ import Firebase
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseDatabase
 
 public class Firebase  {
     public static var shared = Firebase()
@@ -9,35 +10,106 @@ public class Firebase  {
     //let dbName = "Scales"
     let dbName = "Scales_2025_09"
     
-    func writeToRealtimeDatabase(board:String, grade:Int, key:String, data: [String: Any], callback: ((String) -> Void)?) {
-        let database = Database.database().reference() // Reference to the root of the database
-        //print("======= FB write, board: \(board), grade: \(grade), key: \(key)")
-        database.child(self.dbName).child("\(board)_\(grade)").child(key).setValue(data) { error, ref in
+    // MARK: - Authentication Methods
+    
+    /// Sign in anonymously with Firebase Auth
+    func signInAnonymously(completion: @escaping (Bool, String?) -> Void) {
+        Auth.auth().signInAnonymously { authResult, error in
             if let error = error {
-                self.logger.reportError(self, "Error writing to database: \(error.localizedDescription)")
-                if let callback {
-                    callback("error:\(error.localizedDescription)")
-                }
+                self.logger.reportError(self, "Anonymous sign-in failed: \(error.localizedDescription)")
+                completion(false, error.localizedDescription)
+                return
+            }
+            
+            if let user = authResult?.user {
+                //self.logger.reportInfo(self, "Anonymous user signed in with UID: \(user.uid)")
+                completion(true, nil)
             } else {
-                if let callback = callback {
-                    callback("Callback for write OK")
+                completion(false, "Unknown authentication error")
+            }
+        }
+    }
+    
+    /// Check if user is currently authenticated
+    func isUserAuthenticated() -> Bool {
+        return Auth.auth().currentUser != nil
+    }
+    
+    /// Get current user UID (returns nil if not authenticated)
+    func getCurrentUserUID() -> String? {
+        return Auth.auth().currentUser?.uid
+    }
+    
+    /// Sign out current user
+    func signOut(completion: @escaping (Bool, String?) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            completion(true, nil)
+        } catch let signOutError as NSError {
+            self.logger.reportError(self, "Sign out failed: \(signOutError.localizedDescription)")
+            completion(false, signOutError.localizedDescription)
+        }
+    }
+    
+    // MARK: - Database Methods (with Auth Check)
+    
+    /// Ensure user is authenticated before performing database operations
+    private func ensureAuthenticated(completion: @escaping (Bool) -> Void) {
+        if isUserAuthenticated() {
+            completion(true)
+            return
+        }
+        
+        // If not authenticated, try to sign in anonymously
+        signInAnonymously { success, error in
+            if success {
+                completion(true)
+            } else {
+                self.logger.reportError(self, "Failed to authenticate user: \(error ?? "Unknown error")")
+                completion(false)
+            }
+        }
+    }
+    
+    func writeToRealtimeDatabase(board:String, grade:Int, key:String, data: [String: Any], callback: ((String) -> Void)?) {
+        ensureAuthenticated { [weak self] authenticated in
+            guard let self = self, authenticated else {
+                callback?("error: Authentication failed")
+                return
+            }
+            
+            let database = Database.database().reference()
+            
+            // Optional: Include user UID in the data path for user-specific data
+            // let userUID = self.getCurrentUserUID() ?? "anonymous"
+            // let dataPath = "\(self.dbName)/\(userUID)/\(board)_\(grade)/\(key)"
+            
+            database.child(self.dbName).child("\(board)_\(grade)").child(key).setValue(data) { error, ref in
+                if let error = error {
+                    self.logger.reportError(self, "Error writing to database: \(error.localizedDescription)")
+                    callback?("error:\(error.localizedDescription)")
+                } else {
+                    callback?("Callback for write OK")
                 }
             }
         }
     }
     
     func deleteFromRealtimeDatabase(board:String, grade:Int, key:String, callback: ((String) -> Void)?) {
-        let database = Database.database().reference()
-        print("=======CEll view Delete", board, grade, key)
-        database.child(self.dbName).child("\(board)_\(grade)").child(key).removeValue { error, _ in
-            if let error = error {
-                self.logger.reportError(self, "Error deleting from database: \(error.localizedDescription)")
-                if let callback {
-                    callback("error:\(error.localizedDescription)")
-                }
-            } else {
-                if let callback = callback {
-                    callback("OK")
+        ensureAuthenticated { [weak self] authenticated in
+            guard let self = self, authenticated else {
+                callback?("error: Authentication failed")
+                return
+            }
+            
+            let database = Database.database().reference()
+            
+            database.child(self.dbName).child("\(board)_\(grade)").child(key).removeValue { error, _ in
+                if let error = error {
+                    self.logger.reportError(self, "Error deleting from database: \(error.localizedDescription)")
+                    callback?("error:\(error.localizedDescription)")
+                } else {
+                    callback?("OK")
                 }
             }
         }
@@ -45,28 +117,33 @@ public class Firebase  {
     
     ///Return the scale key and staff JSON for each scale in the grade
     func readAllScales(board:String, grade:Int, completion: @escaping ([(String, String, String)]) -> Void) {
-        let database = Database.database().reference() // Get a reference to the database
+        ensureAuthenticated { [weak self] authenticated in
+            guard let self = self, authenticated else {
+                completion([])
+                return
+            }
+            
+            let database = Database.database().reference()
 
-        database.child(self.dbName).child("\(board)_\(grade)").observeSingleEvent(of: .value) { snapshot in
-            var result: [(String, String, String)] = [] // Array to store the result
+            database.child(self.dbName).child("\(board)_\(grade)").observeSingleEvent(of: .value) { snapshot in
+                var result: [(String, String, String)] = []
 
-            if let scalesData = snapshot.value as? [String: Any] {
-                for (scaleKey, scaleDetails) in scalesData {
-                    if let details = scaleDetails as? [String: Any] {
-                        let staffJSON = details["staff"] as? String
-                        let scaleJSON = details["scale"] as? String
-                        if let staffJSON = staffJSON, let scaleJSON = scaleJSON {
-                            result.append((scaleKey, staffJSON, scaleJSON)) 
+                if let scalesData = snapshot.value as? [String: Any] {
+                    for (scaleKey, scaleDetails) in scalesData {
+                        if let details = scaleDetails as? [String: Any] {
+                            let staffJSON = details["staff"] as? String
+                            let scaleJSON = details["scale"] as? String
+                            if let staffJSON = staffJSON, let scaleJSON = scaleJSON {
+                                result.append((scaleKey, staffJSON, scaleJSON))
+                            }
                         }
                     }
                 }
-            } else {
-                //print("No data found at SCALES node.")
+                completion(result)
+            } withCancel: { error in
+                self.logger.reportError(self, "Error reading known-correct data, error:\(error.localizedDescription)")
+                completion([])
             }
-            completion(result)
-        } withCancel: { error in
-            self.logger.reportError(self, "Error reading known-correct data, error:\(error.localizedDescription)")
-            completion([])
         }
     }
     
@@ -74,47 +151,59 @@ public class Firebase  {
     ///Write the score for note placements, note accidentals, clef swaps etc
     ///Write the scale to record fingering and (Sept 2025) finger breaks
     func writeKnownCorrect(scale:Scale, score:Score, board:String, grade:Int) {
-        func completedCallback1(_ x:String) {
-        }
-        do {
-            ///Scale
-            let scaleKey = scale.getScaleIdentificationKey()
-            let scaleData = try JSONEncoder().encode(scale)
-//            if let jsonString = String(data: scaleData, encoding: .utf8) {
-//                print("========", jsonString)
-//            }
-            
-            let scaleJSON = String(data: scaleData, encoding: .utf8)
-            /// Score
-            let scoreData = try JSONEncoder().encode(score)
-            let scoreJSON = String(data: scoreData, encoding: .utf8)
-                
-            if let scoreJSON = scoreJSON, let scaleJSON = scaleJSON {
-                let formatter = DateFormatter()
-                formatter.dateStyle = .medium // Choose a predefined date style
-                formatter.timeStyle = .short // Choose a predefined time style
-                let formattedDate = formatter.string(from: Date())
-                var version = ""
-                if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-                   let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
-                    version = "Version \(appVersion) (Build \(buildNumber))"
+        ensureAuthenticated { [weak self] authenticated in
+            guard let self = self, authenticated else {
+                if let self = self {
+                    self.logger.reportError(self, "Authentication failed for writeKnownCorrect")
                 }
-                let staffData: [String: Any] = [
-                    "version": version,
-                    "date": formattedDate ,
-                    "staff": scoreJSON,
-                    "scale": scaleJSON
-                ]
-                self.writeToRealtimeDatabase(board: board, grade: grade, key: scaleKey, data:staffData, callback: completedCallback1)
-            }
-            else {
-                logger.reportError(self, "Cannot encode score to JSON  \(scaleKey)")
+                return
             }
             
-        } catch {
-            logger.reportError(self, "Error encoding user: \(error)")
+            func completedCallback1(_ x:String) {
+                // Handle completion if needed
+            }
+            
+            do {
+                ///Scale
+                let scaleKey = scale.getScaleIdentificationKey()
+                let scaleData = try JSONEncoder().encode(scale)
+                let scaleJSON = String(data: scaleData, encoding: .utf8)
+                
+                /// Score
+                let scoreData = try JSONEncoder().encode(score)
+                let scoreJSON = String(data: scoreData, encoding: .utf8)
+                    
+                if let scoreJSON = scoreJSON, let scaleJSON = scaleJSON {
+                    let formatter = DateFormatter()
+                    formatter.dateStyle = .medium
+                    formatter.timeStyle = .short
+                    let formattedDate = formatter.string(from: Date())
+                    
+                    var version = ""
+                    if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                       let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                        version = "Version \(appVersion) (Build \(buildNumber))"
+                    }
+                    
+                    // Optional: Include user UID in the data
+                    let userUID = self.getCurrentUserUID() ?? "anonymous"
+                    
+                    let staffData: [String: Any] = [
+                        "version": version,
+                        "date": formattedDate,
+                        "userUID": userUID,
+                        "staff": scoreJSON,
+                        "scale": scaleJSON
+                    ]
+                    
+                    self.writeToRealtimeDatabase(board: board, grade: grade, key: scaleKey, data: staffData, callback: completedCallback1)
+                } else {
+                    self.logger.reportError(self, "Cannot encode score to JSON  \(scaleKey)")
+                }
+                
+            } catch {
+                self.logger.reportError(self, "Error encoding user: \(error)")
+            }
         }
     }
-
 }
-

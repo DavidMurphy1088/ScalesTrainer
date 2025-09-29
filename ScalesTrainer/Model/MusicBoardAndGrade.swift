@@ -629,7 +629,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             ///Chromatic
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves,
                                 hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(startMidiRH: 68, startMidiLH: 54, customScaleName:"F#/A# Chromatic Contrary Motion")))
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 70, startMidiLH: 54, customScaleName:"F#/A# Chromatic Contrary Motion")))
 
             ///Minors
             for minorType in [ScaleType.harmonicMinor, ScaleType.melodicMinor] {

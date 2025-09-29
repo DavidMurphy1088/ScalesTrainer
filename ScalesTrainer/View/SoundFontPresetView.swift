@@ -391,7 +391,6 @@ class SamplerConductor: ObservableObject {
         // Test common General MIDI banks and presets
         let banksToTest = [0, 1, 8, 16, 32, 128] // Common banks
         let presetsToTest = Array(0...127) // All GM presets
-        print("▶️  =================== Instruments")
         for bank in banksToTest {
             for preset in presetsToTest {
                 do {
