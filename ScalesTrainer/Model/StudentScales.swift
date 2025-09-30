@@ -14,13 +14,15 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
     var practiceDay: Int
     var scale: Scale?
     var badgeCount:Int
+    var freeContent:Bool
     
-    init(scale:Scale, scaleId: String, visible:Bool, day:Int) {
+    init(scale:Scale, scaleId: String, visible:Bool, day:Int, freeContent:Bool) {
         self.id = UUID()
         self.scale = scale
         self.scaleId = scaleId
         self.practiceDay = day
         self.badgeCount = 0
+        self.freeContent = freeContent
     }
     
     func setVisible(way:Bool) {
@@ -38,6 +40,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         case scaleId
         case practiceDay
         case badgeCount
+        case freeContent
     }
     
     required init(from decoder: Decoder) throws {
@@ -46,6 +49,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         scaleId = try container.decode(String.self, forKey: .scaleId)
         practiceDay = try container.decode(Int.self, forKey: .practiceDay)
         badgeCount = try container.decode(Int.self, forKey: .badgeCount)
+        freeContent = try container.decode(Bool.self, forKey: .freeContent)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -54,6 +58,7 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         try container.encode(scaleId, forKey: .scaleId)
         try container.encode(practiceDay, forKey: .practiceDay)
         try container.encode(badgeCount, forKey: .badgeCount)
+        try container.encode(freeContent, forKey: .freeContent)
     }
 }
 
@@ -72,11 +77,12 @@ class StudentScales: Codable {
         self.studentScales = []
         self.createdDayOfWeek = Calendar.current.component(.weekday, from: Date()) - 1 //zero base
         
+        var count = 0
         for scale in scales {
             self.studentScales.append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
-                                                   visible: true, day: 0))
+                                                   visible: true, day: 0, freeContent: count < 4))
+            count += 1
         }
-        //setPracticeDaysForScales()
         //debug("Init")
     }
     

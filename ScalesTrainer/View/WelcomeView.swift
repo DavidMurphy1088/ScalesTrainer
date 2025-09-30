@@ -46,7 +46,9 @@ struct WelcomeView: View {
                         FigmaNavLink(destination: UserEditView(
                             addingFirstUser: true,
                             user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0)))) {
-                            Text("Get Started")
+                                VStack {
+                                    Text("Get Started").padding()
+                                }
                         }
                     }
                     Spacer()

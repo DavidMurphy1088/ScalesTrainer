@@ -138,8 +138,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     private let googleAPI = GoogleAPI.shared
     
     ///Product ID's that are known to the app
-    //private let configuredProductIDs:[String] = ["MT_NZMEB_Subscription_Month_3", "MT_NZMEB_Subscription_Month_6", "MT_NZMEB_Subscription_Month_12"]
-    private let configuredProductIDs:[String] = ["Trinity_Monthly_Test"]
+    private let configuredProductIDs:[String] = ["100"]
     
     private override init() {
         super.init()
@@ -188,7 +187,7 @@ public class LicenceManager: NSObject, ObservableObject, SKProductsRequestDelega
     }
     
     public func isLicensed() -> Bool {
-        return true
+        //return true
         let user = Settings.shared.getCurrentUser("License mgr")
         if emailIsLicensed(email: user.email) {
             return true
@@ -519,15 +518,7 @@ public struct LicenseManagerView: View {
         let products = LicenceManager.shared.purchaseableProducts.values.sorted { (product1, product2) -> Bool in
             return product1.price.compare(product2.price) == .orderedAscending
         }
-//        let filteredProducts = products.filter { product in {
-//            let grade = contentSection.getPathTitle().replacingOccurrences(of: " ", with: "_")
-//            if product.productIdentifier.hasPrefix("MT") {
-//                return true
-//            }
-//            return product.productIdentifier.hasPrefix("NZMEB") && product.productIdentifier.contains(grade)
-//        }()
-//        }
-        //return filteredProducts
+
         return products
     }
     
@@ -536,7 +527,7 @@ public struct LicenseManagerView: View {
         let yearString:String
         public var body: some View {
             VStack() {
-                let info = "Access to Scales Academy content is restricted without a subscription.\n\nPurchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
+                let info = "Purchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
                 //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
                 Text(info).padding()
             }
@@ -594,6 +585,7 @@ public struct LicenseManagerView: View {
                     }
                     .padding()
                     .navigationTitle("Available Subscriptions")
+                    .frame(width: UIScreen.main.bounds.width * 0.6, height: UIScreen.main.bounds.height * 0.3)
                     if UIDevice.current.userInterfaceIdiom == .phone {
                         Button(action: {
                             isPopupPresented.toggle()
@@ -617,7 +609,6 @@ public struct LicenseManagerView: View {
                     if iapManager.isInPurchasingState {
                         Text("Purchase in progress. Please standby...").font(.title).foregroundColor(.green).bold().padding()
                     }
-
                 }
                 else {
                     Text("Sorry, no subscription is available yet")
@@ -655,11 +646,10 @@ public struct LicenseManagerView: View {
             DetailedLicensesView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .navigationTitle("Subscriptions")
-                .navigationBarTitleDisplayMode(.inline) 
+                .navigationBarTitleDisplayMode(.inline)
                 .commonToolbar(
-                    title: "Subscriptions", helpMsg: "", onBack: {}
+                    title: "Subscriptions", helpMsg: "Use this screen to mange your Scales Academy subscriptions", onBack: {}
                 )
         }
     }
 }
-

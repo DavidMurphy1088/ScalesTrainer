@@ -78,8 +78,6 @@ struct HandsView: View {
 //    }
 //}
 
-
-
 struct PickBackingStyle: View {
     @Binding var backingPresetNumber: Int
 
@@ -100,8 +98,8 @@ struct PickBackingStyle: View {
             Preset(preset: 2, name: "Electric Piano"),
             Preset(preset: 6, name: "Harpsichord"),
             Preset(preset: 7, name: "Clavinet"),
-            Preset(preset: 9, name: "Glockspiel"),
-            Preset(preset: 10, name: "Music Box"),
+            //Preset(preset: 9, name: "Glockspiel"),
+            //Preset(preset: 10, name: "Music Box"),
             Preset(preset: 11, name: "Vibraphone"),
             Preset(preset: 12, name: "Marimba"),
             Preset(preset: 15, name: "Dulcimer"),

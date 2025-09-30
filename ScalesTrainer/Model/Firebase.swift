@@ -139,6 +139,7 @@ public class Firebase  {
                         }
                     }
                 }
+                self.logger.log(self, "🟢 Connected Ok")
                 completion(result)
             } withCancel: { error in
                 self.logger.reportError(self, "Error reading known-correct data, error:\(error.localizedDescription)")

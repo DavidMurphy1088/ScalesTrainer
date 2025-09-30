@@ -2,6 +2,7 @@ import SwiftUI
 import Foundation
 import Combine
 import AVFoundation
+import SwiftUI
 
 struct ScalesGridCellView: View {
     let user:User?
@@ -14,8 +15,9 @@ struct ScalesGridCellView: View {
     let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
-    //@State private var fadeIn = false
     let compact = UIDevice.current.userInterfaceIdiom == .phone
+    @State var promptForLicence = false
+    @State var scaleName:String = ""
     
     func testDataButtons(user:User) -> some View {
         VStack {
@@ -48,11 +50,16 @@ struct ScalesGridCellView: View {
     var body: some View {
         Button(action: {
             if let scale = self.scaleToChart.scale {
-                if scale.hands.count == 1 {
-                    self.navigateToScale = true
+                if self.scaleToChart.freeContent {
+                    if scale.hands.count == 1 {
+                        self.navigateToScale = true
+                    }
+                    else {
+                        self.navigateToSelectHands = true
+                    }
                 }
                 else {
-                    self.navigateToSelectHands = true
+                    self.promptForLicence = true
                 }
             }
         }) {
@@ -67,7 +74,6 @@ struct ScalesGridCellView: View {
                         HStack {
                             Text(" ")
                             VStack(alignment: .leading) {
-                                //let scaleTitle = scale.getScaleName(showHands: false, handFull: false, octaves: false)
                                 let scaleTitle = scale.getScaleName()
                                 Text(scaleTitle)
                                     .foregroundColor(.black)
@@ -86,6 +92,22 @@ struct ScalesGridCellView: View {
                                     }
                                     let hands = scale.getScaleDescriptionParts(hands: true)
                                     Text(hands).font(compact ? .callout : .title3).foregroundColor(.black).font(.footnote)
+                                    Spacer()
+                                    if self.scaleToChart.freeContent {
+                                        if compact {
+                                            Image("figma_forward_button")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(height: cellWidth * 0.15)
+                                        }
+                                    }
+                                    else {
+                                        Image("padlock")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: cellWidth * 0.10)
+                                            .brightness(-0.15)
+                                    }
                                 }
                             }
                         }
@@ -98,10 +120,12 @@ struct ScalesGridCellView: View {
                         if !compact {
                             HStack {
                                 Spacer()
-                                Image("figma_forward_button")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: cellWidth * 0.15)
+                                if self.scaleToChart.freeContent {
+                                    Image("figma_forward_button")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: cellWidth * 0.15)
+                                }
                             }
                         }
                     }
@@ -111,19 +135,6 @@ struct ScalesGridCellView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .figmaRoundedBackgroundWithBorder(fillColor: self.color, outlineBox: false)
-
-//            .opacity(fadeIn ? 1 : 0)  // start invisible
-//                .onAppear {
-//                    withAnimation(.easeIn(duration: 1.0)) {
-//                        fadeIn = true
-//                    }
-//            }
-//            .onChange(of: scaleToChart.scale?.getScaleIdentificationKey()) {
-//                fadeIn = false
-//                withAnimation(.easeIn(duration: 1.0)) {
-//                    fadeIn = true
-//                }
-//            }
             .navigationTitle(navigationTitle)
             .navigationDestination(isPresented: $navigateToScale) {
                 if let user = user, let scale = scaleToChart.scale {
@@ -135,6 +146,21 @@ struct ScalesGridCellView: View {
                     SelectHandForPractice(user:user, scale: scale, titleColor: self.color)
                 }
             }
+            .onAppear() {
+                if let scale = scaleToChart.scale {
+                    self.scaleName = scale.getScaleName()
+                }
+            }
+            .alert("Subscription Required", isPresented: $promptForLicence) {
+                VStack {
+                    Button("Yes", role: .destructive) {
+                        //deleteItem()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                }
+                } message: {
+                    Text("\n\(scaleName) requires a subscription.\n\nSubscribe now to unlock all premium content.")
+                }
         }
     }
 }

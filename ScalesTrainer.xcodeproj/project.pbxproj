@@ -469,7 +469,6 @@
 		79DA82232BCCEA6A008AC492 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				7995E9012E8008D200D61535 /* SoundFontPresetView.swift */,
 				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
 				791EF05D2E59CF1D00347D57 /* BadgesView.swift */,
 				793292902E46BEA800890198 /* BadgesViewOLD.swift */,
@@ -498,6 +497,7 @@
 				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
 				796D16182E508027009FB741 /* SelectHandsView.swift */,
 				799381782C75D1A400734FDE /* SettingsView.swift */,
+				7995E9012E8008D200D61535 /* SoundFontPresetView.swift */,
 				79FF42FD2E4F248300042814 /* SpinWheelView.swift */,
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				799381762C755F2300734FDE /* SpinWheelViewOLD.swift */,

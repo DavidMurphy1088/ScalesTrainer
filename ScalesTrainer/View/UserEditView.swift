@@ -73,9 +73,10 @@ public struct UserEditView: View {
     let settings = Settings.shared
     @State private var sheetNonce = UUID()
     @State private var showDeleteAlert = false
-    @FocusState private var isTextFieldFocused: Bool
+
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     let colors = FigmaColors.shared
+    let boxSize = UIScreen.main.bounds.width * 0.2
     
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
         var grade = 0
@@ -101,165 +102,164 @@ public struct UserEditView: View {
         }
     }
     
+    func HeaderView() -> some View {
+        HStack {
+            if isSaveEnabled(user:user) {
+                if user.boardAndGrade.grade > 0 {
+                    FigmaButtonWithLabel(
+                        label: {
+                            HStack {
+                                Image("figma_tickmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
+                                Text("Save")
+                            }
+                        },
+                        action: {
+                            if user.boardAndGrade.grade > 0 {
+                                user.setColor()
+                                settings.setUser(user: user)
+                                dismiss()
+                                if addingFirstUser {
+                                    settings.setCurrentUser(id: user.id)
+                                    ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                }
+                            } else {
+                                errorMessage = "▶️ Please select a grade before saving"
+                                showErrorAlert = true
+                            }
+                        }
+                    )
+                    .padding()
+                }
+            }
+            
+            if settings.hasUser(name: user.name) {
+                let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
+                if enabled  {
+                    FigmaButtonWithLabel(
+                        label: {
+                            Text("Remove User").foregroundColor(.red)
+                        },
+                        action: {
+                            showDeleteAlert = true
+                        }
+                    )
+                    .padding()
+                    .alert("Are you sure you want to delete \(user.name)?",
+                           isPresented: $showDeleteAlert) {
+                        Button("Delete", role: .destructive) {
+                            user.name = userName
+                            settings.deleteUser(user: user)
+                            dismiss()
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                    }
+                }
+            }
+            Spacer()
+        }
+    }
+    
     public var body: some View {
         HStack {
             Text("  ")
             VStack(alignment: .leading) {
                 ///Header area
-                VStack {
-                    if UIDevice.current.userInterfaceIdiom != .phone {
-//                        if addingFirstUser {
-//                            HStack {
-//                                Text("Let’s set up your account").font(.title2)
-//                                Spacer()
-//                            }
-//                        }
-                    }
-                    HStack {
-                        if isSaveEnabled(user:user) {
-                            if user.boardAndGrade.grade > 0 {
-                                FigmaButtonWithLabel(
-                                    label: {
-                                        HStack {
-                                            Image("figma_tickmark")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
-                                            Text("Save")
-                                        }
-                                    },
-                                    action: {
-                                        if user.boardAndGrade.grade > 0 {
-                                            user.setColor()
-                                            settings.setUser(user: user)
-                                            dismiss()
-                                            if addingFirstUser {
-                                                settings.setCurrentUser(id: user.id)
-                                                ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
-                                            }
-                                        } else {
-                                            errorMessage = "▶️ Please select a grade before saving"
-                                            showErrorAlert = true
-                                        }
-                                    }
-                                )
-                                .padding()
-                            }
-                        }
-                        
-                        if settings.hasUser(name: user.name) {
-                            let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
-                            if enabled  {
-                                FigmaButtonWithLabel(
-                                    label: {
-                                        Text("Remove User").foregroundColor(.red)
-                                    },
-                                    action: {
-                                        showDeleteAlert = true
-                                    }
-                                )
-                                .padding()
-                                .alert("Are you sure you want to delete \(user.name)?",
-                                       isPresented: $showDeleteAlert) {
-                                    Button("Delete", role: .destructive) {
-                                        user.name = userName
-                                        settings.deleteUser(user: user)
-                                        dismiss()
-                                    }
-                                    Button("Cancel", role: .cancel) { }
-                                } message: {
-                                }
-                            }
-                        }
-                        Spacer()
-                    }
+                if !nameFieldFocused {
+                    HeaderView()
+                    //.padding()
                 }
-                .padding()
                 if !compact {
+                    Text("")
                     Text("")
                 }
                 VStack(alignment: .leading) {
-                    TextField("Please enter your name", text: $userName)
-                        .focused($nameFieldFocused)
-                        .padding()
-                        .cornerRadius(8)
-                        .foregroundColor(.black)
-                        .font(.body)
-                        .frame(width: UIScreen.main.bounds.width * 0.3)
-                        //.figmaRoundedBackgroundWithBorder(fillColor: .white)
-                        .toolbar {
-                                    ToolbarItemGroup(placement: .keyboard) {
-                                        Spacer()
-                                        Button("Done") {
-                                            isTextFieldFocused = false
-                                            nameFieldFocused = false
-                                        }
-                                        .foregroundColor(.blue)
-                                        .fontWeight(.semibold)
-                                    }
-                                }
-                    
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        Text("")
-                        Text("Your Grade").font(.title2)
-                        Text("Note: Only one grade can be active at one time.")
-                    }
-                }
-                .padding()
-                
-                .onChange(of: userName) {_, name in
-                    user.name = name
-                    //self.saveEnabled = isSaveEnabled(user: user)
-                }
-
-                ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        
-                        ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
-                            VStack {
-//                                let boxWidth = screenWidth * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.08)
-//                                Image(board.imageName)
-//                                    .resizable()
-//                                    .scaledToFill()
-//                                    .frame(width: boxWidth, height: boxWidth)
-//                                    .clipShape(RoundedRectangle(cornerRadius: boxWidth * 0.1))
-                                Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
-                                Text(board.name).font(.title2).padding()
-                                    .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
-                                if !compact {
-                                    Text("")
+                        Text("Your name").padding()
+                        TextField("enter your name here", text: $userName)
+                            .focused($nameFieldFocused)
+                            .padding()
+                            .cornerRadius(8)
+                            .foregroundColor(.black)
+                            .font(.body)
+                            .frame(width: UIScreen.main.bounds.width * 0.3)
+                            .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .keyboard) {
+                                    Spacer()
+                                    Button("Done") {
+                                        nameFieldFocused = false
+                                    }
+                                    .foregroundColor(.blue)
+                                    .fontWeight(.semibold)
                                 }
-                                FigmaButton("Select Grade", action: {
-                                    self.selectedBoard = board
-                                    self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
-                                    sheetNonce = UUID()
-                                })
-                                .padding()
-                                ///Make the full name last else the buttons dont line up horizontally
-                                if !compact {
-                                    Text(board.fullName)//.font(.caption)
-                                        .lineLimit(nil)                 // allow unlimited lines
-                                        .multilineTextAlignment(.leading) // left-align
-                                        .fixedSize(horizontal: false, vertical: true) // allows wrapping
-                                }
-                                Spacer()
                             }
-                            .frame(width: UIScreen.main.bounds.width * 0.2)
+                        Spacer()
+                    }
+                    if !nameFieldFocused {
+                        if UIDevice.current.userInterfaceIdiom == .pad {
+                            Text("")
+                            Text("Your Grade").font(.title2)
+                            Text("Note: Only one grade can be active at one time.")
                         }
                     }
                 }
+                .padding(.vertical)
+                //.border(.red)
+                
+                .onChange(of: userName) {_, name in
+                    user.name = name
+                }
+                
+                if !nameFieldFocused {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
+                                VStack {
+                                    Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
+                                    Text(board.name).font(.title2).padding()
+                                        .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
+                                    //if !compact {
+                                        Text("")
+                                    //}
+                                    FigmaButton("Select Grade", action: {
+                                        self.selectedBoard = board
+                                        self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
+                                        sheetNonce = UUID()
+                                    })
+                                    //.padding()
+                                    Text("")
+                                    ///Make the full name last else the buttons dont line up horizontally
+                                    if !compact {
+                                        Text(board.fullName)//.font(.caption)
+                                            .lineLimit(nil)                 // allow unlimited lines
+                                            .multilineTextAlignment(.leading) // left-align
+                                            .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                    }
+                                    Spacer()
+                                }
+                                .frame(width: boxSize)
+                                //.border(.red)
+                            }
+                        }
+                    }
+                    
+                    Text("  ")
+                }
             }
-            Text("  ")
         }
+
         .onAppear {
             if !self.addingFirstUser {
                 self.selectedGrade = user.boardAndGrade.grade
             }
             userName = user.name
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                nameFieldFocused = true
-            }
-            //self.saveEnabled = self.isSaveEnabled(user: user)
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                nameFieldFocused = true
+//            }
         }
         .sheet(item: $selectedBoard, onDismiss: {
             }) { board in

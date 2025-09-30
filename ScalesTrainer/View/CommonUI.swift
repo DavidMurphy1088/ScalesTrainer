@@ -156,6 +156,9 @@ class FigmaColors {
             if item.shade != shade {
                 continue
             }
+            if item.name.lowercased() == "blue" {
+                continue
+            }
             let lower = item.colorHex// name.lowercased()
             if seen.insert(lower).inserted {
                 result.append(lower)

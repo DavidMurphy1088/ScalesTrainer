@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "\n%@ requires a subscription.\n\nSubscribe now to unlock all premium content." : {
+
+    },
     " " : {
 
     },
@@ -216,6 +219,9 @@
 
     },
     "Email %@" : {
+
+    },
+    "enter your name here" : {
 
     },
     "Example: GeneralMIDI, Piano, Drums" : {
@@ -442,9 +448,6 @@
     "Play The Scale" : {
 
     },
-    "Please enter your name" : {
-
-    },
     "Practice Now" : {
 
     },
@@ -588,6 +591,9 @@
     "Show Tap Data" : {
 
     },
+    "SIMULATOR CANNOT DO LICENSING" : {
+
+    },
     "Sorry, no subscription is available yet" : {
 
     },
@@ -634,6 +640,9 @@
           }
         }
       }
+    },
+    "Subscription Required" : {
+
     },
     "Subscriptions" : {
       "comment" : "Menu"
@@ -750,6 +759,9 @@
     "XXXX" : {
 
     },
+    "Yes" : {
+
+    },
     "You’ve landed on..." : {
 
     },
@@ -757,6 +769,9 @@
 
     },
     "Your Grade" : {
+
+    },
+    "Your name" : {
 
     }
   },

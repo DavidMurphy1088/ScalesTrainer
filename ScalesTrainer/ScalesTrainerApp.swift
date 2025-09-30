@@ -153,10 +153,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 #else
         SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
         LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
-        LicenceManager.shared.requestProducts() ///Get products
+        //LicenceManager.shared.requestProducts() ///Get products
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
+        LicenceManager.shared.requestProducts() ///Get products
         if !Settings.shared.isDeveloperModeOn() {
             LicenceManager.shared.getFreeLicenses()
         }

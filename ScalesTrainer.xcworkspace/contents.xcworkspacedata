@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ScalesAcademySubscriptions.storekit">
+   </FileRef>
+   <FileRef
       location = "group:ScalesTrainer.xcodeproj">
    </FileRef>
    <FileRef
