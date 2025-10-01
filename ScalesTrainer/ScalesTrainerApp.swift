@@ -140,7 +140,7 @@ struct DeveloperView: View {
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var orientationLock: UIInterfaceOrientationMask = UIInterfaceOrientationMask.landscape
+    //var orientationLock: UIInterfaceOrientationMask = UIInterfaceOrientationMask.landscape
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
@@ -149,18 +149,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 #if targetEnvironment(simulator)
         ///Simulator asks for password every time even though its signed in with Apple ID. By design for IAP purchasing... :(
         ///Code to run on the Simulator
-        AppLogger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
+        //AppLogger.shared.log(self, "Running on the Simulator, will not load IAP licenses")
 #else
-        SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
-        LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
+        //SKPaymentQueue.default().add(LicenceManager.shared) ///Do this as early as possible so manager is a queue observer
+        //LicenceManager.shared.verifyStoredSubscriptionReceipt(ctx: "App starting") ///Get the current validity of any locally stored subscription receipt
         //LicenceManager.shared.requestProducts() ///Get products
         ///LicenceManager.shared.restoreTransactions() ///No need - the last subscription receipt received is stored locally. If not (e.g. nmew device) user does 'Restore Subscriptions'
 #endif
         FirebaseApp.configure()
-        LicenceManager.shared.requestProducts() ///Get products
-        if !Settings.shared.isDeveloperModeOn() {
-            LicenceManager.shared.getFreeLicenses()
-        }
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         AppLogger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
         
@@ -328,7 +324,19 @@ struct TabContainerView: View {
 //                    .tag(30)
 //                    .environmentObject(viewManager)
                         
-                LicenseManagerView(contentSection: ContentSection(), email: "email.com")
+//                LicenseManagerView()
+//                    .tabItem {
+//                        Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
+//                    }
+//                    .tag(40)
+//                    .environmentObject(viewManager)
+//                    .environmentObject(licence)
+//                    .task {
+//                        // (Optional) refresh on first view
+//                        await licence.refreshProducts()
+//                        await licence.refreshEntitlements()
+//                    }
+                SubscriptionsView()
                     .tabItem {
                         Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                     }
@@ -418,7 +426,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @ObservedObject private var viewManager = ViewManager.shared
-
+    
     let settings = Settings.shared
     let launchTimeSecs = 3.0
     
@@ -431,6 +439,7 @@ struct ScalesTrainerApp: App {
             AppLogger.shared.reportError(AVAudioSession.sharedInstance(), err.localizedDescription)
         }
 #endif
+        LicenceManagerNew.shared.configure(productIDs: ["100"])
         Settings.shared.load()
     }
     

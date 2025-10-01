@@ -76,7 +76,8 @@ public struct UserEditView: View {
 
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     let colors = FigmaColors.shared
-    let boxSize = UIScreen.main.bounds.width * 0.2
+    let boxWidth = UIScreen.main.bounds.width * 0.2
+    let boxHeight = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.2)
     
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
         var grade = 0
@@ -163,22 +164,27 @@ public struct UserEditView: View {
         }
     }
     
+    func showUnderlyingUI() -> Bool {
+//        if !compact {
+//            return true
+//        }
+        return !nameFieldFocused
+    }
+    
     public var body: some View {
         HStack {
-            Text("  ")
+            Text("XXX").padding().foregroundColor(.clear)
             VStack(alignment: .leading) {
                 ///Header area
-                if !nameFieldFocused {
-                    HeaderView()
-                    //.padding()
+                if showUnderlyingUI() {
+                    HeaderView()//.padding(.horizontal)
+                        //.border(.green)
+                        .figmaRoundedBackgroundWithBorder(fillColor: .white)
                 }
-                if !compact {
-                    Text("")
-                    Text("")
-                }
+
                 VStack(alignment: .leading) {
                     HStack {
-                        Text("Your name").padding()
+                        Text("Your name ").padding()
                         TextField("enter your name here", text: $userName)
                             .focused($nameFieldFocused)
                             .padding()
@@ -186,7 +192,7 @@ public struct UserEditView: View {
                             .foregroundColor(.black)
                             .font(.body)
                             .frame(width: UIScreen.main.bounds.width * 0.3)
-                            .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                            //.figmaRoundedBackgroundWithBorder(fillColor: .white)
                             .toolbar {
                                 ToolbarItemGroup(placement: .keyboard) {
                                     Spacer()
@@ -199,57 +205,66 @@ public struct UserEditView: View {
                             }
                         Spacer()
                     }
-                    if !nameFieldFocused {
-                        if UIDevice.current.userInterfaceIdiom == .pad {
-                            Text("")
-                            Text("Your Grade").font(.title2)
-                            Text("Note: Only one grade can be active at one time.")
-                        }
-                    }
+                    .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                    .padding(.vertical)
                 }
-                .padding(.vertical)
-                //.border(.red)
+                //.padding(.vertical)
+                //.border(.purple)
                 
                 .onChange(of: userName) {_, name in
                     user.name = name
                 }
                 
-                if !nameFieldFocused {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
+                if showUnderlyingUI() {
+                    VStack(alignment: .leading) {
+                        if showUnderlyingUI() {
+                            if !compact {
                                 VStack {
-                                    Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
-                                    Text(board.name).font(.title2).padding()
-                                        .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
-                                    //if !compact {
-                                        Text("")
-                                    //}
-                                    FigmaButton("Select Grade", action: {
-                                        self.selectedBoard = board
-                                        self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
-                                        sheetNonce = UUID()
-                                    })
-                                    //.padding()
-                                    Text("")
-                                    ///Make the full name last else the buttons dont line up horizontally
-                                    if !compact {
-                                        Text(board.fullName)//.font(.caption)
-                                            .lineLimit(nil)                 // allow unlimited lines
-                                            .multilineTextAlignment(.leading) // left-align
-                                            .fixedSize(horizontal: false, vertical: true) // allows wrapping
-                                    }
-                                    Spacer()
+                                    //Text("")//.padding(.horizontal)
+                                    Text("Your Grade").font(.title2).padding(.horizontal)
+                                    Text("Note: Only one grade can be active at one time.").padding(.horizontal)
                                 }
-                                .frame(width: boxSize)
-                                //.border(.red)
+                                .padding(.vertical)
                             }
                         }
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
+                                    VStack {
+                                        Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
+                                        Text(board.name).font(.title2).padding()
+                                            .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
+                                        //if !compact {
+                                        Text("")
+                                        //}
+                                        FigmaButton("Select Grade", action: {
+                                            self.selectedBoard = board
+                                            self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
+                                            sheetNonce = UUID()
+                                        })
+                                        //.padding()
+                                        Text("")
+                                        ///Make the full name last else the buttons dont line up horizontally
+                                        if !compact {
+                                            Text(board.fullName)//.font(.caption)
+                                                .lineLimit(nil)                 // allow unlimited lines
+                                                .multilineTextAlignment(.center) // left-align
+                                                .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                        }
+                                        Spacer()
+                                    }
+                                    .frame(width: boxWidth, height: boxHeight)
+                                    //.border(.red)
+                                }
+                            }
+                        }
+                        //.border(.green)
+                        Text("  ")
                     }
-                    
-                    Text("  ")
+                    .figmaRoundedBackgroundWithBorder(fillColor: .white)
                 }
             }
+            Text("XXXX").padding().foregroundColor(.clear)
         }
 
         .onAppear {

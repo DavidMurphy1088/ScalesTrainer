@@ -19,9 +19,6 @@
     "        " : {
 
     },
-    "                  " : {
-
-    },
     "  %@   " : {
 
     },
@@ -121,9 +118,6 @@
     "AudioKit SoundFont Player %@" : {
 
     },
-    "Available Subscriptions" : {
-
-    },
     "Back %@" : {
 
     },
@@ -216,9 +210,6 @@
 
     },
     "Done" : {
-
-    },
-    "Email %@" : {
 
     },
     "enter your name here" : {
@@ -409,6 +400,9 @@
     "Load & Test" : {
 
     },
+    "Loading subscriptions…" : {
+
+    },
     "Log" : {
 
     },
@@ -419,6 +413,12 @@
 
     },
     "New Amplitude Filter:%@" : {
+
+    },
+    "No automatic renewal" : {
+
+    },
+    "No subscriptions found" : {
 
     },
     "Note: Only one grade can be active at one time." : {
@@ -457,12 +457,6 @@
     "Preset: %lld" : {
 
     },
-    "Purchase" : {
-
-    },
-    "Purchase in progress. Please standby..." : {
-
-    },
     "Quick Presets" : {
 
     },
@@ -493,13 +487,19 @@
     "Remove User" : {
 
     },
+    "Renews on %@" : {
+
+    },
     "Required Consecutive Count" : {
 
     },
     "Reset" : {
 
     },
-    "Restore Subscriptions" : {
+    "Restore Purchases" : {
+
+    },
+    "Retry" : {
 
     },
     "Right Hand" : {
@@ -591,12 +591,6 @@
     "Show Tap Data" : {
 
     },
-    "SIMULATOR CANNOT DO LICENSING" : {
-
-    },
-    "Sorry, no subscription is available yet" : {
-
-    },
     "SoundFont File Name" : {
 
     },
@@ -624,6 +618,9 @@
     "Stats: %@" : {
 
     },
+    "status: %@" : {
+
+    },
     "Stop Analysis" : {
 
     },
@@ -640,6 +637,9 @@
           }
         }
       }
+    },
+    "Subscription Active" : {
+
     },
     "Subscription Required" : {
 
@@ -693,9 +693,6 @@
 
     },
     "Test Scale" : {
-
-    },
-    "This subscription provides you with access to all Scales Academy content." : {
 
     },
     "Thumb Under" : {
@@ -756,6 +753,9 @@
     "Who wants to play?" : {
 
     },
+    "XXX" : {
+
+    },
     "XXXX" : {
 
     },
@@ -765,13 +765,10 @@
     "You’ve landed on..." : {
 
     },
-    "Your current subscription is " : {
-
-    },
     "Your Grade" : {
 
     },
-    "Your name" : {
+    "Your name " : {
 
     }
   },

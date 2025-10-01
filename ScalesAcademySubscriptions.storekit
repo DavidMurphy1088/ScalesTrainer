@@ -17,7 +17,12 @@
 
   ],
   "settings" : {
+    "_compatibilityTimeRate" : {
+      "3" : 6
+    },
     "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
     "_storeKitErrors" : [
       {
         "current" : null,
@@ -64,7 +69,8 @@
         "enabled" : false,
         "name" : "Offer Code Redeem Sheet"
       }
-    ]
+    ],
+    "_timeRate" : 1004
   },
   "subscriptionGroups" : [
     {
@@ -82,9 +88,9 @@
             {
               "displayPrice" : "0.99",
               "eligibility" : [
-                "expired",
+                "existing",
                 "new",
-                "existing"
+                "expired"
               ],
               "internalID" : "D1B0326C",
               "isStackable" : true,
@@ -97,12 +103,7 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "7BC54B07",
-          "introductoryOffer" : {
-            "displayPrice" : "0.99",
-            "internalID" : "390BEABB",
-            "paymentMode" : "free",
-            "subscriptionPeriod" : "P1M"
-          },
+          "introductoryOffer" : null,
           "localizations" : [
             {
               "description" : "Monthly Subscription",
@@ -112,7 +113,7 @@
           ],
           "productID" : "100",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Monthly",
+          "referenceName" : "Scales Academy Monthly Subscription",
           "subscriptionGroupID" : "DD5B5062",
           "type" : "RecurringSubscription",
           "winbackOffers" : [

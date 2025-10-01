@@ -7,7 +7,8 @@ struct WelcomeView: View {
     @State private var isEditingUser = false
     @State var screenWidth = UIScreen.main.bounds.width
     @State var screenHeight = UIScreen.main.bounds.height
-
+    let compact = UIDevice.current.userInterfaceIdiom == .phone
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -47,7 +48,7 @@ struct WelcomeView: View {
                             addingFirstUser: true,
                             user: User(boardAndGrade: MusicBoardAndGrade(board: defaultBoard, grade: 0)))) {
                                 VStack {
-                                    Text("Get Started").padding()
+                                    Text("Get Started").padding(compact ? 8 : 0)
                                 }
                         }
                     }

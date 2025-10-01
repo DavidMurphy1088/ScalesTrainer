@@ -16,12 +16,13 @@
 		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
 		79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */; };
 		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
+		790C4E922E8D1856002D7C4B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790C4E912E8D1856002D7C4B /* StoreKit.framework */; };
 		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
 		790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790FF4242E3F687700D53BF6 /* UserListView.swift */; };
 		7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C00B2D605B5D0030928B /* UserDetailsView.swift */; };
 		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
 		791EF05E2E59CF2300347D57 /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791EF05D2E59CF1D00347D57 /* BadgesView.swift */; };
-		791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* LicenseManagerView.swift */; };
+		791F6C312CD18939006BAEBD /* SubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* SubscriptionsView.swift */; };
 		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
 		79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */; };
 		79312DB12C0B2B7E005FDE8B /* TapDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* TapDataView.swift */; };
@@ -105,6 +106,7 @@
 		79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */; };
 		79CFA1F02C3808A90018DC8A /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA1EF2C3808A90018DC8A /* Test.swift */; };
 		79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */; };
+		79D1C9602E8CBB4300BAA5EF /* LicenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */; };
 		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
 		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
 		79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */; };
@@ -164,12 +166,13 @@
 		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
 		79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHandler.swift; sourceTree = "<group>"; };
 		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
+		790C4E912E8D1856002D7C4B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		790FF4242E3F687700D53BF6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
 		7910C00B2D605B5D0030928B /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
 		791EF05D2E59CF1D00347D57 /* BadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesView.swift; sourceTree = "<group>"; };
-		791F6C302CD18939006BAEBD /* LicenseManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManagerView.swift; sourceTree = "<group>"; };
+		791F6C302CD18939006BAEBD /* SubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsView.swift; sourceTree = "<group>"; };
 		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
 		79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTicker.swift; sourceTree = "<group>"; };
 		79312DB02C0B2B7E005FDE8B /* TapDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapDataView.swift; sourceTree = "<group>"; };
@@ -249,6 +252,7 @@
 		79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewOLD.swift; sourceTree = "<group>"; };
 		79CFA1EF2C3808A90018DC8A /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureReportView.swift; sourceTree = "<group>"; };
+		79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenceManager.swift; sourceTree = "<group>"; };
 		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
 		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
 		79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleRoot.swift; sourceTree = "<group>"; };
@@ -310,6 +314,7 @@
 				79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */,
 				79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */,
 				79B072F22D37C2D200CD6F2B /* FirebaseCore in Frameworks */,
+				790C4E922E8D1856002D7C4B /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +324,7 @@
 		29591435A11F915AD3A16C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				790C4E912E8D1856002D7C4B /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -483,7 +489,6 @@
 				799DC8412D5190BB007008A5 /* FFTView.swift */,
 				79312DB62C118B41005FDE8B /* HelpView.swift */,
 				799BE2A92BFF4EED004B19F6 /* LegendView.swift */,
-				791F6C302CD18939006BAEBD /* LicenseManagerView.swift */,
 				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
 				790614442D94093A009E7A8D /* MetronomeView.swift */,
 				79F80E0B2CD4CD6800D636FB /* MIDIView.swift */,
@@ -502,6 +507,7 @@
 				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
 				799381762C755F2300734FDE /* SpinWheelViewOLD.swift */,
 				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
+				791F6C302CD18939006BAEBD /* SubscriptionsView.swift */,
 				79312DB02C0B2B7E005FDE8B /* TapDataView.swift */,
 				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
 				79C979042C1AD4D7001C286F /* TestView.swift */,
@@ -517,11 +523,10 @@
 		79DA822C2BCCED24008AC492 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */,
+				79064CA72D08349C002490A8 /* AnimalBadge.swift */,
 				794D49472BCD15AE0005A173 /* AppLogger.swift */,
 				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
 				79566AD52CB9259C00581A57 /* BackingChords.swift */,
-				79064CA72D08349C002490A8 /* AnimalBadge.swift */,
 				796ED5D72E48902D00771D3A /* BadgeContainer.swift */,
 				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
 				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
@@ -534,6 +539,7 @@
 				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
 				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
 				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
+				79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */,
 				793D6E572BD66F730012F701 /* Metronome.swift */,
 				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
 				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
@@ -547,6 +553,7 @@
 				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
 				79F3F58B2D5363C700D6BAA3 /* Settings.swift */,
 				79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */,
+				79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */,
 				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
 				79CB56202C599D9F00BB328F /* StudentScales.swift */,
 				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
@@ -814,6 +821,7 @@
 				799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */,
 				79FF0D612DD0253A00126573 /* ResultView.swift in Sources */,
 				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
+				79D1C9602E8CBB4300BAA5EF /* LicenceManager.swift in Sources */,
 				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
 				7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */,
 				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
@@ -869,7 +877,7 @@
 				797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */,
 				7995E9022E8008D600D61535 /* SoundFontPresetView.swift in Sources */,
 				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
-				791F6C312CD18939006BAEBD /* LicenseManagerView.swift in Sources */,
+				791F6C312CD18939006BAEBD /* SubscriptionsView.swift in Sources */,
 				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
 				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
 				79A811012E4DD4A50019F866 /* ChooseYourExerciseView.swift in Sources */,
@@ -1084,6 +1092,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1091,7 +1100,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1122,6 +1131,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1129,7 +1139,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
