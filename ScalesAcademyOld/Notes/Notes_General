@@ -1,0 +1,66 @@
+IS IT ONLY FOLLOW OR LEAD TOO?
+
+BaseTap.swift:removeTap():145:The tapped node isn't attached to the engine (BaseTap.swift:removeTap():145)
+BaseTap.swift:start():76:The tapped node isn't attached to the engine (BaseTap.swift:start():76)
+<0x10716da40> Gesture: System gesture gate timed out.
+
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[NSIndexPath objectForKey:]: unrecognized selector sent to instance 0x8000000000000000'
+
+*** First throw call stack:
+(0x183ee87cc 0x1811bb2e4 0x183fee8c8 0x183e86b08 0x183e86430 0x182569344 0x103223974 0x1032233a8 0x1032230cc 0x102f4541c 0x1030b8b54 0x102f34928 0x1061e8a30 0x1061ea71c 0x1061fade8 0x1061fa9a4 0x183ebc204 0x183eb9440 0x183eb8830 0x1cfe981c4 0x186a1eeb0 0x186acd5b4 0x188621f98 0x188602664 0x188605490 0x103210bb8 0x103210c68 0x1a98a6ec8)
+libc++abi: terminating due to uncaught exception of type NSException
+ 
+--- UI TESTS ---
+Run UI Tests Correctly: Use Command + U or the Test Navigator to execute tests. *** Do not use the Run button (⌘R).***
+
+--- NOTES ---
+Translucent background https://www.remove.bg/
+
+---- Change IMAGE COLOR
+https://www1.lunapic.com/editor/
+
+colors
+        https://coolors.co/993955-ae76a6-a3c3d9-ccd6eb-e9ecf5
+
+--- Subscriptions ---
+
+Your first subscription must be submitted with a new app version. Create your subscription, then select it from the app’s In-App Purchases and Subscriptions section on the version page before submitting the version to App Review.
+
+Once your binary has been uploaded and your first subscription has been submitted for review, additional subscriptions can be submitted from the Subscriptions section.
+- frequencies - 1 week, 1,2,3 or 6 months, yearly
+
+--- Monthly subscriptions ---
+For monthly subscriptions, Apple does not send an advance notification or prompt specifically before each renewal charge. Since monthly renewals occur frequently, Apple assumes users are aware of the regular billing cycle, which is disclosed during the initial purchase and confirmed in the original purchase confirmation email.
+
+Key Points on Monthly Subscription Billing and Notifications
+No Monthly Pre-Charge Notification: Unlike longer subscription periods (such as annual plans), which might have a reminder a few days before renewal, monthly subscriptions don’t typically receive this notification due to the regularity of charges.
+
+Purchase Confirmation: Users receive an email receipt upon their initial purchase, which clearly states that the subscription will renew monthly until they cancel. This is intended to set the expectation of automatic monthly billing.
+
+Renewal Receipts: After each renewal charge, Apple emails the user a renewal receipt as confirmation. Users can also view their subscription status and next billing date at any time under Settings > [Your Name] > Subscriptions.
+
+Failed Payment Notifications: If a payment fails, Apple notifies the user via email and provides instructions to update their payment method, offering a grace period to avoid subscription cancellation.
+
+If you want to keep users informed about upcoming charges in your app, you might consider adding in-app reminders around the renewal date as a courtesy, though Apple doesn’t require this.
+
+=== MIDI setup === 1Nov2024
+Run Audio Midi Setup on MAC and ensure iPad window is online
+
+Use VMPK virtual keyboard on MAC
+ - use VMPK, Edit ->Midi Connections and set Output MIDI Connection to iPad
+ 
+Run MIDI Monitor on MAC to ensure VMPK is sending MIDI events
+
+Run code on iPad to listen for events.
+
+ 
+Refactoring <---------
+Clefs (not staffs) should determine note placment
+Staffs have a hand but not a treble, bass type
+
+
+soundevent handler must filter out any pitch that is not on either keyb or the combined kebb
+- if two notes will arrive together at lead the scale: higher will go to RH keyboard, lower to LH keyboard
+- if one note arrives it will go to the KB that had the note last closest to new note
+
+- chromatric and contrary n=motion differnet

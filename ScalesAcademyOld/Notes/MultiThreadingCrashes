@@ -1,0 +1,105 @@
+Use Schema Edit Run Disagnostrics to enable thread sanitizer. Only runs on emulator, not device
+BUT DROP ALL SCHEMA SANITIZERS on APP RELEASE
+
+Address Sanitizer doesn’t detect memory leaks, attempts to access uninitialized memory, or integer overflow errors. Use Instruments and the other sanitizer tools to find additional errors.
+
+=== MAKING THEAD SAFE
+Detect data races among your app’s threads -
+You can’t use Thread Sanitizer to diagnose iOS, tvOS, and watchOS apps running on a device. Use Thread Sanitizer only on your 64-bit macOS app, or to diagnose your 64-bit iOS, tvOS, or watchOS app running in Simulator.
+Choosing the Right Strategy
+Use a serial dispatch queue for simple cases where all processing should be sequential.
+Use locks when you need to synchronize only certain parts of the function.
+Use concurrent queues with barriers for scenarios where frequent reads and occasional writes are needed.
+Use @MainActor if the function must run on the main thread.
+
+==== CRASH 1
+BaseTap.swift:removeTap():145:The tapped node isn't attached to the engine (BaseTap.swift:removeTap():145)
+BaseTap.swift:start():76:The tapped node isn't attached to the engine (BaseTap.swift:start():76)
+<0x10716da40> Gesture: System gesture gate timed out.
+
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[NSIndexPath objectForKey:]: unrecognized selector sent to instance 0x8000000000000000'
+
+*** First throw call stack:
+(0x183ee87cc 0x1811bb2e4 0x183fee8c8 0x183e86b08 0x183e86430 0x182569344 0x103223974 0x1032233a8 0x1032230cc 0x102f4541c 0x1030b8b54 0x102f34928 0x1061e8a30 0x1061ea71c 0x1061fade8 0x1061fa9a4 0x183ebc204 0x183eb9440 0x183eb8830 0x1cfe981c4 0x186a1eeb0 0x186acd5b4 0x188621f98 0x188602664 0x188605490 0x103210bb8 0x103210c68 0x1a98a6ec8)
+libc++abi: terminating due to uncaught exception of type NSException
+
+==== CRASH 2
+FOLLOW
+if let nextExpectedIndex = self.nextExpectedNoteForHandIndex[hand] {
+
+Thread 1: EXC_BAD_ACCESS (code=1, address=0x10)
+
+Threads in -
+    public func setKeyPlaying() {
+        self.keyIsSounding = true
+        DispatchQueue.global(qos: .background).async {
+            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+
+==== CRASH 3
+
+*** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[NSIndexPath objectForKey:]: unrecognized selector sent to instance 0x8000000000000000'
+*** First throw call stack:
+(0x183ee87cc 0x1811bb2e4 0x183fee8c8 0x183e86b08 0x183e86430 0x182569344 0x103017990 0x1030173c4 0x1030170e8 0x102d3941c 0x102eacb70 0x102d28928 0x105feca30 0x105fee71c 0x105ffede8 0x105ffe9a4 0x183ebc204 0x183eb9440 0x183eb8830 0x1cfe981c4 0x186a1eeb0 0x186acd5b4 0x188621f98 0x188602664 0x188605490 0x103004bd4 0x103004c84 0x1a98a6ec8)
+libc++abi: terminating due to uncaught exception of type NSException
+
+
+==== THREADS
+
+Tap Hander - tapHandler.tapUpdate()
+
+Sound Event Handler - tapUpdate()
+
+FollowScale - processSound()
+
+Score - hilightStaffNote()
+
+- KEYBOARD calls STAFF
+    public func setKeyPlaying() {
+        if true {
+            self.keyIsSounding = true
+            DispatchQueue.global(qos: .background).async {
+                usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+                DispatchQueue.main.async {
+                    self.keyIsSounding = false
+                    self.keyboardModel.redraw()
+                }
+            }
+            ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
+            self.keyboardModel.redraw()
+            
+            if self.playedCallbacks.count > 0 {
+                if let callback = self.playedCallbacks[0] {
+                    callback()
+                    self.playedCallbacks.removeFirst()
+                }
+            }
+        }
+    }
+
+-STAFF
+    public func hilightStaffNote(segment: Int, midi: Int, handType:HandType?) {
+        let timeSlices = getAllTimeSlices()
+        var staffNoteFound:StaffNote?
+
+        for i in 0..<timeSlices.count {
+            let ts = timeSlices[i]
+            let timeSliceNotes = ts.getTimeSliceNotes(handType: handType)
+            for staffNote in timeSliceNotes {
+                if staffNote.midiNumber == midi && staffNote.segments[0] == segment {
+                    staffNote.setShowIsPlaying(true)
+                    staffNoteFound = staffNote
+                    DispatchQueue.global(qos: .background).async {
+                        ---------> usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds))
+                        DispatchQueue.main.async {
+                            staffNote.setShowIsPlaying(false)
+                        }
+                    }
+                    break
+                }
+            }
+            if staffNoteFound != nil {
+                break
+            }
+        }
+    }
+

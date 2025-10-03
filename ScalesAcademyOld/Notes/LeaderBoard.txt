@@ -1,0 +1,36 @@
+----------------------- The Cloud Run Service is
+Name :fastapi-leaderboard,  Project in Firebase is "Leaderboard"
+The project is created under Firebase (not Cloud project) but must have a billing account attached to it to show in Cloud Projects and be operable.
+The first submit run will give an iOS side message URL message about creating the database. The database 
+
+Project Leaderboard
+Project ID   leaderboard-71fa3
+Project number   867324319098
+
+The Cloud Run Service has endpoints to 1) submit and 2) get all the leaderboard records in the database
+
+Build it from local Mac with -
+gcloud builds submit --tag gcr.io/leaderboard-71fa3/fastapi-leaderboard
+
+It packages the Python up into a Docker image to run as as a Cloud Run service.
+
+Deploy it with -
+gcloud run deploy fastapi-leaderboard \
+  --image gcr.io/leaderboard-71fa3/fastapi-leaderboard \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+
+This URL are output from the deploy to use in code that access the service -
+
+Service URL: https://fastapi-leaderboard-867324319098.us-central1.run.app
+
+The service URL is the URL iOs and HTML pages uses to access the database
+
+----------------------- HTML hosted at www.musicmastereducation.co.nz/ScalesAcademy/leaderboard1.html
+
+The bucket name is www.musicmastereducation.co.nz and Google requires the bucket name to match exactly the DNS record name musicmastereducation.co.nz.
+This bucket is in the MME site project.
+
+The HTML reads a Firebase database with the student scores. It uses the service URL kGTLRSheets_DataLabel_Placement_Above
+To edit it, the HTML can just be copied from Mac to the bucket.

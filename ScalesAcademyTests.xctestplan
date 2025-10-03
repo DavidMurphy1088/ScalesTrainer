@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "E0E77FE9-6BC7-416A-87F9-AC9215C57E6E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:ScalesAcademy.xcodeproj",
+        "identifier" : "793F6BAF2E8F51C100BF94CC",
+        "name" : "ScalesAcademyTests"
+      }
+    }
+  ],
+  "version" : 1
+}
