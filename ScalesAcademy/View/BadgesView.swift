@@ -117,7 +117,7 @@ struct BadgesView: View {
             let grade = MusicBoardAndGrade(board: board, grade:1)
             let scales = grade.enumerateAllScales()
             for scale in scales {
-                scaleBadges.append(ScaleBadges(title: scale.getScaleName(handFull: true), badges: Int.random(in: 1...13)))
+                //scaleBadges.append(ScaleBadges(title: scale.getScaleName(handFull: true), badges: Int.random(in: 1...13)))
             }
         }
     }

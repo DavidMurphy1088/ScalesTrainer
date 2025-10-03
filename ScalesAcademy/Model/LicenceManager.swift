@@ -4,24 +4,28 @@ import StoreKit
 /// StoreKit 2 subscription manager (iOS 15+)
 /// Singleton usage: `LicenceManager.shared.configure(productIDs: [...])`
 @MainActor
-final class LicenceManagerNew: ObservableObject {
-
-    static let shared = LicenceManagerNew()
+final class Licencing: ObservableObject {
+    static let shared = Licencing()
     private init() {}
 
     @Published private(set) var products: [Product] = []
     @Published private(set) var isSubscribed: Bool = false
     @Published private(set) var lastExpirationDate: Date?
     @Published private(set) var statusMessage1: String?
+    @Published private(set) var willAutoRenew: Bool? = nil        // nil = unknown / not a sub
 
-    // MARK: - Config
+    private var enableLicensing:Bool = false
     private var productIDs: [String] = []
     private var hasStartedListener = false
     private var transactionListenerTask: Task<Void, Never>?
     let logger = AppLogger.shared
     
     /// Call once early (e.g., App init) with your product IDs.
-    func configure(productIDs: [String]) {
+    func configure(enableLicensing:Bool, productIDs: [String]) {
+        self.enableLicensing = enableLicensing
+        if !enableLicensing {
+            return
+        }
         self.productIDs = productIDs
         if !hasStartedListener { startTransactionListener() }
         Task {
@@ -94,34 +98,6 @@ final class LicenceManagerNew: ObservableObject {
         await refreshEntitlementsAndStatus()
     }
 
-    // MARK: - Entitlements
-//    func refreshEntitlementsOld() async {
-//        var active = false
-//        var latestExpiry: Date?
-//
-//        for await entitlement in Transaction.currentEntitlements {
-//            guard case .verified(let t) = entitlement else { continue }
-//            guard t.productType == .autoRenewable else { continue }
-//
-//            let notRevoked = (t.revocationDate == nil)
-//            let notExpired = (t.expirationDate ?? .distantFuture) > Date()
-//            if notRevoked && notExpired {
-//                active = true
-//                if let exp = t.expirationDate {
-//                    latestExpiry = max(latestExpiry ?? .distantPast, exp)
-//                }
-//
-//            }
-//
-//        }
-//
-//        isSubscribed = active
-//        lastExpirationDate = latestExpiry
-//        statusMessage = active ? "Subscription active." : "No active subscription."
-//    }
-    
-    @Published private(set) var willAutoRenew: Bool? = nil        // nil = unknown / not a sub
-    
     //Transactions -
     //              "webOrderLineItemId": "0",
     //              "price": 1990,
@@ -257,152 +233,14 @@ final class LicenceManagerNew: ObservableObject {
     }
     
     func log(_ msg:String, _ error:Bool) {
-        
-        print("============== \(error ? "🔴" : "🟢")  Licence \(msg)")
+        let msg = "\(error ? "🔴" : "")  Licence \(msg)"
+        if error  {
+            AppLogger.shared.reportError(self, msg)
+        }
+        else {
+            //AppLogger.shared.log(self, msg)
+        }
         statusMessage1 = msg
     }
 }
 
-/*
- Awesome—here’s a tight, battle-tested checklist to move from Local StoreKit → TestFlight/Sandbox (the next level). No code changes are required for StoreKit 2; it’s all setup and environment.
-
- 1) Clean up your project for Sandbox
-
- Remove the local .storekit file from the run scheme
- Xcode > Product > Scheme > Edit Scheme… > Options > StoreKit Configuration: Unset (or make a separate “Local” scheme that still points to it).
-
- Ensure target has In-App Purchase capability enabled.
-
- Keep your SK2 code as-is (use Product.products(for:), product.purchase(), Transaction.updates, etc.).
-
- 2) Create IAPs in App Store Connect (ASC)
-
- App Store Connect → My Apps → Your app → In-App Purchases.
-
- Create your Auto-Renewable Subscription(s) inside a Subscription Group.
-
- Use the same product IDs you use in code.
-
- Fill required metadata (Reference Name, Pricing, Duration, Localizations).
-
- For TestFlight, IAPs do not need App Review, but they must exist and be in a usable state (“Ready to Submit / Ready to Use” is fine).
-
- 3) Upload a TestFlight build with IAPs
-
- In Xcode, Archive and upload via Organizer (or use Transporter).
-
- After processing (a few minutes), the build appears in ASC → Your app → TestFlight.
-
- (Recommended) On the TestFlight page, confirm your IAPs are associated/visible with the build (ASC usually picks them up automatically once created).
-
- 4) Set up Sandbox testers (per-device sign-in)
-
- ASC → Users and Access → Sandbox Testers → add at least one tester (email can be non-Apple).
-
- On the test device (not simulator recommended here):
- Settings → App Store → Sandbox Account → sign in with the sandbox tester.
-
- Do not sign in with a real Apple ID during sandbox purchase.
-
- You can leave your main Apple ID signed in for iCloud; just ensure the Sandbox Account is your tester.
-
- 5) Install the app via TestFlight
-
- Invite yourself/others to the build (Internal Testing is instant; External Testing requires a brief Beta App Review).
-
- Install the app from the TestFlight app.
-
- 6) Test the flows (what to expect)
-
- Load products: Your Product.products(for:) should now return items from ASC (not your .storekit file). If the list is empty → see Troubleshooting below.
-
- Purchase with SK2: try await product.purchase() will present the Sandbox purchase sheet.
-
- Auto-renew happens on Apple’s accelerated Sandbox clock (approx):
-
- 1 week ≈ ~3 minutes
-
- 1 month ≈ ~5 minutes
-
- 2 months ≈ ~10 minutes
-
- 3 months ≈ ~15 minutes
-
- 6 months ≈ ~30 minutes
-
- 1 year ≈ ~60 minutes
-
- Your listener (Transaction.updates) should receive a renewal each accelerated period. Keep the app foregrounded to observe them reliably.
-
- Manage / Cancel: If the user cancels in the manage sheet, renewalInfo.willAutoRenew becomes false; entitlement remains until the accelerated expirationDate, then drops.
-
- 7) Optional but recommended
-
- Add a “Restore Purchases” button that calls:
-
- try? await AppStore.sync()
- await LicenceManager.shared.refreshEntitlementsAndStatus()
-
-
- (Only do this in Sandbox/Production; not in Local StoreKit.)
-
- Environment guard so you don’t call AppStore.sync() in Local mode:
-
- #if DEBUG
- let usingLocal = ProcessInfo.processInfo.environment["USE_LOCAL_STOREKIT"] == "1"
- #else
- let usingLocal = false
- #endif
- if !usingLocal { try? await AppStore.sync() }
-
-
- (If you have a server) switch receipt validation to the sandbox endpoint and/or enable App Store Server Notifications V2 (sandbox) to observe renewals server-side.
-
- 8) Test scenarios to cover
-
- First purchase, success → finish().
-
- Auto-renew tick(s) → see Transaction.updates firing.
-
- Cancel auto-renew → willAutoRenew == false, entitlement expires at end.
-
- Billing retry / grace (if configured in ASC) → reflect in UI.
-
- Restore on a clean install/device → AppStore.sync() + entitlement recompute.
-
- Manage sheet while already subscribed → ensure your UI handles it gracefully.
-
- 9) Troubleshooting cheatsheet
-
- Products array is empty
-
- Product IDs in code must match ASC exactly.
-
- Tester must be signed into Sandbox Account on device.
-
- Build must be installed via TestFlight, not Xcode run.
-
- Region/price issues: ensure the subscription is priced and available in the tester’s storefront.
-
- Purchase fails with “Cannot connect to iTunes Store”
-
- Sandbox account not signed in / network / ASC outage. Sign out/in of Sandbox Account.
-
- No renewals arriving
-
- Wait the accelerated time for your duration.
-
- Ensure you finish every transaction.
-
- Keep app foregrounded.
-
- Remember: no renewal-count in Sandbox; it keeps renewing until cancelled or the test session ends.
-
- 10) What you do not need to change
-
- Your LicenceManager class, SK2 purchase flow, and Transaction.updates listener.
-
- No code switch between Local ↔︎ Sandbox beyond not calling AppStore.sync() in Local mode.
-
- Follow those steps and you’ll have a clean path from Local StoreKit to realistic TestFlight/Sandbox testing with accelerated renewals and real App Store purchase flows.
- */

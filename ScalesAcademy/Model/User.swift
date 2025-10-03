@@ -166,7 +166,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         return title
     }
     
-    func getStudentScales(withPracticeDays:Bool) -> StudentScales {
+    func getStudentScales() -> StudentScales {
         let scales:StudentScales
         if let loadedChart = StudentScales.loadFromFile(user: self) {
             scales = loadedChart
@@ -174,13 +174,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         else {
             scales = StudentScales(user: self)
         }
-        if withPracticeDays  {
-            if !scales.arePracticeDaysSet() {
-                if let minorType = self.selectedMinorType {
-                    scales.setPracticeDaysForScales(studentScales: scales.studentScales, minorType: minorType)
-                }
-            }
-        }
+
         return scales
     }
     

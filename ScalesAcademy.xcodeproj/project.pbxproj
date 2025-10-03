@@ -7,314 +7,131 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		790537052C47319600AC794D /* PracticeChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790537042C47319600AC794D /* PracticeChartView.swift */; };
-		790614452D940943009E7A8D /* MetronomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614442D94093A009E7A8D /* MetronomeView.swift */; };
-		790614472D968A0A009E7A8D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790614462D968A06009E7A8D /* User.swift */; };
-		7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790624092C374F5D005A6A3E /* EmailView.swift */; };
-		79064CA82D08349C002490A8 /* AnimalBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA72D08349C002490A8 /* AnimalBadge.swift */; };
-		79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CA92D08ED4E002490A8 /* ExerciseState.swift */; };
-		79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAB2D0A9493002490A8 /* TestInputView.swift */; };
-		79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */; };
-		790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */; };
-		790C4E922E8D1856002D7C4B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790C4E912E8D1856002D7C4B /* StoreKit.framework */; };
-		790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 790C738E2BEF99D500609C48 /* Localizable.xcstrings */; };
-		790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790FF4242E3F687700D53BF6 /* UserListView.swift */; };
-		7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7910C00B2D605B5D0030928B /* UserDetailsView.swift */; };
-		791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */; };
-		791EF05E2E59CF2300347D57 /* BadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791EF05D2E59CF1D00347D57 /* BadgesView.swift */; };
-		791F6C312CD18939006BAEBD /* SubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791F6C302CD18939006BAEBD /* SubscriptionsView.swift */; };
-		79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */; };
-		79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */; };
-		79312DB12C0B2B7E005FDE8B /* TapDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB02C0B2B7E005FDE8B /* TapDataView.swift */; };
-		79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */; };
-		79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */; };
-		79312DB72C118B41005FDE8B /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB62C118B41005FDE8B /* HelpView.swift */; };
-		79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79312DB82C118FFE005FDE8B /* HelpMessages.swift */; };
-		7932928F2E46185A00890198 /* Todo in Sources */ = {isa = PBXBuildFile; fileRef = 7932928E2E46185600890198 /* Todo */; };
-		793292912E46BEB800890198 /* BadgesViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793292902E46BEA800890198 /* BadgesViewOLD.swift */; };
-		793D6E582BD66F730012F701 /* Metronome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793D6E572BD66F730012F701 /* Metronome.swift */; };
-		793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */ = {isa = PBXBuildFile; fileRef = 793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */; };
-		7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7942FAA42BE24E5A00658E39 /* TapEvents.swift */; };
-		794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794A9FC62C2BD24C0001297E /* CoinBankView.swift */; };
-		794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49472BCD15AE0005A173 /* AppLogger.swift */; };
-		794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D494F2BCD28AC0005A173 /* AudioManager.swift */; };
-		794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794D49522BCD28CC0005A173 /* SoundpipeAudioKit */; };
-		794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49552BCD29090005A173 /* RealTimeTapHandler.swift */; };
-		794D495A2BCD29610005A173 /* Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D49592BCD29610005A173 /* Scale.swift */; };
-		794D495C2BCD29DF0005A173 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794D495B2BCD29DF0005A173 /* Util.swift */; };
-		795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */; };
-		795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */; };
-		79552FB62BDB975D00A27531 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79552FB52BDB975D00A27531 /* Result.swift */; };
-		79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FBF2BDBB41100A27531 /* Home_1_60.m4a */; };
-		79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC02BDBB41100A27531 /* Home_2_60.m4a */; };
-		79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC12BDBB41100A27531 /* Home_3_60.m4a */; };
-		79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79552FC22BDBB41100A27531 /* Home_4_48.m4a */; };
-		79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79566AD52CB9259C00581A57 /* BackingChords.swift */; };
-		7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7967099E2BD791F90029E7ED /* CommonUI.swift */; };
-		796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C76E92BD3774400DF2DA9 /* SpeechManager.swift */; };
-		796D16192E508035009FB741 /* SelectHandsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796D16182E508027009FB741 /* SelectHandsView.swift */; };
-		796ED5D82E48903200771D3A /* BadgeContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796ED5D72E48902D00771D3A /* BadgeContainer.swift */; };
-		796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796F26782C1431E700853A21 /* HearScalePlayer.swift */; };
-		797013842BEE36E2009F85D6 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137C2BEE36E1009F85D6 /* Score.swift */; };
-		797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137E2BEE36E1009F85D6 /* StaffNote.swift */; };
-		797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970137F2BEE36E1009F85D6 /* KeySignature.swift */; };
-		797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013802BEE36E1009F85D6 /* StaffKey.swift */; };
-		797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013812BEE36E1009F85D6 /* TimeSlice.swift */; };
-		7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013822BEE36E1009F85D6 /* TimeSignature.swift */; };
-		797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7970138F2BEE3E45009F85D6 /* ScoreView.swift */; };
-		797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */; };
-		797013962BEE3E45009F85D6 /* StaffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013912BEE3E45009F85D6 /* StaffView.swift */; };
-		797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797013932BEE3E45009F85D6 /* TimeSliceView.swift */; };
-		797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797F49FF2E33887F00E04DD9 /* WelcomeView.swift */; };
-		799381772C755F2300734FDE /* SpinWheelViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381762C755F2300734FDE /* SpinWheelViewOLD.swift */; };
-		799381792C75D1A400734FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799381782C75D1A400734FDE /* SettingsView.swift */; };
-		7995E9022E8008D600D61535 /* SoundFontPresetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7995E9012E8008D200D61535 /* SoundFontPresetView.swift */; };
-		79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79980DD62E34CDFE00CF242B /* UserEditView.swift */; };
-		799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A72BFF4322004B19F6 /* CalibrationView.swift */; };
-		799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2A92BFF4EED004B19F6 /* LegendView.swift */; };
-		799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AB2C002B83004B19F6 /* BarChart.swift */; };
-		799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */; };
-		799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */; };
-		799DC8422D5190BB007008A5 /* FFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799DC8412D5190BB007008A5 /* FFTView.swift */; };
-		79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */; };
-		79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A6350B2C40895800661B0F /* ScaleTapHandler.swift */; };
-		79A811012E4DD4A50019F866 /* ChooseYourExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */; };
-		79AF165C2D4E1D18003033E4 /* scale_4_oct.wav in Resources */ = {isa = PBXBuildFile; fileRef = 79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */; };
-		79AFF13C2DD490D10049479F /* LeaderBoard.txt in Sources */ = {isa = PBXBuildFile; fileRef = 79AFF13B2DD490CA0049479F /* LeaderBoard.txt */; };
-		79B072EE2D37C2D200CD6F2B /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */; };
-		79B072F02D37C2D200CD6F2B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072EF2D37C2D200CD6F2B /* FirebaseAuth */; };
-		79B072F22D37C2D200CD6F2B /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F12D37C2D200CD6F2B /* FirebaseCore */; };
-		79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F32D37C2D200CD6F2B /* FirebaseDatabase */; };
-		79B072F62D37C2D200CD6F2B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F52D37C2D200CD6F2B /* FirebaseFirestore */; };
-		79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 79B072F72D37C2D200CD6F2B /* FirebaseStorage */; };
-		79B072FA2D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B072F92D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist */; };
-		79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B072FD2D37C76D00CD6F2B /* Firebase.swift */; };
-		79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79B073012D37C98E00CD6F2B /* Firebase.plist */; };
-		79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */; };
-		79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */; };
-		79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */; };
-		79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */; };
-		79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */; };
-		79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */; };
-		79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C65D6F2CDED7AC00467597 /* StaffClef.swift */; };
-		79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */; };
-		79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */; };
-		79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C8AD012C128F0200770C10 /* PracticeJournalView.swift */; };
-		79C979052C1AD4D7001C286F /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C979042C1AD4D7001C286F /* TestView.swift */; };
-		79CB56212C599D9F00BB328F /* StudentScales.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CB56202C599D9F00BB328F /* StudentScales.swift */; };
-		79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D6F2BEE426B00454BB6 /* Staff.swift */; };
-		79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */; };
-		79CFA1F02C3808A90018DC8A /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CFA1EF2C3808A90018DC8A /* Test.swift */; };
-		79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */; };
-		79D1C9602E8CBB4300BAA5EF /* LicenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */; };
-		79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */; };
-		79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */; };
-		79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */; };
-		79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */; };
-		79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C29F2BD112FF00AE0B24 /* NoteName.swift */; };
-		79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */; };
-		79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */; };
-		79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */; };
-		79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2A92BD1171200AE0B24 /* TouchesView.swift */; };
-		79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */; };
-		79D931112CA222760035EA6B /* ScaleTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D931102CA222760035EA6B /* ScaleTitleView.swift */; };
-		79D935D52E69A39E00F5997F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79D935D42E69A39E00F5997F /* GoogleService-Info.plist */; };
-		79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */; };
-		79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
-		79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */; };
-		79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DA82242BCCEAA0008AC492 /* ScalesView.swift */; };
-		79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82272BCCEB70008AC492 /* AudioKit */; };
-		79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA822A2BCCEB8B008AC492 /* AudioKitUI */; };
-		79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 79DA82352BCCF260008AC492 /* AudioKitEX */; };
-		79DAF3B92E80D55900EF6629 /* Steinway_D.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */; };
-		79DAF3BB2E80DCAF00EF6629 /* SoundfontParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */; };
-		79DAF3BD2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */; };
-		79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */; };
-		79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */; };
-		79EAB8772C8737B400255FC6 /* Notes_General in Resources */ = {isa = PBXBuildFile; fileRef = 79EAB8762C8737B400255FC6 /* Notes_General */; };
-		79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */ = {isa = PBXBuildFile; fileRef = 79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */; };
-		79F1A1DD2D86BB8D008CEAC9 /* StartExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */; };
-		79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3F58B2D5363C700D6BAA3 /* Settings.swift */; };
-		79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */; };
-		79F6CD752D14020200FF2681 /* MidiNotes in Resources */ = {isa = PBXBuildFile; fileRef = 79F6CD742D14020200FF2681 /* MidiNotes */; };
-		79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6CD762D157E2B00FF2681 /* MIDIManager.swift */; };
-		79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F80E0B2CD4CD6800D636FB /* MIDIView.swift */; };
-		79FD7DD72E55B9A9001D890C /* ScalesGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */; };
-		79FF0D612DD0253A00126573 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF0D602DD0253200126573 /* ResultView.swift */; };
-		79FF42FE2E4F248B00042814 /* SpinWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FF42FD2E4F248300042814 /* SpinWheelView.swift */; };
+		794708342E8E135200D43914 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 794708332E8E135200D43914 /* SoundpipeAudioKit */; };
+		794853A32E8E44D4002D5FC2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7948539D2E8E44D4002D5FC2 /* GoogleService-Info.plist */; };
+		7977103C2E8E0B8D0095F807 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7977103B2E8E0B8D0095F807 /* FirebaseFirestore */; };
+		799F9E4B2E8E01D8005BC91E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E4A2E8E01D8005BC91E /* FirebaseAnalytics */; };
+		799F9E512E8E01D8005BC91E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E502E8E01D8005BC91E /* FirebaseAppCheck */; };
+		799F9E532E8E01D8005BC91E /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E522E8E01D8005BC91E /* FirebaseAppDistribution-Beta */; };
+		799F9E552E8E022B005BC91E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E542E8E022B005BC91E /* FirebaseAnalytics */; };
+		799F9E5B2E8E022B005BC91E /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E5A2E8E022B005BC91E /* FirebaseAppCheck */; };
+		799F9E5D2E8E022B005BC91E /* FirebaseAppDistribution-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = 799F9E5C2E8E022B005BC91E /* FirebaseAppDistribution-Beta */; };
+		79BB4CEA2E8E0516006DBB26 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CE92E8E0516006DBB26 /* FirebaseAI */; };
+		79BB4CEC2E8E0516006DBB26 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CEB2E8E0516006DBB26 /* FirebaseAnalytics */; };
+		79BB4CEE2E8E0516006DBB26 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CED2E8E0516006DBB26 /* FirebaseAnalyticsCore */; };
+		79BB4CF02E8E0516006DBB26 /* FirebaseAnalyticsIdentitySupport in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CEF2E8E0516006DBB26 /* FirebaseAnalyticsIdentitySupport */; };
+		79BB4CF22E8E0516006DBB26 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CF12E8E0516006DBB26 /* FirebaseAppCheck */; };
+		79BB4CF42E8E0695006DBB26 /* FirebaseAI in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CF32E8E0695006DBB26 /* FirebaseAI */; };
+		79BB4CF62E8E0695006DBB26 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CF52E8E0695006DBB26 /* FirebaseAnalytics */; };
+		79BB4CF82E8E0695006DBB26 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CF72E8E0695006DBB26 /* FirebaseAnalyticsCore */; };
+		79BB4CFA2E8E0695006DBB26 /* FirebaseAnalyticsIdentitySupport in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CF92E8E0695006DBB26 /* FirebaseAnalyticsIdentitySupport */; };
+		79BB4CFC2E8E0695006DBB26 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4CFB2E8E0695006DBB26 /* FirebaseAppCheck */; };
+		79BB4D9A2E8E089E006DBB26 /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4D992E8E089E006DBB26 /* AudioKit */; };
+		79BB4D9C2E8E093B006DBB26 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4D9B2E8E093B006DBB26 /* FirebaseAuth */; };
+		79BB4D9E2E8E093B006DBB26 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4D9D2E8E093B006DBB26 /* FirebaseCore */; };
+		79BB4DA02E8E093B006DBB26 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4D9F2E8E093B006DBB26 /* FirebaseDatabase */; };
+		79BB4DA22E8E093B006DBB26 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4DA12E8E093B006DBB26 /* FirebaseFunctions */; };
+		79BB4DA42E8E093B006DBB26 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4DA32E8E093B006DBB26 /* FirebaseStorage */; };
+		79D5D18B2E8E248C0003C5B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
+		79EEB75F2E8E3228006A9645 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB75E2E8E3228006A9645 /* GoogleSignIn */; };
+		79EEB7612E8E3228006A9645 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7602E8E3228006A9645 /* GoogleSignInSwift */; };
+		79EEB7642E8E32CD006A9645 /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7632E8E32CD006A9645 /* GoogleAPIClientForRESTCore */; };
+		79EEB7662E8E32CD006A9645 /* GoogleAPIClientForREST_ACMEDNS in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7652E8E32CD006A9645 /* GoogleAPIClientForREST_ACMEDNS */; };
+		79EEB7682E8E32CD006A9645 /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7672E8E32CD006A9645 /* GoogleAPIClientForREST_AIPlatformNotebooks */; };
+		79EEB76A2E8E32CD006A9645 /* GoogleAPIClientForREST_APIGateway in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7692E8E32CD006A9645 /* GoogleAPIClientForREST_APIGateway */; };
+		79EEB76C2E8E32CD006A9645 /* GoogleAPIClientForREST_APIManagement in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB76B2E8E32CD006A9645 /* GoogleAPIClientForREST_APIManagement */; };
+		79EEB7742E8E3335006A9645 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7732E8E3335006A9645 /* SwiftJWT */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		79A42AB72E6988CE00B5438D /* PBXContainerItemProxy */ = {
+		793F6BB42E8F51C100BF94CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 79DA820A2BCCE95F008AC492 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 79DA82112BCCE95F008AC492;
-			remoteInfo = ScalesStar;
+			remoteGlobalIDString = 792B74B52E8D467800BB338A;
+			remoteInfo = ScalesAcademy;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.release.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.release.xcconfig"; sourceTree = "<group>"; };
-		34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScalesStar.debug.xcconfig"; path = "Target Support Files/Pods-ScalesStar/Pods-ScalesStar.debug.xcconfig"; sourceTree = "<group>"; };
-		790537042C47319600AC794D /* PracticeChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeChartView.swift; sourceTree = "<group>"; };
-		790614442D94093A009E7A8D /* MetronomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeView.swift; sourceTree = "<group>"; };
-		790614462D968A06009E7A8D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		790624092C374F5D005A6A3E /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
-		79064CA72D08349C002490A8 /* AnimalBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimalBadge.swift; sourceTree = "<group>"; };
-		79064CA92D08ED4E002490A8 /* ExerciseState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseState.swift; sourceTree = "<group>"; };
-		79064CAB2D0A9493002490A8 /* TestInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInputView.swift; sourceTree = "<group>"; };
-		79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseHandler.swift; sourceTree = "<group>"; };
-		790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordScaleProcess.swift; sourceTree = "<group>"; };
 		790C4E912E8D1856002D7C4B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		790C738E2BEF99D500609C48 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		790FF4242E3F687700D53BF6 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
-		7910C00B2D605B5D0030928B /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
-		791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Yamaha-Grand-Lite-SF-v1.1.sf2"; sourceTree = "<group>"; };
-		791EF05D2E59CF1D00347D57 /* BadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesView.swift; sourceTree = "<group>"; };
-		791F6C302CD18939006BAEBD /* SubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsView.swift; sourceTree = "<group>"; };
-		79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifyScalePlayer.swift; sourceTree = "<group>"; };
-		79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetronomeTicker.swift; sourceTree = "<group>"; };
-		79312DB02C0B2B7E005FDE8B /* TapDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapDataView.swift; sourceTree = "<group>"; };
-		79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSliceEntry.swift; sourceTree = "<group>"; };
-		79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingIsUnderwayView.swift; sourceTree = "<group>"; };
-		79312DB62C118B41005FDE8B /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
-		79312DB82C118FFE005FDE8B /* HelpMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpMessages.swift; sourceTree = "<group>"; };
-		7932928E2E46185600890198 /* Todo */ = {isa = PBXFileReference; lastKnownFileType = text; path = Todo; sourceTree = "<group>"; };
-		793292902E46BEA800890198 /* BadgesViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgesViewOLD.swift; sourceTree = "<group>"; };
-		793D6E572BD66F730012F701 /* Metronome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metronome.swift; sourceTree = "<group>"; };
-		793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MultiThreadingCrashes; sourceTree = "<group>"; };
+		792B74B62E8D467800BB338A /* ScalesAcademy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesAcademy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		793F6BB02E8F51C100BF94CC /* ScalesAcademyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesAcademyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		793F6BB92E8F981700BF94CC /* ScalesAcademyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ScalesAcademyTests.xctestplan; sourceTree = "<group>"; };
 		794180902D40E2E900FE149B /* ScalesStar.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScalesStar.entitlements; sourceTree = "<group>"; };
-		7942FAA42BE24E5A00658E39 /* TapEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapEvents.swift; sourceTree = "<group>"; };
-		794A9FC62C2BD24C0001297E /* CoinBankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinBankView.swift; sourceTree = "<group>"; };
-		794D49472BCD15AE0005A173 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
-		794D494F2BCD28AC0005A173 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
-		794D49552BCD29090005A173 /* RealTimeTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeTapHandler.swift; sourceTree = "<group>"; };
-		794D49592BCD29610005A173 /* Scale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scale.swift; sourceTree = "<group>"; };
-		794D495B2BCD29DF0005A173 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_low.aiff; sourceTree = "<group>"; };
-		795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = metronome_mechanical_high.aiff; sourceTree = "<group>"; };
-		79552FB52BDB975D00A27531 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		79552FBF2BDBB41100A27531 /* Home_1_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_1_60.m4a; sourceTree = "<group>"; };
-		79552FC02BDBB41100A27531 /* Home_2_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_2_60.m4a; sourceTree = "<group>"; };
-		79552FC12BDBB41100A27531 /* Home_3_60.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_3_60.m4a; sourceTree = "<group>"; };
-		79552FC22BDBB41100A27531 /* Home_4_48.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_4_48.m4a; sourceTree = "<group>"; };
-		79566AD52CB9259C00581A57 /* BackingChords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackingChords.swift; sourceTree = "<group>"; };
-		7967099E2BD791F90029E7ED /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonUI.swift; sourceTree = "<group>"; };
-		796C76E92BD3774400DF2DA9 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
-		796D16182E508027009FB741 /* SelectHandsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectHandsView.swift; sourceTree = "<group>"; };
-		796ED5D72E48902D00771D3A /* BadgeContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeContainer.swift; sourceTree = "<group>"; };
-		796F26782C1431E700853A21 /* HearScalePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearScalePlayer.swift; sourceTree = "<group>"; };
-		7970137C2BEE36E1009F85D6 /* Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
-		7970137E2BEE36E1009F85D6 /* StaffNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffNote.swift; sourceTree = "<group>"; };
-		7970137F2BEE36E1009F85D6 /* KeySignature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeySignature.swift; sourceTree = "<group>"; };
-		797013802BEE36E1009F85D6 /* StaffKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffKey.swift; sourceTree = "<group>"; };
-		797013812BEE36E1009F85D6 /* TimeSlice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSlice.swift; sourceTree = "<group>"; };
-		797013822BEE36E1009F85D6 /* TimeSignature.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSignature.swift; sourceTree = "<group>"; };
-		7970138F2BEE3E45009F85D6 /* ScoreView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
-		797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreEntriesView.swift; sourceTree = "<group>"; };
-		797013912BEE3E45009F85D6 /* StaffView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaffView.swift; sourceTree = "<group>"; };
-		797013932BEE3E45009F85D6 /* TimeSliceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSliceView.swift; sourceTree = "<group>"; };
-		797F49FF2E33887F00E04DD9 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
-		799381762C755F2300734FDE /* SpinWheelViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelViewOLD.swift; sourceTree = "<group>"; };
-		799381782C75D1A400734FDE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		7995E9012E8008D200D61535 /* SoundFontPresetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontPresetView.swift; sourceTree = "<group>"; };
-		79980DD62E34CDFE00CF242B /* UserEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditView.swift; sourceTree = "<group>"; };
-		799BE2A72BFF4322004B19F6 /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
-		799BE2A92BFF4EED004B19F6 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
-		799BE2AB2C002B83004B19F6 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
-		799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
-		799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapsEventsAnalyser.swift; sourceTree = "<group>"; };
-		799DC8412D5190BB007008A5 /* FFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFTView.swift; sourceTree = "<group>"; };
-		79A42AB32E6988CE00B5438D /* ScalesStarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScalesStarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEventHandler.swift; sourceTree = "<group>"; };
-		79A6350B2C40895800661B0F /* ScaleTapHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTapHandler.swift; sourceTree = "<group>"; };
-		79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseYourExerciseView.swift; sourceTree = "<group>"; };
-		79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scale_4_oct.wav; sourceTree = "<group>"; };
-		79AFF13B2DD490CA0049479F /* LeaderBoard.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LeaderBoard.txt; sourceTree = "<group>"; };
-		79B072F92D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info_original_TO_BE_DELETED.plist"; sourceTree = "<group>"; };
-		79B072FD2D37C76D00CD6F2B /* Firebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firebase.swift; sourceTree = "<group>"; };
-		79B073012D37C98E00CD6F2B /* Firebase.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Firebase.plist; sourceTree = "<group>"; };
-		79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = GoogleAPI.plist; sourceTree = "<group>"; };
-		79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleAPI.swift; sourceTree = "<group>"; };
-		79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationResults.swift; sourceTree = "<group>"; };
-		79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1_octave_slow.m4a; sourceTree = "<group>"; };
-		79BFC69E2BCF790600006CA4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelViewCoins.swift; sourceTree = "<group>"; };
-		79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesLibraryView.swift; sourceTree = "<group>"; };
-		79C65D6F2CDED7AC00467597 /* StaffClef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffClef.swift; sourceTree = "<group>"; };
-		79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamouseQuotes.swift; sourceTree = "<group>"; };
-		79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicBoardAndGrade.swift; sourceTree = "<group>"; };
-		79C8AD012C128F0200770C10 /* PracticeJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeJournalView.swift; sourceTree = "<group>"; };
-		79C979042C1AD4D7001C286F /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
-		79CB56202C599D9F00BB328F /* StudentScales.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentScales.swift; sourceTree = "<group>"; };
-		79CF5D6F2BEE426B00454BB6 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
-		79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListViewOLD.swift; sourceTree = "<group>"; };
-		79CFA1EF2C3808A90018DC8A /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
-		79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureReportView.swift; sourceTree = "<group>"; };
-		79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenceManager.swift; sourceTree = "<group>"; };
-		79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesModel.swift; sourceTree = "<group>"; };
-		79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewer.swift; sourceTree = "<group>"; };
-		79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleRoot.swift; sourceTree = "<group>"; };
-		79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardModel.swift; sourceTree = "<group>"; };
-		79D7C29F2BD112FF00AE0B24 /* NoteName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteName.swift; sourceTree = "<group>"; };
-		79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardView.swift; sourceTree = "<group>"; };
-		79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyModel.swift; sourceTree = "<group>"; };
-		79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornersShape.swift; sourceTree = "<group>"; };
-		79D7C2A92BD1171200AE0B24 /* TouchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchesView.swift; sourceTree = "<group>"; };
-		79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassicStyle.swift; sourceTree = "<group>"; };
-		79D931102CA222760035EA6B /* ScaleTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScaleTitleView.swift; sourceTree = "<group>"; };
-		79D935D42E69A39E00F5997F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		79DA82122BCCE95F008AC492 /* ScalesStar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScalesStar.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesTrainerApp.swift; sourceTree = "<group>"; };
+		7948539D2E8E44D4002D5FC2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		79DA82192BCCE960008AC492 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		79DA82242BCCEAA0008AC492 /* ScalesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesView.swift; sourceTree = "<group>"; };
-		79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Steinway_D.sf2; sourceTree = "<group>"; };
-		79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundfontParser.swift; sourceTree = "<group>"; };
-		79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = FluidGM_Bank_0.sf2; sourceTree = "<group>"; };
-		79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseDropDownStarsView.swift; sourceTree = "<group>"; };
-		79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeadScaleProcess.swift; sourceTree = "<group>"; };
-		79EAB8762C8737B400255FC6 /* Notes_General */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes_General; sourceTree = "<group>"; };
-		79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPT_Marketing; sourceTree = "<group>"; };
-		79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartExerciseView.swift; sourceTree = "<group>"; };
-		79F3F58B2D5363C700D6BAA3 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
-		79F6CD742D14020200FF2681 /* MidiNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = MidiNotes; sourceTree = "<group>"; };
-		79F6CD762D157E2B00FF2681 /* MIDIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIManager.swift; sourceTree = "<group>"; };
-		79F80E0B2CD4CD6800D636FB /* MIDIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIView.swift; sourceTree = "<group>"; };
-		79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalesGridView.swift; sourceTree = "<group>"; };
-		79FF0D602DD0253200126573 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
-		79FF42FD2E4F248300042814 /* SpinWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinWheelView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		797710662E8E0C510095F807 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AudioFiles/1_octave_slow.m4a,
+				AudioFiles/Home_1_60.m4a,
+				AudioFiles/Home_2_60.m4a,
+				AudioFiles/Home_3_60.m4a,
+				AudioFiles/Home_4_48.m4a,
+				"AudioFiles/Yamaha-Grand-Lite-SF-v1.1.sf2",
+				Info.plist,
+				Resources/GoogleAPI.plist,
+				Resources/scale_4_oct.wav,
+				TRASHED_Ixnfo.plist,
+			);
+			target = 792B74B52E8D467800BB338A /* ScalesAcademy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		79A42AB42E6988CE00B5438D /* ScalesStarTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScalesStarTests; sourceTree = "<group>"; };
+		792B74B72E8D467800BB338A /* ScalesAcademy */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (797710662E8E0C510095F807 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ScalesAcademy; sourceTree = "<group>"; };
+		793F6BB12E8F51C100BF94CC /* ScalesAcademyTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScalesAcademyTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		79A42AB02E6988CE00B5438D /* Frameworks */ = {
+		792B74B32E8D467800BB338A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79BB4CF22E8E0516006DBB26 /* FirebaseAppCheck in Frameworks */,
+				79EEB76A2E8E32CD006A9645 /* GoogleAPIClientForREST_APIGateway in Frameworks */,
+				799F9E552E8E022B005BC91E /* FirebaseAnalytics in Frameworks */,
+				794708342E8E135200D43914 /* SoundpipeAudioKit in Frameworks */,
+				79EEB76C2E8E32CD006A9645 /* GoogleAPIClientForREST_APIManagement in Frameworks */,
+				799F9E4B2E8E01D8005BC91E /* FirebaseAnalytics in Frameworks */,
+				79BB4CFC2E8E0695006DBB26 /* FirebaseAppCheck in Frameworks */,
+				79EEB7612E8E3228006A9645 /* GoogleSignInSwift in Frameworks */,
+				79EEB7682E8E32CD006A9645 /* GoogleAPIClientForREST_AIPlatformNotebooks in Frameworks */,
+				79BB4CF82E8E0695006DBB26 /* FirebaseAnalyticsCore in Frameworks */,
+				79EEB7642E8E32CD006A9645 /* GoogleAPIClientForRESTCore in Frameworks */,
+				7977103C2E8E0B8D0095F807 /* FirebaseFirestore in Frameworks */,
+				79BB4D9E2E8E093B006DBB26 /* FirebaseCore in Frameworks */,
+				79BB4CEC2E8E0516006DBB26 /* FirebaseAnalytics in Frameworks */,
+				79BB4CEE2E8E0516006DBB26 /* FirebaseAnalyticsCore in Frameworks */,
+				79BB4DA22E8E093B006DBB26 /* FirebaseFunctions in Frameworks */,
+				799F9E512E8E01D8005BC91E /* FirebaseAppCheck in Frameworks */,
+				79BB4DA42E8E093B006DBB26 /* FirebaseStorage in Frameworks */,
+				79BB4CF62E8E0695006DBB26 /* FirebaseAnalytics in Frameworks */,
+				79BB4CEA2E8E0516006DBB26 /* FirebaseAI in Frameworks */,
+				79EEB75F2E8E3228006A9645 /* GoogleSignIn in Frameworks */,
+				79BB4DA02E8E093B006DBB26 /* FirebaseDatabase in Frameworks */,
+				79BB4CF42E8E0695006DBB26 /* FirebaseAI in Frameworks */,
+				79EEB7742E8E3335006A9645 /* SwiftJWT in Frameworks */,
+				79BB4D9A2E8E089E006DBB26 /* AudioKit in Frameworks */,
+				79BB4D9C2E8E093B006DBB26 /* FirebaseAuth in Frameworks */,
+				799F9E532E8E01D8005BC91E /* FirebaseAppDistribution-Beta in Frameworks */,
+				79BB4CF02E8E0516006DBB26 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
+				79BB4CFA2E8E0695006DBB26 /* FirebaseAnalyticsIdentitySupport in Frameworks */,
+				799F9E5B2E8E022B005BC91E /* FirebaseAppCheck in Frameworks */,
+				799F9E5D2E8E022B005BC91E /* FirebaseAppDistribution-Beta in Frameworks */,
+				79EEB7662E8E32CD006A9645 /* GoogleAPIClientForREST_ACMEDNS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		79DA820F2BCCE95F008AC492 /* Frameworks */ = {
+		793F6BAD2E8F51C100BF94CC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79DA82362BCCF260008AC492 /* AudioKitEX in Frameworks */,
-				79DA822B2BCCEB8B008AC492 /* AudioKitUI in Frameworks */,
-				794D49532BCD28CC0005A173 /* SoundpipeAudioKit in Frameworks */,
-				79B072F62D37C2D200CD6F2B /* FirebaseFirestore in Frameworks */,
-				79DA82282BCCEB70008AC492 /* AudioKit in Frameworks */,
-				79B072EE2D37C2D200CD6F2B /* FirebaseAppCheck in Frameworks */,
-				79B072F02D37C2D200CD6F2B /* FirebaseAuth in Frameworks */,
-				79B072F42D37C2D200CD6F2B /* FirebaseDatabase in Frameworks */,
-				79B072F82D37C2D200CD6F2B /* FirebaseStorage in Frameworks */,
-				79B072F22D37C2D200CD6F2B /* FirebaseCore in Frameworks */,
-				790C4E922E8D1856002D7C4B /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,329 +146,83 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		794D492E2BCD07220005A173 /* PianoKeyboard */ = {
-			isa = PBXGroup;
-			children = (
-				79D7C2AD2BD1181A00AE0B24 /* Model */,
-				79D7C2AE2BD1184400AE0B24 /* View */,
-			);
-			path = PianoKeyboard;
-			sourceTree = "<group>";
-		};
-		794D495D2BCD34080005A173 /* AudioFiles */ = {
-			isa = PBXGroup;
-			children = (
-				79BF6BC02BCDF60D0092CDDF /* 1_octave_slow.m4a */,
-				79552FBF2BDBB41100A27531 /* Home_1_60.m4a */,
-				79552FC02BDBB41100A27531 /* Home_2_60.m4a */,
-				79552FC12BDBB41100A27531 /* Home_3_60.m4a */,
-				79DAF3BC2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 */,
-				79552FC22BDBB41100A27531 /* Home_4_48.m4a */,
-				795503C02BDF88A1002D7C1D /* metronome_mechanical_high.aiff */,
-				795503BF2BDF88A1002D7C1D /* metronome_mechanical_low.aiff */,
-				79DAF3B82E80D55900EF6629 /* Steinway_D.sf2 */,
-				791D06602C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 */,
-			);
-			path = AudioFiles;
-			sourceTree = "<group>";
-		};
-		7970138D2BEE3DE0009F85D6 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				7970137F2BEE36E1009F85D6 /* KeySignature.swift */,
-				7970137C2BEE36E1009F85D6 /* Score.swift */,
-				79CF5D6F2BEE426B00454BB6 /* Staff.swift */,
-				79C65D6F2CDED7AC00467597 /* StaffClef.swift */,
-				797013802BEE36E1009F85D6 /* StaffKey.swift */,
-				7970137E2BEE36E1009F85D6 /* StaffNote.swift */,
-				797013822BEE36E1009F85D6 /* TimeSignature.swift */,
-				797013812BEE36E1009F85D6 /* TimeSlice.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		7970138E2BEE3DF2009F85D6 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				797013902BEE3E45009F85D6 /* ScoreEntriesView.swift */,
-				7970138F2BEE3E45009F85D6 /* ScoreView.swift */,
-				797013912BEE3E45009F85D6 /* StaffView.swift */,
-				797013932BEE3E45009F85D6 /* TimeSliceView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		79BA2BC32CD387AB00CA68B4 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				79AF165B2D4E1D18003033E4 /* scale_4_oct.wav */,
-				79BA2BC42CD387EB00CA68B4 /* GoogleAPI.plist */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		79C0D2532BE30E7B0036CC91 /* Data */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Data;
-			sourceTree = "<group>";
-		};
-		79D7C2AD2BD1181A00AE0B24 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				79D7C29F2BD112FF00AE0B24 /* NoteName.swift */,
-				79D7C29D2BD1122900AE0B24 /* PianoKeyboardModel.swift */,
-				79D7C2A52BD1167D00AE0B24 /* PianoKeyModel.swift */,
-			);
-			name = Model;
-			path = Piano/Model;
-			sourceTree = "<group>";
-		};
-		79D7C2AE2BD1184400AE0B24 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				79D7C2AB2BD1179B00AE0B24 /* ClassicStyle.swift */,
-				79D7C2A92BD1171200AE0B24 /* TouchesView.swift */,
-				79D7C2A72BD116E300AE0B24 /* RoundedCornersShape.swift */,
-				79D7C2A12BD1133C00AE0B24 /* PianoKeyboardView.swift */,
-				79312DB22C0D8F96005FDE8B /* TimeSliceEntry.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
 		79DA82092BCCE95F008AC492 = {
 			isa = PBXGroup;
 			children = (
-				794180902D40E2E900FE149B /* ScalesStar.entitlements */,
-				79A42AB42E6988CE00B5438D /* ScalesStarTests */,
+				793F6BB92E8F981700BF94CC /* ScalesAcademyTests.xctestplan */,
+				793F6BB12E8F51C100BF94CC /* ScalesAcademyTests */,
 				29591435A11F915AD3A16C39 /* Frameworks */,
+				7948539D2E8E44D4002D5FC2 /* GoogleService-Info.plist */,
 				790C738E2BEF99D500609C48 /* Localizable.xcstrings */,
-				DDA3121AEE7C45E54101ED2B /* Pods */,
 				79DA82132BCCE95F008AC492 /* Products */,
-				79DA82142BCCE95F008AC492 /* ScalesTrainer */,
+				792B74B72E8D467800BB338A /* ScalesAcademy */,
+				79DA82142BCCE95F008AC492 /* ScalesAcademyOld */,
+				794180902D40E2E900FE149B /* ScalesStar.entitlements */,
 			);
 			sourceTree = "<group>";
 		};
 		79DA82132BCCE95F008AC492 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				79DA82122BCCE95F008AC492 /* ScalesStar.app */,
-				79A42AB32E6988CE00B5438D /* ScalesStarTests.xctest */,
+				792B74B62E8D467800BB338A /* ScalesAcademy.app */,
+				793F6BB02E8F51C100BF94CC /* ScalesAcademyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		79DA82142BCCE95F008AC492 /* ScalesTrainer */ = {
+		79DA82142BCCE95F008AC492 /* ScalesAcademyOld */ = {
 			isa = PBXGroup;
 			children = (
-				79D935D42E69A39E00F5997F /* GoogleService-Info.plist */,
 				79DA82192BCCE960008AC492 /* Assets.xcassets */,
-				794D495D2BCD34080005A173 /* AudioFiles */,
-				79C0D2532BE30E7B0036CC91 /* Data */,
-				79BFC69E2BCF790600006CA4 /* Info.plist */,
-				79B072F92D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist */,
-				79B073012D37C98E00CD6F2B /* Firebase.plist */,
-				79DA822C2BCCED24008AC492 /* Model */,
-				79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */,
-				79F6CD792D167B7800FF2681 /* Notes */,
-				794D492E2BCD07220005A173 /* PianoKeyboard */,
-				79DA821B2BCCE960008AC492 /* Preview Content */,
-				79BA2BC32CD387AB00CA68B4 /* Resources */,
-				79DA82152BCCE95F008AC492 /* ScalesTrainerApp.swift */,
-				79DA82232BCCEA6A008AC492 /* View */,
 			);
-			path = ScalesTrainer;
-			sourceTree = "<group>";
-		};
-		79DA821B2BCCE960008AC492 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				79DA821C2BCCE960008AC492 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		79DA82232BCCEA6A008AC492 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				799BE2AF2C01C66A004B19F6 /* ActivitiesView.swift */,
-				791EF05D2E59CF1D00347D57 /* BadgesView.swift */,
-				793292902E46BEA800890198 /* BadgesViewOLD.swift */,
-				799BE2AB2C002B83004B19F6 /* BarChart.swift */,
-				799BE2A72BFF4322004B19F6 /* CalibrationView.swift */,
-				79A811002E4DD4880019F866 /* ChooseYourExerciseView.swift */,
-				794A9FC62C2BD24C0001297E /* CoinBankView.swift */,
-				7967099E2BD791F90029E7ED /* CommonUI.swift */,
-				790624092C374F5D005A6A3E /* EmailView.swift */,
-				79E220ED2C856150004F64D8 /* ExerciseDropDownStarsView.swift */,
-				79D0EEA12CCB5FF600FC1D7C /* FeatureReportView.swift */,
-				799DC8412D5190BB007008A5 /* FFTView.swift */,
-				79312DB62C118B41005FDE8B /* HelpView.swift */,
-				799BE2A92BFF4EED004B19F6 /* LegendView.swift */,
-				79D7C2942BD0F1BF00AE0B24 /* LogViewer.swift */,
-				790614442D94093A009E7A8D /* MetronomeView.swift */,
-				79F80E0B2CD4CD6800D636FB /* MIDIView.swift */,
-				790537042C47319600AC794D /* PracticeChartView.swift */,
-				79C8AD012C128F0200770C10 /* PracticeJournalView.swift */,
-				79312DB42C106D3D005FDE8B /* RecordingIsUnderwayView.swift */,
-				79FF0D602DD0253200126573 /* ResultView.swift */,
-				79FD7DD62E55B9A3001D890C /* ScalesGridView.swift */,
-				79C3904F2C20346300F0A658 /* ScalesLibraryView.swift */,
-				79DA82242BCCEAA0008AC492 /* ScalesView.swift */,
-				79D931102CA222760035EA6B /* ScaleTitleView.swift */,
-				796D16182E508027009FB741 /* SelectHandsView.swift */,
-				799381782C75D1A400734FDE /* SettingsView.swift */,
-				7995E9012E8008D200D61535 /* SoundFontPresetView.swift */,
-				79FF42FD2E4F248300042814 /* SpinWheelView.swift */,
-				79C3904B2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift */,
-				799381762C755F2300734FDE /* SpinWheelViewOLD.swift */,
-				79F1A1DC2D86BB87008CEAC9 /* StartExerciseView.swift */,
-				791F6C302CD18939006BAEBD /* SubscriptionsView.swift */,
-				79312DB02C0B2B7E005FDE8B /* TapDataView.swift */,
-				79064CAB2D0A9493002490A8 /* TestInputView.swift */,
-				79C979042C1AD4D7001C286F /* TestView.swift */,
-				7910C00B2D605B5D0030928B /* UserDetailsView.swift */,
-				79980DD62E34CDFE00CF242B /* UserEditView.swift */,
-				790FF4242E3F687700D53BF6 /* UserListView.swift */,
-				79CF5D712BEE46C900454BB6 /* UserListViewOLD.swift */,
-				797F49FF2E33887F00E04DD9 /* WelcomeView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		79DA822C2BCCED24008AC492 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				79064CA72D08349C002490A8 /* AnimalBadge.swift */,
-				794D49472BCD15AE0005A173 /* AppLogger.swift */,
-				794D494F2BCD28AC0005A173 /* AudioManager.swift */,
-				79566AD52CB9259C00581A57 /* BackingChords.swift */,
-				796ED5D72E48902D00771D3A /* BadgeContainer.swift */,
-				79F6CD722D13F73D00FF2681 /* BluetoothManager.swift */,
-				79BCF7F02C265CA6004E26ED /* CalibrationResults.swift */,
-				79064CAD2D0A9EA2002490A8 /* ExerciseHandler.swift */,
-				79064CA92D08ED4E002490A8 /* ExerciseState.swift */,
-				79C8ACFB2C11CC7F00770C10 /* FamouseQuotes.swift */,
-				79B072FD2D37C76D00CD6F2B /* Firebase.swift */,
-				79BA2BC62CD3884000CA68B4 /* GoogleAPI.swift */,
-				796F26782C1431E700853A21 /* HearScalePlayer.swift */,
-				79312DB82C118FFE005FDE8B /* HelpMessages.swift */,
-				79312DAA2C0743A7005FDE8B /* IdentifyScalePlayer.swift */,
-				79E220EF2C858DC4004F64D8 /* LeadScaleProcess.swift */,
-				79D1C95F2E8CBB3B00BAA5EF /* LicenceManager.swift */,
-				793D6E572BD66F730012F701 /* Metronome.swift */,
-				79312DAC2C09A13B005FDE8B /* MetronomeTicker.swift */,
-				79F6CD762D157E2B00FF2681 /* MIDIManager.swift */,
-				79C8ACFF2C127D8400770C10 /* MusicBoardAndGrade.swift */,
-				794D49552BCD29090005A173 /* RealTimeTapHandler.swift */,
-				790B1B7A2C8BBD94008245DE /* RecordScaleProcess.swift */,
-				79552FB52BDB975D00A27531 /* Result.swift */,
-				794D49592BCD29610005A173 /* Scale.swift */,
-				79D7C2962BD10DB500AE0B24 /* ScaleRoot.swift */,
-				79D7C2922BCFD57600AE0B24 /* ScalesModel.swift */,
-				79A6350B2C40895800661B0F /* ScaleTapHandler.swift */,
-				79F3F58B2D5363C700D6BAA3 /* Settings.swift */,
-				79A43A952CFEF73A00D30F4F /* SoundEventHandler.swift */,
-				79DAF3BA2E80DCAD00EF6629 /* SoundfontParser.swift */,
-				796C76E92BD3774400DF2DA9 /* SpeechManager.swift */,
-				79CB56202C599D9F00BB328F /* StudentScales.swift */,
-				7942FAA42BE24E5A00658E39 /* TapEvents.swift */,
-				799DBF4B2C51175C00E14728 /* TapsEventsAnalyser.swift */,
-				79CFA1EF2C3808A90018DC8A /* Test.swift */,
-				790614462D968A06009E7A8D /* User.swift */,
-				794D495B2BCD29DF0005A173 /* Util.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		79E8AF3B2BEE24A600C2D5B3 /* MusicStaff */ = {
-			isa = PBXGroup;
-			children = (
-				7970138E2BEE3DF2009F85D6 /* View */,
-				7970138D2BEE3DE0009F85D6 /* Model */,
-			);
-			path = MusicStaff;
-			sourceTree = "<group>";
-		};
-		79F6CD792D167B7800FF2681 /* Notes */ = {
-			isa = PBXGroup;
-			children = (
-				7932928E2E46185600890198 /* Todo */,
-				79AFF13B2DD490CA0049479F /* LeaderBoard.txt */,
-				793EA0FE2D12B790007CAAD7 /* MultiThreadingCrashes */,
-				79F6CD742D14020200FF2681 /* MidiNotes */,
-				79EAB8762C8737B400255FC6 /* Notes_General */,
-				79EAD9092D180FBE00D5C1D5 /* GPT_Marketing */,
-			);
-			path = Notes;
-			sourceTree = "<group>";
-		};
-		DDA3121AEE7C45E54101ED2B /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */,
-				0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */,
-			);
-			path = Pods;
+			path = ScalesAcademyOld;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		79A42AB22E6988CE00B5438D /* ScalesStarTests */ = {
+		792B74B52E8D467800BB338A /* ScalesAcademy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 79A42AB92E6988CE00B5438D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */;
+			buildConfigurationList = 792B74DD2E8D467A00BB338A /* Build configuration list for PBXNativeTarget "ScalesAcademy" */;
 			buildPhases = (
-				79A42AAF2E6988CE00B5438D /* Sources */,
-				79A42AB02E6988CE00B5438D /* Frameworks */,
-				79A42AB12E6988CE00B5438D /* Resources */,
+				792B74B22E8D467800BB338A /* Sources */,
+				792B74B32E8D467800BB338A /* Frameworks */,
+				792B74B42E8D467800BB338A /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				79A42AB82E6988CE00B5438D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				79A42AB42E6988CE00B5438D /* ScalesStarTests */,
+				792B74B72E8D467800BB338A /* ScalesAcademy */,
 			);
-			name = ScalesStarTests;
-			packageProductDependencies = (
-			);
-			productName = ScalesStarTests;
-			productReference = 79A42AB32E6988CE00B5438D /* ScalesStarTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
+			name = ScalesAcademy;
+			productName = ScalesAcademy;
+			productReference = 792B74B62E8D467800BB338A /* ScalesAcademy.app */;
+			productType = "com.apple.product-type.application";
 		};
-		79DA82112BCCE95F008AC492 /* ScalesStar */ = {
+		793F6BAF2E8F51C100BF94CC /* ScalesAcademyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 79DA82202BCCE960008AC492 /* Build configuration list for PBXNativeTarget "ScalesStar" */;
+			buildConfigurationList = 793F6BB62E8F51C100BF94CC /* Build configuration list for PBXNativeTarget "ScalesAcademyTests" */;
 			buildPhases = (
-				6CD2004B6595ACA294D88C76 /* [CP] Check Pods Manifest.lock */,
-				79DA820E2BCCE95F008AC492 /* Sources */,
-				79DA820F2BCCE95F008AC492 /* Frameworks */,
-				79DA82102BCCE95F008AC492 /* Resources */,
-				7CB3C4C0589CC522C1BC8C9F /* [CP] Embed Pods Frameworks */,
+				793F6BAC2E8F51C100BF94CC /* Sources */,
+				793F6BAD2E8F51C100BF94CC /* Frameworks */,
+				793F6BAE2E8F51C100BF94CC /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				793F6BB52E8F51C100BF94CC /* PBXTargetDependency */,
 			);
-			name = ScalesStar;
+			fileSystemSynchronizedGroups = (
+				793F6BB12E8F51C100BF94CC /* ScalesAcademyTests */,
+			);
+			name = ScalesAcademyTests;
 			packageProductDependencies = (
-				79DA82272BCCEB70008AC492 /* AudioKit */,
-				79DA822A2BCCEB8B008AC492 /* AudioKitUI */,
-				79DA82352BCCF260008AC492 /* AudioKitEX */,
-				794D49522BCD28CC0005A173 /* SoundpipeAudioKit */,
-				79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */,
-				79B072EF2D37C2D200CD6F2B /* FirebaseAuth */,
-				79B072F12D37C2D200CD6F2B /* FirebaseCore */,
-				79B072F32D37C2D200CD6F2B /* FirebaseDatabase */,
-				79B072F52D37C2D200CD6F2B /* FirebaseFirestore */,
-				79B072F72D37C2D200CD6F2B /* FirebaseStorage */,
 			);
-			productName = ScalesTrainer;
-			productReference = 79DA82122BCCE95F008AC492 /* ScalesStar.app */;
-			productType = "com.apple.product-type.application";
+			productName = ScalesAcademyTests;
+			productReference = 793F6BB02E8F51C100BF94CC /* ScalesAcademyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -663,16 +234,16 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					79A42AB22E6988CE00B5438D = {
+					792B74B52E8D467800BB338A = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 79DA82112BCCE95F008AC492;
 					};
-					79DA82112BCCE95F008AC492 = {
-						CreatedOnToolsVersion = 15.2;
+					793F6BAF2E8F51C100BF94CC = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 792B74B52E8D467800BB338A;
 					};
 				};
 			};
-			buildConfigurationList = 79DA820D2BCCE95F008AC492 /* Build configuration list for PBXProject "ScalesTrainer" */;
+			buildConfigurationList = 79DA820D2BCCE95F008AC492 /* Build configuration list for PBXProject "ScalesAcademy" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -689,248 +260,133 @@
 				79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
 				79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */,
 				794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
-				79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				79EEB75D2E8E3228006A9645 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */,
+				79EEB7722E8E3335006A9645 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
 			);
 			productRefGroup = 79DA82132BCCE95F008AC492 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				79DA82112BCCE95F008AC492 /* ScalesStar */,
-				79A42AB22E6988CE00B5438D /* ScalesStarTests */,
+				792B74B52E8D467800BB338A /* ScalesAcademy */,
+				793F6BAF2E8F51C100BF94CC /* ScalesAcademyTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		79A42AB12E6988CE00B5438D /* Resources */ = {
+		792B74B42E8D467800BB338A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79D5D18B2E8E248C0003C5B4 /* Assets.xcassets in Resources */,
+				794853A32E8E44D4002D5FC2 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		79DA82102BCCE95F008AC492 /* Resources */ = {
+		793F6BAE2E8F51C100BF94CC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79DA821D2BCCE960008AC492 /* Preview Assets.xcassets in Resources */,
-				79DAF3BD2E80EABD00EF6629 /* FluidGM_Bank_0.sf2 in Resources */,
-				79DA821A2BCCE960008AC492 /* Assets.xcassets in Resources */,
-				79BF6BC12BCDF60D0092CDDF /* 1_octave_slow.m4a in Resources */,
-				79EAD90A2D180FBE00D5C1D5 /* GPT_Marketing in Resources */,
-				79BA2BC52CD387EB00CA68B4 /* GoogleAPI.plist in Resources */,
-				79B073022D37C98E00CD6F2B /* Firebase.plist in Resources */,
-				79DAF3B92E80D55900EF6629 /* Steinway_D.sf2 in Resources */,
-				795503C12BDF88A1002D7C1D /* metronome_mechanical_low.aiff in Resources */,
-				79552FC52BDBB41100A27531 /* Home_3_60.m4a in Resources */,
-				79F6CD752D14020200FF2681 /* MidiNotes in Resources */,
-				790C738F2BEF99D500609C48 /* Localizable.xcstrings in Resources */,
-				79AF165C2D4E1D18003033E4 /* scale_4_oct.wav in Resources */,
-				795503C22BDF88A1002D7C1D /* metronome_mechanical_high.aiff in Resources */,
-				79552FC62BDBB41100A27531 /* Home_4_48.m4a in Resources */,
-				79B072FA2D37C42000CD6F2B /* GoogleService-Info_original_TO_BE_DELETED.plist in Resources */,
-				791D06612C18086E00D2241D /* Yamaha-Grand-Lite-SF-v1.1.sf2 in Resources */,
-				79552FC42BDBB41100A27531 /* Home_2_60.m4a in Resources */,
-				79EAB8772C8737B400255FC6 /* Notes_General in Resources */,
-				79D935D52E69A39E00F5997F /* GoogleService-Info.plist in Resources */,
-				79552FC32BDBB41100A27531 /* Home_1_60.m4a in Resources */,
-				793EA0FF2D12B790007CAAD7 /* MultiThreadingCrashes in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		6CD2004B6595ACA294D88C76 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ScalesStar-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7CB3C4C0589CC522C1BC8C9F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScalesStar/Pods-ScalesStar-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		79A42AAF2E6988CE00B5438D /* Sources */ = {
+		792B74B22E8D467800BB338A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		79DA820E2BCCE95F008AC492 /* Sources */ = {
+		793F6BAC2E8F51C100BF94CC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7942FAA52BE24E5A00658E39 /* TapEvents.swift in Sources */,
-				793D6E582BD66F730012F701 /* Metronome.swift in Sources */,
-				799381772C755F2300734FDE /* SpinWheelViewOLD.swift in Sources */,
-				79A43A962CFEF73A00D30F4F /* SoundEventHandler.swift in Sources */,
-				794D495A2BCD29610005A173 /* Scale.swift in Sources */,
-				79F80E0C2CD4CD6800D636FB /* MIDIView.swift in Sources */,
-				799DBF4C2C51175C00E14728 /* TapsEventsAnalyser.swift in Sources */,
-				797013942BEE3E45009F85D6 /* ScoreView.swift in Sources */,
-				79BCF7F12C265CA6004E26ED /* CalibrationResults.swift in Sources */,
-				794D495C2BCD29DF0005A173 /* Util.swift in Sources */,
-				79312DB12C0B2B7E005FDE8B /* TapDataView.swift in Sources */,
-				790614452D940943009E7A8D /* MetronomeView.swift in Sources */,
-				79DA82252BCCEAA0008AC492 /* ScalesView.swift in Sources */,
-				79F3F58C2D5363C700D6BAA3 /* Settings.swift in Sources */,
-				791EF05E2E59CF2300347D57 /* BadgesView.swift in Sources */,
-				79E220F02C858DC4004F64D8 /* LeadScaleProcess.swift in Sources */,
-				79312DAB2C0743A7005FDE8B /* IdentifyScalePlayer.swift in Sources */,
-				79D7C29E2BD1122900AE0B24 /* PianoKeyboardModel.swift in Sources */,
-				79F6CD772D157E2B00FF2681 /* MIDIManager.swift in Sources */,
-				79F6CD732D13F73D00FF2681 /* BluetoothManager.swift in Sources */,
-				790FF4252E3F688000D53BF6 /* UserListView.swift in Sources */,
-				794A9FC72C2BD24C0001297E /* CoinBankView.swift in Sources */,
-				79D931112CA222760035EA6B /* ScaleTitleView.swift in Sources */,
-				797013982BEE3E45009F85D6 /* TimeSliceView.swift in Sources */,
-				799BE2AC2C002B83004B19F6 /* BarChart.swift in Sources */,
-				79FF0D612DD0253A00126573 /* ResultView.swift in Sources */,
-				797013872BEE36E2009F85D6 /* KeySignature.swift in Sources */,
-				79D1C9602E8CBB4300BAA5EF /* LicenceManager.swift in Sources */,
-				797013862BEE36E2009F85D6 /* StaffNote.swift in Sources */,
-				7910C00C2D605B5D0030928B /* UserDetailsView.swift in Sources */,
-				79D7C2A22BD1133C00AE0B24 /* PianoKeyboardView.swift in Sources */,
-				79552FB62BDB975D00A27531 /* Result.swift in Sources */,
-				79D7C2AC2BD1179B00AE0B24 /* ClassicStyle.swift in Sources */,
-				79CB56212C599D9F00BB328F /* StudentScales.swift in Sources */,
-				79C979052C1AD4D7001C286F /* TestView.swift in Sources */,
-				79CF5D722BEE46C900454BB6 /* UserListViewOLD.swift in Sources */,
-				790614472D968A0A009E7A8D /* User.swift in Sources */,
-				797013842BEE36E2009F85D6 /* Score.swift in Sources */,
-				796D16192E508035009FB741 /* SelectHandsView.swift in Sources */,
-				79064CAC2D0A9493002490A8 /* TestInputView.swift in Sources */,
-				79D7C2A62BD1167D00AE0B24 /* PianoKeyModel.swift in Sources */,
-				79064CA82D08349C002490A8 /* AnimalBadge.swift in Sources */,
-				797013962BEE3E45009F85D6 /* StaffView.swift in Sources */,
-				799BE2AA2BFF4EED004B19F6 /* LegendView.swift in Sources */,
-				794D49562BCD29090005A173 /* RealTimeTapHandler.swift in Sources */,
-				797013882BEE36E2009F85D6 /* StaffKey.swift in Sources */,
-				796F26792C1431E700853A21 /* HearScalePlayer.swift in Sources */,
-				79FD7DD72E55B9A9001D890C /* ScalesGridView.swift in Sources */,
-				79B072FE2D37C76D00CD6F2B /* Firebase.swift in Sources */,
-				7967099F2BD791F90029E7ED /* CommonUI.swift in Sources */,
-				79312DB32C0D8F96005FDE8B /* TimeSliceEntry.swift in Sources */,
-				79980DD72E34CE0F00CF242B /* UserEditView.swift in Sources */,
-				79D0EEA22CCB5FF600FC1D7C /* FeatureReportView.swift in Sources */,
-				796ED5D82E48903200771D3A /* BadgeContainer.swift in Sources */,
-				794D49502BCD28AC0005A173 /* AudioManager.swift in Sources */,
-				79A6350C2C40895800661B0F /* ScaleTapHandler.swift in Sources */,
-				79FF42FE2E4F248B00042814 /* SpinWheelView.swift in Sources */,
-				79D7C2952BD0F1BF00AE0B24 /* LogViewer.swift in Sources */,
-				794D49482BCD15AE0005A173 /* AppLogger.swift in Sources */,
-				79C8AD002C127D8400770C10 /* MusicBoardAndGrade.swift in Sources */,
-				79C390502C20346300F0A658 /* ScalesLibraryView.swift in Sources */,
-				799BE2A82BFF4322004B19F6 /* CalibrationView.swift in Sources */,
-				79BA2BC72CD3884000CA68B4 /* GoogleAPI.swift in Sources */,
-				793292912E46BEB800890198 /* BadgesViewOLD.swift in Sources */,
-				79566AD62CB9259C00581A57 /* BackingChords.swift in Sources */,
-				79312DB92C118FFE005FDE8B /* HelpMessages.swift in Sources */,
-				796C76EA2BD3774400DF2DA9 /* SpeechManager.swift in Sources */,
-				79D7C2A02BD112FF00AE0B24 /* NoteName.swift in Sources */,
-				790537052C47319600AC794D /* PracticeChartView.swift in Sources */,
-				799BE2B02C01C66A004B19F6 /* ActivitiesView.swift in Sources */,
-				79312DAD2C09A13B005FDE8B /* MetronomeTicker.swift in Sources */,
-				79E220EE2C856150004F64D8 /* ExerciseDropDownStarsView.swift in Sources */,
-				79D7C2A82BD116E300AE0B24 /* RoundedCornersShape.swift in Sources */,
-				79064CAA2D08ED4E002490A8 /* ExerciseState.swift in Sources */,
-				799381792C75D1A400734FDE /* SettingsView.swift in Sources */,
-				7906240A2C374F5D005A6A3E /* EmailView.swift in Sources */,
-				79CFA1F02C3808A90018DC8A /* Test.swift in Sources */,
-				79C65D702CDED7AC00467597 /* StaffClef.swift in Sources */,
-				79AFF13C2DD490D10049479F /* LeaderBoard.txt in Sources */,
-				79312DB72C118B41005FDE8B /* HelpView.swift in Sources */,
-				797F4A002E33888500E04DD9 /* WelcomeView.swift in Sources */,
-				7995E9022E8008D600D61535 /* SoundFontPresetView.swift in Sources */,
-				790B1B7B2C8BBD94008245DE /* RecordScaleProcess.swift in Sources */,
-				791F6C312CD18939006BAEBD /* SubscriptionsView.swift in Sources */,
-				79C8AD022C128F0200770C10 /* PracticeJournalView.swift in Sources */,
-				7970138A2BEE36E2009F85D6 /* TimeSignature.swift in Sources */,
-				79A811012E4DD4A50019F866 /* ChooseYourExerciseView.swift in Sources */,
-				79F1A1DD2D86BB8D008CEAC9 /* StartExerciseView.swift in Sources */,
-				79D7C2AA2BD1171200AE0B24 /* TouchesView.swift in Sources */,
-				79CF5D702BEE426B00454BB6 /* Staff.swift in Sources */,
-				79D7C2972BD10DB500AE0B24 /* ScaleRoot.swift in Sources */,
-				79312DB52C106D3D005FDE8B /* RecordingIsUnderwayView.swift in Sources */,
-				799DC8422D5190BB007008A5 /* FFTView.swift in Sources */,
-				79D7C2932BCFD57600AE0B24 /* ScalesModel.swift in Sources */,
-				79DA82162BCCE95F008AC492 /* ScalesTrainerApp.swift in Sources */,
-				79C8ACFC2C11CC7F00770C10 /* FamouseQuotes.swift in Sources */,
-				79DAF3BB2E80DCAF00EF6629 /* SoundfontParser.swift in Sources */,
-				7932928F2E46185A00890198 /* Todo in Sources */,
-				79C3904C2C1ECEAA00F0A658 /* SpinWheelViewCoins.swift in Sources */,
-				79064CAE2D0A9EA2002490A8 /* ExerciseHandler.swift in Sources */,
-				797013952BEE3E45009F85D6 /* ScoreEntriesView.swift in Sources */,
-				797013892BEE36E2009F85D6 /* TimeSlice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		79A42AB82E6988CE00B5438D /* PBXTargetDependency */ = {
+		793F6BB52E8F51C100BF94CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 79DA82112BCCE95F008AC492 /* ScalesStar */;
-			targetProxy = 79A42AB72E6988CE00B5438D /* PBXContainerItemProxy */;
+			target = 792B74B52E8D467800BB338A /* ScalesAcademy */;
+			targetProxy = 793F6BB42E8F51C100BF94CC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		79A42ABA2E6988CE00B5438D /* Debug */ = {
+		792B74D72E8D467A00BB338A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ScalesAcademy/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				INFOPLIST_FILE = ScalesAcademy/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Academy needs microphone access to listen to your piano";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
 			};
 			name = Debug;
 		};
-		79A42ABB2E6988CE00B5438D /* Release */ = {
+		792B74D82E8D467A00BB338A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ScalesAcademy/Preview Content\"";
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScalesAcademy/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Academy needs microphone access to listen to your piano";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		793F6BB72E8F51C100BF94CC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -939,14 +395,34 @@
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesStarTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesStar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesStar";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesAcademy.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesAcademy";
+			};
+			name = Debug;
+		};
+		793F6BB82E8F51C100BF94CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = X9VDGR7PQ7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ScalesAcademy.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ScalesAcademy";
 			};
 			name = Release;
 		};
@@ -1069,110 +545,32 @@
 			};
 			name = Release;
 		};
-		79DA82212BCCE960008AC492 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 34788DA9720D67F1ED84EFA6 /* Pods-ScalesStar.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
-				DEVELOPMENT_TEAM = X9VDGR7PQ7;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ScalesTrainer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		79DA82222BCCE960008AC492 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0194CE10841F5E19628FC7AD /* Pods-ScalesStar.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ScalesStar.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
-				DEVELOPMENT_ASSET_PATHS = "\"ScalesTrainer/Preview Content\"";
-				DEVELOPMENT_TEAM = X9VDGR7PQ7;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ScalesTrainer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Scales Academy";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app uses Bluetooth to connect to MIDI devices.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Trainer needs access to your microphone to hear you play";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Scales Trainer listens to your words to execute its commands";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.musicmastereducation.ScalesAcademy;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		79A42AB92E6988CE00B5438D /* Build configuration list for PBXNativeTarget "ScalesStarTests" */ = {
+		792B74DD2E8D467A00BB338A /* Build configuration list for PBXNativeTarget "ScalesAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				79A42ABA2E6988CE00B5438D /* Debug */,
-				79A42ABB2E6988CE00B5438D /* Release */,
+				792B74D72E8D467A00BB338A /* Debug */,
+				792B74D82E8D467A00BB338A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		79DA820D2BCCE95F008AC492 /* Build configuration list for PBXProject "ScalesTrainer" */ = {
+		793F6BB62E8F51C100BF94CC /* Build configuration list for PBXNativeTarget "ScalesAcademyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				793F6BB72E8F51C100BF94CC /* Debug */,
+				793F6BB82E8F51C100BF94CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		79DA820D2BCCE95F008AC492 /* Build configuration list for PBXProject "ScalesAcademy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				79DA821E2BCCE960008AC492 /* Debug */,
 				79DA821F2BCCE960008AC492 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		79DA82202BCCE960008AC492 /* Build configuration list for PBXNativeTarget "ScalesStar" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				79DA82212BCCE960008AC492 /* Debug */,
-				79DA82222BCCE960008AC492 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1188,12 +586,12 @@
 				minimumVersion = 5.6.1;
 			};
 		};
-		79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.7.0;
+				minimumVersion = 12.3.0;
 			};
 		};
 		79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */ = {
@@ -1220,58 +618,185 @@
 				minimumVersion = 5.6.0;
 			};
 		};
+		79EEB75D2E8E3228006A9645 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/google-api-objectivec-client-for-rest";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		79EEB7722E8E3335006A9645 /* XCRemoteSwiftPackageReference "Swift-JWT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-JWT.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		794D49522BCD28CC0005A173 /* SoundpipeAudioKit */ = {
+		794708332E8E135200D43914 /* SoundpipeAudioKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 794D49512BCD28CC0005A173 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
 			productName = SoundpipeAudioKit;
 		};
-		79B072ED2D37C2D200CD6F2B /* FirebaseAppCheck */ = {
+		7977103B2E8E0B8D0095F807 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAppCheck;
-		};
-		79B072EF2D37C2D200CD6F2B /* FirebaseAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
-		};
-		79B072F12D37C2D200CD6F2B /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		79B072F32D37C2D200CD6F2B /* FirebaseDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseDatabase;
-		};
-		79B072F52D37C2D200CD6F2B /* FirebaseFirestore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
 		};
-		79B072F72D37C2D200CD6F2B /* FirebaseStorage */ = {
+		799F9E4A2E8E01D8005BC91E /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 79B072EC2D37C2D200CD6F2B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
+			productName = FirebaseAnalytics;
 		};
-		79DA82272BCCEB70008AC492 /* AudioKit */ = {
+		799F9E502E8E01D8005BC91E /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAppCheck;
+		};
+		799F9E522E8E01D8005BC91E /* FirebaseAppDistribution-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "FirebaseAppDistribution-Beta";
+		};
+		799F9E542E8E022B005BC91E /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalytics;
+		};
+		799F9E5A2E8E022B005BC91E /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAppCheck;
+		};
+		799F9E5C2E8E022B005BC91E /* FirebaseAppDistribution-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "FirebaseAppDistribution-Beta";
+		};
+		79BB4CE92E8E0516006DBB26 /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		79BB4CEB2E8E0516006DBB26 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		79BB4CED2E8E0516006DBB26 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		79BB4CEF2E8E0516006DBB26 /* FirebaseAnalyticsIdentitySupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsIdentitySupport;
+		};
+		79BB4CF12E8E0516006DBB26 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		79BB4CF32E8E0695006DBB26 /* FirebaseAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAI;
+		};
+		79BB4CF52E8E0695006DBB26 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		79BB4CF72E8E0695006DBB26 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		79BB4CF92E8E0695006DBB26 /* FirebaseAnalyticsIdentitySupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsIdentitySupport;
+		};
+		79BB4CFB2E8E0695006DBB26 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		79BB4D992E8E089E006DBB26 /* AudioKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 79DA82262BCCEB70008AC492 /* XCRemoteSwiftPackageReference "AudioKit" */;
 			productName = AudioKit;
 		};
-		79DA822A2BCCEB8B008AC492 /* AudioKitUI */ = {
+		79BB4D9B2E8E093B006DBB26 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 79DA82292BCCEB8B008AC492 /* XCRemoteSwiftPackageReference "AudioKitUI" */;
-			productName = AudioKitUI;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
-		79DA82352BCCF260008AC492 /* AudioKitEX */ = {
+		79BB4D9D2E8E093B006DBB26 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 79DA82342BCCF260008AC492 /* XCRemoteSwiftPackageReference "AudioKitEX" */;
-			productName = AudioKitEX;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		79BB4D9F2E8E093B006DBB26 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		79BB4DA12E8E093B006DBB26 /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		79BB4DA32E8E093B006DBB26 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79BB4CE82E8E0516006DBB26 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		79EEB75E2E8E3228006A9645 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB75D2E8E3228006A9645 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		79EEB7602E8E3228006A9645 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB75D2E8E3228006A9645 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		79EEB7632E8E32CD006A9645 /* GoogleAPIClientForRESTCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForRESTCore;
+		};
+		79EEB7652E8E32CD006A9645 /* GoogleAPIClientForREST_ACMEDNS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_ACMEDNS;
+		};
+		79EEB7672E8E32CD006A9645 /* GoogleAPIClientForREST_AIPlatformNotebooks */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_AIPlatformNotebooks;
+		};
+		79EEB7692E8E32CD006A9645 /* GoogleAPIClientForREST_APIGateway */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_APIGateway;
+		};
+		79EEB76B2E8E32CD006A9645 /* GoogleAPIClientForREST_APIManagement */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7622E8E32CD006A9645 /* XCRemoteSwiftPackageReference "google-api-objectivec-client-for-rest" */;
+			productName = GoogleAPIClientForREST_APIManagement;
+		};
+		79EEB7732E8E3335006A9645 /* SwiftJWT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79EEB7722E8E3335006A9645 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
+			productName = SwiftJWT;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

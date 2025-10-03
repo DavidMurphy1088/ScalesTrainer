@@ -172,7 +172,7 @@ class Settings : Encodable, Decodable {
     }
 
     public func isDeveloperModeOn() -> Bool {
-        return false
+        return true
 //        if users.count == 0 {
 //            return false
 //        }

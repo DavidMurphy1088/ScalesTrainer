@@ -42,6 +42,7 @@ class AudioManager {
 
     init() {
         ///Enable just midi at app start, other more complex audio configs will be made depending on user actions (like recording)
+        AppLogger.shared.log(self, "Audio Mgr init")
         configureAudio(withMic: false, recordAudio: false)
     }
     
@@ -157,7 +158,7 @@ class AudioManager {
             return audioPlayer
         }
         catch  {
-            AppLogger.shared.reportError(self, "Cannot prepare AVAudioPlayer")
+            AppLogger.shared.reportError(self, "Cannot prepare AVAudioPlayer clapURL:\(clapURL)")
         }
 
         AppLogger.shared.log(self, "Loaded audio players")
@@ -233,7 +234,7 @@ class AudioManager {
             return sampler
         }
         catch {
-            AppLogger.shared.reportError(self, error.localizedDescription)
+            AppLogger.shared.reportError(self, "Cant load sampler \(error.localizedDescription)")
             return nil
         }
     }

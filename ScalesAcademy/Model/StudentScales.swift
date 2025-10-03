@@ -80,7 +80,7 @@ class StudentScales: Codable {
         var count = 0
         for scale in scales {
             self.studentScales.append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
-                                                   visible: true, day: 0, freeContent: count < 4))
+                                                   visible: true, day: 0, freeContent: count < 400))
             count += 1
         }
         //debug("Init")
@@ -108,8 +108,6 @@ class StudentScales: Codable {
             }
             let dayOffset = dayCount % scalesPerDay
             studentScale.practiceDay = dayOffset
-//            append(StudentScale(scale: scale, scaleId: scale.getScaleIdentificationKey(),
-//                                                   visible: true, day: dayOffset))
             dayCount += 1
         }
         saveToFile()

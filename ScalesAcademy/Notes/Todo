@@ -1,5 +1,25 @@
 ==== TODO
-22Sep    remove the hughe new sf2 files
+1Oct
+make scale name changes to verify tests still ok
+try unit tests
+store good 1-5
+try github post
+store good abrsm 1-2
+abrsm #5 tickets
+
+make sure all audiomgr, license etc load when flash screen laoding
+try TestFlight
+try licensing
+make sure landscape is locked
+
+delete all assets in old folder
+make sure large files not going to github
+
+
+Why connect to firebase in live app? it does now
+
+
+22Sep    remove the huge new sf2 files
     
 Support ABRSM gr 5 Chromtic starting on F+ (LH) and A+ (RH) 2 oct. legato; hands starting a major third apart
 Do Keyboard screen

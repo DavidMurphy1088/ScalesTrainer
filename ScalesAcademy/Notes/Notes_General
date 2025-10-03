@@ -1,3 +1,11 @@
+
+NIGHTMARE 👹 pod install fails
+soln : cahnge objectVersion back to 60;
+https://github.com/CocoaPods/CocoaPods/issues/12671#issuecomment-2445304215
+
+apptesting2@musicmastereducation.co.nz
+Alg...
+
 IS IT ONLY FOLLOW OR LEAD TOO?
 
 BaseTap.swift:removeTap():145:The tapped node isn't attached to the engine (BaseTap.swift:removeTap():145)

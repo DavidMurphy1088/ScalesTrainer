@@ -111,7 +111,7 @@ struct ScalesGridCellView: View {
                                 }
                             }
                         }
-                        if Settings.shared.isDeveloperModeOn() {
+                        if Paramters.shared.testMode {
                             if let user = user {
                                 self.testDataButtons(user: user)
                                 Spacer()
@@ -206,7 +206,8 @@ struct ScalesGridView : View {
     var body: some View {
         let cellWidth = (screenWidth / Double(self.scalesPerRow)) * 0.8
         let cellHeight = (screenHeight) * 0.15
-        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? screenHeight * 0.000 : screenHeight * 0.004)
+        let paddingVertical = (UIDevice.current.userInterfaceIdiom == .phone ? 0 : 8.0)
+                               //screenHeight * 0.000 : screenHeight * 0.004)
         let compact = UIDevice.current.userInterfaceIdiom == .phone
         
         ScrollView(.vertical) {
