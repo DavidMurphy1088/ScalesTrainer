@@ -118,7 +118,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             let maxAccidentalLoopbackCustomisation = ScaleCustomisation(maxAccidentalLookback: 1)
             
             ///Row 1
-            if false && Settings.shared.isDeveloperModeOn() {
+            if false {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
@@ -502,7 +502,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "E Major Contrary Motion ")))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(customScaleName: "D Chromatic Contrary Motion ")))
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "D Chromatic Contrary Motion")))
             
             ///Hands together argeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
@@ -625,9 +625,12 @@ class MusicBoardAndGrade: Codable, Identifiable {
 
             ///Contrary motion
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],
-                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+                                minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "D♭ Major Contrary Motion")))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves,
-                                hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+                                hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "C# Harmonic Minor Contrary Motion"
+                                )))
             
             ///Chromatic
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves,
@@ -669,9 +672,10 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B♭"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-            
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: 2,
-                                hands: [0,1], minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            for hand in [0,1] {
+                scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: 2,
+                                    hands: [hand], minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+            }
         }
         return scales
     }

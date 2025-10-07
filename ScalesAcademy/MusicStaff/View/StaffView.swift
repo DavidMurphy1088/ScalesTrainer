@@ -37,7 +37,6 @@ public struct StaffLinesView: View {
 }
 
 struct TimeSignatureView: View {
-    //@ObservedObject
     var staff:Staff
     var timeSignature:TimeSignature
     var lineSpacing:Double
@@ -190,6 +189,10 @@ public struct StaffView: View {
         if keySignture.sharps.count > 4 {
             offsets.append(-1)
         }
+        if keySignture.sharps.count > 5 {
+            offsets.append(3)
+        }
+
         
         if keySignture.flats.count > 0 {
             offsets.append(0)
@@ -252,14 +255,14 @@ public struct StaffView: View {
                         KeySignatureView(score: score,
                                          staffOffsets: keySigOffsets(staff: staff, keySignture: score.key.keySig), lineSpacing: self.lineSpacing)
                             .frame(height: getStaffHeight())
+                            //.border(Color.red)
                     }
                 }
                 
                 TimeSignatureView(staff: staff, timeSignature: score.timeSignature, lineSpacing: self.lineSpacing, clefWidth: clefWidth()/1.0)
                     .frame(height: getStaffHeight())
                     .padding([.trailing], self.lineSpacing)
-                //    .border(Color.red)
-
+                    
                 ScoreEntriesView(score: score, staff: staff, scoreView: scoreView, lineSpacing: self.lineSpacing)
                     .frame(height: getStaffHeight())
                     .coordinateSpace(name: "StaffNotesView")

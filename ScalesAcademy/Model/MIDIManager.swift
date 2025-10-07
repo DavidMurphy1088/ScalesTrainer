@@ -249,7 +249,7 @@ class MIDIManager : ObservableObject {
         self.installedNotificationTarget = target
     }
 
-    func setupMIDI() {
+    func setupMIDIUnused() {
         // Create MIDI Client
         let clientName = "Scales Academy" as CFString
         let result = MIDIClientCreate(clientName, midiSetupNotifyProc, Unmanaged.passUnretained(self).toOpaque(), &midiClient)
@@ -281,7 +281,7 @@ class MIDIManager : ObservableObject {
             let endpoint:MIDIEndpointRef = MIDIGetSource(i)
             if let driver = getMIDIProperty(endpoint, kMIDIPropertyDriverOwner) {
                 ///Filter out Apple virtual network driver or connections from other Apple devices
-                if !Settings.shared.isDeveloperModeOn() {
+                if !Parameters.shared.testMode {
                     if driver.lowercased().contains("apple") {
                         continue
                     }

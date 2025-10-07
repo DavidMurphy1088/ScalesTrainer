@@ -1,8 +1,6 @@
 import Foundation
 import StoreKit
 
-/// StoreKit 2 subscription manager (iOS 15+)
-/// Singleton usage: `LicenceManager.shared.configure(productIDs: [...])`
 @MainActor
 final class Licencing: ObservableObject {
     static let shared = Licencing()
@@ -21,6 +19,7 @@ final class Licencing: ObservableObject {
     let logger = AppLogger.shared
     
     /// Call once early (e.g., App init) with your product IDs.
+    /// apptesting2@musicmastereducation.co.nz
     func configure(enableLicensing:Bool, productIDs: [String]) {
         self.enableLicensing = enableLicensing
         if !enableLicensing {
@@ -34,23 +33,41 @@ final class Licencing: ObservableObject {
         }
     }
 
-    // MARK: - Product loading
     func refreshProducts() async {
+        log("Loading products \(self.productIDs)", false)
         guard !productIDs.isEmpty else {
             log("LicenceManager: No product IDs configured.", true)
             products = []
             return
         }
+        print("🟢 Bundle at runtime:", Bundle.main.bundleIdentifier ?? "nil")
+        let storefront = try await Storefront.current
+        log("Storefront: \(storefront?.id) \(storefront?.countryCode)", false)
+        print("🟢 Bundle:", Bundle.main.bundleIdentifier ?? "nil")
+        print("🟢 Can make payments:", AppStore.canMakePayments)
         do {
-            let loaded = try await Product.products(for: productIDs)
-            products = loaded.filter { $0.type == .autoRenewable }
-            if products.isEmpty {
-                log("No auto-renewable subscription products found.", true)
-            } else {
-                log("Loaded \(products.count) products.", false)
-            }
+            let sf = await Storefront.current
+            print("🟢 Storefront:", sf?.id ?? "?", sf?.countryCode ?? "?")
+            let prods = try await Product.products(for: productIDs)
+            print("🟢 Found:", prods.map { "\($0.id) \($0.type) \($0.displayName)" })
         } catch {
-            log("Failed to load products: \(error.localizedDescription)", true)
+            print("🔴 Probe error:", error)
+        }
+
+        for attempt in 1...3 {
+            do {
+                let loaded = try await Product.products(for: productIDs)
+                products = loaded.filter { $0.type == .autoRenewable }
+                if products.isEmpty {
+                    log("No auto-renewable subscription products found. try:\(attempt)", true)
+                } else {
+                    log("Loaded \(products.count) products.", false)
+                    break
+                }
+            } catch {
+                log("Failed to load products: try: \(attempt) \(error.localizedDescription)", true)
+            }
+            try? await Task.sleep(nanoseconds: 800_000_000) // 0.8s
         }
     }
 
@@ -87,7 +104,6 @@ final class Licencing: ObservableObject {
         await refreshEntitlementsAndStatus()
     }
 
-    // MARK: - Restore
     func restorePurchases() async {
         do {
             try await AppStore.sync()
@@ -154,7 +170,7 @@ final class Licencing: ObservableObject {
         guard activeNow else {
             self.willAutoRenew = nil
             self.isInBillingRetry = false
-            log("No active entitlements", true)
+            log("No active entitlements", false)
             return
         }
 
@@ -233,12 +249,12 @@ final class Licencing: ObservableObject {
     }
     
     func log(_ msg:String, _ error:Bool) {
-        let msg = "\(error ? "🔴" : "")  Licence \(msg)"
+        let msg = "\(error ? "🔴" : "🟢")  Licence \(msg)"
         if error  {
             AppLogger.shared.reportError(self, msg)
         }
         else {
-            //AppLogger.shared.log(self, msg)
+            AppLogger.shared.log(self, msg)
         }
         statusMessage1 = msg
     }

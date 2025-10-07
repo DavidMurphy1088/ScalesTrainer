@@ -33,6 +33,7 @@
 		79BB4DA22E8E093B006DBB26 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4DA12E8E093B006DBB26 /* FirebaseFunctions */; };
 		79BB4DA42E8E093B006DBB26 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 79BB4DA32E8E093B006DBB26 /* FirebaseStorage */; };
 		79D5D18B2E8E248C0003C5B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 79DA82192BCCE960008AC492 /* Assets.xcassets */; };
+		79E7B6632E9124C000EE1607 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790C4E912E8D1856002D7C4B /* StoreKit.framework */; };
 		79EEB75F2E8E3228006A9645 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB75E2E8E3228006A9645 /* GoogleSignIn */; };
 		79EEB7612E8E3228006A9645 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7602E8E3228006A9645 /* GoogleSignInSwift */; };
 		79EEB7642E8E32CD006A9645 /* GoogleAPIClientForRESTCore in Frameworks */ = {isa = PBXBuildFile; productRef = 79EEB7632E8E32CD006A9645 /* GoogleAPIClientForRESTCore */; };
@@ -114,6 +115,7 @@
 				79BB4CF62E8E0695006DBB26 /* FirebaseAnalytics in Frameworks */,
 				79BB4CEA2E8E0516006DBB26 /* FirebaseAI in Frameworks */,
 				79EEB75F2E8E3228006A9645 /* GoogleSignIn in Frameworks */,
+				79E7B6632E9124C000EE1607 /* StoreKit.framework in Frameworks */,
 				79BB4DA02E8E093B006DBB26 /* FirebaseDatabase in Frameworks */,
 				79BB4CF42E8E0695006DBB26 /* FirebaseAI in Frameworks */,
 				79EEB7742E8E3335006A9645 /* SwiftJWT in Frameworks */,
@@ -326,7 +328,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesAcademy/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -337,6 +339,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
@@ -359,7 +362,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ScalesAcademy/Preview Content\"";
 				DEVELOPMENT_TEAM = X9VDGR7PQ7;
 				ENABLE_PREVIEWS = YES;
@@ -370,6 +373,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;

@@ -1,4 +1,30 @@
 
+====== Sandbox user
+davidmurphy+sbx1@musicmastereducation.co.nz Zen...n01
+subscriptionid Monthly_3
+
+======== Release Web site HTM =========
+
+This will put whatever is the landing page zip into the MME public domain name.
+
+1 ) Joe will need to use your MME login.
+2)  Download/install Google gcloud at https://cloud.google.com/sdk/docs/install. This allows installing the landing page using Google cloud from the Mac command line. (download required only one-item)
+3)  Download the zip to the Mac
+5)  Go to Mac command line
+6) Set project ID with gcloud (required only one-item)
+  gcloud config set project musicianshiptrainer-393523
+6) cd to the ./Downloads folder. Unpack the zip to the ScalesAcademy sub-folder (note that this name is case sensitive). So the ScalesAcademy subfolder in ./Downloads has all the files.
+7) ===> stay in the ./Downloads folder and copy the files to Google cloud with -
+gcloud storage cp -r ScalesAcademy/ gs://www.musicmastereducation.co.nz/
+
+Worldwide caching means the content wont be public for about one hour at the MME domain name -
+https://www.musicmastereducation.co.nz/ScalesAcademy/index.html
+
+But you should be able to check the new content right after step 7 at this URL
+https://storage.googleapis.com/www.musicmastereducation.co.nz/ScalesAcademy/index.html
+
+===================
+
 NIGHTMARE 👹 pod install fails
 soln : cahnge objectVersion back to 60;
 https://github.com/CocoaPods/CocoaPods/issues/12671#issuecomment-2445304215

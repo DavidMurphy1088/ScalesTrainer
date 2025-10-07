@@ -191,9 +191,7 @@ struct PracticeChartView: View {
                             cellOpacity = 1.0
                         }
                     })
-                    //if !compact {
-                        Spacer()
-                    //}
+                    Spacer()
                     SelectDayOfWeek(dayNames: self.dayNames, daysToShow: daysInChart,
                                     currentDayOfWeekNum: self.currentDayOfWeekNum,
                                     selectedDayColumn: $selectedDayOffset, opacity: $cellOpacity)
@@ -242,7 +240,7 @@ struct PracticeChartView: View {
             if let selectedMinorType = user.selectedMinorType {
                 self.selectedMinorType = selectedMinorType
             }
-            if Settings.shared.isDeveloperModeOn() {
+            if Parameters.shared.testMode {
 //                Firebase.shared.readAllScales(board: studentScales.board, grade:studentScales.grade) { scalesAndScores in
 //                    self.scalesInChart = scalesAndScores.map { $0.0 }
 //                }

@@ -270,23 +270,44 @@ struct SubscriptionsView: View {
                             }
                             
                             // Restore
-                            Section {
-                                Button("Restore Purchases") {
-                                    Task { await licenceManager.restorePurchases() }
-                                }
-                            }
+//                            Section {
+//                                Button("Restore Purchases") {
+//                                    Task { await licenceManager.restorePurchases() }
+//                                }
+//                            }
                         }
                         .listStyle(.insetGrouped)
                         VStack() {
-                            let info = "Purchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
-                            //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
-                            Text(info).padding()
-                        }
-                        HStack {
-                            if let statusMsg = self.licenceManager.statusMessage1 {
-                                Text("status: \(statusMsg)")
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .imageScale(.medium)
+                                    .foregroundColor(.green)
+                                    .padding(.top, 1)
+                                let info = "Purchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
+                                //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
+                                Text(info).padding()
                             }
                         }
+                        Text("Already subscribed?").font(.headline).foregroundColor(.secondary)
+                        Text("If you’ve previously subscribed with this Apple ID, tap Restore to regain access without paying again.")
+                            //.font(.footnote)
+                            .foregroundColor(.secondary)
+                        Button {
+                            Task { await licenceManager.restorePurchases() }
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.clockwise.circle.fill")
+                                Text("Restore Purchases")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+//                        HStack {
+//                            if let statusMsg = self.licenceManager.statusMessage1 {
+//                                Text("status: \(statusMsg)")
+//                            }
+//                        }
 
                     }
                     .padding()

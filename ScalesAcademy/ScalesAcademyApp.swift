@@ -17,9 +17,14 @@ enum LaunchScreenStep {
     case finished
 }
 
+class Parameters {
+    var testMode:Bool = false
+    static let shared = Parameters()
+}
+
 final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep =
-        Settings.shared.isDeveloperModeOn() ? .finished : .firstStep
+    Parameters.shared.testMode ? .finished : .firstStep
     @MainActor func dismiss() {
         Task {
             //state = .secondStep
@@ -138,9 +143,11 @@ struct DeveloperView: View {
     }
 }
 
-
 class AppDelegate: NSObject, UIApplicationDelegate {
-    //var orientationLock: UIInterfaceOrientationMask = UIInterfaceOrientationMask.landscape
+    func application(_ application: UIApplication,
+                         supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+            return .landscape  // Actually only use landscape
+    }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
@@ -326,7 +333,7 @@ struct TabContainerView: View {
 //                .environmentObject(viewManager)
             
 
-            if Settings.shared.isDeveloperModeOn() {
+            if Parameters.shared.testMode {
 //                MIDIView()
 //                    .tabItem {
 //                        Label("MIDI", systemImage: "house")
@@ -395,11 +402,6 @@ struct TabContainerView: View {
     }
 }
 
-class Paramters {
-    var testMode:Bool = false
-    static let shared = Paramters()
-}
-
 @main
 struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
@@ -419,8 +421,8 @@ struct ScalesTrainerApp: App {
         }
 #endif
         Settings.shared.load()
-        Paramters.shared.testMode = ProcessInfo.processInfo.arguments.contains("-testMode")
-        Licencing.shared.configure(enableLicensing: !Paramters.shared.testMode, productIDs: ["100"])
+        Parameters.shared.testMode = ProcessInfo.processInfo.arguments.contains("-testMode")
+        Licencing.shared.configure(enableLicensing: !Parameters.shared.testMode, productIDs: ["Monthly_3"])
         let _ = AudioManager.shared ///Cause it to load sf2 files
     }
     
@@ -456,7 +458,7 @@ struct ScalesTrainerApp: App {
             }
             .onAppear {
                 if Settings.shared.hasUsers() {
-                    if Settings.shared.isDeveloperModeOn() {
+                    if Parameters.shared.testMode {
                         ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
                     }
                     else {

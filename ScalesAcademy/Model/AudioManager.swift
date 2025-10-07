@@ -386,7 +386,7 @@ class AudioManager {
 extension AudioManager: PianoKeyboardDelegate {
     func pianoKeyDown(_ keyNumber: Int) {
         ///Sep 2025 Keep device key presses silent for now
-        if Settings.shared.isDeveloperModeOn() {
+        if Parameters.shared.testMode {
             if let sampler = samplerForKeyboard {
                 sampler.play(noteNumber: MIDINoteNumber(keyNumber), velocity: 64, channel: 0)
             }

@@ -243,8 +243,10 @@ struct ScalesView: View {
                             metronome.stop("ScalesView follow")
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
-                            self.exerciseState.setExerciseState("Follow", settings.isDeveloperModeOn() ?
-                                                                ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart)
+                            self.exerciseState.setExerciseState("Follow",
+                                //Parameters.shared.testMode ? ExerciseState.State.exerciseStarted : ExerciseState.State.exerciseAboutToStart
+                                ExerciseState.State.exerciseAboutToStart
+                            )
                             self.directionIndex = 0
                         })
                     }
@@ -609,7 +611,7 @@ struct ScalesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
             }
-            if Settings.shared.isDeveloperModeOn()  {
+            if Parameters.shared.testMode  {
                 if user.settings.useMidiSources {
                     HStack {
                         TestInputView()
@@ -639,7 +641,7 @@ struct ScalesView: View {
             //let offScreenoffset = UIScreen.main.bounds.height / 4
             
             if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
-                if false && Settings.shared.isDeveloperModeOn() {
+                if false {
                     exerciseState.setExerciseState("ScalesView, exercise started", .exerciseStarted)
                 }
                 else {
@@ -702,7 +704,8 @@ struct ScalesView: View {
             scalesModel.setRecordedAudioFile(nil)
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             scalesModel.setInitialDirectionOfPlay(scale: self.scale)
-           // self.scale.debug1("View Appear")
+            UIApplication.shared.isIdleTimerDisabled = true
+            self.scale.debug11("View Appear")
         }
         
         .onDisappear {
@@ -710,11 +713,12 @@ struct ScalesView: View {
             metronome.removeAllProcesses("ScalesView .Disappear")
             scalesModel.setRunningProcess(.none)
             PianoKeyboardModel.sharedCombined = nil  ///DONT delete, required for the next view initialization
+            UIApplication.shared.isIdleTimerDisabled = false
             
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt
-                if Settings.shared.isDeveloperModeOn()  {
+                if Parameters.shared.testMode  {
                     let fileManager = FileManager.default
                     if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                         do {

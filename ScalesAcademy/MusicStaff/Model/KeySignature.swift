@@ -117,6 +117,10 @@ public class KeySignature {
             if self.accidentalCount >= 5 {
                 sharps.append(StaffNote.MIDDLE_C + 10) //A#
             }
+            if self.accidentalCount >= 6 {
+                sharps.append(StaffNote.MIDDLE_C + 5) //E#
+            }
+
         }
         else {
             if self.accidentalCount >= 1 {

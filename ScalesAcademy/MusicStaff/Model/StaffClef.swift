@@ -87,26 +87,45 @@ public class NoteOffsetsInScaleByKey {
         //Defines which staff line (and accidental) is used to show a midi pitch in each key,
         //assuming key signature is not taken in account (it will be later in the note display code...)
         //offset, sign. sign = ' ' or -1=flat, 1=sharp (=natural,????)
-        //modified July23 - use -1 for flat, 0 for natural, 1 for sharp. Done onlu so far for C and G
+        //modified July23 - use -1 for flat, 0 for natural, 1 for sharp. Done only so far for C and G
         //horizontal is the various keys
-        //Vertical starts at showing which accidentals C, then C#, D, E♭ (row) are shown in that key (column)
+        //Vertical starts at showing which accidentals and offset C, then C#, D, E♭ (the row) are shown in that key (column)
         //31Aug2023 - done for C, G, D, E
         //06Jan2025 NOTE - all chromatic scales are in the key of C. Changing the C column will affect chromatic accidentals
+        
         if keyType == .major {
             //  Key                 C     D♭   D    E♭   E    F    G♭    G     A♭   A    B♭   B
+//            noteOffsetByKey.append("0     0    0    0    0    0    0     0     0    0,1  0    0")    //C
+//            //noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
+//            noteOffsetByKey.append("1,-1  1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
+//            noteOffsetByKey.append("1     1,1  1    1    1    1    1     1     1,1  1    1    1")    //D
+//            noteOffsetByKey.append("1,1   2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
+//            noteOffsetByKey.append("2     2,1  2    2,1  2    2    2     2     2,1  2    2,1  2")    //E
+//            noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
+//            noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
+//            noteOffsetByKey.append("4     4,1  4    4    4    4    4     4     4    4,1  4    4")    //G
+//            //noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭
+//            noteOffsetByKey.append("5,-1  5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭ //Trinity needs G# not A ♭
+//            noteOffsetByKey.append("5     5,1  5    5,1  5    5    5     5     5,1  5    5    5")    //A
+//            noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    6,-1  6,-1  6    6,0  6    5,1")  //A#, B♭
+//            noteOffsetByKey.append("6     6,1  6    6,1  6    6,1  6     6     6,1  6    6,1  6")    //B
+            
+            //Trinity needs G# not A ♭
+            //ABRSM #5 needs F# not G ♭
+            
+            //  Key                 C     D♭   D    E♭   E    F    F#    G     A♭   A    B♭   B
             noteOffsetByKey.append("0     0    0    0    0    0    0     0     0    0,1  0    0")    //C
-            //noteOffsetByKey.append("0,1   1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
-            noteOffsetByKey.append("1,-1  1    0,1  1,0  0,1  1,0  1,-1  0,1   1    0    1,0  0,1")  //C#, D♭
+            noteOffsetByKey.append("1,-1  1    0,1  1,0  0,1  1,0  0,1   0,1   1    0    1,0  0,1")  //C#, D♭
             noteOffsetByKey.append("1     1,1  1    1    1    1    1     1     1,1  1    1    1")    //D
-            noteOffsetByKey.append("1,1   2    1,-1 2    1,1  2,0  2,-1  2,-1  2    1,2  2    1,1")  //D#, E♭
+            noteOffsetByKey.append("1,1   2    1,-1 2    1,1  2,0  1,1   2,-1  2    1,2  2    1,1")  //D#, E♭
             noteOffsetByKey.append("2     2,1  2    2,1  2    2    2     2     2,1  2    2,1  2")    //E
             noteOffsetByKey.append("3     3    3    3    3    3    3     3     3    3,1  3    3")    //F
-            noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  4,-1  3,1   4,0  3    4,0  3,1")  //F#, G♭
+            noteOffsetByKey.append("3,1   4    3,1  4,0  3,1  4,0  3,1   3,1   4,0  3    4,0  3,1")  //F#, G♭
             noteOffsetByKey.append("4     4,1  4    4    4    4    4     4     4    4,1  4    4")    //G
             //noteOffsetByKey.append("5,-1   5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭
-            noteOffsetByKey.append("5,-1  5    4,1  5    4,1  5,0 5,-1  4,1   5    4    5,0  4,1")  //G#, A♭ //Trinity needs G# not A ♭
+            noteOffsetByKey.append("5,-1  5    4,1  5    4,1  5,0  4,1   4,1   5    4    5,0  4,1")  //G#, A♭
             noteOffsetByKey.append("5     5,1  5    5,1  5    5    5     5     5,1  5    5    5")    //A
-            noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    6,-1  6,-1  6    6,0  6    5,1")  //A#, B♭
+            noteOffsetByKey.append("6,-1  6    6,-1 6    6,-1 6    5,1   6,-1  6    6,0  6    5,1")  //A#, B♭
             noteOffsetByKey.append("6     6,1  6    6,1  6    6,1  6     6     6,1  6    6,1  6")    //B
         }
         else {

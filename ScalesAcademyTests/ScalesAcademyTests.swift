@@ -64,10 +64,10 @@ struct ScalesAcademyTests {
                 for key in dict1.keys {
                     if !areJSONStructuresEqual(level: level + 1, dict1[key], dict2[key]) {
                         if [4, 3].contains(level) {
-                            print("======= level:\(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
+//                            print("======= level:\(level) ♦️ DICT key:\(key) \nCORRECT: \(String(describing: dict1[key])) \nWRONG: \(String(describing: dict2[key]))")
                         }
                         else {
-                            print("======= level:\(level) ♦️ DICT key:\(key) ")
+//                            print("======= level:\(level) ♦️ DICT key:\(key) ")
                         }
                         match = false
                         break
@@ -84,7 +84,7 @@ struct ScalesAcademyTests {
             if match {
                 for i in 0..<array1.count {
                     if !areJSONStructuresEqual(level: level + 1, array1[i], array2[i]) {
-                        print("======= Level:\(level) ♦️ ARRAY ctr:\(i)")
+                        //print("======= Level:\(level) ♦️ ARRAY ctr:\(i)")
                         match = false
                         break
                     }
@@ -143,6 +143,10 @@ struct ScalesAcademyTests {
                                 log("❌ SCORE \(scaleKey) failed")
                                 log("❌ SCALE \(scaleKey) failed")
                                 errors = true
+                                if true {
+                                    print("\n----------Correct\n", correctScoreJSON, "\n\n----------Wrong\n", scoreUnderTestJSON)
+                                }
+
                             }
                         }
                         
@@ -154,7 +158,9 @@ struct ScalesAcademyTests {
                             else {
                                 totalMismatchedCnt += 1
                                 log("❌ SCALE \(scaleKey) failed")
-                                print("\n----------Correct\n", correctScaleJSON, "\n\n----------Wrong\n", scaleUnderTestJSON)
+                                if false {
+                                    print("\n----------Correct\n", correctScaleJSON, "\n\n----------Wrong\n", scaleUnderTestJSON)
+                                }
                                 errors = true
                             }
                         }
@@ -180,7 +186,7 @@ struct ScalesAcademyTests {
             log("➡️➡️➡️ Testing:\(musicBoard.name) grade:\(grade) scaleCount:\(gradeScales.count)")
             
             for scale in gradeScales {
-                print("=======Scales", scale.getScaleDescriptionHelpMessage())
+                print("-------- Scales", scale.getScaleDescriptionHelpMessage())
                 if keyFilter.count > 0 {
                     let scaleKeyName = scale.getScaleKeyName().components(separatedBy: " ").first?.uppercased() ?? ""
                     if !keyFilter.contains(scaleKeyName) {

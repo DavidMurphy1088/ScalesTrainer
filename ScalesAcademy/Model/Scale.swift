@@ -592,10 +592,6 @@ public class Scale : Codable {
             ////                    }
             //                }
         }
-        //}
-        //if debug {
-        //debug1("End Init", rootName: "G", hand: 1)
-        //}
         Scale.createCount += 1
     }
     
@@ -676,25 +672,7 @@ public class Scale : Codable {
         }
         return self.hands == scale.hands
     }
-    
-    //    func getArticulationsDescription() -> String {
-    //        var desc = ""
-    //        var d = 0
-    //        for articulationType in articulationTypes {
-    //            if d > 0 {
-    //                desc += " or "
-    //            }
-    //            desc += String(articulationType.description)
-    //            d += 1
-    //        }
-    //        return desc
-    //    }
-    
-    
-    //    func getScaleNoteState(handType:HandType, index:Int) -> ScaleNoteState {
-    //        let states = self.scaleNoteState[handType == .right ? 0 : 1]
-    //        return states[index]
-    //    }
+
     func getScaleNoteState(handType: HandType, index: Int) -> ScaleNoteState? {
         guard index < self.scaleNoteState[0].count else {
             return nil
@@ -1137,41 +1115,6 @@ public class Scale : Codable {
         }
     }
     
-//    private func setFingerBreaksArpeggio(hand:Int) {
-//        for note in self.scaleNoteState[hand] {
-//            note.keyboardFingerColourTypeUp = .none
-//            note.keyboardFingerColourTypeDown = .none
-//        }
-//        let highPointIndex = self.getHighPointIndex(hand: hand) //= self.scaleNoteState[hand].count/2 //-1
-//        if hand == 0 {
-//            var lastFinger = self.scaleNoteState[hand][0].finger
-//            for i in 1...highPointIndex {
-//                let finger = self.scaleNoteState[hand][i].finger
-//                let diff = finger - lastFinger
-//                if diff < 0 {
-//                    self.scaleNoteState[hand][i].keyboardFingerColourTypeUp = .fingeringSequenceBreak
-//                    self.scaleNoteState[hand][self.scaleNoteState[hand].count - i].keyboardFingerColourTypeUp = .fingeringSequenceBreak
-//                }
-//                lastFinger = self.scaleNoteState[hand][i].finger
-//            }
-//        }
-//        else {
-//            var lastFinger = self.scaleNoteState[hand][highPointIndex].finger
-//            for i in stride(from: highPointIndex-1, to: 0, by: -1) {
-//                let finger = self.scaleNoteState[hand][i].finger
-//                let diff = finger - lastFinger
-//                if diff < 0 {
-//                    self.scaleNoteState[hand][i+1].keyboardFingerColourTypeUp = .fingeringSequenceBreak ///break for the downward direction
-//                    let mirror = highPointIndex + (highPointIndex - i)
-//                    if mirror < self.scaleNoteState[hand].count - 1 {
-//                        self.scaleNoteState[hand][mirror].keyboardFingerColourTypeUp = .fingeringSequenceBreak ///break for the upward direction
-//                    }
-//                }
-//                lastFinger = self.scaleNoteState[hand][i].finger
-//            }
-//        }
-//    }
-
     func getMinMax(handIndex:Int) -> (Int, Int) {
         let mid = self.scaleNoteState[handIndex].count / 2
         return (self.scaleNoteState[handIndex][0].midi, self.scaleNoteState[handIndex][mid].midi)
@@ -1190,7 +1133,6 @@ public class Scale : Codable {
             }
         }
     }
-    
     
     func getMinMaxMidis() -> (Int, Int) {
         var min = 0
@@ -1349,6 +1291,7 @@ public class Scale : Codable {
         ///Three note arpeggio
         
         if scaleShapeForFingering == .arpgeggio {
+
             switch self.scaleRoot.name {
             case "C":
                 if [.arpeggioMinor].contains(scaleType) {
@@ -1439,7 +1382,6 @@ public class Scale : Codable {
                 fingers = hand == 0 ? "123" : "123"
             }
         }
-        
         ///Four note arpeggio
         
         if scaleShapeForFingering == .arpgeggio4Note {
@@ -1503,32 +1445,50 @@ public class Scale : Codable {
                     applyFingerPatternToScaleStart(halfway: halfway)
                 }
             }
-            
+            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
+                print("========== fingers 0", scaleRoot.name, hand, scaleType, fingers)
+                self.debug11("finfers")
+            }
+
+            var hasAWhiteKey = false
+            for n in 0..<scaleNoteState[0].count-1 {
+                let state = self.scaleNoteState[hand][n]
+                if state.isWhiteKey() {
+                    hasAWhiteKey = true
+                    break
+                }
+            }
+
             ///For scales starting on a black note adjust the first and last finger to 2
-            if hand == 0 || (hand == 1 && self.scaleMotion == .contraryMotion) {
-                ///All RH scales and arpggeios starting on black note have first finger = 2
-                ///But only the first, after that revert to the regular fingering from the pattern.
-                for n in 0..<scaleNoteState[0].count-1 {
-                    let state = self.scaleNoteState[hand][n]
-                    if state.isWhiteKey() {
-                        break
+            if hasAWhiteKey {
+                if hand == 0 || (hand == 1 && self.scaleMotion == .contraryMotion) {
+                    ///All RH scales and arpggeios starting on black note have first finger = 2
+                    ///But only the first, after that revert to the regular fingering from the pattern.
+                    for n in 0..<scaleNoteState[0].count-1 {
+                        let state = self.scaleNoteState[hand][n]
+                        if state.isWhiteKey() {
+                            break
+                        }
+                        else {
+                            state.finger = 2 + n
+                            let lastNote = self.scaleNoteState[hand].count-n-1
+                            self.scaleNoteState[hand][lastNote].finger = 2 + n
+                        }
                     }
-                    else {
-                        state.finger = 2 + n
-                        let lastNote = self.scaleNoteState[hand].count-n-1
-                        self.scaleNoteState[hand][lastNote].finger = 2 + n
+                }
+                if hand == 1 && (self.scaleMotion != .contraryMotion){
+                    ///All LH scales and arpggeios highest on a black note have first finger 2 on that high note
+                    let state = self.scaleNoteState[hand][halfway]
+                    let startsOnBlack = !state.isWhiteKey()
+                    if startsOnBlack {
+                        scaleNoteState[hand][halfway].finger = 2
                     }
                 }
             }
-            if hand == 1 && (self.scaleMotion != .contraryMotion){
-                ///All LH scales and arpggeios highest on a black note have first finger 2 on that high note
-                let state = self.scaleNoteState[hand][halfway]
-                let startsOnBlack = !state.isWhiteKey()
-                if startsOnBlack {
-                    scaleNoteState[hand][halfway].finger = 2
-                }
+            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
+                print("========== fingers 1", scaleRoot.name, hand, scaleType, fingers)
+                self.debug11("finfers")
             }
-            
         }
         
         func setFinger(hand:Int, index:Int, finger:Int) {

@@ -1,24 +1,29 @@
 ==== TODO
-1Oct
-make scale name changes to verify tests still ok
-try unit tests
-store good 1-5
-try github post
-store good abrsm 1-2
+1 Oct
+Cant delete subscription in sandbox
+scales score accidentals use one note required at least once from the scale
 abrsm #5 tickets
+add 2 licences
+Add 7 day trial
+store good abrsm 1-5 for regression
+subscriptions price to 1.99/ month or 9.99/ year.
 
 make sure all audiomgr, license etc load when flash screen laoding
 try TestFlight
 try licensing
-make sure landscape is locked
+add free licesning
 
 delete all assets in old folder
 make sure large files not going to github
 
+================
+App Store Connect
+- Submitted for review Sun 5th. See ASC -> ScalesAcademy -> General -> App Review. Can tke 48 hours
+- Version submitted attaches the 1st subscription which is reviewed with app. Can add 2nd, 3rd later
+- Subscription requires App Review ok before can test.
+- Subscription also requires a screen shot of how it looks but get error when uploading iamge. Have question to their support
 
-Why connect to firebase in live app? it does now
-
-
+ 
 22Sep    remove the huge new sf2 files
     
 Support ABRSM gr 5 Chromtic starting on F+ (LH) and A+ (RH) 2 oct. legato; hands starting a major third apart

@@ -604,7 +604,6 @@ public class ScalesModel : ObservableObject {
         
         ///Add LH and RH notes played at the same time to the same TimeSlice and add bar lines.
         for i in 0..<scale.getScaleNoteCount() {
-            //if [2,4].contains(i) ||
             if totalBarValue >= maxBarValue {
                 ///Bar line is required to calculate presence or not of accidentals in chromatic scales. It can also provide visible note spacing when required.
                 ///The bar line is not currenlty visible but it might be added to add space around notes
@@ -622,6 +621,7 @@ public class ScalesModel : ObservableObject {
             
             let ts = score.createTimeSlice()
             var maxValue:Double?
+            
             ///The note for each hand is added to the one single TimeSlice
             for handType in handTypes {
                 let noteState = scale.getScaleNoteState(handType: handType, index: i)
@@ -708,10 +708,11 @@ public class ScalesModel : ObservableObject {
         ///Adjust this note's accidental to counter a previous note in the bar's accidental if the note was at the same staff offset but a different MIDI.
         ///If the MIDI is the same as the previous note at the staff offset, set this note's accidental to nil since it's accidental conveys from the previous note.
         ///If the note has an accidental but the key signature includes the accidental dont show the accidental on the note.
-        func checkInBar(clef:StaffClef, note:StaffNote, barNotes:[StaffNote]) {
+        func adjustNoteAccidentalGivenPreceedingBarNotes(clef:StaffClef, note:StaffNote, barNotes:[StaffNote]) {
             let notePlacement = note.noteStaffPlacement
             var matchedAccidental = false
             
+            ///Counter any previous accidental based on the note's offset on the staff
             for prevNote in barNotes.reversed() {
                 if prevNote.noteStaffPlacement.offsetFromStaffMidline == notePlacement.offsetFromStaffMidline {
                     if let lastAccidental = prevNote.noteStaffPlacement.accidental {
@@ -740,29 +741,32 @@ public class ScalesModel : ObservableObject {
             if matchedAccidental {
                 return
             }
+            if !notePlacement.placementCanBeSetByKeySignature {
+                return
+            }
+            
             ///If not already matched, adjust the note's accidental based on the key signature
-            if !matchedAccidental {
-                ///Use no accidental since the key signature has it
-                if clef.score.key.hasKeySignatureNote(note: note.midi) {
-                    notePlacement.accidental = nil
-                    matchedAccidental = true
+            
+            ///Use no accidental since the key signature has it
+            if clef.score.key.hasKeySignatureNote(note: note.midi) {
+                notePlacement.accidental = nil
+                matchedAccidental = true
+            }
+            ///Use the natural accidental to differentiate note from the key signature
+            if clef.score.key.keySig.flats.count > 0 {
+                if clef.score.key.hasKeySignatureNote(note: note.midi-1) {
+                    //if notePlacement.placementCanBeSetByKeySignature {
+                        notePlacement.accidental = 0
+                        matchedAccidental = true
+                    //}
                 }
-                ///Use the natural accidental to differentiate note from the key signature
-                if clef.score.key.keySig.flats.count > 0 {
-                    if clef.score.key.hasKeySignatureNote(note: note.midi-1) {
-                        if notePlacement.placementCanBeSetByKeySignature {
-                            notePlacement.accidental = 0
-                            matchedAccidental = true
-                        }
-                    }
-                }
-                if clef.score.key.keySig.sharps.count > 0 {
-                    if clef.score.key.hasKeySignatureNote(note: note.midi+1) {
-                        if notePlacement.placementCanBeSetByKeySignature {
-                            notePlacement.accidental = 0
-                            matchedAccidental = true
-                        }
-                    }
+            }
+            if clef.score.key.keySig.sharps.count > 0 {
+                if clef.score.key.hasKeySignatureNote(note: note.midi+1) {
+                    //if notePlacement.placementCanBeSetByKeySignature {
+                        notePlacement.accidental = 0
+                        matchedAccidental = true
+                    //}
                 }
             }
         }
@@ -773,7 +777,7 @@ public class ScalesModel : ObservableObject {
         ///E.g. in D chromatic there must be a G (perfect 4th above) and an A (perfect 5th above)."
         ///These adjustments are made after the the note's default placements have been made on the staff.
         ///Use the first accidental found to apply to subsequent notes that need accidentals
-        func adjustPlacementForChromatic(staffNote:StaffNote, firstAccidental:Int?) {
+        func adjustNotePlacementForChromatic(staffNote:StaffNote, firstAccidental:Int?) {
             //return
             let placement = staffNote.noteStaffPlacement
             if placement.accidental != nil && placement.accidental != firstAccidental {
@@ -795,16 +799,43 @@ public class ScalesModel : ObservableObject {
                 }
             }
         }
-
-        var firstAccidental:Int? = nil ///Use same accidental for both staffs. e,g, chromatic LH start E, RH start C
         
+        ///For a scale there must a a note for every note letter in the scale. A note letter must not repeat for consecutive notes
+        ///This is required to ensure that scales like E♭harmonic minor show a C flat, not B natural for MIDI 71. MIDI 70 already shows the B flat.
+        func adjustNotePlacementForScale(note:StaffNote, previousNote:StaffNote?, firstAccidental:Int?) {
+            guard let previousNote = previousNote else {
+                return
+            }
+//            let offsetDiff = note.noteStaffPlacement.offsetFromStaffMidline - previousNote.noteStaffPlacement.offsetFromStaffMidline
+//            staff flip B flat LH Grade 2 T
+//            if staff clef changes dont do this check?
+//            if abs(offsetDiff) == 1 {
+//                return
+//            }
+//            what about going down?
+            note.noteStaffPlacement.offsetFromStaffMidline += 1
+            if let accidental = note.noteStaffPlacement.accidental {
+                note.noteStaffPlacement.accidental = -1
+            }
+            else {
+                note.noteStaffPlacement.accidental = -1
+            }
+            ///Dont let anything change the accidental since we've deliberately moved it to its own offset on the staff
+            note.noteStaffPlacement.placementCanBeSetByKeySignature = false
+        }
+        
+        var accidentalToUse:Int? = nil ///Use same accidental for both staffs. e,g, chromatic LH start E, RH start C
+        
+        /// Process all hands
         for handType in handTypes {
             var startStemCharacteristicsIndex = 0
             let staff = Staff(score: score, handType: handType, linesInStaff: 5)
             score.addStaff(staff: staff)
-            var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score,
-                                                                                                                                                   clefType: .bass)
+            var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score, clefType: .bass)
             var notesInBar:[StaffNote] = []
+            var previousScaleNote:StaffNote? = nil
+            
+            /// Process all score entries - timeslices and bar line
             for scoreEntryIndex in 0..<score.scoreEntries.count {
                 let scoreEntry = score.scoreEntries[scoreEntryIndex]
                 if let staffClef = scoreEntry as? StaffClef {
@@ -821,25 +852,26 @@ public class ScalesModel : ObservableObject {
                 
                 ///Determine the placement and accidentals for each note in the score.
                 if let timeSlice = scoreEntry as? TimeSlice {
+                    
                     for staffNote in timeSlice.getTimeSliceNotes(handType: handType) {
-                        if staffNote.midi == 67 {
-                        }
+
                         staffNote.noteStaffPlacement = clefForPositioning.getNoteViewPlacement(note: staffNote)
-                        if firstAccidental == nil {
+                        if accidentalToUse == nil {
                             if staffNote.noteStaffPlacement.accidental != nil {
-                                firstAccidental = staffNote.noteStaffPlacement.accidental
+                                accidentalToUse = staffNote.noteStaffPlacement.accidental
                             }
                         }
                         if scale.scaleType == .chromatic {
-                            adjustPlacementForChromatic(staffNote: staffNote, firstAccidental: firstAccidental)
+                            adjustNotePlacementForChromatic(staffNote: staffNote, firstAccidental: accidentalToUse)
                         }
-                        ///Only to test regression works...
-                        //if scale.debugOn {
-                            //if staffNote.midi == 62 {
-                                //staffNote.midi = 63
-                            //}
-                        //}
-                        checkInBar(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
+                        if [ScaleType.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(scale.scaleType) {
+//                            if staffNote.midi == 71 {
+//                                print( "======== DEBUG NOTE")
+//                            }
+//                            adjustNotePlacementForScale(note: staffNote, previousNote: previousScaleNote, firstAccidental: accidentalToUse)
+                            previousScaleNote = staffNote
+                        }
+                        adjustNoteAccidentalGivenPreceedingBarNotes(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
                         notesInBar.append(staffNote)
                     }
                 }
