@@ -117,15 +117,16 @@ struct KeySignatureView: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(staffOffsets, id: \.self) { offset in
-                //let yAdjust = score.key.keySig.flats.count > 0 ? score.lineSpacing / 1.1 : 0
                 VStack {
                     Image(score.key.keySig.sharps.count > 0 ? "Sharp" : "flat")
                         .resizable()
                         .foregroundColor(.black)
                         .scaledToFit()
                         .frame(width: self.lineSpacing * getWidthMultiplier() * (score.key.keySig.sharps.count > 0 ? 1 : 1.4))
-                        .offset(y: 0 - Double(offset) * self.lineSpacing / 2.0 - (score.key.keySig.sharps.count > 0 ? 0 : self.lineSpacing * 0.50))
-//                        .border(Color.red)
+                        .offset(y: 0 - Double(offset) * self.lineSpacing / 2.0 -
+                                (score.key.keySig.sharps.count > 0 ? 0 : self.lineSpacing * 0.50)
+                        )
+//                      .border(Color.red)
                 }
                 .padding(0)
                 .frame(width: self.lineSpacing * getWidthMultiplier())

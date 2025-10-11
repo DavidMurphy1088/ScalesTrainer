@@ -1,4 +1,21 @@
 import SwiftUI
+///------------- Fonts ------------
+///Set that the user has chosen Medium in accessibility settings — and don’t allow them to change it
+
+struct FixedDynamicTypeSizeModifier: ViewModifier {
+    let size: DynamicTypeSize   // e.g. .medium, .large, .xLarge, etc.
+
+    func body(content: Content) -> some View {
+        content.dynamicTypeSize(size)   // Forces this size; ignores system changes
+    }
+}
+
+extension View {
+    /// Locks Dynamic Type to a single size app- or view-wide.
+    func lockDynamicTypeSize(_ size: DynamicTypeSize = .medium) -> some View {
+        modifier(FixedDynamicTypeSizeModifier(size: size))
+    }
+}
 
 // --------------- Toolbar ---------------
 

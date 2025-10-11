@@ -705,7 +705,7 @@ struct ScalesView: View {
             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             scalesModel.setInitialDirectionOfPlay(scale: self.scale)
             UIApplication.shared.isIdleTimerDisabled = true
-            self.scale.debug11("View Appear")
+            self.scale.debug1("View Appear")
         }
         
         .onDisappear {

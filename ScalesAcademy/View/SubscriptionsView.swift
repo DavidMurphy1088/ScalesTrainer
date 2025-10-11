@@ -1,177 +1,8 @@
-//import Foundation
-//import SwiftUI
-//import StoreKit
-//
-//import Foundation
-//import Combine
-//import SwiftUI
-//import WebKit
-//import AVFoundation
-//import AVKit
-//import UIKit
-//
-//public struct LicenseManagerView: View {
-//    @Environment(\.presentationMode) var presentationMode
-//    //let contentSection:ContentSection
-//    //let email:String
-//    //@ObservedObject var iapManager = LicenceManager.shared
-//    @State var isPopupPresented = false
-//    var yearString = ""
-//    let compact = UIDevice.current.userInterfaceIdiom == .phone
-//    //let licenceManager = LicenceManager.shared
-//    @StateObject private var licence = LicenceManager.shared
-//    
-////    public init(contentSection:ContentSection, email:String) {
-////        //self.contentSection = contentSection
-////        self.email = email
-////        let currentYear = Calendar.current.component(.year, from: Date())
-////        let formatter = NumberFormatter()
-////        formatter.numberStyle = .none // This ensures no comma formatting
-////        yearString = formatter.string(from: NSNumber(value: currentYear)) ?? ""
-////        //SKPaymentQueue.default().add(self)
-////    }
-////    deinit {
-////            SKPaymentQueue.default().remove(self)
-////    }
-//    
-//    func getProducts() -> [Product] {
-////        let products = LicenceManager.shared.purchaseableProducts.values.sorted { (product1, product2) -> Bool in
-////            return product1.price.compare(product2.price) == .orderedAscending
-////        }
-////        return products
-////        return licence.products
-//    }
-//    
-//    struct InfoView:View {
-//        //let contentSection:ContentSection
-//        let yearString:String
-//        public var body: some View {
-//            VStack() {
-//                let info = "Purchasing a subscription provides you with access to all the Scales Academy content.\nThe subscription types are listed above."
-//                //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
-//                Text(info).padding()
-//            }
-//        }
-//    }
-//    
-////    func getSubscriptionName() -> String {
-////        if let licence = SubscriptionTransactionReceipt.load() {
-////            return licence.getDescription()
-////        }
-////        else {
-////            return "No stored subscription"
-////        }
-////    }
-//    
-//    func DetailedLicensesView() -> some View {
-//        VStack {
-//            if false { //licenceManager.isLicensed() {
-//                let settings = Settings.shared
-//                VStack {
-//                    if settings.isCurrentUserDefined() {
-//                        let user = settings.getCurrentUser("License manager")
-//                        Text("Your current subscription is ").font(.title2).padding()
-////                        if LicenceManager.shared.emailIsLicensed(email:user.email) {
-////                            Text("Email \(user.email)").font(.title2).foregroundColor(.green).bold().padding()
-////                        }
-////                        else {
-////                            Text(getSubscriptionName()).font(.title2).foregroundColor(.green).bold().padding()
-////                        }
-//                        Text("This subscription provides you with access to all Scales Academy content.").font(.title2).padding().padding().padding()
-//                    }
-//                }
-//            }
-//            else {
-//                Text("Available Subscriptions").font(.title).padding(compact ? .zero : 16.0)
-//                if iapManager.isLicenseAvailableToPurchase(grade: contentSection.name) {
-//                    List {
-//                        ForEach(getProducts(), id: \.self) { product in
-//                            HStack {
-//                                Text(product.localizedTitle)
-//                                Spacer()
-//                                let currency = product.priceLocale.localizedString(forCurrencyCode: product.priceLocale.currencyCode!)
-//                                Text(currency ?? "")
-//                                let price:String = product.price.description
-//                                Text(price)
-////                                Button(action: {
-////                                    iapManager.buyProductSubscription(product: product)
-////                                }) {
-////                                    Text("Purchase")
-////                                        .font(.title)
-////                                        .padding()
-////                                }
-//                                FigmaButton("Purchase", action: {
-//                                    iapManager.buyProductSubscription(product: product)
-//                                })
-//                            }
-//                        }
-//                    }
-//                    .listStyle(.plain)
-//                    .padding()
-//                    .border(.red)
-//                    .navigationTitle("Available Subscriptions")
-//                    .frame(width: UIScreen.main.bounds.width * (compact ? 0.6 : 0.4),
-//                           height: UIScreen.main.bounds.height * (compact ? 0.4 : 0.2))
-//                    if compact {
-//                        if false {
-//                            Button(action: {
-//                                isPopupPresented.toggle()
-//                            }) {
-//                                VStack {
-//                                    Image(systemName: "questionmark.circle")
-//                                }
-//                            }
-//                            .padding()
-//                            .popover(isPresented: $isPopupPresented) {
-//                                InfoView(contentSection: contentSection, yearString: yearString)
-//                            }
-//                        }
-//                    }
-//                    else {
-//                        HStack {
-//                            Text("                  ").padding()
-//                            InfoView(contentSection: contentSection, yearString: yearString)
-//                            Text("                  ").padding()
-//                        }
-//                    }
-//                    if iapManager.isInPurchasingState {
-//                        Text("Purchase in progress. Please standby...").font(.title2).foregroundColor(.green).bold().padding()
-//                    }
-//                }
-//                else {
-//                    Text("Sorry, no subscription is available yet")
-//#if targetEnvironment(simulator)
-//                    Text("SIMULATOR CANNOT DO LICENSING")
-//#endif
-//                }
-//            }
-//            VStack {
-//                FigmaButton("Restore Subscriptions", action: {
-//                    iapManager.restoreTransactions()
-//                    }
-//                )
-//            }
-//        }
-//    }
-//    
-//    public var body: some View {
-//        NavigationStack {
-//            DetailedLicensesView()
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                .navigationTitle("Subscriptions")
-//                .navigationBarTitleDisplayMode(.inline)
-//                .commonToolbar(
-//                    title: "Subscriptions", helpMsg: "Use this screen to mange your Scales Academy subscriptions", onBack: {}
-//                )
-//        }
-//    }
-//}
-
 import SwiftUI
 import StoreKit
 
 struct SubscriptionsView: View {
-    @ObservedObject private var licenceManager = Licencing.shared
+    @ObservedObject private var licenceManager = LicenceManager.shared
     @State private var isLoading = true
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     
@@ -210,8 +41,11 @@ struct SubscriptionsView: View {
                     }
                 } else {
                     VStack {
+                        if licenceManager.licenceType != .subscribed {
+                            Text(TrialLicenceManager.shared.getStatus())
+                        }
                         List {
-                            if licenceManager.isSubscribed {
+                            if licenceManager.licenceType == .subscribed {
                                 Section {
                                     HStack {
                                         Image(systemName: "checkmark.seal.fill")
@@ -219,7 +53,6 @@ struct SubscriptionsView: View {
                                             Text("Subscription Active").font(.headline)
                                             if self.willAutoRenew() {
                                                 if let exp = licenceManager.lastExpirationDate {
-                                                    //Text("Renews on \(exp.formatted(date: .abbreviated, time: .omitted))")
                                                     Text("Renews on \(self.getRenewDateTime(exp))")
                                                         .font(.subheadline)
                                                         .foregroundStyle(.secondary)
@@ -236,29 +69,33 @@ struct SubscriptionsView: View {
                                     }
                                 }
                             }
+                            
                             ///▶️ Note that when a subscription is cancelled it it not deleted. It is set to no auto-renew and will disappear at the
                             ///start of the next subscription period. So when a user deletes a subscription via "manage" then they are only told it
                             ///wont renew.
-                            if true || !licenceManager.isSubscribed {
-                                // Products
-                                Section("Subscriptions") {
-                                    ForEach(licenceManager.products, id: \.id) { product in
-                                        HStack {
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text(product.displayName)
-                                                    .font(.headline)
-                                                Text(product.displayPrice)
+                            // Products
+                            Section("Subscriptions") {
+                                ForEach(licenceManager.products, id: \.id) { product in
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(product.displayName)
+                                                .font(.headline)
+                                            Text(product.displayPrice)
+                                        }
+                                        Spacer()
+                                        FigmaButton(licenceManager.licenceType == .subscribed ? "Manage" : "Purchase", action: {
+                                            Task {
+                                                await licenceManager.purchase(product)
+                                                try? await AppStore.sync()
+                                                await licenceManager.refreshEntitlementsAndStatus()
                                             }
-                                            Spacer()
-                                            FigmaButton(licenceManager.isSubscribed ? "Manage" : "Purchase", action: {
-                                                Task { await licenceManager.purchase(product) }
-                                            })
-                                        }
-                                        .contentShape(Rectangle())
-                                        .onTapGesture {
-                                            Task { await licenceManager.purchase(product) }
-                                        }
+                                        })
                                     }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        Task { await licenceManager.purchase(product) }
+                                    }
+                                }
 //                                    FigmaButton("TEST", action: {
 //                                        Task {
 //                                            //try? await AppStore.sync()         // prompts StoreKit to resync entitlements
@@ -266,7 +103,6 @@ struct SubscriptionsView: View {
 //                                            Task { await licenceManager.refreshEntitlementsAndStatus() }
 //                                        }
 //                                    })
-                                }
                             }
                             
                             // Restore
@@ -277,32 +113,46 @@ struct SubscriptionsView: View {
 //                            }
                         }
                         .listStyle(.insetGrouped)
-                        VStack() {
-                            HStack {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .imageScale(.medium)
-                                    .foregroundColor(.green)
-                                    .padding(.top, 1)
-                                let info = "Purchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
-                                //\n\nFree licensing is available for NZMEB teachers. Please contact sales@musicmastereducation.co.nz for more details."
-                                Text(info).padding()
+                        if !self.compact {
+                            VStack() {
+                                HStack {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .imageScale(.medium)
+                                        .foregroundColor(.green)
+                                        .padding(.top, 1)
+                                    let info = "Purchasing a subscription provides you with access to all the Scales Academy content. The subscription types are listed above."
+                                    Text(info).padding()
+                                }
                             }
                         }
-                        Text("Already subscribed?").font(.headline).foregroundColor(.secondary)
-                        Text("If you’ve previously subscribed with this Apple ID, tap Restore to regain access without paying again.")
-                            //.font(.footnote)
-                            .foregroundColor(.secondary)
-                        Button {
-                            Task { await licenceManager.restorePurchases() }
-                        } label: {
-                            HStack {
-                                Image(systemName: "arrow.clockwise.circle.fill")
-                                Text("Restore Purchases")
+                        
+                        HStack {
+                            if !self.compact {
+                                Text("If you’ve previously subscribed with this Apple ID, tap Restore to regain access.").foregroundColor(.secondary)
                             }
-                            .frame(maxWidth: .infinity)
+                            Button {
+                                Task { await licenceManager.restorePurchases() }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrow.clockwise.circle.fill")
+                                    Text("Restore Purchases")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            //.controlSize(.large)
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
+                        
+                        HStack {
+                            Text("By subscribing, you agree to:")
+                                .font(.footnote)
+                            Link("Terms of Use (EULA)",
+                                 destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                                .font(.footnote)
+                            Link("Privacy Policy",
+                                 destination: URL(string: "https://www.musicmastereducation.co.nz/ScalesAcademy/privacy-policy.html")!)
+                                .font(.footnote)
+                        }
 //                        HStack {
 //                            if let statusMsg = self.licenceManager.statusMessage1 {
 //                                Text("status: \(statusMsg)")

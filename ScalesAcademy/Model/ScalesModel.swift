@@ -802,23 +802,42 @@ public class ScalesModel : ObservableObject {
         
         ///For a scale there must a a note for every note letter in the scale. A note letter must not repeat for consecutive notes
         ///This is required to ensure that scales like E♭harmonic minor show a C flat, not B natural for MIDI 71. MIDI 70 already shows the B flat.
-        func adjustNotePlacementForScale(note:StaffNote, previousNote:StaffNote?, firstAccidental:Int?) {
+        func adjustNotePlacementForScale(note:StaffNote, previousNote:StaffNote?, staffClef:StaffClef) {
             guard let previousNote = previousNote else {
                 return
             }
-//            let offsetDiff = note.noteStaffPlacement.offsetFromStaffMidline - previousNote.noteStaffPlacement.offsetFromStaffMidline
-//            staff flip B flat LH Grade 2 T
-//            if staff clef changes dont do this check?
-//            if abs(offsetDiff) == 1 {
-//                return
-//            }
-//            what about going down?
-            note.noteStaffPlacement.offsetFromStaffMidline += 1
-            if let accidental = note.noteStaffPlacement.accidental {
-                note.noteStaffPlacement.accidental = -1
+
+            //Todo for say offset 1 to 2 its going up two semitones, not 1.
+            if note.midi >= previousNote.midi {
+                let delta = note.noteStaffPlacement.offsetFromStaffMidline - previousNote.noteStaffPlacement.offsetFromStaffMidline
+                if delta == 1 {
+                    return
+                }
+                if delta == 0 {
+                    ///e.g. E♭ harmonic minor note=B
+                    note.noteStaffPlacement.offsetFromStaffMidline += 1
+                    note.noteStaffPlacement.accidental = -1
+                }
+                if delta == 2 {
+                    ///e.g. F# major D# to F♮should be D# to E#
+                    note.noteStaffPlacement.offsetFromStaffMidline -= 1
+                    note.noteStaffPlacement.accidental = 1
+                }
             }
             else {
-                note.noteStaffPlacement.accidental = -1
+                ///Descending
+                let delta = previousNote.noteStaffPlacement.offsetFromStaffMidline - note.noteStaffPlacement.offsetFromStaffMidline
+                if delta == 1 {
+                    return
+                }
+                if delta == 0 {
+                    note.noteStaffPlacement.offsetFromStaffMidline -= 1
+                    note.noteStaffPlacement.accidental = 1
+                }
+                if delta == 2 {
+                    note.noteStaffPlacement.offsetFromStaffMidline += 1
+                    note.noteStaffPlacement.accidental = -1
+                }
             }
             ///Dont let anything change the accidental since we've deliberately moved it to its own offset on the staff
             note.noteStaffPlacement.placementCanBeSetByKeySignature = false
@@ -834,6 +853,7 @@ public class ScalesModel : ObservableObject {
             var clefForPositioning = handType == .right ? StaffClef(scale: scale, score: score, clefType: .treble) : StaffClef(scale: scale, score: score, clefType: .bass)
             var notesInBar:[StaffNote] = []
             var previousScaleNote:StaffNote? = nil
+            var clefSwitch = false
             
             /// Process all score entries - timeslices and bar line
             for scoreEntryIndex in 0..<score.scoreEntries.count {
@@ -843,10 +863,11 @@ public class ScalesModel : ObservableObject {
                     if staff.handType == .left {
                         score.addStemCharacteristics(handType: handType, clef: clefForPositioning, startEntryIndex: startStemCharacteristicsIndex, endEntryIndex: scoreEntryIndex)
                         startStemCharacteristicsIndex = scoreEntryIndex
+                        clefSwitch = clefForPositioning.clefType != staffClef.clefType
                         clefForPositioning = staffClef //Staff(score: score, type: staffClef.staffType, linesInStaff: 5)
                     }
                 }
-                if let bar = scoreEntry as? BarLine {
+                if scoreEntry is BarLine {
                     notesInBar = []
                 }
                 
@@ -865,11 +886,11 @@ public class ScalesModel : ObservableObject {
                             adjustNotePlacementForChromatic(staffNote: staffNote, firstAccidental: accidentalToUse)
                         }
                         if [ScaleType.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(scale.scaleType) {
-//                            if staffNote.midi == 71 {
-//                                print( "======== DEBUG NOTE")
-//                            }
-//                            adjustNotePlacementForScale(note: staffNote, previousNote: previousScaleNote, firstAccidental: accidentalToUse)
+                            if !clefSwitch {
+                                adjustNotePlacementForScale(note: staffNote, previousNote: previousScaleNote, staffClef: clefForPositioning)
+                            }
                             previousScaleNote = staffNote
+                            clefSwitch = false
                         }
                         adjustNoteAccidentalGivenPreceedingBarNotes(clef: clefForPositioning, note: staffNote, barNotes: notesInBar)
                         notesInBar.append(staffNote)

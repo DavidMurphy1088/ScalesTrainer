@@ -1,28 +1,188 @@
 import Foundation
 import StoreKit
+import Security
+
+//--------------- Timed Free Trial ------------------
+///The key is the current version and build, the data is the date this version was first installed
+
+class TrialLicenceManager {
+    public static var shared = TrialLicenceManager()
+    private let service = "com.musicmastereducation.ScalesAcademy"
+    private let account = "licence_key"
+    private let trialTimeSeconds = 60.0 * 60.0 * 24.0 * 7.0
+    private var trialStartDate:Date? = nil
+    //private var trialExpiryDate:Date? = nil
+
+    init() {
+        self.trialStartDate = self.readFromKeychain()
+        if self.trialStartDate == nil {
+            self.writeToKeychain()
+            self.trialStartDate = Date()
+        }
+//        guard let trialStartDate = self.trialStartDate else {
+//            return
+//        }
+    }
+    
+    public func isTrialExpired() -> Bool {
+        guard let trialStartDate = self.trialStartDate else {
+            return true
+        }
+        let trialExpiryDate = trialStartDate.addingTimeInterval(trialTimeSeconds)
+        let expired = Date() > trialExpiryDate
+        log("isTrialExpired :\(expired)", false)
+        return expired
+    }
+    
+    public func getStatus() -> String {
+        guard let startDate = self.trialStartDate else {
+            return ""
+        }
+        let expiryDate = startDate.addingTimeInterval(trialTimeSeconds)
+        let expiry = self.dateToStr(expiryDate)
+        if Date() > expiryDate {
+            return "Your trial licence expired on \(expiry)"
+        }
+        else {
+            return "Your trial licence expires on \(expiry)"
+        }
+    }
+    
+    private func getKey() -> String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let build:String = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+        ///change string to simulate a first install of the app
+        return "trial_licence_5a_\(version)_(\(build))"
+    }
+    
+    private func log(_ msg:String, _ error:Bool) {
+        let msg = "\(error ? "🟥" : "🟩")  Licence \(msg)"
+        if error  {
+            AppLogger.shared.reportError(self, msg)
+        }
+        else {
+            //AppLogger.shared.log(self, msg)
+        }
+    }
+    
+    private func dateToStr(_ date:Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = .current
+        formatter.dateFormat = "d MMMM yyyy 'at' h:mm a"
+        formatter.locale = Locale(identifier: "en_US_POSIX")  // Ensures consistent AM/PM formatting
+        let formattedDate = formatter.string(from: date)
+        return formattedDate
+    }
+    
+    func readFromKeychain() -> Date? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: self.getKey(),
+            kSecAttrSynchronizable as String: true,  // Must match write
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+                
+        guard status == errSecSuccess else {
+            if status == errSecItemNotFound {
+                log("Item not found in keychain", false)
+            } else {
+                log("Error reading from keychain: \(status)", true)
+            }
+            return nil
+        }
+        
+        guard let storedData = result as? Data else {
+            log("Cannot convert keychain to data", true)
+            return nil
+        }
+
+        let restoredTimestamp = storedData.withUnsafeBytes {
+            $0.load(as: TimeInterval.self)
+        }
+        let restoredDate = Date(timeIntervalSince1970: restoredTimestamp)
+        print("Retrieved:", self.dateToStr(restoredDate))
+        return restoredDate
+    }
+
+    func writeToKeychain() {
+        if false {
+            let deleteQuery: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: self.getKey(),
+                kSecAttrSynchronizable as String: true
+            ]
+            SecItemDelete(deleteQuery as CFDictionary)
+        }
+
+        let date = Date()
+        let timestamp = date.timeIntervalSince1970  // Double
+        var time = timestamp
+        let data = Data(bytes: &time, count: MemoryLayout.size(ofValue: time))
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: self.getKey(),
+            kSecValueData as String: data as Any,
+            kSecAttrSynchronizable as String: true,  // Sync across devices via iCloud
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked  // Survives app deletion
+        ]
+        
+        let status = SecItemAdd(query as CFDictionary, nil)
+        if status != errSecSuccess {
+            self.log("Cant save trial licence to keychain. status:\(status)", true)
+        }
+    }
+}
+
+//--------------- Licensing ------------------
+///Test with Sandbox user davidmurphy+sbx1@musicmastereducation.co.nz
 
 @MainActor
-final class Licencing: ObservableObject {
-    static let shared = Licencing()
-    private init() {}
-
+final class LicenceManager: ObservableObject {
+    static let shared = LicenceManager()
     @Published private(set) var products: [Product] = []
-    @Published private(set) var isSubscribed: Bool = false
+    @Published private(set) var isInBillingRetry: Bool = false  //signal for UI
     @Published private(set) var lastExpirationDate: Date?
     @Published private(set) var statusMessage1: String?
-    @Published private(set) var willAutoRenew: Bool? = nil        // nil = unknown / not a sub
+    @Published private(set) var willAutoRenew: Bool? = nil  //nil => no purchased subscriptions
 
-    private var enableLicensing:Bool = false
     private var productIDs: [String] = []
     private var hasStartedListener = false
     private var transactionListenerTask: Task<Void, Never>?
+    private let trialLicenceManager = TrialLicenceManager.shared
     let logger = AppLogger.shared
     
+    enum LicenceType {
+        case none
+        case notNeeded
+        case trialActive
+        case trialExpired
+        case subscribed
+    }
+    
+    @Published private(set) var licenceType:LicenceType = .none
+    
+    func isLicenced() -> Bool {
+        return [.notNeeded, .trialActive, .subscribed].contains(self.licenceType)
+    }
+    
+    private init() {
+        print("🟢 Licencing INIT")
+    }
+    
+    func setLicenseType(_ type:LicenceType) {
+        print("🟢 Changeing lic type old:\(self.licenceType) new:\(type)")
+        self.licenceType = type
+    }
+    
     /// Call once early (e.g., App init) with your product IDs.
-    /// apptesting2@musicmastereducation.co.nz
     func configure(enableLicensing:Bool, productIDs: [String]) {
-        self.enableLicensing = enableLicensing
         if !enableLicensing {
+            self.setLicenseType(.notNeeded)
             return
         }
         self.productIDs = productIDs
@@ -32,7 +192,7 @@ final class Licencing: ObservableObject {
             await refreshEntitlementsAndStatus()
         }
     }
-
+    
     func refreshProducts() async {
         log("Loading products \(self.productIDs)", false)
         guard !productIDs.isEmpty else {
@@ -40,14 +200,10 @@ final class Licencing: ObservableObject {
             products = []
             return
         }
-        print("🟢 Bundle at runtime:", Bundle.main.bundleIdentifier ?? "nil")
         let storefront = try await Storefront.current
         log("Storefront: \(storefront?.id) \(storefront?.countryCode)", false)
-        print("🟢 Bundle:", Bundle.main.bundleIdentifier ?? "nil")
-        print("🟢 Can make payments:", AppStore.canMakePayments)
         do {
             let sf = await Storefront.current
-            print("🟢 Storefront:", sf?.id ?? "?", sf?.countryCode ?? "?")
             let prods = try await Product.products(for: productIDs)
             print("🟢 Found:", prods.map { "\($0.id) \($0.type) \($0.displayName)" })
         } catch {
@@ -71,7 +227,6 @@ final class Licencing: ObservableObject {
         }
     }
 
-    // MARK: - Purchasing
     func purchase(productID: String) async {
         guard let product = products.first(where: { $0.id == productID }) else {
             log("Unknown product: \(productID)", true)
@@ -80,7 +235,13 @@ final class Licencing: ObservableObject {
         await purchase(product)
     }
 
+    ///Purchase or Cancel subscription
+    ///Cancels - You don’t cancel inside your app. The user cancels through Apple’s subscription management UI that you launch from your app.
+    ///NB A canceled sub stays active until the current period ends (in Sandbox that’s minutes, not days). So your entitlement remains valid until expiry.
+    ///Nothing in your app is “called” by Apple when the user taps Cancel Subscription. There’s no callback. Your job is to refresh state when the manage sheet is dismissed or when your app becomes active again, and then update the UI.
+
     func purchase(_ product: Product) async {
+        log("start purchase", false)
         do {
             let result = try await product.purchase()
             switch result {
@@ -114,37 +275,10 @@ final class Licencing: ObservableObject {
         await refreshEntitlementsAndStatus()
     }
 
-    //Transactions -
-    //              "webOrderLineItemId": "0",
-    //              "price": 1990,
-    //              "productId": "100",
-    //              "inAppOwnershipType": "PURCHASED",
-    //              "environment": "Xcode",
-    //              "currency": "USD",
-    //              "originalPurchaseDate": 1759287023685,
-    //              "transactionReason": "PURCHASE",
-    //              "quantity": 1,
-    //              "subscriptionGroupIdentifier": "DD5B5062",
-    //              "deviceVerification": "dVGJIkETxBxowiSFaa3nIQF4kk80oclo/jzpgTTkufZPoS5KHNAi8cqgdRS0C/tl",
-    //              "transactionId": "0",
-    //              "isUpgraded": false,
-    //              "purchaseDate": 1759287023685,
-    //              "type": "Auto-Renewable Subscription",
-    //              "bundleId": "com.musicmastereducation.ScalesStar",
-    //              "originalTransactionId": "0",
-    //              "deviceVerificationNonce": "2005b629-17b1-4b94-8fc6-b1a78dd21a47",
-    //              "storefront": "USA",
-    //              "signedDate": 1759288042847,
-    //              "storefrontId": "143441",
-    //              "expiresDate": 1761965423685
-                //logger.log(self, String(data: t.jsonRepresentation, encoding: .utf8)!)
-
-    @Published private(set) var isInBillingRetry: Bool = false  // optional signal for UI
-
     /// Recompute current entitlement + future renewal intent.
     /// Call this at launch, on foreground, and after purchase/updates.
     func refreshEntitlementsAndStatus() async {
-        // ---------- 1) ACTIVE NOW? (transactions) ----------
+        log("RefreshEntitlementsAndStatus() starting...", false)
         var activeNow = false
         var latestExpiry: Date?
 
@@ -162,21 +296,27 @@ final class Licencing: ObservableObject {
             }
         }
 
-        // Publish “now” state
-        self.isSubscribed = activeNow
+        // Publish state
         self.lastExpirationDate = latestExpiry
 
-        // If nothing is active, clear renewal flags and return early.
+        // If nothing is active, clear renewal flags and use trial license
         guard activeNow else {
             self.willAutoRenew = nil
             self.isInBillingRetry = false
             log("No active entitlements", false)
+            if self.trialLicenceManager.isTrialExpired() {
+                self.setLicenseType(.trialExpired)
+            }
+            else {
+                self.setLicenseType(.trialActive)
+            }
             return
         }
+        
+        self.setLicenseType(.subscribed)
 
-        // ---------- 2) WILL IT RENEW? (status/renewalInfo) ----------
-        // We’ll scan all loaded subscription products and AND the results
-        // so any known “cancelled” status makes willAutoRenew == false.
+        /// Will subscrioption renew? Cancelled are not removed until end of period but their auto renew goes to false
+        /// Scan all loaded subscription products and AND the results so any known “cancelled” status makes willAutoRenew == false.
         var autoRenew: Bool? = nil
         var billingRetry = false
 
@@ -186,7 +326,6 @@ final class Licencing: ObservableObject {
             // `status` can return multiple entries (e.g. across devices/accounts)
             if let statuses = try? await subscription.status {
                 for status in statuses where status.state == .subscribed {
-                    // renewalInfo is a VerificationResult — must verify before use
                     if case .verified(let info) = status.renewalInfo {
                         // willAutoRenew is Bool
                         autoRenew = (autoRenew ?? true) && info.willAutoRenew
@@ -203,8 +342,8 @@ final class Licencing: ObservableObject {
             }
         }
 
-        // Publish “future intent” state
-        self.willAutoRenew = autoRenew     // true/false if known; nil if indeterminate
+        // cancelled subscriptions wont auto renew, but stay active till end of current period
+        self.willAutoRenew = autoRenew     
         self.isInBillingRetry = billingRetry
         if let auto = self.willAutoRenew {
             log("Entitlement auto-renew:\(auto)", false)
@@ -225,7 +364,7 @@ final class Licencing: ObservableObject {
         return false
     }
 
-    // MARK: - Transaction listener
+    ///Listen for transaction updates
     private func startTransactionListener() {
         log("start transaction listener", false)
         hasStartedListener = true
@@ -242,7 +381,6 @@ final class Licencing: ObservableObject {
         }
     }
 
-    // MARK: - Helpers
     private func handleVerified(_ transaction: Transaction) async {
         // Unlock features here if you gate per product.
         await transaction.finish()
@@ -260,3 +398,27 @@ final class Licencing: ObservableObject {
     }
 }
 
+//Transactions -
+//              "webOrderLineItemId": "0",
+//              "price": 1990,
+//              "productId": "100",
+//              "inAppOwnershipType": "PURCHASED",
+//              "environment": "Xcode",
+//              "currency": "USD",
+//              "originalPurchaseDate": 1759287023685,
+//              "transactionReason": "PURCHASE",
+//              "quantity": 1,
+//              "subscriptionGroupIdentifier": "DD5B5062",
+//              "deviceVerification": "dVGJIkETxBxowiSFaa3nIQF4kk80oclo/jzpgTTkufZPoS5KHNAi8cqgdRS0C/tl",
+//              "transactionId": "0",
+//              "isUpgraded": false,
+//              "purchaseDate": 1759287023685,
+//              "type": "Auto-Renewable Subscription",
+//              "bundleId": "com.musicmastereducation.ScalesStar",
+//              "originalTransactionId": "0",
+//              "deviceVerificationNonce": "2005b629-17b1-4b94-8fc6-b1a78dd21a47",
+//              "storefront": "USA",
+//              "signedDate": 1759288042847,
+//              "storefrontId": "143441",
+//              "expiresDate": 1761965423685
+            //logger.log(self, String(data: t.jsonRepresentation, encoding: .utf8)!)

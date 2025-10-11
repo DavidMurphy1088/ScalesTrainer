@@ -4,6 +4,8 @@ import Combine
 import AVFoundation
 import SwiftUI
 
+
+
 struct ScalesGridCellView: View {
     let user:User?
     @ObservedObject var scaleToChart:StudentScale
@@ -15,6 +17,7 @@ struct ScalesGridCellView: View {
     let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
+    @State var showLicenceMessage = false
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     @State var promptForLicence = false
     @State var scaleName:String = ""
@@ -50,16 +53,21 @@ struct ScalesGridCellView: View {
     var body: some View {
         Button(action: {
             if let scale = self.scaleToChart.scale {
-                if self.scaleToChart.freeContent {
-                    if scale.hands.count == 1 {
-                        self.navigateToScale = true
+                if LicenceManager.shared.isLicenced() {
+                    if self.scaleToChart.freeContent {
+                        if scale.hands.count == 1 {
+                            self.navigateToScale = true
+                        }
+                        else {
+                            self.navigateToSelectHands = true
+                        }
                     }
                     else {
-                        self.navigateToSelectHands = true
+                        self.promptForLicence = true
                     }
                 }
                 else {
-                    self.promptForLicence = true
+                    showLicenceMessage = true
                 }
             }
         }) {
@@ -151,16 +159,15 @@ struct ScalesGridCellView: View {
                     self.scaleName = scale.getScaleName()
                 }
             }
-            .alert("Subscription Required", isPresented: $promptForLicence) {
-                VStack {
-                    Button("Yes", role: .destructive) {
-                        //deleteItem()
-                    }
-                    Button("Cancel", role: .cancel) { }
+
+            .alert("Trial Licence Expired", isPresented: $showLicenceMessage) {
+                Button("Cancel", role: .cancel) { }
+                Button("Get Your Subscription") {
+                    ViewManager.shared.setTab(tab: ViewManager.TAB_SUBSCRIPTIONS)
                 }
-                } message: {
-                    Text("\n\(scaleName) requires a subscription.\n\nSubscribe now to unlock all premium content.")
-                }
+            } message: {
+                Text("Your trial licence has expired — subscribe now to access all Scales Academy content")
+            }
         }
     }
 }

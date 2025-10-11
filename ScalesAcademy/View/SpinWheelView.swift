@@ -115,10 +115,10 @@ struct SpinTheWheelView: View {
                             }
                         }
                         else {
-                            Text("What will you play today?").font(.title)
+                            Text("Try Exam Conditions").font(.title)
                             Text("")
-                            Text("Spin the wheel and get a surprise")
-                            Text("exercise to practise")
+                            Text("Spin the wheel to pick a scale at random.")
+                            //Text("exercise to practise")
                             Text("")
                             Text("")
                             Text("")

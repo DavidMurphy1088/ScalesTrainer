@@ -896,7 +896,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug11(_ msg:String, rootName:String? = nil, hand:Int? = nil)  {
+    func debug1(_ msg:String, rootName:String? = nil, hand:Int? = nil)  {
         if let rootName = rootName {
             if scaleRoot.name != rootName {
                 return
@@ -1445,10 +1445,10 @@ public class Scale : Codable {
                     applyFingerPatternToScaleStart(halfway: halfway)
                 }
             }
-            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
-                print("========== fingers 0", scaleRoot.name, hand, scaleType, fingers)
-                self.debug11("finfers")
-            }
+//            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
+//                print("========== fingers 0", scaleRoot.name, hand, scaleType, fingers)
+//                self.debug11("finfers")
+//            }
 
             var hasAWhiteKey = false
             for n in 0..<scaleNoteState[0].count-1 {
@@ -1485,10 +1485,7 @@ public class Scale : Codable {
                     }
                 }
             }
-            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
-                print("========== fingers 1", scaleRoot.name, hand, scaleType, fingers)
-                self.debug11("finfers")
-            }
+
         }
         
         func setFinger(hand:Int, index:Int, finger:Int) {

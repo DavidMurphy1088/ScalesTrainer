@@ -13,7 +13,6 @@ import UIKit
     
 enum LaunchScreenStep {
     case firstStep
-    //case secondStep
     case finished
 }
 
@@ -27,8 +26,6 @@ final class LaunchScreenStateManager: ObservableObject {
     Parameters.shared.testMode ? .finished : .firstStep
     @MainActor func dismiss() {
         Task {
-            //state = .secondStep
-            //sleep(1)
             self.state = .finished
         }
     }
@@ -149,7 +146,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return .landscape  // Actually only use landscape
     }
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
         let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
         
@@ -166,7 +164,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         AppLogger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
-        
+        LicenceManager.shared.configure(enableLicensing: !Parameters.shared.testMode, productIDs: ["Monthly_3"])
+        let _ = AudioManager.shared ///Cause it to load sf2 files
+
         let status = AVCaptureDevice.authorizationStatus(for: .audio)
         var statusMsg = ""
         switch status {
@@ -193,6 +193,7 @@ class ViewManager: ObservableObject {
     static let TAB_ACTIVITES = 10
     static let TAB_BADGES = 12
     static let TAB_USERS = 20
+    static let TAB_SUBSCRIPTIONS = 50
 
     static var shared = ViewManager()
     @Published var selectedTab: Int = 0
@@ -321,7 +322,7 @@ struct TabContainerView: View {
                     .tabItem {
                         Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                     }
-                    .tag(40)
+                    .tag(ViewManager.TAB_SUBSCRIPTIONS)
                     .environmentObject(viewManager)
             }
                         
@@ -389,16 +390,14 @@ struct TabContainerView: View {
 //            WelcomeView()
 //                .tag(ViewManager.TAB_WELCOME) ///Keep it last in list
         }
-        //.background(Color.white)
-        //.background(Color(FigmaColors.shared.colorShades[0].1))
         .tabViewStyle(DefaultTabViewStyle())
+        .lockDynamicTypeSize(.medium) 
         ///required to stop iPad putting tabView at top and overwriting some of the app's UI
         .environment(\.horizontalSizeClass, .compact)
         .onAppear {
             setupTabBarAppearance()
         }
         .accentColor(.black) ///black tab icons
-        
     }
 }
 
@@ -422,8 +421,6 @@ struct ScalesTrainerApp: App {
 #endif
         Settings.shared.load()
         Parameters.shared.testMode = ProcessInfo.processInfo.arguments.contains("-testMode")
-        Licencing.shared.configure(enableLicensing: !Parameters.shared.testMode, productIDs: ["Monthly_3"])
-        let _ = AudioManager.shared ///Cause it to load sf2 files
     }
     
     func setupDev() {
