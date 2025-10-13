@@ -240,11 +240,7 @@ struct PracticeChartView: View {
             if let selectedMinorType = user.selectedMinorType {
                 self.selectedMinorType = selectedMinorType
             }
-            if Parameters.shared.testMode {
-//                Firebase.shared.readAllScales(board: studentScales.board, grade:studentScales.grade) { scalesAndScores in
-//                    self.scalesInChart = scalesAndScores.map { $0.0 }
-//                }
-            }
+
             setVisibleCells("on appear", studentScales: studentScales, dayOffset: selectedDayOffset)
         }
         .onChange(of: selectedDayOffset) {oldValue, day in

@@ -611,7 +611,7 @@ struct ScalesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
             }
-            if Parameters.shared.testMode  {
+            if Parameters.shared.inDevelopmentMode  {
                 if user.settings.useMidiSources {
                     HStack {
                         TestInputView()
@@ -681,8 +681,14 @@ struct ScalesView: View {
                     PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale)
                 }
                 if let combined = PianoKeyboardModel.sharedCombined {
-                    if let firstNote = self.scale.getScaleNoteState(handType: .right, index: 0) {
-                        let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstNote.midi)
+                    if let firstRHNote = self.scale.getScaleNoteState(handType: .right, index: 0) {
+                        let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstRHNote.midi)
+                        if let middleKeyIndex = middleKeyIndex {
+                            combined.pianoKeyModel[middleKeyIndex].hilightType = .middleOfKeyboard
+                        }
+                    }
+                    if let firstLHNote = self.scale.getScaleNoteState(handType: .left, index: 0) {
+                        let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstLHNote.midi)
                         if let middleKeyIndex = middleKeyIndex {
                             combined.pianoKeyModel[middleKeyIndex].hilightType = .middleOfKeyboard
                         }
@@ -718,7 +724,7 @@ struct ScalesView: View {
             ///Clean up any recorded files
             if false {
                 ///This deletes the practice chart AND shouldnt
-                if Parameters.shared.testMode  {
+                if Parameters.shared.inDevelopmentMode  {
                     let fileManager = FileManager.default
                     if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
                         do {

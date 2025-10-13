@@ -17,13 +17,13 @@ enum LaunchScreenStep {
 }
 
 class Parameters {
-    var testMode:Bool = false
+    var inDevelopmentMode:Bool = false
     static let shared = Parameters()
 }
 
 final class LaunchScreenStateManager: ObservableObject {
     @MainActor @Published private(set) var state: LaunchScreenStep =
-    Parameters.shared.testMode ? .finished : .firstStep
+    Parameters.shared.inDevelopmentMode ? .finished : .firstStep
     @MainActor func dismiss() {
         Task {
             self.state = .finished
@@ -164,7 +164,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         AppLogger.shared.log(self, "Version.Build \(appVersion).\(buildNumber)")
-        LicenceManager.shared.configure(enableLicensing: !Parameters.shared.testMode, productIDs: ["Monthly_3"])
+        LicenceManager.shared.configure(enableLicensing: !Parameters.shared.inDevelopmentMode)
         let _ = AudioManager.shared ///Cause it to load sf2 files
 
         let status = AVCaptureDevice.authorizationStatus(for: .audio)
@@ -334,7 +334,7 @@ struct TabContainerView: View {
 //                .environmentObject(viewManager)
             
 
-            if Parameters.shared.testMode {
+            if Parameters.shared.inDevelopmentMode {
 //                MIDIView()
 //                    .tabItem {
 //                        Label("MIDI", systemImage: "house")
@@ -420,7 +420,7 @@ struct ScalesTrainerApp: App {
         }
 #endif
         Settings.shared.load()
-        Parameters.shared.testMode = ProcessInfo.processInfo.arguments.contains("-testMode")
+        Parameters.shared.inDevelopmentMode = ProcessInfo.processInfo.arguments.contains("-testMode")
     }
     
     func setupDev() {
@@ -455,7 +455,7 @@ struct ScalesTrainerApp: App {
             }
             .onAppear {
                 if Settings.shared.hasUsers() {
-                    if Parameters.shared.testMode {
+                    if Parameters.shared.inDevelopmentMode {
                         ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
                     }
                     else {

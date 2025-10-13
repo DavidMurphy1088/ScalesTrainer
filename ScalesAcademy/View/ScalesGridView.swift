@@ -119,7 +119,7 @@ struct ScalesGridCellView: View {
                                 }
                             }
                         }
-                        if Parameters.shared.testMode {
+                        if Parameters.shared.inDevelopmentMode {
                             if let user = user {
                                 self.testDataButtons(user: user)
                                 Spacer()
@@ -245,7 +245,7 @@ struct ScalesGridView : View {
             //studentScales.debug("OnAppead")
             let user = Settings.shared.getCurrentUser("SalesGrivView .onAppear")
             self.user = user
-            if Parameters.shared.testMode {
+            if Parameters.shared.inDevelopmentMode {
                 Firebase.shared.readAllScales(board: user.boardAndGrade.board.name, grade: user.boardAndGrade.grade, completion: {data in
                     for (scaleKey, staffJSON, _) in data {
                         self.scoreTestScaleIds.append(scaleKey)

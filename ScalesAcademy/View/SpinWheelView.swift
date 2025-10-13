@@ -115,9 +115,12 @@ struct SpinTheWheelView: View {
                             }
                         }
                         else {
-                            Text("Try Exam Conditions").font(.title)
+                            Text("Spin The Wheel").font(.title)
                             Text("")
-                            Text("Spin the wheel to pick a scale at random.")
+                            VStack(alignment: .leading) {
+                                Text("Try exam conditions. Spin the wheel")
+                                Text(" to pick an exercise at random.")
+                            }
                             //Text("exercise to practise")
                             Text("")
                             Text("")

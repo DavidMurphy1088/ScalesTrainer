@@ -142,14 +142,14 @@ struct SubscriptionsView: View {
                             .buttonStyle(.bordered)
                             //.controlSize(.large)
                         }
-                        
+                        Text("")
                         HStack {
                             Text("By subscribing, you agree to:")
                                 .font(.footnote)
                             Link("Terms of Use (EULA)",
                                  destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
                                 .font(.footnote)
-                            Link("Privacy Policy",
+                            Link("  Privacy Policy",
                                  destination: URL(string: "https://www.musicmastereducation.co.nz/ScalesAcademy/privacy-policy.html")!)
                                 .font(.footnote)
                         }
@@ -178,20 +178,12 @@ struct SubscriptionsView: View {
 
         .task {
             // Initial load
-            await licenceManager.refreshProducts()
-            await licenceManager.refreshEntitlementsAndStatus()
-            isLoading = false
+            if !Parameters.shared.inDevelopmentMode {
+                await licenceManager.refreshProducts()
+                await licenceManager.refreshEntitlementsAndStatus()
+                isLoading = false
+            }
         }
-//        .overlay(alignment: .bottom) {
-//            if let msg = licence.statusMessage, !msg.isEmpty {
-//                Text(msg)
-//                    .font(.footnote)
-//                    .padding(10)
-//                    .background(.ultraThinMaterial, in: Capsule())
-//                    .padding(.bottom, 12)
-//                    .transition(.opacity)
-//            }
-//        }
     }
 
 }

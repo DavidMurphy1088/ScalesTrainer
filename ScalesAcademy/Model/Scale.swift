@@ -1347,7 +1347,8 @@ public class Scale : Codable {
             case "F":
                 fingers = hand == 0 ? "123" : "124"
             case "F#":
-                fingers = hand == 0 ? "412" : "241"
+                fingers = hand == 0 ? "123" : "123"
+                leftHandLastFingerJump = 2
             case "C#":
                 fingers = hand == 0 ? "412" : "241"
             case "G#":

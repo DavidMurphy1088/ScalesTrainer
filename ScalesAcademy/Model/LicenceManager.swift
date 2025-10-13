@@ -180,12 +180,13 @@ final class LicenceManager: ObservableObject {
     }
     
     /// Call once early (e.g., App init) with your product IDs.
-    func configure(enableLicensing:Bool, productIDs: [String]) {
+    func configure(enableLicensing:Bool) {
         if !enableLicensing {
             self.setLicenseType(.notNeeded)
             return
         }
-        self.productIDs = productIDs
+        //self.productIDs = ["Monthly_3", "Monthly_4"]
+        self.productIDs = ["Monthly_4"]
         if !hasStartedListener { startTransactionListener() }
         Task {
             await refreshProducts()
@@ -194,14 +195,14 @@ final class LicenceManager: ObservableObject {
     }
     
     func refreshProducts() async {
-        log("Loading products \(self.productIDs)", false)
+        log("Loading product IDs: \(self.productIDs)", false)
         guard !productIDs.isEmpty else {
             log("LicenceManager: No product IDs configured.", true)
             products = []
             return
         }
-        let storefront = try await Storefront.current
-        log("Storefront: \(storefront?.id) \(storefront?.countryCode)", false)
+        let storefront = await Storefront.current
+        log("Storefront: \(String(describing: storefront?.id)) \(String(describing: storefront?.countryCode))", false)
         do {
             let sf = await Storefront.current
             let prods = try await Product.products(for: productIDs)
@@ -217,7 +218,10 @@ final class LicenceManager: ObservableObject {
                 if products.isEmpty {
                     log("No auto-renewable subscription products found. try:\(attempt)", true)
                 } else {
-                    log("Loaded \(products.count) products.", false)
+                    log("Loaded \(products.count) product IDs.", false)
+                    for product in products {
+                        log("  \(getProductDescription(product))", false)
+                    }
                     break
                 }
             } catch {
@@ -225,8 +229,20 @@ final class LicenceManager: ObservableObject {
             }
             try? await Task.sleep(nanoseconds: 800_000_000) // 0.8s
         }
+        
     }
 
+    func getProductDescription(_ product:Product) -> String {
+        var desc = ""
+        desc += " id:[\(product.id)" + "]"
+        desc += " displayName:[" + product.displayName + "]"
+        desc += " description:[" + product.description + "]"
+        desc += " displayPrice:[" + product.displayPrice + "]"
+        //desc += " " + String(product.price)
+        return desc
+        
+    }
+    
     func purchase(productID: String) async {
         guard let product = products.first(where: { $0.id == productID }) else {
             log("Unknown product: \(productID)", true)
