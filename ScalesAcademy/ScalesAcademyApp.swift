@@ -406,7 +406,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @ObservedObject private var viewManager = ViewManager.shared
-    
+    @Environment(\.scenePhase) private var scenePhase
     let settings = Settings.shared
     let launchTimeSecs = 3.0
     
@@ -439,6 +439,7 @@ struct ScalesTrainerApp: App {
     }
     
     var body: some Scene {
+        
         WindowGroup {
             VStack {
                 if launchScreenState.state != .finished {
@@ -485,6 +486,11 @@ struct ScalesTrainerApp: App {
             }
             
         }
+        .onChange(of: scenePhase) { _, phase in
+                    if phase == .active {
+                        Task { await LicenceManager.shared.refreshEntitlementsAndStatus() }
+                    }
+                }
     }
     
 }
