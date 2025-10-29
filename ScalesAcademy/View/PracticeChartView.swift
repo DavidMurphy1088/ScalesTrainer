@@ -163,12 +163,18 @@ struct PracticeChartView: View {
                     let minorLabel = self.selectedMinorType.description + " ▼"
                     FigmaButton(minorLabel, action: { //imageName:"figma_down_arrowhead"
                         showMinorTypeSelection = true
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+//                            showMinorTypeSelection = false
+//                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+//                                showMinorTypeSelection = true
+//                            }
+//                        }
                     })
                     .popover(isPresented: $showMinorTypeSelection) {
                         if let user = self.user {
                             if let selectedMinorType = user.selectedMinorType {
                                 let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
-                                SinglePickList(title: "Minor Types", items: self.self.minorScaleTypes,
+                                SinglePickList(title: "Minor Types", items: self.minorScaleTypes,
                                                initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
                                     self.selectedMinorType = selectedMinorType
                                     user.selectedMinorType = selectedMinorType
@@ -184,6 +190,7 @@ struct PracticeChartView: View {
                             }
                         }
                     }
+
                     FigmaButton("Shuffle", imageName1:"figma_shuffle", action: {
                         cellOpacity = 0.0
                         doShuffle()

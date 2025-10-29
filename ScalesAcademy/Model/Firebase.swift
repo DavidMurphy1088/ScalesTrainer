@@ -8,7 +8,8 @@ public class Firebase  {
     public static var shared = Firebase()
     let logger = AppLogger.shared
     //let dbName = "Scales"
-    let dbName = "Scales_2025_09"
+    //let dbName = "Scales_2025_09"
+    let dbName = "Scales_2025_11"
     
     // MARK: - Authentication Methods
     

@@ -4,8 +4,6 @@ import Combine
 import AVFoundation
 import SwiftUI
 
-
-
 struct ScalesGridCellView: View {
     let user:User?
     @ObservedObject var scaleToChart:StudentScale
@@ -14,7 +12,6 @@ struct ScalesGridCellView: View {
     @Binding var scoreTestScaleIds:[String]
     let navigationTitle:String
     
-    let opacityValue = 0.6
     @State var navigateToScale = false
     @State var navigateToSelectHands = false
     @State var showLicenceMessage = false
@@ -227,7 +224,7 @@ struct ScalesGridView : View {
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex), // .opacity(compact ? 0.65 : 0.65),
+                                color:getColor(n: rowIndex * 3 + colIndex).opacity(compact ? 0.65 : 0.65),
                                 scoreTestScaleIds: $scoreTestScaleIds,
                                 navigationTitle: self.navigationTitle
                             )

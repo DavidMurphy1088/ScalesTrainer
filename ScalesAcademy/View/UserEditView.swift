@@ -58,6 +58,32 @@ struct SelectGradeView: View {
     }
 }
 
+struct DisclaimerSheet: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Disclaimer")
+                        .font(.title2).bold()
+
+                    Text("""
+Scales Academy™ is an independent educational product and is not endorsed by or affiliated with Trinity College London. Trinity College London retains all rights to its syllabuses and trademarks.
+""")
+
+                    Divider()
+
+                    Text("Why you’re seeing this")
+                        .font(.headline)
+                    Text("We show this notice to be transparent about our relationship to examination boards.")
+
+                    Spacer(minLength: 8)
+                }
+                .padding()
+            }
+        }
+    }
+}
+
 public struct UserEditView: View {
     public let addingFirstUser: Bool
     @State var user: User
@@ -69,6 +95,8 @@ public struct UserEditView: View {
     @State private var selectedBoard:MusicBoard? = nil
     @State private var errorMessage: String = ""
     @State private var showErrorAlert = false
+    @State private var showDisclaimer = false
+    
     let screenWidth = UIScreen.main.bounds.width
     let settings = Settings.shared
     @State private var sheetNonce = UUID()
@@ -76,9 +104,10 @@ public struct UserEditView: View {
 
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     let colors = FigmaColors.shared
-    let boxWidth = UIScreen.main.bounds.width * 0.2
-    let boxHeight = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.2)
-    
+    let boxWidth = UIScreen.main.bounds.width * 0.25
+    //let boxHeight = UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.15 : 0.2)
+    let boxHeight = UIScreen.main.bounds.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.40 : 0.40)
+
     func getSelectedGrade(_ ctx:String, board:MusicBoard) -> Int {
         var grade = 0
         if board.name == user.boardAndGrade.board.name {
@@ -95,12 +124,13 @@ public struct UserEditView: View {
     }
     
     func getColor(name:String) -> Color {
-        if name == "Trinity" {
+        if name == "Trinity College" {
             return colors.getColor1("UserEditViewforBoard", "green")
         }
-        else {
+        if name == "ABRSM" {
             return colors.getColor1("UserEditViewforBoard", "blue")
         }
+        return colors.getColor1("UserEditViewforBoard", "orange")
     }
     
     func HeaderView() -> some View {
@@ -192,7 +222,6 @@ public struct UserEditView: View {
                             .foregroundColor(.black)
                             .font(.body)
                             .frame(width: UIScreen.main.bounds.width * 0.3)
-                            //.figmaRoundedBackgroundWithBorder(fillColor: .white)
                             .toolbar {
                                 ToolbarItemGroup(placement: .keyboard) {
                                     Spacer()
@@ -206,7 +235,8 @@ public struct UserEditView: View {
                         Spacer()
                     }
                     .figmaRoundedBackgroundWithBorder(fillColor: .white)
-                    .padding(.vertical)
+                    //.padding(self.compact ? 0 : .vertical)
+                    .padding(self.compact ? 2 : 10.0)
                 }
                 //.padding(.vertical)
                 //.border(.purple)
@@ -232,26 +262,41 @@ public struct UserEditView: View {
                                 ForEach(MusicBoard.getSupportedBoards(), id: \.id) { board in
                                     VStack {
                                         Text("") /// Dont remove this - if gone the boxes loose their top lines 👹
-                                        Text(board.name).font(.title2).padding()
+                                        Text(board.name).font(compact ? .title3 : .title2).padding()
                                             .figmaRoundedBackgroundWithBorder(fillColor: getColor(name: board.name))
-                                        //if !compact {
                                         Text("")
-                                        //}
                                         FigmaButton("Select Grade", action: {
                                             self.selectedBoard = board
                                             self.selectedGrade = self.getSelectedGrade("Button Action to Show POPUP", board: board)
                                             sheetNonce = UUID()
                                         })
                                         //.padding()
-                                        Text("")
+                                       
                                         ///Make the full name last else the buttons dont line up horizontally
-                                        if !compact {
-                                            Text(board.fullName)//.font(.caption)
+                                        //                                        if !compact {
+                                        //                                            Text(board.fullName)//.font(.caption)
+                                        //                                                .lineLimit(nil)                 // allow unlimited lines
+                                        //                                                .multilineTextAlignment(.center) // left-align
+                                        //                                                .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                        //                                        }
+
+                                        if compact {
+                                            Text("xxx").opacity(0.0)
+                                            //Text("xxx").opacity(0.0)
+                                            Button("Disclaimer") {
+                                                self.showDisclaimer = true
+                                            }
+                                            .foregroundColor(.blue)
+                                            //.padding()
+                                        }
+                                        else {
+                                            Text("")
+                                            Text(board.copyrightDisclaimer).font(.caption)
                                                 .lineLimit(nil)                 // allow unlimited lines
                                                 .multilineTextAlignment(.center) // left-align
-                                                .fixedSize(horizontal: false, vertical: true) // allows wrapping
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .padding()
                                         }
-                                        Spacer()
                                     }
                                     .frame(width: boxWidth, height: boxHeight)
                                     //.border(.red)
@@ -276,6 +321,7 @@ public struct UserEditView: View {
 //                nameFieldFocused = true
 //            }
         }
+           
         .sheet(item: $selectedBoard, onDismiss: {
             }) { board in
                 SelectGradeView(board: board, selectedGrade: $selectedGrade, onConfirm: {grade in
@@ -297,6 +343,12 @@ public struct UserEditView: View {
                 title: Text(errorMessage),
                 dismissButton: .default(Text("OK"))
             )
+        }
+        .sheet(isPresented: $showDisclaimer, onDismiss: {  }) {
+            DisclaimerSheet()
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+
         }
     }
 

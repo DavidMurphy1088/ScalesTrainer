@@ -668,15 +668,6 @@ struct OutlinedStyleView: ViewModifier {
 //    }
 //}
 
-//extension View {
-//    func hilighted(backgroundColor: Color = .green) -> some View {
-//        modifier(Hilighted(backgroundColor: backgroundColor))
-//    }
-////    func fancyTextStyle() -> some View {
-////        modifier(FancyTextStyle())
-////    }
-//}
-
 struct ConfettiView: UIViewRepresentable {
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     func makeUIView(context: Context) -> UIView {
@@ -819,7 +810,6 @@ struct ConfettiView: UIViewRepresentable {
     }
 }
 
-//struct SinglePickList<Item: Hashable>: View {
 struct SinglePickList<Item>: View {
 
     let title:String
@@ -835,7 +825,7 @@ struct SinglePickList<Item>: View {
             ScrollView {
                 LazyVStack {
                     ForEach(items.indices, id: \.self) { i in
-                        let isSelected = (selectedIndex == i)
+                        //let isSelected = (selectedIndex == i)
                         Button {
                             selectedIndex = i
                             onPick(items[i], i)
@@ -844,12 +834,39 @@ struct SinglePickList<Item>: View {
                             HStack {
                                 Text(label(items[i])).padding(.horizontal)
                                 Spacer()
-//                                if isSelected {
-//                                    Image(systemName: "checkmark")
-//                                }
                             }
                             .padding(4)
-                            //.background(FigmaColors.shared.color(named: "green"))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+struct ScaleTypePicker: View {
+    let title: String
+    let items: [ScaleType]
+    let initiallySelectedIndex: Int?
+    let onPick: (ScaleType, Int) -> Void
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        VStack {
+            ScrollView {
+                LazyVStack {
+                    ForEach(items.indices, id: \.self) { i in
+                        Button {
+                            onPick(items[i], i)
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Text(items[i].description).padding(.horizontal)
+                                Spacer()
+                            }
+                            .padding(4)
                         }
                         .buttonStyle(.plain)
                     }
@@ -857,7 +874,6 @@ struct SinglePickList<Item>: View {
             }
         }
     }
-
 }
 extension SinglePickList<ScaleMotion> where Item == ScaleMotion {
     init(title:String,

@@ -434,7 +434,7 @@ struct ScalesTrainerApp: App {
                                             dynamicTypes: [.mf], articulationTypes: [.legato],
                                             //scaleCustomisation: scaleCustomisation,
                                             debugOn: true)
-            MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
+            //MIDIManager.shared.testMidiNotes = TestMidiNotes(scale: scale, hands: [0], noteSetWait: 0.2, withErrors: false)
         }
     }
     

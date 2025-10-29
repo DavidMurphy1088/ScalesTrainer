@@ -71,7 +71,7 @@ func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: U
             } else if statusByte & 0x80 != 0 {
                 // Status byte found
                 let messageType = statusByte & 0xF0
-                let channel = statusByte & 0x0F
+                //let channel = statusByte & 0x0F
                 var messageLength = 0
                 switch messageType {
                 case 0x80, 0x90, 0xA0, 0xB0, 0xE0:

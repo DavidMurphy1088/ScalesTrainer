@@ -94,7 +94,7 @@ public class ScalesModel : ObservableObject {
     var soundEventHandlers:[SoundEventHandlerProtocol] = []
     
     ///Just used for receiving MIDI messages locally generated for testing
-    var midiTestHander:MIDISoundEventHandler?
+    //var midiTestHander:MIDISoundEventHandler?
         
     private(set) var processedEventSet:TapStatusRecordSet? = nil
     @Published var processedEventSetPublished = false
@@ -354,13 +354,13 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
-            if user.settings.useMidiSources {
-                soundHandler = MIDISoundEventHandler(scale: scale)
-                self.midiTestHander = soundHandler as? MIDISoundEventHandler
-            }
-            else {
+//            if user.settings.useMidiSources {
+//                soundHandler = MIDISoundEventHandler(scale: scale)
+//                self.midiTestHander = soundHandler as? MIDISoundEventHandler
+//            }
+//            else {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
-            }
+//            }
             self.soundEventHandlers.append(soundHandler)
             self.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, metronome: metronome)
@@ -888,9 +888,7 @@ public class ScalesModel : ObservableObject {
                         if scale.scaleType == .chromatic {
                             adjustNotePlacementForChromatic(staffNote: staffNote, firstAccidental: accidentalToUse)
                         }
-//                        if staffNote.midi == 71 {
-//                            print("============= Debug")
-//                        }
+
                         if [ScaleType.major, .naturalMinor, .harmonicMinor, .melodicMinor].contains(scale.scaleType) {
                             if !clefSwitch {
                                 adjustNotePlacementForScale(note: staffNote, previousNote: previousScaleNote, staffClef: clefForPositioning)

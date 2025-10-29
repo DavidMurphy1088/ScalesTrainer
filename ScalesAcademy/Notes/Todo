@@ -1,7 +1,8 @@
 ==== TODO
-Oct 22025
-submit for review with support, privacy etc
-Cant delete subscription in sandbox
+fix disclaimer lange - dont hard code
+AbRSM licensing follow up
+AMEB licensing follow up
+run regression - but changed Trinity name
 
 abrsm #5 tickets
 add email licences feedback
@@ -13,7 +14,7 @@ make sure all audiomgr, license etc load when flash screen loading
 add free licesning
 delete all assets in old folder
 
-================
+==== Done ============
 App Store Connect
 - Submitted for review Sun 5th. See ASC -> ScalesAcademy -> General -> App Review. Can tke 48 hours
 - Version submitted attaches the 1st subscription which is reviewed with app. Can add 2nd, 3rd later

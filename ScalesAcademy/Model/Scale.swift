@@ -117,6 +117,7 @@ public enum ScaleType: CaseIterable, Comparable, Codable {
             return "Broken Triad"
         }
     }
+
 }
 
 public enum ScaleMotion: CaseIterable, Comparable, Codable {
@@ -567,30 +568,6 @@ public class Scale : Codable {
                 setFingerBreaks(hand: hand)
             }
             
-            //            if self.scaleType == .chromatic {
-            //                ///Chromatic fingering is usually 1,3 whereas finger breaks for other scales are determined by a break in the finger number in the finger sequence.
-            //                //setChromaticFingerBreaks(hand: hand)
-            //                setFingerBreaks(hand: hand)
-            //            }
-            //            else {
-            //                if [.brokenChordMajor, .brokenChordMinor].contains(self.scaleType) {
-            //                    ///Set segments for Broken Chords. Broken chords color the chord arpeggios by segment
-            //                    for hand in self.scaleNoteState {
-            //                        for state in hand {
-            //                            state.keyboardFingerColourTypeUp = KeyboardColourType.bySegment
-            //                            state.keyboardFingerColourTypeDown = KeyboardColourType.bySegment
-            //                        }
-            //                    }
-            //                }
-            //                else {
-            ////                    if [.arpeggioMajor, .arpeggioMinor, .arpeggioDiminished, .arpeggioDiminishedSeventh].contains(self.scaleType) {
-            ////                        //setFingerBreaksArpeggio(hand: hand)
-            ////                        setFingerBreaks(hand: hand)
-            ////                    }
-            ////                    else {
-            //                        setFingerBreaks(hand: hand)
-            ////                    }
-            //                }
         }
         Scale.createCount += 1
     }
@@ -1347,8 +1324,18 @@ public class Scale : Codable {
             case "F":
                 fingers = hand == 0 ? "123" : "124"
             case "F#":
-                fingers = hand == 0 ? "123" : "123"
-                leftHandLastFingerJump = 2
+                if [.major, .arpeggioMajor].contains(scaleType) {
+                    fingers = hand == 0 ? "123" : "123"
+                    leftHandLastFingerJump = 2
+                }
+                if [.arpeggioMinor].contains(scaleType) {
+                    if hand == 0 {
+                        fingeringSpecifiedByNote = [2, 1,2,4, 1,2,4, 2,1,4, 2,1,2]
+                    }
+                    else {
+                        fingeringSpecifiedByNote = [2, 1,4,2, 1,4,2, 4,1,2, 4,1,2]
+                    }
+                }
             case "C#":
                 fingers = hand == 0 ? "412" : "241"
             case "G#":
@@ -1446,9 +1433,9 @@ public class Scale : Codable {
                     applyFingerPatternToScaleStart(halfway: halfway)
                 }
             }
-//            if scaleRoot.name == "E♭" && [.arpeggioMinor].contains(scaleType) {
+//            if scaleRoot.name == "F#" && hand == 0 && [.arpeggioMinor].contains(scaleType) {
 //                print("========== fingers 0", scaleRoot.name, hand, scaleType, fingers)
-//                self.debug11("finfers")
+//                self.debug1("F# fingers")
 //            }
 
             var hasAWhiteKey = false

@@ -1,20 +1,3 @@
-//
-//  ScalesAcademyTests.swift
-//  ScalesAcademyTests
-//
-//  Created by David Murphy on 03/10/2025.
-//
-
-import Testing
-
-//struct ScalesAcademyTests {
-//
-//    @Test func example() async throws {
-//        print("============ TEST Swift 🟢🟢🟢🟢")
-//    }
-//
-//}
-
 import Testing
 import Foundation
 @testable import ScalesAcademy
@@ -113,7 +96,11 @@ struct ScalesAcademyTests {
             // Read the stored known-correct scales for this grade using async/await
             let storedKnownCorrect: [String: (String, String)] = await withCheckedContinuation { continuation in
                 var results: [String: (String, String)] = [:]
-                firebase.readAllScales(board: musicBoard.name, grade: grade) { result in
+                var name = musicBoard.name
+//                if name == "Trinity College" {
+//                    name = "Trinity"
+//                }
+                firebase.readAllScales(board: name, grade: grade) { result in
                     for (scaleKey, staffJSON, scaleJSON) in result {
                         results[scaleKey] = (staffJSON, scaleJSON)
                     }
@@ -143,7 +130,7 @@ struct ScalesAcademyTests {
                                 log("❌ SCORE \(scaleKey) failed")
                                 log("❌ SCALE \(scaleKey) failed")
                                 errors = true
-                                if true {
+                                if false {
                                     print("\n----------Correct\n", correctScoreJSON, "\n\n----------Wrong\n", scoreUnderTestJSON)
                                 }
 
@@ -182,7 +169,7 @@ struct ScalesAcademyTests {
             let musicBoardAndGrade = MusicBoardAndGrade(board: musicBoard, grade: grade)
             let scalesModel = ScalesModel.shared
 
-            let gradeScales: [Scale] = MusicBoardAndGrade.getScales(boardName: "Trinity", grade: grade)
+            let gradeScales: [Scale] = MusicBoardAndGrade.getScales(boardName: "Trinity College", grade: grade)
             log("➡️➡️➡️ Testing:\(musicBoard.name) grade:\(grade) scaleCount:\(gradeScales.count)")
             
             for scale in gradeScales {
@@ -230,9 +217,9 @@ struct ScalesAcademyTests {
         }
     }
     
-    @Test("Trinity All Grades")
+    @Test("Trinity College All Grades")
     func testTrinityGrade3CKey() async throws {
-        let musicBoard = MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity")
+        let musicBoard = MusicBoard(name: "Trinity College", fullName: "Trinity College London", imageName: "trinity")
         try await processBoard(
             musicBoard: musicBoard,
             gradeFilter: [],

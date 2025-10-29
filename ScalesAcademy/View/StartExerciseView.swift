@@ -299,7 +299,8 @@ struct StartExerciseView: View {
                             Text("Counting In \(count)").padding().bold()
                         }
                         else {
-                            Text("Starting Count In ...").padding().bold()
+                            //Text("Starting Count In ...").padding().bold()
+                            Text("Get Ready").padding().bold()
                         }
                     }
                     .onChange(of: self.metronome.leadInCountdownPublished, {

@@ -335,6 +335,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScalesAcademy/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Scales Academy does not use Bluetooth";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Academy needs microphone access to listen to your piano";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -369,6 +370,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScalesAcademy/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Scales Academy does not use Bluetooth";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Scales Academy needs microphone access to listen to your piano";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

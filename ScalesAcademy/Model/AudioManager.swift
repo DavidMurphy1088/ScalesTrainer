@@ -90,6 +90,7 @@ class AudioManager {
                 self.mixer!.addInput(self.samplerForBacking!)
                 
                 if withMic {
+
                     self.mic = self.audioEngine?.input
                     self.tappableNodeA = Fader(mic!)
                     ///Multiple nodes allow multiple tap handlers - if required

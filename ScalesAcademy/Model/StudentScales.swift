@@ -6,7 +6,6 @@ class StudentScale: ObservableObject, Codable, Identifiable, Hashable {
         lhs.id == rhs.id
     }
     
-    //@Published
     var visible:Bool = true
     
     let id: UUID

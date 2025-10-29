@@ -35,10 +35,6 @@ class MusicBoardAndGrade: Codable, Identifiable {
         try container.encode(grade, forKey: .grade)
     }
     
-//    func getGradeName() -> String {
-//        return "Grade " + String(grade) + " Piano"
-//    }
-    
     func getFullName() -> String {
         var name = self.board.name
         name += ", Grade " + String(grade) + " Piano"
@@ -295,7 +291,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleMotion: .contraryMotion, octaves: 1, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: [.legato],
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "A♭ Chromatic Contrary Motion ")))
 
-            //=========== Arpeggios
+            //------------- Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMajor,
                                 scaleMotion: .similarMotion, octaves: octaves, hands: [0],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypesArpeggio,
@@ -354,7 +350,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
 //                                                                       customScaleNameWheel: "Chrom Contrary, LH C, RH E"
                                                                       )))
             
-            // ================ Arpeggios
+            // ------------- Arpeggios
             scales.append(Scale(scaleRoot: ScaleRoot(name: "D♭"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggioTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
@@ -716,7 +712,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
     static func getScales(boardName:String, grade:Int) -> [Scale] {
         let scales:[Scale] = []
         switch boardName {
-        case "Trinity":
+        case "Trinity College":
             return scalesTrinity(grade:grade)
         case "ABRSM":
             return scalesABRSM(grade:grade)
@@ -774,10 +770,11 @@ class MusicBoard : Identifiable, Codable, Hashable {
     var fullName:String
     var imageName:String
     var gradesOffered:[Int]
+    var copyrightDisclaimer = ""
 
     static func getSupportedBoards() -> [MusicBoard] {
         var result:[MusicBoard] = []
-        result.append(MusicBoard(name: "Trinity", fullName: "Trinity College London", imageName: "trinity"))
+        result.append(MusicBoard(name: "Trinity College", fullName: "Trinity College London", imageName: "trinity"))
         result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"))
         //result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"))
         //result.append(MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"))
@@ -801,13 +798,14 @@ class MusicBoard : Identifiable, Codable, Hashable {
         gradesOffered = []
         
         switch name {
-        case "Trinity":
+        case "Trinity College":
             //gradesOffered.append(0) ///initial
             gradesOffered.append(1)
             gradesOffered.append(2)
             gradesOffered.append(3)
             gradesOffered.append(4)
             gradesOffered.append(5)
+            self.copyrightDisclaimer = "Scales Academy™ is an independent educational product and is not endorsed by or affiliated with Trinity College London"
 
         case "ABRSM":
             gradesOffered.append(1)
@@ -815,6 +813,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
             gradesOffered.append(3)
             gradesOffered.append(4)
             gradesOffered.append(5)
+            self.copyrightDisclaimer = "Scales Academy™ is an independent educational product and is not endorsed by or affiliated with The Associated Board of the Royal Schools of Music"
         default:
             gradesOffered.append(1)
             gradesOffered.append(2)
