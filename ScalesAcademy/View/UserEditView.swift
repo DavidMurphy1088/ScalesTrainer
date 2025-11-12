@@ -290,12 +290,18 @@ public struct UserEditView: View {
                                             //.padding()
                                         }
                                         else {
-                                            Text("")
-                                            Text(board.copyrightDisclaimer).font(.caption)
-                                                .lineLimit(nil)                 // allow unlimited lines
-                                                .multilineTextAlignment(.center) // left-align
-                                                .fixedSize(horizontal: false, vertical: true)
-                                                .padding()
+                                            VStack {
+                                                Text("")
+                                                Text(board.copyrightDisclaimer)
+                                                    .font(.subheadline)
+                                                    .lineLimit(nil)                 // allow unlimited lines
+                                                    .multilineTextAlignment(.center) // left-align
+                                                    .fixedSize(horizontal: false, vertical: true)
+                                                    .padding()
+                                                Spacer()
+                                            }
+                                            .frame(height: boxHeight * 0.3)
+                                            //.border(.green)
                                         }
                                     }
                                     .frame(width: boxWidth, height: boxHeight)

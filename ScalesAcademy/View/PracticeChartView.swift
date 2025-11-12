@@ -171,24 +171,24 @@ struct PracticeChartView: View {
 //                        }
                     })
                     .popover(isPresented: $showMinorTypeSelection) {
-                        if let user = self.user {
-                            if let selectedMinorType = user.selectedMinorType {
-                                let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
-                                SinglePickList(title: "Minor Types", items: self.minorScaleTypes,
-                                               initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
-                                    self.selectedMinorType = selectedMinorType
-                                    user.selectedMinorType = selectedMinorType
-                                    let newStudentScales:StudentScales = user.getStudentScales()
-                                    newStudentScales.setPracticeDaysForScales(studentScales: newStudentScales.studentScales, minorType: selectedMinorType)
-                                    self.studentScales = newStudentScales
-                                    Settings.shared.save()
-                                    if let studentScales = studentScales {
-                                        setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
-                                    }
-                                }
-                                .presentationCompactAdaptation(.popover)
-                            }
-                        }
+//                        if let user = self.user {
+//                            if let selectedMinorType = user.selectedMinorType {
+//                                let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
+//                                SinglePickList(title: "Minor Types", items: self.minorScaleTypes,
+//                                               initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
+//                                    self.selectedMinorType = selectedMinorType
+//                                    user.selectedMinorType = selectedMinorType
+//                                    let newStudentScales:StudentScales = user.getStudentScales()
+//                                    newStudentScales.setPracticeDaysForScales(studentScales: newStudentScales.studentScales, minorType: selectedMinorType)
+//                                    self.studentScales = newStudentScales
+//                                    Settings.shared.save()
+//                                    if let studentScales = studentScales {
+//                                        setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
+//                                    }
+//                                }
+//                                .presentationCompactAdaptation(.popover)
+//                            }
+//                        }
                     }
 
                     FigmaButton("Shuffle", imageName1:"figma_shuffle", action: {
@@ -229,8 +229,9 @@ struct PracticeChartView: View {
             self.user = user
             let studentScales = user.getStudentScales()
             if !studentScales.arePracticeDaysSet() {
-                studentScales.setPracticeDaysForScales(studentScales: studentScales.studentScales, minorType: self.selectedMinorType)
+                studentScales.setPracticeDaysForScales(studentScales: studentScales.studentScales)
             }
+            studentScales.debug("Chart view")
             
             self.studentScales = studentScales
             let minorTypes = studentScales.getScaleTypes()

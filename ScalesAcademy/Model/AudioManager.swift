@@ -14,8 +14,8 @@ class AudioManager {
     //let samplerFileName = num == 0 ? "UprightPianoKW" : "david_ChateauGrand_polyphone"
     //let samplerFileName = num == 0 ? "Yamaha-Grand-Lite-SF-v1.1" : "david_ChateauGrand_polyphone"
     //static let samplerFileName = "NEW_Timbres of Heaven" ///‼️ B and B♭ sound wrong - an octave too low. Bad for piano preset 0
-    static let keyboardSamplerFileName = "Steinway_D" ///🟢 22Sep25 Claude recommended best for piano.  "Logic Pro Steinway D"
-    static let backingSamplerFileName = "FluidGM_Bank_0"///🟢 22Sep25 Claude recommended best for multiple instruments. "FluidR3 GM"
+    static let keyboardSamplerFileName = "Steinway_D" /// 22Sep25 Claude recommended best for piano.  "Logic Pro Steinway D"
+    static let backingSamplerFileName = "FluidGM_Bank_0"/// 22Sep25 Claude recommended best for multiple instruments. "FluidR3 GM"
     
     static let shared = AudioManager()
     private var audioEngine: AudioEngine?

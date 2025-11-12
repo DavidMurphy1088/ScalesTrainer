@@ -813,7 +813,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
             gradesOffered.append(3)
             gradesOffered.append(4)
             gradesOffered.append(5)
-            self.copyrightDisclaimer = "Scales Academy™ is an independent educational product and is not endorsed by or affiliated with The Associated Board of the Royal Schools of Music"
+            self.copyrightDisclaimer = "The copyright licencing is being finalised with the Associated Board of the Royal Schools of Music. We are now only awaiting the joint signed agreement."
         default:
             gradesOffered.append(1)
             gradesOffered.append(2)

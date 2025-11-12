@@ -539,11 +539,6 @@ public class ScalesModel : ObservableObject {
 //        }
 //    }
     
-    func idStringDebug() -> String {
-        let uuidString = self.id.uuidString
-        return "🟢" + String(uuidString.suffix(6))
-    }
-    
     ///Get tempo for 1/4 note
 //    func getTempo(_ ctx: String) -> Int {
 //        var selected = self.tempoSettings[self.selectedTempoIndex]

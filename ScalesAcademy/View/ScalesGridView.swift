@@ -224,7 +224,7 @@ struct ScalesGridView : View {
                                 user:user,
                                 scaleToChart: scaleToChart,
                                 cellWidth: cellWidth,
-                                color:getColor(n: rowIndex * 3 + colIndex).opacity(compact ? 0.65 : 0.65),
+                                color:getColor(n: rowIndex * 3 + colIndex),//.opacity(compact ? 0.65 : 0.65),
                                 scoreTestScaleIds: $scoreTestScaleIds,
                                 navigationTitle: self.navigationTitle
                             )

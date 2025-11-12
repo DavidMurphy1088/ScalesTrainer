@@ -94,20 +94,32 @@ class StudentScales: Codable {
         return false
     }
     
-    func setPracticeDaysForScales(studentScales:[StudentScale], minorType:ScaleType) {
+    func setPracticeDaysForScales(studentScales:[StudentScale]) {
+        ///The bord/grade may list >1 minor scale types for a specific ScaleRoot. However the student only picks one to be active.
+        ///So map all variations of minor type of a given scale to the same day to ensure even number of scales per practice day
+        ///Note that some (e.g. ABRSM #5) list some minor scales hands seperate. i.e. the dict key must contaions hands.
+        var minorScaleDays: [String: Int] = [:]
+        
         var dayCount = 0
         for studentScale in studentScales {
             guard let scale = studentScale.scale else {
                 continue
             }
+            let minorDictKey = scale.scaleRoot.name + "_" + scale.getScaleDescriptionParts(hands: true) + "_" + scale.scaleMotion.description
+            print("=========", minorDictKey, studentScale.scale?.scaleRoot.name, studentScale.scale?.scaleType)
+            
             if [.harmonicMinor, .melodicMinor, .naturalMinor].contains(scale.scaleType) {
-                if scale.scaleType != minorType {
+                if let day = minorScaleDays[minorDictKey] {
+                    studentScale.practiceDay = day
                     continue
                 }
             }
             let dayOffset = dayCount % scalesPerDay
             studentScale.practiceDay = dayOffset
             dayCount += 1
+            if [.harmonicMinor, .melodicMinor, .naturalMinor].contains(scale.scaleType) {
+                minorScaleDays[minorDictKey] = dayOffset
+            }
         }
         saveToFile()
     }
@@ -116,7 +128,7 @@ class StudentScales: Codable {
         guard let minorType = user.selectedMinorType else {
             return
         }
-        setPracticeDaysForScales(studentScales: studentScales.shuffled(), minorType: minorType)
+        setPracticeDaysForScales(studentScales: studentScales.shuffled())
     }
     
     func convertToJSON() -> Data? {
@@ -137,12 +149,14 @@ class StudentScales: Codable {
         }
     }
     
-    func debug11(_ ctx:String) {
+    func debug(_ ctx:String) {
         print("======== StudentScales", ctx)
         for r in 0..<self.studentScales.count {
-            let x = self.studentScales[r]
-            let name = x.scaleId + String(repeating: " ", count: 60 - x.scaleId.count)
-            print("  \(name)", "\tvis:\(x.visible) \tday:\(x.practiceDay)")
+            let studentScale = self.studentScales[r]
+            let name = studentScale.scaleId + String(repeating: " ", count: 60 - studentScale.scaleId.count)
+            if let scale = studentScale.scale {
+                print("  \(name)", "type:\(scale.scaleType) \tvis:\(studentScale.visible) \tday:\(studentScale.practiceDay)")
+            }
         }
     }
     
