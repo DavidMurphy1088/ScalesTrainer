@@ -487,10 +487,10 @@ struct ScalesTrainerApp: App {
             
         }
         .onChange(of: scenePhase) { _, phase in
-                    if phase == .active {
-                        Task { await LicenceManager.shared.refreshEntitlementsAndStatus() }
-                    }
-                }
+            if phase == .active {
+                Task { await LicenceManager.shared.refreshEntitlementsAndStatus() }
+            }
+        }
     }
     
 }

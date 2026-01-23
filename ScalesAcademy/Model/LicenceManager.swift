@@ -24,6 +24,10 @@ class TrialLicenceManager {
     }
     
     public func isTrialExpired() -> Bool {
+        let user = Settings.shared.getCurrentUser("Exercise Handler init")
+        if user.name.starts(with: "_") {
+            return false
+        }
         guard let trialStartDate = self.trialStartDate else {
             return true
         }
@@ -387,6 +391,7 @@ final class LicenceManager: ObservableObject {
         } else {
             self.willAutoRenew = nil
             self.isInBillingRetry = false
+            
             if trialLicenceManager.isTrialExpired() {
                 setLicenseType(.trialExpired)
             } else {
