@@ -365,23 +365,22 @@ struct ScalesView: View {
         let headerHeight = screenHeight * scale
 
         /// ----------- Keyboard -------------
-        if callType == ComponentSizeType.keyboard {
-        }
+
         var keyboardHeight = 0.0
         //0.5 //0.33 🔴 DONT TOUCH ANY OF THIS LIGHTLY
         //Score height is calculated with whats left after the header and keyboard heights are specified
         var keyboardHeightScale:Double = 0.40
-            if let showingStaff = showingStaff {
-                if !showingStaff {
-                    keyboardHeightScale = 0.60
-                }
+        if let showingStaff = showingStaff {
+            if !showingStaff {
+                keyboardHeightScale = 0.60
             }
-            if self.scale.scaleMotion == ScaleMotion.contraryMotion {
-                if self.scale.hands.count > 1 {
-                    ///Too many keys get too thin
-                    keyboardHeightScale = 0.40
-                }
+        }
+        if self.scale.scaleMotion == ScaleMotion.contraryMotion {
+            if self.scale.hands.count > 1 {
+                ///Too many keys get too thin
+                keyboardHeightScale = 0.40
             }
+        }
 
         if self.scale.octaves > 1 {
             ///Keys are narrower so make height less to keep proportion ratio
@@ -396,7 +395,7 @@ struct ScalesView: View {
             return headerHeight
         }
         if callType == ComponentSizeType.keyboard {
-            return keyboardHeight
+            return keyboardHeight * (compact ? 0.7 : 1.0)
         }
         if callType == ComponentSizeType.score {
             return scoreHeight

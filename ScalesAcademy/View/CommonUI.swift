@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 ///------------- Fonts ------------
 ///Set that the user has chosen Medium in accessibility settings — and don’t allow them to change it
 
@@ -72,6 +73,9 @@ extension View {
 class FigmaColors {
     static let shared = FigmaColors()
     static let appBackground = Color("#FEFEFE")
+    static let iconBlue = Color(red: 77/255.0, green: 172/255.0, blue: 187/255.0)
+    static let lightGray = Color(red: 211/255.0, green: 211/255.0, blue: 211/255.0)
+
     class FColor {
         let name:String
         let color:Color
@@ -392,18 +396,21 @@ struct FigmaButton: View {
 struct FigmaButtonWithLabel<Label: View>: View {
     var label: () -> Label
     var action: () -> Void
+    var verticalPadding: CGFloat?
     let compact = UIDevice.current.userInterfaceIdiom == .phone
-    
-    init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void) {
+
+    init(@ViewBuilder label: @escaping () -> Label, action: @escaping () -> Void, verticalPadding: CGFloat? = nil) {
         self.action = action
         self.label = label
+        self.verticalPadding = verticalPadding
     }
 
     var body: some View {
         Button(action: action) {
             label()
                 .foregroundColor(.black)
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, verticalPadding ?? 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12).stroke(Color.black, lineWidth: 1)
                 )
@@ -534,55 +541,138 @@ struct ToolbarTitleHelpView: View {
     }
 }
 
+//struct ToolbarTitleHelpView: View {
+//    let helpMessage: String
+//
+//    var body: some View {
+//        Text(helpMessage)
+//            .foregroundColor(.white)
+//            .multilineTextAlignment(.leading)
+//            .font(.headline)
+//            .padding(16)
+//            .background(FigmaColors.shared.purple)
+//            .clipShape(RoundedRectangle(cornerRadius: 12))
+//            .padding(12)
+//    }
+//}
+import SwiftUI
+
+struct MessagePopup: View {
+    let message: String
+    let onDismiss: () -> Void
+
+    var body: some View {
+        ZStack {
+            // Dim background + tap outside to dismiss (optional)
+            Color.black.opacity(0.35)
+                .ignoresSafeArea()
+                .onTapGesture { onDismiss() }
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text(message)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                HStack {
+                    Spacer()
+                    Button("Dismiss") { onDismiss() }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.white.opacity(0.18))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(16)
+            .background(FigmaColors.shared.purple)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .shadow(radius: 10)
+            .padding(.horizontal, 24)
+        }
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
+    }
+}
+
+extension View {
+    func messagePopup(isPresented: Binding<Bool>, message: String) -> some View {
+        ZStack {
+            self
+            if isPresented.wrappedValue {
+                MessagePopup(message: message) {
+                    isPresented.wrappedValue = false
+                }
+                .zIndex(999)
+            }
+        }
+        .animation(.easeInOut(duration: 0.15), value: isPresented.wrappedValue)
+    }
+}
+
+
 struct ToolbarNameTitleView: View {
     let screenName: String
     let helpMsg: String
     @ObservedObject var viewManager = ViewManager.shared
-    @State var showHelp = false
-    
+    @State private var showHelp = false
+
     let circleWidth = UIDevice.current.userInterfaceIdiom == .phone ? 35.0 : 35.0
     func firstLetter(user:String) -> String {
         guard let first = user.first else {
             return ""
         }
-        return first.uppercased() 
+        return first.uppercased()
     }
-    
+
     var body: some View {
         HStack {
             HStack {
                 if viewManager.gradePublished > 0 {
                     Button(action: {
-                        self.showHelp = true
+                        showHelp = true
                     }) {
                         Text("?")
-                            .padding(8)
-                            .background(
+                            .foregroundColor(.black)
+                            .padding(6)
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .strokeBorder(Color.black, lineWidth: 1)
                             )
-                            
                     }
-                    .popover(isPresented: $showHelp) {
-                        ToolbarTitleHelpView(helpMessage: helpMsg)
-                            //.offset(x: -50) // Negative x moves left
-                            .presentationCompactAdaptation(.none) ///Else popover takes whole screen on iPhone
+                    .alert("Instruction", isPresented: $showHelp) {
+                        Button("OK", role: .cancel) {}
+                    } message: {
+                        Text(helpMsg)
                     }
 
-                    Rectangle()
-                        .fill(Color.gray)
-                        .frame(width: 2, height: 50)
-                    ZStack {
-                        Circle()
-                            .fill(FigmaColors.colorFromHex(viewManager.userColorPublished)
-                            .opacity(FigmaColors.shared.userDisplayOpacity))
-                            .frame(width: circleWidth, height: circleWidth)
-                        Text(firstLetter(user: viewManager.userNamePublished))
-                    }
-                    VStack {
+                    Text("  ")
+                    HStack(spacing: 6) {
                         Text(viewManager.userNamePublished)
-                        Text(viewManager.boardPublished + ", Grade \(viewManager.gradePublished)").font(.caption)
+                            .font(.headline)
+                            .foregroundColor(.white)
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                            RoundedRectangle(cornerRadius: 10)
+                            .fill(FigmaColors.iconBlue
+                            .opacity(FigmaColors.shared.userDisplayOpacity))
+                    )
+                    Text(" ")
+                    HStack(spacing: 6) {
+
+                        Text("\(viewManager.boardPublished), Grade \(viewManager.gradePublished)")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(FigmaColors.iconBlue
+                            .opacity(FigmaColors.shared.userDisplayOpacity))
+                    )
                 }
             }
         }
@@ -810,22 +900,72 @@ struct ConfettiView: UIViewRepresentable {
     }
 }
 
-struct SinglePickList<Item>: View {
+//struct SinglePickListOld<Item>: View {
+//    let title:String
+//    let items: [Item]
+//    let initiallySelectedIndex: Int?
+//    let label: (Item) -> String
+//    let onPick: (Item, Int) -> Void
+//    @State private var selectedIndex: Int?
+//    @Environment(\.dismiss) private var dismiss
+//    
+//    var body: some View {
+//        VStack {
+//            ScrollView {
+//                LazyVStack {
+//                    ForEach(items.indices, id: \.self) { i in
+//                        //let isSelected = (selectedIndex == i)
+//                        Button {
+//                            selectedIndex = i
+//                            onPick(items[i], i)
+//                            dismiss()
+//                        } label: {
+//                            HStack {
+//                                Text(label(items[i])).padding(.horizontal)
+//                                Spacer()
+//                            }
+//                            .padding(4)
+//                        }
+//                        .buttonStyle(.plain)
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
+//}
 
-    let title:String
+struct SinglePickList<Item>: View {
+    let title: String
     let items: [Item]
     let initiallySelectedIndex: Int?
     let label: (Item) -> String
     let onPick: (Item, Int) -> Void
+
     @State private var selectedIndex: Int?
     @Environment(\.dismiss) private var dismiss
-    
+
+    // ✅ ADD THIS INIT (and keep it exactly like this)
+    init(
+        title: String,
+        items: [Item],
+        initiallySelectedIndex: Int? = nil,
+        label: @escaping (Item) -> String,
+        onPick: @escaping (Item, Int) -> Void
+    ) {
+        self.title = title
+        self.items = items
+        self.initiallySelectedIndex = initiallySelectedIndex
+        self.label = label
+        self.onPick = onPick
+        _selectedIndex = State(initialValue: initiallySelectedIndex)
+    }
+
     var body: some View {
         VStack {
             ScrollView {
                 LazyVStack {
                     ForEach(items.indices, id: \.self) { i in
-                        //let isSelected = (selectedIndex == i)
                         Button {
                             selectedIndex = i
                             onPick(items[i], i)
@@ -834,6 +974,9 @@ struct SinglePickList<Item>: View {
                             HStack {
                                 Text(label(items[i])).padding(.horizontal)
                                 Spacer()
+                                if selectedIndex == i {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                             .padding(4)
                         }
@@ -841,8 +984,10 @@ struct SinglePickList<Item>: View {
                     }
                 }
             }
+            .padding()
         }
-
+        //.presentationBackground(FigmaColors.shared.getColor1("SinglePickList", "blue", 6))
+        .presentationBackground(FigmaColors.lightGray)
     }
 }
 
@@ -875,41 +1020,88 @@ struct ScaleTypePicker: View {
         }
     }
 }
-extension SinglePickList<ScaleMotion> where Item == ScaleMotion {
-    init(title:String,
+//extension SinglePickList<ScaleMotion> where Item == ScaleMotion {
+//    init(title:String,
+//         items: [ScaleMotion],
+//         initiallySelectedIndex: Int? = nil,
+//         onPick: @escaping (ScaleMotion, Int) -> Void) {
+//         self.title = title
+//         self.items = items
+//         self.initiallySelectedIndex = initiallySelectedIndex
+//         self.label = { $0.descriptionShort }
+//         self.onPick = onPick
+//    }
+//}
+//
+//extension SinglePickList<ScaleType> where Item == ScaleType {
+//    init(title:String,
+//        items: [ScaleType],
+//        initiallySelectedIndex: Int? = nil,
+//        onPick: @escaping (ScaleType, Int) -> Void) {
+//        self.title = title
+//        self.items = items
+//        self.initiallySelectedIndex = initiallySelectedIndex
+//        self.label = { $0.description }
+//        self.onPick = onPick
+//    }
+//}
+//
+//extension SinglePickList<String> where Item == String {
+//    init(title:String,
+//         items: [String],
+//         initiallySelectedIndex: Int? = nil,
+//         onPick: @escaping (String, Int) -> Void) {
+//         self.title = title
+//         self.items = items
+//         self.initiallySelectedIndex = initiallySelectedIndex
+//         self.label = { $0.description }
+//         self.onPick = onPick
+//    }
+//}
+
+extension SinglePickList where Item == ScaleMotion {
+    init(title: String,
          items: [ScaleMotion],
          initiallySelectedIndex: Int? = nil,
          onPick: @escaping (ScaleMotion, Int) -> Void) {
-         self.title = title
-         self.items = items
-         self.initiallySelectedIndex = initiallySelectedIndex
-         self.label = { $0.descriptionShort }
-         self.onPick = onPick
+        self.init(
+            title: title,
+            items: items,
+            initiallySelectedIndex: initiallySelectedIndex,
+            label: { $0.descriptionShort },
+            onPick: onPick
+        )
     }
 }
 
-extension SinglePickList<ScaleType> where Item == ScaleType {
-    init(title:String,
-        items: [ScaleType],
-        initiallySelectedIndex: Int? = nil,
-        onPick: @escaping (ScaleType, Int) -> Void) {
-        self.title = title
-        self.items = items
-        self.initiallySelectedIndex = initiallySelectedIndex
-        self.label = { $0.description }
-        self.onPick = onPick
+extension SinglePickList where Item == ScaleType {
+    init(title: String,
+         items: [ScaleType],
+         initiallySelectedIndex: Int? = nil,
+         onPick: @escaping (ScaleType, Int) -> Void) {
+        self.init(
+            title: title,
+            items: items,
+            initiallySelectedIndex: initiallySelectedIndex,
+            label: { $0.description },
+            onPick: onPick
+        )
     }
 }
 
-extension SinglePickList<String> where Item == String {
-    init(title:String,
+extension SinglePickList where Item == String {
+    init(title: String,
          items: [String],
          initiallySelectedIndex: Int? = nil,
          onPick: @escaping (String, Int) -> Void) {
-         self.title = title
-         self.items = items
-         self.initiallySelectedIndex = initiallySelectedIndex
-         self.label = { $0.description }
-         self.onPick = onPick
+        self.init(
+            title: title,
+            items: items,
+            initiallySelectedIndex: initiallySelectedIndex,
+            label: { $0 },
+            onPick: onPick
+        )
     }
 }
+
+

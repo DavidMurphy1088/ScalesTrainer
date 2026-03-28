@@ -140,9 +140,7 @@ class Metronome:ObservableObject {
         else {
             self.setStatus(status: .running)
         }
-//                print("\n====== Metronome  tick", self.timerTickCount, ",Status", self.status, ", NotesPerClick:\(notesPerClick)",
-//                      "lead in:\(self.leadInCount)", "  [waitTicks:\(waitForLeadInTicks), pub:\(waitForLeadInTicks % notesPerClick), beats:\(remainingBeats)]")
-        
+     
         if doLeadIn {
             if self.status != .running {
                 //Sound tick for count in only but notifications must still go out after lead in
@@ -172,7 +170,7 @@ class Metronome:ObservableObject {
                 let currentTime = DispatchTime.now()
                 let intervalMs = (60.0 / Double(self.currentTempo) * 1000.0) / Double(notesPerClick) // milliseconds per beat (857.14ms for 70 BPM)
                 
-                //print("===> ⏰ Metronome", tickCount, String(format: "\tActual: %.2f ms, \tExpected: %.2f ms", elapsedMs, expectedTimeMs), "\tDiff:\(elapsedMs - expectedTimeMs)")
+
                 processTick(notesPerClick: notesPerClick, doLeadIn: doLeadIn)
                 tickCount += 1
                 

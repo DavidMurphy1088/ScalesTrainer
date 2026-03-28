@@ -81,8 +81,13 @@ struct PracticeChartView: View {
             var visible = studentScale.practiceDay == visibleDayOffset
             if let scale = studentScale.scale {
                 if [ScaleType.naturalMinor, ScaleType.harmonicMinor, ScaleType.melodicMinor].contains(scale.scaleType)  {
-                    if scale.scaleType != user?.selectedMinorType {
-                        visible = false
+                    if scale.scaleCustomisation?.retainWithMelodicSwitch == true {
+                        visible = true
+                    }
+                    else {
+                        if scale.scaleType != user?.selectedMinorType {
+                            visible = false
+                        }
                     }
                 }
             }
@@ -161,34 +166,30 @@ struct PracticeChartView: View {
                 //Text("DayOfWeek:\(self.currentDayOfWeekNum)")
                 HStack {
                     let minorLabel = self.selectedMinorType.description + " ▼"
-                    FigmaButton(minorLabel, action: { //imageName:"figma_down_arrowhead"
+                    FigmaButton(minorLabel, action: {
                         showMinorTypeSelection = true
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-//                            showMinorTypeSelection = false
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-//                                showMinorTypeSelection = true
-//                            }
-//                        }
                     })
                     .popover(isPresented: $showMinorTypeSelection) {
-//                        if let user = self.user {
-//                            if let selectedMinorType = user.selectedMinorType {
-//                                let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
-//                                SinglePickList(title: "Minor Types", items: self.minorScaleTypes,
-//                                               initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
-//                                    self.selectedMinorType = selectedMinorType
-//                                    user.selectedMinorType = selectedMinorType
-//                                    let newStudentScales:StudentScales = user.getStudentScales()
+                        if let user = self.user {
+                            if let selectedMinorType = user.selectedMinorType {
+                                let alreadySelected = self.getSelectedTypeIndex(userType: selectedMinorType)
+
+                                SinglePickList(title: "Minor Types", items: self.minorScaleTypes,
+                                               initiallySelectedIndex: alreadySelected) { selectedMinorType, _ in
+                                    self.selectedMinorType = selectedMinorType
+                                    user.selectedMinorType = selectedMinorType
+                                    let newStudentScales:StudentScales = user.getStudentScales()
+                                    newStudentScales.setPracticeDaysForScales(studentScales: newStudentScales.studentScales)
 //                                    newStudentScales.setPracticeDaysForScales(studentScales: newStudentScales.studentScales, minorType: selectedMinorType)
-//                                    self.studentScales = newStudentScales
-//                                    Settings.shared.save()
-//                                    if let studentScales = studentScales {
-//                                        setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
-//                                    }
-//                                }
-//                                .presentationCompactAdaptation(.popover)
-//                            }
-//                        }
+                                    self.studentScales = newStudentScales
+                                    Settings.shared.save()
+                                    if let studentScales = studentScales {
+                                        setVisibleCells("SelectType", studentScales: studentScales, dayOffset: selectedDayOffset)
+                                    }
+                                }
+                                .presentationCompactAdaptation(.popover)
+                            }
+                        }
                     }
 
                     FigmaButton("Shuffle", imageName1:"figma_shuffle", action: {
@@ -256,9 +257,7 @@ struct PracticeChartView: View {
                 setVisibleCells("set DAY", studentScales: studentScales, dayOffset: selectedDayOffset)
             }
         }
-        .sheet(isPresented: $showMinorTypeSelection) {
 
-        }
         .onChange(of: viewManager.boardPublished) {oldValue, newValue in
             dismiss()
         }

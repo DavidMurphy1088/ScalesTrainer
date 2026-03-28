@@ -173,12 +173,14 @@ public class ScaleCustomisation : Codable {
     let customScaleNameRH:String?
     let customScaleNameLH:String?
     let removeKeySig:Bool?
+    let retainWithMelodicSwitch:Bool? //Some harmonic scales (e.g. ABRSM G4 contrary harmonic) must remain in the practice when melodic is set
 
     init(startMidiRH:Int? = nil, startMidiLH:Int? = nil, clefSwitch:Bool? = nil, maxAccidentalLookback:Int? = nil,
           customScaleName:String? = nil,
           customScaleNameLH:String? = nil, customScaleNameRH:String? = nil,
           customScaleNameWheel:String? = nil,
-          removeKeySig:Bool? = nil) {
+          removeKeySig:Bool? = nil,
+          retainWithMelodicSwitch:Bool? = nil) {
         self.startMidiRH = startMidiRH
         self.startMidiLH = startMidiLH
         self.clefSwitch = clefSwitch
@@ -188,6 +190,7 @@ public class ScaleCustomisation : Codable {
         self.customScaleNameRH = customScaleNameRH
         self.customScaleNameLH = customScaleNameLH
         self.removeKeySig = removeKeySig
+        self.retainWithMelodicSwitch = retainWithMelodicSwitch
     }
 }
 
@@ -1433,10 +1436,6 @@ public class Scale : Codable {
                     applyFingerPatternToScaleStart(halfway: halfway)
                 }
             }
-//            if scaleRoot.name == "F#" && hand == 0 && [.arpeggioMinor].contains(scaleType) {
-//                print("========== fingers 0", scaleRoot.name, hand, scaleType, fingers)
-//                self.debug1("F# fingers")
-//            }
 
             var hasAWhiteKey = false
             for n in 0..<scaleNoteState[0].count-1 {
@@ -1628,9 +1627,9 @@ public class Scale : Codable {
                     var handName = ""
                     if handFull {
                         switch self.hands[0] {
-                        case 0: handName = "Right Hand"
-                        case 1: handName = "Left Hand"
-                        default: handName = "Together"
+                        case 0: handName = "right Hand"
+                        case 1: handName = "left Hand"
+                        default: handName = "hands together"
                         }
                     }
                     else {
@@ -1645,13 +1644,13 @@ public class Scale : Codable {
                 }
                 else {
                     //name += handFull ? ", Together" : ", Together"
-                    name += " Together" //handFull ? " Together" : " Together"
+                    name += " hands together" //handFull ? " Together" : " Together"
                 }
             }
         }
         if let octaves = octaves {
             if octaves {
-                name += ", \(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+                name += ", \(self.octaves) \(self.octaves > 1 ? "octaves" : "octave")"
             }
         }
         return name
@@ -1695,9 +1694,9 @@ public class Scale : Codable {
                 var handName = ""
                 if true {
                     switch self.hands[0] {
-                    case 0: handName = "Right Hand"
-                    case 1: handName = "Left Hand"
-                    default: handName = "Together"
+                    case 0: handName = "right Hand"
+                    case 1: handName = "left Hand"
+                    default: handName = "hands together"
                     }
                 }
                 else {
@@ -1710,12 +1709,12 @@ public class Scale : Codable {
                 description = handName
             }
             else {
-                description = "Together"
+                description = "hands together"
             }
         }
         if let octaves = octaves {
             if octaves {
-                description = "\(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
+                description = "\(self.octaves) \(self.octaves > 1 ? "octaves" : "octave")"
             }
         }
         if tempo != nil {
@@ -1766,26 +1765,26 @@ public class Scale : Codable {
         var handsDescription = ""
         if self.hands.count == 1 {
             switch self.hands[0] {
-            case 0: handsDescription  = "Right Hand"
-            case 1: handsDescription  = "Left Hand"
-            default: handsDescription  = "Together"
+            case 0: handsDescription  = "right Hand"
+            case 1: handsDescription  = "left Hand"
+            default: handsDescription  = "hands together"
             }
             if scaleMotion == .contraryMotion {
-                handsDescription += " practise"
+                handsDescription += " practice"
             }
         }
         else {
             if scaleMotion != .contraryMotion {
-                handsDescription = "Together"
+                handsDescription = "hands together"
             }
         }
         if handsDescription.count > 0 {
             description = description + ",  \(handsDescription)"
         }
         
-        let octaveDescription = "\(self.octaves) \(self.octaves > 1 ? "Octaves" : "Octave")"
-        description = description + ",  \(octaveDescription)"
-        
+        let octaveDescription = "\(self.octaves) \(self.octaves > 1 ? "octaves" : "octave")"
+        //description = description + ",  \(octaveDescription)"
+        description = description + "\n\(octaveDescription)"
         if true {
             var tempoDescription = "\u{2669}"
             if self.timeSignature.top % 3 == 0 {

@@ -101,7 +101,6 @@ struct ChooseYourExerciseView: View {
                 let alreadySelected = self.getSelectedTypeIndex()
                 SinglePickList<ScaleType>(title: "Exercise Types", items: self.scaleTypes,
                                initiallySelectedIndex: alreadySelected) { selectedType, _ in
-                    //self.selectedKey = nil
                     if let studentScales = studentScales {
                         setVisibleCells("SelectType", studentScales: studentScales,
                                         typeFilter: selectedType, keyFilter: nil, motionFilter: nil)
@@ -122,7 +121,6 @@ struct ChooseYourExerciseView: View {
                 
                 SinglePickList(title: "Exercise Keys", items: self.scaleKeys,
                     initiallySelectedIndex: alreadySelected) { selectedKey, _ in
-                    //self.selectedType = nil
                     if let studentScales = studentScales {
                         setVisibleCells("SelectKeys", studentScales: studentScales,
                                         typeFilter: nil, keyFilter: selectedKey, motionFilter: nil)
@@ -131,7 +129,7 @@ struct ChooseYourExerciseView: View {
                     self.selectedType = nil
                     self.selectedMotion = nil
                 }
-                .frame(width: screenWidth * (self.compact ? 0.10 : 0.06))
+                .frame(width: screenWidth * (self.compact ? 0.20 : 0.12))
                 .presentationCompactAdaptation(.popover)
             }
             

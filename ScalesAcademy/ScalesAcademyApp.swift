@@ -65,7 +65,7 @@ struct LaunchScreenView: View {
                         Spacer()
                     }
                     VStack(alignment: .center) {
-                        Text("© 2025 Musicmaster Education LLC.")
+                        Text("© 2026 Musicmaster Education LLC.")
                         Text("Version \(appVersion())")
                     }
                     Spacer()
@@ -202,7 +202,6 @@ class ViewManager: ObservableObject {
     @Published var boardPublished:String = ""
     @Published var userNamePublished = ""
     @Published var userColorPublished = "" //hex color
-    
     init() {
         self.selectedTab = 0
     }

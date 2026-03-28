@@ -239,23 +239,7 @@ class AudioManager {
             return nil
         }
     }
-    
-//    func showPresets() {
-//        let presetRange = 0..<128
-//        for preset in presetRange {
-//            do {
-//                let samplerFileName = "Yamaha-Grand-Lite-SF-v1.1"
-//                let sampler = MIDISampler()
-//                try sampler.loadSoundFont(samplerFileName, preset: preset, bank: 0)
-//                // Log the successfully loaded preset number
-//                print("Loaded preset: \(preset) from sound font \(samplerFileName)")
-//            } catch {
-//                // If the preset can't be loaded, skip and continue
-//                print("Preset \(preset) not found or failed to load.")
-//            }
-//        }
-//    }
-    
+        
     ///Return a list of tap events recorded previously in a file
     func readTestDataFile() -> [TapEventSet] {
         

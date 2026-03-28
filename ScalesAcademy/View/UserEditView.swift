@@ -25,6 +25,7 @@ struct SelectGradeView: View {
                     onConfirm(selectedGrade)
                     dismiss()
                 }
+                .font(.title2)
                 .padding()
                 Spacer()
             }
@@ -49,12 +50,16 @@ struct SelectGradeView: View {
                     .onTapGesture {
                         selectedGrade = grade
                     }
+                    .listRowBackground(Color.clear)
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(.clear)
                 .frame(maxWidth: UIScreen.main.bounds.size.width * 0.25) // Set maximum width
                 Spacer()
             }
         }
+        .padding()
     }
 }
 
@@ -133,67 +138,6 @@ public struct UserEditView: View {
         return colors.getColor1("UserEditViewforBoard", "orange")
     }
     
-    func HeaderView() -> some View {
-        HStack {
-            if isSaveEnabled(user:user) {
-                if user.boardAndGrade.grade > 0 {
-                    FigmaButtonWithLabel(
-                        label: {
-                            HStack {
-                                Image("figma_tickmark")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
-                                Text("Save")
-                            }
-                        },
-                        action: {
-                            if user.boardAndGrade.grade > 0 {
-                                user.setColor()
-                                settings.setUser(user: user)
-                                dismiss()
-                                if addingFirstUser {
-                                    settings.setCurrentUser(id: user.id)
-                                    ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
-                                }
-                            } else {
-                                errorMessage = "▶️ Please select a grade before saving"
-                                showErrorAlert = true
-                            }
-                        }
-                    )
-                    .padding()
-                }
-            }
-            
-            if settings.hasUser(name: user.name) {
-                let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
-                if enabled  {
-                    FigmaButtonWithLabel(
-                        label: {
-                            Text("Remove User").foregroundColor(.red)
-                        },
-                        action: {
-                            showDeleteAlert = true
-                        }
-                    )
-                    .padding()
-                    .alert("Are you sure you want to delete \(user.name)?",
-                           isPresented: $showDeleteAlert) {
-                        Button("Delete", role: .destructive) {
-                            user.name = userName
-                            settings.deleteUser(user: user)
-                            dismiss()
-                        }
-                        Button("Cancel", role: .cancel) { }
-                    } message: {
-                    }
-                }
-            }
-            Spacer()
-        }
-    }
-    
     func showUnderlyingUI() -> Bool {
 //        if !compact {
 //            return true
@@ -205,45 +149,77 @@ public struct UserEditView: View {
         HStack {
             Text("XXX").padding().foregroundColor(.clear)
             VStack(alignment: .leading) {
-                ///Header area
-                if showUnderlyingUI() {
-                    HeaderView()//.padding(.horizontal)
-                        //.border(.green)
-                        .figmaRoundedBackgroundWithBorder(fillColor: .white)
-                }
-
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text("Your name ").padding()
-                        TextField("enter your name here", text: $userName)
-                            .focused($nameFieldFocused)
-                            .padding()
-                            .cornerRadius(8)
-                            .foregroundColor(.black)
-                            .font(.body)
-                            .frame(width: UIScreen.main.bounds.width * 0.3)
-                            .toolbar {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    Spacer()
-                                    Button("Done") {
-                                        nameFieldFocused = false
-                                    }
+                /// Name field — always visible so TextField focus is never lost
+                HStack {
+                    Text("Your name ").padding(.leading)
+                    TextField("enter your name here", text: $userName)
+                        .focused($nameFieldFocused)
+                        .padding(6)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(FigmaColors.shared.blue))
+                        .foregroundColor(.black)
+                        .font(.body)
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") { nameFieldFocused = false }
                                     .foregroundColor(.blue)
                                     .fontWeight(.semibold)
-                                }
                             }
-                        Spacer()
+                        }
+                    Spacer()
+                    if isSaveEnabled(user: user) && showUnderlyingUI() {
+                        FigmaButtonWithLabel(
+                            label: {
+                                HStack {
+                                    Image("figma_tickmark")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
+                                    Text("Save")
+                                }
+                            },
+                            action: {
+                                user.setColor()
+                                settings.setUser(user: user)
+                                dismiss()
+                                if addingFirstUser {
+                                    settings.setCurrentUser(id: user.id)
+                                    ViewManager.shared.setTab(tab: ViewManager.TAB_ACTIVITES)
+                                }
+                            },
+                            verticalPadding: 4
+                        )
+                        .padding(.trailing, 4)
                     }
-                    .figmaRoundedBackgroundWithBorder(fillColor: .white)
-                    //.padding(self.compact ? 0 : .vertical)
-                    .padding(self.compact ? 2 : 10.0)
+                    if settings.hasUser(name: user.name) && showUnderlyingUI() {
+                        let enabled = user.id != settings.getCurrentUser("UserEditView- is remove enabled").id
+                        if enabled {
+                            FigmaButtonWithLabel(
+                                label: {
+                                    Text("Remove User").foregroundColor(.red)
+                                },
+                                action: {
+                                    showDeleteAlert = true
+                                },
+                                verticalPadding: 4
+                            )
+                            .padding(.trailing, 4)
+                            .alert("Are you sure you want to delete \(user.name)?",
+                                   isPresented: $showDeleteAlert) {
+                                Button("Delete", role: .destructive) {
+                                    user.name = userName
+                                    settings.deleteUser(user: user)
+                                    dismiss()
+                                }
+                                Button("Cancel", role: .cancel) { }
+                            } message: {
+                            }
+                        }
+                    }
                 }
-                //.padding(.vertical)
-                //.border(.purple)
-                
-                .onChange(of: userName) {_, name in
-                    user.name = name
-                }
+                .figmaRoundedBackgroundWithBorder(fillColor: .white)
+                .padding(compact ? 2 : 10.0)
+                .onChange(of: userName) { _, name in user.name = name }
                 
                 if showUnderlyingUI() {
                     VStack(alignment: .leading) {
@@ -319,6 +295,7 @@ public struct UserEditView: View {
         }
 
         .onAppear {
+            AudioManager.shared.stopListening()
             if !self.addingFirstUser {
                 self.selectedGrade = user.boardAndGrade.grade
             }
@@ -340,7 +317,7 @@ public struct UserEditView: View {
             
         .commonToolbar(
             title: settings.isCurrentUserDefined() ? "Edit User" : "Let's set up your account",
-            helpMsg: "",
+            helpMsg: "Use this screen to setup your name and grade",
             onBack: { dismiss() }
         )
         .toolbar(.hidden, for: .tabBar) // Hide the TabView

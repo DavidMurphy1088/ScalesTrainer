@@ -106,7 +106,6 @@ class StudentScales: Codable {
                 continue
             }
             let minorDictKey = scale.scaleRoot.name + "_" + scale.getScaleDescriptionParts(hands: true) + "_" + scale.scaleMotion.description
-            print("=========", minorDictKey, studentScale.scale?.scaleRoot.name, studentScale.scale?.scaleType)
             
             if [.harmonicMinor, .melodicMinor, .naturalMinor].contains(scale.scaleType) {
                 if let day = minorScaleDays[minorDictKey] {

@@ -390,21 +390,16 @@ public class Score : ObservableObject, Encodable {
     }
 
     public func debug11(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
-//        if !self.debugOn {
-//            return
-//        }
+
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
-        print("\nSCORE DEBUG =====", ctx, "\tScale", scale.scaleRoot, scale.scaleType.description)
-        //let midiFilter = nil //[60, 62, 63,64]
-        
+        //print("\nSCORE DEBUG =====", ctx, "\tScale", scale.scaleRoot, scale.scaleType.description)
+
         for entry in self.scoreEntries {
             if midiFilter == nil {
                 if let timeSlice = entry as? BarLine {
-                    print("------------- Bar line", timeSlice.sequence)
                     continue
                 }
                 if let timeSlice = entry as? StaffClef {
-                    print("------------- Staff Clef sequence:", timeSlice.sequence, "clefType:", timeSlice.clefType)
                     continue
                 }
             }
@@ -418,9 +413,6 @@ public class Score : ObservableObject, Encodable {
 //                            continue
 //                        }
                         if !hdrDone {
-                            print("TimeSlice, ", terminator: "")
-                            print("Seq", String(format: "%2d", timeSlice.sequence), terminator: "")
-                            print()
                             hdrDone = true
                         }
                         if handType == nil || note.handType == handType {

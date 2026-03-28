@@ -118,13 +118,14 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                         ///Stop the note soon to avoid the reverb, extended sounding effect of leaving it running
                         if let noteValue = key.scaleNoteState?.value {
                             let tempo = Double(metronome.currentTempo)
-                            let wait = noteValue * (60.0 / tempo) * (scale.hands.count>1 ? 0.9 : 1.0)
+                            let articulationFactor = scale.articulationTypes.contains(.staccato) ? 0.5 : 1.0
+                            let soundDuration = noteValue * (60.0 / tempo) * (scale.hands.count>1 ? 0.9 : 1.0) * articulationFactor
                             ///Dont silence the last note since the same note will be repeated as the first note of the next play iteration (which then wont sound)
-                            if nextNoteIndex < self.scale.getScaleNoteCount() - 1 {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+                            //if nextNoteIndex < self.scale.getScaleNoteCount() - 1 {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + soundDuration) {
                                     samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
                                 }
-                            }
+                            //}
                         }
                     }
 

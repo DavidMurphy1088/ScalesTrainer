@@ -24,8 +24,13 @@ class MusicBoardAndGrade: Codable, Identifiable {
                 break
             }
         }
-        self.board = loadedBoard!
-        grade = try container.decode(Int.self, forKey: .grade)
+        if let loadedBoard = loadedBoard {
+            self.board = loadedBoard
+            grade = try container.decode(Int.self, forKey: .grade)
+        }
+        else {
+            fatalError("No loaded music exam board")
+        }
     }
     
     func encode(to encoder: Encoder) throws {
@@ -399,7 +404,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
             }
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(customScaleName: "C Major Contrary Motion ")))
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "C Major Contrary Motion")))
             for hand in [[0], [1]] {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: hand,
                                     minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
@@ -497,17 +502,17 @@ class MusicBoardAndGrade: Codable, Identifiable {
 
             scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .major, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "E Major Contrary Motion ")))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1],minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: 1, hands: [0,1],minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "D Chromatic Contrary Motion")))
             
             ///Hands together argeggios
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "D"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "A"), scaleType: .arpeggioMajor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "E"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
-            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: 2, hands: [0,1],
+            scales.append(Scale(scaleRoot: ScaleRoot(name: "G"), scaleType: .arpeggioMinor, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1],
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
 
@@ -562,7 +567,8 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "E♭ Major Contrary Motion ")))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(customScaleName: "C Harmonic Minor Contrary Motion ")))
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "C Harmonic Minor Contrary Motion ",
+                                                                       retainWithMelodicSwitch: true)))
             
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .similarMotion, octaves: octaves, hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
 
@@ -625,13 +631,14 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 scaleCustomisation: ScaleCustomisation(customScaleName: "D♭ Major Contrary Motion")))
             scales.append(Scale(scaleRoot: ScaleRoot(name: "C#"), scaleType: .harmonicMinor, scaleMotion: .contraryMotion, octaves: octaves,
                                 hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(customScaleName: "C# Harmonic Minor Contrary Motion"
+                                scaleCustomisation: ScaleCustomisation(customScaleName: "C# Harmonic Minor Contrary Motion",
+                                                                       retainWithMelodicSwitch: true
                                 )))
             
             ///Chromatic
             scales.append(Scale(scaleRoot: ScaleRoot(name: "F#"), scaleType: .chromatic, scaleMotion: .contraryMotion, octaves: octaves,
                                 hands: [0,1], minTempo: minTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes,
-                                scaleCustomisation: ScaleCustomisation(startMidiRH: 70, startMidiLH: 54, customScaleName:"F#/A# Chromatic Contrary Motion")))
+                                scaleCustomisation: ScaleCustomisation(startMidiRH: 70, startMidiLH: 54, customScaleName:"F#(LH)/A#(RH) Chromatic Contrary Motion")))
 
             ///Minors
             for minorType in [ScaleType.harmonicMinor, ScaleType.melodicMinor] {
@@ -670,7 +677,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
                                 minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
             for hand in [0,1] {
                 scales.append(Scale(scaleRoot: ScaleRoot(name: "B"), scaleType: .arpeggioDiminishedSeventh, scaleMotion: .similarMotion, octaves: 2,
-                                    hands: [hand], minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes))
+                                    hands: [hand], minTempo: arpeggionTempo, dynamicTypes: dynamicTypes, articulationTypes: articulationTypes, scaleCustomisation: ScaleCustomisation(customScaleName:"Diminished 7th Arpeggio on B")))
             }
         }
         return scales
@@ -774,7 +781,7 @@ class MusicBoard : Identifiable, Codable, Hashable {
 
     static func getSupportedBoards() -> [MusicBoard] {
         var result:[MusicBoard] = []
-        result.append(MusicBoard(name: "Trinity College", fullName: "Trinity College London", imageName: "trinity"))
+        //result.append(MusicBoard(name: "Trinity College", fullName: "Trinity College London", imageName: "trinity"))
         result.append(MusicBoard(name: "ABRSM", fullName:"The Associated Board of the Royal Schools of Music", imageName: "abrsm"))
         //result.append(MusicBoard(name: "NZMEB", fullName: "New Zealand Music Examinations Board", imageName: "nzmeb"))
         //result.append(MusicBoard(name: "AMEB", fullName: "Australian Music Examinations Board", imageName: "AMEB"))

@@ -84,7 +84,7 @@ public struct StaffClefView: View {
                 Text("\u{1d122}")
                     .foregroundColor(isTransparent ? .black : .clear)
                     .font(.system(size: CGFloat(getClefSize(clefType: staffClef.clefType))))
-                    //.padding()
+                    .padding(.top, -self.lineSpacing * 1.5)
             }
         }
         .frame(minWidth: Double(self.lineSpacing)  * 1.1)

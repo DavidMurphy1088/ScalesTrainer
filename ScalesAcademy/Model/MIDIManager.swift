@@ -85,7 +85,6 @@ func midiNotifyProc(packetList: UnsafePointer<MIDIPacketList>, readProcRefCon: U
                 if index + messageLength <= data.count {
                     let messageBytes = Array(data[index..<(index + messageLength)])
                     if let message:MIDIMessage = midiManager.parseMIDIMessage(messageBytes) {
-                        //print("Received MIDI message: \(message)")
                         midiManager.processMidiMessage(MIDImessage: message)
                     }
                     index += messageLength
