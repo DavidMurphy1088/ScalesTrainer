@@ -109,24 +109,40 @@ class HearScalePlayer : MetronomeTimerNotificationProtocol {
                 ///Hilight the keyboard key, sound the note and highlight the score note.
                 if self.waitBeatsToAdvanceScale == 0 {
                     let key=keyboard.pianoKeyModel[keyboardKeyIndex]
-                    key.setKeyPlaying()
                     //let velocity:UInt8 = key.keyboardModel == .sharedLH ? 48 : 64
                     let velocity:UInt8 = 64
-                    if [.playingAlong, .recordingScale].contains(process) {
-                        samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
-                        self.lastStatePlayed = key.scaleNoteState
-                        ///Stop the note soon to avoid the reverb, extended sounding effect of leaving it running
+                    if [.playingAlong, .recordingScale, .backingOn].contains(process) {
                         if let noteValue = key.scaleNoteState?.value {
                             let tempo = Double(metronome.currentTempo)
                             let articulationFactor = scale.articulationTypes.contains(.staccato) ? 0.5 : 1.0
+                            /// soundDuration = note length in seconds at the current tempo.
+                            /// Staccato notes are halved. Hands-together is scaled down 10% to avoid overlap.
                             let soundDuration = noteValue * (60.0 / tempo) * (scale.hands.count>1 ? 0.9 : 1.0) * articulationFactor
-                            ///Dont silence the last note since the same note will be repeated as the first note of the next play iteration (which then wont sound)
-                            //if nextNoteIndex < self.scale.getScaleNoteCount() - 1 {
+                            /// Smooth keys on: highlight clears exactly when the note ends, preventing old
+                            /// highlights accumulating across the keyboard.
+                            /// Smooth keys off: original fixed 0.8s highlight — applies to both play-along and backing.
+                            key.setKeyPlaying(soundingDuration: PianoKeyboardModel.debounceRedraws ? soundDuration : nil)
+                            if [.playingAlong, .recordingScale].contains(process) {
+                                /// Play the audio note immediately — timing is never affected by smooth keys.
+                                samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                                self.lastStatePlayed = key.scaleNoteState
+                                /// Schedule audio stop to prevent the note sustaining/reverbing into the next note.
                                 DispatchQueue.main.asyncAfter(deadline: .now() + soundDuration) {
                                     samplerForKeyboard?.stop(noteNumber: UInt8(key.midi), channel: 0)
                                 }
-                            //}
+                            }
+                            /// Backing track audio is handled separately by playBacking() below.
+                        } else {
+                            /// No note value available — fall back to default highlight and audio.
+                            key.setKeyPlaying()
+                            if [.playingAlong, .recordingScale].contains(process) {
+                                samplerForKeyboard?.play(noteNumber: UInt8(key.midi), velocity: velocity, channel: 0)
+                                self.lastStatePlayed = key.scaleNoteState
+                            }
                         }
+                    } else {
+                        /// All other processes (e.g. hear scale) use the original fixed highlight duration.
+                        key.setKeyPlaying()
                     }
 
                     if let score = scalesModel.getScore() {

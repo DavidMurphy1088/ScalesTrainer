@@ -101,18 +101,24 @@ public class PianoKeyModel: Identifiable, Hashable {
         self.scaleNoteState = state
     }
     
-    ///Set a keyboard key as playing.
-    ///Also hilight the associated score note.
-    public func setKeyPlaying() {
+    /// Mark this key as currently sounding and schedule its highlight to be cleared.
+    /// - Parameter soundingDuration: How long the highlight stays lit in seconds.
+    ///   When nil (all callers except play-along with smooth keys on) the fixed default
+    ///   of keySoundingSeconds (0.8s) is used — original behaviour unchanged.
+    ///   When provided by HearScalePlayer during play-along, the duration matches the
+    ///   actual note length at the current tempo, so the highlight clears as the next
+    ///   note arrives rather than lingering for a fixed period.
+    public func setKeyPlaying(soundingDuration: Double? = nil) {
+        let duration = soundingDuration ?? PianoKeyModel.keySoundingSeconds
         self.keyIsSounding = true
         DispatchQueue.global(qos: .background).async {
-            usleep(UInt32(1000000 * PianoKeyModel.keySoundingSeconds)) 
+            usleep(UInt32(1000000 * duration))
             DispatchQueue.main.async {
                 self.keyIsSounding = false
                 self.keyboardModel.redraw()
             }
         }
-        
+
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
         

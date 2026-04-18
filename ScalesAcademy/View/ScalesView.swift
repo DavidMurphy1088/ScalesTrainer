@@ -286,6 +286,13 @@ struct ScalesView: View {
                         self.exerciseState.setExerciseState("PlayAlong", ExerciseState.State.exerciseAboutToStart)
                         self.exerciseProcess = RunningProcess.playingAlong
                     })
+                    //18Apr26 removed for now
+//                    Toggle("Smooth keys", isOn: Binding(
+//                        get: { PianoKeyboardModel.debounceRedraws },
+//                        set: { PianoKeyboardModel.debounceRedraws = $0 }
+//                    ))
+                    .font(.caption)
+                    .fixedSize()
                 }
                 
                 if self.scale.getBackingChords() != nil {

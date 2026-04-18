@@ -14,6 +14,12 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
 
     let id = UUID()
     @Published public var forceRepaint1 = 0 ///Without this the key view does not update when pressed
+    /// When true, rapid successive redraw() calls are collapsed into a single Canvas repaint.
+    /// This prevents visible flutter on keys that weren't changed when one key updates.
+    /// Toggled by the "Smooth keys" switch in ScalesView. Off by default.
+    static var debounceRedraws = false
+    /// Holds the pending debounced repaint so it can be cancelled if another redraw arrives first.
+    private var pendingRedraw: DispatchWorkItem?
     let scalesModel = ScalesModel.shared
     private(set) var pianoKeyModel: [PianoKeyModel] = []
 
@@ -161,10 +167,20 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         }
     }
     
-    func redraw() { //_ ctx:String) {
-        DispatchQueue.main.async {
-            self.forceRepaint1 += 1
+    func redraw() {
+        guard PianoKeyboardModel.debounceRedraws else {
+            /// Smooth keys off: repaint immediately, original behaviour.
+            DispatchQueue.main.async { self.forceRepaint1 += 1 }
+            return
         }
+        /// Smooth keys on: cancel any repaint that hasn't fired yet, then schedule
+        /// a fresh one 32ms from now. If another redraw() arrives before 32ms elapses
+        /// the timer resets again. Only when 32ms passes with no further calls does
+        /// the Canvas actually repaint — collapsing many per-key updates into one draw.
+        pendingRedraw?.cancel()
+        let work = DispatchWorkItem { self.forceRepaint1 += 1 }
+        pendingRedraw = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.032, execute: work)
     }
 
     public var numberOfKeys = 18
