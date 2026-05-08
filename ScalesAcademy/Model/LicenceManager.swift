@@ -80,6 +80,7 @@ class TrialLicenceManager {
         return formattedDate
     }
     
+    ///Dont let user just delete the app to start a new trial licence
     func readFromKeychain() -> Date? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

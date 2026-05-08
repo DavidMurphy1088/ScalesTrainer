@@ -181,6 +181,7 @@ public struct UserEditView: View {
                             action: {
                                 user.setColor()
                                 settings.setUser(user: user)
+                                Task { await LicenceManager.shared.refreshEntitlementsAndStatus() }
                                 dismiss()
                                 if addingFirstUser {
                                     settings.setCurrentUser(id: user.id)
