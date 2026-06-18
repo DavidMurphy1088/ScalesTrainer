@@ -221,7 +221,7 @@ public struct UserEditView: View {
                 .figmaRoundedBackgroundWithBorder(fillColor: .white)
                 .padding(compact ? 2 : 10.0)
                 .onChange(of: userName) { _, name in user.name = name }
-                
+
                 if showUnderlyingUI() {
                     VStack(alignment: .leading) {
                         if showUnderlyingUI() {

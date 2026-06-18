@@ -17,6 +17,7 @@ enum LaunchScreenStep {
 }
 
 class Parameters {
+    static let midiEnabled = true
     var inDevelopmentMode:Bool = false
     static let shared = Parameters()
 }
@@ -405,6 +406,7 @@ struct ScalesTrainerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate ///Dont remove this ⬅️
     @StateObject var launchScreenState = LaunchScreenStateManager()
     @ObservedObject private var viewManager = ViewManager.shared
+    @ObservedObject private var midiManager = MIDIManager.shared
     @Environment(\.scenePhase) private var scenePhase
     let settings = Settings.shared
     let launchTimeSecs = 3.0
@@ -465,8 +467,11 @@ struct ScalesTrainerApp: App {
                 else {
                     ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME
                 }
-                ///Using CoreMIDI, check for available MIDI connections early, typically during app initialization, but not too early — CoreMIDI may not be fully ready at app launch.
-                //MIDIManager.shared.setupMIDI()
+                if Parameters.midiEnabled {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        MIDIManager.shared.setupMIDI()
+                    }
+                }
             }
             .onAppear {
                 NotificationCenter.default.addObserver(
@@ -482,6 +487,23 @@ struct ScalesTrainerApp: App {
                 DispatchQueue.main.asyncAfter(deadline: .now() + launchTimeSecs) {
                     self.launchScreenState.dismiss()
                 }
+            }
+            .alert("MIDI Piano Detected", isPresented: $midiManager.showMidiSourceAlert) {
+                Button("Use MIDI Piano") {
+                    midiManager.useMidiForSession = true
+                    if Settings.shared.isCurrentUserDefined() {
+                        Settings.shared.getCurrentUser("MIDI session choice").settings.useMidiSources = true
+                    }
+                }
+                Button("Use Microphone", role: .cancel) {
+                    midiManager.useMidiForSession = false
+                    if Settings.shared.isCurrentUserDefined() {
+                        Settings.shared.getCurrentUser("MIDI session choice").settings.useMidiSources = false
+                    }
+                }
+            } message: {
+                let names = midiManager.detectedDeviceNames.joined(separator: "\n")
+                Text("A MIDI piano was detected:\n\(names)\n\nWould you like to use it for this session, or listen via the microphone?")
             }
             
         }

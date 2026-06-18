@@ -63,7 +63,7 @@ class ExerciseHandler  {
         nextExpectedStaffSegment[.right] = 0
         nextExpectedStaffSegment[.left] = 0
         currentScoreSegment = 0
-        MIDIManager.shared.matchedNotes.start(hands: scale.getHandTypes())
+        if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.start(hands: scale.getHandTypes()) }
         let numberToWin = scale.getScaleNoteCount()
         exerciseState.setNumberToWin(numberToWin)
         if scale.scaleMotion == .contraryMotion {
@@ -79,7 +79,7 @@ class ExerciseHandler  {
         if self.exerciseType == .followingScale {
             hilightKey(scaleIndex: 0)
         }
-        if Parameters.shared.inDevelopmentMode {
+        if Parameters.midiEnabled {
             let user = Settings.shared.getCurrentUser("ExerciseHandler - start")
             if user.settings.useMidiSources {
                 if MIDIManager.shared.testMidiNotes != nil {
@@ -116,7 +116,7 @@ class ExerciseHandler  {
     ///Called by sound handler on receipt of new sound
     func notifiedOfSound(midiMsg:MIDIMessage) {
         if midiMsg.messageType == MIDIMessage.MIDIStatus.noteOff {
-            MIDIManager.shared.matchedNotes.processNoteOff(midi: midiMsg.midi)
+            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOff(midi: midiMsg.midi) }
             return
         }
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
@@ -159,6 +159,7 @@ class ExerciseHandler  {
         if scale.hands.count == 1 {
             let hand = scale.hands[0] == 0 ? HandType.right : .left
             handThatPlayedNote = hand
+            print("==== MIDI processSound midi:\(midi) hand:\(hand) ====")
         }
         else {
             ///Does the received midi match with the expected note in any hand?
@@ -345,7 +346,7 @@ class ExerciseHandler  {
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 awardChartBadge()
             }
-            MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: velocity)
+            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: velocity) }
             testForEndOfExercise()
         }
 
@@ -411,7 +412,7 @@ class ExerciseHandler  {
                 }
                 exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, "Wrong Note")
                 scalesModel.exerciseCompletedNotify()
-                MIDIManager.shared.testMidiNotesStopPlaying = true
+                if Parameters.midiEnabled { MIDIManager.shared.testMidiNotesStopPlaying = true }
                 break
             }
         }

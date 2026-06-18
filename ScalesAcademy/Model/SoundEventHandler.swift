@@ -37,7 +37,7 @@ class SoundEventHandler  {
 }
 
 ///A class that generates sound events from the MIDI notifications to exercise processes
-class MIDISoundEventHandlerUnused : SoundEventHandler, SoundEventHandlerProtocol {
+class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
 
     func start() {
         let midiManager = MIDIManager.shared

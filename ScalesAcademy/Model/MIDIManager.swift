@@ -192,18 +192,23 @@ class MatchedNotes {
 
 class MIDIManager : ObservableObject {
     static let shared = MIDIManager()
-    
+
     @Published var connectionSourcesPublished:[String] = []
+    @Published var showMidiSourceAlert: Bool = false
     private var connectedSources: Set<MIDIEndpointRef> = []
+
+    /// Session-only: set from the startup dialog, never persisted
+    var useMidiForSession: Bool = false
+    var detectedDeviceNames: [String] = []
 
     private var midiClient: MIDIClientRef = 0
     private var inputPort: MIDIPortRef = 0
     private let log = AppLogger.shared
-    
+
     var testMidiNotes:TestMidiNotes?
     var testMidiNotesStopPlaying = false
     var matchedNotes:MatchedNotes
-    
+
     private var installedNotificationTarget: ((MIDIMessage) -> Void)?
 
     init() {
@@ -238,6 +243,8 @@ class MIDIManager : ObservableObject {
     }
     
     func processMidiMessage(MIDImessage:MIDIMessage) {
+        let type = MIDImessage.messageType == .noteOn ? "NoteOn " : "NoteOff"
+        print("==== MIDI \(type) note:\(MIDImessage.midi) velocity:\(MIDImessage.velocity) ====")
         if let target = self.installedNotificationTarget {
             target(MIDImessage)
         }
@@ -248,24 +255,27 @@ class MIDIManager : ObservableObject {
         self.installedNotificationTarget = target
     }
 
-    func setupMIDIUnused() {
-        // Create MIDI Client
+    func setupMIDI() {
         let clientName = "Scales Academy" as CFString
         let result = MIDIClientCreate(clientName, midiSetupNotifyProc, Unmanaged.passUnretained(self).toOpaque(), &midiClient)
         if result != noErr {
             log.reportError(self, "Error creating MIDI client: \(result)")
             return
         }
-        
-        // Create Input Port
         let portName = "Input Port" as CFString
         let inputResult = MIDIInputPortCreate(midiClient, portName, midiNotifyProc, Unmanaged.passUnretained(self).toOpaque(), &inputPort)
         if inputResult != noErr {
             log.reportError(self, "Error creating MIDI input port: \(inputResult)")
             return
         }
-        
         scanMIDISources()
+        // connectionSourcesPublished is updated async — read connectedSources directly
+        detectedDeviceNames = connectedSources.map { getEndpointDetails($0) }
+        if !detectedDeviceNames.isEmpty {
+            DispatchQueue.main.async {
+                self.showMidiSourceAlert = true
+            }
+        }
     }
 
     public func scanMIDISources() {
@@ -278,16 +288,8 @@ class MIDIManager : ObservableObject {
         
         for i in 0..<numSources {
             let endpoint:MIDIEndpointRef = MIDIGetSource(i)
-            if let driver = getMIDIProperty(endpoint, kMIDIPropertyDriverOwner) {
-                ///Filter out Apple virtual network driver or connections from other Apple devices
-                if !Parameters.shared.inDevelopmentMode {
-                    if driver.lowercased().contains("apple") {
-                        continue
-                    }
-                }
-                if !connectedSources.contains(endpoint) {
-                    connectToSource(endpoint)
-                }
+            if !connectedSources.contains(endpoint) {
+                connectToSource(endpoint)
             }
         }
         log.log(self, "Connected MIDI sources count:\(self.connectedSources.count)")

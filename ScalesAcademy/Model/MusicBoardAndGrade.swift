@@ -29,7 +29,9 @@ class MusicBoardAndGrade: Codable, Identifiable {
             grade = try container.decode(Int.self, forKey: .grade)
         }
         else {
-            fatalError("No loaded music exam board")
+            self.board = MusicBoard.getSupportedBoards()[0]
+            grade = try container.decode(Int.self, forKey: .grade)
+            print("⚠️ MusicBoardAndGrade: board name '\(boardName)' not found, defaulting to \(self.board.name)")
         }
     }
     

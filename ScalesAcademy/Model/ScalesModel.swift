@@ -354,18 +354,17 @@ public class ScalesModel : ObservableObject {
         
         if [.followingScale, .leadingTheScale].contains(setProcess) {
             let soundHandler:SoundEventHandlerProtocol
-//            if user.settings.useMidiSources {
-//                soundHandler = MIDISoundEventHandler(scale: scale)
-//                self.midiTestHander = soundHandler as? MIDISoundEventHandler
-//            }
-//            else {
+            if Parameters.midiEnabled && user.settings.useMidiSources {
+                soundHandler = MIDISoundEventHandler(scale: scale)
+            }
+            else {
                 soundHandler = AcousticSoundEventHandler(scale: scale)
-//            }
+            }
             self.soundEventHandlers.append(soundHandler)
             self.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
             let exerciseProcess = ExerciseHandler(exerciseType: setProcess, scalesModel: self, metronome: metronome)
             exerciseProcess.start(soundHandler: soundHandler)
-            if !user.settings.useMidiSources {
+            if !(Parameters.midiEnabled && user.settings.useMidiSources) {
                 self.audioManager.configureAudio(withMic: true, recordAudio: false, soundEventHandlers: self.soundEventHandlers)
             }
         }

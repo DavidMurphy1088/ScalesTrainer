@@ -617,14 +617,15 @@ struct ScalesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
             }
-            if Parameters.shared.inDevelopmentMode  {
-                if user.settings.useMidiSources {
-                    HStack {
-                        TestInputView()
-                        Spacer()
-                    }
-                }
-            }
+            // TestInputView() — on-screen letter keyboard for generating MIDI internally, not needed now that external MIDI input works
+//            if Parameters.midiEnabled {
+//                if user.settings.useMidiSources {
+//                    HStack {
+//                        TestInputView()
+//                        Spacer()
+//                    }
+//                }
+//            }
         }
         .commonToolbar(
             title: self.scale.getScaleName() + ", " + self.scale.getScaleDescriptionParts(hands:true),
