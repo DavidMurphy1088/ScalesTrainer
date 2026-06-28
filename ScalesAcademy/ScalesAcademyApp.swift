@@ -17,7 +17,8 @@ enum LaunchScreenStep {
 }
 
 class Parameters {
-    static let midiEnabled = true
+    static let midiEnabled = false
+    static let trialLicensingEnabled = false
     var inDevelopmentMode:Bool = false
     static let shared = Parameters()
 }

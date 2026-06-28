@@ -18,18 +18,17 @@ class TrialLicenceManager {
             self.writeToKeychain()
             self.trialStartDate = Date()
         }
-//        guard let trialStartDate = self.trialStartDate else {
-//            return
-//        }
     }
     
+    private func isExemptUser() -> Bool {
+        guard Settings.shared.isCurrentUserDefined() else { return false }
+        let user = Settings.shared.getCurrentUser("isExemptUser")
+        return user.name.starts(with: "_") || user.name.starts(with: "@")
+    }
+
     public func isTrialExpired() -> Bool {
-        if Settings.shared.isCurrentUserDefined() {
-            let user = Settings.shared.getCurrentUser("isTrialExpired")
-            if user.name.starts(with: "_") || user.name.starts(with: "@") {
-                return false
-            }
-        }
+        return false ///Change for live
+        if isExemptUser() { return false }
         guard let trialStartDate = self.trialStartDate else {
             return true
         }
@@ -38,8 +37,9 @@ class TrialLicenceManager {
         log("isTrialExpired :\(expired)", false)
         return expired
     }
-    
+
     public func getStatus() -> String {
+        if isExemptUser() { return "" }
         guard let startDate = self.trialStartDate else {
             return ""
         }
@@ -394,7 +394,7 @@ final class LicenceManager: ObservableObject {
         } else {
             self.willAutoRenew = nil
             self.isInBillingRetry = false
-            if trialLicenceManager.isTrialExpired() {
+            if Parameters.trialLicensingEnabled && trialLicenceManager.isTrialExpired() {
                 setLicenseType(.trialExpired)
             } else {
                 setLicenseType(.trialActive)

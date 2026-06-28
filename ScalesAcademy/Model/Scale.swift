@@ -1627,9 +1627,9 @@ public class Scale : Codable {
                     var handName = ""
                     if handFull {
                         switch self.hands[0] {
-                        case 0: handName = "right Hand"
-                        case 1: handName = "left Hand"
-                        default: handName = "hands together"
+                        case 0: handName = "Right Hand"
+                        case 1: handName = "Left Hand"
+                        default: handName = "Hands Together"
                         }
                     }
                     else {
@@ -1694,9 +1694,9 @@ public class Scale : Codable {
                 var handName = ""
                 if true {
                     switch self.hands[0] {
-                    case 0: handName = "right Hand"
-                    case 1: handName = "left Hand"
-                    default: handName = "hands together"
+                    case 0: handName = "Right Hand"
+                    case 1: handName = "Left Hand"
+                    default: handName = "Hands Together"
                     }
                 }
                 else {
@@ -1765,9 +1765,9 @@ public class Scale : Codable {
         var handsDescription = ""
         if self.hands.count == 1 {
             switch self.hands[0] {
-            case 0: handsDescription  = "right Hand"
-            case 1: handsDescription  = "left Hand"
-            default: handsDescription  = "hands together"
+            case 0: handsDescription  = "Right Hand"
+            case 1: handsDescription  = "Left Hand"
+            default: handsDescription  = "Hands together"
             }
             if scaleMotion == .contraryMotion {
                 handsDescription += " practice"

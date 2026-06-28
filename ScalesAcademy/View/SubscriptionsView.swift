@@ -36,7 +36,7 @@ struct SubscriptionsView: View {
                 } else {
                     VStack(spacing: 16) {
                         // Trial messaging when not subscribed
-                        if licenceManager.licenceType != .subscribed {
+                        if Parameters.trialLicensingEnabled && licenceManager.licenceType != .subscribed {
                             Text(TrialLicenceManager.shared.getStatus())
                                 .font(.subheadline)
                                 //.foregroundStyle(.secondary)
@@ -163,6 +163,11 @@ struct SubscriptionsView: View {
                                 .font(.footnote)
                         }
                         .foregroundStyle(.secondary)
+                        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+                        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+                        Text("Version \(version).\(build)")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                     .padding()
                     .figmaRoundedBackgroundWithBorder()
