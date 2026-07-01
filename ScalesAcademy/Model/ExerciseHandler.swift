@@ -151,7 +151,7 @@ class ExerciseHandler  {
     ///Then set the key on that keyboard playing. Also hilight the associated staff note.
     ///The specific exercise sets the callback on the key to have its code executed once the key is set playing.
     ///
-    public func processSound(callNumber:Int, midi:Int, velocity:Int) {
+    public func processSound(callNumber:Int, midi:Int, velocity:Float) {
         ///Determine which hand the next expected note was played with if possible.
         var handThatPlayedNote:HandType?
         var handsToSearch:[HandType] = []
@@ -159,7 +159,6 @@ class ExerciseHandler  {
         if scale.hands.count == 1 {
             let hand = scale.hands[0] == 0 ? HandType.right : .left
             handThatPlayedNote = hand
-            print("==== MIDI processSound midi:\(midi) hand:\(hand) ====")
         }
         else {
             ///Does the received midi match with the expected note in any hand?
@@ -248,6 +247,9 @@ class ExerciseHandler  {
         
         ///Play the keyboard key and determine which staff to hilight the key on.
         if let keyToPlay = keyToPlay {
+            if user.settings.debugMode {
+                print(String(format: "===    processSound playing key  MIDI:%d (%@)  vol:%.3f", midi, StaffNote.getNoteName(midiNum: midi), velocity))
+            }
             keyToPlay.setKeyPlaying()
             if let score = scalesModel.getScore() {
                 let keyboard = keyToPlay.keyboardModel
@@ -261,7 +263,7 @@ class ExerciseHandler  {
         }
     }
     
-    func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Int) {
+    func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Float) {
         var expectedNotes:[RequiredNote] = []
                 
         ///Gather the expected next midi(s) in each hand. We look ahead usualy 2 notes for a match.
@@ -346,7 +348,7 @@ class ExerciseHandler  {
                 exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
                 awardChartBadge()
             }
-            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: velocity) }
+            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: Int(velocity)) }
             testForEndOfExercise()
         }
 
@@ -410,7 +412,10 @@ class ExerciseHandler  {
                     let key = keyboard.pianoKeyModel[keyIndex]
                     key.hilightType = .wasWrongNote
                 }
-                exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, "Wrong Note")
+                let msg = user.settings.debugMode
+                    ? "Wrong Note — played: MIDI \(midi) expected: \(requiredNote.midi)"
+                    : "Wrong Note"
+                exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, msg)
                 scalesModel.exerciseCompletedNotify()
                 if Parameters.midiEnabled { MIDIManager.shared.testMidiNotesStopPlaying = true }
                 break

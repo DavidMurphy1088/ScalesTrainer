@@ -196,6 +196,7 @@ class ViewManager: ObservableObject {
     static let TAB_BADGES = 12
     static let TAB_USERS = 20
     static let TAB_SUBSCRIPTIONS = 50
+    static let TAB_SETTINGS = 55
 
     static var shared = ViewManager()
     @Published var selectedTab: Int = 0
@@ -324,6 +325,13 @@ struct TabContainerView: View {
                         Label(NSLocalizedString("Subscriptions", comment: "Menu"), systemImage: "checkmark.icloud")
                     }
                     .tag(ViewManager.TAB_SUBSCRIPTIONS)
+                    .environmentObject(viewManager)
+
+                SettingsView(user: Settings.shared.getCurrentUser("Tab"))
+                    .tabItem {
+                        Label(NSLocalizedString("Settings", comment: "Menu"), systemImage: "gear")
+                    }
+                    .tag(ViewManager.TAB_SETTINGS)
                     .environmentObject(viewManager)
             }
                         

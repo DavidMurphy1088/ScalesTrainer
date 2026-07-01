@@ -241,6 +241,11 @@ struct ScalesView: View {
                         FigmaButton("Follow",
                         action: {
                             metronome.stop("ScalesView follow")
+                            DebugLog.shared.clear()
+                            if user.settings.debugMode {
+                                let s = user.settings
+                                print(String(format: "=== Follow started — amplitudeFilter:%.2f  consecutiveCount:%d", s.debugMode ? s.amplitudeFilterGate : 0.04, s.debugMode ? s.consecutiveCountGate : 2))
+                            }
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
                             self.exerciseState.setExerciseState("Follow",
@@ -264,6 +269,11 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
+                                DebugLog.shared.clear()
+                                if user.settings.debugMode {
+                                    let s = user.settings
+                                    print(String(format: "=== Lead started — amplitudeFilter:%.2f  consecutiveCount:%d", s.debugMode ? s.amplitudeFilterGate : 0.04, s.debugMode ? s.consecutiveCountGate : 2))
+                                }
                                 //scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
                                 self.exerciseState.setExerciseState("Lead",
@@ -624,6 +634,17 @@ struct ScalesView: View {
 //                        TestInputView()
 //                        Spacer()
 //                    }
+//                }
+//            }
+
+            // DebugLogView: scrolling white-on-black console shown at the bottom of the screen during Follow/Lead
+            // when Debug Mode is on. Displays each pitch event that exits SoundEventHandler (serial, MIDI, volume).
+            // Has a freeze/unfreeze button to pause auto-scroll without stopping the log.
+//            if user.settings.debugMode && [.followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+//                VStack {
+//                    Spacer()
+//                    DebugLogView()
+//                        .frame(height: UIScreen.main.bounds.height * 0.18)
 //                }
 //            }
         }

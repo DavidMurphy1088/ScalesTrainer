@@ -5,12 +5,12 @@ struct TestInputView: View {
     let octaves = 2 //UIDevice.current.userInterfaceIdiom == .phone ? 1 : 2
     
     func noteTapped(_ midiNumber:Int) {
-        let msg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midiNumber, velocity: 50)
+        let msg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midiNumber, velocity: 50.0)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
             midiManager.processMidiMessage(MIDImessage: msg)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            let offMsg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: midiNumber, velocity: 0)
+            let offMsg = MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: midiNumber, velocity: 0.0)
             midiManager.processMidiMessage(MIDImessage: offMsg)
         }
     }

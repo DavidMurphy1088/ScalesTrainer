@@ -97,7 +97,9 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             amplitude = amplitudes[1]
         }
         
-        let aboveFilter = amplitude > AUValue(self.amplitudeFilter)
+        let user = Settings.shared.getCurrentUser("SoundEventHandler amplitude")
+        let effectiveAmplitudeFilter = user.settings.debugMode ? user.settings.amplitudeFilterGate : 0.04
+        let aboveFilter = amplitude > AUValue(effectiveAmplitudeFilter)
         let midi = Util.frequencyToMIDI(frequency: frequency)
         
         if aboveFilter {
@@ -113,7 +115,8 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
                 }
             }
             
-            if consecutiveCount < Settings.shared.requiredConsecutiveCount - 1 {
+            let requiredCount = user.settings.debugMode ? user.settings.consecutiveCountGate : 2
+            if consecutiveCount < requiredCount - 1 {
                 tapStatus = .countTooLow
             }
             lastPlayedKey = LastPlayedKey(midi: midi)
@@ -127,10 +130,16 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
                 self.hilightKeysAndStaff(midi: midi)
                 lastHilightedMidi = midi
             }
-            
+            if user.settings.debugMode {
+                DispatchQueue.main.async {
+                    let entry = DebugLog.shared.append(midi: midi, amplitude: amplitude)
+                    //print(String(format: "=== Exited SoundEventHandler  %d  MIDI:%d  vol:%.3f", entry.serial, entry.midi, entry.amplitude))
+                    _ = entry
+                }
+            }
             if let notify = self.functionToNotify {
                 //notify(midi, Int(amplitude))
-                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midi, velocity: Int(amplitude)))
+                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midi, velocity: amplitude))
             }
         }
     }

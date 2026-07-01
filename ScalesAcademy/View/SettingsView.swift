@@ -30,6 +30,9 @@ struct SettingsView: View {
     @State var badgeStyleNumber = 0
     @State var developerMode = false
     @State var useMidiSources = false
+    @State var debugMode = false
+    @State var consecutiveCountGate: Int = 2
+    @State var amplitudeFilterGate: Double = 0.04
     @State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
@@ -91,19 +94,19 @@ struct SettingsView: View {
             
             ///Badges
             //Spacer()
-            HStack {
-                Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
-                Picker("Select Value", selection: $badgeStyleNumber) {
-                    ForEach(0..<5) { number in
-                        Text("\(badgeStyle(number))")
-                    }
-                }
-                .pickerStyle(.menu)
-                .onChange(of: badgeStyleNumber, {
-                    user.settings.badgeStyle = badgeStyleNumber
-                })
-            }
-            .padding()
+//            HStack {
+//                Text(LocalizedStringResource("Badge Styles")).font(.title2).padding(0)
+//                Picker("Select Value", selection: $badgeStyleNumber) {
+//                    ForEach(0..<5) { number in
+//                        Text("\(badgeStyle(number))")
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//                .onChange(of: badgeStyleNumber, {
+//                    user.settings.badgeStyle = badgeStyleNumber
+//                })
+//            }
+//            .padding()
             
             //Spacer()
 //            HStack {
@@ -135,10 +138,48 @@ struct SettingsView: View {
 //                //.frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
 //                .padding()
 //            }
+            HStack {
+                Spacer()
+                Toggle(isOn: $debugMode) {
+                    Text("Debug Mode").font(.title2).padding(0)
+                }
+                .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                .onChange(of: debugMode) {
+                    user.settings.debugMode = debugMode
+                }
+                Spacer()
+            }
+            .padding()
+
+            if debugMode {
+                HStack {
+                    Spacer()
+                    Text("Consecutive Count Gate: \(consecutiveCountGate)").font(.title2)
+                    Stepper("", value: $consecutiveCountGate, in: 0...12)
+                        .labelsHidden()
+                        .onChange(of: consecutiveCountGate) {
+                            user.settings.consecutiveCountGate = consecutiveCountGate
+                        }
+                    Spacer()
+                }
+                .padding()
+
+                HStack {
+                    Spacer()
+                    Text(String(format: "Amplitude Filter: %.2f", amplitudeFilterGate)).font(.title2)
+                    Stepper("", value: $amplitudeFilterGate, in: 0.0...0.50, step: 0.01)
+                        .labelsHidden()
+                        .onChange(of: amplitudeFilterGate) {
+                            user.settings.amplitudeFilterGate = amplitudeFilterGate
+                        }
+                    Spacer()
+                }
+                .padding()
+            }
             Spacer()
         }
     }
-    
+
     func backingSoundName(_ n:Int) -> String {
         var str:String
         switch n {
@@ -195,6 +236,9 @@ struct SettingsView: View {
             self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
             self.useMidiSources = user.settings.useMidiSources
+            self.debugMode = user.settings.debugMode
+            self.consecutiveCountGate = user.settings.consecutiveCountGate
+            self.amplitudeFilterGate = user.settings.amplitudeFilterGate
         }
         .onDisappear() {
             settings.save()

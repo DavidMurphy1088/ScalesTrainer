@@ -13,8 +13,8 @@ class MIDIMessage {
     }
     let messageType:MIDIStatus
     let midi:Int
-    let velocity:Int
-    init(messageType:MIDIStatus, midi:Int, velocity:Int) {
+    let velocity:Float
+    init(messageType:MIDIStatus, midi:Int, velocity:Float) {
         self.messageType = messageType
         self.midi = midi
         self.velocity = velocity
@@ -227,9 +227,9 @@ class MIDIManager : ObservableObject {
                         DispatchQueue.main.async {
                             for note in noteSet.notes {
                                 //Logger.shared.log(self, "sending note:\(note) notify:\(self.functionToNotify != nil)")
-                                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: note, velocity: 50))
+                                notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: note, velocity: 50.0))
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: note, velocity: 0))
+                                    notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: note, velocity: 0.0))
                                 }
                             }
                             usleep(UInt32(0.2 * 1000000))
@@ -424,7 +424,7 @@ class MIDIManager : ObservableObject {
                     let note = bytes[1]
                     let velocity = bytes[2]
                     var out = "Note Off - Channel \(channel + 1), Note \(note), Velocity \(velocity)"
-                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: Int(note), velocity: Int(velocity))
+                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOff, midi: Int(note), velocity: Float(velocity))
                 }
             case 0x90:
                 // Note On
@@ -440,7 +440,7 @@ class MIDIManager : ObservableObject {
 //                    if velocity != 0 {
 //                        self.lastNoteOn = Date()
 //                    }
-                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: Int(note), velocity: Int(velocity))
+                    return MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: Int(note), velocity: Float(velocity))
                 }
             case 0xA0:
                 // Polyphonic Key Pressure (Aftertouch)

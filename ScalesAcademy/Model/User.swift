@@ -99,6 +99,9 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         var badgeStyle = 0
         var practiceChartGamificationOn = true
         var useMidiSources = false
+        var debugMode = false
+        var consecutiveCountGate: Int = 2
+        var amplitudeFilterGate: Double = 0.04
         var scaleLeadInBeatCountIndexOld:Int = 2
         
         public func getLeadInBeatsOld() -> Int {
