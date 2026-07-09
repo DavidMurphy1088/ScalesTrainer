@@ -164,32 +164,32 @@ public class StaffNote : TimeSliceEntry, Comparable {
         }
     }
     
-    public static func getNoteName(midiNum:Int) -> String {
+    public static func getNoteName(midiNum:Int, useFlats: Bool = false) -> String {
         var name = ""
         let note = midiNum % 12 //self.midiNumber % 12
         switch note {
         case 0:
             name = "C"
         case 1:
-            name = "C#"
+            name = useFlats ? "Db" : "C#"
         case 2:
             name = "D"
         case 3:
-            name = "D#"
+            name = useFlats ? "Eb" : "D#"
         case 4:
             name = "E"
         case 5:
             name = "F"
         case 6:
-            name = "F#"
+            name = useFlats ? "Gb" : "F#"
         case 7:
             name = "G"
         case 8:
-            name = "G#"
+            name = useFlats ? "Ab" : "G#"
         case 9:
             name = "A"
         case 10:
-            name = "A#"
+            name = useFlats ? "Bb" : "A#"
         case 11:
             name = "B"
 

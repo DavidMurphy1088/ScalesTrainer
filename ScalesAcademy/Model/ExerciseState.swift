@@ -35,12 +35,15 @@ class ExerciseState : ObservableObject {
     @Published private(set) var statePublished:State = .exerciseNotStarted
     private(set) var state:State = .exerciseNotStarted
     func setExerciseState(_ activityName:String, _ value:ExerciseState.State, _ msg:String? = nil) {
+        let user = Settings.shared.getCurrentUser("ExerciseState")
+        if Parameters.shared.debugMode {
+            let line = "==setExerciseState  ctx:\(activityName)  from:\(self.state)  to:\(value)"
+            ProcessLog.shared.log(line)
+        }
         if value != self.state {
             self.state = value
             self.activityName = activityName
-
             DispatchQueue.main.async {
-                
                 if self.state == .exerciseLost {
                     self.exerciseMessage = msg
                 }
@@ -49,6 +52,10 @@ class ExerciseState : ObservableObject {
                         self.exerciseMessage = nil
                     }
                 }
+                if Parameters.shared.debugMode {
+                    let line = "==setExerciseState(published) ctx:\(activityName)  from:\(self.statePublished)  to:\(value)"
+                    ProcessLog.shared.log(line)
+                }
                 self.statePublished = value
             }
         }
@@ -56,7 +63,7 @@ class ExerciseState : ObservableObject {
     func getState() -> State {
         return self.state
     }
-    
+
     @Published private(set) var totalCorrectPublished: Int = 0
     var totalCorrect: Int = 0
     func bumpTotalCorrect() {

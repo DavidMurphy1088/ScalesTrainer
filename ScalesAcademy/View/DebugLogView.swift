@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DebugLogView: View {
-    @ObservedObject private var debugLog = DebugLog.shared
+    @ObservedObject private var debugLog = DebugLogUnused.shared
     @State private var frozen = false
 
     var body: some View {

@@ -7,8 +7,8 @@ struct DebugLogEntry: Identifiable {
     let amplitude: Float
 }
 
-class DebugLog: ObservableObject {
-    static let shared = DebugLog()
+class DebugLogUnused: ObservableObject {
+    static let shared = DebugLogUnused()
     @Published private(set) var entries: [DebugLogEntry] = []
     private var counter = 0
 

@@ -19,7 +19,7 @@ struct ScalesGridCellView: View {
     @State var promptForLicence = false
     @State var scaleName:String = ""
     
-    func testDataButtons(user:User) -> some View {
+    func regressionTestDataButtons(user:User) -> some View {
         VStack {
             if let scale = scaleToChart.scale {
                 Button(action: {
@@ -118,7 +118,7 @@ struct ScalesGridCellView: View {
                         }
                         if Parameters.shared.inDevelopmentMode {
                             if let user = user {
-                                self.testDataButtons(user: user)
+                                self.regressionTestDataButtons(user: user)
                                 Spacer()
                             }
                         }
@@ -244,7 +244,7 @@ struct ScalesGridView : View {
             self.user = user
             if Parameters.shared.inDevelopmentMode {
                 Firebase.shared.readAllScales(board: user.boardAndGrade.board.name, grade: user.boardAndGrade.grade, completion: {data in
-                    for (scaleKey, staffJSON, _) in data {
+                    for (scaleKey, _, _) in data {
                         self.scoreTestScaleIds.append(scaleKey)
                     }
                 })

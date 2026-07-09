@@ -20,6 +20,33 @@ class Parameters {
     static let midiEnabled = false
     static let trialLicensingEnabled = false
     var inDevelopmentMode:Bool = false
+    var debugMode: Bool {
+        get { UserDefaults.standard.bool(forKey: "debugMode") }
+        set { UserDefaults.standard.set(newValue, forKey: "debugMode") }
+    }
+    var lookaheadGate: Int {
+        get { let v = UserDefaults.standard.integer(forKey: "lookaheadGate"); return v == 0 ? 2 : v }
+        set { UserDefaults.standard.set(newValue, forKey: "lookaheadGate") }
+    }
+    var consecutiveCountGate: Int {
+        get { let v = UserDefaults.standard.integer(forKey: "consecutiveCountGate"); return v == 0 ? 2 : v }
+        set { UserDefaults.standard.set(newValue, forKey: "consecutiveCountGate") }
+    }
+    var amplitudeFilterGate: Double {
+        get {
+            let v = UserDefaults.standard.double(forKey: "amplitudeFilterGate")
+            return v == 0.0 ? Double(AcousticSoundEventHandler.defaultAmplitudeFilter) : v
+        }
+        set { UserDefaults.standard.set(newValue, forKey: "amplitudeFilterGate") }
+    }
+    var loggingEnabled: Bool {
+        get { UserDefaults.standard.bool(forKey: "loggingEnabled") }
+        set { UserDefaults.standard.set(newValue, forKey: "loggingEnabled") }
+    }
+    var allowHarmonics: Bool {
+        get { UserDefaults.standard.bool(forKey: "allowHarmonics") }
+        set { UserDefaults.standard.set(newValue, forKey: "allowHarmonics") }
+    }
     static let shared = Parameters()
 }
 
@@ -466,12 +493,7 @@ struct ScalesTrainerApp: App {
             }
             .onAppear {
                 if Settings.shared.hasUsers() {
-                    if Parameters.shared.inDevelopmentMode {
-                        ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
-                    }
-                    else {
-                        ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
-                    }
+                    ViewManager.shared.selectedTab = ViewManager.TAB_ACTIVITES
                 }
                 else {
                     ViewManager.shared.selectedTab = ViewManager.TAB_WELCOME

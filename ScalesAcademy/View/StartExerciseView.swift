@@ -168,7 +168,7 @@ struct PianoStartNoteIllustrationView: View {
         }
         .onAppear() {
             if let score = scalesModel.getScore() {
-                keyboardModel.configureKeyboardForScaleStartView1(scale:scalesModel.scale, score:score, start: 37, numberOfKeys: 47, handType: .right)
+                keyboardModel.configureKeyboardForScaleStartView(scale:scalesModel.scale, score:score, start: 37, numberOfKeys: 47, handType: .right)
             }
         }
     }

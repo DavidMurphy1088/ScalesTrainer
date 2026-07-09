@@ -115,10 +115,10 @@ class ExerciseHandler  {
     
     ///Called by sound handler on receipt of new sound
     func notifiedOfSound(midiMsg:MIDIMessage) {
-        if midiMsg.messageType == MIDIMessage.MIDIStatus.noteOff {
-            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOff(midi: midiMsg.midi) }
-            return
-        }
+//        if midiMsg.messageType == MIDIMessage.MIDIStatus.noteOff {
+//            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOff(midi: midiMsg.midi) }
+//            return
+//        }
         ///For contrary motion scales with LH and RH starting on the note the student will only play one key. (And the same for the final scale note)
         ///But note based badge matching requires that both LH and RH of the scale are matched, so send the midi again.
         let midi = midiMsg.midi
@@ -135,14 +135,14 @@ class ExerciseHandler  {
         ///A contrary motion scale with LH and RH starting on the same note needs to generate a call for each hand
         let callCount = midisWithOneKeyPress.contains(midi) ? 2 : 1
         for call in 0..<callCount {
-            if self.applySerialLock() {
-                accessQueue.sync {
-                    processSound(callNumber: call, midi: midi, velocity: midiMsg.velocity)
-                }
-            }
-            else {
-                processSound(callNumber: call, midi: midi, velocity: midiMsg.velocity)
-            }
+//            if self.applySerialLock() {
+//                accessQueue.sync {
+//                    processSound(callNumber: call, midi: midi, velocity: midiMsg.velocity)
+//                }
+//            }
+//            else {
+                pressKeyboard(callNumber: call, midi: midi, velocity: midiMsg.velocity)
+//            }
         }
         self.noteNotificationNumber += 1
     }
@@ -151,7 +151,7 @@ class ExerciseHandler  {
     ///Then set the key on that keyboard playing. Also hilight the associated staff note.
     ///The specific exercise sets the callback on the key to have its code executed once the key is set playing.
     ///
-    public func processSound(callNumber:Int, midi:Int, velocity:Float) {
+    public func pressKeyboard(callNumber:Int, midi:Int, velocity:Float) {
         ///Determine which hand the next expected note was played with if possible.
         var handThatPlayedNote:HandType?
         var handsToSearch:[HandType] = []
@@ -217,7 +217,6 @@ class ExerciseHandler  {
         
         if let handThatPlayedNote = handThatPlayedNote {
             ///Midi was in the scale for this hand. Set the note in the scale for that hand to matched.
-            //let keyboard:PianoKeyboardModel
             if PianoKeyboardModel.sharedCombined != nil {
                 ///contrary motion
                 keyboardThatPlayedNote = keyboards[.combined]!
@@ -247,9 +246,6 @@ class ExerciseHandler  {
         
         ///Play the keyboard key and determine which staff to hilight the key on.
         if let keyToPlay = keyToPlay {
-            if user.settings.debugMode {
-                print(String(format: "===    processSound playing key  MIDI:%d (%@)  vol:%.3f", midi, StaffNote.getNoteName(midiNum: midi), velocity))
-            }
             keyToPlay.setKeyPlaying()
             if let score = scalesModel.getScore() {
                 let keyboard = keyToPlay.keyboardModel
@@ -263,11 +259,27 @@ class ExerciseHandler  {
         }
     }
     
+    ///16Mar2025 - sometimes get wrong octave of note played so allow it
+    ///allowHarmonics - also accept the fifth above (+7) and fifth below (-5), the other common pitch-detection harmonic error
+    func harmonicsTolerantMidis(_ midi:Int, allowHarmonics: Bool = false) -> [Int] {
+        var allowed:[Int]
+        if allowHarmonics {
+            allowed = [midi-24, midi-12, midi, midi+12, midi+24, midi+7, midi-5]
+        }
+        else {
+            allowed = [midi-24, midi-12, midi, midi+12, midi+24]
+        }
+        return allowed
+    }
+
     func notifyPlayedKey(Keyboard:PianoKeyboardModel, midi:Int, handType:HandType, velocity:Float) {
         var expectedNotes:[RequiredNote] = []
                 
         ///Gather the expected next midi(s) in each hand. We look ahead usualy 2 notes for a match.
         ///Thats because at faster tempos there may be failure to get notified of correct notes the student plays.
+        ///1 Jul 2026 make lookahead default 2. 1 => Wrongly played notes could be ignored.
+        ///Counter - 2 => correct notes faster tempos or staccato articulation may give wrong note. i.e. the note was played but didn't get this far. TBD to decide
+        ///2Jul 2026 no more than 2 lookahead should be needed for the tempos in the Grade 1->5 syllabus tempos
         if expectedNotes.count == 0 {
             for h in scale.hands {
                 let handType = h==0 ? HandType.right : .left
@@ -277,6 +289,9 @@ class ExerciseHandler  {
                     let lookahead:Int
                     if user.settings.useMidiSources {
                         lookahead = 1
+                    }
+                    else if Parameters.shared.debugMode {
+                        lookahead = atScaleMiddle ? 1 : Parameters.shared.lookaheadGate
                     }
                     else {
                         lookahead = atScaleMiddle ? 1 : 2
@@ -290,7 +305,8 @@ class ExerciseHandler  {
                 }
             }
         }
-        //log("start")
+        
+        ///Match all the notes covered by the new arriving note
         for expectedNote in expectedNotes {
             ///16Mar2025 - sometimes get wrong octave of note played so allow it
             let allowed:[Int]
@@ -298,7 +314,7 @@ class ExerciseHandler  {
                 allowed = [expectedNote.midi]
             }
             else {
-                allowed = [expectedNote.midi-24, expectedNote.midi-12, expectedNote.midi, expectedNote.midi+12, expectedNote.midi+24]
+                allowed = harmonicsTolerantMidis(expectedNote.midi, allowHarmonics: Parameters.shared.allowHarmonics)
             }
             if allowed.contains(midi) && expectedNote.handType == handType {
                 expectedNote.matched = true
@@ -311,13 +327,14 @@ class ExerciseHandler  {
             }
         }
         
+        ///Advance the nextExpectedNoteIndex and set the scale segment
         var matchedCount = 0
-        for requiredNote in expectedNotes {
-            if requiredNote.matched {
+        for expectedNote in expectedNotes {
+            if expectedNote.matched {
                 matchedCount += 1
-                self.lastMatchedMidi = requiredNote.midi
+                self.lastMatchedMidi = expectedNote.midi
                 if self.nextExpectedNoteIndexForHand.keys.contains(handType) {
-                    nextExpectedNoteIndexForHand[requiredNote.handType]! += 1
+                    nextExpectedNoteIndexForHand[expectedNote.handType]! += 1
                 }
                 if let index = nextExpectedNoteIndexForHand[handType] {
                     if index < scale.getScaleNoteCount() {
@@ -331,8 +348,24 @@ class ExerciseHandler  {
                 }
             }
         }
+        
         if matchedCount == 0 {
-            testForFailExercise(midi: midi, requiredNotes: expectedNotes, keyboard: Keyboard)
+            if Parameters.shared.debugMode {
+                let expectedStr = expectedNotes.map { "\(StaffNote.getNoteName(midiNum: $0.midi))(\($0.midi))" }.joined(separator: ",")
+                let handIndex = handType == .right ? 0 : 1
+                let scaleMidis = scale.getMidisInScale(handIndex: handIndex)
+                let notInScale = !scaleMidis.contains(midi)
+                let suffix = notInScale ? "  WRONG NOTE" : ""
+                let totalMatched = nextExpectedNoteIndexForHand[handType] ?? 0
+                let line = String(format: "==notifyPlayedKey MIDI:%d (%@) vol:%.3f  expected:[%@]  matched:0  badge:n/a  total:%d/%d%@", midi, StaffNote.getNoteName(midiNum: midi), velocity, expectedStr, totalMatched, scale.getScaleNoteCount(), suffix)
+                ProcessLog.shared.log(line)
+            }
+            ///The note pitches may ring on and cause > 1 note notification
+            if let lastMatchedMidi = self.lastMatchedMidi {
+                if (midi % 12) != (lastMatchedMidi % 12) {
+                    testForFailExercise(midi: midi, velocity: velocity, requiredNotes: expectedNotes, keyboard: Keyboard)
+                }
+            }
         }
         else {
             var awardBadge = false
@@ -344,77 +377,57 @@ class ExerciseHandler  {
                     awardBadge = true
                 }
             }
-            if awardBadge {
-                exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
-                awardChartBadge()
+            if Parameters.shared.debugMode {
+                let expectedStr = expectedNotes.map { "\(StaffNote.getNoteName(midiNum: $0.midi))(\($0.midi))" }.joined(separator: ",")
+                let totalMatched = nextExpectedNoteIndexForHand[handType] ?? 0
+                let matchFlag = matchedCount > 1 ? " 🔴" : " 🟢"
+                let line = String(format: "==notifyPlayedKey MIDI:%d (%@) vol:%.3f  expected:[%@]  matched:%d  badge:%@  total:%d/%d", midi, StaffNote.getNoteName(midiNum: midi), velocity, expectedStr, matchedCount, awardBadge ? "yes" : "no", totalMatched, scale.getScaleNoteCount()) + matchFlag
+                ProcessLog.shared.log(line)
             }
-            if Parameters.midiEnabled { MIDIManager.shared.matchedNotes.processNoteOn(midi: midi, handType: handType, velocity: Int(velocity)) }
+            if awardBadge {
+                for _ in 0..<matchedCount {
+                    exerciseBadgesList.setTotalBadges(exerciseBadgesList.totalBadges + 1)
+                    exerciseState.bumpTotalCorrect()
+                }
+                if Parameters.shared.debugMode {
+                    let line = "==awardBadge matchedCount:\(matchedCount)  totalCorrect:\(exerciseState.totalCorrect)  numberToWin:\(exerciseState.numberToWin)  exerciseState:\(exerciseState.getState())"
+                    ProcessLog.shared.log(line)
+                }
+            }
             testForEndOfExercise()
         }
-
     }
     
-//    func awardChartBadge() {
-//        let user = Settings.shared.getCurrentUser()
-//        let studentScales = user.getStudentScales()
-//        for studentScale in studentScales.studentScales {
-//            if studentScale.scaleId == self.scale.getScaleIdentificationKey() {
-//                studentScale.badgeCount += 1
-//            }
-//        }
-//    }
-    
-    func awardChartBadge() {
-        let user = Settings.shared.getCurrentUser("Exercise Handler - award badges")
-        if user.settings.practiceChartGamificationOn {
-            let wonStateOld = exerciseState.totalCorrect >= exerciseState.numberToWin
-            exerciseState.bumpTotalCorrect()
-            let wonStateNew = exerciseState.totalCorrect >= exerciseState.numberToWin
-            if !wonStateOld && wonStateNew {
-                if let exerciseBadge = scalesModel.exerciseBadge {
-//                    if let practiceChartCell = practiceChartCell {
-//                        practiceChartCell.addBadge(badge: exerciseBadge, callback: {
-//                            //self.practiceChart?.savePracticeChartToFile()
-//                        })
-//                    }
-                }
+    func testForFailExercise(midi:Int, velocity:Float, requiredNotes: [RequiredNote], keyboard:PianoKeyboardModel) {
+        ///Student may be finding correct start octave
+        var scaleStartMidis = requiredNotes.map { $0.midi }
+        if let min = scaleStartMidis.min() {
+            for delta in stride(from: -24, through: 24, by: 12) {
+                scaleStartMidis.append(min + delta)
+            }
+            if scaleStartMidis.contains(midi) {
+                return
             }
         }
-    }
-    
-    func testForFailExercise(midi:Int, requiredNotes: [RequiredNote], keyboard:PianoKeyboardModel) {
-        ///The note pitches may ring on and cause > 1 note notification
-        guard let lastMatchedMidi = self.lastMatchedMidi else {
-            return
-        }
-        let lastMatchedMidis = [lastMatchedMidi-24, lastMatchedMidi-12, lastMatchedMidi, lastMatchedMidi+12, lastMatchedMidi+24]
-        if lastMatchedMidis.contains(midi) {
-            return
-        }
-        if self.lastMatchedMidi == nil {
-            ///Student may be finding correct start octave
-            var scaleStartMidis = requiredNotes.map { $0.midi }
-            if let min = scaleStartMidis.min() {
-                for delta in stride(from: -24, through: 24, by: 12) {
-                    scaleStartMidis.append(min + delta)
-                }
-                if scaleStartMidis.contains(midi) {
-                    return
-                }
-            }
-        }
+        
         ///If the note was close to (but not the same as) an expected note, the note played was wrong
-        //////16Mar2025 - sometimes get wrong octave of octave played
+        ///16Mar2025 - sometimes get wrong octave of octave played
         for requiredNote in requiredNotes {
-            let allowed = [requiredNote.midi-24, requiredNote.midi-12, requiredNote.midi, requiredNote.midi+12, requiredNote.midi+24]
+            let allowed = harmonicsTolerantMidis(requiredNote.midi, allowHarmonics: Parameters.shared.allowHarmonics)
             if !allowed.contains(midi) {
                 if let keyIndex = keyboard.getKeyIndexForMidi(midi: midi) {
                     let key = keyboard.pianoKeyModel[keyIndex]
                     key.hilightType = .wasWrongNote
                 }
-                let msg = user.settings.debugMode
-                    ? "Wrong Note — played: MIDI \(midi) expected: \(requiredNote.midi)"
-                    : "Wrong Note"
+                let segment = currentScoreSegment == 0 ? "ascending" : "descending"
+                let useFlats = (scalesModel.getScore()?.key.keySig.flats.count ?? 0) > 0
+                let msg = Parameters.shared.debugMode
+                    ? "Wrong Note — \(segment), played: \(midi) \(StaffNote.getNoteName(midiNum: midi, useFlats: useFlats))  expected: \(requiredNote.midi) \(StaffNote.getNoteName(midiNum: requiredNote.midi, useFlats: useFlats))"
+                    : "Wrong Note — \(segment), played: \(StaffNote.getNoteName(midiNum: midi, useFlats: useFlats))  expected: \(StaffNote.getNoteName(midiNum: requiredNote.midi, useFlats: useFlats))"
+                if Parameters.shared.debugMode {
+                    let line = String(format: "==EXERCISE ENDED wrong note played:%d (%@) expected:%d (%@) %@ vol:%.3f 😡", midi, StaffNote.getNoteName(midiNum: midi, useFlats: useFlats), requiredNote.midi, StaffNote.getNoteName(midiNum: requiredNote.midi, useFlats: useFlats), segment, velocity)
+                    ProcessLog.shared.log(line)
+                }
                 exerciseState.setExerciseState("Wrong note midi:\(midi) required:\(requiredNote.midi)", .exerciseLost, msg)
                 scalesModel.exerciseCompletedNotify()
                 if Parameters.midiEnabled { MIDIManager.shared.testMidiNotesStopPlaying = true }
@@ -424,6 +437,14 @@ class ExerciseHandler  {
     }
     
     func testForEndOfExercise()  {
+        func wrapUp() {
+            scalesModel.exerciseCompletedNotify()
+            self.scalesModel.setRunningProcess(.none)
+            if exerciseState.getState() == .exerciseStarted {
+                exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
+            }
+        }
+        
         let atEnd:Bool
         if scale.hands.count == 1 {
             atEnd = self.nextExpectedNoteIndexForHand[.left]! >= scale.getScaleNoteCount() ||
@@ -434,15 +455,9 @@ class ExerciseHandler  {
                     self.nextExpectedNoteIndexForHand[.right]! >= scale.getScaleNoteCount()
         }
         if atEnd {
-            scalesModel.exerciseCompletedNotify()
-            scalesModel.setRunningProcess(.none)
-            ///If the exercise has not been set to won by earning enough badges and its now over then its lost
-            if exerciseState.getState() == .exerciseStarted {
-                exerciseState.setExerciseState("Follow, EndOfExercise", .exerciseLost, "Notes Not Complete")
-            }
+            wrapUp()
         }
     }
-
 }
 
 

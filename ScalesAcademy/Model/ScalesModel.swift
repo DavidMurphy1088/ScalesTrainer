@@ -159,19 +159,21 @@ public class ScalesModel : ObservableObject {
         }
     }
     
-    //@Published Cant use it. Published needs main thread update but some processes cant wait for the main thread to update it.
+    //@Published Cant use it. Published needs async main thread update but some processes cant wait for the main thread to update it.
+    //@Published var selectedScaleSegmentPublished = 0
     var selectedScaleSegment = 0
-    @Published var selectedScaleSegmentPublished = 0
     func setSelectedScaleSegment(_ segment:Int) {
         if segment == self.selectedScaleSegment {
-//            if self.directionOfPlayPublished != nil {
+            if self.directionOfPlayPublished != nil {
+                ///1Jul 2026 re-enable return to avoid too much unnecessay processing here on every key press
 //                return
-//            }
+                return
+            }
         }
         
         self.selectedScaleSegment = segment
         DispatchQueue.main.async { 
-            self.selectedScaleSegmentPublished = segment
+            //self.selectedScaleSegmentPublished = segment
             let scaleSegments = self.scale.getMinMaxSegments()
             let reverse = self.scale.hands.count == 1 && self.scale.hands[0] == 1 && self.scale.scaleMotion == .contraryMotion
             if scaleSegments.0 == segment {
@@ -298,9 +300,6 @@ public class ScalesModel : ObservableObject {
     func setRunningProcess(_ setProcess: RunningProcess, amplitudeFilter:Double? = nil) {
         let metronome = Metronome.shared
         let user = Settings.shared.getCurrentUser("Scales model, set Run process")
-        if setProcess == .leadingTheScale {
-            
-        }
         if setProcess == self.runningProcess {
             return
         }
@@ -309,6 +308,10 @@ public class ScalesModel : ObservableObject {
             setProcessLock.unlock()
         }
         AppLogger.shared.log(self, "Setting process from:\(self.runningProcess) to:\(setProcess.description)")
+        if Parameters.shared.debugMode {
+            let line = "==setRunningProcess  to:\(setProcess)  from:\(self.runningProcess)"
+            ProcessLog.shared.log(line)
+        }
         if setProcess == .none {
             self.audioManager.stopListening()
 //            if self.runningProcess == .syncRecording {

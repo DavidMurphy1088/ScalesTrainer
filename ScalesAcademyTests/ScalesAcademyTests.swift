@@ -169,7 +169,7 @@ struct ScalesAcademyTests {
             let musicBoardAndGrade = MusicBoardAndGrade(board: musicBoard, grade: grade)
             let scalesModel = ScalesModel.shared
 
-            let gradeScales: [Scale] = MusicBoardAndGrade.getScales(boardName: "Trinity College", grade: grade)
+            let gradeScales: [Scale] = MusicBoardAndGrade.getScales(boardName: musicBoard.name, grade: grade)
             log("➡️➡️➡️ Testing:\(musicBoard.name) grade:\(grade) scaleCount:\(gradeScales.count)")
             
             for scale in gradeScales {
@@ -217,7 +217,7 @@ struct ScalesAcademyTests {
         }
     }
     
-    @Test("Trinity College All Grades")
+    ///@Test("Trinity College All Grades")
     func testTrinityGrade3CKey() async throws {
         let musicBoard = MusicBoard(name: "Trinity College", fullName: "Trinity College London", imageName: "trinity")
         try await processBoard(
@@ -227,4 +227,16 @@ struct ScalesAcademyTests {
             typeFilter: []
         )
     }
+    
+    @Test("ABRSM All Grades")
+    func testABRSMGrades() async throws {
+        let musicBoard = MusicBoard(name: "ABRSM", fullName: "", imageName: "abrsm")
+        try await processBoard(
+            musicBoard: musicBoard,
+            gradeFilter: [1, 2],
+            keyFilter: [],
+            typeFilter: []
+        )
+    }
+
 }

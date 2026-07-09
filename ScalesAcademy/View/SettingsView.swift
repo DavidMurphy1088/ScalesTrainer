@@ -26,14 +26,15 @@ struct SettingsView: View {
     let scalesModel = ScalesModel.shared
     let settings = Settings.shared
     @State var leadInBarCount = 0
-    //@State var backingPresetNumber = 0
     @State var badgeStyleNumber = 0
-    @State var developerMode = false
     @State var useMidiSources = false
     @State var debugMode = false
     @State var consecutiveCountGate: Int = 2
     @State var amplitudeFilterGate: Double = 0.04
-    @State var practiceChartGamificationOn = false
+    @State var lookaheadGate: Int = 1
+    @State var loggingEnabled: Bool = false
+    @State var allowHarmonics: Bool = false
+    //@State var practiceChartGamificationOn = false
 
     @State private var defaultOctaves = 2
     @State private var tapBufferSize = 4096
@@ -145,7 +146,11 @@ struct SettingsView: View {
                 }
                 .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
                 .onChange(of: debugMode) {
-                    user.settings.debugMode = debugMode
+                    Parameters.shared.debugMode = debugMode
+                    if debugMode {
+                        loggingEnabled = true
+                        Parameters.shared.loggingEnabled = true
+                    }
                 }
                 Spacer()
             }
@@ -158,11 +163,27 @@ struct SettingsView: View {
                     Stepper("", value: $consecutiveCountGate, in: 0...12)
                         .labelsHidden()
                         .onChange(of: consecutiveCountGate) {
-                            user.settings.consecutiveCountGate = consecutiveCountGate
+                            Parameters.shared.consecutiveCountGate = consecutiveCountGate
                         }
+                    Text("Times a note must be detected in a row before it is accepted.").font(.caption).foregroundColor(.secondary).frame(maxWidth: 200)
                     Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, 6)
+
+                HStack {
+                    Spacer()
+                    Text("Lookahead Gate: \(lookaheadGate)").font(.title2)
+                    Stepper("", value: $lookaheadGate, in: 1...3)
+                        .labelsHidden()
+                        .onChange(of: lookaheadGate) {
+                            Parameters.shared.lookaheadGate = lookaheadGate
+                        }
+                    Text("Number of upcoming scale notes to accept as a match when pitch detection is imprecise.").font(.caption).foregroundColor(.secondary).frame(maxWidth: 200)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 6)
 
                 HStack {
                     Spacer()
@@ -170,11 +191,42 @@ struct SettingsView: View {
                     Stepper("", value: $amplitudeFilterGate, in: 0.0...0.50, step: 0.01)
                         .labelsHidden()
                         .onChange(of: amplitudeFilterGate) {
-                            user.settings.amplitudeFilterGate = amplitudeFilterGate
+                            Parameters.shared.amplitudeFilterGate = amplitudeFilterGate
                         }
+                    Text("Minimum volume level required before a note is processed.").font(.caption).foregroundColor(.secondary).frame(maxWidth: 200)
                     Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
+                .padding(.vertical, 6)
+
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $loggingEnabled) {
+                        Text("Logging").font(.title2).padding(0)
+                    }
+                    .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                    .onChange(of: loggingEnabled) {
+                        Parameters.shared.loggingEnabled = loggingEnabled
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 6)
+
+                HStack {
+                    Spacer()
+                    Toggle(isOn: $allowHarmonics) {
+                        Text("Allow Harmonics").font(.title2).padding(0)
+                    }
+                    .frame(width: UIScreen.main.bounds.width * (UIDevice.current.userInterfaceIdiom == .phone ? 0.60 : 0.3))
+                    .onChange(of: allowHarmonics) {
+                        Parameters.shared.allowHarmonics = allowHarmonics
+                    }
+                    Text("Accept the fifth above/below an expected note, to allow for pitch detection harmonic errors.").font(.caption).foregroundColor(.secondary).frame(maxWidth: 200)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 6)
             }
             Spacer()
         }
@@ -233,12 +285,14 @@ struct SettingsView: View {
             }
             self.defaultOctaves = settings.defaultOctaves
             //self.backingPresetNumber = user.settings.backingSamplerPreset
-            self.practiceChartGamificationOn = user.settings.practiceChartGamificationOn
             self.badgeStyleNumber = user.settings.badgeStyle
             self.useMidiSources = user.settings.useMidiSources
-            self.debugMode = user.settings.debugMode
-            self.consecutiveCountGate = user.settings.consecutiveCountGate
-            self.amplitudeFilterGate = user.settings.amplitudeFilterGate
+            self.debugMode = Parameters.shared.debugMode
+            self.consecutiveCountGate = Parameters.shared.consecutiveCountGate
+            self.amplitudeFilterGate = Parameters.shared.amplitudeFilterGate
+            self.lookaheadGate = Parameters.shared.lookaheadGate
+            self.loggingEnabled = Parameters.shared.loggingEnabled
+            self.allowHarmonics = Parameters.shared.allowHarmonics
         }
         .onDisappear() {
             settings.save()

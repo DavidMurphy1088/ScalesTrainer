@@ -55,10 +55,14 @@ class MIDISoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
 ///A class that generates sound events from the microphone acoustic input to exercise processes
 ///
 class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
+    static let defaultAmplitudeFilter: Float = 0.03
     let bufferSize = 4096
     var consecutiveCount = 0
     let amplitudeFilter = Settings.shared.amplitudeFilter
     var lastHilightedMidi:Int? = nil
+    var effectiveAmplitudeFilter: Float = defaultAmplitudeFilter
+    var requiredCount: Int = 2
+    var debugMode: Bool = false
     
     class LastPlayedKey {
         let midi:Int
@@ -81,8 +85,14 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
     func start() {
         consecutiveCount = 0
         lastHilightedMidi = nil
+        //let user = Settings.shared.getCurrentUser("AcousticSoundEventHandler start")
+        debugMode = Parameters.shared.debugMode
+        effectiveAmplitudeFilter = debugMode ? Float(Parameters.shared.amplitudeFilterGate) : AcousticSoundEventHandler.defaultAmplitudeFilter
+        requiredCount = debugMode ? Parameters.shared.consecutiveCountGate : 2
     }
-
+    
+    ///Called by AudiKit
+    ///Call interval: 4096 ÷ 44100 ≈ ~93ms, so tapUpdate fires roughly 10–11 times per second
     func tapUpdate(_ frequencies: [AudioKit.AUValue], _ amplitudes: [AudioKit.AUValue]) {
         var tapStatus:TapEventStatus = .none
         
@@ -96,26 +106,25 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
             frequency = frequencies[1]
             amplitude = amplitudes[1]
         }
-        
-        let user = Settings.shared.getCurrentUser("SoundEventHandler amplitude")
-        let effectiveAmplitudeFilter = user.settings.debugMode ? user.settings.amplitudeFilterGate : 0.04
-        let aboveFilter = amplitude > AUValue(effectiveAmplitudeFilter)
+
+        let aboveAmplitudeFilter = amplitude >= effectiveAmplitudeFilter
         let midi = Util.frequencyToMIDI(frequency: frequency)
-        
-        if aboveFilter {
-            if [.belowAmplitudeFilter, .outsideRange].contains(tapStatus) {
-                consecutiveCount = 0
-            }
+
+        if debugMode {
+            let line = String(format: "=tapUpdate  MIDI:%d (%@)  vol:%.3f", midi, StaffNote.getNoteName(midiNum: midi), amplitude)
+            ProcessLog.shared.log(line)
+        }
+
+        if aboveAmplitudeFilter {
             if let lastPlayedKey = lastPlayedKey {
-                if midi == lastPlayedKey.midi {
+                if midi % 12 == lastPlayedKey.midi % 12 {
                     consecutiveCount += 1
                 }
                 else {
                     consecutiveCount = 0
                 }
             }
-            
-            let requiredCount = user.settings.debugMode ? user.settings.consecutiveCountGate : 2
+
             if consecutiveCount < requiredCount - 1 {
                 tapStatus = .countTooLow
             }
@@ -123,6 +132,7 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
         }
         else {
             tapStatus = .belowAmplitudeFilter
+            consecutiveCount = 0
         }
 
         if tapStatus == .none {
@@ -130,13 +140,14 @@ class AcousticSoundEventHandler : SoundEventHandler, SoundEventHandlerProtocol {
                 self.hilightKeysAndStaff(midi: midi)
                 lastHilightedMidi = midi
             }
-            if user.settings.debugMode {
-                DispatchQueue.main.async {
-                    let entry = DebugLog.shared.append(midi: midi, amplitude: amplitude)
-                    //print(String(format: "=== Exited SoundEventHandler  %d  MIDI:%d  vol:%.3f", entry.serial, entry.midi, entry.amplitude))
-                    _ = entry
-                }
-            }
+//            if debugMode {
+///               June 2026 Unused now
+//                DispatchQueue.main.async {
+//                    let entry = DebugLogUnused.shared.append(midi: midi, amplitude: amplitude)
+//                    //print(String(format: "=== Exited SoundEventHandler  %d  MIDI:%d  vol:%.3f", entry.serial, entry.midi, entry.amplitude))
+//                    _ = entry
+//                }
+//            }
             if let notify = self.functionToNotify {
                 //notify(midi, Int(amplitude))
                 notify(MIDIMessage(messageType: MIDIMessage.MIDIStatus.noteOn, midi: midi, velocity: amplitude))

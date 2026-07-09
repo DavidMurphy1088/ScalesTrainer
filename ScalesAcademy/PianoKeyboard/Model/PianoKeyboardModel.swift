@@ -22,6 +22,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     private var pendingRedraw: DispatchWorkItem?
     let scalesModel = ScalesModel.shared
     private(set) var pianoKeyModel: [PianoKeyModel] = []
+    private var midiToIndex: [Int: Int] = [:]
 
     public var firstKeyMidi = 60
     public var hilightNotesOutsideScale = true
@@ -292,18 +293,21 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     func configureKeyboardForScale(scale:Scale, score:Score, handType:HandType) {
         (self.firstKeyMidi, self.numberOfKeys) = getKeyBoardStartAndSize(scale: scale, handType: handType)
         self.pianoKeyModel = []
+        self.midiToIndex = [:]
         self.keyRects1 = Array(repeating: .zero, count: self.numberOfKeys)
         for i in 0..<self.numberOfKeys {
             let midi = self.firstKeyMidi + i
             let pianoKeyModel = PianoKeyModel(scale:scale, score:score, keyboardModel: self, keyIndex: i, midi: midi, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
+            self.midiToIndex[midi] = i
         }
         self.linkScaleFingersToKeyboardKeys(scale: scale, scaleSegment: ScalesModel.shared.selectedScaleSegment, handType: handType, scaleDirection: 0)
         //self.debug11("configureKeyboardForScale hand:\(handType) keys:\(self.numberOfKeys)")
     }
     
-    func configureKeyboardForScaleStartView1(scale:Scale, score:Score, start:Int, numberOfKeys:Int, handType:HandType) {
+    func configureKeyboardForScaleStartView(scale:Scale, score:Score, start:Int, numberOfKeys:Int, handType:HandType) {
         self.pianoKeyModel = []
+        self.midiToIndex = [:]
         self.keyRects1 = Array(repeating: .zero, count: numberOfKeys)
         self.firstKeyMidi = start
         let handStartMidis = scale.getHandStartMidis()
@@ -311,6 +315,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
         for i in 0..<numberOfKeys {
             let pianoKeyModel = PianoKeyModel(scale:scale, score: score, keyboardModel: self, keyIndex: i, midi: self.firstKeyMidi + i, handType: handType)
             self.pianoKeyModel.append(pianoKeyModel)
+            self.midiToIndex[self.firstKeyMidi + i] = i
             if handStartMidis.contains(pianoKeyModel.midi) {
                 let keyState = ScaleNoteState(sequence: 0, midi: pianoKeyModel.midi, value: 1, segment: [0])
                 ///Mark the start of scale
@@ -474,9 +479,7 @@ public class PianoKeyboardModel: ObservableObject, Equatable {
     ///For ascending C 1-octave returns C 60 to C 72 inclusive = 8 notes
     ///For descending C 1-octave returns same 8 notes
     public func getKeyIndexForMidi(midi:Int) -> Int? {
-        var keyNumber:PianoKeyModel?
-        keyNumber = self.pianoKeyModel.first(where: { $0.midi == midi })
-        return keyNumber == nil ? nil : keyNumber?.keyOffsetFromLowestKey
+        return midiToIndex[midi]
     }
 
 }

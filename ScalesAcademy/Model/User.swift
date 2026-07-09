@@ -97,24 +97,9 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         var keyboardColor:[Double] = [1.0, 0.9647, 1.0, 1.0]
         var backgroundColor:[Double] = [0.8219926357269287, 0.8913233876228333, 1.0000004768371582, 1.0]
         var badgeStyle = 0
-        var practiceChartGamificationOn = true
+        //var practiceChartGamificationOn = true
         var useMidiSources = false
-        var debugMode = false
-        var consecutiveCountGate: Int = 2
-        var amplitudeFilterGate: Double = 0.04
-        var scaleLeadInBeatCountIndexOld:Int = 2
-        
-        public func getLeadInBeatsOld() -> Int {
-            switch scaleLeadInBeatCountIndexOld {
-            case 1:
-                return 2
-            case 2:
-                return 4
-            default:
-                return 0
-            }
-        }
-        
+
         func isCustomColor() -> Bool {
             return keyboardColor.contains{ $0 != 1.0 }
         }

@@ -759,8 +759,12 @@ struct OutlinedStyleView: ViewModifier {
 //}
 
 struct ConfettiView: UIViewRepresentable {
+    static var duration: Double = 1.5
     let compact = UIDevice.current.userInterfaceIdiom == .phone
     func makeUIView(context: Context) -> UIView {
+        if Parameters.shared.debugMode {
+            ProcessLog.shared.log("==ConfettiView makeUIView")
+        }
         let container = UIView(frame: .zero)
         container.backgroundColor = .clear
         return container
@@ -772,8 +776,16 @@ struct ConfettiView: UIViewRepresentable {
         uiView.layer.sublayers?.removeAll(where: { $0 is CAEmitterLayer })
         
         // Delay setting up the emitter until the view's bounds are valid.
-        DispatchQueue.main.async {
-            guard uiView.bounds.size != .zero else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            if Parameters.shared.debugMode {
+                ProcessLog.shared.log("==ConfettiView updateUIView bounds:\(uiView.bounds.size)")
+            }
+            guard uiView.bounds.size != .zero else {
+                if Parameters.shared.debugMode {
+                    ProcessLog.shared.log("==ConfettiView updateUIView ZERO BOUNDS - no confetti")
+                }
+                return
+            }
             
             // Calculate confetti size based on screen width
             let screenWidth = uiView.bounds.width
@@ -808,9 +820,9 @@ struct ConfettiView: UIViewRepresentable {
             uiView.layer.addSublayer(emitter)
             
             // Stop emitting after 1 second, then remove the emitter after another 1.5 seconds.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + ConfettiView.duration) {
                 emitter.birthRate = 0
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + ConfettiView.duration) {
                     emitter.removeFromSuperlayer()
                 }
             }
@@ -899,41 +911,6 @@ struct ConfettiView: UIViewRepresentable {
         return image
     }
 }
-
-//struct SinglePickListOld<Item>: View {
-//    let title:String
-//    let items: [Item]
-//    let initiallySelectedIndex: Int?
-//    let label: (Item) -> String
-//    let onPick: (Item, Int) -> Void
-//    @State private var selectedIndex: Int?
-//    @Environment(\.dismiss) private var dismiss
-//    
-//    var body: some View {
-//        VStack {
-//            ScrollView {
-//                LazyVStack {
-//                    ForEach(items.indices, id: \.self) { i in
-//                        //let isSelected = (selectedIndex == i)
-//                        Button {
-//                            selectedIndex = i
-//                            onPick(items[i], i)
-//                            dismiss()
-//                        } label: {
-//                            HStack {
-//                                Text(label(items[i])).padding(.horizontal)
-//                                Spacer()
-//                            }
-//                            .padding(4)
-//                        }
-//                        .buttonStyle(.plain)
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
-//}
 
 struct SinglePickList<Item>: View {
     let title: String

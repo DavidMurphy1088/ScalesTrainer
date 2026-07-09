@@ -43,6 +43,7 @@ struct ScalesView: View {
     @State var emailPopupSheet: ActiveSheet?
     @State var exerciseProcess:RunningProcess? = nil
     @State private var spacingHorizontal:CGFloat = 12
+    @State private var showProcessLog = false
     
     let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? UIScreen.main.bounds.size.height * 0.02 : UIScreen.main.bounds.size.height * 0.02
     //let spacingVertical:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 4 : 4
@@ -184,7 +185,6 @@ struct ScalesView: View {
                     action: {
                         scalesModel.setRunningProcess(.none)
                         if [ .followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
-                            if user.settings.practiceChartGamificationOn {
                                 ///Stopped by user before exercise process stopped it
                                 if exerciseState.statePublished == .exerciseWon  {
                                     //exerciseState.setExerciseState(ctx: "ScalesView, StopProcessView() WON", .wonAndFinished)
@@ -192,7 +192,6 @@ struct ScalesView: View {
                                 else {
                                     exerciseState.setExerciseState("ScalesView, user stopped", .exerciseAborted)
                                 }
-                            }
                         }
                     })
                 }
@@ -241,10 +240,16 @@ struct ScalesView: View {
                         FigmaButton("Follow",
                         action: {
                             metronome.stop("ScalesView follow")
-                            DebugLog.shared.clear()
-                            if user.settings.debugMode {
-                                let s = user.settings
-                                print(String(format: "=== Follow started — amplitudeFilter:%.2f  consecutiveCount:%d", s.debugMode ? s.amplitudeFilterGate : 0.04, s.debugMode ? s.consecutiveCountGate : 2))
+                            DebugLogUnused.shared.clear()
+                            ProcessLog.shared.clear()
+                            if Parameters.shared.debugMode {
+                                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+                                let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+                                let scaleName = scale.getScaleName(handFull: true, octaves: true)
+                                let boardGrade = "\(user.boardAndGrade.board.name) Grade \(user.boardAndGrade.grade)"
+                                let hdr = "SA v\(version) (\(build))\n\(scaleName)  \(boardGrade)\nFollow started — amplitudeFilter:\(String(format: "%.2f", Parameters.shared.amplitudeFilterGate))  consecutiveCount:\(Parameters.shared.consecutiveCountGate)  lookahead:\(Parameters.shared.lookaheadGate)  logging:\(Parameters.shared.loggingEnabled ? "on" : "off")  harmonics:\(Parameters.shared.allowHarmonics ? "on" : "off")"
+                                print("=== \(hdr)")
+                                if Parameters.shared.loggingEnabled { ProcessLog.shared.setHeader(hdr) }
                             }
                             scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                             self.exerciseProcess = RunningProcess.followingScale
@@ -269,10 +274,16 @@ struct ScalesView: View {
                                 scalesModel.setRunningProcess(.none)
                             }
                             else {
-                                DebugLog.shared.clear()
-                                if user.settings.debugMode {
-                                    let s = user.settings
-                                    print(String(format: "=== Lead started — amplitudeFilter:%.2f  consecutiveCount:%d", s.debugMode ? s.amplitudeFilterGate : 0.04, s.debugMode ? s.consecutiveCountGate : 2))
+                                DebugLogUnused.shared.clear()
+                                ProcessLog.shared.clear()
+                                if Parameters.shared.debugMode {
+                                    let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+                                    let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+                                    let scaleName = scale.getScaleName(handFull: true, octaves: true)
+                                    let boardGrade = "\(user.boardAndGrade.board.name) Grade \(user.boardAndGrade.grade)"
+                                    let hdr = "SA v\(version) (\(build))\n\(scaleName)  \(boardGrade)\nLead started — amplitudeFilter:\(String(format: "%.2f", Parameters.shared.amplitudeFilterGate))  consecutiveCount:\(Parameters.shared.consecutiveCountGate)  lookahead:\(Parameters.shared.lookaheadGate)  logging:\(Parameters.shared.loggingEnabled ? "on" : "off")  harmonics:\(Parameters.shared.allowHarmonics ? "on" : "off")"
+                                    print("=== \(hdr)")
+                                    if Parameters.shared.loggingEnabled { ProcessLog.shared.setHeader(hdr) }
                                 }
                                 //scalesModel.exerciseBadge = ExerciseBadge.getRandomExerciseBadge()
                                 self.exerciseProcess = RunningProcess.leadingTheScale
@@ -626,6 +637,11 @@ struct ScalesView: View {
                 ConfettiView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .allowsHitTesting(false)
+                    .onAppear {
+                        if Parameters.shared.debugMode {
+                            ProcessLog.shared.log("==ConfettiView onAppear")
+                        }
+                    }
             }
             // TestInputView() — on-screen letter keyboard for generating MIDI internally, not needed now that external MIDI input works
 //            if Parameters.midiEnabled {
@@ -640,13 +656,28 @@ struct ScalesView: View {
             // DebugLogView: scrolling white-on-black console shown at the bottom of the screen during Follow/Lead
             // when Debug Mode is on. Displays each pitch event that exits SoundEventHandler (serial, MIDI, volume).
             // Has a freeze/unfreeze button to pause auto-scroll without stopping the log.
-//            if user.settings.debugMode && [.followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
+//            if Parameters.shared.debugMode && [.followingScale, .leadingTheScale].contains(scalesModel.runningProcessPublished) {
 //                VStack {
 //                    Spacer()
 //                    DebugLogView()
 //                        .frame(height: UIScreen.main.bounds.height * 0.18)
 //                }
 //            }
+
+            if Parameters.shared.debugMode {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button("Show Log") { ProcessLog.shared.pause(); showProcessLog = true }
+                            .padding(8)
+                            .background(Color.black.opacity(0.7))
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .padding()
+                    }
+                }
+            }
         }
         .commonToolbar(
             title: self.scale.getScaleName() + ", " + self.scale.getScaleDescriptionParts(hands:true),
@@ -657,17 +688,23 @@ struct ScalesView: View {
         .toolbar(.hidden, for: .tabBar) // Hide the TabView
         .edgesIgnoringSafeArea(.bottom)
         
+        .fullScreenCover(isPresented: $showProcessLog) {
+            ProcessLogView(onDismiss: { showProcessLog = false; ProcessLog.shared.resume() })
+        }
         .sheet(isPresented: $helpShowing) {
             if let topic = scalesModel.helpTopic {
                 HelpView(topic: topic)
             }
         }
         .onChange(of: exerciseState.statePublished) { oldValue, newValue in
+            if Parameters.shared.debugMode {
+                ProcessLog.shared.log("==ScalesView.onChange statePublished \(oldValue) → \(newValue)")
+            }
             ///Modify showBadgeMessagePanelOffset to bring the badge message off and on the display
             //let messageTime = 3.0
             //let fallTime = 2.0
             //let offScreenoffset = UIScreen.main.bounds.height / 4
-            
+
             if [ExerciseState.State.exerciseAboutToStart].contains(exerciseState.statePublished) {
                 if false {
                     exerciseState.setExerciseState("ScalesView, exercise started", .exerciseStarted)

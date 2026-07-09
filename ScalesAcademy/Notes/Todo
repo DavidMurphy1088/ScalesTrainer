@@ -1,42 +1,9 @@
 ==== TODO
-1.0.5 was released. SET ALL COUNTIES UNAVAILALBE. CHECK when 2.0 goes out to make all countires avaialbe. 
-fix disclaimer lange - dont hard code
-AbRSM licensing follow up
-AMEB licensing follow up
-run regression - but changed Trinity name
-
-abrsm #5 tickets
-add email licences feedback
-store good abrsm 1-5 for regression
-subscriptions price to 1.99/ month or 9.99/ year.
-
-make sure all audiomgr, license etc load when flash screen loading
-
-add free licesning
-delete all assets in old folder
-
-==== Done ============
-App Store Connect
-- Submitted for review Sun 5th. See ASC -> ScalesAcademy -> General -> App Review. Can tke 48 hours
-- Version submitted attaches the 1st subscription which is reviewed with app. Can add 2nd, 3rd later
-- Subscription requires App Review ok before can test.
-- Subscription also requires a screen shot of how it looks but get error when uploading iamge. Have question to their support
-
- 
-22Sep    remove the huge new sf2 files
-    
-Support ABRSM gr 5 Chromtic starting on F+ (LH) and A+ (RH) 2 oct. legato; hands starting a major third apart
-Do Keyboard screen
-Go back over Figma and complete them all. Check on iPad and iPhone
-Look for commented code or classes no longer used or methods no longer used and DELETE them
 
 
-Finish badges screen
-Should studentscales have LH and RH broken out for badges or to select in PC or Select Your Exercise
-add Firebase Crashlytics:
 
-
-FUTURES
+==== FUTURES
+Grid view with colors for number of tries and pass fail rate
 play scale and student guesses the type
 show scale shape and student identifes the type
 badge screen

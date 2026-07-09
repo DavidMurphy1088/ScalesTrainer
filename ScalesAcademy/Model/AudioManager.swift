@@ -344,6 +344,7 @@ class AudioManager {
                 }
             }
             else {
+                ///July 2026 Dont run synchronously inside AudioKit's real-time audio callback.
                 tapHandler.tapUpdate([pitch[0], pitch[1]], [amplitude[0], amplitude[1]])
             }
         }
