@@ -742,9 +742,10 @@ struct ScalesView: View {
             PianoKeyboardModel.sharedRH.resetKeysWerePlayedState()
             PianoKeyboardModel.sharedLH.resetKeysWerePlayedState()
             if self.scale.scaleMotion == .contraryMotion && self.scale.hands.count == 2 {
-                if let score = scalesModel.getScore() {
-                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale)
-                }
+//                if let score = scalesModel.getScore() {
+//                    PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale)
+//                    //ScalesModel.shared.configureKeyboards(scale: scale, ctx: "contraryMotion combined")
+//                }
                 if let combined = PianoKeyboardModel.sharedCombined {
                     if let firstRHNote = self.scale.getScaleNoteState(handType: .right, index: 0) {
                         let middleKeyIndex = combined.getKeyIndexForMidi(midi: firstRHNote.midi)

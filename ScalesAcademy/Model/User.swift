@@ -88,7 +88,7 @@ class User : Encodable, Decodable, Hashable, Identifiable {
         hasher.combine(id) // Combine the `id` property into the hasher
     }
     
-    func debug(_ ctx:String) {
+    func debug13(_ ctx:String) {
         print("===== User", ctx, self.name, self.boardAndGrade.board, "Grade:", self.boardAndGrade.grade, "MinorType", self.selectedMinorType)
     }
     

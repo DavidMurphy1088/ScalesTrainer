@@ -947,47 +947,36 @@ public class ScalesModel : ObservableObject {
             callback(scale, score)
         }
         
-//        if scale.timeSignature.top == 3 {
-//            self.tempoSettings = ["42", "44", "46", "48", "50", "52", "54", "56", "58", "60"]
-//        }
-//        else {
-//            self.tempoSettings = ["40", "50", "60", "70", "80", "90", "100", "110", "120", "130"]
-//        }
-        
         ///10Jan2025 - changed to ensure keyboard key view has score to be able to set its note names
         //self.configureKeyboards(scale: scale, ctx: "setScale")
         //DispatchQueue.main.async {
-            ///Scores are @Published so set them here
-            //DispatchQueue.main.async {
-                self.tempoChangePublished = !self.tempoChangePublished
-                self.score1 = score
-            //}
+        ///Scores are @Published so set them here
+        //DispatchQueue.main.async {
+        self.tempoChangePublished = !self.tempoChangePublished
+        self.score1 = score
         //}
+        //}
+
         self.configureKeyboards(scale: scale, ctx: "setScale")
+        PianoKeyboardModel.sharedCombined = nil
+        if self.scale.scaleMotion == .contraryMotion && self.scale.hands.count == 2 {
+            if let score = getScore() {
+                PianoKeyboardModel.sharedCombined = PianoKeyboardModel.sharedLH.joinKeyboard(score: score, fromKeyboard: PianoKeyboardModel.sharedRH, scale: self.scale)
+            }
+        }
     }
     
     func configureKeyboards(scale:Scale, ctx:String) {
-        //let name = scale.getScaleName(handFull: true, octaves: true)
         self.scale = scale
         if let score = self.getScore() {
-            if let combinedKeyboard = PianoKeyboardModel.sharedCombined {
-                combinedKeyboard.resetLinkScaleFingersToKeyboardKeys()
-                combinedKeyboard.configureKeyboardForScale(scale: scale, score: score, handType: .right)
-                self.setSelectedScaleSegment(0)
-                let middleKey = combinedKeyboard.pianoKeyModel.count / 2
-                combinedKeyboard.pianoKeyModel[middleKey].setKeyPlaying()
-                combinedKeyboard.redraw()
-            }
-            else {
-                ///Set the single RH and RH keyboard
-                PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
-                PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
-                PianoKeyboardModel.sharedRH.configureKeyboardForScale(scale: scale, score: score, handType: .right)
-                PianoKeyboardModel.sharedLH.configureKeyboardForScale(scale: scale, score: score, handType: .left)
-                self.setSelectedScaleSegment(0)
-                PianoKeyboardModel.sharedRH.redraw()
-                PianoKeyboardModel.sharedLH.redraw()
-            }
+            ///Set the single RH and RH keyboard
+            PianoKeyboardModel.sharedRH.resetLinkScaleFingersToKeyboardKeys()
+            PianoKeyboardModel.sharedLH.resetLinkScaleFingersToKeyboardKeys()
+            PianoKeyboardModel.sharedRH.configureKeyboardForExercise(scale: scale, score: score, handType: .right)
+            PianoKeyboardModel.sharedLH.configureKeyboardForExercise(scale: scale, score: score, handType: .left)
+            self.setSelectedScaleSegment(0)
+            PianoKeyboardModel.sharedRH.redraw()
+            PianoKeyboardModel.sharedLH.redraw()
         }
     }
 

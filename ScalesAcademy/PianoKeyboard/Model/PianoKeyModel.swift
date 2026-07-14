@@ -121,13 +121,6 @@ public class PianoKeyModel: Identifiable, Hashable {
 
         ///🤚 keyboard cannot redraw just one key... the key model is not observable so redraw whole keyboard is required
         self.keyboardModel.redraw()
-        
-//        if self.playedCallbacks.count > 0 {
-//            if let callback = self.playedCallbacks[0] {
-//                callback()
-//                self.playedCallbacks.removeFirst()
-//            }
-//        }
     }
     
     public var noteMidiNumber: Int {

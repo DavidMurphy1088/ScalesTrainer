@@ -134,7 +134,7 @@ class MatchedNotes {
     }
     
     func applyToScore(score:Score) {
-        debug1("ResultView OnAppear")
+        //debug1("ResultView OnAppear")
         for ts in score.getAllTimeSlices() {
             for note in ts.getTimeSliceNotes(handType: .right) {
                 let status = StaffNoteResultStatus()
@@ -143,7 +143,7 @@ class MatchedNotes {
         }
     }
     func resetScore(score:Score) {
-        debug1("ResultView OnAppear")
+        //debug1("ResultView OnAppear")
         for ts in score.getAllTimeSlices() {
             for note in ts.getTimeSliceNotes(handType: .right) {
                 note.staffNoteResultStatus = nil
@@ -151,7 +151,7 @@ class MatchedNotes {
         }
     }
     
-    func debug1(_ msg:String) {
+    func debug13(_ msg:String) {
         print("======== Matched Notes \(msg) =======")
         let formatter = DateFormatter()
         formatter.dateFormat = "mm:ss.SSS"
@@ -549,7 +549,7 @@ class TestMidiNotes {
         self.scaleId = nil
     }
     
-    func debug(_ ctx:String) {
+    func debug3(_ ctx:String) {
         var msg = ""
         for noteSet in noteSets {
             for note in noteSet.notes {

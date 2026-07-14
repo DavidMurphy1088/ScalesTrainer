@@ -389,7 +389,7 @@ public class Score : ObservableObject, Encodable {
         return result
     }
 
-    public func debug11(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
+    public func debug13(ctx:String, handType:HandType?, midiFilter:Int? = nil, toleranceLevel:Int=0) {
 
         let tolerance = RhythmTolerance.getTolerancePercent(toleranceLevel)
         //print("\nSCORE DEBUG =====", ctx, "\tScale", scale.scaleRoot, scale.scaleType.description)

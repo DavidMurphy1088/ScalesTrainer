@@ -82,7 +82,7 @@ class MusicBoardAndGrade: Codable, Identifiable {
         return ScaleType.harmonicMinor
     }
     
-    static func debug11(scales:[Scale]) {
+    static func debug13(scales:[Scale]) {
         print("===== BoardDebug count:\(scales.count)")
         for scale in scales {
             print("  ", scale.getScaleDescriptionHelpMessage())

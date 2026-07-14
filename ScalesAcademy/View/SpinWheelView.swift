@@ -165,6 +165,18 @@ struct SpinTheWheelView: View {
             //self.scales = MusicBoardAndGrade.getScales(boardName: user.board, grade: user.grade)
             self.scales = MusicBoardAndGrade.getScales(boardName: user.boardAndGrade.board.name,
                                                        grade: user.boardAndGrade.grade)
+            if let selectedMinorType = user.selectedMinorType {
+                self.scales = self.scales.filter { scale in
+                    let isMinorVariant = [ScaleType.naturalMinor, .harmonicMinor, .melodicMinor].contains(scale.scaleType)
+                    if !isMinorVariant {
+                        return true
+                    }
+                    if scale.scaleCustomisation?.retainWithMelodicSwitch == true {
+                        return true
+                    }
+                    return scale.scaleType == selectedMinorType
+                }
+            }
 
             wasSpun = false
             totalSpinSeconds = 3.0 + Double.random(in: 0...1.0)

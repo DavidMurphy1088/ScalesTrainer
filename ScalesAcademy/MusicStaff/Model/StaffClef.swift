@@ -25,7 +25,7 @@ public class NoteLayoutPositions {
 //        }
     }
     
-    func debug11(_ ctx:String, handType:HandType) -> Bool {
+    func debug13(_ ctx:String, handType:HandType) -> Bool {
         print ("=============== NoteLayoutPos", ctx)
         var ctr = 0
         for k in positions.keys {

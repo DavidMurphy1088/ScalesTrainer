@@ -148,7 +148,7 @@ class StudentScales: Codable {
         }
     }
     
-    func debug(_ ctx:String) {
+    func debug13(_ ctx:String) {
         print("======== StudentScales", ctx)
         for r in 0..<self.studentScales.count {
             let studentScale = self.studentScales[r]

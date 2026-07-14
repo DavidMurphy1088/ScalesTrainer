@@ -95,7 +95,9 @@ class FigmaColors {
     var blue = Color.clear
     let userDisplayOpacity = 0.8
     var purple = Color.clear
-    
+    var fingerOnKey = Color.clear
+    var fingerOverUnder = Color.clear
+
     private init() {
         ///See Jennifer's brand guidelines colors and shades. Using shade index = 2 in 0,1,2
         ///shade 0 is direct from colour palette, shade > 0 are J's shades
@@ -153,6 +155,9 @@ class FigmaColors {
         ///J Figma for blue shades is WRONG RGB 👹 for blue shade 5
         self.blue = getColor1("getglobalblue", "blue", 6)
         self.purple = FColor("purple", "#786A85", 5).color
+
+        self.fingerOverUnder = FColor("fingerOverUnder", "#FAA248", 5).color //orange  #FAA248 #F98C1F Good = #AE5904
+        self.fingerOnKey = FColor("fingerOnKey", "#786A85", 5).color  //purple "#8B0404" #B20505 #A1DFE7 #91DAE3 Good = #65CBD8
     }
     
     func getColor1(_ ctx:String, _ name: String, _ shade: Int? = nil) -> Color {

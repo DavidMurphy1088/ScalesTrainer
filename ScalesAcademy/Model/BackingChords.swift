@@ -150,13 +150,16 @@ class BackingChords {
             }
             chords.append(BackingChord(pitches: [0], value: 2.0, offset: octaveOffset))
         }
+        
         if [.arpeggioDiminishedSeventh].contains(scaleType) {
             let minor = true //[.arpeggioMinor, .arpeggioMinorSeventh].contains(scaleType)
             for _ in 0..<4 {
                 chords.append(BackingChord(pitches: [0], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7], value: 0.5, offset: octaveOffset))
-                chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+                //chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 6], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 6], value: 0.5, offset: octaveOffset))
+                //chords.append(BackingChord(pitches: [minor ? 3 : 4, 7, 7], value: 0.5, offset: octaveOffset))
+                chords.append(BackingChord(pitches: [minor ? 3 : 4, 6], value: 0.5, offset: octaveOffset))
             }
             chords.append(BackingChord(pitches: [0], value: 4.0, offset: octaveOffset))
         }

@@ -66,18 +66,17 @@ public struct ClassicStyle {
     }
     
     private func getFingerColor(scaleNote:ScaleNoteState) -> Color {
-//        if scaleNote.keyboardColourType == .bySegment {
-//            let color:Color
-//            color = FigmaColors.shared.getColor1("KB getFingerColor", "blue", 1) //Color.blue
-//            return color
-//        }
-        //let finger = scaleNote.finger
-        //return finger == 1 ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
         if self.scaleDirection == 0 {
-            return scaleNote.keyboardFingerColourTypeUp == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+            return scaleNote.keyboardFingerColourTypeUp == .fingeringSequenceBreak ?
+            FigmaColors.shared.fingerOverUnder : FigmaColors.shared.fingerOnKey
+            //FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+            
         }
         else {
-            return scaleNote.keyboardFingerColourTypeDown == .fingeringSequenceBreak ? FigmaColors.shared.getColor1("getFingerColor", "orange", 3) : FigmaColors.shared.purple //getColor1("KB getFingerColor", "purple", 4)
+            return scaleNote.keyboardFingerColourTypeDown == .fingeringSequenceBreak ?
+            FigmaColors.shared.fingerOverUnder : FigmaColors.shared.fingerOnKey
+            //FigmaColors.shared.purple)
+            
         }
     }
     
@@ -256,8 +255,8 @@ public struct ClassicStyle {
                 }
                 //xpos += plainStyle ? 8 : naturalXIncr
                 xpos += naturalWidth + naturalKeySpace
-                if index < viewModel.keyRects1.count {
-                    viewModel.keyRects1[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
+                if index < viewModel.keyRectangleBoundaries.count {
+                    viewModel.keyRectangleBoundaries[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
                 }
                 
             }
@@ -354,7 +353,7 @@ public struct ClassicStyle {
                     var color:Color = .clear
                     if keyModel.scaleNoteState != nil {
                         if let state = keyModel.scaleNoteState {
-                            color = getFingerColor(scaleNote: state)//Color.blue //figma.green
+                            color = getFingerColor(scaleNote: state)
                         }
                         //color = figma.green
                     }
@@ -391,8 +390,8 @@ public struct ClassicStyle {
                         )
                     }
                 }
-                if index < viewModel.keyRects1.count {
-                    viewModel.keyRects1[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
+                if index < viewModel.keyRectangleBoundaries.count {
+                    viewModel.keyRectangleBoundaries[index] = keyRect.offsetBy(dx: geometryLeftEdge, dy: geometryTopEdge)
                 }
             }
         }

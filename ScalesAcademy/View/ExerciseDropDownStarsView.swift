@@ -66,20 +66,32 @@ struct ExerciseDropDownStarsView: View {
     
     func getDotSpace() -> CGFloat {
         if ScalesModel.shared.scale.octaves > 1 {
-            return UIDevice.current.userInterfaceIdiom == .phone ? 4 : 10
+            let spacing:CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 4 : 10
+            if ScalesModel.shared.scale.scaleType == .chromatic {
+                //spacing *= 0.6
+            }
+            return spacing
         }
         else {
             return 10
         }
     }
     
+    ///Must be smaller for lots of stars. e.g. chromatic 2 octaves
+    func getStarShape(scale: Scale) -> String {
+        if UIDevice.current.userInterfaceIdiom == .phone && scale.octaves > 1 && scale.scaleType == .chromatic  {
+            return "·"
+        }
+        else {
+            return "⊙"
+        }
+    }
+    
     var body: some View {
         ZStack(alignment: .topTrailing) { // Ensure button is positioned at the top-right
             VStack(spacing:0) {
-
                 HStack(spacing: getDotSpace()) {
                     
-                    //let imWidth = CGFloat(40)
                     let animationDuration = 0.5 //0.1
                     
                     ///Draw a place for every note in the scale. Put badges in places where the note was played
@@ -87,7 +99,7 @@ struct ExerciseDropDownStarsView: View {
                         if scaleNoteNumber == exerciseBadgesList.totalBadges - 1  {
                             ///Drop in the last badge awarded
                             ZStack {
-                                Text("⊙").foregroundColor(.blue)
+                                Text(getStarShape(scale: scale)).foregroundColor(.blue)
                                 if exerciseBadgesList.totalBadges > 0 {
                                     StarShape(shapeSize: starIconSize, offset: offset, color: self.getNextColor())
                                         .rotationEffect(Angle.degrees(rotationAngle))
@@ -106,7 +118,7 @@ struct ExerciseDropDownStarsView: View {
                         }
                         else {
                             ZStack {
-                                Text("⊙").foregroundColor(.blue)
+                                Text(getStarShape(scale: scale)).foregroundColor(.blue)
                                 if scaleNoteNumber < exerciseBadgesList.totalBadges {
                                     StarShape(shapeSize: starIconSize, offset: offset,
                                               color: self.getNextColor())
@@ -114,7 +126,6 @@ struct ExerciseDropDownStarsView: View {
                                 }
                             }
                             .frame(width: starIconSize, height: starIconSize)
-                            //.border(AppOrange)
                         }
                     }
                     Text("XXXX").foregroundColor(.clear) ///Make sure button below does not cover last star(s)
@@ -143,27 +154,18 @@ struct ExerciseDropDownStarsView: View {
 
         .onAppear() {
             self.handType = KeyboardType.right //scale.hand == 2 ? 0 : scale.hand
-            let scale = scale.getScaleNoteCount() >= 16 ? 0.02 : 0.03
-            self.starIconSize = UIScreen.main.bounds.size.width * scale
-//            let colorNames = FigmaColors.shared.allColorNames()
-//            var colorIndex = 0
-//            switch scale.scaleType {
-//            case .major:
-//                colorIndex = 0
-//            case .harmonicMinor:
-//                colorIndex = 1
-//            case .melodicMinor:
-//                colorIndex = 2
-//            case .naturalMinor:
-//                colorIndex = 3
-//            case .brokenChordMinor:
-//                colorIndex = 4
-//           default:
-//                colorIndex = 5
-//            }
-//            let colorName = colorNames[colorIndex % colorNames.count]
-//            self.starColor = FigmaColors.shared.getColor(colorName)
-            
+            var widthScale = scale.getScaleNoteCount() >= 16 ? 0.02 : 0.03
+            if scale.octaves > 1 {
+                if scale.scaleType == .chromatic {
+                    if UIDevice.current.userInterfaceIdiom == .phone {
+                        widthScale = widthScale * 0.7
+                    }
+                    else {
+                        widthScale = widthScale * 0.5
+                    }
+                }
+            }
+            self.starIconSize = UIScreen.main.bounds.size.width * widthScale
         }
     }
 }

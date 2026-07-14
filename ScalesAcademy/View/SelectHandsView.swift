@@ -54,7 +54,8 @@ struct SelectHandForPractice: View {
                 }
                 Text("")
                 Text("In the exam \(scaleName) must be played with both hands.")
-                Text("However you can also practise \(name) hands separately.")
+                //Text("However you can also practise \(name) hands separately.")
+                Text("However you can also practise hands separately.")
                 Text("")
                 if !compact {
                     Text("")

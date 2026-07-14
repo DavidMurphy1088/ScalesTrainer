@@ -876,7 +876,7 @@ public class Scale : Codable {
         return out
     }
     
-    func debug1(_ msg:String, rootName:String? = nil, hand:Int? = nil)  {
+    func debug13(_ msg:String, rootName:String? = nil, hand:Int? = nil)  {
         if let rootName = rootName {
             if scaleRoot.name != rootName {
                 return

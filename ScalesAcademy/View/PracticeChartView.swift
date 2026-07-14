@@ -80,9 +80,10 @@ struct PracticeChartView: View {
         studentScales.processAllScales(procFunction: {studentScale in
             var visible = studentScale.practiceDay == visibleDayOffset
             if let scale = studentScale.scale {
-                if [ScaleType.naturalMinor, ScaleType.harmonicMinor, ScaleType.melodicMinor].contains(scale.scaleType)  {
+                if [ScaleType.naturalMinor, ScaleType.harmonicMinor, ScaleType.melodicMinor].contains(scale.scaleType) {
                     if scale.scaleCustomisation?.retainWithMelodicSwitch == true {
-                        visible = true
+                        //day-based visibility from ① must still stand
+                        //visible = true
                     }
                     else {
                         if scale.scaleType != user?.selectedMinorType {
@@ -232,7 +233,7 @@ struct PracticeChartView: View {
             if !studentScales.arePracticeDaysSet() {
                 studentScales.setPracticeDaysForScales(studentScales: studentScales.studentScales)
             }
-            studentScales.debug("Chart view")
+            //studentScales.debug("Chart view")
             
             self.studentScales = studentScales
             let minorTypes = studentScales.getScaleTypes()
